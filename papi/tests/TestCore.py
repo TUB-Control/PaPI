@@ -26,34 +26,24 @@ Contributors:
 Stefan Ruppin
 """
 
-class PapiEvent(object):
+
+import unittest
+from papi.core import Core
+from papi.Event import PapiEvent
 
 
-    def __init__(self,orID,destID,type_,op,optParameter):
-        """
-        Function used to create a new Event ready to send.
+class CoreTests(unittest.TestCase):
 
-        :param orID: plugin id of sender
-        :type orID: int
-        :param destID: plugin id of destination
-        :type destID: int
-        :param type_: event type, see list
-        :type type_: string
-        """
-
-        self.__originID__ = orID
-        self.__destID__ = destID
-        self.__eventtype__ = type_
-        self.__operation__ = op
-        self.__optionalparameter__ = optParameter
+    def setUp(self):
+        self.core = Core()
 
 
-    def get_originID(self):
-        return self.__originID__
+    def test_process_event_divider(self):
+        event = PapiEvent(1,2,'status_event','alive','')
+        self.core.__process_event__(event)
 
-    def get_destinatioID(self):
-        return self.__destID__
 
-    def get_eventtype(self):
-        return self.__eventtype__
+
+if __name__ == "__main__":
+    unittest.main();
 
