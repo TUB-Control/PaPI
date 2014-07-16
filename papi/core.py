@@ -28,46 +28,64 @@ Sven Knuth
 
 version = '0.1'
 
-from papi.plugin.plot import Plot
-
+from yapsy.PluginManager import PluginManager
+from multiprocessing import Process, Array, Lock, Queue
+import time
+import os
+from papi.Event import PapiEvent
+from papi.DebugOut import debug_print
 
 class Core:
 
 
-    def init(foo, bar=True):
-        """
-        Function used to initialize PaPI.
 
-        :param foo: used to foo
-        :type foo: String
-        :param bar: used to bar
-        :type bar: bool
-        :rtype bool:
-        """
-
-        print("initialize PaPI - Plugin based Process Interaction")
-
-        plot = Plot('SuperPlot')
-        plot.max(4)
+    def __init__(self):
+        self.__process_event_by_type__ = {   'status_event': self.__process_status_event__,
+                                        'data_event': self.__process_data_event__,
+                                        'instr_event': self.__process_instr_event__,
+        }
+        self.__debugLevel__ = 1
 
 
-        print(plot.name)
-        print(plot.description)
+    def run(self):
+        debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
+        debug_print(self.__debugLevel__, ['Core: core process id: ',os.getpid()] )
+        coreEventQueue = Queue()
 
-        return True
+        guiEventQueue = Queue()
+
+        # sollte weg, wenn Datenstruktur da
+        process_alive_cout = 0
 
 
-    def create(foo, bar=True):
-        """
-        Function used to create something.
+        # GUIAlive
+        guiAlive = 0
 
-        :param foo: used to foo
-        :type foo: String
-        :param bar: used to bar
-        :type bar: bool
-        :rtype bool:
-        """
 
-        print("initialize PaPI - Plugin based Process Interaction")
-        return True
+
+        coreGoOn = 0
+
+        debug_print(self.__debugLevel__,'Core:  entering event loop')
+        while coreGoOn:
+            event = coreEventQueue.get()
+            self.__process_event__(event)
+            coreGoOn = process_alive_cout == 0 & guiAlive
+
+
+
+
+
+
+    def __process_event__(self,event: PapiEvent):
+         t = event.get_eventtype()
+         self.__process_event_by_type__[t](event)
+
+    def __process_status_event__(self,event):
+        debug_print(self.__debugLevel__,'Core: processing status event')
+
+    def __process_data_event__(self):
+        debug_print(self.__debugLevel__,'Core: processing data event')
+
+    def __process_instr_event__(self):
+        debug_print(self.__debugLevel__,'Core: processing instr event')
 
