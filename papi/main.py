@@ -34,8 +34,7 @@ from papi.core import Core
 
 def main():
     core = Core()
-    core.init()
-    core.create()
+    core.run()
 
 
 if __name__ == '__main__':
