@@ -28,9 +28,17 @@ Sven Knuth
 
 __author__ = 'control'
 
-from multiprocessing import Process
-from papi.data.dcore import DGUIProcess, DPLCollectionProcess, DPluginProcess, DProcess
+from multiprocessing import Process, Queue
 
+from papi.data.DObject import DObject
+
+from papi.data.dcore.DGUIProcess import DGUIProcess
+from papi.data.dcore.DPLCollectionProcess import DPLCollectionProcess
+from papi.data.dcore.DPluginProcess import DPluginProcess
+from papi.data.dcore.DProcess import DProcess
+
+
+import uuid
 
 class DCore():
 
@@ -43,20 +51,37 @@ class DCore():
         self.__GProcess = None
         self.__PLCProcess = None
 
-    def add_pl_process(self, plp=Process):
-        d_pl_p = DPluginProcess()
-        assert isinstance(d_pl_p, DPluginProcess)
-        self.__PLProcesses[d_pl_p.id] = d_pl_p
+
+    def __create_id(self):
+        return uuid.uuid4()
+
+
+    def add_pl_process(self, pl=None, plp=None, q=None):
+
+        d_pl_p = DPluginProcess(plugin=pl, process=plp, queue=q)
+        d =  DPluginProcess()
+        DP
+        #d_pl_p.set_id(self.__create_id())
+
+        #assert isinstance(d_pl_p, DPluginProcess)
+
+        #self.__PLProcesses[d_pl_p.id] = d_pl_p
+
+        return True
 
     def set_gui_process(self, gui=Process):
         d_gui_p = DGUIProcess()
         assert isinstance(d_gui_p, DGUIProcess)
         self.__GProcess = d_gui_p
 
+        return True
+
     def set_plc_process(self,plcp=Process):
         d_plc_p = DPLCollectionProcess()
         assert isinstance(d_plc_p, DPLCollectionProcess)
         self.__PLProcesses = d_plc_p
+
+        return True
 
     def get_pl_process(self):
         return self.__PLProcesses

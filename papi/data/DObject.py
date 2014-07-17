@@ -26,39 +26,9 @@ Contributors
 Sven Knuth
 """
 
+__author__ = 'knuths'
 
-version = '0.1'
+class DObject():
 
-from papi.plugin.template import Template
-from papi.plugin_base import plugin_base
-
-
-class Plot(plugin_base):
-    max = 0
-
-    def start_init(self):
-        pass
-
-    def start(self):
-        pass
-
-    def pause_init(self):
-        pass
-
-    def pause(self):
-        pass
-
-    def resume_init(self):
-        pass
-
-    def resume(self):
-        pass
-
-    def execute(self):
-        pass
-
-    def set_parameter(self):
-        pass
-
-    def quit(self):
-        pass
+    def __init__(self):
+        self.id = 0

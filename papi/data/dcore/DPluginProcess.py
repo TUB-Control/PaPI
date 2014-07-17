@@ -32,6 +32,8 @@ from papi.data.dcore.DProcess import DProcess
 
 
 class DPluginProcess(DProcess):
-    def __init__(self, plugin, parent=None):
-        super(DPluginProcess, self).__init__(parent)
+
+    def __init__(self, plugin, queue, process, parent=None):
+        super(DProcess, self).__init__(parent)
+
         self.plugin = plugin
