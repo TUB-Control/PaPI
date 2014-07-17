@@ -34,6 +34,7 @@ import time
 import os
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
+from papi.data.DCore import DCore
 
 class Core:
 
@@ -59,6 +60,9 @@ class Core:
 
         self.__debugLevel__ = 1
         self.__debug_var = ''
+
+
+        self.core_data = DCore()
 
 
 
@@ -156,8 +160,10 @@ class Core:
         return True
 
 
-    def __process_join_request__(self,event):
+    def __process_join_request__(self,event: PapiEvent):
         self.__debug_var__ = 'join_request'
+        data_object = self.core_data.get_plugin_by_id(event.get_originID())
+        data_object.
         return True
 
 
