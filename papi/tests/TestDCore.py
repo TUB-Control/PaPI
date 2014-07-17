@@ -26,39 +26,27 @@ Contributors
 Sven Knuth
 """
 
+__author__ = 'knuths'
 
-version = '0.1'
+import unittest
 
-from papi.plugin.template import Template
-from papi.plugin_base import plugin_base
+from multiprocessing import Process, Queue
+from papi.data.DCore import DCore
+from papi.data.dcore import DProcess
+from papi.plugin.plot import Plot
 
+class TestDCore(unittest.TestCase):
 
-class Plot(plugin_base):
-    max = 0
+    def setUp(self):
+        self.dcore = DCore()
 
-    def start_init(self):
-        pass
+    def test_add_pl_process(self):
 
-    def start(self):
-        pass
+        p = Process()
+        queue = Queue()
+        pl = Plot()
 
-    def pause_init(self):
-        pass
+        self.dcore.add_pl_process(pl, plp=p, q=queue)
 
-    def pause(self):
-        pass
-
-    def resume_init(self):
-        pass
-
-    def resume(self):
-        pass
-
-    def execute(self):
-        pass
-
-    def set_parameter(self):
-        pass
-
-    def quit(self):
-        pass
+if __name__ == "__main__":
+    unittest.main();
