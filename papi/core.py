@@ -156,6 +156,9 @@ class Core:
 
 
     def __process_alive__(self,event):
+        """
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'alive'
         return True
 
@@ -163,7 +166,6 @@ class Core:
     def __process_join_request__(self,event: PapiEvent):
         self.__debug_var__ = 'join_request'
         data_object = self.core_data.get_plugin_by_id(event.get_originID())
-        data_object.
         return True
 
 

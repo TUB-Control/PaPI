@@ -115,6 +115,7 @@ class DCore():
         return found_buffer
 
     def get_plugin_by_id(self, pl_id):
+        """ :rtype: DPlugin"""
         found_plugin = None
         found_plugin = self.__PLAvailable[pl_id]
         return found_plugin
