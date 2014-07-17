@@ -23,10 +23,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Stefan Ruppin
 """
 
-version = '0.1'
+__author__ = 'control'
+
 
 from yapsy.PluginManager import PluginManager
 from multiprocessing import Process, Array, Lock, Queue
@@ -113,24 +114,40 @@ class Core:
 
     # ------- Event processing initial stage ---------
 
-    def __process_event__(self,event: PapiEvent):
-         t = event.get_eventtype()
-         self.__process_event_by_type__[t](event)
+    def __process_event__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
+        t = event.get_eventtype()
+        self.__process_event_by_type__[t](event)
 
 
     # ------- Event processing first stage ---------
 
     def __process_status_event__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         debug_print(self.__debugLevel__,'Core: processing status event')
         op = event.get_event_operation()
         return self.__process_status_event_l__[op](event)
 
     def __process_data_event__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         debug_print(self.__debugLevel__,'Core: processing data event')
         op = event.get_event_operation()
         return self.__process_data_event_l__[op](event)
 
     def __process_instr_event__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         debug_print(self.__debugLevel__,'Core: processing instr event')
         op = event.get_event_operation()
         return self.__process_instr_event_l__[op](event)
@@ -141,45 +158,74 @@ class Core:
     # ------- Event processing second stage: status events ---------
 
     def __process_start_successfull__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'start_successfull'
         return True
 
 
     def __process_start_failed__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'start_failed'
         return True
 
 
     def __process_check_alive__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'check_alive_status'
         return True
 
 
     def __process_alive__(self,event):
         """
+         :param event: event to process
          :type event: PapiEvent
         """
         self.__debug_var__ = 'alive'
         return True
 
 
-    def __process_join_request__(self,event: PapiEvent):
+    def __process_join_request__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'join_request'
-        data_object = self.core_data.get_plugin_by_id(event.get_originID())
+        #data_object = self.core_data.get_plugin_by_id(event.get_originID())
         return True
 
 
     # ------- Event processing second stage: data events ---------
 
     def __process_new_data__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'new_data'
         return True
 
     def __process_get_output_size__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'get_output_size'
         return True
 
     def __process_response_output_size__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'response_output_size'
         return True
 
@@ -187,9 +233,17 @@ class Core:
     # ------- Event processing second stage: instr events ---------
 
     def __process_create_plugin__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'create_plugin'
         return True
 
     def __process_stop_plugin__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
         self.__debug_var__ = 'stop_plugin'
         return True
