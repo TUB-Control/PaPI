@@ -57,3 +57,5 @@ class PapiEvent(object):
     def get_eventtype(self):
         return self.__eventtype__
 
+    def get_event_operation(self):
+        return self.__operation__

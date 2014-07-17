@@ -29,18 +29,70 @@ Stefan Ruppin
 
 import unittest
 from papi.core import Core
-from papi.Event import PapiEvent
+from papi.PapiEvent import PapiEvent
 
 
-class CoreTests(unittest.TestCase):
+class TestCore(unittest.TestCase):
 
     def setUp(self):
         self.core = Core()
 
 
-    def test_process_event_divider(self):
+    def test_process_event_alive(self):
         event = PapiEvent(1,2,'status_event','alive','')
         self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'alive'
+
+    def test_process_event_check_alive(self):
+        event = PapiEvent(1,2,'status_event','check_alive_status','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'check_alive_status'
+
+    def test_process_event_start_successfull(self):
+        event = PapiEvent(1,2,'status_event','start_successfull','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'start_successfull'
+
+    def test_process_event_join_request(self):
+        event = PapiEvent(1,2,'status_event','join_request','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'join_request'
+
+    def test_process_event_start_failed(self):
+        event = PapiEvent(1,2,'status_event','start_failed','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'start_failed'
+
+    def test_process_event_new_data(self):
+        event = PapiEvent(1,2,'data_event','new_data','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'new_data'
+
+    def test_process_event_get_output_size(self):
+        event = PapiEvent(1,2,'data_event','get_output_size','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'get_output_size'
+
+    def test_process_event_response_output_size(self):
+        event = PapiEvent(1,2,'data_event','response_output_size','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'response_output_size'
+
+    def test_process_event_create_plugin(self):
+        event = PapiEvent(1,2,'instr_event','create_plugin','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'create_plugin'
+
+    def test_process_event_stop_plugin(self):
+        event = PapiEvent(1,2,'instr_event','stop_plugin','')
+        self.core.__process_event__(event)
+        assert self.core.__debug_var__ == 'stop_plugin'
+
+
+
+
+
+
 
 
 
