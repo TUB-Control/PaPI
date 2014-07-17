@@ -36,7 +36,9 @@ from papi.data.dcore.DGUIProcess import DGUIProcess
 from papi.data.dcore.DPLCollectionProcess import DPLCollectionProcess
 from papi.data.dcore.DPluginProcess import DPluginProcess
 from papi.data.dcore.DProcess import DProcess
+from papi.data.dcore.DPlugin import DPlugin
 
+from papi.plugin_base import plugin_base
 
 import uuid
 
@@ -56,27 +58,36 @@ class DCore():
         return uuid.uuid4()
 
 
-    def add_pl_process(self, pl=None, plp=None, q=None):
+    def add_pl_process(self, plugin: plugin_base, process: Process, queue: Queue):
+        """
 
-        d_pl_p = DPluginProcess(plugin=pl, process=plp, queue=q)
-        d =  DPluginProcess()
-        DP
+        :param plugin:
+        :param process:
+        :param queue:
+        :rtype DPluginProcess
+        :return:
+        """
+
+        d_pl = DPlugin(plugin)
+
+        d_pl_p = DPluginProcess(plugin, process, queue)
+
         #d_pl_p.set_id(self.__create_id())
 
         #assert isinstance(d_pl_p, DPluginProcess)
 
         #self.__PLProcesses[d_pl_p.id] = d_pl_p
 
-        return True
+        return d_pl_p
 
-    def set_gui_process(self, gui=Process):
+    def set_gui_process(self, gui: Process):
         d_gui_p = DGUIProcess()
         assert isinstance(d_gui_p, DGUIProcess)
         self.__GProcess = d_gui_p
 
         return True
 
-    def set_plc_process(self,plcp=Process):
+    def set_plc_process(self, plcp: Process):
         d_plc_p = DPLCollectionProcess()
         assert isinstance(d_plc_p, DPLCollectionProcess)
         self.__PLProcesses = d_plc_p

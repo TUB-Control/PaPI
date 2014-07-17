@@ -28,9 +28,16 @@ Sven Knuth
 
 __author__ = 'control'
 
+from papi.Buffer import Buffer
+from papi.data.DObject import DObject
 
-class DPlugin():
+class DPlugin(DObject):
     lastCheck = 0
     state = 0
     buffer = None
-    id = 0
+
+    def __init__(self, buffer: Buffer):
+        super(DPlugin,self).__init__()
+        self.lastCheck = 0
+        self.state = 0
+        self.buffer = buffer

@@ -33,7 +33,6 @@ from papi.data.dcore.DProcess import DProcess
 
 class DPluginProcess(DProcess):
 
-    def __init__(self, plugin, queue, process, parent=None):
-        super(DProcess, self).__init__(parent)
-
-        self.plugin = plugin
+    def __init__(self, d_plugin, queue, process, parent=None):
+        super(DPluginProcess, self).__init__(queue, process, parent)
+        self.d_plugin = d_plugin

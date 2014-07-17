@@ -28,25 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-import unittest
 
-from multiprocessing import Process, Queue
-from papi.data.DCore import DCore
-from papi.data.dcore import DProcess
-from papi.plugin.plot import Plot
-
-class TestDCore(unittest.TestCase):
-
-    def setUp(self):
-        self.dcore = DCore()
-
-    def test_add_pl_process(self):
-
-        p = Process()
-        queue = Queue()
-        pl = Plot()
-
-        self.dcore.add_pl_process(pl, p, queue)
-
-if __name__ == "__main__":
-    unittest.main();
+class Buffer:
+    def __init__(self):
+        pass

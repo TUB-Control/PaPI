@@ -33,16 +33,8 @@ from papi.data.DObject import DObject
 
 class DProcess(DObject):
 
-    def __init__(self, queue=None, process=None, parent=None):
-        super(DObject, self).__init__(parent)
-        self.__e_queue = queue
-        self.__process = process
-        self.t = 1
-
-    def get_process(self):
-        return self.process
-
-    def set_queue(self, queue):
-        self.__e_queue = queue
-
+    def __init__(self, queue, process, parent=None):
+        super(DProcess, self).__init__()
+        self.queue = queue
+        self.process = process
 
