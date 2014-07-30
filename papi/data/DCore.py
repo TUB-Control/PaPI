@@ -39,14 +39,17 @@ class DCore():
     def __init__(self):
         self.__DPlugins = {}
 
+        self.__newid = 0
+
     def create_id(self):
         """
         Creates and returns random unique 64 bit integer
         :returns: 64bit random integer
         :rtype: int
         """
-
-        return uuid.uuid4().int >> 64
+        self.__newid =+ 1
+        return self.__newid
+#        return uuid.uuid4().int >> 64
 
     def add_plugin(self, process, pid, queue, array, plugin, id ):
         """
