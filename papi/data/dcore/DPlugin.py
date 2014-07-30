@@ -35,14 +35,34 @@ class DPlugin(DObject):
 
     def __init__(self, buffer: Buffer):
         super(DPlugin,self).__init__()
-
         self.process = None
         self.pid = None
         self.queue = None
         self.array = None
         self.plugin = None
         self.plugin_id = None
+        self.__subscribers = {}
 
 
-    def add_subscriper(self, dplugin):
-        pass
+    def add_subscriber(self, dplugin):
+        """
+        An other DPlugin should subscribe this plugin.
+        :param dplugin: DPlugin which should subscribes this plugin
+        :return:
+        """
+        self.__subscribers[dplugin.id] = dplugin
+
+    def rm_subscriber(self, dplugin):
+        """
+        Cancel the subscribtion of DPlugin for this plugin
+        :param dplugin: DPlugin will unsubscribe
+        :return:
+        """
+        if dplugin.id in self.__subscribers:
+            del self.__subscribers[dplugin.id]
+            return True
+        else:
+            return False
+
+    def get_subscribers(self):
+        return self.__subscribers
