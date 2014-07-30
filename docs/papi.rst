@@ -13,6 +13,14 @@ Subpackages
 Submodules
 ----------
 
+papi.Buffer module
+------------------
+
+.. automodule:: papi.Buffer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.DebugOut module
 --------------------
 
@@ -21,10 +29,10 @@ papi.DebugOut module
     :undoc-members:
     :show-inheritance:
 
-papi.Event module
------------------
+papi.PapiEvent module
+---------------------
 
-.. automodule:: papi.Event
+.. automodule:: papi.PapiEvent
     :members:
     :undoc-members:
     :show-inheritance:
@@ -41,14 +49,6 @@ papi.main module
 ----------------
 
 .. automodule:: papi.main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.plugin_base module
------------------------
-
-.. automodule:: papi.plugin_base
     :members:
     :undoc-members:
     :show-inheritance:
