@@ -79,7 +79,9 @@ class TestCore(unittest.TestCase):
         assert self.core.__debug_var__ == 'response_output_size'
 
     def test_process_event_create_plugin(self):
-        event = PapiEvent(1,2,'instr_event','create_plugin','')
+        event = PapiEvent(1,2,'instr_event','create_plugin','TestPL1')
+        self.core.plugin_manager.setPluginPlaces(["plugin","../plugin"])
+        self.core.plugin_manager.collectPlugins()
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'create_plugin'
 

@@ -47,7 +47,7 @@ class PapiEvent(object):
         self.__destID__ = destID
         self.__eventtype__ = type_
         self.__operation__ = op
-        self.__optionalparameter__ = optParameter
+        self.__optional_parameter__ = optParameter
 
 
     def get_originID(self):
@@ -61,3 +61,6 @@ class PapiEvent(object):
 
     def get_event_operation(self):
         return self.__operation__
+
+    def get_optional_parameter(self):
+        return self.__optional_parameter__

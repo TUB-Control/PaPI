@@ -25,14 +25,13 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
+from papi.plugin import plugin_base
 
 __author__ = 'control'
 
 from multiprocessing import Process, Queue, Array
 
-from papi.data.DObject import DObject
 from papi.data.dcore.DPlugin import DPlugin
-from papi.plugin_base import plugin_base
 import uuid
 
 

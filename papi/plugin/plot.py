@@ -25,12 +25,10 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
+from papi.plugin import plugin_base
 
 
 version = '0.1'
-
-from papi.plugin.template import Template
-from papi.plugin_base import plugin_base
 
 
 class Plot(plugin_base):
