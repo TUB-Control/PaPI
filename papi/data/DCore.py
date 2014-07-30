@@ -33,18 +33,22 @@ from multiprocessing import Process, Queue, Array
 from papi.data.DObject import DObject
 from papi.data.dcore.DPlugin import DPlugin
 from papi.plugin_base import plugin_base
-
 import uuid
 
-class DCore():
 
+class DCore():
     def __init__(self):
         self.__DPlugins = {}
 
 
 
-    def __create_id(self):
-        return uuid.uuid4()
+    def create_id(self):
+        """
+
+        :return: This function returns a 64bit random integer
+        """
+
+        return uuid.uuid4().int >> 64
 
 
     def add_plugin(self, process: Process, pid, queue : Queue, array: Array, plugin: plugin_base, plugin_id ):
