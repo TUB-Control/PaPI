@@ -36,6 +36,8 @@ import os
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
+from papi.data.dcore.DPlugin import DPlugin
+
 
 class Core:
 
@@ -70,32 +72,29 @@ class Core:
 
         self.core_event_queue = Queue()
 
+        self.gui_event_queue = Queue()
+
+        self.gui_alive = 0
+
+        self.core_goOn = 1
 
 
     def run(self):
         debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
         debug_print(self.__debugLevel__, ['Core: core process id: ',os.getpid()] )
 
-
-        guiEventQueue = Queue()
-
-        # sollte weg, wenn Datenstruktur da
-        process_alive_cout = 0
-
-
-        # GUIAlive
-        guiAlive = 0
-
         # check PlugIn directory for Plugins and collect them
         self.plugin_manager.collectPlugins()
 
-        coreGoOn = 0
-
         debug_print(self.__debugLevel__,'Core:  entering event loop')
-        while coreGoOn:
+
+        while self.core_goOn:
+
             event = self.core_event_queue.get()
+
             self.__process_event__(event)
-            coreGoOn = process_alive_cout != 0 | guiAlive
+
+            self.coreGoOn = self.core_data.get_dplugins_count != 0 | self.gui_alive
 
 
 
@@ -169,6 +168,8 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'start_successfull'
+
+
         return True
 
 
@@ -203,14 +204,18 @@ class Core:
         """
          :param event: event to process
          :type event: PapiEvent
+         :type dplugin: DPlugin
         """
         self.__debug_var__ = 'join_request'
 
-        pl_id = event.get_destinatioID()
+        pl_id = event.get_originID()
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
-        dplugin.process.join()
+        if (dplugin != None):
+            dplugin.process.join()
+            return self.core_data.rm_dplugin(dplugin)
+        else:
 
-        return True
+            return False
 
 
     # ------- Event processing second stage: data events ---------
