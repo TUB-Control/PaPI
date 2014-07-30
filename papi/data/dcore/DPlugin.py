@@ -32,12 +32,17 @@ from papi.Buffer import Buffer
 from papi.data.DObject import DObject
 
 class DPlugin(DObject):
-    lastCheck = 0
-    state = 0
-    buffer = None
 
     def __init__(self, buffer: Buffer):
         super(DPlugin,self).__init__()
-        self.lastCheck = 0
-        self.state = 0
-        self.buffer = buffer
+
+        self.process = None
+        self.pid = None
+        self.queue = None
+        self.array = None
+        self.plugin = None
+        self.plugin_id = None
+
+
+    def add_subscriper(self, dplugin):
+        pass

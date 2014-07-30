@@ -32,7 +32,6 @@ import unittest
 
 from multiprocessing import Process, Queue
 from papi.data.DCore import DCore
-from papi.data.dcore import DProcess
 from papi.plugin.plot import Plot
 
 class TestDCore(unittest.TestCase):
@@ -46,7 +45,11 @@ class TestDCore(unittest.TestCase):
         queue = Queue()
         pl = Plot()
 
-        self.dcore.add_pl_process(pl, p, queue)
+        self.dcore.add_plugin(p, 5, queue, None, pl, 10 )
+
+        dp = self.dcore.get_dplugin_by_id(5)
+
+       # self.assertTrue()
 
 if __name__ == "__main__":
     unittest.main();
