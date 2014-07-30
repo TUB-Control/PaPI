@@ -63,6 +63,9 @@ class TestDCore(unittest.TestCase):
 
         self.assertEqual(self.dcore.get_dplugins_count(),1)
 
+        self.assertTrue(isinstance(self.dcore.dbg_get_first_dplugin(),DPlugin))
+
+
     def test_add_subscriber(self):
         self.dcore.add_plugin(None, 1, None, None, None, 10)
         self.dcore.add_plugin(None, 1, None, None, None, 11)
