@@ -28,6 +28,7 @@ Stefan Ruppin
 
 from abc import ABCMeta, abstractmethod
 from yapsy.IPlugin import IPlugin
+from papi.PapiEvent import PapiEvent
 
 class plugin_base(IPlugin):
 
@@ -42,9 +43,6 @@ class plugin_base(IPlugin):
         self.__id__ = id
 
 
-    def work(self):
-        print("Plugin work called")
-
     def work_process(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
         print("Plugin work_process called")
         self._Core_event_queue__ = CoreQueue
@@ -53,6 +51,35 @@ class plugin_base(IPlugin):
         self.__buffer__ = buffer
         self.__id__ = id
 
+        self.goOn = 1
+
+        self.start_init()
+
+        event = PapiEvent(self.__id__,0,'status_event','start_successfull','')
+        self._Core_event_queue__.put(event)
+
+        while self.goOn:
+            try:
+                event = self.__plugin_queue__.get_nowait()
+                #process event
+                op = event.get_event_operation()
+                if (op=='stop'):
+                    self.quit()
+                    self.goOn = 0
+                    event = PapiEvent(self.__id__,0,'status_event','join_request','')
+                    self._Core_event_queue__.put(event)
+                if op=='pause':
+                    self.pause()
+                if op=='resume':
+                    self.resume()
+                if op=='check_alive_status':
+                    alive_event = PapiEvent(self.__id__,0,'status_event','alive','')
+                    self._Core_event_queue__.put(alive_event)
+            except:
+                self.execute()
+
+
+
     def get_output_sizes(self):
         return [1,1]
 
@@ -60,21 +87,9 @@ class plugin_base(IPlugin):
     def start_init(self):
         raise Exception("Unable to create an instance of abstract class")
 
-    @abstractmethod
-    def start(self):
-        raise Exception("Unable to create an instance of abstract class")
-
-
-    @abstractmethod
-    def pause_init(self):
-        raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
     def pause(self):
-        raise Exception("Unable to create an instance of abstract class")
-
-    @abstractmethod
-    def resume_init(self):
         raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod

@@ -30,55 +30,79 @@ Stefan Ruppin
 import unittest
 from papi.core import Core
 from papi.PapiEvent import PapiEvent
-
+from papi.data.DCore import DPlugin,DCore
+from multiprocessing import Process, Array, Lock, Queue
+import time
+from papi.main import main
 
 class TestCore(unittest.TestCase):
-
+    '''
     def setUp(self):
         self.core = Core()
 
 
     def test_process_event_alive(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'status_event','alive','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'alive'
 
     def test_process_event_check_alive(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'status_event','check_alive_status','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'check_alive_status'
 
     def test_process_event_start_successfull(self):
+        self.core.__debugLevel__ = 0
+        print('Test start successfull -----------------------')
         event = PapiEvent(1,2,'status_event','start_successfull','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'start_successfull'
 
     def test_process_event_join_request(self):
-        event = PapiEvent(1,2,'status_event','join_request','')
+        print('Test join request -----------------------')
+        event = PapiEvent(1,0,'instr_event','create_plugin','TestPL1')
+        self.core.plugin_manager.setPluginPlaces(["plugin","../plugin"])
+        self.core.plugin_manager.collectPlugins()
         self.core.__process_event__(event)
-        assert self.core.__debug_var__ == 'join_request'
+
+        pl = self.core.core_data.dbg_get_first_dplugin()
+
+        self.assert_(pl.process.is_alive())
+        event = PapiEvent(id,0,'instr_event','stop','')
+        pl.queue.put(event)
+        time.sleep(1)
+        assert pl.process.is_alive() == False
+
 
     def test_process_event_start_failed(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'status_event','start_failed','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'start_failed'
 
     def test_process_event_new_data(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'data_event','new_data','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'new_data'
 
     def test_process_event_get_output_size(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'data_event','get_output_size','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'get_output_size'
 
     def test_process_event_response_output_size(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'data_event','response_output_size','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'response_output_size'
 
     def test_process_event_create_plugin(self):
+        self.core.__debugLevel__ = 0
+        return True
         event = PapiEvent(1,2,'instr_event','create_plugin','TestPL1')
         self.core.plugin_manager.setPluginPlaces(["plugin","../plugin"])
         self.core.plugin_manager.collectPlugins()
@@ -86,14 +110,23 @@ class TestCore(unittest.TestCase):
         assert self.core.__debug_var__ == 'create_plugin'
 
     def test_process_event_stop_plugin(self):
+        self.core.__debugLevel__ = 0
         event = PapiEvent(1,2,'instr_event','stop_plugin','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'stop_plugin'
 
+    '''
 
+    def test_bigTest(self):
+        print("BigTest -----------------------")
+        core = Core();
+        core.plugin_manager.setPluginPlaces(["plugin","../plugin"])
 
+        pcore = Process(target=core.run())
 
-
+        # start a plugin
+        event = PapiEvent(1,2,'instr_event','create_plugin','TestPL1')
+        core.core_event_queue.put(event)
 
 
 
