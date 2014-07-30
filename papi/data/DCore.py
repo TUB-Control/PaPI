@@ -41,8 +41,8 @@ class DCore():
 
     def create_id(self):
         """
-
-        :returns: This function returns a 64bit random integer
+        Creates and returns random unique 64 bit integer
+        :returns: 64bit random integer
         :rtype: int
         """
 
@@ -50,6 +50,8 @@ class DCore():
 
     def add_plugin(self, process, pid, queue, array, plugin, id ):
         """
+        Add plugin with necessary information
+
         :param process: Plugin is running in this process
         :param pid: Process ID of the process in which the plugin is running
         :param queue: Event queue needed for events which should be received by this plugin
@@ -77,6 +79,7 @@ class DCore():
 
     def rm_dplugin(self, dplugin):
         """
+        Removes DPlugin
 
         :param dplugin:
         :return:
@@ -91,6 +94,7 @@ class DCore():
 
     def get_dplugins_count(self):
         """
+        Returns count of known plugins in this data structure
 
         :return:
         :rtype: int
@@ -99,6 +103,7 @@ class DCore():
 
     def get_dplugin_by_id(self, plugin_id):
         """
+        Returns DPlugin object by ID
 
         :param plugin_id: ID of an DPlugin object
         :return DPlugin:
