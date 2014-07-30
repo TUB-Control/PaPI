@@ -39,18 +39,16 @@ class DCore():
     def __init__(self):
         self.__DPlugins = {}
 
-
-
     def create_id(self):
         """
 
-        :return: This function returns a 64bit random integer
+        :returns: This function returns a 64bit random integer
+        :rtype: int
         """
 
         return uuid.uuid4().int >> 64
 
-
-    def add_plugin(self, process: Process, pid, queue : Queue, array: Array, plugin: plugin_base, plugin_id ):
+    def add_plugin(self, process, pid, queue, array, plugin, plugin_id ):
         """
         :param process: Plugin is running in this process
         :param pid: Process ID of the process in which the plugin is running
@@ -59,9 +57,11 @@ class DCore():
         :param plugin: Plugin object
         :param plugin_id: ID of this plugin
         :return: Returns the data object DPlugin
+        :rtype: DPlugin
         """
 
         d_pl = DPlugin(plugin)
+
 
         d_pl.process = process
         d_pl.pid = pid
@@ -75,12 +75,33 @@ class DCore():
 
         return d_pl
 
+    def rm_dplugin(self, dplugin):
+        """
+
+        :param dplugin:
+        :return:
+        :rtype: bool
+        """
+
+        if dplugin.id in self.__DPlugins:
+            del self.__DPlugins[dplugin.id]
+            return True
+        else:
+            return False
+
+    def get_dplugins_count(self):
+        """
+
+        :return:
+        :rtype: int
+        """
+        return len(self.__DPlugins.keys())
 
     def get_dplugin_by_id(self, plugin_id):
         """
 
         :param plugin_id: ID of an DPlugin object
-        :return: DPlugin
+        :return DPlugin:
         :rtype: DPlugin
         """
 

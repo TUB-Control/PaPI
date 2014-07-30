@@ -62,9 +62,9 @@ class TestDCore(unittest.TestCase):
         dp_1 = self.dcore.get_dplugin_by_id(10)
         dp_2 = self.dcore.get_dplugin_by_id(11)
 
-        self.assertEqual(len(dp_1.get_subscribers().keys()), 0)
+        self.assertEqual(len(dp_1.get_subscribers.keys()), 0)
         dp_1.add_subscriber(dp_2)
-        self.assertEqual(len(dp_1.get_subscribers().keys()), 1)
+        self.assertEqual(len(dp_1.get_subscribers.keys()), 1)
 
 if __name__ == "__main__":
     unittest.main();

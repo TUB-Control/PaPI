@@ -33,7 +33,7 @@ from papi.data.DObject import DObject
 
 class DPlugin(DObject):
 
-    def __init__(self, buffer: Buffer):
+    def __init__(self, buffer):
         super(DPlugin,self).__init__()
         self.process = None
         self.pid = None
@@ -42,13 +42,13 @@ class DPlugin(DObject):
         self.plugin = None
         self.plugin_id = None
         self.__subscribers = {}
-
+        self.state = None
 
     def add_subscriber(self, dplugin):
         """
         An other DPlugin should subscribe this plugin.
         :param dplugin: DPlugin which should subscribes this plugin
-        :return:
+        :returns: nothing
         """
         self.__subscribers[dplugin.id] = dplugin
 
@@ -56,7 +56,7 @@ class DPlugin(DObject):
         """
         Cancel the subscribtion of DPlugin for this plugin
         :param dplugin: DPlugin will unsubscribe
-        :return:
+        :returns: Nothing
         """
         if dplugin.id in self.__subscribers:
             del self.__subscribers[dplugin.id]
@@ -65,4 +65,10 @@ class DPlugin(DObject):
             return False
 
     def get_subscribers(self):
+        """
+        Returns a dictionary of all subscribers
+        :return {} of DPlugin :
+        :rtype: {}
+        """
+
         return self.__subscribers
