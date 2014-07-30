@@ -70,22 +70,22 @@ class DCore():
         d_pl.array = array
         d_pl.plugin = plugin
         d_pl.plugin_id = plugin_id
-
+        d_pl.id = self.create_id()
 
         self.__DPlugins[plugin_id] = d_pl
 
         return d_pl
 
 
-    def get_dplugin_by_id(self, id):
+    def get_dplugin_by_id(self, plugin_id):
         """
 
-        :param id: ID of an DPlugin object
+        :param plugin_id: ID of an DPlugin object
         :return: DPlugin
         """
 
-        if id in self.__DPlugins.keys():
-            return self.__DPlugins[id]
+        if plugin_id in self.__DPlugins:
+            return self.__DPlugins[plugin_id]
         else:
             return None
 
