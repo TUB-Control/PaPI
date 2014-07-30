@@ -205,7 +205,11 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'join_request'
-        #data_object = self.core_data.get_plugin_by_id(event.get_originID())
+
+        pl_id = event.get_destinatioID()
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        dplugin.process.join()
+
         return True
 
 
@@ -264,10 +268,10 @@ class Core:
 
         # create Process object for new plugin
         PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
-        #PluginProcess.start() TODO
+        PluginProcess.start()
 
         #Add new Plugin process to DCore
-        self.core_data.add_plugin(PluginProcess, PluginProcess.pid(), plugin_queue, shared_Arr, plugin, plugin_id)
+        self.core_data.add_plugin(PluginProcess, PluginProcess.pid, plugin_queue, shared_Arr, plugin, plugin_id)
 
         return True
 

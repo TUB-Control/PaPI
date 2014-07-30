@@ -81,6 +81,7 @@ class DCore():
 
         :param plugin_id: ID of an DPlugin object
         :return: DPlugin
+        :rtype: DPlugin
         """
 
         if plugin_id in self.__DPlugins:

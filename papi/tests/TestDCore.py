@@ -31,7 +31,7 @@ __author__ = 'knuths'
 import unittest
 
 from papi.data.DCore import DCore
-from papi.plugin.plot import Plot
+from papi.plugin.TestPL1 import TestPl1
 from papi.data.DCore import DPlugin
 
 
@@ -43,7 +43,7 @@ class TestDCore(unittest.TestCase):
     def test_add_pl_process(self):
 
 
-        pl = Plot()
+        pl = None
 
         self.dcore.add_plugin(None, 1, None, None, pl, 10)
         self.dcore.add_plugin(None, 2, None, None, pl, 11)
