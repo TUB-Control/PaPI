@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainGUI</class>
+ <widget class="QMainWindow" name="MainGUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1084</width>
+    <height>918</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QMdiArea" name="scopeArea">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1084</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionM_License"/>
+    <addaction name="actionM_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menuAvailablePlugins">
+    <property name="title">
+     <string>AvailablePlugins</string>
+    </property>
+    <addaction name="actionAP_Visual"/>
+    <addaction name="actionAP_IO"/>
+    <addaction name="actionAP_Parameter"/>
+   </widget>
+   <widget class="QMenu" name="menuRunningPlugins">
+    <property name="title">
+     <string>RunningPlugins</string>
+    </property>
+    <addaction name="actionRP_Visual"/>
+    <addaction name="actionRP_IO"/>
+   </widget>
+   <addaction name="menuMenu"/>
+   <addaction name="menuAvailablePlugins"/>
+   <addaction name="menuRunningPlugins"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAP_Visual">
+   <property name="text">
+    <string>Visual</string>
+   </property>
+  </action>
+  <action name="actionAP_IO">
+   <property name="text">
+    <string>IO</string>
+   </property>
+  </action>
+  <action name="actionRP_Visual">
+   <property name="text">
+    <string>Visual</string>
+   </property>
+  </action>
+  <action name="actionRP_IO">
+   <property name="text">
+    <string>IO</string>
+   </property>
+  </action>
+  <action name="actionM_License">
+   <property name="text">
+    <string>License</string>
+   </property>
+  </action>
+  <action name="actionM_Quit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionAP_Parameter">
+   <property name="text">
+    <string>Parameter</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
