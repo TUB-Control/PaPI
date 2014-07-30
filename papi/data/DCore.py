@@ -48,7 +48,7 @@ class DCore():
 
         return uuid.uuid4().int >> 64
 
-    def add_plugin(self, process, pid, queue, array, plugin, plugin_id ):
+    def add_plugin(self, process, pid, queue, array, plugin, id ):
         """
         :param process: Plugin is running in this process
         :param pid: Process ID of the process in which the plugin is running
@@ -68,10 +68,10 @@ class DCore():
         d_pl.queue = queue
         d_pl.array = array
         d_pl.plugin = plugin
-        d_pl.plugin_id = plugin_id
-        d_pl.id = self.create_id()
+        d_pl.id = id
 
-        self.__DPlugins[plugin_id] = d_pl
+
+        self.__DPlugins[id] = d_pl
 
         return d_pl
 

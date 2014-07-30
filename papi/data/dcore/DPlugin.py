@@ -40,7 +40,6 @@ class DPlugin(DObject):
         self.queue = None
         self.array = None
         self.plugin = None
-        self.plugin_id = None
         self.__subscribers = {}
         self.state = None
 

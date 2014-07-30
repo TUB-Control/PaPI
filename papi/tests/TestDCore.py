@@ -49,11 +49,19 @@ class TestDCore(unittest.TestCase):
         self.dcore.add_plugin(None, 2, None, None, pl, 11)
 
         dp_1 = self.dcore.get_dplugin_by_id(10)
+
         self.assertTrue(isinstance(dp_1, DPlugin))
-        self.assertEqual(dp_1.plugin_id, 10)
+
+        self.assertEqual(dp_1.id, 10)
         dp_2 = self.dcore.get_dplugin_by_id(11)
         self.assertTrue(isinstance(dp_2, DPlugin))
-        self.assertEqual(dp_2.plugin_id, 11)
+        self.assertEqual(dp_2.id, 11)
+
+        self.assertEqual(self.dcore.get_dplugins_count(),2)
+
+        self.dcore.rm_dplugin(dp_1)
+
+        self.assertEqual(self.dcore.get_dplugins_count(),1)
 
     def test_add_subscriber(self):
         self.dcore.add_plugin(None, 1, None, None, None, 10)
@@ -62,9 +70,9 @@ class TestDCore(unittest.TestCase):
         dp_1 = self.dcore.get_dplugin_by_id(10)
         dp_2 = self.dcore.get_dplugin_by_id(11)
 
-        self.assertEqual(len(dp_1.get_subscribers.keys()), 0)
+        self.assertEqual(len(dp_1.get_subscribers().keys()), 0)
         dp_1.add_subscriber(dp_2)
-        self.assertEqual(len(dp_1.get_subscribers.keys()), 1)
+        self.assertEqual(len(dp_1.get_subscribers().keys()), 1)
 
 if __name__ == "__main__":
     unittest.main();
