@@ -27,23 +27,34 @@ Stefan Ruppin
 """
 
 from abc import ABCMeta, abstractmethod
+from yapsy.IPlugin import IPlugin
 
-class plugin_base(object):
+class plugin_base(IPlugin):
 
     __metaclass__= ABCMeta
 
 
-    def __init_(self,CoreQueue,sharedMemory,buffer):
-        self._CoreEventQueue = CoreQueue
-        self._sharedMemory = sharedMemory
-        self._buffer_ = buffer
+    def __init_(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
+        self._Core_event_queue__ = CoreQueue
+        self.__plugin_queue__ = pluginQueue
+        self.__shared_memory__ = sharedMemory
+        self.__buffer__ = buffer
+        self.__id__ = id
 
 
     def work(self):
         print("Plugin work called")
 
-    def work_process(self):
+    def work_process(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
         print("Plugin work_process called")
+        self._Core_event_queue__ = CoreQueue
+        self.__plugin_queue__ = pluginQueue
+        self.__shared_memory__ = sharedMemory
+        self.__buffer__ = buffer
+        self.__id__ = id
+
+    def get_output_sizes(self):
+        return [1,1]
 
     @abstractmethod
     def start_init(self):

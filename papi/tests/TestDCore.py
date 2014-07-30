@@ -30,10 +30,10 @@ __author__ = 'knuths'
 
 import unittest
 
-from multiprocessing import Process, Queue
 from papi.data.DCore import DCore
-from papi.data.dcore import DProcess
 from papi.plugin.plot import Plot
+from papi.data.DCore import DPlugin
+
 
 class TestDCore(unittest.TestCase):
 
@@ -42,11 +42,29 @@ class TestDCore(unittest.TestCase):
 
     def test_add_pl_process(self):
 
-        p = Process()
-        queue = Queue()
+
         pl = Plot()
 
-        self.dcore.add_pl_process(pl, p, queue)
+        self.dcore.add_plugin(None, 1, None, None, pl, 10)
+        self.dcore.add_plugin(None, 2, None, None, pl, 11)
+
+        dp_1 = self.dcore.get_dplugin_by_id(10)
+        self.assertTrue(isinstance(dp_1, DPlugin))
+        self.assertEqual(dp_1.plugin_id, 10)
+        dp_2 = self.dcore.get_dplugin_by_id(11)
+        self.assertTrue(isinstance(dp_2, DPlugin))
+        self.assertEqual(dp_2.plugin_id, 11)
+
+    def test_add_subscriber(self):
+        self.dcore.add_plugin(None, 1, None, None, None, 10)
+        self.dcore.add_plugin(None, 1, None, None, None, 11)
+
+        dp_1 = self.dcore.get_dplugin_by_id(10)
+        dp_2 = self.dcore.get_dplugin_by_id(11)
+
+        self.assertEqual(len(dp_1.get_subscribers().keys()), 0)
+        dp_1.add_subscriber(dp_2)
+        self.assertEqual(len(dp_1.get_subscribers().keys()), 1)
 
 if __name__ == "__main__":
     unittest.main();

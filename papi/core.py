@@ -65,12 +65,17 @@ class Core:
 
         self.core_data = DCore()
 
+        self.plugin_manager = PluginManager()
+        self.plugin_manager.setPluginPlaces(["plugin"])
+
+        self.core_event_queue = Queue()
+
 
 
     def run(self):
         debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
         debug_print(self.__debugLevel__, ['Core: core process id: ',os.getpid()] )
-        coreEventQueue = Queue()
+
 
         guiEventQueue = Queue()
 
@@ -81,15 +86,16 @@ class Core:
         # GUIAlive
         guiAlive = 0
 
-
+        # check PlugIn directory for Plugins and collect them
+        self.plugin_manager.collectPlugins()
 
         coreGoOn = 0
 
         debug_print(self.__debugLevel__,'Core:  entering event loop')
         while coreGoOn:
-            event = coreEventQueue.get()
+            event = self.core_event_queue.get()
             self.__process_event__(event)
-            coreGoOn = process_alive_cout == 0 & guiAlive
+            coreGoOn = process_alive_cout != 0 | guiAlive
 
 
 
@@ -238,7 +244,36 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'create_plugin'
+
+
+        #decide which Plugin to start
+        plugin_identifier = event.get_optional_parameter()
+        plugin = self.plugin_manager.getPluginByName(plugin_identifier)
+
+        size = plugin.plugin_object.get_output_sizes()
+        memory_size = size[0] * size[1] * 2
+
+        plugin_queue = Queue()
+        shared_Arr = Array('d',memory_size,lock=True)
+
+        #TODO
+        buffer = 1
+
+        #creates a new plugin id
+        plugin_id = self.core_data.create_id()
+
+        # create Process object for new plugin
+        PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
+        #PluginProcess.start() TODO
+
+        #Add new Plugin process to DCore
+        self.core_data.add_plugin(PluginProcess, PluginProcess.pid(), plugin_queue, shared_Arr, plugin, plugin_id)
+
         return True
+
+
+
+
 
     def __process_stop_plugin__(self,event):
         """
