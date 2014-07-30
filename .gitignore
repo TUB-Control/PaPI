@@ -6,6 +6,8 @@
 # PyCharm project folder
 .idea/
 
+# Astah Backupfile
+*.bak
 
 # #### GitHub .gitignore template for Python
 
