@@ -31,3 +31,6 @@ class TestPl1(plugin_base):
 
     def quit(self):
         print('TestPL1: will quit')
+
+    def get_type(self):
+        return 'IOP'
