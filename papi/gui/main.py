@@ -40,7 +40,7 @@ from pyqtgraph import QtGui, QtCore
 pg.setConfigOptions(antialias=True)
 
 from papi.ui.gui.main import Ui_MainGUI
-
+from papi.gui.manager import Manager
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -48,14 +48,18 @@ class GUI(QMainWindow, Ui_MainGUI):
         super(GUI, self).__init__(parent)
         self.setupUi(self)
 
+        self.create_actions()
 
+        self.manager_visual = Manager('visual')
+        self.manager_io = Manager('io')
+        self.manager_parameter = Manager('parameter')
 
-        self.createActions()
+        self.setWindowTitle('PaPI')
 
     def dbg(self):
         print("Action")
 
-    def createActions(self):
+    def create_actions(self):
         self.actionM_License.triggered.connect(self.menu_license)
         self.actionM_Quit.triggered.connect(self.menu_quit)
 
@@ -74,12 +78,16 @@ class GUI(QMainWindow, Ui_MainGUI):
         pass
 
     def ap_visual(self):
+        self.manager_visual.show()
+
         pass
 
     def ap_io(self):
+        self.manager_io.show()
         pass
 
     def ap_parameter(self):
+        self.manager_parameter.show()
         pass
 
     def rp_visual(self):
@@ -88,17 +96,22 @@ class GUI(QMainWindow, Ui_MainGUI):
     def rp_io(self):
         pass
 
+    def closeEvent(self, *args, **kwargs):
+        self.manager_visual.close()
+        self.manager_parameter.close()
+        self.manager_io.close()
+        self.close()
 
 def startGUI( CoreQueue, GUIQueue, timeArr, valueArr, lock):
     app = QApplication(sys.argv)
-    mw = QtGui.QMainWindow
+#    mw = QtGui.QMainWindow
     gui = GUI()
     gui.show()
     app.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    mw = QtGui.QMainWindow
+#    mw = QtGui.QMainWindow
     frame = GUI()
     frame.show()
     app.exec_()

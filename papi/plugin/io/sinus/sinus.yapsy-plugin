@@ -1,0 +1,9 @@
+[Core]
+Name = Sinus
+Module = IO
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website = www
+Description = simple sinus io plugin
