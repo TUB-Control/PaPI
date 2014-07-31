@@ -135,6 +135,6 @@ def startGUI(CoreQueue, GUIQueue,gui_id):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 #    mw = QtGui.QMainWindow
-    frame = GUI(None,None)
+    frame = GUI(None,None,None)
     frame.show()
     app.exec_()
