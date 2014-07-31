@@ -16,6 +16,13 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
+     <widget class="QPushButton" name="stefans_button">
+      <property name="text">
+       <string>Action</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QMdiArea" name="scopeArea">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>

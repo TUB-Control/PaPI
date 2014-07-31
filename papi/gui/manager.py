@@ -45,15 +45,21 @@ class Manager(QMainWindow, Ui_Manager):
         super(Manager, self).__init__(parent)
         self.setupUi(self)
         self.plugin_type = plugin_type
-
         self.plugin_manager = PluginManager()
+        self.plugin_path = "../plugin/"
 
         if self.plugin_type == 'visual':
-            self.plugin_manager.setPluginPlaces(["plugin/visual"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "visual"])
             self.setWindowTitle('Visual Plugins')
         if self.plugin_type == 'io':
-            self.plugin_manager.setPluginPlaces(["plugin/io"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "io"])
             self.setWindowTitle('IO Plugins')
         if self.plugin_type == 'parameter':
-            self.plugin_manager.setPluginPlaces(["plugin/parameter"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "parameter"])
             self.setWindowTitle('Parameter Plugins')
+
+        self.plugin_manager.collectPlugins()
+
+        for pluginfo in self.plugin_manager.getAllPlugins():
+            print('Plugin: ')
+            print(pluginfo.plugin_object)

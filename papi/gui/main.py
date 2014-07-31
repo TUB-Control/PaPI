@@ -42,9 +42,10 @@ pg.setConfigOptions(antialias=True)
 from papi.ui.gui.main import Ui_MainGUI
 from papi.gui.manager import Manager
 
+
 class GUI(QMainWindow, Ui_MainGUI):
 
-    def __init__(self, parent=None):
+    def __init__(self, core_queue, gui_queue, parent=None):
         super(GUI, self).__init__(parent)
         self.setupUi(self)
 
@@ -55,6 +56,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.manager_parameter = Manager('parameter')
 
         self.setWindowTitle('PaPI')
+
+        self.core_queue = core_queue
+        self.gui_queue = gui_queue
 
     def dbg(self):
         print("Action")
@@ -69,6 +73,8 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.actionRP_IO.triggered.connect(self.rp_io)
         self.actionRP_Visual.triggered.connect(self.rp_visual)
+
+        self.stefans_button.clicked.connect(self.stefan)
 
     def menu_license(self):
         pass
@@ -102,16 +108,20 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.manager_io.close()
         self.close()
 
-def startGUI( CoreQueue, GUIQueue, timeArr, valueArr, lock):
+    def stefan(self):
+        print('action')
+        pass
+
+def startGUI( CoreQueue, GUIQueue):
     app = QApplication(sys.argv)
 #    mw = QtGui.QMainWindow
-    gui = GUI()
+    gui = GUI(CoreQueue, GUIQueue)
     gui.show()
     app.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 #    mw = QtGui.QMainWindow
-    frame = GUI()
+    frame = GUI(None,None)
     frame.show()
     app.exec_()

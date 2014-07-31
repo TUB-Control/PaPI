@@ -82,7 +82,6 @@ class visual_base(plugin_base):
         for elem in y:
             self.yDatabuffer.append( elem )
 
-
     def get_sub_window(self):
         return self._subWindow
 
