@@ -118,7 +118,7 @@ class Core:
 
             self.__process_event__(event)
 
-            self.coreGoOn = self.core_data.get_dplugins_count != 0 | self.gui_alive
+            self.core_goOn = self.core_data.get_dplugins_count() != 0 | self.gui_alive
 
 
 
@@ -268,9 +268,6 @@ class Core:
         oID = event.get_originID()
         dplug = self.core_data.get_dplugin_by_id(oID)
         if dplug != None:
-
-            print(dplug.array[:])
-
             targets = dplug.get_subscribers()
             for tar_plug in targets:
                 plug = targets[tar_plug]
@@ -366,5 +363,13 @@ class Core:
 
         self.gui_process.join()
 
-        
+        self.gui_alive = 0
+
+        all_plugins = self.core_data.get_all_plugins()
+
+
+        for dplugin_key in all_plugins:
+            dplugin = all_plugins[dplugin_key]
+            event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
+            dplugin.queue.put(event)
 
