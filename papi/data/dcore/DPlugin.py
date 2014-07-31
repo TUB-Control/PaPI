@@ -41,27 +41,60 @@ class DPlugin(DObject):
         self.array = None
         self.plugin = None
         self.__subscribers = {}
+        self.__subscriptions = {}
         self.state = None
 
     def add_subscriber(self, dplugin):
         """
-        An other DPlugin should subscribe this plugin.
-        :param dplugin: DPlugin which should subscribes this plugin
+        Add `dplugin` as subscriber for this plugin.
+        :param dplugin: DPlugin which subscribes this plugin
         :returns: nothing
         """
-        self.__subscribers[dplugin.id] = dplugin
+        if dplugin.id not in self.__subscribers:
+            self.__subscribers[dplugin.id] = dplugin
+            dplugin.subscribe(self)
+
+    def subscribe(self, dplugin):
+        """
+        This plugins subscribes `dplugin`
+        :param dplugin: DPlugin which should be subscribed
+        :return:
+        """
+
+        if dplugin.id not in self.__subscriptions:
+            self.__subscriptions[dplugin.id] = dplugin
+            dplugin.add_subscriber(self)
 
     def rm_subscriber(self, dplugin):
         """
-        Cancel the subscribtion of DPlugin for this plugin
-        :param dplugin: DPlugin will unsubscribe
+        Remove `dplugin` as subscripber for this plugin
+        :param dplugin: will be unsubscribed
         :returns: Nothing
         """
-        if dplugin.id in self.__subscribers:
-            del self.__subscribers[dplugin.id]
+        if dplugin.id in self.get_subscribers():
+            d_pl = self.get_subscribers()[dplugin.id]
+            del self.get_subscribers()[dplugin.id]
+            d_pl.unsubscribe(self)
             return True
         else:
             return False
+
+    def unsubscribe(self, dplugin):
+        """
+        This plugin will unsubscribe `dplugin`
+        :param dplugin: DPlugin which should be unsubscribed
+        :return:
+        """
+        if dplugin.id in self.get_subcribtions():
+            d_pl = self.get_subcribtions()[dplugin.id]
+            del self.get_subcribtions()[dplugin.id]
+            d_pl.rm_subscriber(self)
+            return True
+        else:
+            return False
+
+
+
 
     def get_subscribers(self):
         """
@@ -71,3 +104,11 @@ class DPlugin(DObject):
         """
 
         return self.__subscribers
+
+    def get_subcribtions(self):
+        """
+        Returns a dictionary of all subscribtions
+        :return {} of DPlugin
+        :rtype: {}
+        """
+        return self.__subscriptions

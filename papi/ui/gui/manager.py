@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Thu Jul 31 13:08:38 2014
+# Created: Thu Jul 31 13:23:00 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Manager(object):
     def setupUi(self, Manager):
         Manager.setObjectName("Manager")
-        Manager.resize(800, 600)
+        Manager.resize(654, 467)
         self.centralwidget = QtGui.QWidget(Manager)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayoutWidget = QtGui.QWidget(self.centralwidget)
@@ -21,9 +21,9 @@ class Ui_Manager(object):
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.listView = QtGui.QListView(self.horizontalLayoutWidget)
-        self.listView.setObjectName("listView")
-        self.horizontalLayout.addWidget(self.listView)
+        self.listPlugin = QtGui.QListWidget(self.horizontalLayoutWidget)
+        self.listPlugin.setObjectName("listPlugin")
+        self.horizontalLayout.addWidget(self.listPlugin)
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setObjectName("formLayout")
         self.pushButton = QtGui.QPushButton(self.horizontalLayoutWidget)

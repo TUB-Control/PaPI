@@ -118,12 +118,5 @@ class DCore():
         else:
             return None
 
-
-    def dbg_get_first_dplugin(self):
-        """
-
-        :return:
-        :rtype: DPlugin
-        """
-        for key in self.__DPlugins.keys():
-            return self.__DPlugins[key]
+    def get_all_plugins(self):
+        return self.__DPlugins

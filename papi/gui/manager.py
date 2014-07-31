@@ -32,7 +32,7 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QApplication
+from PySide.QtGui import QMainWindow, QApplication, QListWidgetItem
 
 import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
@@ -58,8 +58,16 @@ class Manager(QMainWindow, Ui_Manager):
             self.plugin_manager.setPluginPlaces([self.plugin_path + "parameter"])
             self.setWindowTitle('Parameter Plugins')
 
-        self.plugin_manager.collectPlugins()
+        self.listPlugin.currentItemChanged.connect(self.itemChanged)
 
+    def itemChanged(self):
+        print('itemChanged')
+
+    def showEvent(self, *args, **kwargs):
+        self.plugin_manager.collectPlugins()
         for pluginfo in self.plugin_manager.getAllPlugins():
             print('Plugin: ')
-            print(pluginfo.plugin_object)
+            print(pluginfo.name)
+            newItem = QListWidgetItem()
+            newItem.setText(pluginfo.name)
+            self.listPlugin.insertItem(0, newItem)
