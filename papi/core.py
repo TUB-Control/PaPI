@@ -38,6 +38,7 @@ from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
+from papi.gui.main import startGUI
 
 class Core:
 
@@ -58,11 +59,12 @@ class Core:
         }
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
-                                           'stop_plugin': self.__process_stop_plugin__
+                                           'stop_plugin': self.__process_stop_plugin__,
+                                            'close_program':self.__process_close_programm__
         }
 
 
-        self.msg_lvl = 1
+        self.msg_lvl = 2
         self.__debugLevel__ = 1
         self.__debug_var = ''
 
@@ -75,6 +77,8 @@ class Core:
         self.core_event_queue = Queue()
 
         self.gui_event_queue = Queue()
+        self.gui_id = self.core_data.create_id()
+
 
         self.gui_alive = 0
 
@@ -94,12 +98,23 @@ class Core:
         debug_print(self.__debugLevel__,'Core:  entering event loop')
 
         #TODO
-        self.gui_process = None
+        self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
+        self.gui_process.start()
+
+        #/=-------------
+
+
+
+        #---------------
+
+
 
 
         while self.core_goOn:
 
             event = self.core_event_queue.get()
+
+            self.log.print(2,'Event->'+event.get_eventtype()+'   '+event.get_event_operation())
 
             self.__process_event__(event)
 
@@ -253,10 +268,14 @@ class Core:
         oID = event.get_originID()
         dplug = self.core_data.get_dplugin_by_id(oID)
         if dplug != None:
+
+            print(dplug.array[:])
+
             targets = dplug.get_subscribers()
             for tar_plug in targets:
-                event = PapiEvent(oID,tar_plug.id,'data_event','new_data','')
-                tar_plug.queue.put(event)
+                plug = targets[tar_plug]
+                event = PapiEvent(oID,plug.id,'data_event','new_data','')
+                plug.queue.put(event)
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
@@ -320,7 +339,7 @@ class Core:
 
         if plugin.plugin_object.get_type()== 'ViP':
             self.core_data.add_plugin(self.gui_process, self.gui_process.pid, self.gui_event_queue, shared_Arr, plugin, plugin_id)
-            #TODO: send event to gui to create plugin with id and memory
+            #TODO: send event to gui to create plugin with id and memory and NAME??
 
 
         return True
@@ -336,3 +355,16 @@ class Core:
         """
         self.__debug_var__ = 'stop_plugin'
         return True
+
+
+    def __process_close_programm__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
+        self.__debug_var__ = 'close_program'
+
+        self.gui_process.join()
+
+        
+

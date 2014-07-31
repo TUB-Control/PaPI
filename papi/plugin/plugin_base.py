@@ -84,9 +84,9 @@ class plugin_base(IPlugin):
                 self.execute()
 
 
-
+    @abstractmethod
     def get_output_sizes(self):
-        return [1,1]
+        raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
     def start_init(self):

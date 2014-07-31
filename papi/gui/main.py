@@ -41,11 +41,12 @@ pg.setConfigOptions(antialias=True)
 
 from papi.ui.gui.main import Ui_MainGUI
 from papi.gui.manager import Manager
+from papi.PapiEvent import PapiEvent
 
 
 class GUI(QMainWindow, Ui_MainGUI):
 
-    def __init__(self, core_queue, gui_queue, parent=None):
+    def __init__(self, core_queue, gui_queue,gui_id, parent=None):
         super(GUI, self).__init__(parent)
         self.setupUi(self)
 
@@ -59,6 +60,10 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.core_queue = core_queue
         self.gui_queue = gui_queue
+
+        self.gui_id = gui_id
+
+        self.count = 0
 
     def dbg(self):
         print("Action")
@@ -103,19 +108,27 @@ class GUI(QMainWindow, Ui_MainGUI):
         pass
 
     def closeEvent(self, *args, **kwargs):
+        event = PapiEvent(self.gui_id, 0, 'instr_event','close_program','Reason')
+        self.core_queue.put(event)
         self.manager_visual.close()
         self.manager_parameter.close()
         self.manager_io.close()
         self.close()
 
     def stefan(self):
-        print('action')
-        pass
+        self.count += 1
 
-def startGUI( CoreQueue, GUIQueue):
+        if self.count == 1:
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+            self.core_queue.put(event)
+
+
+
+
+def startGUI(CoreQueue, GUIQueue,gui_id):
     app = QApplication(sys.argv)
 #    mw = QtGui.QMainWindow
-    gui = GUI(CoreQueue, GUIQueue)
+    gui = GUI(CoreQueue, GUIQueue,gui_id)
     gui.show()
     app.exec_()
 
