@@ -36,7 +36,7 @@ import time
 from papi.main import main
 
 class TestCore(unittest.TestCase):
-    '''
+
     def setUp(self):
         self.core = Core()
 
@@ -114,19 +114,6 @@ class TestCore(unittest.TestCase):
         event = PapiEvent(1,2,'instr_event','stop_plugin','')
         self.core.__process_event__(event)
         assert self.core.__debug_var__ == 'stop_plugin'
-
-    '''
-
-    def test_bigTest(self):
-        print("BigTest -----------------------")
-        core = Core();
-        core.plugin_manager.setPluginPlaces(["plugin","../plugin"])
-
-        pcore = Process(target=core.run())
-
-        # start a plugin
-        event = PapiEvent(1,2,'instr_event','create_plugin','TestPL1')
-        core.core_event_queue.put(event)
 
 
 

@@ -37,7 +37,7 @@ from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
-
+from papi.ConsoleLog import ConsoleLog
 
 class Core:
 
@@ -61,6 +61,8 @@ class Core:
                                            'stop_plugin': self.__process_stop_plugin__
         }
 
+
+        self.msg_lvl = 1
         self.__debugLevel__ = 1
         self.__debug_var = ''
 
@@ -78,6 +80,9 @@ class Core:
 
         self.core_goOn = 1
 
+        self.log = ConsoleLog(self.msg_lvl,'Core-Process: ')
+
+        self.core_id = 0
 
     def run(self):
         debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
@@ -87,6 +92,10 @@ class Core:
         self.plugin_manager.collectPlugins()
 
         debug_print(self.__debugLevel__,'Core:  entering event loop')
+
+        #TODO
+        self.gui_process = None
+
 
         while self.core_goOn:
 
@@ -168,9 +177,14 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'start_successfull'
+        dplug = self.core_data.get_dplugin_by_id(event.get_originID())
+        if (dplug != None):
+            dplug.state = 'start_successfull'
+            return 1
+        else:
+            self.log.print(1,'start_successfull_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            return -1
 
-
-        return True
 
 
     def __process_start_failed__(self,event):
@@ -179,7 +193,14 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'start_failed'
-        return True
+
+        dplug = self.core_data.get_dplugin_by_id(event.get_originID())
+        if (dplug != None):
+            dplug.state = 'start_failed'
+            return 1
+        else:
+            self.log.print(1,'start_failed_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            return -1
 
 
     def __process_check_alive__(self,event):
@@ -214,8 +235,8 @@ class Core:
             dplugin.process.join()
             return self.core_data.rm_dplugin(dplugin)
         else:
-
-            return False
+            self.log.print(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            return -1
 
 
     # ------- Event processing second stage: data events ---------
@@ -224,9 +245,24 @@ class Core:
         """
          :param event: event to process
          :type event: PapiEvent
+         :type tar_plug: DPlugin
         """
         self.__debug_var__ = 'new_data'
-        return True
+
+
+        oID = event.get_originID()
+        dplug = self.core_data.get_dplugin_by_id(oID)
+        if dplug != None:
+            targets = dplug.get_subscribers()
+            for tar_plug in targets:
+                event = PapiEvent(oID,tar_plug.id,'data_event','new_data','')
+                tar_plug.queue.put(event)
+            return 1
+        else:
+            self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
+            return -1
+
+
 
     def __process_get_output_size__(self,event):
         """
@@ -259,11 +295,14 @@ class Core:
         plugin_identifier = event.get_optional_parameter()
         plugin = self.plugin_manager.getPluginByName(plugin_identifier)
 
+        if plugin == None:
+            self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
+            return -1
+
         size = plugin.plugin_object.get_output_sizes()
         memory_size = size[0] * size[1] * 2
-
-        plugin_queue = Queue()
         shared_Arr = Array('d',memory_size,lock=True)
+
 
         #TODO
         buffer = 1
@@ -271,12 +310,18 @@ class Core:
         #creates a new plugin id
         plugin_id = self.core_data.create_id()
 
-        # create Process object for new plugin
-        PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
-        PluginProcess.start()
+        if plugin.plugin_object.get_type()== 'IOP':
+            plugin_queue = Queue()
+            # create Process object for new plugin
+            PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
+            PluginProcess.start()
+            #Add new Plugin process to DCore
+            self.core_data.add_plugin(PluginProcess, PluginProcess.pid, plugin_queue, shared_Arr, plugin, plugin_id)
 
-        #Add new Plugin process to DCore
-        self.core_data.add_plugin(PluginProcess, PluginProcess.pid, plugin_queue, shared_Arr, plugin, plugin_id)
+        if plugin.plugin_object.get_type()== 'ViP':
+            self.core_data.add_plugin(self.gui_process, self.gui_process.pid, self.gui_event_queue, shared_Arr, plugin, plugin_id)
+            #TODO: send event to gui to create plugin with id and memory
+
 
         return True
 

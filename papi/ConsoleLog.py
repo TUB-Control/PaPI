@@ -26,9 +26,17 @@ Contributors:
 Stefan Ruppin
 """
 
-def debug_print(lvl,msg):
-    if lvl == 1:
-        print(msg)
+__author__ = 'ruppins'
 
 
 
+class ConsoleLog(object):
+
+    def __init__(self,lvl,identifier):
+        self.lvl = lvl
+        self.ident = identifier
+
+
+    def print(self,l,msg):
+        if l <= self.lvl:
+            print(self.ident+msg)

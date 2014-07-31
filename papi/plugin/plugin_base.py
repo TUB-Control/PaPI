@@ -53,10 +53,15 @@ class plugin_base(IPlugin):
 
         self.goOn = 1
 
-        self.start_init()
-
-        event = PapiEvent(self.__id__,0,'status_event','start_successfull','')
-        self._Core_event_queue__.put(event)
+        if self.start_init():
+            event = PapiEvent(self.__id__,0,'status_event','start_successfull','')
+            self._Core_event_queue__.put(event)
+        else:
+            event = PapiEvent(self.__id__,0,'status_event','start_failed','')
+            self._Core_event_queue__.put(event)
+            self.goOn = 0
+            event = PapiEvent(self.__id__,0,'status_event','join_request','')
+            self._Core_event_queue__.put(event)
 
         while self.goOn:
             try:
@@ -106,4 +111,7 @@ class plugin_base(IPlugin):
 
     @abstractmethod
     def quit(self):
+        raise Exception("Unable to create an instance of abstract class")
+
+    def get_type(self):
         raise Exception("Unable to create an instance of abstract class")
