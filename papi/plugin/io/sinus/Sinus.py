@@ -46,3 +46,6 @@ class Sinus(plugin_base):
 
     def get_type(self):
         return 'IOP'
+
+    def get_output_sizes(self):
+        return [2,10]

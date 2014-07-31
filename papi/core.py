@@ -38,6 +38,7 @@ from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
+from papi.gui.main import startGUI
 
 class Core:
 
@@ -58,7 +59,8 @@ class Core:
         }
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
-                                           'stop_plugin': self.__process_stop_plugin__
+                                           'stop_plugin': self.__process_stop_plugin__,
+                                            'close_program':self.__process_close_programm__
         }
 
 
@@ -75,6 +77,8 @@ class Core:
         self.core_event_queue = Queue()
 
         self.gui_event_queue = Queue()
+        self.gui_id = self.core_data.create_id()
+
 
         self.gui_alive = 0
 
@@ -94,13 +98,12 @@ class Core:
         debug_print(self.__debugLevel__,'Core:  entering event loop')
 
         #TODO
-        self.gui_process = None
-
+        self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
+        self.gui_process.start()
 
         #/=-------------
 
-        event = PapiEvent(1,0,'instr_event','create_plugin','Sinus')
-        self.core_event_queue.put(event)
+
 
         #---------------
 
@@ -270,8 +273,9 @@ class Core:
 
             targets = dplug.get_subscribers()
             for tar_plug in targets:
-                event = PapiEvent(oID,tar_plug.id,'data_event','new_data','')
-                tar_plug.queue.put(event)
+                plug = targets[tar_plug]
+                event = PapiEvent(oID,plug.id,'data_event','new_data','')
+                plug.queue.put(event)
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
@@ -351,3 +355,16 @@ class Core:
         """
         self.__debug_var__ = 'stop_plugin'
         return True
+
+
+    def __process_close_programm__(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+        """
+        self.__debug_var__ = 'close_program'
+
+        self.gui_process.join()
+
+        
+
