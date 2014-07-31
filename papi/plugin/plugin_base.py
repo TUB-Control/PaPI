@@ -68,14 +68,14 @@ class plugin_base(IPlugin):
                 event = self.__plugin_queue__.get_nowait()
                 #process event
                 op = event.get_event_operation()
-                if (op=='stop'):
+                if (op=='stop_plugin'):
                     self.quit()
                     self.goOn = 0
                     event = PapiEvent(self.__id__,0,'status_event','join_request','')
                     self._Core_event_queue__.put(event)
-                if op=='pause':
+                if op=='pause_plugin':
                     self.pause()
-                if op=='resume':
+                if op=='resume_plugin':
                     self.resume()
                 if op=='check_alive_status':
                     alive_event = PapiEvent(self.__id__,0,'status_event','alive','')
