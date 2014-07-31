@@ -62,7 +62,7 @@ class Core:
         }
 
 
-        self.msg_lvl = 1
+        self.msg_lvl = 2
         self.__debugLevel__ = 1
         self.__debug_var = ''
 
@@ -97,9 +97,21 @@ class Core:
         self.gui_process = None
 
 
+        #/=-------------
+
+        event = PapiEvent(1,0,'instr_event','create_plugin','Sinus')
+        self.core_event_queue.put(event)
+
+        #---------------
+
+
+
+
         while self.core_goOn:
 
             event = self.core_event_queue.get()
+
+            self.log.print(2,'Event->'+event.get_eventtype()+'   '+event.get_event_operation())
 
             self.__process_event__(event)
 
@@ -253,6 +265,9 @@ class Core:
         oID = event.get_originID()
         dplug = self.core_data.get_dplugin_by_id(oID)
         if dplug != None:
+
+            print(dplug.array[:])
+
             targets = dplug.get_subscribers()
             for tar_plug in targets:
                 event = PapiEvent(oID,tar_plug.id,'data_event','new_data','')
@@ -320,7 +335,7 @@ class Core:
 
         if plugin.plugin_object.get_type()== 'ViP':
             self.core_data.add_plugin(self.gui_process, self.gui_process.pid, self.gui_event_queue, shared_Arr, plugin, plugin_id)
-            #TODO: send event to gui to create plugin with id and memory
+            #TODO: send event to gui to create plugin with id and memory and NAME??
 
 
         return True

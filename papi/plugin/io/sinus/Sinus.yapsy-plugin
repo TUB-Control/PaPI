@@ -1,6 +1,6 @@
 [Core]
 Name = Sinus
-Module = IO
+Module = Sinus
 
 [Documentation]
 Author = S.K.

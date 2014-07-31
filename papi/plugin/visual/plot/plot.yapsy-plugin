@@ -1,6 +1,6 @@
 [Core]
 Name = Plot
-Module = Visual
+Module = plot
 
 [Documentation]
 Author = S.K.
