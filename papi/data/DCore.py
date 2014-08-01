@@ -123,6 +123,9 @@ class DCore():
         return self.__DPlugins
 
     def subscribe(self, target_id, source_id):
+
+
+
         pass
 
     def unsubscribe(self, target_id, source_id):
