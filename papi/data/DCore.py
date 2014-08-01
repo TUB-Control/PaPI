@@ -33,7 +33,7 @@ from multiprocessing import Process, Queue, Array
 
 from papi.data.dcore.DPlugin import DPlugin
 import uuid
-
+import copy
 
 class DCore():
     def __init__(self):
@@ -65,7 +65,7 @@ class DCore():
         :rtype: DPlugin
         """
 
-        d_pl = DPlugin(plugin)
+        d_pl = DPlugin()
 
 
         d_pl.process = process
@@ -81,6 +81,7 @@ class DCore():
 
         return d_pl
 
+    #TODO: Map auf dplugin
     def rm_dplugin(self, dplugin):
         """
         Removes DPlugin
@@ -89,9 +90,13 @@ class DCore():
         :return:
         :rtype: bool
         """
-
         if dplugin.id in self.__DPlugins:
+
+            self.rm_all_subscribers(dplugin.id)
+            self.unsubscribe_all(dplugin.id)
+
             del self.__DPlugins[dplugin.id]
+
             return True
         else:
             return False
@@ -103,6 +108,7 @@ class DCore():
         :return:
         :rtype: int
         """
+
         return len(self.__DPlugins.keys())
 
     def get_dplugin_by_id(self, plugin_id):
@@ -120,19 +126,75 @@ class DCore():
             return None
 
     def get_all_plugins(self):
+        """
+
+        :return:
+        """
+
         return self.__DPlugins
 
     def subscribe(self, target_id, source_id):
+        """
 
+        :param target_id:
+        :param source_id:
+        :return:
+        """
 
+        target = self.get_dplugin_by_id(target_id)
+        source = self.get_dplugin_by_id(source_id)
 
-        pass
+        return target.subscribe(source)
 
     def unsubscribe(self, target_id, source_id):
-        pass
+        """
+
+        :param target_id:
+        :param source_id:
+        :return:
+        """
+
+        target = self.get_dplugin_by_id(target_id)
+        source = self.get_dplugin_by_id(source_id)
+
+        return target.unsubscribe(source)
 
     def unsubscribe_all(self, dplugin_id):
-        pass
+        """
+
+        :param dplugin_id:
+        :return:
+        """
+
+        dplugin = self.get_dplugin_by_id(dplugin_id)
+
+        subscribtions = copy.copy(dplugin.get_subcribtions())
+
+        for sub_id in subscribtions:
+            subscribtion = subscribtions[sub_id]
+            dplugin.unsubscribe(subscribtion)
+
+        if 0 == len(dplugin.get_subcribtions().keys()):
+            return True
+        else:
+            return False
 
     def rm_all_subscribers(self, dplugin_id):
-        pass
+        """
+
+        :param dplugin_id:
+        :return:
+        """
+
+        dplugin = self.get_dplugin_by_id(dplugin_id)
+
+        subscribers = copy.copy(dplugin.get_subscribers())
+
+        for sub_id in subscribers:
+            subscriber = subscribers[sub_id]
+            dplugin.rm_subscriber(subscriber)
+
+        if len(dplugin.get_subscribers().keys()) == 0:
+            return True
+        else:
+            return False

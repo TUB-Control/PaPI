@@ -33,7 +33,7 @@ from papi.data.DObject import DObject
 
 class DPlugin(DObject):
 
-    def __init__(self, buffer):
+    def __init__(self):
         super(DPlugin,self).__init__()
         self.process = None
         self.pid = None
