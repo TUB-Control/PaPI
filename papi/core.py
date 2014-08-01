@@ -62,7 +62,9 @@ class Core:
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
                                            'stop_plugin': self.__process_stop_plugin__,
-                                            'close_program':self.__process_close_programm__
+                                            'close_program':self.__process_close_programm__,
+                                            'subscribe': self.__process_subscribe__,
+                                            'unsubscribe':self.__process_unsubsribe__
         }
 
 
@@ -121,7 +123,6 @@ class Core:
             self.__process_event__(event)
 
             self.core_goOn = self.core_data.get_dplugins_count() != 0 | self.gui_alive
-
 
 
 
@@ -334,10 +335,10 @@ class Core:
             PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
             PluginProcess.start()
             #Add new Plugin process to DCore
-            self.core_data.add_plugin(PluginProcess, PluginProcess.pid, plugin_queue, shared_Arr, plugin, plugin_id)
+            self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
 
         if plugin.plugin_object.get_type()== 'ViP':
-            self.core_data.add_plugin(self.gui_process, self.gui_process.pid, self.gui_event_queue, shared_Arr, plugin, plugin_id)
+            self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, shared_Arr, plugin, plugin_id)
             #TODO: send event to gui to create plugin with id and memory and NAME??
 
 
@@ -351,27 +352,92 @@ class Core:
         """
          :param event: event to process
          :type event: PapiEvent
+         :type dplugin: DPlugin
         """
         self.__debug_var__ = 'stop_plugin'
+
+        id = event.get_destinatioID()
+
+        dplugin =  self.core_data.get_dplugin_by_id(id)
+        if dplugin != None:
+            dplugin.queue.put(event)
+            return 1
+        else:
+            self.log.print(1,'stop_plugin, plugin with id '+str(id)+' not found')
+            return -1
+
+
+
+
         return True
 
 
     def __process_close_programm__(self,event):
         """
+         This functions processes a close_programm event from GUI and
+         sends events to all processes to close themselves
+
          :param event: event to process
          :type event: PapiEvent
         """
         self.__debug_var__ = 'close_program'
 
+        # GUI wants to close, so join process
         self.gui_process.join()
 
+        # Set gui_alive to false for core loop to know that is it closed
         self.gui_alive = 0
 
+        # get a list of all running plugIns
         all_plugins = self.core_data.get_all_plugins()
 
-
+        # iterate through all plugins to send an event to tell them to quit and
+        # response with a join_request
         for dplugin_key in all_plugins:
             dplugin = all_plugins[dplugin_key]
-            event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
-            dplugin.queue.put(event)
+            # just send event to plugins running in own process
+            if dplugin.own_process:
+                event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
+                dplugin.queue.put(event)
 
+
+    def __process_subscribe__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        oID = event.get_originID()
+        sID = event.get_optional_parameter()
+
+        if self.core_data.subscribe(oID,sID):
+            return 1
+        else:
+            self.log.print(1,'subscribe, uubscription for id '+str(oID)+' of id '+str(sID)+' failed')
+            return -1
+
+
+
+    def __process_unsubsribe__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+
+        oID = event.get_originID()
+        para = event.get_optional_parameter()
+        if para == 'all':
+            if self.core_data.unsubscribe_all(oID):
+                return 1
+            else:
+                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of all failed')
+                return -1
+        else:
+            if self.core_data.unsubscribe(oID,para):
+                return 1
+            else:
+                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of id '+str(para)+' failed')
+                return -1
