@@ -29,6 +29,9 @@ Sven Knuth
 __author__ = 'knuths'
 
 
-class Buffer:
+class BufferManager:
     def __init__(self):
+        pass
+
+    def create_buffers(self, vectors = [[]] ):
         pass

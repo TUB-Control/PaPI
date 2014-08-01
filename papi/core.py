@@ -36,7 +36,9 @@ from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
-from papi.GUI import startGUI
+from papi.gui.gui_main import startGUI
+
+
 from multiprocessing import Process, Queue, Array
 
 
