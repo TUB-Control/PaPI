@@ -118,9 +118,9 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        if self.count == 1:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
-            self.core_queue.put(event)
+        #if self.count == 1:
+        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+        self.core_queue.put(event)
 
 
 

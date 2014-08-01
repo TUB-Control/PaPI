@@ -49,13 +49,13 @@ class Manager(QMainWindow, Ui_Manager):
         self.plugin_path = "../plugin/"
 
         if self.plugin_type == 'visual':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "visual"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "visual",'plugin/visual'])
             self.setWindowTitle('Visual Plugins')
         if self.plugin_type == 'io':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "io"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "io",'plugin/io'])
             self.setWindowTitle('IO Plugins')
         if self.plugin_type == 'parameter':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "parameter"])
+            self.plugin_manager.setPluginPlaces([self.plugin_path + "parameter",'plugin/parameter'])
             self.setWindowTitle('Parameter Plugins')
 
         self.listPlugin.currentItemChanged.connect(self.itemChanged)
