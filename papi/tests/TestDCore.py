@@ -31,7 +31,6 @@ __author__ = 'knuths'
 import unittest
 
 from papi.data.DCore import DCore
-from papi.plugin.TestPL1 import TestPl1
 from papi.data.DCore import DPlugin
 
 

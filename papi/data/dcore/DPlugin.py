@@ -28,7 +28,7 @@ Sven Knuth
 
 __author__ = 'control'
 
-from papi.Buffer import Buffer
+#from papi.BufferManager import Buffer
 from papi.data.DObject import DObject
 
 class DPlugin(DObject):
