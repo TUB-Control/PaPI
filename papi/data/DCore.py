@@ -121,3 +121,15 @@ class DCore():
 
     def get_all_plugins(self):
         return self.__DPlugins
+
+    def subscribe(self, target_id, source_id):
+        pass
+
+    def unsubscribe(self, target_id, source_id):
+        pass
+
+    def unsubscribe_all(self, dplugin_id):
+        pass
+
+    def rm_all_subscribers(self, dplugin_id):
+        pass
