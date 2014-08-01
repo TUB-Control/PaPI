@@ -28,17 +28,17 @@ Stefan Ruppin
 
 __author__ = 'control'
 
+import os
 
 from yapsy.PluginManager import PluginManager
-from multiprocessing import Process, Array, Lock, Queue
-import time
-import os
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
-from papi.gui.main import startGUI
+from papi.GUI import startGUI
+from multiprocessing import Process, Queue, Array
+
 
 class Core:
 
