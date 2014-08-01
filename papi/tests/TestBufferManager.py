@@ -36,4 +36,8 @@ from papi.BufferManager import BufferManager
 class TestDCore(unittest.TestCase):
 
     def setUp(self):
-        self.dcore = DCore()
+        self.bm = BufferManager()
+
+
+    def test_create_buffers(self):
+        pass

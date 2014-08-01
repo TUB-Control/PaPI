@@ -28,10 +28,12 @@ Sven Knuth
 
 __author__ = 'knuths'
 
+import numpy as np
 
 class BufferManager:
     def __init__(self):
         pass
 
-    def create_buffers(self, vectors = [[]] ):
+    def create_buffers(self, vectors):
         pass
+        #for a in vectors

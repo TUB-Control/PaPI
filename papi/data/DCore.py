@@ -47,7 +47,7 @@ class DCore():
         :returns: 64bit random integer
         :rtype: int
         """
-        self.__newid =+ 1
+        self.__newid += 1
         return self.__newid
 #        return uuid.uuid4().int >> 64
 

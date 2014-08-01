@@ -62,6 +62,14 @@ class TestDCore(unittest.TestCase):
 
         self.assertEqual(self.dcore.get_dplugins_count(),1)
 
+    def test_get_all_plugins(self):
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        self.assertEqual(len(self.dcore.get_all_plugins().keys()), 4)
+
 
     def test_add_subscriber(self):
         self.dcore.add_plugin(None, 1, None, None, None, 10)
