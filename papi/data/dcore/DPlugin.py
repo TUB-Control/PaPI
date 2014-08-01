@@ -43,6 +43,7 @@ class DPlugin(DObject):
         self.__subscribers = {}
         self.__subscriptions = {}
         self.state = None
+        self.own_process = None
 
     def add_subscriber(self, dplugin):
         """

@@ -51,7 +51,7 @@ class DCore():
         return self.__newid
 #        return uuid.uuid4().int >> 64
 
-    def add_plugin(self, process, pid, queue, array, plugin, id ):
+    def add_plugin(self, process, pid, own_process, queue, array, plugin, id ):
         """
         Add plugin with necessary information
 
@@ -74,6 +74,7 @@ class DCore():
         d_pl.array = array
         d_pl.plugin = plugin
         d_pl.id = id
+        d_pl.own_process = own_process
 
 
         self.__DPlugins[id] = d_pl
