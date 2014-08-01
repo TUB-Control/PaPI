@@ -28,33 +28,12 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-import numpy as np
 
-class BufferManager:
-    header_size = 3
+class Group:
     def __init__(self):
-        pass
+        self.size = None
+        self.count = None
+        self.position = None
+        self.id = None
+        self.offset = None
 
-    @staticmethod
-    def get_array_size(desc :np.array ):
-
-        dim =desc.shape[0]
-
-        print(dim)
-        return
-        array_size = 0
-
-        count_buffer_groups = len(desc)
-
-        array_size += count_buffer_groups * BufferManager.header_size;
-
-        if desc[0][0] == None:
-            return None
-
-
-        for i in range(len(desc)):
-            count_vector = desc[i][0]
-            freq = desc[i][1]
-            array_size += count_vector * freq * 10
-
-        return array_size

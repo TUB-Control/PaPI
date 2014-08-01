@@ -25,31 +25,5 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.buffer.manager import Manager
 
 __author__ = 'knuths'
-
-import unittest
-
-from multiprocessing import Array
-
-
-class TestDBufferManager(unittest.TestCase):
-
-    def setUp(self):
-        pass
-
-    def test_get_array_size(self):
-
-        queue_1 = Manager.get_array_size([[5, 100], [2, 1000]])
-        self.assertEqual(len(queue_1), 25006)
-
-        queue_2 = Manager.get_array_size([[2, 10]])
-        self.assertEqual(len(queue_2), 203)
-
-    def test_add_data(self):
-        pass
-        #emory_size = manager.get_array_size([[2, 10]])
-
-
-        #bm = manager(shared_Arr)
