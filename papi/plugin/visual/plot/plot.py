@@ -26,8 +26,10 @@ class Plot(visual_base):
     def execute(self,Data):
         #print(Data)
 
-        t = Data[0:10]
-        y = Data[10:len(Data)]
+        l = len(Data)
+
+        t = Data[0:l/2]
+        y = Data[l/2:l]
 
         self.add_data(t, y)
 

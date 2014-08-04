@@ -11,7 +11,7 @@ import time
 __author__ = 'knuths'
 
 
-class Plot(visual_base):
+class Plot2(visual_base):
 
     def start_init(self):
         pass
@@ -23,12 +23,32 @@ class Plot(visual_base):
     def resume(self):
         pass
 
-    def execute(self):
-        print('Sinus: execute')
-        time.sleep(1)
+    def execute(self,Data):
+        #print(Data)
+
+        l = len(Data)
+
+        t = Data[0:l/2]
+        y = Data[l/2:l]
+
+        self.add_data(t, y)
+
+        self.update()
 
     def set_parameter(self):
         pass
 
+    def get_type(self):
+        return "ViP"
+
+    def get_output_sizes(self):
+        return [0,0]
+
+    def start_init(self):
+        pass
+
+
+
+
     def quit(self):
-        print('Sinus: will quit')
+        print('Plot: will quit')
