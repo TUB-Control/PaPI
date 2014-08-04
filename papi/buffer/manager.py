@@ -30,49 +30,53 @@ __author__ = 'knuths'
 
 from papi.buffer.group import Group
 from multiprocessing import Array
+from papi.ConsoleLog import ConsoleLog
+
 
 class Manager:
     header_size = 3
 
     def __init__(self, shared_array):
-        self.groups = {}
+        self.__groups = {}
+        self.__shared_array = shared_array
+        self.msg_lvl = 2
+        self.__debugLevel__ = 1
+        self.__debug_var = ''
+        self.log = ConsoleLog(self.msg_lvl,'BufferManager: ')
+
         i = -1
-        state = 'size'
+        state = 'attributes'
         bg = None
 
-        while i < len(shared_array):
+        group_id = 1
+
+        while i < len(shared_array)-1:
             i += 1
+
             # Found new group
-            if state == 'size':
+            if state == 'attributes':
                 bg = Group()
                 bg.size = shared_array[i]
                 bg.offset = i
-                state = 'count'
-                continue
+                bg.id = group_id
+                group_id += 1
 
-            if state == 'count':
-                bg.count = shared_array[i]
-                state = 'position'
-                continue
-
-            if state == 'position':
-                bg.position = shared_array[i]
+                bg.count = shared_array[i+1]
+                bg.position = shared_array[i+2]
                 state = 'vectors'
-                continue
 
             if state == 'vectors':
-                i = bg.size*bg.count
-                self.groups[bg.id] = bg
-                bg = None
-                state == 'size'
-                continue
+                i += int(bg.size*bg.count) + 2
 
+                self.__groups[bg.id] = bg
+                bg = None
+                state = 'attributes'
 
     def get_all_groups(self):
-        return self.groups
+        return self.__groups
 
     @staticmethod
-    def get_array_size(desc):
+    def get_shared_array(desc):
         """
 
         :param desc:
@@ -92,26 +96,55 @@ class Manager:
             freq = desc[i][1]
             array_size += count_vector * freq * 10
 
-        shared_Arr = Array('d',array_size,lock=True)
+        shared_array = Array('d', array_size, lock=True)
+
+        next_offset = 0
 
         for i in range(len(desc)):
+
             count_vector = desc[i][0]
             freq = desc[i][1]
-            shared_Arr[i * count_vector + 0] = freq * 10
-            shared_Arr[i * count_vector + 1] = count_vector
+            current_offset = next_offset
+            pos_s = current_offset + 0
+            pos_c = current_offset + 1
+            pos_p = current_offset + 2
 
-        return shared_Arr
+            shared_array[pos_s] = freq * 10
+            shared_array[pos_c] = count_vector
+            shared_array[pos_p] = 0
 
-    def add_data(self, buffer_group, data):
+            next_offset = current_offset + 10 * count_vector * freq + 3
+
+        return shared_array
+
+    def add_data(self, bg_id, data):
         """
 
-        :param buffer_group:
+        :param bg_id:
         :param data:
         :return:
         """
 
+        if bg_id in self.__groups:
+            bg = self.__groups[bg_id]
+        else:
+            #unknown buffer group
+            return False
 
-        pass
+        if len(data) != bg.count:
+            #more/less elements to write than it has to
+            return False
+
+        for i in range(len(data)):
+            ele = data[i]
+            write_index = int(bg.offset + 3 + (i * bg.size) + bg.position)
+            self.__shared_array[write_index] = ele
+
+        bg.position += 1
+        if not bg.position % bg.size:
+            bg.position = 0
+
+        return True
 
     def get_data(self, buffer_group):
         """
