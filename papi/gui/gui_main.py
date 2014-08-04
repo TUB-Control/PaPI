@@ -138,7 +138,7 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','CPU_Load')
         self.core_queue.put(event)
         event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
         self.core_queue.put(event)
@@ -212,8 +212,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
-
-
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,array,plugin,id)
         dplugin.uname = uname
         buffer = 1
@@ -221,7 +219,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue, array,buffer,dplugin.id)
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
+        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
         dplugin.plugin.plugin_object.get_sub_window().show()

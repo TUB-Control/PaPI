@@ -45,8 +45,5 @@ class Plot(visual_base):
     def start_init(self):
         pass
 
-
-
-
     def quit(self):
         print('Plot: will quit')
