@@ -37,7 +37,7 @@ class Sinus(plugin_base):
         self.__shared_memory__[:]=vec
         event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
         self._Core_event_queue__.put(event)
-        time.sleep(1)
+        time.sleep(0.04)
 
     def set_parameter(self):
         pass

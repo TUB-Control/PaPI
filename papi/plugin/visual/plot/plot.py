@@ -24,14 +24,15 @@ class Plot(visual_base):
         pass
 
     def execute(self,Data):
-        print(Data)
-        print('Plot: execute')
+        #print(Data)
 
         t = Data[0:10]
-        y = Data[10,len(Data)]
+        y = Data[10:len(Data)]
+
         self.add_data(t, y)
 
         self.update()
+
     def set_parameter(self):
         pass
 
