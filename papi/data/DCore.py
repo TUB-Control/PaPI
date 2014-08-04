@@ -158,7 +158,7 @@ class DCore():
         :param source_id:
         :return:
         """
-
+        #TODO Fehlerbehandlung falls target/source nicht existiert
         target = self.get_dplugin_by_id(target_id)
         source = self.get_dplugin_by_id(source_id)
 

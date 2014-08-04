@@ -37,7 +37,7 @@ from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
-
+import time
 
 from multiprocessing import Process, Queue, Array
 
@@ -99,21 +99,10 @@ class Core:
         # check PlugIn directory for Plugins and collect them
         self.plugin_manager.collectPlugins()
 
-        debug_print(self.__debugLevel__,'Core:  entering event loop')
-
-        #TODO
         self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
         self.gui_process.start()
 
-        #/=-------------
-
-
-
-        #---------------
-
-
-
-
+        debug_print(self.__debugLevel__,'Core:  entering event loop')
         while self.core_goOn:
 
             event = self.core_event_queue.get()
@@ -162,7 +151,6 @@ class Core:
          :param event: event to process
          :type event: PapiEvent
         """
-        debug_print(self.__debugLevel__,'Core: processing status event')
         op = event.get_event_operation()
         return self.__process_status_event_l__[op](event)
 
@@ -171,7 +159,6 @@ class Core:
          :param event: event to process
          :type event: PapiEvent
         """
-        debug_print(self.__debugLevel__,'Core: processing data event')
         op = event.get_event_operation()
         return self.__process_data_event_l__[op](event)
 
@@ -180,7 +167,6 @@ class Core:
          :param event: event to process
          :type event: PapiEvent
         """
-        debug_print(self.__debugLevel__,'Core: processing instr event')
         op = event.get_event_operation()
         return self.__process_instr_event_l__[op](event)
 
@@ -272,9 +258,10 @@ class Core:
         dplug = self.core_data.get_dplugin_by_id(oID)
         if dplug != None:
             targets = dplug.get_subscribers()
+            print(targets)
             for tar_plug in targets:
                 plug = targets[tar_plug]
-                event = PapiEvent(oID,plug.id,'data_event','new_data','')
+                event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())
                 plug.queue.put(event)
             return 1
         else:
@@ -335,12 +322,14 @@ class Core:
             PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
             PluginProcess.start()
             #Add new Plugin process to DCore
-            self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
+            dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
+            dplug.uname = event.get_optional_parameter()
 
         if plugin.plugin_object.get_type()== 'ViP':
-            self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, shared_Arr, plugin, plugin_id)
-            #TODO: send event to gui to create plugin with id and memory and NAME??
-
+            dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, shared_Arr, plugin, plugin_id)
+            dplug.uname = event.get_optional_parameter()
+            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
+            self.gui_event_queue.put(event)
 
         return True
 
@@ -393,12 +382,18 @@ class Core:
 
         # iterate through all plugins to send an event to tell them to quit and
         # response with a join_request
+        toDelete =[]
         for dplugin_key in all_plugins:
             dplugin = all_plugins[dplugin_key]
             # just send event to plugins running in own process
             if dplugin.own_process:
                 event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
                 dplugin.queue.put(event)
+            else:
+                toDelete.append(dplugin)
+
+        for dplugin in toDelete:
+            self.core_data.rm_dplugin(dplugin)
 
 
     def __process_subscribe__(self,event):

@@ -102,7 +102,7 @@ class plugin_base(IPlugin):
         raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
-    def execute(self):
+    def execute(self,Data=None):
         raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
