@@ -37,7 +37,7 @@ import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
 
 # Enable antialiasing for prettier plots
-pg.setConfigOptions(antialias=True)
+pg.setConfigOptions(antialias=False)
 
 from papi.ui.gui.main import Ui_MainGUI
 from papi.gui.manager import Manager
@@ -64,6 +64,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.gui_id = gui_id
 
         self.count = 0
+
+        QtCore.QTimer.singleShot(1000,self.gui_working)
 
     def dbg(self):
         print("Action")
@@ -124,6 +126,25 @@ class GUI(QMainWindow, Ui_MainGUI):
         if (self.count > 3):
             event = PapiEvent(self.gui_id, 2, 'instr_event','stop_plugin','')
             self.core_queue.put(event)
+
+
+    def gui_working(self):
+        """
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        try:
+            event = self.core_queue.get_nowait()
+            # TODO: DGui strucutre und fuellen dieser Struktur vom Core aus
+            # TODO: event verteilung und reagieren auf events
+            # TODO: ausfuehren von Fuktionen aus den plugins "execute"
+        except:
+            pass
+
+        finally:
+            QtCore.QTimer.singleShot(40,self.gui_working)
+
+
 
 
 
