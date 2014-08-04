@@ -31,6 +31,7 @@ __author__ = 'control'
 #from papi.BufferManager import Buffer
 from papi.data.DObject import DObject
 
+
 class DPlugin(DObject):
 
     def __init__(self):
@@ -44,6 +45,7 @@ class DPlugin(DObject):
         self.__subscriptions = {}
         self.state = None
         self.own_process = None
+        self.uname = None
 
     def add_subscriber(self, dplugin):
         """

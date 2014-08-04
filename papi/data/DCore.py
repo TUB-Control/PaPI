@@ -51,7 +51,7 @@ class DCore():
         return self.__newid
 #        return uuid.uuid4().int >> 64
 
-    def add_plugin(self, process, pid, own_process, queue, array, plugin, id ):
+    def add_plugin(self, process, pid, own_process, queue, array, plugin, id):
         """
         Add plugin with necessary information
 
@@ -124,6 +124,24 @@ class DCore():
             return self.__DPlugins[plugin_id]
         else:
             return None
+
+    def get_dplugin_by_uname(self, plugin_uname):
+        """
+        Returns DPlugin object by uname
+
+        :param plugin_name: uname of an DPlugin object
+        :return DPlugin:
+        :rtype: DPlugin
+        """
+
+        for plugin_id in self.__DPlugins:
+            d_pl = self.__DPlugins[plugin_id]
+
+            if d_pl.uname == plugin_uname:
+                return d_pl
+
+        return None
+
 
     def get_all_plugins(self):
         """
