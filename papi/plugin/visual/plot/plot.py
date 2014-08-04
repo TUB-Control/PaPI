@@ -23,7 +23,8 @@ class Plot(visual_base):
     def resume(self):
         pass
 
-    def execute(self):
+    def execute(self,Data):
+        print(Data)
         print('Plot: execute')
 
 

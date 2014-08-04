@@ -142,7 +142,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.core_queue.put(event)
         event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
         self.core_queue.put(event)
-        event = PapiEvent(2,0,'instr_event','subscribe',1)
+        event = PapiEvent(3,0,'instr_event','subscribe',2)
         self.core_queue.put(event)
 
         if self.count <= 0:
@@ -186,7 +186,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dID = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         if dplugin != None:
-            dplugin.plugin.plugin_object.execute()
+            dplugin.plugin.plugin_object.execute(event.get_optional_parameter())
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -200,9 +200,13 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
         optPar = event.get_optional_parameter()
-        id = optPar[2]
-        plugin_identifier = optPar[1]
+        id = optPar[1]
+        plugin_identifier = optPar[0]
+        uname = optPar[2]
 
+        array = None
+
+        self.plugin_manager.collectPlugins()
         plugin = self.plugin_manager.getPluginByName(plugin_identifier)
 
         if plugin == None:
@@ -212,7 +216,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,array,plugin,id)
-
+        dplugin.uname = uname
         buffer = 1
 
         dplugin.plugin.__init__(self.core_queue,self.gui_queue,dplugin.array,buffer)

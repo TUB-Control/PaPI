@@ -263,7 +263,6 @@ class Core:
                 plug = targets[tar_plug]
                 event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())
                 plug.queue.put(event)
-                self.log(2,'put event new_data, from '+str(oID)+' to id '+str(plug.id))
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
@@ -323,11 +322,13 @@ class Core:
             PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
             PluginProcess.start()
             #Add new Plugin process to DCore
-            self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
+            dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
+            dplug.uname = event.get_optional_parameter()
 
         if plugin.plugin_object.get_type()== 'ViP':
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, shared_Arr, plugin, plugin_id)
-            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id])
+            dplug.uname = event.get_optional_parameter()
+            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
             self.gui_event_queue.put(event)
 
         return True
@@ -376,20 +377,23 @@ class Core:
         # Set gui_alive to false for core loop to know that is it closed
         self.gui_alive = 0
 
-        # TODO: delete all Plugins running in gui from DCore
-
-
         # get a list of all running plugIns
         all_plugins = self.core_data.get_all_plugins()
 
         # iterate through all plugins to send an event to tell them to quit and
         # response with a join_request
+        toDelete =[]
         for dplugin_key in all_plugins:
             dplugin = all_plugins[dplugin_key]
             # just send event to plugins running in own process
             if dplugin.own_process:
                 event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
                 dplugin.queue.put(event)
+            else:
+                toDelete.append(dplugin)
+
+        for dplugin in toDelete:
+            self.core_data.rm_dplugin(dplugin)
 
 
     def __process_subscribe__(self,event):
@@ -401,6 +405,7 @@ class Core:
         """
         oID = event.get_originID()
         sID = event.get_optional_parameter()
+
         if self.core_data.subscribe(oID,sID):
             return 1
         else:
