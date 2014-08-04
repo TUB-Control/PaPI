@@ -78,7 +78,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.gui_data = DGui()
 
-        self.log = ConsoleLog(2,'Gui-Process: ')
+        self.log = ConsoleLog(2, 'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin"])
@@ -205,11 +205,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         uname = optPar[2]
 
         array = None
-
         self.plugin_manager.collectPlugins()
         plugin = self.plugin_manager.getPluginByName(plugin_identifier)
 
-        if plugin == None:
+        if plugin is None:
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
@@ -219,8 +218,23 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.uname = uname
         buffer = 1
 
-        dplugin.plugin.__init__(self.core_queue,self.gui_queue,dplugin.array,buffer)
+
+        #dplugin.plugin.__init__(self.core_queue,self.gui_queue,dplugin.array,buffer)
+
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
+
+        print('GUI: create plugin 1')
+
+        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
+
+        print('GUI: create plugin 2')
+
+        self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
+
+        dplugin.plugin.plugin_object.get_sub_window().show()
+
+        print('GUI: create plugin 3')
+
 
     def process_close_program_event(self,event):
         """

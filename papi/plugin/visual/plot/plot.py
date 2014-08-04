@@ -27,7 +27,11 @@ class Plot(visual_base):
         print(Data)
         print('Plot: execute')
 
+        t = Data[0:10]
+        y = Data[10,len(Data)]
+        self.add_data(t, y)
 
+        self.update()
     def set_parameter(self):
         pass
 
