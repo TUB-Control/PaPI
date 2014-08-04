@@ -68,7 +68,7 @@ class Core:
         }
 
 
-        self.msg_lvl = 2
+        self.msg_lvl = 0
         self.__debugLevel__ = 1
         self.__debug_var = ''
 

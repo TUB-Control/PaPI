@@ -78,7 +78,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.gui_data = DGui()
 
-        self.log = ConsoleLog(2,'Gui-Process: ')
+        self.log = ConsoleLog(0,'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin"])
@@ -138,19 +138,26 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','CPU_Load')
-        self.core_queue.put(event)
-        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
-        self.core_queue.put(event)
-        event = PapiEvent(3,0,'instr_event','subscribe',2)
-        self.core_queue.put(event)
-
-        if self.count <= 0:
+        if  self.count == 1:
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
             self.core_queue.put(event)
-        if (self.count > 100):
-            event = PapiEvent(self.gui_id, 2, 'instr_event','stop_plugin','')
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
             self.core_queue.put(event)
+            event = PapiEvent(3,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+
+        if self.count is 2:
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot2')
+            self.core_queue.put(event)
+
+        if self.count is 3:
+            event = PapiEvent(4,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+
+        if self.count is 4:
+            event = PapiEvent(0,2,'instr_event','stop_plugin','')
+            self.core_queue.put(event)
+
 
 
     def gui_working(self):
@@ -158,16 +165,16 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
+
         try:
-            event = self.gui_queue.get_nowait()
-            op = event.get_event_operation()
-            self.log.print(2,'Event: '+ op)
-            self.process_event[op](event)
+            while (True):
+                event = self.gui_queue.get_nowait()
+                op = event.get_event_operation()
+                self.log.print(2,'Event: '+ op)
+                self.process_event[op](event)
 
 
-            # TODO: DGui strucutre und fuellen dieser Struktur vom Core aus
-            # TODO: event verteilung und reagieren auf events
-            # TODO: ausfuehren von Fuktionen aus den plugins "execute"
+            #TODO: wenn 1 Quelle zu 2 Plots geht, nur 1 Event benutzen!
         except:
             pass
 
@@ -212,6 +219,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
+
+
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,array,plugin,id)
         dplugin.uname = uname
         buffer = 1
@@ -219,7 +228,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue, array,buffer,dplugin.id)
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(150,150))
+        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
 
         self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
         dplugin.plugin.plugin_object.get_sub_window().show()

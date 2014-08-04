@@ -18,6 +18,7 @@ class Sinus(plugin_base):
 
     def start_init(self):
         self.t = 0
+        self.amax = 50
         return True
 
     def pause(self):
@@ -28,16 +29,16 @@ class Sinus(plugin_base):
         pass
 
     def execute(self):
-        vec = numpy.zeros(20)
-        for i in range(10):
+        vec = numpy.zeros(self.amax*2)
+        for i in range(self.amax):
                 vec[i] = self.t
-                vec[i+10] = math.sin(2*math.pi*0.01*self.t)
+                vec[i+self.amax] = math.sin(2*math.pi*0.01*self.t)
                 self.t += 0.1
 
         self.__shared_memory__[:]=vec
         event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
         self._Core_event_queue__.put(event)
-        time.sleep(0.04)
+        time.sleep(0.02)
 
     def set_parameter(self):
         pass
@@ -49,4 +50,4 @@ class Sinus(plugin_base):
         return 'IOP'
 
     def get_output_sizes(self):
-        return [1,10]
+        return [1,50]
