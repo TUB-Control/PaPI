@@ -42,6 +42,9 @@ pg.setConfigOptions(antialias=False)
 from papi.ui.gui.main import Ui_MainGUI
 from papi.gui.manager import Manager
 from papi.PapiEvent import PapiEvent
+from papi.data.DGui import DGui
+from yapsy.PluginManager import PluginManager
+from papi.ConsoleLog import ConsoleLog
 
 
 class GUI(QMainWindow, Ui_MainGUI):
@@ -65,7 +68,22 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.count = 0
 
-        QtCore.QTimer.singleShot(1000,self.gui_working)
+        QtCore.QTimer.singleShot(40,self.gui_working)
+
+        self.process_event = {  'new_data': self.process_new_data_event,
+                                'close_programm': self.process_close_program_event,
+                                'check_alive_status': self.process_check_alive_status,
+                                'create_plugin':self.process_create_plugin
+        }
+
+        self.gui_data = DGui()
+
+        self.log = ConsoleLog(2,'Gui-Process: ')
+
+        self.plugin_manager = PluginManager()
+        self.plugin_manager.setPluginPlaces(["plugin"])
+
+
 
     def dbg(self):
         print("Action")
@@ -120,10 +138,17 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        if self.count <= 3:
+        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+        self.core_queue.put(event)
+        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
+        self.core_queue.put(event)
+        event = PapiEvent(2,0,'instr_event','subscribe',1)
+        self.core_queue.put(event)
+
+        if self.count <= 0:
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
             self.core_queue.put(event)
-        if (self.count > 3):
+        if (self.count > 100):
             event = PapiEvent(self.gui_id, 2, 'instr_event','stop_plugin','')
             self.core_queue.put(event)
 
@@ -134,7 +159,12 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
         try:
-            event = self.core_queue.get_nowait()
+            event = self.gui_queue.get_nowait()
+            op = event.get_event_operation()
+            self.log.print(2,'Event: '+ op)
+            self.process_event[op](event)
+
+
             # TODO: DGui strucutre und fuellen dieser Struktur vom Core aus
             # TODO: event verteilung und reagieren auf events
             # TODO: ausfuehren von Fuktionen aus den plugins "execute"
@@ -144,6 +174,66 @@ class GUI(QMainWindow, Ui_MainGUI):
         finally:
             QtCore.QTimer.singleShot(40,self.gui_working)
 
+
+
+    def process_new_data_event(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+
+        dID = event.get_destinatioID()
+        dplugin = self.gui_data.get_dplugin_by_id(dID)
+        if dplugin != None:
+            dplugin.plugin.plugin_object.execute()
+            return 1
+        else:
+            self.log.print(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
+            return -1
+
+
+    def process_create_plugin(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        optPar = event.get_optional_parameter()
+        id = optPar[2]
+        plugin_identifier = optPar[1]
+
+        plugin = self.plugin_manager.getPluginByName(plugin_identifier)
+
+        if plugin == None:
+            self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
+            return -1
+
+
+
+        dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,array,plugin,id)
+
+        buffer = 1
+
+        dplugin.plugin.__init__(self.core_queue,self.gui_queue,dplugin.array,buffer)
+        self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
+
+    def process_close_program_event(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        pass
+
+
+    def process_check_alive_status(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        pass
 
 
 

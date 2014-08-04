@@ -24,11 +24,23 @@ class Plot(visual_base):
         pass
 
     def execute(self):
-        print('Sinus: execute')
-        time.sleep(1)
+        print('Plot: execute')
+
 
     def set_parameter(self):
         pass
 
+    def get_type(self):
+        return "ViP"
+
+    def get_output_sizes(self):
+        return [0,0]
+
+    def start_init(self):
+        pass
+
+
+
+
     def quit(self):
-        print('Sinus: will quit')
+        print('Plot: will quit')
