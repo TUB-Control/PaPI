@@ -95,7 +95,15 @@ class TestDCore(unittest.TestCase):
         self.dcore.get_dplugin_by_id(d_pl_1.id)
         self.assertEqual(d_pl_1.id, self.dcore.get_dplugin_by_id(d_pl_1.id).id)
 
-        pass
+    def test_get_dplugin_by_uname(self):
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, None, self.dcore.create_id())
+
+        d_pl_1.uname = "Test"
+
+        self.assertEqual("Test", self.dcore.get_dplugin_by_uname("Test").uname)
+
+        self.assertIsNone(self.dcore.get_dplugin_by_uname("Test2"))
+
 
     def test_get_all_plugins(self):
         self.dcore.add_plugin(None, 1, None, None, None, None, self.dcore.create_id())

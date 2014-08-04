@@ -121,10 +121,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count += 1
 
         if self.count <= 3:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+            event = PapiEvent(self.gui_id, 0, 'instr_event', 'create_plugin', 'Sinus')
             self.core_queue.put(event)
         if (self.count > 3):
-            event = PapiEvent(self.gui_id, 2, 'instr_event','stop_plugin','')
+            event = PapiEvent(self.gui_id, 2, 'instr_event', 'stop_plugin', '')
             self.core_queue.put(event)
 
 
