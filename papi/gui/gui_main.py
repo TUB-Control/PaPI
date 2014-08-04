@@ -78,7 +78,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.gui_data = DGui()
 
-        self.log = ConsoleLog(2, 'Gui-Process: ')
+        self.log = ConsoleLog(2,'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin"])
@@ -218,9 +218,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.uname = uname
         buffer = 1
 
-
-        #dplugin.plugin.__init__(self.core_queue,self.gui_queue,dplugin.array,buffer)
-
+        dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue, array,buffer,dplugin.id)
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
         print('GUI: create plugin 1')

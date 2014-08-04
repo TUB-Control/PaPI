@@ -258,7 +258,6 @@ class Core:
         dplug = self.core_data.get_dplugin_by_id(oID)
         if dplug != None:
             targets = dplug.get_subscribers()
-            print(targets)
             for tar_plug in targets:
                 plug = targets[tar_plug]
                 event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())

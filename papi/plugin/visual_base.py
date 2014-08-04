@@ -88,3 +88,10 @@ class visual_base(plugin_base):
     def get_plot_widget(self):
         return self._plotWidget
 
+    def init_plugin(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
+        self._Core_event_queue__ = CoreQueue
+        self.__plugin_queue__ = pluginQueue
+        self.__shared_memory__ = sharedMemory
+        self.__buffer__ = buffer
+        self.__id__ = id
+        print('Plot init')
