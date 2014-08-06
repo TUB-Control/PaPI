@@ -29,10 +29,11 @@ class Plot(visual_base):
 
         l = len(Data)
 
-        t = Data[0:l/23]
-        self.sinus_curve = 22
-        y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
-        self.add_data(t, y)
+        t = Data[0]
+        #self.sinus_curve = 22
+        #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
+        y = Data[1]
+        self.add_data([t], [y])
 
         self.update()
 

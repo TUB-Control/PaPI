@@ -67,22 +67,19 @@ class Core:
                                             'unsubscribe':self.__process_unsubsribe__
         }
 
-
         self.msg_lvl = 0
         self.__debugLevel__ = 1
         self.__debug_var = ''
 
-
         self.core_data = DCore()
 
         self.plugin_manager = PluginManager()
-        self.plugin_manager.setPluginPlaces(["plugin"])
+        self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
         self.core_event_queue = Queue()
 
         self.gui_event_queue = Queue()
         self.gui_id = self.core_data.create_id()
-
 
         self.gui_alive = 0
 
@@ -112,22 +109,6 @@ class Core:
             self.__process_event__(event)
 
             self.core_goOn = self.core_data.get_dplugins_count() != 0 | self.gui_alive
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -260,6 +241,7 @@ class Core:
             targets = dplug.get_subscribers()
             for tar_plug in targets:
                 plug = targets[tar_plug]
+                #TODO: vllt. nur das ankommende Even benutzen und die IDs aendern
                 event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())
                 plug.queue.put(event)
             return 1
@@ -297,17 +279,13 @@ class Core:
 
 
         #decide which Plugin to start
-        plugin_identifier = event.get_optional_parameter()
+        opt = event.get_optional_parameter()
+        plugin_identifier = opt[0]
         plugin = self.plugin_manager.getPluginByName(plugin_identifier)
 
         if plugin == None:
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
-
-        size = plugin.plugin_object.get_output_sizes()
-        memory_size = size[0] * size[1] * 2
-        shared_Arr = Array('d',memory_size,lock=True)
-
 
         #TODO
         buffer = 1
@@ -315,20 +293,50 @@ class Core:
         #creates a new plugin id
         plugin_id = self.core_data.create_id()
 
+
         if plugin.plugin_object.get_type()== 'IOP':
             plugin_queue = Queue()
+            size = plugin.plugin_object.get_output_sizes()
+            memory_size = size[0] * size[1]
+            shared_Arr = Array('d',memory_size,lock=True)
+
             # create Process object for new plugin
             PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id) )
             PluginProcess.start()
+
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
             dplug.uname = event.get_optional_parameter()
 
         if plugin.plugin_object.get_type()== 'ViP':
-            dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, shared_Arr, plugin, plugin_id)
+            dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, None, plugin, plugin_id)
             dplug.uname = event.get_optional_parameter()
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
             self.gui_event_queue.put(event)
+
+        if plugin.plugin_object.get_type()== 'DPP':
+            sub_id = opt[1]
+            source_plugin = self.core_data.get_dplugin_by_id(sub_id)
+            if source_plugin != None:
+                plugin_queue = Queue()
+                size = source_plugin.plugin.plugin_object.get_output_sizes()
+                memory_size = size[0] * size[1]
+                shared_Arr = Array('d',memory_size,lock=True)
+                # create Process object for new plugin
+                PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,shared_Arr,buffer,plugin_id,source_plugin.array) )
+                PluginProcess.start()
+                #Add new Plugin process to DCore
+                dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, shared_Arr, plugin, plugin_id)
+                dplug.uname = event.get_optional_parameter()
+                #subscribe
+                print(source_plugin.id)
+                self.core_data.subscribe(dplug.id,source_plugin.id)
+            else:
+                self.log.print(1,'create_plugin, DataProcessingPlugin cannont subscribe id '+str(sub_id))
+
+
+
+
 
         return True
 

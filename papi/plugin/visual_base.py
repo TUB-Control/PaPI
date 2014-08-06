@@ -48,7 +48,7 @@ class visual_base(plugin_base):
 
         # Set internal variables
 
-        self._interval = int(sampleinterval*1000)
+        self._interval = int(sampleinterval*timewindow)
         self._bufsize = int(timewindow/sampleinterval)
         self.tDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
         self.yDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
