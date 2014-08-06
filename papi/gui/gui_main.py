@@ -139,7 +139,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count += 1
 
         if  self.count == 1:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Fourier_Rect')
             self.core_queue.put(event)
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
             self.core_queue.put(event)

@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.buffer.group import Group
 from multiprocessing import Array
 from papi.ConsoleLog import ConsoleLog
+import numpy
 
 
 class Manager:
@@ -63,6 +64,7 @@ class Manager:
 
                 bg.count = shared_array[i+1]
                 bg.position = shared_array[i+2]
+                bg.position_reader = bg.position
                 state = 'vectors'
 
             if state == 'vectors':
@@ -131,6 +133,8 @@ class Manager:
             #unknown buffer group
             return False
 
+        self.__check_for_position_change(bg)
+
         if len(data) != bg.count:
             #more/less elements to write than it has to
             return False
@@ -146,10 +150,48 @@ class Manager:
 
         return True
 
-    def get_data(self, buffer_group):
+    def get_data(self, bg_id):
+        """
+
+        :param buffer_group:
+        :return []:
+        """
+
+        bg = None
+
+        # is there a group with this id?
+        if bg_id in self.__groups:
+            bg = self.__groups[bg_id]
+        else:
+            return None
+
+        self.__check_for_position_change(bg)
+
+        # are there already new data?
+
+        #if bg.position_reader <
+
+        data = numpy.zeros(bg.count)
+
+        for i in range(int(bg.count)):
+            read_index = int(bg.offset + 3 + i*bg.size + bg.position_reader)
+            data[i] = self.__shared_array[read_index]
+
+        bg.position_reader += 1
+        if not bg.position_reader % bg.size:
+            bg.position_reader = 0
+
+        return data
+
+    def get_all_data(self, buffer_group):
         """
 
         :param buffer_group:
         :return:
         """
+
+        pass
+
+    def __check_for_position_change(self, bg):
+
         pass

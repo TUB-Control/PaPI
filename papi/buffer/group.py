@@ -31,9 +31,16 @@ __author__ = 'knuths'
 
 class Group:
     def __init__(self):
+        #Size of one vector
         self.size = None
+        #count of vectors
         self.count = None
+        #current write position (is global)
         self.position = None
+        #current position of this reader
+        self.position_reader = None        #id of this group
         self.id = None
+        #offset for this group in array
         self.offset = None
+
 

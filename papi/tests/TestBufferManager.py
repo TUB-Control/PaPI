@@ -94,14 +94,14 @@ class TestDBufferManager(unittest.TestCase):
         self.assertEqual(len(bm_5.get_all_groups().keys()), 5)
 
     def test_add_data(self):
-        array_1 = Manager.get_shared_array([[2,1]])
+        array_1 = Manager.get_shared_array([[2, 1]])
 
         bm_1 = Manager(array_1)
 
         self.assertTrue(bm_1.add_data(1, [1, 1]))
 
-        self.assertEqual(array_1[3],1)
-        self.assertEqual(array_1[13],1)
+        self.assertEqual(array_1[3], 1)
+        self.assertEqual(array_1[13], 1)
 
         self.assertTrue(bm_1.add_data(1, [1, 2]))
         self.assertTrue(bm_1.add_data(1, [3, 4]))
@@ -139,5 +139,31 @@ class TestDBufferManager(unittest.TestCase):
 
         self.assertEqual(array_1[4], 21)
         self.assertEqual(array_1[14], 22)
+
+    def test_get_data(self):
+        array_1 = Manager.get_shared_array([[2, 1]])
+        bm_1 = Manager(array_1)
+
+        time = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        data = [11, 22, 33, 44, 55, 66, 77, 88, 99]
+
+        #without overflow
+        for i in range(len(data)):
+            self.assertTrue(bm_1.add_data(1, [time[i], data[i]]))
+
+        for i in range(len(data)):
+            read_data = bm_1.get_data(1)
+            self.assertEqual(read_data[0], time[i])
+            self.assertEqual(read_data[1], data[i])
+
+        #with overflow
+        for i in range(len(data)):
+            self.assertTrue(bm_1.add_data(1, [time[i], data[i]]))
+
+        for i in range(len(data)):
+            read_data = bm_1.get_data(1)
+            self.assertEqual(read_data[0], time[i])
+            self.assertEqual(read_data[1], data[i])
+
 
 
