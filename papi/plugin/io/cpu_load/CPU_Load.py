@@ -33,12 +33,11 @@ class CPU_Load(plugin_base):
         vec[0] = self.t
         vec[1] = self.getCpuLoad() * 100
 
-        print(vec)
-        self.t += 0.1
+        self.t += 0.01
 
         event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
         self._Core_event_queue__.put(event)
-        time.sleep(0.04)
+        time.sleep(0.01)
 
     def set_parameter(self):
         pass

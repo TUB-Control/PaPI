@@ -14,6 +14,7 @@ __author__ = 'knuths'
 class Plot(visual_base):
 
     def start_init(self):
+
         pass
 
     def pause(self):
@@ -28,9 +29,9 @@ class Plot(visual_base):
 
         l = len(Data)
 
-        t = Data[0:l/2]
-        y = Data[l/2:l]
-
+        t = Data[0:l/23]
+        self.sinus_curve = 22
+        y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
         self.add_data(t, y)
 
         self.update()
