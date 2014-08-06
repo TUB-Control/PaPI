@@ -50,4 +50,4 @@ class Sinus(plugin_base):
         return 'IOP'
 
     def get_output_sizes(self):
-        return [1,50]
+        return [2,50]

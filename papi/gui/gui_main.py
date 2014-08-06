@@ -45,7 +45,9 @@ from papi.PapiEvent import PapiEvent
 from papi.data.DGui import DGui
 from yapsy.PluginManager import PluginManager
 from papi.ConsoleLog import ConsoleLog
-
+import copy
+from multiprocessing import Queue
+import multiprocessing
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -81,7 +83,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.log = ConsoleLog(0,'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
-        self.plugin_manager.setPluginPlaces(["plugin"])
+        self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
 
 
@@ -139,15 +141,18 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count += 1
 
         if  self.count == 1:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Sinus')
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot')
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2])
             self.core_queue.put(event)
-            event = PapiEvent(3,0,'instr_event','subscribe',2)
+
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
+            self.core_queue.put(event)
+            event = PapiEvent(4,0,'instr_event','subscribe',3)
             self.core_queue.put(event)
 
         if self.count is 2:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin','Plot2')
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
             self.core_queue.put(event)
 
         if self.count is 3:
@@ -213,12 +218,13 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         array = None
         self.plugin_manager.collectPlugins()
-        plugin = self.plugin_manager.getPluginByName(plugin_identifier)
+        plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
 
-        if plugin is None:
+        if plugin_orginal is None:
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
+        plugin = plugin_orginal
 
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,array,plugin,id)
@@ -228,7 +234,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue, array,buffer,dplugin.id)
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
+        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=300., size=(300,300))
 
         self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
         dplugin.plugin.plugin_object.get_sub_window().show()

@@ -29,27 +29,31 @@ Stefan Ruppin
 from abc import ABCMeta, abstractmethod
 from yapsy.IPlugin import IPlugin
 from papi.PapiEvent import PapiEvent
+import os
 
 class plugin_base(IPlugin):
 
     __metaclass__= ABCMeta
 
 
-    def __init_(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
+    def __init_(self,CoreQueue,pluginQueue,sharedMemory,buffer,id,SourceMemory = None):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__shared_memory__ = sharedMemory
         self.__buffer__ = buffer
         self.__id__ = id
+        self.source_memory = SourceMemory
 
 
-    def work_process(self,CoreQueue,pluginQueue,sharedMemory,buffer,id):
+    def work_process(self,CoreQueue,pluginQueue,sharedMemory,buffer,id, SourceMemory = None):
         print("Plugin work_process called")
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__shared_memory__ = sharedMemory
         self.__buffer__ = buffer
         self.__id__ = id
+
+        self.source_memory = SourceMemory
 
         self.goOn = 1
 
@@ -63,9 +67,14 @@ class plugin_base(IPlugin):
             event = PapiEvent(self.__id__,0,'status_event','join_request','')
             self._Core_event_queue__.put(event)
 
+        if SourceMemory == None:
+            wait = False
+        else:
+            wait = True
+
         while self.goOn:
             try:
-                event = self.__plugin_queue__.get_nowait()
+                event = self.__plugin_queue__.get(wait)
                 #process event
                 op = event.get_event_operation()
                 if (op=='stop_plugin'):
@@ -80,6 +89,8 @@ class plugin_base(IPlugin):
                 if op=='check_alive_status':
                     alive_event = PapiEvent(self.__id__,0,'status_event','alive','')
                     self._Core_event_queue__.put(alive_event)
+                if op=='new_data':
+                    self.execute(event.get_optional_parameter())
             except:
                 self.execute()
 
