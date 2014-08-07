@@ -11,9 +11,10 @@ import time
 __author__ = 'knuths'
 
 
-class Plot2(visual_base):
+class Plot(visual_base):
 
     def start_init(self):
+
         pass
 
     def pause(self):
@@ -29,8 +30,9 @@ class Plot2(visual_base):
         l = len(Data)
 
         t = Data[0:l/2]
+        #self.sinus_curve = 22
+        #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
         y = Data[l/2:l]
-
         self.add_data(t, y)
 
         self.update()
@@ -46,9 +48,6 @@ class Plot2(visual_base):
 
     def start_init(self):
         pass
-
-
-
 
     def quit(self):
         print('Plot: will quit')

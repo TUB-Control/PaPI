@@ -35,7 +35,9 @@ import math
 import numpy
 import os
 
-
+import socket
+import sys
+import pickle
 
 
 class Fourier_Rect(plugin_base):
@@ -49,6 +51,13 @@ class Fourier_Rect(plugin_base):
         self.freq = 1
         self.vec = numpy.ones(self.amax* ( self.max_approx + 1) )
         print(['Fourier: process id: ',os.getpid()] )
+
+
+        self.HOST = "localhost"
+        self.PORT = 9999
+        # SOCK_DGRAM is the socket type to use for UDP sockets
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
         return True
 
     def pause(self):
@@ -61,15 +70,21 @@ class Fourier_Rect(plugin_base):
     def execute(self):
 
 
-        for i in range(self.amax):
-            self.vec[i] = self.t
-            for k in range(1, self.max_approx + 1):
-                self.vec[i+self.amax*k] = 4*self.amplitude / math.pi * math.sin((2*k - 1)*math.pi*self.freq*self.t)/(2*k - 1)
-            self.t += 0.001
+
+        # As you can see, there is no connect() call; UDP has no connections.
+        # Instead, data is directly sent to the recipient via sendto().
+
+        self.sock.sendto(b'GET', (self.HOST, self.PORT) )
+
+        received = self.sock.recv(30000)
+
+        data = pickle.loads(received)
+
 
 
         #self.__shared_memory__[:]=self.vec
-        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', self.vec)
+        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', data)
+
         self._Core_event_queue__.put(event)
 
         time.sleep(0.001*self.amax )
