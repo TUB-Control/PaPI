@@ -184,7 +184,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             pass
 
         finally:
-            QtCore.QTimer.singleShot(40,self.gui_working)
+            QtCore.QTimer.singleShot(20,self.gui_working)
 
 
 

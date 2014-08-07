@@ -39,15 +39,15 @@ import os
 
 
 class Fourier_Rect(plugin_base):
-    max_approx = 500
-    amax = 100
+    max_approx = 23
+    amax = 1
     def start_init(self):
         self.t = 0
         self.amax = Fourier_Rect.amax
         self.amplitude = 1
         self.max_approx = Fourier_Rect.max_approx
         self.freq = 1
-        self.vec = numpy.zeros(self.amax* ( self.max_approx + 1) )
+        self.vec = numpy.ones(self.amax* ( self.max_approx + 1) )
         print(['Fourier: process id: ',os.getpid()] )
         return True
 
@@ -62,20 +62,17 @@ class Fourier_Rect(plugin_base):
 
 
         for i in range(self.amax):
-                self.vec[i] = self.t
-                for k in range(1, self.max_approx + 1):
-                    self.vec[i+self.amax*k] = 4*self.amplitude / math.pi * math.sin((2*k - 1)*math.pi*self.freq*self.t)/(2*k - 1)
+            self.vec[i] = self.t
+            for k in range(1, self.max_approx + 1):
+                self.vec[i+self.amax*k] = 4*self.amplitude / math.pi * math.sin((2*k - 1)*math.pi*self.freq*self.t)/(2*k - 1)
+            self.t += 0.01
 
 
-                self.t += 0.02
-
-
-        #vec = numpy.ones(100*501)
         #self.__shared_memory__[:]=self.vec
         event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', self.vec)
         self._Core_event_queue__.put(event)
 
-        time.sleep(0.01 )
+        time.sleep(0.01*self.amax )
 
     def set_parameter(self):
         pass
