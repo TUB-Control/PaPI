@@ -19,6 +19,14 @@ papi.data.DCore module
     :undoc-members:
     :show-inheritance:
 
+papi.data.DGui module
+---------------------
+
+.. automodule:: papi.data.DGui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.data.DObject module
 ------------------------
 

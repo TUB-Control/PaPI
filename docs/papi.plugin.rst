@@ -36,6 +36,14 @@ papi.plugin.template module
     :undoc-members:
     :show-inheritance:
 
+papi.plugin.visual_base module
+------------------------------
+
+.. automodule:: papi.plugin.visual_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

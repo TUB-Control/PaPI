@@ -4,6 +4,14 @@ papi.tests package
 Submodules
 ----------
 
+papi.tests.TestBufferManager module
+-----------------------------------
+
+.. automodule:: papi.tests.TestBufferManager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.tests.TestCore module
 --------------------------
 
@@ -16,6 +24,14 @@ papi.tests.TestDCore module
 ---------------------------
 
 .. automodule:: papi.tests.TestDCore
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.tests.TestDPlugin module
+-----------------------------
+
+.. automodule:: papi.tests.TestDPlugin
     :members:
     :undoc-members:
     :show-inheritance:

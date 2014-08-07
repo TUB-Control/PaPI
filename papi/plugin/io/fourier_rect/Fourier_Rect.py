@@ -39,7 +39,7 @@ import os
 
 
 class Fourier_Rect(plugin_base):
-    max_approx = 300
+    max_approx = 200
     amax = 10
     def start_init(self):
         self.t = 0
@@ -49,6 +49,9 @@ class Fourier_Rect(plugin_base):
         self.freq = 1
         self.vec = numpy.ones(self.amax* ( self.max_approx + 1) )
         print(['Fourier: process id: ',os.getpid()] )
+
+
+
         return True
 
     def pause(self):
@@ -60,12 +63,12 @@ class Fourier_Rect(plugin_base):
 
     def execute(self):
 
-
         for i in range(self.amax):
             self.vec[i] = self.t
             for k in range(1, self.max_approx + 1):
                 self.vec[i+self.amax*k] = 4*self.amplitude / math.pi * math.sin((2*k - 1)*math.pi*self.freq*self.t)/(2*k - 1)
             self.t += 0.001
+
 
 
         #self.__shared_memory__[:]=self.vec

@@ -39,7 +39,6 @@ class DPlugin(DObject):
         self.process = None
         self.pid = None
         self.queue = None
-        self.array = None
         self.plugin = None
         self.__subscribers = {}
         self.__subscriptions = {}

@@ -29,7 +29,7 @@ from papi.plugin import plugin_base
 
 __author__ = 'control'
 
-from multiprocessing import Process, Queue, Array
+from multiprocessing import Process, Queue
 
 from papi.data.dcore.DPlugin import DPlugin
 import uuid
@@ -51,14 +51,13 @@ class DCore():
         return self.__newid
 #        return uuid.uuid4().int >> 64
 
-    def add_plugin(self, process, pid, own_process, queue, array, plugin, id):
+    def add_plugin(self, process, pid, own_process, queue, plugin, id):
         """
         Add plugin with necessary information
 
         :param process: Plugin is running in this process
         :param pid: Process ID of the process in which the plugin is running
         :param queue: Event queue needed for events which should be received by this plugin
-        :param array: Used as shared memory by this plugin
         :param plugin: Plugin object
         :param plugin_id: ID of this plugin
         :return: Returns the data object DPlugin
@@ -71,7 +70,6 @@ class DCore():
         d_pl.process = process
         d_pl.pid = pid
         d_pl.queue = queue
-        d_pl.array = array
         d_pl.plugin = plugin
         d_pl.id = id
         d_pl.own_process = own_process
