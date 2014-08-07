@@ -42,7 +42,7 @@ class Add(plugin_base):
         self.t = 0
         print(['ADD: process id: ',os.getpid()] )
         self.amax = 10
-        self.approx = 300
+        self.approx = 200
         self.vec = numpy.zeros(self.amax*2)
         return True
 

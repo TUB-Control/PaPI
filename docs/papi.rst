@@ -6,17 +6,20 @@ Subpackages
 
 .. toctree::
 
+    papi.buffer
     papi.data
+    papi.gui
     papi.plugin
     papi.tests
+    papi.ui
 
 Submodules
 ----------
 
-papi.Buffer module
-------------------
+papi.ConsoleLog module
+----------------------
 
-.. automodule:: papi.Buffer
+.. automodule:: papi.ConsoleLog
     :members:
     :undoc-members:
     :show-inheritance:
