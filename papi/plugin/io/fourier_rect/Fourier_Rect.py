@@ -39,8 +39,8 @@ import os
 
 
 class Fourier_Rect(plugin_base):
-    max_approx = 23
-    amax = 1
+    max_approx = 300
+    amax = 10
     def start_init(self):
         self.t = 0
         self.amax = Fourier_Rect.amax
@@ -65,14 +65,14 @@ class Fourier_Rect(plugin_base):
             self.vec[i] = self.t
             for k in range(1, self.max_approx + 1):
                 self.vec[i+self.amax*k] = 4*self.amplitude / math.pi * math.sin((2*k - 1)*math.pi*self.freq*self.t)/(2*k - 1)
-            self.t += 0.01
+            self.t += 0.001
 
 
         #self.__shared_memory__[:]=self.vec
         event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', self.vec)
         self._Core_event_queue__.put(event)
 
-        time.sleep(0.01*self.amax )
+        time.sleep(0.001*self.amax )
 
     def set_parameter(self):
         pass

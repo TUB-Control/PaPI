@@ -40,9 +40,10 @@ class Add(plugin_base):
 
     def start_init(self):
         self.t = 0
-        self.amax = 50
         print(['ADD: process id: ',os.getpid()] )
-        self.vec = numpy.zeros(2)
+        self.amax = 10
+        self.approx = 300
+        self.vec = numpy.zeros(self.amax*2)
         return True
 
     def pause(self):
@@ -54,12 +55,13 @@ class Add(plugin_base):
 
     def execute(self,Data):
 
-        self.vec[0] = Data[0]
-        self.vec[1] = 0
-        for i in range(1,24):
-            self.vec[1] += Data[i]
 
+        self.vec[:] = 0
+        self.vec[0:self.amax] = Data[0:self.amax]
 
+        for i in range(self.amax):
+            for k in range(self.approx):
+                self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
 
         event = PapiEvent(self.__id__,0,'data_event','new_data',self.vec)
         self._Core_event_queue__.put(event)

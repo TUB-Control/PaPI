@@ -234,7 +234,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue, array,buffer,dplugin.id)
         self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=300., size=(300,300))
+        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=3000., size=(300,300))
 
         self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
         dplugin.plugin.plugin_object.get_sub_window().show()
