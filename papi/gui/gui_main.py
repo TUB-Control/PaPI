@@ -47,6 +47,7 @@ from yapsy.PluginManager import PluginManager
 from papi.ConsoleLog import ConsoleLog
 from multiprocessing import Queue
 
+import importlib.machinery
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -156,7 +157,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5])
             self.core_queue.put(event)
 
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot2'])
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
             self.core_queue.put(event)
             event = PapiEvent(7,0,'instr_event','subscribe',6)
             #event = PapiEvent(5,0,'instr_event','subscribe',3)
@@ -231,7 +232,22 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
-        plugin = plugin_orginal
+
+#NEU
+
+        imp_path = plugin_orginal.path + ".py"
+
+        loader = importlib.machinery.SourceFileLoader(plugin_orginal.name.lower(), imp_path)
+        current_modul = loader.load_module()
+
+        class_name = plugin_orginal.name[:1].upper() + plugin_orginal.name[1:]
+
+        print("ClassName " + class_name  )
+        plugin = getattr(current_modul, class_name)()
+
+
+
+#NEU
 
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
@@ -262,6 +278,7 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
         pass
+
 
 
 

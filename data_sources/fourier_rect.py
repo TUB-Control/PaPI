@@ -46,7 +46,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     """
 
     max_approx = 300
-    amax = 10
+    amax = 20
 
     t = 0
 
@@ -85,7 +85,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 9999
+    HOST, PORT = "0.0.0.0", 9999
     server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
     server.t = 0
     server.serve_forever()
