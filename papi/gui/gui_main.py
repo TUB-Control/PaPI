@@ -70,7 +70,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.count = 0
 
-        QtCore.QTimer.singleShot(40,self.gui_working)
+        QtCore.QTimer.singleShot(40,self.gui_working_v2)
 
         self.process_event = {  'new_data': self.process_new_data_event,
                                 'close_programm': self.process_close_program_event,
@@ -197,6 +197,31 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
 
+    def gui_working_v2(self):
+        """
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        isEvent = True
+        event = None
+        while(isEvent):
+            try:
+                event = self.gui_queue.get_nowait()
+                isEvent = True
+            except:
+                isEvent = False
+
+            if(isEvent):
+                op = event.get_event_operation()
+                self.log.print(2,'Event: '+ op)
+                self.process_event[op](event)
+
+        QtCore.QTimer.singleShot(40,self.gui_working)
+
+
+
+
+
     def process_new_data_event(self,event):
         """
          :param event: event to process
@@ -233,9 +258,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
-
-#NEU
-
         imp_path = plugin_orginal.path + ".py"
 
         loader = importlib.machinery.SourceFileLoader(plugin_orginal.name.lower(), imp_path)
@@ -245,11 +267,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         plugin = getattr(current_modul, class_name)()
 
-
-
-#NEU
-
-        #plugin = plugin_orginal
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
         dplugin.uname = uname
