@@ -18,7 +18,7 @@ class Sinus(plugin_base):
 
     def start_init(self):
         self.t = 0
-        self.amax = 50
+        self.amax = 100
         return True
 
     def pause(self):
