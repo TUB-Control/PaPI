@@ -31,7 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.plugin_base import plugin_base
 from PySide.QtGui import QMdiSubWindow
 from pyqtgraph import PlotWidget
-
+from pyqtgraph import QtCore
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
@@ -69,6 +69,9 @@ class visual_base(plugin_base):
 
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
+
+
+        QtCore.QTimer.singleShot(sampleinterval,self.update())
 
     def update(self):
         self.x[:] = self.tDatabuffer
