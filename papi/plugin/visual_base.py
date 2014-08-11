@@ -94,5 +94,5 @@ class visual_base(plugin_base):
         self.__id__ = id
         print('Plot init')
 
-    def dbg(self):
-        print('Debug from PL id XX')
+
+

@@ -243,10 +243,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         class_name = plugin_orginal.name[:1].upper() + plugin_orginal.name[1:]
 
-        print("ClassName " + class_name  )
         plugin = getattr(current_modul, class_name)()
 
-        plugin.dbg()
+
 
 #NEU
 

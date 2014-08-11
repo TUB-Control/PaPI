@@ -41,7 +41,6 @@ class plugin_base(IPlugin):
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
 
-
     def work_process(self,CoreQueue,pluginQueue,id,EventTriggered=False):
         print("Plugin work_process called")
         self._Core_event_queue__ = CoreQueue
