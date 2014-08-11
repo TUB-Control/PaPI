@@ -46,7 +46,7 @@ from papi.data.DGui import DGui
 from yapsy.PluginManager import PluginManager
 from papi.ConsoleLog import ConsoleLog
 from multiprocessing import Queue
-
+import os
 import importlib.machinery
 
 class GUI(QMainWindow, Ui_MainGUI):
@@ -86,7 +86,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
-
+        self.log.print(1,'Gui: Gui process id: '+str(os.getpid()))
 
     def dbg(self):
         print("Action")
@@ -142,26 +142,26 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count += 1
 
         if  self.count == 1:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
             self.core_queue.put(event)
-            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2])
+            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2]) #id
             #self.core_queue.put(event)
 
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 3
             self.core_queue.put(event)
             event = PapiEvent(3,0,'instr_event','subscribe',2)
             self.core_queue.put(event)
 
         if self.count is 2:
-            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])
-            #self.core_queue.put(event)
-            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5])
-            #self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 4
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',4]) #id 5
+            self.core_queue.put(event)
 
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 6
             self.core_queue.put(event)
             #event = PapiEvent(7,0,'instr_event','subscribe',6)
-            event = PapiEvent(5,0,'instr_event','subscribe',3)
+            event = PapiEvent(6,0,'instr_event','subscribe',5)
             self.core_queue.put(event)
 
         if self.count is 3:
@@ -207,7 +207,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         dID = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         if dplugin != None:
-            dplugin.plugin.plugin_object.execute(event.get_optional_parameter())
+            dplugin.plugin.execute(event.get_optional_parameter())
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -246,22 +246,23 @@ class GUI(QMainWindow, Ui_MainGUI):
         print("ClassName " + class_name  )
         plugin = getattr(current_modul, class_name)()
 
-
+        plugin.dbg()
 
 #NEU
 
+        #plugin = plugin_orginal
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
         dplugin.uname = uname
         buffer = 1
 
-        dplugin.plugin.plugin_object.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
-        self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
+        dplugin.plugin.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
+        #self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.plugin_object.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
+        dplugin.plugin.setConfig(name='Plot', sampleinterval=1, timewindow=1000., size=(300,300))
 
-        self.scopeArea.addSubWindow(dplugin.plugin.plugin_object.get_sub_window())
-        dplugin.plugin.plugin_object.get_sub_window().show()
+        self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
+        dplugin.plugin.get_sub_window().show()
 
     def process_close_program_event(self,event):
         """
