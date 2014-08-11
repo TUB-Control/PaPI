@@ -35,7 +35,7 @@ class Sinus(plugin_base):
                 vec[i+self.amax] = math.sin(2*math.pi*0.01*self.t)
                 self.t += 0.1
 
-        self.__shared_memory__[:]=vec
+
         event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
         self._Core_event_queue__.put(event)
         time.sleep(0.02)

@@ -41,7 +41,7 @@ class Add(plugin_base):
     def start_init(self):
         self.t = 0
         print(['ADD: process id: ',os.getpid()] )
-        self.amax = 10
+        self.amax = 20
         self.approx = 200
         self.vec = numpy.zeros(self.amax*2)
         return True

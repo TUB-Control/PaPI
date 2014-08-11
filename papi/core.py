@@ -39,7 +39,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
 import time
 
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Manager
 
 
 class Core:
@@ -310,6 +310,15 @@ class Core:
         if plugin.plugin_object.get_type()== 'ViP':
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
             dplug.uname = event.get_optional_parameter()
+
+            man = Manager()
+            l = man.list(range(100))
+            #d = man.Array('d',100)
+            #d[0]=100
+
+            event = PapiEvent(0,plugin_id,'test','test',[])
+            self.gui_event_queue.put(event)
+
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
             self.gui_event_queue.put(event)
 

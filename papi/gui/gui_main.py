@@ -74,12 +74,13 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.process_event = {  'new_data': self.process_new_data_event,
                                 'close_programm': self.process_close_program_event,
                                 'check_alive_status': self.process_check_alive_status,
-                                'create_plugin':self.process_create_plugin
+                                'create_plugin':self.process_create_plugin,
+                                'test': self.test
         }
 
         self.gui_data = DGui()
 
-        self.log = ConsoleLog(0,'Gui-Process: ')
+        self.log = ConsoleLog(1,'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
@@ -140,26 +141,26 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count += 1
 
         if  self.count == 1:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2])
-            self.core_queue.put(event)
+            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2])
+            #self.core_queue.put(event)
 
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot'])
             self.core_queue.put(event)
-            event = PapiEvent(4,0,'instr_event','subscribe',3)
+            event = PapiEvent(3,0,'instr_event','subscribe',2)
             self.core_queue.put(event)
 
         if self.count is 2:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5])
-            self.core_queue.put(event)
+            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])
+            #self.core_queue.put(event)
+            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5])
+            #self.core_queue.put(event)
 
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot2'])
             self.core_queue.put(event)
-            event = PapiEvent(7,0,'instr_event','subscribe',6)
-            #event = PapiEvent(5,0,'instr_event','subscribe',3)
+            #event = PapiEvent(7,0,'instr_event','subscribe',6)
+            event = PapiEvent(5,0,'instr_event','subscribe',3)
             self.core_queue.put(event)
 
         if self.count is 3:
@@ -263,6 +264,18 @@ class GUI(QMainWindow, Ui_MainGUI):
         """
         pass
 
+
+    def test(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        self.log.print(1,'Test Execute')
+        opt= event.get_optional_parameter()
+        l = opt[0]
+        l.reverse()
+        print(l)
 
 
 

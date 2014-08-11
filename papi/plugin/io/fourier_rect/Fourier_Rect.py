@@ -42,7 +42,7 @@ import pickle
 
 class Fourier_Rect(plugin_base):
     max_approx = 300
-    amax = 10
+    amax = 20
     def start_init(self):
         self.t = 0
         self.amax = Fourier_Rect.amax
@@ -53,7 +53,7 @@ class Fourier_Rect(plugin_base):
         print(['Fourier: process id: ',os.getpid()] )
 
 
-        self.HOST = "localhost"
+        self.HOST = "130.149.155.73"
         self.PORT = 9999
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -76,7 +76,7 @@ class Fourier_Rect(plugin_base):
 
         self.sock.sendto(b'GET', (self.HOST, self.PORT) )
 
-        received = self.sock.recv(30000)
+        received = self.sock.recv(60000)
 
         data = pickle.loads(received)
 
