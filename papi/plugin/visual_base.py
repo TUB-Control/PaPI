@@ -41,7 +41,7 @@ class visual_base(plugin_base):
 
     _metaclass__= ABCMeta
 
-    def setConfig(self, name='Plot', sampleinterval=1, timewindow=1000., size=(300,300)):
+    def setConfig(self, name='Plot', sampleinterval=1, timewindow=1000., size=(150,150)):
 
         self.name = name
         #PlotWidget.__init__(self)

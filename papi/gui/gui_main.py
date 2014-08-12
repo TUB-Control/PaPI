@@ -138,21 +138,72 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.manager_io.close()
         self.close()
 
+
     def stefan(self):
         self.count += 1
 
-        if  self.count == 1:
+        op=6
+
+        if op==1:
+            # 1 Sinus IOP und 1 Plot
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
             self.core_queue.put(event)
-            #event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',2]) #id
-            #self.core_queue.put(event)
-
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 3
             self.core_queue.put(event)
             event = PapiEvent(3,0,'instr_event','subscribe',2)
             self.core_queue.put(event)
 
-        if self.count is 2:
+
+        if op==2:
+            # 2x Sinus und 2 Plot
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 4
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 5
+            self.core_queue.put(event)
+            event = PapiEvent(4,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+            event = PapiEvent(5,0,'instr_event','subscribe',3)
+            self.core_queue.put(event)
+
+        if op==3:
+            # 2x Sinus und 5 Plots
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 4
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 5
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 6
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 7
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 8
+            self.core_queue.put(event)
+            event = PapiEvent(4,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+            event = PapiEvent(5,0,'instr_event','subscribe',3)
+            self.core_queue.put(event)
+            event = PapiEvent(6,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+            event = PapiEvent(7,0,'instr_event','subscribe',3)
+            self.core_queue.put(event)
+            event = PapiEvent(8,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+
+
+        if op==4:
+            # Sinus und Plot, Fourier Server und Plot+Add
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 3
+            self.core_queue.put(event)
+
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 4
             self.core_queue.put(event)
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',4]) #id 5
@@ -160,16 +211,66 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 6
             self.core_queue.put(event)
-            #event = PapiEvent(7,0,'instr_event','subscribe',6)
+
+            event = PapiEvent(3,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+
             event = PapiEvent(6,0,'instr_event','subscribe',5)
             self.core_queue.put(event)
 
-        if self.count is 3:
-            event = PapiEvent(4,0,'instr_event','subscribe',2)
+
+        if op==5:
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 4
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 5
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 6
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5]) #id 7
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',6]) #id 8
             self.core_queue.put(event)
 
-        if self.count is 4:
-            event = PapiEvent(0,2,'instr_event','stop_plugin','')
+        if op==6:
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 4
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 5
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 6
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5]) #id 7
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',6]) #id 8
+            self.core_queue.put(event)
+
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 9
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 10
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 11
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 12
+            self.core_queue.put(event)
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 13
+            self.core_queue.put(event)
+
+            event = PapiEvent(9,0,'instr_event','subscribe',2)
+            self.core_queue.put(event)
+            event = PapiEvent(10,0,'instr_event','subscribe',3)
+            self.core_queue.put(event)
+            event = PapiEvent(11,0,'instr_event','subscribe',4)
+            self.core_queue.put(event)
+            event = PapiEvent(12,0,'instr_event','subscribe',7)
+            self.core_queue.put(event)
+            event = PapiEvent(13,0,'instr_event','subscribe',8)
             self.core_queue.put(event)
 
 
@@ -258,9 +359,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
-
-#NEU
-
         imp_path = plugin_orginal.path + ".py"
 
         loader = importlib.machinery.SourceFileLoader(plugin_orginal.name.lower(), imp_path)
@@ -270,11 +368,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         plugin = getattr(current_modul, class_name)()
 
-
-
-#NEU
-
-        #plugin = plugin_orginal
 
         dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
         dplugin.uname = uname
@@ -286,7 +379,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
-        dplugin.plugin.setConfig(name='Plot', sampleinterval=1, timewindow=600., size=(300,300))
+        dplugin.plugin.setConfig(name='Plot', sampleinterval=1, timewindow=600., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
         dplugin.plugin.get_sub_window().show()
