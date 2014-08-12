@@ -43,11 +43,15 @@ from papi.ui.gui.main import Ui_MainGUI
 from papi.gui.manager import Manager
 from papi.PapiEvent import PapiEvent
 from papi.data.DGui import DGui
-from yapsy.PluginManager import PluginManager
 from papi.ConsoleLog import ConsoleLog
+from papi.data.DOptionalData import DOptionalData
+
+from yapsy.PluginManager import PluginManager
+import importlib.machinery
+
+
 from multiprocessing import Queue
 import os
-import importlib.machinery
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -131,7 +135,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         pass
 
     def closeEvent(self, *args, **kwargs):
-        event = PapiEvent(self.gui_id, 0, 'instr_event','close_program','Reason')
+        opt = DOptionalData()
+        opt.reason = 'User clicked close Button'
+        event = PapiEvent(self.gui_id, 0, 'instr_event','close_program',opt)
         self.core_queue.put(event)
         self.manager_visual.close()
         self.manager_parameter.close()
@@ -142,7 +148,40 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        op=6
+        op=0
+
+        if op == 0:
+            # 1 Sinus IOP und 1 Plot
+            opt = DOptionalData()
+
+            opt.plugin_identifier = 'Fourier_Rect'
+            opt.plugin_uname = 'Four'
+
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
+            self.core_queue.put(event)
+
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Plot'
+            opt.plugin_uname = 'Plot1'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
+            self.core_queue.put(event)
+
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Add'
+            opt.plugin_uname = 'Add1'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 4
+            self.core_queue.put(event)
+
+            opt = DOptionalData()
+            opt.source_ID = 2
+            event = PapiEvent(4,0,'instr_event','subscribe',opt)
+            self.core_queue.put(event)
+
+            opt = DOptionalData()
+            opt.source_ID = 4
+            event = PapiEvent(3,0,'instr_event','subscribe',opt)
+            self.core_queue.put(event)
+
 
         if op==1:
             # 1 Sinus IOP und 1 Plot
@@ -331,9 +370,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         """
 
         dID = event.get_destinatioID()
+        opt = event.get_optional_parameter()
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         if dplugin != None:
-            dplugin.plugin.execute(event.get_optional_parameter())
+            dplugin.plugin.execute(opt.data)
             return 1
         else:
             self.log.print(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -346,12 +386,12 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
-        optPar = event.get_optional_parameter()
-        id = optPar[1]
-        plugin_identifier = optPar[0]
-        uname = optPar[2]
+        opt = event.get_optional_parameter()
+        id = opt.plugin_id
+        plugin_identifier = opt.plugin_identifier
+        uname = opt.plugin_uname
+        #print('GUI',uname)
 
-        array = None
         self.plugin_manager.collectPlugins()
         plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
 
@@ -377,12 +417,13 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         dplugin.plugin.start_init()
 
-        #self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
-
-        dplugin.plugin.setConfig(name='Plot', sampleinterval=1, timewindow=600., size=(150,150))
+        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=600., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
         dplugin.plugin.get_sub_window().show()
+
+        self.log.print(2,'create_plugin, Plugin with name  '+str(uname)+'  was started')
+
 
     def process_close_program_event(self,event):
         """
@@ -409,10 +450,7 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
         self.log.print(1,'Test Execute')
-        opt= event.get_optional_parameter()
-        l = opt[0]
-        l.reverse()
-        print(l)
+
 
 
 

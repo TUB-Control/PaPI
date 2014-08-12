@@ -27,9 +27,12 @@ Stefan Ruppin
 """
 
 from abc import ABCMeta, abstractmethod
-from yapsy.IPlugin import IPlugin
-from papi.PapiEvent import PapiEvent
 import os
+
+from yapsy.IPlugin import IPlugin
+
+from papi.PapiEvent import PapiEvent
+from papi.data.DOptionalData import DOptionalData
 
 class plugin_base(IPlugin):
 
@@ -50,13 +53,13 @@ class plugin_base(IPlugin):
         self.goOn = 1
 
         if self.start_init():
-            event = PapiEvent(self.__id__,0,'status_event','start_successfull','')
+            event = PapiEvent(self.__id__,0,'status_event','start_successfull',None)
             self._Core_event_queue__.put(event)
         else:
-            event = PapiEvent(self.__id__,0,'status_event','start_failed','')
+            event = PapiEvent(self.__id__,0,'status_event','start_failed',None)
             self._Core_event_queue__.put(event)
             self.goOn = 0
-            event = PapiEvent(self.__id__,0,'status_event','join_request','')
+            event = PapiEvent(self.__id__,0,'status_event','join_request',None)
             self._Core_event_queue__.put(event)
 
         while self.goOn:
@@ -67,17 +70,18 @@ class plugin_base(IPlugin):
                 if (op=='stop_plugin'):
                     self.quit()
                     self.goOn = 0
-                    event = PapiEvent(self.__id__,0,'status_event','join_request','')
+                    event = PapiEvent(self.__id__,0,'status_event','join_request',None)
                     self._Core_event_queue__.put(event)
                 if op=='pause_plugin':
                     self.pause()
                 if op=='resume_plugin':
                     self.resume()
                 if op=='check_alive_status':
-                    alive_event = PapiEvent(self.__id__,0,'status_event','alive','')
+                    alive_event = PapiEvent(self.__id__,0,'status_event','alive',None)
                     self._Core_event_queue__.put(alive_event)
                 if op=='new_data':
-                    self.execute(event.get_optional_parameter())
+                    opt = event.get_optional_parameter()
+                    self.execute(opt.data)
             except:
                 self.execute()
 

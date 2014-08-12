@@ -7,6 +7,8 @@
 
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
+from papi.data.DOptionalData import DOptionalData
+
 import time
 import math
 import numpy
@@ -36,7 +38,7 @@ class Sinus(plugin_base):
                 self.t += 0.1
 
 
-        event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
+        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=vec))
         self._Core_event_queue__.put(event)
         time.sleep(0.02)
 

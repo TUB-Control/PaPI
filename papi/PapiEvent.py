@@ -41,6 +41,8 @@ class PapiEvent(object):
         :type destID: int
         :param type_: event type, see list
         :type type_: string
+        :param optParameter: optinalParameterObject for information
+        :type: optParameter: DOptionlaData
         """
 
         self.__originID__ = orID
