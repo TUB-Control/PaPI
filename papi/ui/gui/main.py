@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Tue Aug 12 14:30:37 2014
+# Created: Tue Aug 12 14:56:54 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,11 +23,14 @@ class Ui_MainGUI(object):
         self.stefans_button_2 = QtGui.QPushButton(self.centralwidget)
         self.stefans_button_2.setObjectName("stefans_button_2")
         self.verticalLayout_2.addWidget(self.stefans_button_2)
-        self.scopeArea = QtGui.QMdiArea(self.centralwidget)
-        self.scopeArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scopeArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scopeArea.setObjectName("scopeArea")
-        self.verticalLayout_2.addWidget(self.scopeArea)
+        self.lineEdit = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit.setObjectName("lineEdit")
+        self.verticalLayout_2.addWidget(self.lineEdit)
+        self.stefans_text_field = QtGui.QMdiArea(self.centralwidget)
+        self.stefans_text_field.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.stefans_text_field.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.stefans_text_field.setObjectName("stefans_text_field")
+        self.verticalLayout_2.addWidget(self.stefans_text_field)
         MainGUI.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainGUI)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1084, 25))
