@@ -82,6 +82,9 @@ class plugin_base(IPlugin):
                 if op=='new_data':
                     opt = event.get_optional_parameter()
                     self.execute(opt.data)
+                if op=='set_parameter':
+                    opt = event.get_optional_parameter()
+                    self.set_parameter(opt.parameter_list)
             except:
                 self.execute()
 
@@ -93,7 +96,6 @@ class plugin_base(IPlugin):
     @abstractmethod
     def start_init(self):
         raise Exception("Unable to create an instance of abstract class")
-
 
     @abstractmethod
     def pause(self):
@@ -108,7 +110,7 @@ class plugin_base(IPlugin):
         raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
-    def set_parameter(self):
+    def set_parameter(self,para_list):
         raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod

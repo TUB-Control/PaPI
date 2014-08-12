@@ -107,6 +107,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.actionRP_Visual.triggered.connect(self.rp_visual)
 
         self.stefans_button.clicked.connect(self.stefan)
+        self.stefans_button_2.clicked.connect(self.stefan_at_his_best)
 
     def menu_license(self):
         pass
@@ -145,6 +146,13 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
 
 
+    def stefan_at_his_best(self):
+        opt = DOptionalData()
+        opt.plugin_id =4
+        opt.parameter_list = 8/300
+        event = PapiEvent(3,0,'instr_event','set_parameter',opt)
+        self.core_queue.put(event)
+
     def stefan(self):
         self.count += 1
 
@@ -181,6 +189,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             opt.source_ID = 4
             event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
+
 
 
         if op==1:
@@ -417,7 +426,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         dplugin.plugin.start_init()
 
-        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=600., size=(150,150))
+        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=1000., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
         dplugin.plugin.get_sub_window().show()

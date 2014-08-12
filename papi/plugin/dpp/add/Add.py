@@ -43,9 +43,12 @@ class Add(plugin_base):
     def start_init(self):
         self.t = 0
         print(['ADD: process id: ',os.getpid()] )
+        self.approx_max = 200
+        self.fac= 1
         self.amax = 20
-        self.approx = 200
+        self.approx = self.approx_max*self.fac
         self.vec = numpy.zeros(self.amax*2)
+
         return True
 
     def pause(self):
@@ -68,8 +71,10 @@ class Add(plugin_base):
         event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
         self._Core_event_queue__.put(event)
 
-    def set_parameter(self):
-        pass
+    def set_parameter(self,para_list):
+        #TODO change with whole list setup
+        self.fac = para_list
+        self.approx = round(self.approx_max*self.fac)
 
     def quit(self):
         print('Add: will quit')
@@ -78,4 +83,4 @@ class Add(plugin_base):
         return 'DPP'
 
     def get_output_sizes(self):
-        return [2,50]
+        return None
