@@ -42,7 +42,7 @@ class Plot(visual_base):
 
         if self.counter > self.max_counter:
             self.add_data(t, y)
-           # self.update()
+            self.update()
             self.counter = 0
 
         self.counter += 1

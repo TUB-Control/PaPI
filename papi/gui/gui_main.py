@@ -390,6 +390,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         id = opt.plugin_id
         plugin_identifier = opt.plugin_identifier
         uname = opt.plugin_uname
+        #print('GUI',uname)
 
         self.plugin_manager.collectPlugins()
         plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
@@ -416,12 +417,13 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         dplugin.plugin.start_init()
 
-        #self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
-
         dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=600., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
         dplugin.plugin.get_sub_window().show()
+
+        self.log.print(2,'create_plugin, Plugin with name  '+str(uname)+'  was started')
+
 
     def process_close_program_event(self,event):
         """

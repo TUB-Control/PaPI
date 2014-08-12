@@ -71,7 +71,7 @@ class visual_base(plugin_base):
         self._subWindow.setWidget(self._plotWidget)
 
 
-        QtCore.QTimer.singleShot(sampleinterval,self.update())
+
 
     def update(self):
         self.x[:] = self.tDatabuffer
