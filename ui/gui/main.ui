@@ -23,6 +23,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="stefans_button_2">
+      <property name="text">
+       <string>Wayne</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QMdiArea" name="scopeArea">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
