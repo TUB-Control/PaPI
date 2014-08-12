@@ -67,7 +67,8 @@ class Core:
                                            'stop_plugin': self.__process_stop_plugin__,
                                             'close_program':self.__process_close_programm__,
                                             'subscribe': self.__process_subscribe__,
-                                            'unsubscribe':self.__process_unsubsribe__
+                                            'unsubscribe':self.__process_unsubsribe__,
+                                            'set_parameter': self.__process_set_parameter__
         }
 
         self.msg_lvl = 1
@@ -464,3 +465,23 @@ class Core:
             else:
                 self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of id '+str(optData.source_ID)+' failed')
                 return -1
+
+
+    def __process_set_parameter__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        opt = event.get_optional_parameter()
+        pl_id = opt.plugin_id
+
+        dplugin =  self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin != None:
+            dplugin.queue.put(event)
+            return 1
+        else:
+            self.log.print(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')
+            return -1
+

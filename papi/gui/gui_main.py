@@ -182,6 +182,13 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
 
+            pt = DOptionalData()
+            opt.plugin_id =4
+            opt.parameter_list = 0.2
+            event = PapiEvent(3,0,'instr_event','set_parameter',opt)
+            self.core_queue.put(event)
+
+
 
         if op==1:
             # 1 Sinus IOP und 1 Plot
@@ -417,7 +424,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         dplugin.plugin.start_init()
 
-        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=600., size=(150,150))
+        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=1000., size=(150,150))
 
         self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
         dplugin.plugin.get_sub_window().show()

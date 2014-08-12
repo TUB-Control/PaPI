@@ -16,7 +16,7 @@ class Plot(visual_base):
 
     def start_init(self):
         print("start_init")
-        self.max_counter = 1
+        self.max_counter = 0
         self.counter = 0
 
         pass
