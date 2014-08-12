@@ -413,6 +413,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         buffer = 1
 
         dplugin.plugin.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
+
+        dplugin.plugin.start_init()
+
         #self.log.print(2,'create_plugin, Plugin with name  '+str(dplugin.plugin.name)+'  was started')
 
         dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=600., size=(150,150))
