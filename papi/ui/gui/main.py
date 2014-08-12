@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Thu Jul 31 13:23:00 2014
+# Created: Tue Aug 12 14:30:37 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,6 +20,9 @@ class Ui_MainGUI(object):
         self.stefans_button = QtGui.QPushButton(self.centralwidget)
         self.stefans_button.setObjectName("stefans_button")
         self.verticalLayout_2.addWidget(self.stefans_button)
+        self.stefans_button_2 = QtGui.QPushButton(self.centralwidget)
+        self.stefans_button_2.setObjectName("stefans_button_2")
+        self.verticalLayout_2.addWidget(self.stefans_button_2)
         self.scopeArea = QtGui.QMdiArea(self.centralwidget)
         self.scopeArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.scopeArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -70,6 +73,7 @@ class Ui_MainGUI(object):
     def retranslateUi(self, MainGUI):
         MainGUI.setWindowTitle(QtGui.QApplication.translate("MainGUI", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.stefans_button.setText(QtGui.QApplication.translate("MainGUI", "Action", None, QtGui.QApplication.UnicodeUTF8))
+        self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Wayne", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("MainGUI", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAvailablePlugins.setTitle(QtGui.QApplication.translate("MainGUI", "AvailablePlugins", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRunningPlugins.setTitle(QtGui.QApplication.translate("MainGUI", "RunningPlugins", None, QtGui.QApplication.UnicodeUTF8))
