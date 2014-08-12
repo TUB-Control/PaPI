@@ -30,10 +30,10 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit"/>
+     <widget class="QLineEdit" name="stefans_text_field"/>
     </item>
     <item>
-     <widget class="QMdiArea" name="stefans_text_field">
+     <widget class="QMdiArea" name="scopeArea">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
