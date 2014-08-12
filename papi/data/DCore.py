@@ -25,14 +25,10 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.plugin import plugin_base
+from papi.data.DPlugin import DPlugin, DBlock
 
 __author__ = 'control'
 
-from multiprocessing import Process, Queue
-
-from papi.data.dcore.DPlugin import DPlugin
-import uuid
 import copy
 
 class DCore():
@@ -123,6 +119,19 @@ class DCore():
         else:
             return None
 
+    def get_dblock_by_id(self, dblock_id):
+        """
+        Returns DBlock object by ID
+
+        :param dblock_id: ID of an DBlock object
+        :return DBlock:
+        :rtype: DBlock
+        """
+
+        for dplugin_id in self.__DPlugins:
+            d_pl = self.__DPlugins[dplugin_id]
+            d_bl = d_pl.get_block_by_id()
+
     def get_dplugin_by_uname(self, plugin_uname):
         """
         Returns DPlugin object by uname
@@ -149,31 +158,45 @@ class DCore():
 
         return self.__DPlugins
 
-    def subscribe(self, target_id, source_id):
+    def subscribe(self, dplugin_id, dblock_id):
         """
 
-        :param target_id:
-        :param source_id:
-        :return:
-        """
-        #TODO Fehlerbehandlung falls target/source nicht existiert
-        target = self.get_dplugin_by_id(target_id)
-        source = self.get_dplugin_by_id(source_id)
-
-        return target.subscribe(source)
-
-    def unsubscribe(self, target_id, source_id):
-        """
-
-        :param target_id:
-        :param source_id:
+        :param dplugin_id: DPlugin
+        :param dblock_id: DBlock
         :return:
         """
 
-        target = self.get_dplugin_by_id(target_id)
-        source = self.get_dplugin_by_id(source_id)
+        dplugin = self.get_dplugin_by_id(dplugin_id)
 
-        return target.unsubscribe(source)
+        if dplugin is None:
+            return None
+
+        dblock = self.get_dblock_by_id(dblock_id)
+
+        if dblock is None:
+            return None
+
+        return dplugin.subscribe(dblock)
+
+    def unsubscribe(self, dplugin_id, dblock_id):
+        """
+
+        :param dplugin_id: DPlugin
+        :param dblock_id: DBlock
+        :return:
+        """
+
+        dplugin = self.get_dplugin_by_id(dplugin_id)
+
+        if dplugin is None:
+            return None
+
+        dblock = self.get_dblock_by_id(dblock_id)
+
+        if dblock is None:
+            return None
+
+        return dplugin.unsubscribe(dblock)
 
     def unsubscribe_all(self, dplugin_id):
         """
@@ -203,6 +226,8 @@ class DCore():
         """
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
+
+        #TODO: dblock.rm_all_subscribers fertig machen !!
 
         subscribers = copy.copy(dplugin.get_subscribers())
 

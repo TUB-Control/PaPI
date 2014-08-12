@@ -30,54 +30,103 @@ __author__ = 'knuths'
 
 import unittest
 
-from papi.data.DCore import DCore
-from papi.data.DCore import DPlugin
-
+from papi.data.DPlugin import DPlugin, DBlock
+from papi.data.DParameter import DParameter
 
 class TestDPlugin(unittest.TestCase):
 
     def setUp(self):
         pass
 
-    def test_add_subscriber(self):
+    def test_subscribtions(self):
+        dpl_1 = DPlugin()
+        dpl_1.id = 1
+        dpl_2 = DPlugin()
+        dpl_2.id = 2
 
-        dp_1 = DPlugin()
-        dp_2 = DPlugin()
-        dp_1.id = 1
-        dp_2.id = 2
+        dbl_1 = DBlock(dpl_2,1,5)
+        dbl_1.id = 3
+        dbl_2 = DBlock(dpl_2,1,5)
+        dbl_2.id = 4
 
-        self.assertEqual(len(dp_1.get_subscribers().keys()), 0)
-        dp_1.add_subscriber(dp_2)
-        self.assertEqual(len(dp_1.get_subscribers().keys()), 1)
+        #Check: subscribe DBlocks
+        self.assertTrue(dpl_1.subscribe(dbl_1))
+        self.assertTrue(dpl_1.subscribe(dbl_2))
 
-    def test_subscribe(self):
+        self.assertFalse(dpl_1.subscribe(dbl_1))
+        self.assertFalse(dpl_1.subscribe(dbl_2))
+
+        #Check: count of subscribtions
+        self.assertEqual(len(dpl_1.get_subscribtions().keys()), 2)
+        #Check: count of subscribers
+        self.assertEqual(len(dbl_1.get_subscribers().keys()), 1)
+        self.assertEqual(len(dbl_1.get_subscribers().keys()),1)
+
+        #Check: unsubscribe DBlock
+        self.assertTrue(dpl_1.unsubscribe(dbl_1))
+
+        #Check: count of subscribtions
+        self.assertEqual(len(dpl_1.get_subscribtions().keys()), 1)
+        #Check: count of subscribers
+        self.assertEqual(len(dbl_1.get_subscribers().keys()), 0)
+        self.assertEqual(len(dbl_2.get_subscribers().keys()), 1)
+
+
         pass
 
-    def test_rm_subscriber(self):
+    def test_parameters(self):
+        dpl_1 = DPlugin()
+        dpl_1.id = 1
 
-        dp_1 = DPlugin()
-        dp_2 = DPlugin()
-        dp_1.id = 1
-        dp_2.id = 2
+        dp_1 = DParameter(1)
+        dp_1.id = 2
+        dp_2 = DParameter(2)
+        dp_2.id = 3
 
-        dp_1.add_subscriber(dp_2)
+        #check: add Parameter
+        self.assertTrue(dpl_1.add_parameter(dp_1))
+        self.assertTrue(dpl_1.add_parameter(dp_2))
 
-        dp_2.add_subscriber(dp_1)
+        self.assertFalse(dpl_1.add_parameter(dp_1))
+        self.assertFalse(dpl_1.add_parameter(dp_2))
 
-        self.assertEqual(len(dp_1.get_subscribers().keys()),1)
-        self.assertEqual(len(dp_2.get_subcribtions().keys()),1)
+        #Check: count of parameters
 
-        dp_1.rm_subscriber(dp_2)
+        self.assertEqual(len(dpl_1.get_parameters().keys()), 2)
 
-        self.assertEqual(len(dp_1.get_subscribers().keys()),0)
-        self.assertEqual(len(dp_2.get_subcribtions().keys()),0)
+        #Check: rm parameter
 
-        self.assertEqual(len(dp_2.get_subscribers().keys()),1)
-        self.assertEqual(len(dp_1.get_subcribtions().keys()),1)
+        self.assertTrue(dpl_1.rm_parameter(dp_1))
+        self.assertEqual(len(dpl_1.get_parameters().keys()), 1)
+        self.assertTrue(dpl_1.rm_parameter(dp_2))
+        self.assertEqual(len(dpl_1.get_parameters().keys()), 0)
 
-    def test_unsubscribe(self):
-        pass
+    def test_dblocks(self):
+        dpl_1 = DPlugin()
+        dpl_1.id = 1
 
+        dbl_1 = DBlock(dpl_1,1,5)
+        dbl_1.id = 3
+        dbl_2 = DBlock(dpl_1,1,5)
+        dbl_2.id = 4
+
+        #check: add Parameter
+        self.assertTrue(dpl_1.add_dblock(dbl_1))
+        self.assertTrue(dpl_1.add_dblock(dbl_2))
+
+        self.assertFalse(dpl_1.add_dblock(dbl_1))
+        self.assertFalse(dpl_1.add_dblock(dbl_2))
+
+        #Check: count of parameters
+
+        self.assertEqual(len(dpl_1.get_dblocks().keys()), 2)
+
+        #Check: rm parameter
+
+        self.assertTrue(dpl_1.rm_dblock(dbl_1))
+        self.assertEqual(len(dpl_1.get_dblocks().keys()), 1)
+        self.assertTrue(dpl_1.rm_dblock(dbl_2))
+        self.assertEqual(len(dpl_1.get_dblocks().keys()), 0)
 
 
 if __name__ == "__main__":

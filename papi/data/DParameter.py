@@ -27,3 +27,16 @@ Sven Knuth
 """
 
 __author__ = 'knuths'
+
+from papi.data.DObject import DObject
+
+
+class DParameter(DObject):
+
+    def __init__(self, ptype, default=0, prange=0, live=1):
+        super(DParameter, self).__init__()
+
+        self.type = ptype
+        self.default = default
+        self.range = prange
+        self.live = live

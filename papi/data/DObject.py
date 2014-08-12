@@ -28,6 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
+
 class DObject():
 
     def __init__(self):
