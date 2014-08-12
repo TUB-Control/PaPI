@@ -7,6 +7,8 @@
 
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
+from papi.data.DOptionalData import DOptionalData
+
 import time
 import math
 import numpy
@@ -35,7 +37,8 @@ class CPU_Load(plugin_base):
 
         self.t += 0.01
 
-        event = PapiEvent(self.__id__,0,'data_event','new_data',vec)
+        opt = DOptionalData(DATA=vec)
+        event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
         self._Core_event_queue__.put(event)
         time.sleep(0.01)
 

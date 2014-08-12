@@ -29,17 +29,20 @@ Stefan Ruppin
 __author__ = 'control'
 
 import os
+import time
+from multiprocessing import Process, Queue, Manager
 
 from yapsy.PluginManager import PluginManager
+
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.dcore.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
-import time
+from papi.data.DOptionalData import DOptionalData
 
-from multiprocessing import Process, Queue, Manager
+
 
 
 class Core:
@@ -67,7 +70,7 @@ class Core:
                                             'unsubscribe':self.__process_unsubsribe__
         }
 
-        self.msg_lvl = 0
+        self.msg_lvl = 1
         self.__debugLevel__ = 1
         self.__debug_var = ''
 
@@ -243,8 +246,9 @@ class Core:
                 targets = dplug.get_subscribers()
                 for tar_plug in targets:
                     plug = targets[tar_plug]
-                    #TODO: vllt. nur das ankommende Even benutzen und die IDs aendern
-                    event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())
+                    #TODO: TESTE diese Anspassung
+                    #event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())/
+                    event.__destID__=plug.id
                     plug.queue.put(event)
                 return 1
             else:
@@ -275,72 +279,73 @@ class Core:
     def __process_create_plugin__(self,event):
         """
          :param event: event to process
+         :param optData: optional Data Object of event
          :type event: PapiEvent
+         :type optData: DOptionalData
         """
         self.__debug_var__ = 'create_plugin'
 
 
         #decide which Plugin to start
-        opt = event.get_optional_parameter()
-        plugin_identifier = opt[0]
-        plugin = self.plugin_manager.getPluginByName(plugin_identifier)
+        optData = event.get_optional_parameter()
+
+        plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
 
         if plugin == None:
-            self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
+            self.log.print(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
             return -1
 
         #creates a new plugin id
         plugin_id = self.core_data.create_id()
 
 
-        if plugin.plugin_object.get_type()== 'IOP':
+        if plugin.plugin_object.get_type() != 'ViP':
             plugin_queue = Queue()
-            size = plugin.plugin_object.get_output_sizes()
-            memory_size = size[0] * size[1]
 
+            if plugin.plugin_object.get_type()=='DPP':
+                eventTriggered = True
+            else:
+                eventTriggered = False
 
             # create Process object for new plugin
-            PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,False) )
+            PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,eventTriggered ) )
             PluginProcess.start()
 
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
-            dplug.uname = event.get_optional_parameter()
+            dplug.uname = optData.plugin_uname
 
-        if plugin.plugin_object.get_type()== 'ViP':
+        else:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
-            dplug.uname = event.get_optional_parameter()
+            dplug.uname = optData.plugin_uname
 
-            man = Manager()
-            l = man.list(range(100))
-            #d = man.Array('d',100)
-            #d[0]=100
-
-            event = PapiEvent(0,plugin_id,'test','test',[])
+            #event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
+            opt = DOptionalData()
+            opt.plugin_identifier = plugin.name
+            opt.plugin_id = plugin_id
+            opt.plugin_uname = dplug.uname
+            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
 
-            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
-            self.gui_event_queue.put(event)
-
-        if plugin.plugin_object.get_type()== 'DPP':
-            sub_id = opt[1]
-            source_plugin = self.core_data.get_dplugin_by_id(sub_id)
-            if source_plugin != None:
-                plugin_queue = Queue()
-
-
-                # create Process object for new plugin
-                PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,True) )
-                PluginProcess.start()
-                #Add new Plugin process to DCore
-                dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
-                dplug.uname = event.get_optional_parameter()
-                #subscribe
-                print(source_plugin.id)
-                self.core_data.subscribe(dplug.id,source_plugin.id)
-            else:
-                self.log.print(1,'create_plugin, DataProcessingPlugin cannont subscribe id '+str(sub_id))
-
+        #TODO: DA keine Buffer mehr da, ueberpruefe Notwendigkeit der Unterscheidung
+        # if plugin.plugin_object.get_type()== 'DP1P':
+        #     sub_id = opt[1]
+        #     source_plugin = self.core_data.get_dplugin_by_id(sub_id)
+        #     if source_plugin != None:
+        #         plugin_queue = Queue()
+        #
+        #
+        #         # create Process object for new plugin
+        #         PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,True) )
+        #         PluginProcess.start()
+        #         #Add new Plugin process to DCore
+        #         dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
+        #         dplug.uname =  optData.plugin_uname
+        #         #subscribe
+        #         print(source_plugin.id)
+        #         self.core_data.subscribe(dplug.id,source_plugin.id)
+        #     else:
+        #         self.log.print(1,'create_plugin, DataProcessingPlugin cannont subscribe id '+str(sub_id))
 
 
 
@@ -401,7 +406,7 @@ class Core:
             dplugin = all_plugins[dplugin_key]
             # just send event to plugins running in own process
             if dplugin.own_process:
-                event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin','')
+                event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin',None)
                 dplugin.queue.put(event)
             else:
                 toDelete.append(dplugin)
@@ -418,7 +423,8 @@ class Core:
         :type dplugin_source: DPlugin
         """
         oID = event.get_originID()
-        sID = event.get_optional_parameter()
+        opt = event.get_optional_parameter()
+        sID = opt.source_ID
 
         if self.core_data.subscribe(oID,sID):
             return 1
@@ -443,8 +449,8 @@ class Core:
         """
 
         oID = event.get_originID()
-        para = event.get_optional_parameter()
-        if para == 'all':
+        optData = event.get_optional_parameter()
+        if optData.unsubscribe_all:
             # aLL: unsubscribe from all sources of id oID
             if self.core_data.unsubscribe_all(oID):
                 return 1
@@ -453,8 +459,8 @@ class Core:
                 return -1
         else:
             # unsubsribe for oID from plugin with id para
-            if self.core_data.unsubscribe(oID,para):
+            if self.core_data.unsubscribe(oID,optData.source_ID):
                 return 1
             else:
-                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of id '+str(para)+' failed')
+                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of id '+str(optData.source_ID)+' failed')
                 return -1

@@ -31,6 +31,8 @@ __author__ = 'ruppins'
 
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
+from papi.data.DOptionalData import DOptionalData
+
 import time
 import math
 import numpy
@@ -63,7 +65,7 @@ class Add(plugin_base):
             for k in range(self.approx):
                 self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
 
-        event = PapiEvent(self.__id__,0,'data_event','new_data',self.vec)
+        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
         self._Core_event_queue__.put(event)
 
     def set_parameter(self):

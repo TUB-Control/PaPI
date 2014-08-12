@@ -30,6 +30,8 @@ __author__ = 'knuths'
 
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
+from papi.data.DOptionalData import DOptionalData
+
 import time
 import math
 import numpy
@@ -81,9 +83,8 @@ class Fourier_Rect(plugin_base):
         data = pickle.loads(received)
 
 
+        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', DOptionalData(DATA=data))
 
-        #self.__shared_memory__[:]=self.vec
-        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', data)
 
         self._Core_event_queue__.put(event)
 
