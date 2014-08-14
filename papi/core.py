@@ -37,7 +37,7 @@ from yapsy.PluginManager import PluginManager
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
-from papi.data.dcore.DPlugin import DPlugin
+from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
 from papi.data.DOptionalData import DOptionalData
