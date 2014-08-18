@@ -80,6 +80,7 @@ class GUI(QMainWindow, Ui_MainGUI):
                                 'close_programm': self.process_close_program_event,
                                 'check_alive_status': self.process_check_alive_status,
                                 'create_plugin':self.process_create_plugin,
+                                'update_meta': self.process_update_meta,
                                 'test': self.test
         }
 
@@ -146,6 +147,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
 
 
+
+
+
     def stefan_at_his_best(self):
         opt = DOptionalData()
         opt.plugin_id =4
@@ -194,11 +198,21 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         if op==1:
             # 1 Sinus IOP und 1 Plot
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Sinus'
+            opt.plugin_uname = 'Sinus1'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 3
+
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Plot'
+            opt.plugin_uname = 'Plot'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
             self.core_queue.put(event)
-            event = PapiEvent(3,0,'instr_event','subscribe',2)
+
+            opt =  DOptionalData
+            opt.source_ID = 2
+            event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
 
 
@@ -344,8 +358,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         finally:
             QtCore.QTimer.singleShot(40,self.gui_working)
 
-
-
     def gui_working_v2(self):
         """
          :type event: PapiEvent
@@ -366,6 +378,8 @@ class GUI(QMainWindow, Ui_MainGUI):
                 self.process_event[op](event)
 
         QtCore.QTimer.singleShot(40,self.gui_working)
+
+
 
 
 
@@ -461,7 +475,25 @@ class GUI(QMainWindow, Ui_MainGUI):
         """
         self.log.print(1,'Test Execute')
 
+    def process_update_meta(self,event):
+        """
+         :param event: event to process
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        opt = event.get_optional_parameter()
+        pl_id = event.get_originID()
 
+        dplugin = self.gui_data.get_dplugin_by_id(pl_id)
+        if dplugin != None:
+            dplugin.update_meta(opt.plugin_object)
+        else:
+            self.log.print(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
+
+        # blocks = dplugin.get_dblocks()
+        # for b in blocks:
+        #     block = blocks[b]
+        #     print(block.name)
 
 
 

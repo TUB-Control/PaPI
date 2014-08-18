@@ -60,7 +60,8 @@ class Core:
         }
         self.__process_data_event_l__ = {   'new_data': self.__process_new_data__,
                                             'get_output_size': self.__process_get_output_size__,
-                                            'response_output_size': self.__process_response_output_size__
+                                            'response_output_size': self.__process_response_output_size__,
+                                            'new_block': self.__process_new_block__
         }
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
@@ -120,8 +121,9 @@ class Core:
 
 
 
-    # ------- Event processing initial stage ---------
 
+
+    # ------- Event processing initial stage ---------
     def __process_event__(self,event):
         """
          :param event: event to process
@@ -130,9 +132,7 @@ class Core:
         t = event.get_eventtype()
         self.__process_event_by_type__[t](event)
 
-
     # ------- Event processing first stage ---------
-
     def __process_status_event__(self,event):
         """
          :param event: event to process
@@ -160,6 +160,9 @@ class Core:
 
 
 
+
+
+
     # ------- Event processing second stage: status events ---------
 
     def __process_start_successfull__(self,event):
@@ -175,7 +178,6 @@ class Core:
         else:
             self.log.print(1,'start_successfull_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
-
 
 
     def __process_start_failed__(self,event):
@@ -230,6 +232,11 @@ class Core:
             return -1
 
 
+
+
+
+
+
     # ------- Event processing second stage: data events ---------
 
     def __process_new_data__(self,event):
@@ -242,20 +249,34 @@ class Core:
 
         if self.gui_alive:
             oID = event.get_originID()
+            opt = event.get_optional_parameter()
+
             dplug = self.core_data.get_dplugin_by_id(oID)
             if dplug != None:
-                targets = dplug.get_subscribers()
-                for tar_plug in targets:
-                    plug = targets[tar_plug]
-                    #TODO: TESTE diese Anspassung
-                    #event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())/
-                    event.__destID__=plug.id
-                    plug.queue.put(event)
+                block= dplug.get_dblock_by_name(opt.block_name)
+                subscriber = block.get_subscribers()
+                for sub_id in subscriber:
+                    pl = self.core_data.get_dplugin_by_id(sub_id)
+                    #TODO: just 1 Event for multiple VIP...
+                    new_event = PapiEvent(oID,pl.id,'data_event','new_data',event.get_optional_parameter())
+                    pl.queue.put(new_event)
                 return 1
             else:
                 self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
 
+            # if dplug != None:
+            #     targets = dplug.get_subscribers()
+            #     for tar_plug in targets:
+            #         plug = targets[tar_plug]
+            #         #TODO: TESTE diese Anspassung
+            #         #event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())/
+            #         event.__destID__=plug.id
+            #         plug.queue.put(event)
+            #     return 1
+            # else:
+            #     self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
+            #     return -1
 
 
     def __process_get_output_size__(self,event):
@@ -266,6 +287,7 @@ class Core:
         self.__debug_var__ = 'get_output_size'
         return True
 
+
     def __process_response_output_size__(self,event):
         """
          :param event: event to process
@@ -273,6 +295,12 @@ class Core:
         """
         self.__debug_var__ = 'response_output_size'
         return True
+
+
+
+
+
+
 
 
     # ------- Event processing second stage: instr events ---------
@@ -328,33 +356,7 @@ class Core:
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
 
-        #TODO: DA keine Buffer mehr da, ueberpruefe Notwendigkeit der Unterscheidung
-        # if plugin.plugin_object.get_type()== 'DP1P':
-        #     sub_id = opt[1]
-        #     source_plugin = self.core_data.get_dplugin_by_id(sub_id)
-        #     if source_plugin != None:
-        #         plugin_queue = Queue()
-        #
-        #
-        #         # create Process object for new plugin
-        #         PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,True) )
-        #         PluginProcess.start()
-        #         #Add new Plugin process to DCore
-        #         dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
-        #         dplug.uname =  optData.plugin_uname
-        #         #subscribe
-        #         print(source_plugin.id)
-        #         self.core_data.subscribe(dplug.id,source_plugin.id)
-        #     else:
-        #         self.log.print(1,'create_plugin, DataProcessingPlugin cannont subscribe id '+str(sub_id))
-
-
-
-
         return True
-
-
-
 
 
     def __process_stop_plugin__(self,event):
@@ -374,11 +376,6 @@ class Core:
         else:
             self.log.print(1,'stop_plugin, plugin with id '+str(id)+' not found')
             return -1
-
-
-
-
-        return True
 
 
     def __process_close_programm__(self,event):
@@ -423,16 +420,7 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-        oID = event.get_originID()
-        opt = event.get_optional_parameter()
-        sID = opt.source_ID
-
-        if self.core_data.subscribe(oID,sID):
-            return 1
-        else:
-            self.log.print(1,'subscribe, uubscription for id '+str(oID)+' of id '+str(sID)+' failed')
-            return -1
-
+        pass
 
 
     def __process_unsubsribe__(self,event):
@@ -448,23 +436,7 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-
-        oID = event.get_originID()
-        optData = event.get_optional_parameter()
-        if optData.unsubscribe_all:
-            # aLL: unsubscribe from all sources of id oID
-            if self.core_data.unsubscribe_all(oID):
-                return 1
-            else:
-                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of all failed')
-                return -1
-        else:
-            # unsubsribe for oID from plugin with id para
-            if self.core_data.unsubscribe(oID,optData.source_ID):
-                return 1
-            else:
-                self.log.print(1,'UNsubscribe, unsubscription for id '+str(oID)+' of id '+str(optData.source_ID)+' failed')
-                return -1
+        pass
 
 
     def __process_set_parameter__(self,event):
@@ -485,3 +457,25 @@ class Core:
             self.log.print(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')
             return -1
 
+
+    def __process_new_block__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        opt = event.get_optional_parameter()
+        pl_id = event.get_originID()
+        dplugin =  self.core_data.get_dplugin_by_id(pl_id)
+
+        if dplugin != None:
+            for b in opt.block_list:
+                dplugin.add_dblock(b)
+            o = DOptionalData()
+            o.plugin_object = dplugin.get_meta()
+            eventMeta = PapiEvent(pl_id,self.gui_id,'instr_event','update_meta',o)
+            self.gui_event_queue.put(eventMeta)
+        else:
+            self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
+        return -1

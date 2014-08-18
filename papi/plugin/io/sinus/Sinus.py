@@ -10,6 +10,7 @@ from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
 from papi.data.DPlugin import DBlock
 
+from copy import deepcopy
 
 import time
 import math
@@ -26,11 +27,13 @@ class Sinus(plugin_base):
         self.amax = 100
 
 
-        block1 = DBlock(None,1,10,'Sin')
+        block1 = DBlock(None,1,10,'SinMit_f1')
         opt = DOptionalData()
-        opt.
+        opt.block_list = [block1]
         event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
         self._Core_event_queue__.put(event)
+
+        print("Sinus  ", opt.block_list[0].name)
 
 
 
@@ -51,8 +54,7 @@ class Sinus(plugin_base):
                 self.t += 0.1
 
 
-        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=vec))
-        self._Core_event_queue__.put(event)
+        self.send_new_data(vec,'SinMit_f1')
         time.sleep(0.02)
 
     def set_parameter(self):

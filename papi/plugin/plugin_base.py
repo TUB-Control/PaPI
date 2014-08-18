@@ -89,8 +89,10 @@ class plugin_base(IPlugin):
                 self.execute()
 
 
-    def send_new_data(self,data):
-        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=data))
+    def send_new_data(self,data,block_name):
+        opt = DOptionalData(DATA=data)
+        opt.block_name = block_name
+        event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
         self._Core_event_queue__.put(event)
 
     @abstractmethod
