@@ -31,7 +31,7 @@ __author__ = 'ruppins'
 
 class DOptionalData(object):
 
-    def __init__(self,DATA=None,pluginID=None,):
+    def __init__(self,DATA=None,pluginID=None):
         self.data = DATA
         self.plugin_identifier = None
         self.plugin_uname = None
@@ -40,6 +40,9 @@ class DOptionalData(object):
         self.unsubscribe_all = None
         self.reason = None
         self.parameter_list = None
+        self.block_name = None
+        self.block_list = None
+        self.plugin_object = None
 
 
 
