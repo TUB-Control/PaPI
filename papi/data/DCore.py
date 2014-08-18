@@ -56,6 +56,7 @@ class DCore():
         :param queue: Event queue needed for events which should be received by this plugin
         :param plugin: Plugin object
         :param plugin_id: ID of this plugin
+        :param id: ID for the new DPlugin
         :return: Returns the data object DPlugin
         :rtype: DPlugin
         """
@@ -119,18 +120,6 @@ class DCore():
         else:
             return None
 
-    def get_dblock_by_id(self, dblock_id):
-        """
-        Returns DBlock object by ID
-
-        :param dblock_id: ID of an DBlock object
-        :return DBlock:
-        :rtype: DBlock
-        """
-
-        for dplugin_id in self.__DPlugins:
-            d_pl = self.__DPlugins[dplugin_id]
-            d_bl = d_pl.get_block_by_id()
 
     def get_dplugin_by_uname(self, plugin_uname):
         """
@@ -158,85 +147,115 @@ class DCore():
 
         return self.__DPlugins
 
-    def subscribe(self, dplugin_id, dblock_id):
+    def subscribe(self, subscriber_id, target_id, dblock_name):
         """
 
-        :param dplugin_id: DPlugin
-        :param dblock_id: DBlock
+        :param subscriber_id: DPlugin which likes to subscribes dblock
+        :param target_id: DPlugin which contains the dblock for subscribtion
+        :param dblock_name: DBlock for subscribtion
         :return:
         """
 
-        dplugin = self.get_dplugin_by_id(dplugin_id)
+        #Get Susbcriber DPlugin
+        subscriber = self.get_dplugin_by_id(subscriber_id)
 
-        if dplugin is None:
-            return None
+        if subscriber is None:
+            return False
 
-        dblock = self.get_dblock_by_id(dblock_id)
+        #Get Target DPlugin
+        target = self.get_dplugin_by_id(target_id)
+
+        if target is None:
+            return False
+
+        dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
-            return None
+            return False
 
-        dplugin.subscribe(dblock)
-        dblock.add_subscribers(dplugin)
+        #Create relation between DPlugin and DBlock
+        subscriber.subscribe(dblock)
+        dblock.add_subscribers(subscriber)
 
-    def unsubscribe(self, dplugin_id, dblock_id):
+        return True
+
+    def unsubscribe(self, subscriber_id, target_id, dblock_name):
         """
 
-        :param dplugin_id: DPlugin
-        :param dblock_id: DBlock
+        :param subscriber_id: DPlugin which likes to unsubscribes dblock
+        :param target_id: DPlugin which contains the dblock for subscribtion
+        :param dblock_name: DBlock for unsubscribtion
         :return:
         """
 
-        dplugin = self.get_dplugin_by_id(dplugin_id)
+        #Get Susbcriber DPlugin
+        subscriber = self.get_dplugin_by_id(subscriber_id)
 
-        if dplugin is None:
-            return None
+        if subscriber is None:
+            return False
 
-        dblock = self.get_dblock_by_id(dblock_id)
+        #Get Target DPlugin
+        target = self.get_dplugin_by_id(target_id)
+
+        if target is None:
+            return False
+
+        dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
-            return None
+            return False
 
-        return dplugin.unsubscribe(dblock)
+        #Destroy relation between DPlugin and DBlock
+        subscriber.unsubscribe(dblock)
+        dblock.rm_subscriber(subscriber)
 
     def unsubscribe_all(self, dplugin_id):
         """
-
+        This function is used to cancel all subscribtion of the DPlugin with the dplugin_id
         :param dplugin_id:
         :return:
         """
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
-        subscribtions = copy.copy(dplugin.get_subcribtions())
 
-        for sub_id in subscribtions:
-            subscribtion = subscribtions[sub_id]
-            dplugin.unsubscribe(subscribtion)
+        dblock_ids = dplugin.get_subscribtions()
 
-        if 0 == len(dplugin.get_subcribtions().keys()):
+        for dblock_id in dblock_ids:
+
+            dblock = self.get_dblock_by_id(dblock_id)
+
+            dplugin.unsubscribe(dblock)
+            dblock.rm_subscriber(dplugin)
+
+        if 0 == len(dplugin.get_subscribtions()):
             return True
         else:
             return False
 
     def rm_all_subscribers(self, dplugin_id):
         """
-
+        This function is used to remove all subscribers of all DBlocks, which are hold by the DPlugin with the dplugin_id
         :param dplugin_id:
         :return:
         """
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
-        #TODO: dblock.rm_all_subscribers fertig machen !!
+        dblock_ids = dplugin.get_dblocks()
 
-        subscribers = copy.copy(dplugin.get_subscribers())
+        for dblock_id in dblock_ids:
+            dblock = self.get_dblock_by_id(dblock_id)
 
-        for sub_id in subscribers:
-            subscriber = subscribers[sub_id]
-            dplugin.rm_subscriber(subscriber)
+            dplugin_ids = dblock.get_subscribers()
 
-        if len(dplugin.get_subscribers().keys()) == 0:
+            for dplugin_id in dplugin_ids:
+                dplugin = self.get_dplugin_by_id(dplugin_id)
+
+                dplugin.unsubscribe(dblock)
+                dblock.rm_subscriber(dplugin)
+
+        if len(dplugin.get_dblocks()) == 0:
             return True
         else:
             return False

@@ -28,7 +28,7 @@ class Sinus(plugin_base):
 
         block1 = DBlock(None,1,10,'Sin')
         opt = DOptionalData()
-        opt.
+#        opt.
         event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
         self._Core_event_queue__.put(event)
 

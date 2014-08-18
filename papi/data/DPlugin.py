@@ -55,7 +55,7 @@ class DBlock(DObject):
         else:
             return False
 
-    def rm_subscribers(self, dplugin):
+    def rm_subscriber(self, dplugin):
         """
 
         :param dplugin:
@@ -81,9 +81,9 @@ class DBlock(DObject):
         """
 
         :return:
-        :rtype {}:
+        :rtype []:
         """
-        return self.subscribers
+        return self.subscribers.items()
 
 
 class DPlugin(DObject):
@@ -213,7 +213,7 @@ class DPlugin(DObject):
         """
 
         :return:
-        :rtype boolean:
+        :rtype {}:
         """
         return self.__blocks
 
