@@ -89,6 +89,10 @@ class plugin_base(IPlugin):
                 self.execute()
 
 
+    def send_new_data(self,data):
+        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=data))
+        self._Core_event_queue__.put(event)
+
     @abstractmethod
     def get_output_sizes(self):
         raise Exception("Unable to create an instance of abstract class")

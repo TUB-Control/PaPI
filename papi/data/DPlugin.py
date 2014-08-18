@@ -2,8 +2,8 @@
 # -*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische UniversitÃ¤t Berlin,
+FakultÃ¤t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
 
@@ -34,12 +34,13 @@ from papi.data.DObject import DObject
 
 class DBlock(DObject):
 
-    def __init__(self, dplugin, count, freq):
+    def __init__(self, dplugin, count, freq,name):
         super(DObject, self).__init__()
         self.signals_count = count
         self.freq = freq
         self.subscribers = {}
         self.dplugin = dplugin
+        self.name = name
 
     def add_subscribers(self, dplugin):
         """

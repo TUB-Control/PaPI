@@ -2,8 +2,8 @@
 #-*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische UniversitÃ¤t Berlin,
-FakultÃ¤t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universität Berlin,
+Fakultät IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
  
@@ -68,8 +68,9 @@ class Add(plugin_base):
             for k in range(self.approx):
                 self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
 
-        event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
-        self._Core_event_queue__.put(event)
+        #event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
+        #self._Core_event_queue__.put(event)
+        self.send_new_data(self.vec)
 
     def set_parameter(self,para_list):
         #TODO change with whole list setup

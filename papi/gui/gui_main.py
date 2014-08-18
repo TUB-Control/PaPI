@@ -156,10 +156,10 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        op=0
+        op=1
 
         if op == 0:
-            # 1 Sinus IOP und 1 Plot
+            # 1 test uname subsribe
             opt = DOptionalData()
 
             opt.plugin_identifier = 'Fourier_Rect'

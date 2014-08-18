@@ -8,10 +8,13 @@
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
+from papi.data.DPlugin import DBlock
+
 
 import time
 import math
 import numpy
+
 
 __author__ = 'knuths'
 
@@ -21,6 +24,16 @@ class Sinus(plugin_base):
     def start_init(self):
         self.t = 0
         self.amax = 100
+
+
+        block1 = DBlock(None,1,10,'Sin')
+        opt = DOptionalData()
+        opt.
+        event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
+        self._Core_event_queue__.put(event)
+
+
+
         return True
 
     def pause(self):
