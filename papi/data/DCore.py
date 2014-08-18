@@ -77,20 +77,22 @@ class DCore():
         return d_pl
 
     #TODO: Map auf dplugin
-    def rm_dplugin(self, dplugin):
+    def rm_dplugin(self, dplugin_id):
         """
-        Removes DPlugin
+        Removes DPlugin with dplugin_id
 
-        :param dplugin:
+        :param dplugin_id:
         :return:
         :rtype: bool
         """
-        if dplugin.id in self.__DPlugins:
 
-            self.rm_all_subscribers(dplugin.id)
-            self.unsubscribe_all(dplugin.id)
+        if dplugin_id in self.__DPlugins:
 
-            del self.__DPlugins[dplugin.id]
+
+            self.rm_all_subscribers(dplugin_id)
+            self.unsubscribe_all(dplugin_id)
+
+            del self.__DPlugins[dplugin_id]
 
             return True
         else:
@@ -242,14 +244,15 @@ class DCore():
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
-        dblock_ids = dplugin.get_dblocks()
+        dblock_names = dplugin.get_dblocks()
 
-        for dblock_id in dblock_ids:
-            dblock = self.get_dblock_by_id(dblock_id)
+        for dblock_name in dblock_names:
+            dblock = dplugin.get_dblock_by_name(dblock_name)
 
             dplugin_ids = dblock.get_subscribers()
 
             for dplugin_id in dplugin_ids:
+
                 dplugin = self.get_dplugin_by_id(dplugin_id)
 
                 dplugin.unsubscribe(dblock)

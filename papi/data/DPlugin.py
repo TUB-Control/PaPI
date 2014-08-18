@@ -25,12 +25,13 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
+
 from papi.data import DParameter
 
 __author__ = 'knuths'
 
 from papi.data.DObject import DObject
-
+import copy
 
 class DBlock(DObject):
 
@@ -83,7 +84,7 @@ class DBlock(DObject):
         :return:
         :rtype []:
         """
-        return self.subscribers.items()
+        return self.subscribers.values()
 
 
 class DPlugin(DObject):
@@ -110,10 +111,10 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        if self.id not in dblock.get_subscribers():
+        if self.id not in self.__subscriptions:
             #dblock.add_subscribers(self)
             #self.__subscriptions.append(dblock.id)
-            self.__subscriptions[dblock.id] = dblock.id
+            self.__subscriptions[dblock.name] = dblock.name
             return True
         else:
             return False
@@ -126,8 +127,8 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        if dblock.id in self.__subscriptions:
-            del self.__subscriptions[dblock.id]
+        if dblock.name in self.__subscriptions:
+            del self.__subscriptions[dblock.name]
             return True
         else:
             return False
@@ -146,7 +147,7 @@ class DPlugin(DObject):
         :rtype: []
         """
 
-        return self.__subscriptions.items()
+        return self.__subscriptions.values()
 
     def add_parameter(self, parameter: DParameter):
         """
@@ -235,7 +236,19 @@ class DPlugin(DObject):
         :return:
         :rtype DPlugin:
         """
-        pass
+
+        DPlugin_new = DPlugin()
+        DPlugin_new.id = self.id
+        DPlugin_new.pid = self.pid
+        DPlugin_new.state = self.state
+        DPlugin_new.own_process = self.own_process
+        DPlugin_new.uname = self.uname
+
+        DPlugin_new.__parameters = copy.deepcopy(self.__parameters)
+        DPlugin_new.__subscriptions = copy.deepcopy(self.__subscriptions)
+        DPlugin_new.__blocks = copy.deepcopy(self.__blocks)
+
+        return DPlugin_new
 
     def update_meta(self, meta):
         """
@@ -243,4 +256,13 @@ class DPlugin(DObject):
         :param meta: of type DPlugin
         :return:
         """
-        pass
+
+        self.id = meta.id
+        self.pid = meta.pid
+        self.state = meta.state
+        self.own_process = meta.own_process
+        self.uname = meta.uname
+
+        self.__parameters = meta.__parameters
+        self.__subscriptions = meta.__subscriptions
+        self.__blocks = meta.__blocks
