@@ -70,14 +70,14 @@ class TestCore(unittest.TestCase):
 
         self.assertEqual(len(dbl.get_subscribers().keys()),2)
 
-        dbl.rm_subscribers(dpl_1)
+        dbl.rm_subscriber(dpl_1)
 
         self.assertEqual(len(dbl.get_subscribers().keys()),1)
 
-        dbl.rm_subscribers(dpl_2)
+        dbl.rm_subscriber(dpl_2)
 
         self.assertEqual(len(dbl.get_subscribers().keys()),0)
 
-        self.assertFalse(dbl.rm_subscribers(dpl_1))
+        self.assertFalse(dbl.rm_subscriber(dpl_1))
 
 
