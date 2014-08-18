@@ -28,33 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.data.DObject import DObject
 
+from PySide.QtGui import QMainWindow, QApplication
+import sys
+from papi.gui.gui_main import GUI
 
-class DParameter(DObject):
-
-    def __init__(self, ptype, default=0, prange=0, live=1):
-        super(DParameter, self).__init__()
-
-        self.type = ptype
-        self.default = default
-        self.range = prange
-        self.live = live
-
-
-class DButton(DParameter):
-
-    def __init__(self, ptype, default=0, prange=0, live=1):
-        super(DButton, self).__init__(ptype, default=0, prange=0, live=1)
-
-
-class DSlider(DParameter):
-
-    def __init__(self, ptype, default=0, prange=0, live=1):
-        super(DButton, self).__init__(ptype, default=0, prange=0, live=1)
-
-
-class DText(DParameter):
-
-    def __init__(self, ptype, default=0, prange=0, live=1):
-        super(DButton, self).__init__(ptype, default=0, prange=0, live=1)
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+#    mw = QtGui.QMainWindow
+    frame = GUI(None,None,None)
+    frame.show()
+    app.exec_()

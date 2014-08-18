@@ -1,13 +1,6 @@
 papi.data package
 =================
 
-Subpackages
------------
-
-.. toctree::
-
-    papi.data.dcore
-
 Submodules
 ----------
 
@@ -31,6 +24,30 @@ papi.data.DObject module
 ------------------------
 
 .. automodule:: papi.data.DObject
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.data.DOptionalData module
+------------------------------
+
+.. automodule:: papi.data.DOptionalData
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.data.DParameter module
+---------------------------
+
+.. automodule:: papi.data.DParameter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.data.DPlugin module
+------------------------
+
+.. automodule:: papi.data.DPlugin
     :members:
     :undoc-members:
     :show-inheritance:

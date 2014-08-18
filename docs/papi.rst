@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    papi.buffer
     papi.data
     papi.gui
     papi.plugin

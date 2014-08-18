@@ -2,8 +2,8 @@
 #-*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische UniversitÃ¤t Berlin,
+FakultÃ¤t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
  

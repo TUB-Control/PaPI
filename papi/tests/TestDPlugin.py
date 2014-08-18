@@ -33,6 +33,7 @@ import unittest
 from papi.data.DPlugin import DPlugin, DBlock
 from papi.data.DParameter import DParameter
 
+
 class TestDPlugin(unittest.TestCase):
 
     def setUp(self):
@@ -105,10 +106,9 @@ class TestDPlugin(unittest.TestCase):
         dpl_1 = DPlugin()
         dpl_1.id = 1
 
-        dbl_1 = DBlock(dpl_1,1,5)
-        dbl_1.id = 3
-        dbl_2 = DBlock(dpl_1,1,5)
-        dbl_2.id = 4
+        dbl_1 = DBlock(dpl_1, 1, 5, 'Block1')
+
+        dbl_2 = DBlock(dpl_1, 1, 5, 'Block2')
 
         #check: add Parameter
         self.assertTrue(dpl_1.add_dblock(dbl_1))

@@ -32,7 +32,7 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QApplication, QListWidgetItem
+from PySide.QtGui import QMainWindow, QApplication, QListWidgetItem, QTreeWidgetItem
 
 import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
@@ -48,17 +48,20 @@ class Manager(QMainWindow, Ui_Manager):
         self.plugin_manager = PluginManager()
         self.plugin_path = "../plugin/"
 
-        if self.plugin_type == 'visual':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "visual",'plugin/visual'])
-            self.setWindowTitle('Visual Plugins')
-        if self.plugin_type == 'io':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "io",'plugin/io'])
-            self.setWindowTitle('IO Plugins')
-        if self.plugin_type == 'parameter':
-            self.plugin_manager.setPluginPlaces([self.plugin_path + "parameter",'plugin/parameter'])
-            self.setWindowTitle('Parameter Plugins')
+
+
+        self.plugin_manager.setPluginPlaces([self.plugin_path + "visual", 'plugin/visual', self.plugin_path + "io", 'plugin/io', self.plugin_path + "dpp", 'plugin/dpp' ])
+        self.setWindowTitle('Available Plugins')
+
 
         self.listPlugin.currentItemChanged.connect(self.itemChanged)
+
+        self.visual_root = QTreeWidgetItem(self.listPlugin)
+        self.visual_root.setText(0, 'Visual')
+        self.io_root = QTreeWidgetItem(self.listPlugin)
+        self.io_root.setText(0, 'IO')
+        self.dpp_root = QTreeWidgetItem(self.listPlugin)
+        self.dpp_root.setText(0, 'DPP')
 
     def itemChanged(self):
         print('itemChanged')
@@ -66,8 +69,44 @@ class Manager(QMainWindow, Ui_Manager):
     def showEvent(self, *args, **kwargs):
         self.plugin_manager.collectPlugins()
         for pluginfo in self.plugin_manager.getAllPlugins():
-            print('Plugin: ')
-            print(pluginfo.name)
-            newItem = QListWidgetItem()
-            newItem.setText(pluginfo.name)
-            self.listPlugin.insertItem(0, newItem)
+
+            plugin_item = None
+
+            if '/visual/' in pluginfo.path:
+                plugin_item = QTreeWidgetItem(self.visual_root)
+            if '/io/' in pluginfo.path:
+                plugin_item = QTreeWidgetItem(self.io_root)
+            if '/dpp/' in pluginfo.path:
+                plugin_item = QTreeWidgetItem(self.dpp_root)
+
+            plugin_item.setText(0, pluginfo.name)
+            plugin_item.setText(1, pluginfo.path)
+
+
+
+            # plugins = QTreeWidgetItem(self.listPlugin)
+            # plugins.setText(0, pluginfo.name)
+            # plugins.setText(1, pluginfo.path)
+
+        # for pluginfo in self.plugin_manager.getAllPlugins():
+        #     print('Plugin: ')
+        #     print(pluginfo.name)
+        #     newItem = QListWidgetItem()
+        #     newItem.setText(pluginfo.name)
+        #     self.listPlugin.insertItem(0, newItem)
+
+    def hideEvent(self, *args, **kwargs):
+        #print(self.listPlugin.topLevelItemCount())
+
+
+        item = self.io_root.child(0)
+
+        while( item is not None ):
+            self.io_root.removeChild(item)
+            item = self.io_root.child(0)
+
+        item = self.visual_root.child(0)
+
+        while( item is not None ):
+            self.visual_root.removeChild(item)
+            item = self.visual_root.child(0)

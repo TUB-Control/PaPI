@@ -50,7 +50,7 @@ class DBlock(DObject):
         :rtype boolean:
         """
         if dplugin.id not in self.subscribers:
-            self.subscribers[dplugin.id] = dplugin
+            self.subscribers[dplugin.id] = dplugin.id
             return True
         else:
             return False
@@ -104,42 +104,49 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock: DBlock):
         """
-        This plugins subscribes 'dblock'
+        This plugins subscribes 'dblock' by remembering the dblog id
         :param dblock: DBlock which should be subscribed
         :return:
         :rtype boolean:
         """
 
         if self.id not in dblock.get_subscribers():
-            dblock.add_subscribers(self)
-            self.__subscriptions[dblock.id] = dblock
+            #dblock.add_subscribers(self)
+            #self.__subscriptions.append(dblock.id)
+            self.__subscriptions[dblock.id] = dblock.id
             return True
         else:
             return False
 
     def unsubscribe(self, dblock:DBlock):
         """
-        This plugins unsubscribes 'dblock'
+        This plugins unsubscribes 'dblock' by forgetting the dblog id
         :param dblock: DBlock which should be unsubscribed
         :return:
         :rtype boolean:
         """
 
-        if self.id in dblock.get_subscribers():
-            dblock.rm_subscribers(self)
+        if dblock.id in self.__subscriptions:
             del self.__subscriptions[dblock.id]
             return True
         else:
             return False
 
+        # if self.id in dblock.get_subscribers():
+        #     dblock.rm_subscribers(self)
+        #     del self.__subscriptions[dblock.id]
+        #     return True
+        # else:
+        #     return False
+
     def get_subscribtions(self):
         """
         Returns a dictionary of all susbcribtions
-        :return {} of DBlock :
-        :rtype: {}
+        :return [] of DBlock ids :
+        :rtype: []
         """
 
-        return self.__subscriptions
+        return self.__subscriptions.items()
 
     def add_parameter(self, parameter: DParameter):
         """
@@ -183,8 +190,8 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
-        if dblock.id not in self.__blocks:
-            self.__blocks[dblock.id] = dblock
+        if dblock.name not in self.__blocks:
+            self.__blocks[dblock.name] = dblock
             return True
         else:
             return False
@@ -196,8 +203,8 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
-        if dblock.id in self.__blocks:
-            del self.__blocks[dblock.id]
+        if dblock.name in self.__blocks:
+            del self.__blocks[dblock.name]
             return True
         else:
             return False
@@ -210,14 +217,30 @@ class DPlugin(DObject):
         """
         return self.__blocks
 
-    def get_dblock_by_id(self, dblock_id):
+    def get_dblock_by_name(self, dblock_name):
         """
 
         :return:
         :rtype DBlock:
         """
 
-        if dblock_id in self.__blocks:
-            return self.__blocks[dblock_id]
+        if dblock_name in self.__blocks:
+            return self.__blocks[dblock_name]
         else:
             return None
+
+    def get_meta(self):
+        """
+
+        :return:
+        :rtype DPlugin:
+        """
+        pass
+
+    def update_meta(self, meta):
+        """
+
+        :param meta: of type DPlugin
+        :return:
+        """
+        pass

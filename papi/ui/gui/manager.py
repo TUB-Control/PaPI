@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Tue Aug 12 15:02:55 2014
+# Created: Mon Aug 18 09:38:04 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,7 +21,7 @@ class Ui_Manager(object):
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.listPlugin = QtGui.QListWidget(self.horizontalLayoutWidget)
+        self.listPlugin = QtGui.QTreeWidget(self.horizontalLayoutWidget)
         self.listPlugin.setObjectName("listPlugin")
         self.horizontalLayout.addWidget(self.listPlugin)
         self.formLayout = QtGui.QFormLayout()
@@ -40,5 +40,7 @@ class Ui_Manager(object):
 
     def retranslateUi(self, Manager):
         Manager.setWindowTitle(QtGui.QApplication.translate("Manager", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.listPlugin.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
+        self.listPlugin.headerItem().setText(1, QtGui.QApplication.translate("Manager", "Path", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("Manager", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
 

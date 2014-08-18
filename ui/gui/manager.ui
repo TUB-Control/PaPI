@@ -25,7 +25,18 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QListWidget" name="listPlugin"/>
+      <widget class="QTreeWidget" name="listPlugin">
+       <column>
+        <property name="text">
+         <string>Plugin</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Path</string>
+        </property>
+       </column>
+      </widget>
      </item>
      <item>
       <layout class="QFormLayout" name="formLayout">

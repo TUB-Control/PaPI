@@ -176,7 +176,8 @@ class DCore():
         if dblock is None:
             return None
 
-        return dplugin.subscribe(dblock)
+        dplugin.subscribe(dblock)
+        dblock.add_subscribers(dplugin)
 
     def unsubscribe(self, dplugin_id, dblock_id):
         """
