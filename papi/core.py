@@ -117,6 +117,8 @@ class Core:
             self.core_goOn = self.core_data.get_dplugins_count() != 0
 
 
+        self.log.print(1,'Core finished operation')
+
 
 
 
@@ -226,7 +228,7 @@ class Core:
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if (dplugin != None):
             dplugin.process.join()
-            return self.core_data.rm_dplugin(dplugin)
+            return self.core_data.rm_dplugin(dplugin.id)
         else:
             self.log.print(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
@@ -255,6 +257,7 @@ class Core:
             if dplug != None:
                 block= dplug.get_dblock_by_name(opt.block_name)
                 subscriber = block.get_subscribers()
+                #print(subscriber)
                 for sub_id in subscriber:
                     pl = self.core_data.get_dplugin_by_id(sub_id)
                     #TODO: just 1 Event for multiple VIP...
@@ -333,7 +336,14 @@ class Core:
             dplug.uname = optData.plugin_uname
 
 
-            # TODO: lege IOP auch in GUI an !!!
+            # set plugin info for gui
+            opt = DOptionalData()
+            opt.plugin_identifier = plugin.name
+            opt.plugin_id = plugin_id
+            opt.plugin_uname = dplug.uname
+            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
+            self.gui_event_queue.put(event)
+
 
         else:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
@@ -346,6 +356,7 @@ class Core:
             opt.plugin_uname = dplug.uname
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
+            self.log.print(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
 
         return True
 
@@ -398,10 +409,11 @@ class Core:
                 event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin',None)
                 dplugin.queue.put(event)
             else:
-                toDelete.append(dplugin)
+                toDelete.append(dplugin.id)
 
         for dplugin in toDelete:
             self.core_data.rm_dplugin(dplugin)
+            print('pls: ', self.core_data.get_dplugins_count())
 
 
     def __process_subscribe__(self,event):
@@ -415,7 +427,12 @@ class Core:
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
-        self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
+
+
+        if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) == False:
+            self.log.print(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+        else:
+            self.log.print(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
 
         self.update_meta_data_to_gui(oID)
         self.update_meta_data_to_gui(opt.source_ID)
@@ -477,13 +494,6 @@ class Core:
         else:
             self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
         return -1
-
-
-
-
-
-
-
 
 
     def update_meta_data_to_gui(self,pl_id):

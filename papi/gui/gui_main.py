@@ -151,16 +151,32 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
     def stefan_at_his_best(self):
-        opt = DOptionalData()
-        opt.plugin_id =4
-        opt.parameter_list = 9/300
-        event = PapiEvent(3,0,'instr_event','set_parameter',opt)
-        self.core_queue.put(event)
+        name = 'Sinus1'
+        print('Plugin Information System - Today: '+name)
+        print('===========================================')
+        p = self.gui_data.get_dplugin_by_uname(name)
+        blocks = p.get_dblocks()
+        for k in blocks:
+            b = blocks[k]
+            print('Block: ',b.name)
+        paras = p.get_parameters()
+
+        for i in paras:
+             p = paras[i]
+             print('Parameter: ',p.ptype)
+
+
+        # opt = DOptionalData()
+        # opt.plugin_id =4
+        # opt.parameter_list = 9/300
+        # event = PapiEvent(3,0,'instr_event','set_parameter',opt)
+        # self.core_queue.put(event)
+        # self.log.print(1,'gui was closed')
 
     def stefan(self):
         self.count += 1
 
-        op=1
+        op=2
 
         if op == 0:
             # 1 test uname subsribe
@@ -210,6 +226,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
             self.core_queue.put(event)
 
+            time.sleep(2)
+
             opt =  DOptionalData()
             opt.source_ID = 2
             opt.block_name = 'SinMit_f1'
@@ -218,19 +236,39 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
         if op==2:
-            # 2x Sinus und 2 Plot
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
+             # 1 Sinus IOP und 1 Plot
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Sinus'
+            opt.plugin_uname = 'Sinus1'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
+
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Plot'
+            opt.plugin_uname = 'Plot1'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 4
+
+            opt = DOptionalData()
+            opt.plugin_identifier = 'Plot'
+            opt.plugin_uname = 'Plot2'
+            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 4
             self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 5
+
+            time.sleep(0.5)
+
+            opt =  DOptionalData()
+            opt.source_ID = 2
+            opt.block_name = 'SinMit_f1'
+            event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
-            event = PapiEvent(4,0,'instr_event','subscribe',2)
+
+            opt =  DOptionalData()
+            opt.source_ID = 2
+            opt.block_name = 'SinMit_f2'
+            event = PapiEvent(4,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
-            event = PapiEvent(5,0,'instr_event','subscribe',3)
-            self.core_queue.put(event)
+
 
         if op==3:
             # 2x Sinus und 5 Plots
@@ -393,6 +431,7 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
 
+        self.log.print(2,'new data event')
         dID = event.get_destinatioID()
         opt = event.get_optional_parameter()
         dplugin = self.gui_data.get_dplugin_by_id(dID)
@@ -432,22 +471,25 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         plugin = getattr(current_modul, class_name)()
 
+        if plugin.get_type() == "ViP":
+            dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
+            dplugin.uname = uname
 
-        dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
-        dplugin.uname = uname
-        buffer = 1
+            dplugin.plugin.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
 
-        dplugin.plugin.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
+            dplugin.plugin.start_init()
 
-        dplugin.plugin.start_init()
+            dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=1000., size=(150,150))
+
+            self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
+            dplugin.plugin.get_sub_window().show()
+            self.log.print(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
+        else:
+            dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
+            dplugin.uname = uname
+            self.log.print(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
 
 
-        dplugin.plugin.setConfig(name=dplugin.uname, sampleinterval=1, timewindow=1000., size=(150,150))
-
-        self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
-        dplugin.plugin.get_sub_window().show()
-
-        self.log.print(1,'create_plugin, Plugin with name  '+str(uname)+'  was started')
 
 
     def process_close_program_event(self,event):
@@ -491,11 +533,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         else:
             self.log.print(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
 
-
-        blocks = dplugin.get_dblocks()
-        for b in blocks:
-            block = blocks[b]
-            print(block.name)
 
 
 
