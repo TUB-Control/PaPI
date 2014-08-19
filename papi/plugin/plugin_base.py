@@ -95,6 +95,13 @@ class plugin_base(IPlugin):
         event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
         self._Core_event_queue__.put(event)
 
+    def send_new_block_list(self,blocks):
+        opt = DOptionalData()
+        opt.block_list = blocks
+        event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
+        self._Core_event_queue__.put(event)
+
+
     @abstractmethod
     def get_output_sizes(self):
         raise Exception("Unable to create an instance of abstract class")
