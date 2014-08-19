@@ -217,14 +217,13 @@ class TestDCore(unittest.TestCase):
         self.assertTrue(self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_1.name))
         self.assertTrue(self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_2.name))
 
+        self.assertEqual(len(d_bl_1.get_subscribers()), 2)
+        self.assertEqual(len(d_bl_2.get_subscribers()), 2)
 
-        self.dcore.rm_all_subscribers(d_bl_1.id)
+        self.dcore.rm_all_subscribers(d_pl_1.id)
 
-        self.assertEqual(len(d_bl_1.get_subscribers().keys()), 5)
-
-        self.dcore.rm_all_subscribers(d_pl_6.id)
-
-        self.assertEqual(len(d_pl_6.get_subscribers().keys()), 0)
+        self.assertEqual(len(d_bl_1.get_subscribers()), 0)
+        self.assertEqual(len(d_bl_2.get_subscribers()), 0)
 
         pass
 
