@@ -86,8 +86,7 @@ class TestDCore(unittest.TestCase):
         self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name)
         self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name)
 
-
-        self.assertEqual(len(d_pl_2.get_subscribtions()), 2)
+        self.assertEqual(len(d_pl_2.get_subscribtions()[d_pl_1.id]), 2)
         self.assertEqual(len(d_bl_1.get_subscribers()), 1)
         self.assertEqual(len(d_bl_2.get_subscribers()), 1)
 
@@ -99,7 +98,7 @@ class TestDCore(unittest.TestCase):
 
         #Check if all subscribtions were canceled
 
-        self.assertEqual(len(d_pl_2.get_subscribtions()), 0)
+        self.assertEqual(len(d_pl_2.get_subscribtions().keys()), 0)
         self.assertEqual(len(d_bl_1.get_subscribers()), 0)
         self.assertEqual(len(d_bl_2.get_subscribers()), 0)
 
@@ -191,36 +190,43 @@ class TestDCore(unittest.TestCase):
         self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
         self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
 
-        self.assertEqual(len(d_pl_2.get_subscribtions()), 2)
+        self.assertEqual(len(d_pl_2.get_subscribtions()[d_pl_1.id].keys()), 2)
 
         self.dcore.unsubscribe_all(d_pl_2.id)
 
-        self.assertEqual(len(d_pl_2.get_subscribtions()), 0)
-
+        self.assertNotIn(d_pl_1.id, d_pl_2.get_subscribtions())
 
         pass
 
-    # def test_rm_all_subscribers(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_4 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_5 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_6 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #
-    #     d_pl_1.subscribe(d_pl_6)
-    #     d_pl_2.subscribe(d_pl_6)
-    #     d_pl_3.subscribe(d_pl_6)
-    #     d_pl_4.subscribe(d_pl_6)
-    #     d_pl_5.subscribe(d_pl_6)
-    #
-    #     self.assertEqual(len(d_pl_6.get_subscribers().keys()), 5)
-    #
-    #     self.dcore.rm_all_subscribers(d_pl_6.id)
-    #
-    #     self.assertEqual(len(d_pl_6.get_subscribers().keys()), 0)
-    #
-    #     pass
+    def test_rm_all_subscribers(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_2.name))
+
+
+        self.dcore.rm_all_subscribers(d_bl_1.id)
+
+        self.assertEqual(len(d_bl_1.get_subscribers().keys()), 5)
+
+        self.dcore.rm_all_subscribers(d_pl_6.id)
+
+        self.assertEqual(len(d_pl_6.get_subscribers().keys()), 0)
+
+        pass
 
 if __name__ == "__main__":
     unittest.main();

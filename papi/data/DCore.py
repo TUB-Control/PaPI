@@ -31,6 +31,7 @@ __author__ = 'control'
 
 import copy
 
+
 class DCore():
     def __init__(self):
         self.__DPlugins = {}
@@ -221,14 +222,22 @@ class DCore():
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
 
-        dblock_names = dplugin.get_subscribtions()
+        subscribtion_ids = dplugin.get_subscribtions().copy()
 
-        for dblock_name in dblock_names:
 
-            dblock = dplugin.get_dblock_by_name(dblock_name)
+        #Iterate over all DPlugins, which own a subscribed DBlock
+        for sub_id in subscribtion_ids:
+            sub = self.get_dplugin_by_id(sub_id)
 
-            dplugin.unsubscribe(dblock)
-            dblock.rm_subscriber(dplugin)
+            dblock_names = subscribtion_ids[sub_id]
+
+            for dblock_name in dblock_names:
+
+                dblock = sub.get_dblock_by_name(dblock_name)
+
+                dblock.rm_subscriber(dplugin)
+#                print(dblock_names)
+                dplugin.unsubscribe(dblock)
 
         if 0 == len(dplugin.get_subscribtions()):
             return True
@@ -249,9 +258,6 @@ class DCore():
         for dblock_name in dblock_names:
 
             dblock = dplugin.get_dblock_by_name(dblock_name)
-
-            #TODO: Should not be None !!
-
 
             dplugin_ids = dblock.get_subscribers()
             for dplugin_id in dplugin_ids:

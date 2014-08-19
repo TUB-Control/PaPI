@@ -33,14 +33,15 @@ __author__ = 'knuths'
 from papi.data.DObject import DObject
 import copy
 
+
 class DBlock(DObject):
 
-    def __init__(self, dplugin, count, freq,name):
+    def __init__(self, dplugin_id, count, freq,name):
         super(DObject, self).__init__()
         self.signals_count = count
         self.freq = freq
         self.subscribers = {}
-        self.dplugin = dplugin
+        self.dplugin_id = dplugin_id
         self.name = name
 
     def add_subscribers(self, dplugin):
@@ -111,13 +112,19 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        if self.id not in self.__subscriptions:
+        if dblock.dplugin_id not in self.__subscriptions:
             #dblock.add_subscribers(self)
             #self.__subscriptions.append(dblock.id)
-            self.__subscriptions[dblock.name] = dblock.name
+            self.__subscriptions[dblock.dplugin_id] = {}
+            self.__subscriptions[dblock.dplugin_id][dblock.name] = 1
             return True
         else:
-            return False
+            if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
+                self.__subscriptions[dblock.dplugin_id][dblock.name] = 1
+                return True
+            else:
+                return False
+        return False
 
     def unsubscribe(self, dblock:DBlock):
         """
@@ -127,11 +134,19 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        if dblock.name in self.__subscriptions:
-            del self.__subscriptions[dblock.name]
-            return True
-        else:
+        if dblock.dplugin_id not in self.__subscriptions:
             return False
+        else:
+            if dblock.name in self.__subscriptions[dblock.dplugin_id]:
+                del self.__subscriptions[dblock.dplugin_id][dblock.name]
+
+                if len(self.__subscriptions[dblock.dplugin_id]) is 0:
+                    del self.__subscriptions[dblock.dplugin_id]
+                return True
+            else:
+                return False
+        return False
+
 
         # if self.id in dblock.get_subscribers():
         #     dblock.rm_subscribers(self)
@@ -143,11 +158,11 @@ class DPlugin(DObject):
     def get_subscribtions(self):
         """
         Returns a dictionary of all susbcribtions
-        :return [] of DBlock ids :
-        :rtype: []
+        :return {}{} of DPlugin ids to DBlock names :
+        :rtype: {}{}
         """
 
-        return self.__subscriptions.copy().values()
+        return copy.deepcopy(self.__subscriptions.copy())
 
     def add_parameter(self, parameter: DParameter):
         """
@@ -191,6 +206,8 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
+        dblock.dplugin_id = self.id
+
         if dblock.name not in self.__blocks:
             self.__blocks[dblock.name] = dblock
             return True
