@@ -264,19 +264,7 @@ class Core:
             else:
                 self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
-
-            # if dplug != None:
-            #     targets = dplug.get_subscribers()
-            #     for tar_plug in targets:
-            #         plug = targets[tar_plug]
-            #         #TODO: TESTE diese Anspassung
-            #         #event = PapiEvent(oID,plug.id,'data_event','new_data',event.get_optional_parameter())/
-            #         event.__destID__=plug.id
-            #         plug.queue.put(event)
-            #     return 1
-            # else:
-            #     self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
-            #     return -1
+        return 1
 
 
     def __process_get_output_size__(self,event):
@@ -343,6 +331,9 @@ class Core:
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
+
+
+            # TODO: lege IOP auch in GUI an !!!
 
         else:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
@@ -420,6 +411,15 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
+
+        opt = event.get_optional_parameter()
+        oID = event.get_originID()
+
+        self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
+
+        self.update_meta_data_to_gui(oID)
+        self.update_meta_data_to_gui(opt.source_ID)
+
         pass
 
 
@@ -472,10 +472,30 @@ class Core:
         if dplugin != None:
             for b in opt.block_list:
                 dplugin.add_dblock(b)
+
+            self.update_meta_data_to_gui(pl_id)
+        else:
+            self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
+        return -1
+
+
+
+
+
+
+
+
+
+    def update_meta_data_to_gui(self,pl_id):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin != None:
             o = DOptionalData()
             o.plugin_object = dplugin.get_meta()
             eventMeta = PapiEvent(pl_id,self.gui_id,'instr_event','update_meta',o)
             self.gui_event_queue.put(eventMeta)
-        else:
-            self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
-        return -1

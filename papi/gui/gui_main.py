@@ -210,8 +210,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
             self.core_queue.put(event)
 
-            opt =  DOptionalData
+            opt =  DOptionalData()
             opt.source_ID = 2
+            opt.block_name = 'SinMit_f1'
             event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
 
@@ -490,10 +491,11 @@ class GUI(QMainWindow, Ui_MainGUI):
         else:
             self.log.print(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
 
-        # blocks = dplugin.get_dblocks()
-        # for b in blocks:
-        #     block = blocks[b]
-        #     print(block.name)
+
+        blocks = dplugin.get_dblocks()
+        for b in blocks:
+            block = blocks[b]
+            print(block.name)
 
 
 
