@@ -64,7 +64,7 @@ class TestDCore(unittest.TestCase):
 
         self.assertEqual(self.dcore.get_dplugins_count(), 2)
 
-        self.dcore.rm_dplugin(dp_1)
+        self.assertTrue(self.dcore.rm_dplugin(dp_1.id))
 
         self.assertEqual(self.dcore.get_dplugins_count(), 1)
 
@@ -83,15 +83,15 @@ class TestDCore(unittest.TestCase):
 
         #create subscribtions
 
-        self.dcore.subscribe(d_pl_2.id, d_bl_1.name)
-        self.dcore.subscribe(d_pl_2.id, d_bl_2.name)
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name)
 
 
         self.assertEqual(len(d_pl_2.get_subscribtions()), 2)
         self.assertEqual(len(d_bl_1.get_subscribers()), 1)
         self.assertEqual(len(d_bl_2.get_subscribers()), 1)
 
-        self.dcore.rm_dplugin(d_pl_1)
+        self.dcore.rm_dplugin(d_pl_1.id)
 
         #Check if DPlugin d_pl_1 is missing
 
@@ -103,74 +103,103 @@ class TestDCore(unittest.TestCase):
         self.assertEqual(len(d_bl_1.get_subscribers()), 0)
         self.assertEqual(len(d_bl_2.get_subscribers()), 0)
 
+        pass
+
+    def test_get_dplugin_by_id(self):
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.get_dplugin_by_id(d_pl_1.id)
+        self.assertEqual(d_pl_1.id, self.dcore.get_dplugin_by_id(d_pl_1.id).id)
+
+    def test_get_dplugin_by_uname(self):
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        d_pl_1.uname = "Test"
+
+        self.assertEqual("Test", self.dcore.get_dplugin_by_uname("Test").uname)
+
+        self.assertIsNone(self.dcore.get_dplugin_by_uname("Test2"))
 
 
-        self.dc
+    def test_get_all_plugins(self):
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        self.assertEqual(len(self.dcore.get_all_plugins().keys()), 4)
+
+    def test_subscribe(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
+
+
+        self.assertTrue(d_pl_2.id in d_bl_1.get_subscribers())
+        self.assertTrue(d_pl_2.id in d_bl_2.get_subscribers())
+
+
+    def test_unsubscribe(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
+
+        self.dcore.unsubscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.unsubscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name)
+
+        self.assertFalse(d_pl_2.id in d_bl_1.get_subscribers())
+        self.assertFalse(d_pl_2.id in d_bl_1.get_subscribers())
+        self.assertEqual(len(d_bl_2.get_subscribers()),0)
+
+
+    def test_unsubscribe_all(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
+
+        self.assertEqual(len(d_pl_2.get_subscribtions()), 2)
+
+        self.dcore.unsubscribe_all(d_pl_2.id)
+
+        self.assertEqual(len(d_pl_2.get_subscribtions()), 0)
+
 
         pass
-    #
-    # def test_get_dplugin_by_id(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     self.dcore.get_dplugin_by_id(d_pl_1.id)
-    #     self.assertEqual(d_pl_1.id, self.dcore.get_dplugin_by_id(d_pl_1.id).id)
-    #
-    # def test_get_dplugin_by_uname(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #
-    #     d_pl_1.uname = "Test"
-    #
-    #     self.assertEqual("Test", self.dcore.get_dplugin_by_uname("Test").uname)
-    #
-    #     self.assertIsNone(self.dcore.get_dplugin_by_uname("Test2"))
-    #
-    #
-    # def test_get_all_plugins(self):
-    #     self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #
-    #     self.assertEqual(len(self.dcore.get_all_plugins().keys()), 4)
-    #
-    # def test_subscribe(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #
-    #     self.assertTrue(self.dcore.subscribe(d_pl_1.id, d_pl_2.id))
-    #     self.assertTrue(d_pl_1.id in d_pl_2.get_subscribers().keys())
-    #     self.assertTrue(d_pl_2.id in d_pl_1.get_subcribtions().keys())
-    #
-    # def test_unsubscribe(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     self.dcore.subscribe(d_pl_1.id, d_pl_2.id)
-    #
-    #     self.assertTrue(self.dcore.unsubscribe(d_pl_1.id, d_pl_2.id))
-    #     self.assertFalse(d_pl_1.id in d_pl_2.get_subscribers().keys())
-    #     self.assertFalse(d_pl_2.id in d_pl_1.get_subcribtions().keys())
-    #
-    # def test_unsubscribe_all(self):
-    #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_4 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_5 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #     d_pl_6 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-    #
-    #     d_pl_1.subscribe(d_pl_2)
-    #     d_pl_1.subscribe(d_pl_3)
-    #     d_pl_1.subscribe(d_pl_4)
-    #     d_pl_1.subscribe(d_pl_5)
-    #     d_pl_1.subscribe(d_pl_6)
-    #
-    #     self.assertEqual(len(d_pl_1.get_subcribtions().keys()), 5)
-    #
-    #     self.dcore.unsubscribe_all(d_pl_1.id)
-    #
-    #     self.assertEqual(len(d_pl_1.get_subcribtions().keys()), 0)
-    #
-    #     pass
-    #
+
     # def test_rm_all_subscribers(self):
     #     d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
     #     d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())

@@ -2,8 +2,8 @@
 # -*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische UniversitÃ¤t Berlin,
-FakultÃ¤t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universität Berlin,
+Fakultät IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
 
@@ -84,7 +84,7 @@ class DBlock(DObject):
         :return:
         :rtype []:
         """
-        return self.subscribers.values()
+        return self.subscribers.copy().values()
 
 
 class DPlugin(DObject):
@@ -147,7 +147,7 @@ class DPlugin(DObject):
         :rtype: []
         """
 
-        return self.__subscriptions.values()
+        return self.__subscriptions.copy().values()
 
     def add_parameter(self, parameter: DParameter):
         """

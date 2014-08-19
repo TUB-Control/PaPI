@@ -221,11 +221,11 @@ class DCore():
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
 
-        dblock_ids = dplugin.get_subscribtions()
+        dblock_names = dplugin.get_subscribtions()
 
-        for dblock_id in dblock_ids:
+        for dblock_name in dblock_names:
 
-            dblock = self.get_dblock_by_id(dblock_id)
+            dblock = dplugin.get_dblock_by_name(dblock_name)
 
             dplugin.unsubscribe(dblock)
             dblock.rm_subscriber(dplugin)
@@ -247,16 +247,19 @@ class DCore():
         dblock_names = dplugin.get_dblocks()
 
         for dblock_name in dblock_names:
+
             dblock = dplugin.get_dblock_by_name(dblock_name)
 
-            dplugin_ids = dblock.get_subscribers()
+            #TODO: Should not be None !!
 
+
+            dplugin_ids = dblock.get_subscribers()
             for dplugin_id in dplugin_ids:
 
-                dplugin = self.get_dplugin_by_id(dplugin_id)
+                subscriber = self.get_dplugin_by_id(dplugin_id)
 
-                dplugin.unsubscribe(dblock)
-                dblock.rm_subscriber(dplugin)
+                subscriber.unsubscribe(dblock)
+                dblock.rm_subscriber(subscriber)
 
         if len(dplugin.get_dblocks()) == 0:
             return True
