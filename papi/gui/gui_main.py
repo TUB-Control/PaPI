@@ -163,7 +163,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         for i in paras:
              p = paras[i]
-             print('Parameter: ',p.ptype)
+             print('Parameter: ',p.name)
 
 
         # opt = DOptionalData()
@@ -255,7 +255,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 4
             self.core_queue.put(event)
 
-            time.sleep(0.5)
+            time.sleep(0.1)
 
             opt =  DOptionalData()
             opt.source_ID = 2
@@ -265,7 +265,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             opt =  DOptionalData()
             opt.source_ID = 2
-            opt.block_name = 'SinMit_f2'
+            opt.block_name = 'SinMit_f3'
             event = PapiEvent(4,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
 

@@ -101,6 +101,13 @@ class plugin_base(IPlugin):
         event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
         self._Core_event_queue__.put(event)
 
+    def send_new_parameter_list(self,parameters):
+        opt = DOptionalData()
+        opt.parameter_list= parameters
+
+        event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
+        self._Core_event_queue__.put(event)
+
 
     @abstractmethod
     def get_output_sizes(self):

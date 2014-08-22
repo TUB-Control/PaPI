@@ -35,11 +35,11 @@ class Sinus(plugin_base):
         self.send_new_block_list([block1, block2, block3])
 
 
-        #para3 = DParameter()
+        para3 = DParameter(None,'Frequenz Block SinMit_f3',0.001,[0,1],1)
+        para3.id = 1
+        para_l = [para3]
 
-
-
-
+        self.send_new_parameter_list(para_l)
 
 
 

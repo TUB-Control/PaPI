@@ -61,7 +61,8 @@ class Core:
         self.__process_data_event_l__ = {   'new_data': self.__process_new_data__,
                                             'get_output_size': self.__process_get_output_size__,
                                             'response_output_size': self.__process_response_output_size__,
-                                            'new_block': self.__process_new_block__
+                                            'new_block': self.__process_new_block__,
+                                            'new_parameter': self.__process_new_parameter__
         }
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
@@ -411,9 +412,8 @@ class Core:
             else:
                 toDelete.append(dplugin.id)
 
-        for dplugin in toDelete:
-            self.core_data.rm_dplugin(dplugin)
-            print('pls: ', self.core_data.get_dplugins_count())
+        for dplugin_ID in toDelete:
+            self.core_data.rm_dplugin(dplugin_ID)
 
 
     def __process_subscribe__(self,event):
@@ -494,6 +494,28 @@ class Core:
         else:
             self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
         return -1
+
+
+    def __process_new_parameter__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        opt = event.get_optional_parameter()
+        pl_id = event.get_originID()
+
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin != None:
+            for p in opt.parameter_list:
+                dplugin.add_parameter(p)
+            self.update_meta_data_to_gui(pl_id)
+            return 1
+        else:
+            self.log.print(1,'new_parameter, plugin with id '+str(pl_id)+' not found')
+            return -1
+
 
 
     def update_meta_data_to_gui(self,pl_id):
