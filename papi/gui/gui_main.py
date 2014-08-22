@@ -66,7 +66,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.gui_data = DGui()
 
         self.manager_overview = Overview()
-
+        self.manager_overview.dgui = self.gui_data
         self.setWindowTitle('PaPI')
 
         self.core_queue = core_queue
@@ -145,9 +145,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         opt.reason = 'User clicked close Button'
         event = PapiEvent(self.gui_id, 0, 'instr_event','close_program',opt)
         self.core_queue.put(event)
+
+        self.manager_overview.close()
         self.manager_available.close()
-        self.manager_parameter.close()
-        self.manager_io.close()
         self.close()
 
 

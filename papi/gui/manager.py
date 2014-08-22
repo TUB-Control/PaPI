@@ -59,9 +59,12 @@ class Available(QMainWindow, Ui_Manager):
         self.io_root.setText(0, 'IO')
         self.dpp_root = QTreeWidgetItem(self.treePlugin)
         self.dpp_root.setText(0, 'DPP')
+        self.pcb_root = QTreeWidgetItem(self.treePlugin)
+        self.pcb_root.setText(0, 'PCB')
 
-    def itemChanged(self):
-        print('itemChanged')
+    def itemChanged(self, item):
+        print(item)
+        print('itemChanged ', item.text(0))
 
     def showEvent(self, *args, **kwargs):
         self.plugin_manager.collectPlugins()
@@ -77,7 +80,7 @@ class Available(QMainWindow, Ui_Manager):
                 plugin_item = QTreeWidgetItem(self.dpp_root)
 
             plugin_item.setText(0, pluginfo.name)
-            plugin_item.setText(1, pluginfo.path)
+            plugin_item.setText(2, pluginfo.path)
 
 
 
@@ -95,7 +98,6 @@ class Available(QMainWindow, Ui_Manager):
     def hideEvent(self, *args, **kwargs):
         #print(self.treePlugin.topLevelItemCount())
 
-
         item = self.io_root.child(0)
 
         while( item is not None ):
@@ -107,6 +109,19 @@ class Available(QMainWindow, Ui_Manager):
         while( item is not None ):
             self.visual_root.removeChild(item)
             item = self.visual_root.child(0)
+
+        item = self.dpp_root.child(0)
+
+        while( item is not None ):
+            self.dpp_root.removeChild(item)
+            item = self.dpp_root.child(0)
+
+
+        item = self.pcb_root.child(0)
+
+        while( item is not None ):
+            self.pcb_root.removeChild(item)
+            item = self.pcb_root.child(0)
 
 
 class Overview(QMainWindow, Ui_Manager):
@@ -125,13 +140,16 @@ class Overview(QMainWindow, Ui_Manager):
 
         #print(self.treePlugin)
         self.treePlugin.currentItemChanged.connect(self.itemChanged)
-        self.treePlugin.setHeaderLabel(1, "ID")
+        #self.treePlugin.setHeaderLabel(1, "ID")
         self.visual_root = QTreeWidgetItem(self.treePlugin)
         self.visual_root.setText(0, 'Visual')
         self.io_root = QTreeWidgetItem(self.treePlugin)
         self.io_root.setText(0, 'IO')
         self.dpp_root = QTreeWidgetItem(self.treePlugin)
         self.dpp_root.setText(0, 'DPP')
+        self.pcb_root = QTreeWidgetItem(self.treePlugin)
+        self.pcb_root.setText(0, 'PCB')
+        self.dgui = None
 
     def itemChanged(self):
         print('itemChanged')
@@ -146,10 +164,19 @@ class Overview(QMainWindow, Ui_Manager):
             dplugin = dplugin_ids[dplugin_id]
             print(dplugin.id)
 
-            plugin_item = None
-
             plugin_item = QTreeWidgetItem(self.visual_root)
-            plugin_item.setText(0, str(dplugin.id) )
+
+            # if dplugin.type == "visual":
+            #     plugin_item = QTreeWidgetItem(self.visual_root)
+            # if dplugin.type == "io":
+            #     plugin_item = QTreeWidgetItem(self.io_root)
+            # if dplugin.type == "dpp":
+            #     plugin_item = QTreeWidgetItem(self.dpp_root)
+            # if dplugin.type == "pcb":
+            #     plugin_item = QTreeWidgetItem(self.pcb_root)
+
+            plugin_item.setText(0, str(dplugin.uname) )
+            plugin_item.setText(1, str(dplugin.id) )
 
 
             #Add DBlocks for DPlugin
@@ -184,3 +211,10 @@ class Overview(QMainWindow, Ui_Manager):
         while( item is not None ):
             self.dpp_root.removeChild(item)
             item = self.dpp_root.child(0)
+
+
+        item = self.pcb_root.child(0)
+
+        while( item is not None ):
+            self.pcb_root.removeChild(item)
+            item = self.pcb_root.child(0)

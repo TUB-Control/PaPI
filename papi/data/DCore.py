@@ -72,6 +72,7 @@ class DCore():
         d_pl.id = id
         d_pl.own_process = own_process
 
+        #print(plugin)
 
         self.__DPlugins[id] = d_pl
 
