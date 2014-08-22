@@ -37,6 +37,6 @@ class ConsoleLog(object):
         self.ident = identifier
 
 
-    def print(self,l,msg):
+    def printText(self,l,msg):
         if l <= self.lvl:
             print(self.ident+msg)

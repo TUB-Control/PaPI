@@ -91,7 +91,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
-        self.log.print(1,'Gui: Gui process id: '+str(os.getpid()))
+        self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
 
     def dbg(self):
         print("Action")
@@ -171,7 +171,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         # opt.parameter_list = 9/300
         # event = PapiEvent(3,0,'instr_event','set_parameter',opt)
         # self.core_queue.put(event)
-        # self.log.print(1,'gui was closed')
+        # self.log.printText(1,'gui was closed')
 
     def stefan(self):
         self.count += 1
@@ -236,38 +236,14 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
         if op==2:
-             # 1 Sinus IOP und 1 Plot
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Sinus'
-            opt.plugin_uname = 'Sinus1'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Plot'
-            opt.plugin_uname = 'Plot1'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Plot'
-            opt.plugin_uname = 'Plot2'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 4
-            self.core_queue.put(event)
+            self.do_create_plugin('Sinus','Sinus1') #id 2
+            self.do_create_plugin('Plot','Plot1')   #id 3
+            self.do_create_plugin('Plot','Plot2')   #id 4
 
             time.sleep(0.1)
 
-            opt =  DOptionalData()
-            opt.source_ID = 2
-            opt.block_name = 'SinMit_f1'
-            event = PapiEvent(3,0,'instr_event','subscribe',opt)
-            self.core_queue.put(event)
-
-            opt =  DOptionalData()
-            opt.source_ID = 2
-            opt.block_name = 'SinMit_f3'
-            event = PapiEvent(4,0,'instr_event','subscribe',opt)
-            self.core_queue.put(event)
+            self.do_subsribe(3,2,'SinMit_f1')
+            self.do_subsribe(4,2,'SinMit_f3')
 
 
         if op==3:
@@ -386,7 +362,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             while (True):
                 event = self.gui_queue.get_nowait()
                 op = event.get_event_operation()
-                self.log.print(2,'Event: '+ op)
+                self.log.printText(2,'Event: '+ op)
                 self.process_event[op](event)
 
 
@@ -413,7 +389,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             if(isEvent):
                 op = event.get_event_operation()
-                self.log.print(2,'Event: '+ op)
+                self.log.printText(2,'Event: '+ op)
                 self.process_event[op](event)
 
         QtCore.QTimer.singleShot(40,self.gui_working)
@@ -431,7 +407,7 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type dplugin: DPlugin
         """
 
-        self.log.print(2,'new data event')
+        self.log.printText(2,'new data event')
         dID = event.get_destinatioID()
         opt = event.get_optional_parameter()
         dplugin = self.gui_data.get_dplugin_by_id(dID)
@@ -439,7 +415,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             dplugin.plugin.execute(opt.data)
             return 1
         else:
-            self.log.print(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
+            self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
             return -1
 
 
@@ -459,7 +435,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
 
         if plugin_orginal is None:
-            self.log.print(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
+            self.log.printText(1,'create_plugin, Plugin with Name  '+plugin_identifier+'  does not exist in file system')
             return -1
 
         imp_path = plugin_orginal.path + ".py"
@@ -483,11 +459,11 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
             dplugin.plugin.get_sub_window().show()
-            self.log.print(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
+            self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
         else:
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
             dplugin.uname = uname
-            self.log.print(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
+            self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
 
 
 
@@ -516,7 +492,7 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
-        self.log.print(1,'Test Execute')
+        self.log.printText(1,'Test Execute')
 
     def process_update_meta(self,event):
         """
@@ -531,9 +507,26 @@ class GUI(QMainWindow, Ui_MainGUI):
         if dplugin != None:
             dplugin.update_meta(opt.plugin_object)
         else:
-            self.log.print(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
+            self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
 
 
+    def do_create_plugin(self,plugin_identifier,uname):
+        opt = DOptionalData()
+        opt.plugin_identifier = plugin_identifier
+        opt.plugin_uname = uname
+        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)
+        self.core_queue.put(event)
+
+
+    def do_subsribe(self,subcriber_id,source_id,block_name):
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        event = PapiEvent(subcriber_id, 0, 'instr_event', 'subscribe', opt)
+        self.core_queue.put(event)
+
+    def do_unsubscribe(self,subscriber_id,source_id,block_name):
+        pass
 
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
