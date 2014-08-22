@@ -103,6 +103,7 @@ class DPlugin(DObject):
         self.uname = None
         self.__parameters = {}
         self.__blocks = {}
+        self.type = None
 
     def subscribe(self, dblock: DBlock):
         """
@@ -260,6 +261,7 @@ class DPlugin(DObject):
         DPlugin_new.state = self.state
         DPlugin_new.own_process = self.own_process
         DPlugin_new.uname = self.uname
+        DPlugin_new.type = self.type
 
         DPlugin_new.__parameters = copy.deepcopy(self.__parameters)
         DPlugin_new.__subscriptions = copy.deepcopy(self.__subscriptions)
@@ -279,6 +281,7 @@ class DPlugin(DObject):
         self.state = meta.state
         self.own_process = meta.own_process
         self.uname = meta.uname
+        self.type = meta.type
 
         self.__parameters = meta.__parameters
         self.__subscriptions = meta.__subscriptions

@@ -62,27 +62,19 @@
    </widget>
    <widget class="QMenu" name="menuAvailablePlugins">
     <property name="title">
-     <string>AvailablePlugins</string>
+     <string>Plugins</string>
     </property>
-    <addaction name="actionAP_Visual"/>
-    <addaction name="actionAP_IO"/>
-    <addaction name="actionAP_Parameter"/>
-   </widget>
-   <widget class="QMenu" name="menuRunningPlugins">
-    <property name="title">
-     <string>RunningPlugins</string>
-    </property>
-    <addaction name="actionRP_Visual"/>
-    <addaction name="actionRP_IO"/>
+    <addaction name="actionP_Available"/>
+    <addaction name="separator"/>
+    <addaction name="actionP_Overview"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuAvailablePlugins"/>
-   <addaction name="menuRunningPlugins"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAP_Visual">
+  <action name="actionP_Available">
    <property name="text">
-    <string>Visual</string>
+    <string>Available</string>
    </property>
   </action>
   <action name="actionAP_IO">
@@ -113,6 +105,11 @@
   <action name="actionAP_Parameter">
    <property name="text">
     <string>Parameter</string>
+   </property>
+  </action>
+  <action name="actionP_Overview">
+   <property name="text">
+    <string>Overview</string>
    </property>
   </action>
  </widget>

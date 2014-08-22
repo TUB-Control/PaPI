@@ -32,10 +32,38 @@ __author__ = 'knuths'
 from PySide.QtGui import QMainWindow, QApplication
 import sys
 from papi.gui.gui_main import GUI
+from papi.data.DGui import DGui
+from papi.data.DCore import DPlugin, DBlock
+from papi.data.DParameter import DParameter
+
+
+def get_gui_data():
+    """
+
+    :return:
+    :rtype DGui:
+    """
+    dgui = DGui()
+    #Create dplugins
+    d_pl_1 = dgui.add_plugin(None, 1, None, None, None, dgui.create_id())
+    d_pl_2 = dgui.add_plugin(None, 1, None, None, None, dgui.create_id())
+    d_pl_3 = dgui.add_plugin(None, 1, None, None, None, dgui.create_id())
+
+    #Create dblocks
+    d_bl_1 = DBlock(None, 0, 0, 'Block_1')
+    d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+    d_bl_3 = DBlock(None, 0, 0, 'Block_3')
+
+    #assign dblocks to DPlugin d_pl_1
+    d_pl_1.add_dblock(d_bl_1)
+    d_pl_1.add_dblock(d_bl_2)
+    d_pl_1.add_dblock(d_bl_3)
+    return dgui
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 #    mw = QtGui.QMainWindow
     frame = GUI(None,None,None)
+    frame.set_dgui_data(get_gui_data())
     frame.show()
     app.exec_()

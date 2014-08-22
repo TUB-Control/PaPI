@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Mon Aug 18 09:38:04 2014
+# Created: Fri Aug 22 12:21:34 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,9 +21,15 @@ class Ui_Manager(object):
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.listPlugin = QtGui.QTreeWidget(self.horizontalLayoutWidget)
-        self.listPlugin.setObjectName("listPlugin")
-        self.horizontalLayout.addWidget(self.listPlugin)
+        self.treePlugin = QtGui.QTreeWidget(self.horizontalLayoutWidget)
+        self.treePlugin.setObjectName("treePlugin")
+        self.treePlugin.header().setCascadingSectionResizes(False)
+        self.treePlugin.header().setDefaultSectionSize(50)
+        self.treePlugin.header().setHighlightSections(False)
+        self.treePlugin.header().setMinimumSectionSize(30)
+        self.treePlugin.header().setSortIndicatorShown(True)
+        self.treePlugin.header().setStretchLastSection(True)
+        self.horizontalLayout.addWidget(self.treePlugin)
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setObjectName("formLayout")
         self.pushButton = QtGui.QPushButton(self.horizontalLayoutWidget)
@@ -40,7 +46,8 @@ class Ui_Manager(object):
 
     def retranslateUi(self, Manager):
         Manager.setWindowTitle(QtGui.QApplication.translate("Manager", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.listPlugin.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
-        self.listPlugin.headerItem().setText(1, QtGui.QApplication.translate("Manager", "Path", None, QtGui.QApplication.UnicodeUTF8))
+        self.treePlugin.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
+        self.treePlugin.headerItem().setText(1, QtGui.QApplication.translate("Manager", "ID", None, QtGui.QApplication.UnicodeUTF8))
+        self.treePlugin.headerItem().setText(2, QtGui.QApplication.translate("Manager", "Path", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("Manager", "PushButton", None, QtGui.QApplication.UnicodeUTF8))
 

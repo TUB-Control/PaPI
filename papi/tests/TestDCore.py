@@ -111,13 +111,18 @@ class TestDCore(unittest.TestCase):
 
     def test_get_dplugin_by_uname(self):
         d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
-        d_pl_1.uname = "Test"
+        d_pl_1.uname = "Test1"
+        d_pl_2.uname = "Test2"
+        d_pl_3.uname = "Test3"
 
-        self.assertEqual("Test", self.dcore.get_dplugin_by_uname("Test").uname)
+        self.assertEqual("Test1", self.dcore.get_dplugin_by_uname("Test1").uname)
+        self.assertEqual("Test2", self.dcore.get_dplugin_by_uname("Test2").uname)
+        self.assertEqual("Test3", self.dcore.get_dplugin_by_uname("Test3").uname)
 
-        self.assertIsNone(self.dcore.get_dplugin_by_uname("Test2"))
-
+        self.assertIsNone(self.dcore.get_dplugin_by_uname("Test4"))
 
     def test_get_all_plugins(self):
         self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
