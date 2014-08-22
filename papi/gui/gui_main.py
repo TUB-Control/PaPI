@@ -170,6 +170,9 @@ class GUI(QMainWindow, Ui_MainGUI):
              print('Parameter: ',p.name)
 
 
+        self.do_subscribe_uname('Plot1','Sinus1','SinMit_f1')
+        self.do_subsribe(4,2,'SinMit_f3')
+
         # opt = DOptionalData()
         # opt.plugin_id =4
         # opt.parameter_list = 9/300
@@ -246,8 +249,8 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             time.sleep(0.1)
 
-            self.do_subsribe(3,2,'SinMit_f1')
-            self.do_subsribe(4,2,'SinMit_f3')
+            #self.do_subsribe(3,2,'SinMit_f1')
+            #self.do_subsribe(4,2,'SinMit_f3')
 
 
         if op==3:
@@ -451,9 +454,11 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         plugin = getattr(current_modul, class_name)()
 
+
         if plugin.get_type() == "ViP":
             dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
             dplugin.uname = uname
+            dplugin.type = opt.plugin_type
 
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue,dplugin.id)
 
@@ -467,6 +472,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         else:
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
             dplugin.uname = uname
+            dplugin.type = opt.plugin_type
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
 
 
@@ -522,12 +528,40 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.core_queue.put(event)
 
 
-    def do_subsribe(self,subcriber_id,source_id,block_name):
+    def do_subsribe(self,subscriber_id,source_id,block_name):
         opt = DOptionalData()
         opt.source_ID = source_id
         opt.block_name = block_name
-        event = PapiEvent(subcriber_id, 0, 'instr_event', 'subscribe', opt)
+        event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)
+
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name):
+
+        source_id = None
+        subscriber_id = None
+
+        dplug = self.gui_data.get_dplugin_by_uname(subscriber_uname)
+
+        if dplug != None:
+            subscriber_id = dplug.id
+        else:
+            self.log.printText(1, 'do_subscribe, sub uname worng')
+            return -1
+
+        dplug2 = self.gui_data.get_dplugin_by_uname(source_uname)
+        if dplug2 != None:
+            source_id = dplug2.id
+        else:
+            self.log.printText(1, 'do_subscribe, target uname  worng')
+            return -1
+
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
+        self.core_queue.put(event)
+
+
 
     def do_unsubscribe(self,subscriber_id,source_id,block_name):
         pass
