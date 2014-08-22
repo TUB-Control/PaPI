@@ -337,13 +337,14 @@ class Core:
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
-
+            dplug.type = plugin.plugin_object.get_type()
 
             # set plugin info for gui
             opt = DOptionalData()
             opt.plugin_identifier = plugin.name
             opt.plugin_id = plugin_id
             opt.plugin_uname = dplug.uname
+            opt.plugin_type = dplug.type
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
 
@@ -351,12 +352,14 @@ class Core:
         else:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
+            dplug.type = plugin.plugin_object.get_type()
 
-            #event = PapiEvent(0,plugin_id,'instr_event','create_plugin',[plugin.name,plugin_id,dplug.uname])
+
             opt = DOptionalData()
             opt.plugin_identifier = plugin.name
             opt.plugin_id = plugin_id
             opt.plugin_uname = dplug.uname
+            opt.plugin_type = dplug.type
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
             self.log.printText(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
