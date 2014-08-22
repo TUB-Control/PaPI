@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 from papi.data.DPlugin import DPlugin, DBlock
-
+from papi.ConsoleLog import ConsoleLog
 __author__ = 'control'
 
 import copy
@@ -37,6 +37,7 @@ class DCore():
         self.__DPlugins = {}
 
         self.__newid = 0
+        self.log = ConsoleLog(2, "DCore")
 
     def create_id(self):
         """
@@ -164,17 +165,21 @@ class DCore():
         subscriber = self.get_dplugin_by_id(subscriber_id)
 
         if subscriber is None:
+            self.log.printText(1, "Found no Subscriber with ID " + subscriber_id)
             return False
 
         #Get Target DPlugin
         target = self.get_dplugin_by_id(target_id)
 
         if target is None:
+            self.log.printText(1, "Found no Target with ID " + target_id)
             return False
 
         dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
+            self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
+
             return False
 
         #Create relation between DPlugin and DBlock
