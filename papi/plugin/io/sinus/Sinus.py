@@ -74,7 +74,6 @@ class Sinus(plugin_base):
 
     def set_parameter(self, parameter_list):
         for p in parameter_list:
-            print(p.name)
             if p.name == self.para3.name:
                 self.para3 = p
 

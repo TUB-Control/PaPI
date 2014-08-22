@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
+from papi.data.DPlugin import DBlock
 
 import time
 import math
@@ -60,6 +61,9 @@ class Fourier_Rect(plugin_base):
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+        self.block1 = DBlock(None,300,10,'Rect1')
+        self.send_new_block_list([self.block1])
+
         return True
 
     def pause(self):
@@ -83,10 +87,7 @@ class Fourier_Rect(plugin_base):
         data = pickle.loads(received)
 
 
-        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', DOptionalData(DATA=data))
-
-
-        self._Core_event_queue__.put(event)
+        self.send_new_data(data,'Rect1')
 
         time.sleep(0.001*self.amax )
 

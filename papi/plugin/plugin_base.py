@@ -33,6 +33,10 @@ from yapsy.IPlugin import IPlugin
 
 from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
+from papi.data.DParameter import DParameter
+from papi.data.DPlugin import DPlugin,DBlock
+
+
 
 class plugin_base(IPlugin):
 
