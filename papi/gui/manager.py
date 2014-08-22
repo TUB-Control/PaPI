@@ -33,13 +33,14 @@ import sys
 import time
 
 from PySide.QtGui import QMainWindow, QTreeWidgetItem
+from PySide import QtGui
 
 from papi.ui.gui.manager import Ui_Manager
 from yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
 
 class Available(QMainWindow, Ui_Manager):
-    def __init__(self, parent=None):
+    def __init__(self, callback_functions, parent=None):
         super(Available, self).__init__(parent)
         self.setupUi(self)
 
@@ -51,18 +52,40 @@ class Available(QMainWindow, Ui_Manager):
 
         self.treePlugin.currentItemChanged.connect(self.itemChanged)
 
+        self.callback_functions = callback_functions
+
+
         self.visual_root = QTreeWidgetItem(self.treePlugin)
-        self.visual_root.setText(0, 'ViP')
+        self.visual_root.setText(self.get_column_by_name("PLUGIN"), 'ViP')
         self.io_root = QTreeWidgetItem(self.treePlugin)
-        self.io_root.setText(0, 'IOP')
+        self.io_root.setText(self.get_column_by_name("PLUGIN"), 'IOP')
         self.dpp_root = QTreeWidgetItem(self.treePlugin)
-        self.dpp_root.setText(0, 'DPP')
+        self.dpp_root.setText(self.get_column_by_name("PLUGIN"), 'DPP')
         self.pcb_root = QTreeWidgetItem(self.treePlugin)
-        self.pcb_root.setText(0, 'PCB')
+        self.pcb_root.setText(self.get_column_by_name("PLUGIN"), 'PCB')
+
+        self.createButton.clicked.connect(self.create_action)
+
+    def create_action(self):
+        item = self.treePlugin.currentItem()
+        if hasattr(item, 'object'):
+            print(item.object)
+
+            self.callback_functions['create_plugin'](item.object.name, 'SuperPlot !!')
+
+        print('itemCreate')
+
+        pass
+
+
 
     def itemChanged(self, item):
-        print(item)
-        print('itemChanged ', item.text(0))
+        # if hasattr(item, 'object'):
+        #     print(item.object)
+        #
+        #     self.callback_functions['create_plugin'](item.object.name, 'SuperPlot !!')
+
+        print('itemChanged')
 
     def showEvent(self, *args, **kwargs):
         self.plugin_manager.collectPlugins()
@@ -77,8 +100,11 @@ class Available(QMainWindow, Ui_Manager):
             if '/dpp/' in pluginfo.path:
                 plugin_item = QTreeWidgetItem(self.dpp_root)
 
-            plugin_item.setText(0, pluginfo.name)
-            plugin_item.setText(2, pluginfo.path)
+            if plugin_item is not None:
+                plugin_item.object = pluginfo
+
+                plugin_item.setText(self.get_column_by_name("PLUGIN"), pluginfo.name)
+                plugin_item.setText(self.get_column_by_name("PATH"), pluginfo.path)
 
     def hideEvent(self, *args, **kwargs):
         #print(self.treePlugin.topLevelItemCount())
@@ -107,9 +133,18 @@ class Available(QMainWindow, Ui_Manager):
             self.pcb_root.removeChild(item)
             item = self.pcb_root.child(0)
 
+    def get_column_by_name(self, name):
+        if name == "PLUGIN":
+            return 0
+        if name == "TYPE":
+            return 1
+        if name == "ID":
+            return 2
+        if name == "PATH":
+            return 3
 
 class Overview(QMainWindow, Ui_Manager):
-    def __init__(self, parent=None):
+    def __init__(self, callback_functions, parent=None):
         """
 
         :param dgui:
@@ -122,26 +157,43 @@ class Overview(QMainWindow, Ui_Manager):
 
         self.setWindowTitle('Overview Plugins')
 
+        self.callback_functions = callback_functions
+
         #print(self.treePlugin)
         self.treePlugin.currentItemChanged.connect(self.itemChanged)
         #self.treePlugin.setHeaderLabel(1, "ID")
         self.visual_root = QTreeWidgetItem(self.treePlugin)
-        self.visual_root.setText(0, 'ViP')
+        self.visual_root.setText(self.get_column_by_name("PLUGIN"), 'ViP')
         self.io_root = QTreeWidgetItem(self.treePlugin)
-        self.io_root.setText(0, 'IOP')
+        self.io_root.setText(self.get_column_by_name("PLUGIN"), 'IOP')
         self.dpp_root = QTreeWidgetItem(self.treePlugin)
-        self.dpp_root.setText(0, 'DPP')
+        self.dpp_root.setText(self.get_column_by_name("PLUGIN"), 'DPP')
         self.pcb_root = QTreeWidgetItem(self.treePlugin)
-        self.pcb_root.setText(0, 'PCB')
+        self.pcb_root.setText(self.get_column_by_name("PLUGIN"), 'PCB')
         self.dgui = None
 
+        self.subscribeButton.clicked.connect(self.subscribe_action)
+
+
+    def subscribe_action(self):
+        item = self.treePlugin.currentItem()
+        if hasattr(item, 'object'):
+            print(item.object)
+            sub_id = item.object.id
+            target_id = int(self.target_id.text())
+            block_name = str(self.block_name.text())
+#            print(sub_id + " - " + target_id + " - " + block_name)
+            self.callback_functions['subscribe'](sub_id, target_id, block_name)
+
+        print('itemCreate')
+
     def itemChanged(self, item):
-        print(item.type())
+        if hasattr(item, 'object'):
+            print(item.object)
         print('itemChanged')
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
-
 
         #Add DPlugins in QTree
 
@@ -161,8 +213,9 @@ class Overview(QMainWindow, Ui_Manager):
             if dplugin.type == "PCB":
                 plugin_item = QTreeWidgetItem(self.pcb_root)
 
-            plugin_item.setText(0, str(dplugin.uname) )
-            plugin_item.setText(1, str(dplugin.id) )
+            plugin_item.object = dplugin
+            plugin_item.setText(self.get_column_by_name("PLUGIN"), str(dplugin.uname) )
+            plugin_item.setText(self.get_column_by_name("ID"), str(dplugin.id) )
 
 
             #Add DBlocks for DPlugin
@@ -170,23 +223,25 @@ class Overview(QMainWindow, Ui_Manager):
             dblock_ids = dplugin.get_dblocks()
 
             dblock_root = QTreeWidgetItem(plugin_item)
-            dblock_root.setText(0, "Blocks")
+            dblock_root.setText(self.get_column_by_name("PLUGIN"), "Blocks")
 
             for dblock_id in dblock_ids:
                 dblock = dblock_ids[dblock_id]
                 block_item = QTreeWidgetItem(dblock_root)
-                block_item.setText(0, dblock.name)
+                block_item.object = dblock
+                block_item.setText(self.get_column_by_name("PLUGIN"), dblock.name)
 
             #Add DParameter for DPlugin
             dparameter_root = QTreeWidgetItem(plugin_item)
-            dparameter_root.setText(0, "Parameters")
+            dparameter_root.setText(self.get_column_by_name("PLUGIN"), "Parameters")
 
             dparameter_names = dplugin.get_parameters()
 
             for dparameter_name in dparameter_names:
                 dparameter = dparameter_names[dparameter_name]
                 parameter_item = QTreeWidgetItem(dparameter_root)
-                parameter_item.setText(0, dparameter.name)
+                parameter_item.object = dparameter
+                parameter_item.setText(self.get_column_by_name("PLUGIN"), dparameter.name)
 
     def hideEvent(self, *args, **kwargs):
         #print(self.treePlugin.topLevelItemCount())
@@ -214,3 +269,13 @@ class Overview(QMainWindow, Ui_Manager):
         while item is not None:
             self.pcb_root.removeChild(item)
             item = self.pcb_root.child(0)
+
+    def get_column_by_name(self, name):
+        if name == "PLUGIN":
+            return 0
+        if name == "TYPE":
+            return 1
+        if name == "ID":
+            return 2
+        if name == "PATH":
+            return 3
