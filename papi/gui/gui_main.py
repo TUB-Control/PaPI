@@ -153,10 +153,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.manager_available.close()
         self.close()
 
-
-
-
-
     def stefan_at_his_best(self):
         # name = 'Sinus1'
         # print('Plugin Information System - Today: '+name)

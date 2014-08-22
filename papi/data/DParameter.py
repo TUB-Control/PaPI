@@ -43,19 +43,15 @@ class DParameter(DObject):
         self.live = live
         self.name = name
 
-
-
 class DButton(DParameter):
 
     def __init__(self, ptype, default=0, prange=0, live=1):
         super(DButton, self).__init__(ptype, default=0, prange=0, live=1)
 
-
 class DSlider(DParameter):
 
     def __init__(self, ptype, default=0, prange=0, live=1):
         super(DButton, self).__init__(ptype, default=0, prange=0, live=1)
-
 
 class DText(DParameter):
 
