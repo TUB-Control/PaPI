@@ -172,8 +172,8 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
-        if parameter.id not in self.__parameters:
-            self.__parameters[parameter.id] = parameter
+        if parameter.name not in self.__parameters:
+            self.__parameters[parameter.name] = parameter
             return True
         else:
             return False
@@ -186,8 +186,8 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        if parameter.id in self.__parameters:
-            del self.__parameters[parameter.id]
+        if parameter.name in self.__parameters:
+            del self.__parameters[parameter.name]
             return True
         else:
             return False
