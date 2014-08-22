@@ -35,9 +35,9 @@ class Sinus(plugin_base):
         self.send_new_block_list([block1, block2, block3])
 
 
-        para3 = DParameter(None,'Frequenz Block SinMit_f3',0.001,[0,1],1)
-        para3.id = 1
-        para_l = [para3]
+        self.para3 = DParameter(None,'Frequenz Block SinMit_f3',0.1,[0,1],1)
+        self.para3.id = 1
+        para_l = [self.para3]
 
         self.send_new_parameter_list(para_l)
 
@@ -63,7 +63,7 @@ class Sinus(plugin_base):
                 vec2[i] = self.t
                 vec2[i+self.amax] = math.sin(2*math.pi*0.15*self.t)
                 vec3[i] = self.t
-                vec3[i+self.amax] = math.sin(2*math.pi*self.f*self.t)
+                vec3[i+self.amax] = math.sin(2*math.pi*self.para3.value*self.t)
                 self.t += 0.1
 
 
@@ -72,8 +72,12 @@ class Sinus(plugin_base):
         self.send_new_data(vec3,'SinMit_f3')
         time.sleep(0.02)
 
-    def set_parameter(self):
-        pass
+    def set_parameter(self, parameter_list):
+        for p in parameter_list:
+            print(p.name)
+            if p.name == self.para3.name:
+                self.para3 = p
+
 
     def quit(self):
         print('Sinus: will quit')
