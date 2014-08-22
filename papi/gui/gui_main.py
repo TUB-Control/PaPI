@@ -40,7 +40,7 @@ from pyqtgraph import QtGui, QtCore
 pg.setConfigOptions(antialias=False)
 
 from papi.ui.gui.main import Ui_MainGUI
-from papi.gui.manager import Manager
+from papi.gui.manager import Available, Overview
 from papi.PapiEvent import PapiEvent
 from papi.data.DGui import DGui
 from papi.ConsoleLog import ConsoleLog
@@ -53,6 +53,7 @@ import importlib.machinery
 from multiprocessing import Queue
 import os
 
+
 class GUI(QMainWindow, Ui_MainGUI):
 
     def __init__(self, core_queue, gui_queue,gui_id, parent=None):
@@ -61,9 +62,10 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.create_actions()
 
-        self.manager_visual = Manager('visual')
-        self.manager_io = Manager('io')
-        self.manager_parameter = Manager('parameter')
+        self.manager_available = Available()
+        self.gui_data = DGui()
+
+        self.manager_overview = Overview()
 
         self.setWindowTitle('PaPI')
 
@@ -84,7 +86,6 @@ class GUI(QMainWindow, Ui_MainGUI):
                                 'test': self.test
         }
 
-        self.gui_data = DGui()
 
         self.log = ConsoleLog(1,'Gui-Process: ')
 
@@ -93,6 +94,11 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.log.print(1,'Gui: Gui process id: '+str(os.getpid()))
 
+
+    def set_dgui_data(self, dgui):
+        self.gui_data = dgui
+        self.manager_overview.dgui =dgui
+
     def dbg(self):
         print("Action")
 
@@ -100,12 +106,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.actionM_License.triggered.connect(self.menu_license)
         self.actionM_Quit.triggered.connect(self.menu_quit)
 
-        self.actionAP_Visual.triggered.connect(self.ap_visual)
-        self.actionAP_IO.triggered.connect(self.ap_io)
-        self.actionAP_Parameter.triggered.connect(self.ap_parameter)
+        self.actionP_Available.triggered.connect(self.ap_available)
 
-        self.actionRP_IO.triggered.connect(self.rp_io)
-        self.actionRP_Visual.triggered.connect(self.rp_visual)
+        self.actionP_Overview.triggered.connect(self.ap_overview)
+
 
         self.stefans_button.clicked.connect(self.stefan)
         self.stefans_button_2.clicked.connect(self.stefan_at_his_best)
@@ -118,16 +122,16 @@ class GUI(QMainWindow, Ui_MainGUI):
         pass
 
     def ap_visual(self):
-        self.manager_visual.show()
+        self.manager_available.show()
 
         pass
 
-    def ap_io(self):
-        self.manager_io.show()
+    def ap_available(self):
+        self.manager_available.show()
         pass
 
-    def ap_parameter(self):
-        self.manager_parameter.show()
+    def ap_overview(self):
+        self.manager_overview.show()
         pass
 
     def rp_visual(self):
@@ -141,7 +145,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         opt.reason = 'User clicked close Button'
         event = PapiEvent(self.gui_id, 0, 'instr_event','close_program',opt)
         self.core_queue.put(event)
-        self.manager_visual.close()
+        self.manager_available.close()
         self.manager_parameter.close()
         self.manager_io.close()
         self.close()
