@@ -469,8 +469,7 @@ class Core:
         :type dplugin_source: DPlugin
         """
         opt = event.get_optional_parameter()
-        pl_id = opt.plugin_id
-
+        pl_id = event.get_destinatioID()
         dplugin =  self.core_data.get_dplugin_by_id(pl_id)
         if dplugin != None:
             dplugin.queue.put(event)

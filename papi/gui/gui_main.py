@@ -162,12 +162,19 @@ class GUI(QMainWindow, Ui_MainGUI):
         paras = p.get_parameters()
 
         for i in paras:
-             p = paras[i]
-             print('Parameter: ',p.name)
+             par = paras[i]
+             print('Parameter: ',par.name)
+             if par.name =='Frequenz Block SinMit_f3':
+                 par.value = 0.001
+                 opt = DOptionalData()
+                 opt.parameter_list = [par]
+                 opt.plugin_id = p.id
+                 e = PapiEvent(3,p.id,'instr_event','set_parameter',opt)
+                 self.core_queue.put(e)
 
 
-        self.do_subscribe_uname('Plot1','Sinus1','SinMit_f1')
-        self.do_subsribe(4,2,'SinMit_f3')
+        #self.do_subscribe_uname('Plot1','Sinus1','SinMit_f1')
+        #self.do_subsribe(4,2,'SinMit_f3')
 
         # opt = DOptionalData()
         # opt.plugin_id =4
@@ -175,6 +182,19 @@ class GUI(QMainWindow, Ui_MainGUI):
         # event = PapiEvent(3,0,'instr_event','set_parameter',opt)
         # self.core_queue.put(event)
         # self.log.printText(1,'gui was closed')
+
+    def do_set_parameter(self,plugin_uname,parameter_name,value):
+        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+        if dplug is not None:
+            parameters = dplug.get_parameters()
+            p = parameters[parameter_name]
+            p.value = value
+
+            opt = DOptionalData()
+            opt.parameter_list = [p]
+            opt.plugin_id = dplug.id
+            e = PapiEvent(1,dplug.id,'instr_event','set_parameter',opt)
+            self.core_queue.put(e)
 
     def stefan(self):
         self.count += 1
@@ -245,8 +265,8 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             time.sleep(0.1)
 
-            #self.do_subsribe(3,2,'SinMit_f1')
-            #self.do_subsribe(4,2,'SinMit_f3')
+            self.do_subsribe(3,2,'SinMit_f1')
+            self.do_subsribe(4,2,'SinMit_f3')
 
 
         if op==3:
