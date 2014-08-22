@@ -34,6 +34,7 @@ from multiprocessing import Process, Queue, Manager
 
 from yapsy.PluginManager import PluginManager
 
+
 from papi.PapiEvent import PapiEvent
 from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
@@ -61,7 +62,8 @@ class Core:
         self.__process_data_event_l__ = {   'new_data': self.__process_new_data__,
                                             'get_output_size': self.__process_get_output_size__,
                                             'response_output_size': self.__process_response_output_size__,
-                                            'new_block': self.__process_new_block__
+                                            'new_block': self.__process_new_block__,
+                                            'new_parameter': self.__process_new_parameter__
         }
 
         self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
@@ -94,6 +96,7 @@ class Core:
 
         self.core_id = 0
 
+
     def run(self):
         debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
         debug_print(self.__debugLevel__, ['Core: core process id: ',os.getpid()] )
@@ -110,14 +113,14 @@ class Core:
 
             event = self.core_event_queue.get()
 
-            self.log.print(2,'Event->'+event.get_eventtype()+'   '+event.get_event_operation())
+            self.log.printText(2,'Event->'+event.get_eventtype()+'   '+event.get_event_operation())
 
             self.__process_event__(event)
 
             self.core_goOn = self.core_data.get_dplugins_count() != 0
 
 
-        self.log.print(1,'Core finished operation')
+        self.log.printText(1,'Core finished operation')
 
 
 
@@ -178,7 +181,7 @@ class Core:
             dplug.state = 'start_successfull'
             return 1
         else:
-            self.log.print(1,'start_successfull_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            self.log.printText(1,'start_successfull_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
 
@@ -194,7 +197,7 @@ class Core:
             dplug.state = 'start_failed'
             return 1
         else:
-            self.log.print(1,'start_failed_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            self.log.printText(1,'start_failed_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
 
@@ -230,7 +233,7 @@ class Core:
             dplugin.process.join()
             return self.core_data.rm_dplugin(dplugin.id)
         else:
-            self.log.print(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
+            self.log.printText(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
 
@@ -265,7 +268,7 @@ class Core:
                     pl.queue.put(new_event)
                 return 1
             else:
-                self.log.print(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
+                self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
         return 1
 
@@ -312,7 +315,7 @@ class Core:
         plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
 
         if plugin == None:
-            self.log.print(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
+            self.log.printText(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
             return -1
 
         #creates a new plugin id
@@ -356,7 +359,7 @@ class Core:
             opt.plugin_uname = dplug.uname
             event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
-            self.log.print(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
+            self.log.printText(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
 
         return True
 
@@ -376,7 +379,7 @@ class Core:
             dplugin.queue.put(event)
             return 1
         else:
-            self.log.print(1,'stop_plugin, plugin with id '+str(id)+' not found')
+            self.log.printText(1,'stop_plugin, plugin with id '+str(id)+' not found')
             return -1
 
 
@@ -411,9 +414,8 @@ class Core:
             else:
                 toDelete.append(dplugin.id)
 
-        for dplugin in toDelete:
-            self.core_data.rm_dplugin(dplugin)
-            print('pls: ', self.core_data.get_dplugins_count())
+        for dplugin_ID in toDelete:
+            self.core_data.rm_dplugin(dplugin_ID)
 
 
     def __process_subscribe__(self,event):
@@ -430,9 +432,9 @@ class Core:
 
 
         if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) == False:
-            self.log.print(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+            self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
         else:
-            self.log.print(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
+            self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
 
         self.update_meta_data_to_gui(oID)
         self.update_meta_data_to_gui(opt.source_ID)
@@ -471,7 +473,7 @@ class Core:
             dplugin.queue.put(event)
             return 1
         else:
-            self.log.print(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')
+            self.log.printText(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')
             return -1
 
 
@@ -492,8 +494,30 @@ class Core:
 
             self.update_meta_data_to_gui(pl_id)
         else:
-            self.log.print(1,'new_block, plugin with id '+str(pl_id)+' not found')
+            self.log.printText(1,'new_block, plugin with id '+str(pl_id)+' not found')
         return -1
+
+
+    def __process_new_parameter__(self,event):
+        """
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        opt = event.get_optional_parameter()
+        pl_id = event.get_originID()
+
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin != None:
+            for p in opt.parameter_list:
+                dplugin.add_parameter(p)
+            self.update_meta_data_to_gui(pl_id)
+            return 1
+        else:
+            self.log.printText(1,'new_parameter, plugin with id '+str(pl_id)+' not found')
+            return -1
+
 
 
     def update_meta_data_to_gui(self,pl_id):
