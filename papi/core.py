@@ -432,17 +432,20 @@ class Core:
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
+        p = self.core_data.get_dplugin_by_id(opt.source_ID)
+        b = p.get_dblocks()
 
 
         if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) == False:
             self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
         else:
             self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
+            self.update_meta_data_to_gui(oID)
+            self.update_meta_data_to_gui(opt.source_ID)
 
-        self.update_meta_data_to_gui(oID)
-        self.update_meta_data_to_gui(opt.source_ID)
 
-        pass
+
+
 
 
     def __process_unsubsribe__(self,event):

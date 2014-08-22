@@ -32,6 +32,8 @@ __author__ = 'ruppins'
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
+from papi.data.DPlugin import DBlock
+from papi.data.DParameter import DParameter
 
 import time
 import math
@@ -43,11 +45,20 @@ class Add(plugin_base):
     def start_init(self):
         self.t = 0
         print(['ADD: process id: ',os.getpid()] )
-        self.approx_max = 200
+        self.approx_max = 300
         self.fac= 1
         self.amax = 20
         self.approx = self.approx_max*self.fac
         self.vec = numpy.zeros(self.amax*2)
+
+
+        self.block1 = DBlock(None,1,10,'AddOut1')
+
+        self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
+
+        self.send_new_block_list([self.block1])
+        self.send_new_parameter_list([self.para1])
+
 
         return True
 
@@ -59,8 +70,7 @@ class Add(plugin_base):
         pass
 
     def execute(self,Data):
-
-
+        self.approx = round(self.approx_max*self.para1.value)
         self.vec[:] = 0
         self.vec[0:self.amax] = Data[0:self.amax]
 
@@ -70,12 +80,12 @@ class Add(plugin_base):
 
         #event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
         #self._Core_event_queue__.put(event)
-        self.send_new_data(self.vec)
+        self.send_new_data(self.vec,'AddOut1')
 
-    def set_parameter(self,para_list):
-        #TODO change with whole list setup
-        self.fac = para_list
-        self.approx = round(self.approx_max*self.fac)
+    def set_parameter(self,parameter_list):
+        for p in parameter_list:
+            if p.name == self.para1.name:
+                self.para1 = p
 
     def quit(self):
         print('Add: will quit')

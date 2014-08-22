@@ -33,6 +33,9 @@ import time
 
 from PySide.QtGui import QMainWindow, QApplication
 
+
+
+
 import pyqtgraph as pg
 from pyqtgraph import QtGui, QtCore
 
@@ -155,43 +158,38 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
     def stefan_at_his_best(self):
-        name = 'Sinus1'
-        print('Plugin Information System - Today: '+name)
-        print('===========================================')
-        p = self.gui_data.get_dplugin_by_uname(name)
-        blocks = p.get_dblocks()
-        for k in blocks:
-            b = blocks[k]
-            print('Block: ',b.name)
-        paras = p.get_parameters()
+        # name = 'Sinus1'
+        # print('Plugin Information System - Today: '+name)
+        # print('===========================================')
+        # p = self.gui_data.get_dplugin_by_uname(name)
+        # blocks = p.get_dblocks()
+        # for k in blocks:
+        #     b = blocks[k]
+        #     print('Block: ',b.name)
+        # paras = p.get_parameters()
+        #
+        # for i in paras:
+        #      par = paras[i]
+        #      print('Parameter: ',par.name)
 
-        for i in paras:
-             par = paras[i]
-             print('Parameter: ',par.name)
-             if par.name =='Frequenz Block SinMit_f3':
-                 par.value = 0.001
-                 opt = DOptionalData()
-                 opt.parameter_list = [par]
-                 opt.plugin_id = p.id
-                 e = PapiEvent(3,p.id,'instr_event','set_parameter',opt)
-                 self.core_queue.put(e)
+        #self.do_set_parameter('Sinus1','Frequenz Block SinMit_f3',0.001)
 
+        s = self.stefans_text_field.text()
+        val = float(s)
+
+        self.do_set_parameter('Add1','Count',val)
 
         #self.do_subscribe_uname('Plot1','Sinus1','SinMit_f1')
         #self.do_subsribe(4,2,'SinMit_f3')
 
-        # opt = DOptionalData()
-        # opt.plugin_id =4
-        # opt.parameter_list = 9/300
-        # event = PapiEvent(3,0,'instr_event','set_parameter',opt)
-        # self.core_queue.put(event)
-        # self.log.printText(1,'gui was closed')
 
     def do_set_parameter(self,plugin_uname,parameter_name,value):
         dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
         if dplug is not None:
             parameters = dplug.get_parameters()
             p = parameters[parameter_name]
+
+            # TODO: check para range
             p.value = value
 
             opt = DOptionalData()
@@ -203,39 +201,18 @@ class GUI(QMainWindow, Ui_MainGUI):
     def stefan(self):
         self.count += 1
 
-        op=2
+        op=0
 
         if op == 0:
             # 1 test uname subsribe
-            opt = DOptionalData()
 
-            opt.plugin_identifier = 'Fourier_Rect'
-            opt.plugin_uname = 'Four'
+            self.do_create_plugin('Fourier_Rect','Four')    #id 2
+            self.do_create_plugin('Add','Add1')             #id 3
+            self.do_create_plugin('Plot','Plot1')           #id 4
 
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Plot'
-            opt.plugin_uname = 'Plot1'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Add'
-            opt.plugin_uname = 'Add1'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 4
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.source_ID = 2
-            event = PapiEvent(4,0,'instr_event','subscribe',opt)
-            self.core_queue.put(event)
-
-            opt = DOptionalData()
-            opt.source_ID = 4
-            event = PapiEvent(3,0,'instr_event','subscribe',opt)
-            self.core_queue.put(event)
+            time.sleep(0.1)
+            self.do_subsribe(3,2,'Rect1')
+            self.do_subsribe(4,3,'AddOut1')
 
 
 
