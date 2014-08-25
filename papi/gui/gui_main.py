@@ -188,36 +188,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         #self.do_subsribe(4,2,'SinMit_f3')
 
 
-    def do_set_parameter(self,plugin_uname,parameter_name,value):
-        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-        if dplug is not None:
-            parameters = dplug.get_parameters()
-            p = parameters[parameter_name]
-
-            # TODO: check against range AND type of parameter
-            if self.check_range_of_value(value,p.range):
-                p.value = value
-            else:
-                self.log.printText(1,'do_set_parameter, value out of range')
-
-            opt = DOptionalData()
-            opt.parameter_list = [p]
-            opt.plugin_id = dplug.id
-            e = PapiEvent(1,dplug.id,'instr_event','set_parameter',opt)
-            self.core_queue.put(e)
-
-
-
-    def check_range_of_value(self,value,range):
-        min = range[0]
-        max = range[1]
-        if value > max:
-            return False
-        if value < min:
-            return False
-        return True
-
-
 
     def stefan(self):
         self.count += 1
@@ -235,9 +205,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.do_subsribe(3,2,'Rect1')
             self.do_subsribe(4,3,'AddOut1')
 
-
-
-        if op==1:
+        if op == 1:
             # 1 Sinus IOP und 1 Plot
             opt = DOptionalData()
             opt.plugin_identifier = 'Sinus'
@@ -259,8 +227,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(3,0,'instr_event','subscribe',opt)
             self.core_queue.put(event)
 
-
-        if op==2:
+        if op == 2:
             self.do_create_plugin('Sinus','Sinus1') #id 2
             self.do_create_plugin('Plot','Plot1')   #id 3
             self.do_create_plugin('Plot','Plot2')   #id 4
@@ -268,112 +235,19 @@ class GUI(QMainWindow, Ui_MainGUI):
             time.sleep(0.1)
 
             self.do_subsribe(3,2,'SinMit_f1')
-            self.do_subsribe(4,2,'SinMit_f3')
+            self.do_subsribe(4,2,'SinMit_f1')
 
+        if op == 3:
+            pass
 
-        if op==3:
-            # 2x Sinus und 5 Plots
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 4
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 5
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 6
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 7
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 8
-            self.core_queue.put(event)
-            event = PapiEvent(4,0,'instr_event','subscribe',2)
-            self.core_queue.put(event)
-            event = PapiEvent(5,0,'instr_event','subscribe',3)
-            self.core_queue.put(event)
-            event = PapiEvent(6,0,'instr_event','subscribe',2)
-            self.core_queue.put(event)
-            event = PapiEvent(7,0,'instr_event','subscribe',3)
-            self.core_queue.put(event)
-            event = PapiEvent(8,0,'instr_event','subscribe',2)
-            self.core_queue.put(event)
+        if op == 4:
+            pass
 
+        if op == 5:
+            pass
 
-        if op==4:
-            # Sinus und Plot, Fourier Server und Plot+Add
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 3
-            self.core_queue.put(event)
-
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 4
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',4]) #id 5
-            self.core_queue.put(event)
-
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 6
-            self.core_queue.put(event)
-
-            event = PapiEvent(3,0,'instr_event','subscribe',2)
-            self.core_queue.put(event)
-
-            event = PapiEvent(6,0,'instr_event','subscribe',5)
-            self.core_queue.put(event)
-
-
-        if op==5:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 4
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 5
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 6
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5]) #id 7
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',6]) #id 8
-            self.core_queue.put(event)
-
-        if op==6:
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 2
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 3
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Sinus'])  #id 4
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 5
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Fourier_Rect'])  #id 6
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',5]) #id 7
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Add',6]) #id 8
-            self.core_queue.put(event)
-
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 9
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 10
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 11
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 12
-            self.core_queue.put(event)
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',['Plot']) #id 13
-            self.core_queue.put(event)
-
-            event = PapiEvent(9,0,'instr_event','subscribe',2)
-            self.core_queue.put(event)
-            event = PapiEvent(10,0,'instr_event','subscribe',3)
-            self.core_queue.put(event)
-            event = PapiEvent(11,0,'instr_event','subscribe',4)
-            self.core_queue.put(event)
-            event = PapiEvent(12,0,'instr_event','subscribe',7)
-            self.core_queue.put(event)
-            event = PapiEvent(13,0,'instr_event','subscribe',8)
-            self.core_queue.put(event)
+        if op == 6:
+            pass
 
 
 
@@ -390,8 +264,6 @@ class GUI(QMainWindow, Ui_MainGUI):
                 self.log.printText(2,'Event: '+ op)
                 self.process_event[op](event)
 
-
-            #TODO: wenn 1 Quelle zu 2 Plots geht, nur 1 Event benutzen!
         except:
             pass
 
@@ -433,15 +305,14 @@ class GUI(QMainWindow, Ui_MainGUI):
         """
 
         self.log.printText(2,'new data event')
-        dID = event.get_destinatioID()
+        dID_list = event.get_destinatioID()
         opt = event.get_optional_parameter()
-        dplugin = self.gui_data.get_dplugin_by_id(dID)
-        if dplugin != None:
-            dplugin.plugin.execute(opt.data)
-            return 1
-        else:
-            self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
-            return -1
+        for dID in dID_list:
+            dplugin = self.gui_data.get_dplugin_by_id(dID)
+            if dplugin != None:
+                dplugin.plugin.execute(opt.data)
+            else:
+                self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
 
 
     def process_create_plugin(self,event):
@@ -583,7 +454,70 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
     def do_unsubscribe(self,subscriber_id,source_id,block_name):
-        pass
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
+        self.core_queue.put(event)
+
+    def do_unsubscribe_uname(self,subscriber_uname,source_uname,block_name):
+        source_id = None
+        subscriber_id = None
+
+        dplug = self.gui_data.get_dplugin_by_uname(subscriber_uname)
+
+        if dplug != None:
+            subscriber_id = dplug.id
+        else:
+            self.log.printText(1, 'do_subscribe, sub uname worng')
+            return -1
+
+        dplug2 = self.gui_data.get_dplugin_by_uname(source_uname)
+        if dplug2 != None:
+            source_id = dplug2.id
+        else:
+            self.log.printText(1, 'do_subscribe, target uname  worng')
+            return -1
+
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
+        self.core_queue.put(event)
+
+
+    def do_set_parameter(self,plugin_uname,parameter_name,value):
+        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+        if dplug is not None:
+            parameters = dplug.get_parameters()
+            if parameters is not None:
+                p = parameters[parameter_name]
+                if p is not None:
+                    # TODO: check against range AND type of parameter
+                    if self.check_range_of_value(value,p.range):
+                        p.value = value
+                        opt = DOptionalData()
+                        opt.parameter_list = [p]
+                        opt.plugin_id = dplug.id
+                        e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
+                        self.core_queue.put(e)
+                    else:
+                        self.log.printText(1,'do_set_parameter, value out of range')
+
+
+
+
+
+    def check_range_of_value(self,value,range):
+        min = range[0]
+        max = range[1]
+        if value > max:
+            return False
+        if value < min:
+            return False
+        return True
+
+
 
 
 def startGUI(CoreQueue, GUIQueue,gui_id):

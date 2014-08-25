@@ -261,11 +261,20 @@ class Core:
                 block= dplug.get_dblock_by_name(opt.block_name)
                 subscriber = block.get_subscribers()
                 #print(subscriber)
+                id_list = []
                 for sub_id in subscriber:
                     pl = self.core_data.get_dplugin_by_id(sub_id)
-                    #TODO: just 1 Event for multiple VIP...
-                    new_event = PapiEvent(oID,pl.id,'data_event','new_data',event.get_optional_parameter())
-                    pl.queue.put(new_event)
+                    if pl.type == 'ViP':
+                        id_list.append(pl.id)
+                    else:
+                        new_event = PapiEvent(oID,[pl.id],'data_event','new_data',event.get_optional_parameter())
+                        pl.queue.put(new_event)
+
+                if len(id_list)> 0:
+                    #print(id_list)
+                    new_event = PapiEvent(oID,id_list,'data_event','new_data',event.get_optional_parameter())
+                    self.gui_event_queue.put(new_event)
+
                 return 1
             else:
                 self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
@@ -345,7 +354,7 @@ class Core:
             opt.plugin_id = plugin_id
             opt.plugin_uname = dplug.uname
             opt.plugin_type = dplug.type
-            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
+            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
 
 
@@ -360,7 +369,7 @@ class Core:
             opt.plugin_id = plugin_id
             opt.plugin_uname = dplug.uname
             opt.plugin_type = dplug.type
-            event = PapiEvent(0,plugin_id,'instr_event','create_plugin',opt)
+            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',opt)
             self.gui_event_queue.put(event)
             self.log.printText(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
 
@@ -451,19 +460,26 @@ class Core:
     def __process_unsubsribe__(self,event):
         """
         Case A:
-        Plugin wants to unsubscribe from another plugin
-        PapiEvent(oID,CoreID,'instr_event','unsubscribe',SourceID)
+          Plugin wants to unsubscribe from another plugin
+
         Case B:
-         Plugin wants to close all his subscribtions
-        PapiEvent(oID,CoreID,'instr_event','unsubscribe','all'
+          Plugin wants to close all his subscribtions
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-        #TODO
 
-        pass
+        opt = event.get_optional_parameter()
+        oID = event.get_originID()
+
+        if self.core_data.unsubscribe(oID,opt.source_ID,opt.block_name) is False:
+            self.log.printText(1,'unsubscribe, something failed in unsubsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+        else:
+            self.log.printText(1,'unsubscribe, unsubscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
+            self.update_meta_data_to_gui(oID)
+            self.update_meta_data_to_gui(opt.source_ID)
 
 
     def __process_set_parameter__(self,event):
@@ -477,6 +493,12 @@ class Core:
         pl_id = event.get_destinatioID()
         dplugin =  self.core_data.get_dplugin_by_id(pl_id)
         if dplugin != None:
+            pl_parameter = dplugin.get_parameters()
+            for new_para in opt.parameter_list:
+                p = pl_parameter[new_para.name]
+                if p is not None:
+                    p.value = new_para.value
+
             dplugin.queue.put(event)
             return 1
         else:
