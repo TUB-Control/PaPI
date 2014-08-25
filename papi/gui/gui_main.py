@@ -65,10 +65,17 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.create_actions()
 
-        self.manager_available = Available()
+        callback_functions = {
+            'create_plugin' : self.do_create_plugin,
+            'set_parameter' : self.do_set_parameter,
+            'subscribe'     : self.do_subsribe,
+            'unsubscribe'   : self.do_unsubscribe
+        }
+
+        self.manager_available = Available(callback_functions)
         self.gui_data = DGui()
 
-        self.manager_overview = Overview()
+        self.manager_overview = Overview(callback_functions)
         self.manager_overview.dgui = self.gui_data
         self.setWindowTitle('PaPI')
 
@@ -532,6 +539,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
     def do_create_plugin(self,plugin_identifier,uname):
+        print('Create Plugin ' + uname)
         opt = DOptionalData()
         opt.plugin_identifier = plugin_identifier
         opt.plugin_uname = uname
