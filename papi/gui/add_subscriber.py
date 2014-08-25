@@ -30,10 +30,110 @@ __author__ = 'knuths'
 
 from papi.ui.gui.add_subscriber import Ui_AddSubscriber
 from PySide.QtGui import QDialog
-
+from PySide.QtGui import QTreeWidgetItem
 
 class AddSubscriber(QDialog, Ui_AddSubscriber):
 
     def __init__(self, parent=None):
         super(AddSubscriber, self).__init__(parent)
         self.setupUi(self)
+        self.dgui = None
+
+        self.treeSubscriber.currentItemChanged.connect(self.subscriberItemChanged)
+        self.treeTarget.currentItemChanged.connect(self.targetItemChanged)
+        self.treeBlock.currentItemChanged.connect(self.blockItemChanged)
+
+        self.subscriberID = None
+        self.targetID = None
+        self.blockName = None
+        self.setWindowTitle("Add Subscribtion")
+
+    def setDGui(self, dgui):
+        self.dgui = dgui
+
+    def getDGui(self):
+        """
+
+        :return:
+        :rtype DGui:
+        """
+        return self.dgui
+
+    def subscriberItemChanged(self, item):
+        self.treeTarget.clear()
+        if hasattr(item, 'dplugin'):
+
+            subscriber = self.treeSubscriber.currentItem().dplugin
+
+            dplugin_ids = self.dgui.get_all_plugins()
+
+            for dplugin_id in dplugin_ids:
+                dplugin = dplugin_ids[dplugin_id]
+
+                # ------------------------------
+                # Sort DPluginItem in TreeWidget of Subscriber and Target
+                # ------------------------------
+
+                if subscriber.id is not dplugin_id and len(dplugin.get_dblocks()) is not 0:
+
+                    target_item = QTreeWidgetItem(self.treeTarget)
+
+                    target_item.dplugin = dplugin
+                    target_item.setText(0, str(dplugin.uname) )
+
+    def targetItemChanged(self, item):
+
+        self.treeBlock.clear()
+
+        if hasattr(item, 'dplugin'):
+            dplugin = item.dplugin
+            dblock_ids = dplugin.get_dblocks()
+
+            for dblock_id in dblock_ids:
+                dblock = dblock_ids[dblock_id]
+                block_item = QTreeWidgetItem(self.treeBlock)
+                block_item.dblock = dblock
+                block_item.setText(0, dblock.name)
+
+    def blockItemChanged(self, item):
+        pass
+
+
+    def showEvent(self, *args, **kwargs):
+
+        self.treeSubscriber.clear()
+        self.treeTarget.clear()
+        self.treeBlock.clear()
+
+        dplugin_ids = self.dgui.get_all_plugins()
+
+        for dplugin_id in dplugin_ids:
+            dplugin = dplugin_ids[dplugin_id]
+
+            # ------------------------------
+            # Sort DPluginItem in TreeWidget of Subscriber and Target
+            # ------------------------------
+
+            subscriber_item = QTreeWidgetItem(self.treeSubscriber)
+
+            subscriber_item.dplugin = dplugin
+            subscriber_item.setText(0, str(dplugin.uname) )
+
+            # # -------------------------------
+            # # Set amount of blocks and parameters as meta information
+            # # -------------------------------
+            # dblock_ids = dplugin.get_dblocks()
+            #
+            # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
+
+
+    def accept(self, *args, **kwargs):
+        subscriber_item = self.treeSubscriber.currentItem()
+        target_item = self.treeTarget.currentItem()
+        block_item = self.treeBlock.currentItem()
+
+        self.subscriberID = subscriber_item.dplugin.id
+        self.targetID = target_item.dplugin.id
+        self.blockName = block_item.dblock.name
+        print("Accepted")
+        self.done(1)

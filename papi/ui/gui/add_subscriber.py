@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_subscriber.ui'
 #
-# Created: Mon Aug 25 12:23:51 2014
+# Created: Mon Aug 25 17:19:45 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,30 +12,27 @@ from PySide import QtCore, QtGui
 class Ui_AddSubscriber(object):
     def setupUi(self, AddSubscriber):
         AddSubscriber.setObjectName("AddSubscriber")
-        AddSubscriber.resize(400, 148)
+        AddSubscriber.resize(408, 199)
         self.buttonBox = QtGui.QDialogButtonBox(AddSubscriber)
-        self.buttonBox.setGeometry(QtCore.QRect(20, 110, 341, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(40, 160, 351, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.listSubscriber = QtGui.QListWidget(AddSubscriber)
-        self.listSubscriber.setGeometry(QtCore.QRect(10, 30, 111, 71))
-        self.listSubscriber.setObjectName("listSubscriber")
-        self.listTarget = QtGui.QListWidget(AddSubscriber)
-        self.listTarget.setGeometry(QtCore.QRect(140, 30, 111, 71))
-        self.listTarget.setObjectName("listTarget")
-        self.label = QtGui.QLabel(AddSubscriber)
-        self.label.setGeometry(QtCore.QRect(30, 10, 81, 17))
-        self.label.setObjectName("label")
-        self.listBlock = QtGui.QListWidget(AddSubscriber)
-        self.listBlock.setGeometry(QtCore.QRect(270, 30, 111, 71))
-        self.listBlock.setObjectName("listBlock")
-        self.label_2 = QtGui.QLabel(AddSubscriber)
-        self.label_2.setGeometry(QtCore.QRect(170, 10, 81, 17))
-        self.label_2.setObjectName("label_2")
-        self.label_3 = QtGui.QLabel(AddSubscriber)
-        self.label_3.setGeometry(QtCore.QRect(310, 10, 81, 17))
-        self.label_3.setObjectName("label_3")
+        self.horizontalLayoutWidget = QtGui.QWidget(AddSubscriber)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 381, 141))
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.treeSubscriber = QtGui.QTreeWidget(self.horizontalLayoutWidget)
+        self.treeSubscriber.setObjectName("treeSubscriber")
+        self.horizontalLayout.addWidget(self.treeSubscriber)
+        self.treeTarget = QtGui.QTreeWidget(self.horizontalLayoutWidget)
+        self.treeTarget.setObjectName("treeTarget")
+        self.horizontalLayout.addWidget(self.treeTarget)
+        self.treeBlock = QtGui.QTreeWidget(self.horizontalLayoutWidget)
+        self.treeBlock.setObjectName("treeBlock")
+        self.horizontalLayout.addWidget(self.treeBlock)
 
         self.retranslateUi(AddSubscriber)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), AddSubscriber.accept)
@@ -44,7 +41,7 @@ class Ui_AddSubscriber(object):
 
     def retranslateUi(self, AddSubscriber):
         AddSubscriber.setWindowTitle(QtGui.QApplication.translate("AddSubscriber", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("AddSubscriber", "Subscriber", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("AddSubscriber", "Target", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("AddSubscriber", "Block", None, QtGui.QApplication.UnicodeUTF8))
+        self.treeSubscriber.headerItem().setText(0, QtGui.QApplication.translate("AddSubscriber", "Subscriber", None, QtGui.QApplication.UnicodeUTF8))
+        self.treeTarget.headerItem().setText(0, QtGui.QApplication.translate("AddSubscriber", "Target", None, QtGui.QApplication.UnicodeUTF8))
+        self.treeBlock.headerItem().setText(0, QtGui.QApplication.translate("AddSubscriber", "Block", None, QtGui.QApplication.UnicodeUTF8))
 

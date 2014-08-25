@@ -43,11 +43,15 @@ from pyqtgraph import QtGui, QtCore
 pg.setConfigOptions(antialias=False)
 
 from papi.ui.gui.main import Ui_MainGUI
-from papi.gui.manager import Available, Overview
+from papi.gui.manager import Overview
 from papi.PapiEvent import PapiEvent
 from papi.data.DGui import DGui
 from papi.ConsoleLog import ConsoleLog
 from papi.data.DOptionalData import DOptionalData
+from papi.gui.add_plugin import AddPlugin
+from papi.gui.add_subscriber import AddSubscriber
+from PySide.QtGui import QIcon
+from PySide.QtCore import QSize
 
 from yapsy.PluginManager import PluginManager
 import importlib.machinery
@@ -72,7 +76,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             'unsubscribe'   : self.do_unsubscribe
         }
 
-        self.manager_available = Available(callback_functions)
+
         self.gui_data = DGui()
 
         self.manager_overview = Overview(callback_functions)
@@ -104,6 +108,58 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
 
+        # -------------------------------------
+        # Create actions for buttons
+        # -------------------------------------
+
+        self.buttonCreatePlugin.clicked.connect(self.create_plugin)
+        self.buttonCreateSubscription.clicked.connect(self.create_subscription)
+        self.buttonShowOverview.clicked.connect(self.ap_overview)
+        self.buttonExit.clicked.connect(self.close)
+
+        # -------------------------------------
+        # Create Icons for buttons
+        # -------------------------------------
+
+        addplugin_icon = QIcon.fromTheme("list-add")
+        close_icon = QIcon.fromTheme("application-exit")
+        overview_icon = QIcon.fromTheme("view-fullscreen")
+        addsubscription_icon = QIcon.fromTheme("list-add")
+
+        # -------------------------------------
+        # Set Icons for buttons
+        # -------------------------------------
+
+        self.buttonCreatePlugin.setIcon(addplugin_icon)
+        self.buttonCreatePlugin.setIconSize(QSize(30, 30))
+
+        self.buttonExit.setIcon(close_icon)
+        self.buttonExit.setIconSize(QSize(30, 30))
+
+        self.buttonShowOverview.setIcon(overview_icon)
+        self.buttonShowOverview.setIconSize(QSize(30, 30))
+
+        self.buttonCreateSubscription.setIcon(addsubscription_icon)
+        self.buttonCreateSubscription.setIconSize(QSize(30, 30))
+
+        # -------------------------------------
+        # Set Tooltipps for buttons
+        # -------------------------------------
+
+        self.buttonExit.setToolTip("Exit PaPI")
+        self.buttonCreatePlugin.setToolTip("Add New Plugin")
+        self.buttonCreateSubscription.setToolTip("Create New Subscription")
+        self.buttonShowOverview.setToolTip("Show Overview")
+
+        # -------------------------------------
+        # Set TextName to ''
+        # -------------------------------------
+
+        self.buttonExit.setText('')
+        self.buttonCreatePlugin.setText('')
+        self.buttonCreateSubscription.setText('')
+        self.buttonShowLicence.setText('')
+        self.buttonShowOverview.setText('')
 
     def set_dgui_data(self, dgui):
         self.gui_data = dgui
@@ -116,13 +172,42 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.actionM_License.triggered.connect(self.menu_license)
         self.actionM_Quit.triggered.connect(self.menu_quit)
 
-        self.actionP_Available.triggered.connect(self.ap_available)
-
         self.actionP_Overview.triggered.connect(self.ap_overview)
 
 
         self.stefans_button.clicked.connect(self.stefan)
         self.stefans_button_2.clicked.connect(self.stefan_at_his_best)
+
+    def create_plugin(self):
+        AddPlu = AddPlugin()
+        AddPlu.setDGui(self.gui_data)
+        AddPlu.show()
+        AddPlu.raise_()
+        AddPlu.activateWindow()
+        r = AddPlu.exec_()
+
+        if r == 1 :
+            self.do_create_plugin(AddPlu.plugin_name, AddPlu.plugin_uname)
+
+        print("ReturnCode ", str(r))
+
+    def create_subscription(self):
+        print('create_sub')
+        AddSub = AddSubscriber()
+        AddSub.setDGui(self.gui_data)
+        AddSub.show()
+        AddSub.raise_()
+        AddSub.activateWindow()
+        r = AddSub.exec_()
+
+        if r == 1 :
+            subscriber_id = AddSub.subscriberID
+            target_id = AddSub.targetID
+            block_name = AddSub.blockName
+
+            self.do_subsribe(subscriber_id, target_id, block_name)
+
+        print("ReturnCode " , str(r))
 
     def menu_license(self):
         pass
@@ -131,10 +216,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
         pass
 
-    def ap_visual(self):
-        self.manager_available.show()
-
-        pass
 
     def ap_available(self):
         self.manager_available.show()
@@ -157,7 +238,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.core_queue.put(event)
 
         self.manager_overview.close()
-        self.manager_available.close()
         self.close()
 
     def stefan_at_his_best(self):

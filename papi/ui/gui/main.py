@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Mon Aug 25 12:23:51 2014
+# Created: Mon Aug 25 17:19:45 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,6 +17,24 @@ class Ui_MainGUI(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.buttonExit = QtGui.QPushButton(self.centralwidget)
+        self.buttonExit.setObjectName("buttonExit")
+        self.horizontalLayout.addWidget(self.buttonExit)
+        self.buttonCreatePlugin = QtGui.QPushButton(self.centralwidget)
+        self.buttonCreatePlugin.setObjectName("buttonCreatePlugin")
+        self.horizontalLayout.addWidget(self.buttonCreatePlugin)
+        self.buttonShowOverview = QtGui.QPushButton(self.centralwidget)
+        self.buttonShowOverview.setObjectName("buttonShowOverview")
+        self.horizontalLayout.addWidget(self.buttonShowOverview)
+        self.buttonCreateSubscription = QtGui.QPushButton(self.centralwidget)
+        self.buttonCreateSubscription.setObjectName("buttonCreateSubscription")
+        self.horizontalLayout.addWidget(self.buttonCreateSubscription)
+        self.buttonShowLicence = QtGui.QPushButton(self.centralwidget)
+        self.buttonShowLicence.setObjectName("buttonShowLicence")
+        self.horizontalLayout.addWidget(self.buttonShowLicence)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.stefans_button = QtGui.QPushButton(self.centralwidget)
         self.stefans_button.setObjectName("stefans_button")
         self.verticalLayout_2.addWidget(self.stefans_button)
@@ -32,6 +50,9 @@ class Ui_MainGUI(object):
         self.scopeArea.setObjectName("scopeArea")
         self.verticalLayout_2.addWidget(self.scopeArea)
         MainGUI.setCentralWidget(self.centralwidget)
+        self.statusbar = QtGui.QStatusBar(MainGUI)
+        self.statusbar.setObjectName("statusbar")
+        MainGUI.setStatusBar(self.statusbar)
         self.menubar = QtGui.QMenuBar(MainGUI)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1084, 25))
         self.menubar.setObjectName("menubar")
@@ -40,9 +61,6 @@ class Ui_MainGUI(object):
         self.menuAvailablePlugins = QtGui.QMenu(self.menubar)
         self.menuAvailablePlugins.setObjectName("menuAvailablePlugins")
         MainGUI.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainGUI)
-        self.statusbar.setObjectName("statusbar")
-        MainGUI.setStatusBar(self.statusbar)
         self.actionP_Available = QtGui.QAction(MainGUI)
         self.actionP_Available.setObjectName("actionP_Available")
         self.actionAP_IO = QtGui.QAction(MainGUI)
@@ -59,11 +77,6 @@ class Ui_MainGUI(object):
         self.actionAP_Parameter.setObjectName("actionAP_Parameter")
         self.actionP_Overview = QtGui.QAction(MainGUI)
         self.actionP_Overview.setObjectName("actionP_Overview")
-        self.menuMenu.addAction(self.actionM_License)
-        self.menuMenu.addAction(self.actionM_Quit)
-        self.menuAvailablePlugins.addAction(self.actionP_Available)
-        self.menuAvailablePlugins.addSeparator()
-        self.menuAvailablePlugins.addAction(self.actionP_Overview)
         self.menubar.addAction(self.menuMenu.menuAction())
         self.menubar.addAction(self.menuAvailablePlugins.menuAction())
 
@@ -72,6 +85,11 @@ class Ui_MainGUI(object):
 
     def retranslateUi(self, MainGUI):
         MainGUI.setWindowTitle(QtGui.QApplication.translate("MainGUI", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonExit.setText(QtGui.QApplication.translate("MainGUI", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonCreatePlugin.setText(QtGui.QApplication.translate("MainGUI", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonShowOverview.setText(QtGui.QApplication.translate("MainGUI", "ShowOverview", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonCreateSubscription.setText(QtGui.QApplication.translate("MainGUI", "CreateSubscription", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonShowLicence.setText(QtGui.QApplication.translate("MainGUI", "ShowLicence", None, QtGui.QApplication.UnicodeUTF8))
         self.stefans_button.setText(QtGui.QApplication.translate("MainGUI", "Action", None, QtGui.QApplication.UnicodeUTF8))
         self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Wayne", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("MainGUI", "Menu", None, QtGui.QApplication.UnicodeUTF8))

@@ -16,6 +16,45 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="buttonExit">
+        <property name="text">
+         <string>Exit</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonCreatePlugin">
+        <property name="text">
+         <string>CreatePlugin</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonShowOverview">
+        <property name="text">
+         <string>ShowOverview</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonCreateSubscription">
+        <property name="text">
+         <string>CreateSubscription</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonShowLicence">
+        <property name="text">
+         <string>ShowLicence</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="QPushButton" name="stefans_button">
       <property name="text">
        <string>Action</string>
@@ -44,6 +83,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -57,21 +97,15 @@
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="actionM_License"/>
-    <addaction name="actionM_Quit"/>
    </widget>
    <widget class="QMenu" name="menuAvailablePlugins">
     <property name="title">
      <string>Plugins</string>
     </property>
-    <addaction name="actionP_Available"/>
-    <addaction name="separator"/>
-    <addaction name="actionP_Overview"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuAvailablePlugins"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionP_Available">
    <property name="text">
     <string>Available</string>

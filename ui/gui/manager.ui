@@ -160,7 +160,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="createButton">
+   <widget class="QPushButton" name="createplugin">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -174,6 +177,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="createsubscribtion">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>130</x>

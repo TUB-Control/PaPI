@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Mon Aug 25 12:23:51 2014
+# Created: Mon Aug 25 17:19:45 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -71,10 +71,12 @@ class Ui_Manager(object):
         self.treeBlock.header().setDefaultSectionSize(80)
         self.verticalLayout.addWidget(self.treeBlock)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.createButton = QtGui.QPushButton(self.centralwidget)
-        self.createButton.setGeometry(QtCore.QRect(10, 790, 106, 27))
-        self.createButton.setObjectName("createButton")
+        self.createplugin = QtGui.QPushButton(self.centralwidget)
+        self.createplugin.setEnabled(False)
+        self.createplugin.setGeometry(QtCore.QRect(10, 790, 106, 27))
+        self.createplugin.setObjectName("createplugin")
         self.createsubscribtion = QtGui.QPushButton(self.centralwidget)
+        self.createsubscribtion.setEnabled(False)
         self.createsubscribtion.setGeometry(QtCore.QRect(130, 790, 151, 27))
         self.createsubscribtion.setObjectName("createsubscribtion")
         Manager.setCentralWidget(self.centralwidget)
@@ -96,6 +98,6 @@ class Ui_Manager(object):
         self.label_3.setText(QtGui.QApplication.translate("Manager", "Path", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Block", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(1, QtGui.QApplication.translate("Manager", "Subscriber", None, QtGui.QApplication.UnicodeUTF8))
-        self.createButton.setText(QtGui.QApplication.translate("Manager", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
+        self.createplugin.setText(QtGui.QApplication.translate("Manager", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
         self.createsubscribtion.setText(QtGui.QApplication.translate("Manager", "CreateSubscribtion", None, QtGui.QApplication.UnicodeUTF8))
 

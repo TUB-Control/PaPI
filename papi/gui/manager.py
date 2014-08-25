@@ -32,124 +32,17 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QTreeWidgetItem, QDialog
+from PySide.QtGui import QMainWindow, QTreeWidgetItem
 from PySide import QtGui
 from PySide.QtGui import QAction
 from PySide.QtCore import Qt
 
 from papi.ui.gui.manager import Ui_Manager
 from papi.gui.add_subscriber import AddSubscriber
+from papi.gui.add_plugin import AddPlugin
 
 from yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
-
-
-class Available(QMainWindow, Ui_Manager):
-    def __init__(self, callback_functions, parent=None):
-        super(Available, self).__init__(parent)
-        self.setupUi(self)
-
-        self.plugin_manager = PluginManager()
-        self.plugin_path = "../plugin/"
-
-        self.plugin_manager.setPluginPlaces([self.plugin_path + "visual", 'plugin/visual', self.plugin_path + "io", 'plugin/io', self.plugin_path + "dpp", 'plugin/dpp' ])
-        self.setWindowTitle('Available Plugins')
-
-        self.treePlugin.currentItemChanged.connect(self.itemChanged)
-
-        self.callback_functions = callback_functions
-
-
-        self.visual_root = QTreeWidgetItem(self.treePlugin)
-        self.visual_root.setText(self.get_column_by_name("PLUGIN"), 'ViP')
-        self.io_root = QTreeWidgetItem(self.treePlugin)
-        self.io_root.setText(self.get_column_by_name("PLUGIN"), 'IOP')
-        self.dpp_root = QTreeWidgetItem(self.treePlugin)
-        self.dpp_root.setText(self.get_column_by_name("PLUGIN"), 'DPP')
-        self.pcb_root = QTreeWidgetItem(self.treePlugin)
-        self.pcb_root.setText(self.get_column_by_name("PLUGIN"), 'PCB')
-
-        self.createButton.clicked.connect(self.create_action)
-
-    def create_action(self):
-        item = self.treePlugin.currentItem()
-        if hasattr(item, 'object'):
-            print(item.object)
-
-            self.callback_functions['create_plugin'](item.object.name, 'SuperPlot !!')
-
-        print('itemCreate')
-
-        pass
-
-    def itemChanged(self, item):
-        # if hasattr(item, 'object'):
-        #     print(item.object)
-        #
-        #     self.callback_functions['create_plugin'](item.object.name, 'SuperPlot !!')
-
-        print('itemChanged')
-
-    def itemDoubleClicked(self, item):
-        if hasattr(item, 'object'):
-            print(item.object)
-        print('itemClicked')
-
-    def showEvent(self, *args, **kwargs):
-        self.plugin_manager.collectPlugins()
-        for pluginfo in self.plugin_manager.getAllPlugins():
-
-            plugin_item = None
-
-            if '/visual/' in pluginfo.path:
-                plugin_item = QTreeWidgetItem(self.visual_root)
-            if '/io/' in pluginfo.path:
-                plugin_item = QTreeWidgetItem(self.io_root)
-            if '/dpp/' in pluginfo.path:
-                plugin_item = QTreeWidgetItem(self.dpp_root)
-
-            if plugin_item is not None:
-                plugin_item.object = pluginfo
-
-                plugin_item.setText(self.get_column_by_name("PLUGIN"), pluginfo.name)
-                plugin_item.setText(self.get_column_by_name("PATH"), pluginfo.path)
-
-    def hideEvent(self, *args, **kwargs):
-        #print(self.treePlugin.topLevelItemCount())
-
-        item = self.io_root.child(0)
-
-        while( item is not None ):
-            self.io_root.removeChild(item)
-            item = self.io_root.child(0)
-
-        item = self.visual_root.child(0)
-
-        while( item is not None ):
-            self.visual_root.removeChild(item)
-            item = self.visual_root.child(0)
-
-        item = self.dpp_root.child(0)
-
-        while( item is not None ):
-            self.dpp_root.removeChild(item)
-            item = self.dpp_root.child(0)
-
-        item = self.pcb_root.child(0)
-
-        while( item is not None ):
-            self.pcb_root.removeChild(item)
-            item = self.pcb_root.child(0)
-
-    def get_column_by_name(self, name):
-        if name == "PLUGIN":
-            return 0
-        if name == "TYPE":
-            return 1
-        if name == "ID":
-            return 2
-        if name == "PATH":
-            return 3
 
 class Overview(QMainWindow, Ui_Manager):
     def __init__(self, callback_functions, parent=None):
@@ -184,6 +77,7 @@ class Overview(QMainWindow, Ui_Manager):
         self.dgui = None
 
         self.createsubscribtion.clicked.connect(self.add_subscribtion)
+        self.createplugin.clicked.connect(self.add_plugin)
 
 #        self.subscribeButton.clicked.connect(self.subscribe_action)
 
@@ -201,14 +95,36 @@ class Overview(QMainWindow, Ui_Manager):
     #         print(item.object)
     #     print('itemContextMenu')
 
+    def add_plugin(self):
+        AddPlu = AddPlugin()
+        AddPlu.setDGui(self.dgui)
+        AddPlu.show()
+        AddPlu.raise_()
+        AddPlu.activateWindow()
+        r = AddPlu.exec_()
+
+        if r == 1 :
+            self.callback_functions['create_plugin'](AddPlu.plugin_name, AddPlu.plugin_uname)
+
+        print("ReturnCode ", str(r))
+
     def add_subscribtion(self):
+
         AddSub = AddSubscriber()
+        AddSub.setDGui(self.dgui)
         AddSub.show()
         AddSub.raise_()
         AddSub.activateWindow()
+        r = AddSub.exec_()
 
-        print('OpenDialog')
-        pass
+        if r == 1 :
+            subscriber_id = AddSub.subscriberID
+            target_id = AddSub.targetID
+            block_name = AddSub.blockName
+
+            self.callback_functions['subscribe'](subscriber_id, target_id, block_name)
+
+        print("ReturnCode " , str(r))
 
     def subscribe_action(self):
         item = self.treePlugin.currentItem()
