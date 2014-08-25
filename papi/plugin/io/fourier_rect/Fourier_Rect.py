@@ -69,7 +69,6 @@ class Fourier_Rect(plugin_base):
     def pause(self):
         pass
 
-
     def resume(self):
         pass
 

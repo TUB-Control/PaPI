@@ -7,25 +7,34 @@
     <x>0</x>
     <y>0</y>
     <width>791</width>
-    <height>495</height>
+    <height>943</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="horizontalLayoutWidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>641</width>
-      <height>431</height>
+      <y>20</y>
+      <width>771</width>
+      <height>751</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QTreeWidget" name="treePlugin">
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="animated">
+        <bool>true</bool>
+       </property>
+       <property name="allColumnsShowFocus">
+        <bool>true</bool>
+       </property>
        <attribute name="headerVisible">
         <bool>true</bool>
        </attribute>
@@ -33,7 +42,7 @@
         <bool>false</bool>
        </attribute>
        <attribute name="headerDefaultSectionSize">
-        <number>70</number>
+        <number>100</number>
        </attribute>
        <attribute name="headerHighlightSections">
         <bool>true</bool>
@@ -42,7 +51,7 @@
         <number>30</number>
        </attribute>
        <attribute name="headerShowSortIndicator" stdset="0">
-        <bool>false</bool>
+        <bool>true</bool>
        </attribute>
        <attribute name="headerStretchLastSection">
         <bool>true</bool>
@@ -54,46 +63,128 @@
        </column>
        <column>
         <property name="text">
-         <string>Type</string>
+         <string>#Parameters</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>ID</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Path</string>
+         <string>#Blocks</string>
         </property>
        </column>
       </widget>
      </item>
      <item>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="createButton">
-         <property name="text">
-          <string>CreatePlugin</string>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
+         <property name="horizontalSpacing">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>ID</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="le_ID">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Path</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="le_Type">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="le_Path">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="treeParameter">
+         <column>
+          <property name="text">
+           <string notr="true">Parameter</string>
+          </property>
+         </column>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="subscribeButton">
-         <property name="text">
-          <string>Subscribe</string>
-         </property>
+       <item>
+        <widget class="QTreeWidget" name="treeBlock">
+         <attribute name="headerDefaultSectionSize">
+          <number>80</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Block</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Subscriber</string>
+          </property>
+         </column>
         </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="target_id"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="block_name"/>
        </item>
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="createButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>790</y>
+      <width>106</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CreatePlugin</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="createsubscribtion">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>790</y>
+      <width>151</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CreateSubscribtion</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
