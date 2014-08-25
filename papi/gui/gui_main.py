@@ -97,6 +97,8 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
 
+        self.stefans_text_field.setText('1')
+
 
     def set_dgui_data(self, dgui):
         self.gui_data = dgui
@@ -185,14 +187,30 @@ class GUI(QMainWindow, Ui_MainGUI):
             parameters = dplug.get_parameters()
             p = parameters[parameter_name]
 
-            # TODO: check para range
-            p.value = value
+            # TODO: check against range AND type of parameter
+            if self.check_range_of_value(value,p.range):
+                p.value = value
+            else:
+                self.log.printText(1,'do_set_parameter, value out of range')
 
             opt = DOptionalData()
             opt.parameter_list = [p]
             opt.plugin_id = dplug.id
             e = PapiEvent(1,dplug.id,'instr_event','set_parameter',opt)
             self.core_queue.put(e)
+
+
+
+    def check_range_of_value(self,value,range):
+        min = range[0]
+        max = range[1]
+        if value > max:
+            return False
+        if value < min:
+            return False
+        return True
+
+
 
     def stefan(self):
         self.count += 1
