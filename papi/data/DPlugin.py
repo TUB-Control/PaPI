@@ -104,6 +104,7 @@ class DPlugin(DObject):
         self.__parameters = {}
         self.__blocks = {}
         self.type = None
+        self.alive_count = 0
 
     def subscribe(self, dblock: DBlock):
         """

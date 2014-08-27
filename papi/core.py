@@ -42,7 +42,7 @@ from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
 from papi.data.DOptionalData import DOptionalData
-
+from threading import Timer
 
 
 
@@ -96,6 +96,9 @@ class Core:
 
         self.core_id = 0
 
+        self.alive_timer = Timer(2,self.check_alive_callback)
+        self.alive_count = 0
+        self.gui_alive_count = 0
 
     def run(self):
         debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
@@ -108,6 +111,8 @@ class Core:
         self.gui_process.start()
         self.gui_alive = True
 
+        self.alive_timer.start()
+
         debug_print(self.__debugLevel__,'Core:  entering event loop')
         while self.core_goOn:
 
@@ -117,13 +122,54 @@ class Core:
 
             self.__process_event__(event)
 
-            self.core_goOn = self.core_data.get_dplugins_count() != 0
+            self.core_goOn = self.core_data.get_dplugins_count() != 0 or self.gui_alive
 
 
+        self.alive_timer.cancel()
         self.log.printText(1,'Core finished operation')
 
 
 
+
+    def send_alive_check_events(self):
+        dplugs = self.core_data.get_all_plugins()
+        for id in dplugs:
+            plug = dplugs[id]
+            if plug.own_process is True:
+                event = PapiEvent(self.core_id,plug.id,'status_event','check_alive_status',None)
+                plug.queue.put(event)
+
+        event = PapiEvent(self.core_id,self.gui_id,'status_event','check_alive_status',None)
+        self.gui_event_queue.put(event)
+
+
+    def handle_alive_situation(self):
+        dplugs = self.core_data.get_all_plugins()
+        for id in dplugs:
+            plug = dplugs[id]
+            if plug.own_process is True:
+                if plug.alive_count is self.alive_count:
+                    self.log.printText(2,'Plugin '+plug.uname+' is still alive')
+                else:
+                    self.log.printText(2,'Plugin '+plug.uname+' is DEAD')
+
+        if self.gui_alive_count is self.alive_count:
+            self.log.printText(2,'GUI  is still ALIVE')
+        else:
+            self.log.printText(2,'GUI  is  DEAD')
+
+
+    def check_alive_callback(self):
+        print('check_alive')
+
+        self.handle_alive_situation()
+
+        self.alive_count += 1
+
+        self.send_alive_check_events()
+
+        self.alive_timer = Timer(2,self.check_alive_callback)
+        self.alive_timer.start()
 
 
 
@@ -207,6 +253,7 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'check_alive_status'
+
         return True
 
 
@@ -216,6 +263,19 @@ class Core:
          :type event: PapiEvent
         """
         self.__debug_var__ = 'alive'
+
+        oID = event.get_originID()
+
+        if oID is self.gui_id:
+            self.gui_alive_count += 1
+        else:
+            dplug = self.core_data.get_dplugin_by_id(oID)
+
+            if dplug is not None:
+                dplug.alive_count += 1
+
+
+
         return True
 
 
@@ -333,7 +393,7 @@ class Core:
         plugin_id = self.core_data.create_id()
 
 
-        if plugin.plugin_object.get_type() != 'ViP':
+        if plugin.plugin_object.get_type() != 'ViP' and plugin.plugin_object.get_type() != 'PCP':
             plugin_queue = Queue()
 
             if plugin.plugin_object.get_type()=='DPP':
@@ -349,6 +409,7 @@ class Core:
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
+            dplug.alive_count = self.alive_count
 
             # set plugin info for gui
             opt = DOptionalData()
@@ -411,7 +472,7 @@ class Core:
         self.gui_process.join()
 
         # Set gui_alive to false for core loop to know that is it closed
-        self.gui_alive = 0
+        self.gui_alive = False
 
         # get a list of all running plugIns
         all_plugins = self.core_data.get_all_plugins()

@@ -474,7 +474,12 @@ class GUI(QMainWindow, Ui_MainGUI):
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
-        pass
+
+        event = PapiEvent(1,0,'status_event','alive',None)
+        self.core_queue.put(event)
+
+
+
 
 
     def test(self,event):
