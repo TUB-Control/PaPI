@@ -220,6 +220,8 @@ class Overview(QMainWindow, Ui_Manager):
                 # Set PCPs
                 # ---------------------
                 combo_box = QComboBox()
+
+                #TODO: Erzeugt Fehler, da objekte beim Wechsel von Plugins geloescht werden.
                 combo_box.currentIndexChanged.connect( lambda : self.combo_box_parameter_changed(dplugin, dparameter, combo_box))
 #
                 dparameter_table.setCellWidget(row, 1, combo_box)
@@ -238,21 +240,36 @@ class Overview(QMainWindow, Ui_Manager):
                 parameter_item_value = QTableWidgetItem( str(dparameter.value) )
                 dparameter_table.setItem(row, 2, parameter_item_value)
 
-                dparameter_table.itemChanged.connect( lambda  : self.dparameter_table_value_coloumn_changed(dplugin, dparameter, parameter_item_value.text()))
+
+                #TODO: Erzeugt Fehler, da objekte beim Wechsel von Plugins geloescht werden.
+                dparameter_table.itemChanged.connect( lambda  : self.dparameter_table_value_coloumn_changed(dplugin, dparameter, parameter_item_value))
 
                 row+=1
 
-    def dparameter_table_value_coloumn_changed(self, dplugin, dparameter, nvalue):
+    def dparameter_table_value_coloumn_changed(self, dplugin, dparameter, parameter_item_value):
 
+        if parameter_item_value is None:
+            return 0
+
+        nvalue = parameter_item_value.text()
         self.callback_functions['set_parameter'](dplugin.uname, dparameter.name, float(nvalue))
 
         # print('Parameter Change Request for ' + dparameter.name + " of Plugin " + dplugin.uname + " Value: " + nvalue)
 
     def combo_box_parameter_changed(self, dplugin, dparameter, box):
+
+        if dplugin == None or dparameter == None or box == None:
+            return 0
+
         dparameter_name = dparameter.name
         index = box.currentIndex()
 
         pcp = box.itemData(index)
+
+        if pcp == None:
+            return 0
+
+        self.callback_functions['create_plugin'](pcp.name, dparameter.name + "_" + pcp.name)
 
         if pcp is not None:
             print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
