@@ -101,7 +101,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         }
 
 
-        self.log = ConsoleLog(1,'Gui-Process: ')
+        self.log = ConsoleLog(1, 'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
@@ -181,6 +181,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.stefans_button_2.clicked.connect(self.stefan_at_his_best)
 
     def create_plugin(self):
+        """
+        This function is called to create an QDialog, which is used to create Plugins
+        :return:
+        """
         AddPlu = AddPlugin()
         AddPlu.setDGui(self.gui_data)
         AddPlu.show()
@@ -194,7 +198,11 @@ class GUI(QMainWindow, Ui_MainGUI):
         print("ReturnCode ", str(r))
 
     def create_subscription(self):
-        print('create_sub')
+        """
+        This function is called to create an QDialog, which is used to create a subscribtion for a single Plugin
+        :return:
+        """
+
         AddSub = AddSubscriber()
         AddSub.setDGui(self.gui_data)
         AddSub.show()
@@ -406,6 +414,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         plugin_identifier = opt.plugin_identifier
         uname = opt.plugin_uname
 
+        self.log.printText(2,'create_plugin, Try to create plugin with Name  '+plugin_identifier+ " and UName " + uname )
+
 
         self.plugin_manager.collectPlugins()
         plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
@@ -437,7 +447,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
             dplugin.plugin.get_sub_window().show()
+            print(dplugin.plugin.get_sub_window())
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
+
         else:
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
             dplugin.uname = uname
