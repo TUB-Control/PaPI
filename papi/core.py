@@ -96,7 +96,8 @@ class Core:
 
         self.core_id = 0
 
-        self.alive_timer = Timer(2,self.check_alive_callback)
+        self.alive_intervall = 2
+        self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
 
@@ -168,7 +169,7 @@ class Core:
 
         self.send_alive_check_events()
 
-        self.alive_timer = Timer(2,self.check_alive_callback)
+        self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
         self.alive_timer.start()
 
 
