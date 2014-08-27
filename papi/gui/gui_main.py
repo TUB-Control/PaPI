@@ -252,29 +252,11 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
 
     def stefan_at_his_best(self):
-        # name = 'Sinus1'
-        # print('Plugin Information System - Today: '+name)
-        # print('===========================================')
-        # p = self.gui_data.get_dplugin_by_uname(name)
-        # blocks = p.get_dblocks()
-        # for k in blocks:
-        #     b = blocks[k]
-        #     print('Block: ',b.name)
-        # paras = p.get_parameters()
-        #
-        # for i in paras:
-        #      par = paras[i]
-        #      print('Parameter: ',par.name)
-
-        #self.do_set_parameter('Sinus1','Frequenz Block SinMit_f3',0.001)
-
         s = self.stefans_text_field.text()
         val = float(s)
 
         self.do_set_parameter('Add1','Count',val)
 
-        #self.do_subscribe_uname('Plot1','Sinus1','SinMit_f1')
-        #self.do_subsribe(4,2,'SinMit_f3')
 
 
 
@@ -326,17 +308,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.do_subsribe(3,2,'SinMit_f1')
             self.do_subsribe(4,2,'SinMit_f1')
 
-        if op == 3:
-            pass
 
-        if op == 4:
-            pass
-
-        if op == 5:
-            pass
-
-        if op == 6:
-            pass
 
 
 
