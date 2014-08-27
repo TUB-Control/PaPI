@@ -151,17 +151,19 @@ class Core:
             if plug.own_process is True:
                 if plug.alive_count is self.alive_count:
                     self.log.printText(2,'Plugin '+plug.uname+' is still alive')
+                    plug.state = 'alive'
                 else:
-                    self.log.printText(2,'Plugin '+plug.uname+' is DEAD')
+                    self.log.printText(1,'Plugin '+plug.uname+' is DEAD')
+                    plug.state = 'dead'
 
         if self.gui_alive_count is self.alive_count:
             self.log.printText(2,'GUI  is still ALIVE')
         else:
-            self.log.printText(2,'GUI  is  DEAD')
+            self.log.printText(1,'GUI  is  DEAD')
 
 
     def check_alive_callback(self):
-        print('check_alive')
+        self.log.printText(2,'check alive')
 
         self.handle_alive_situation()
 
