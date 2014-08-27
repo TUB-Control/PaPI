@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*- coding: latin-1 -*-
+#-*- coding: utf-8 -*-
 
 """
 Copyright (C) 2014 Technische Universität Berlin,
@@ -81,6 +81,8 @@ class Add(plugin_base):
         #event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
         #self._Core_event_queue__.put(event)
         self.send_new_data(self.vec,'AddOut1')
+        #while(1):
+        #    pass
 
     def set_parameter(self,parameter_list):
         for p in parameter_list:
