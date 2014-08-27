@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
 Copyright (C) 2014 Technische Universität Berlin,
