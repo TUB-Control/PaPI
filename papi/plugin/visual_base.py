@@ -95,7 +95,6 @@ class visual_base(plugin_base):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
-        print('Plot init')
 
 
 

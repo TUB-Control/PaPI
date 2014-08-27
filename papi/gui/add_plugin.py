@@ -50,7 +50,15 @@ class AddPlugin(QDialog, Ui_AddPlugin):
         self.plugin_manager = PluginManager()
         self.plugin_path = "../plugin/"
 
-        self.plugin_manager.setPluginPlaces([self.plugin_path + "visual", 'plugin/visual', self.plugin_path + "io", 'plugin/io', self.plugin_path + "dpp", 'plugin/dpp' ])
+        self.plugin_manager.setPluginPlaces(
+            [
+                self.plugin_path + "visual", 'plugin/visual',
+                self.plugin_path + "io", 'plugin/io',
+                self.plugin_path + "dpp", 'plugin/dpp',
+                self.plugin_path + "pcp", 'plugin/pcp'
+
+            ]
+        )
         self.setWindowTitle('Available Plugins')
 
 
@@ -97,7 +105,7 @@ class AddPlugin(QDialog, Ui_AddPlugin):
                 plugin_item = QTreeWidgetItem(self.io_root)
             if '/dpp/' in pluginfo.path:
                 plugin_item = QTreeWidgetItem(self.dpp_root)
-            if '/pcb/' in pluginfo.path:
+            if '/pcp/' in pluginfo.path:
                 plugin_item = QTreeWidgetItem(self.pcb_root)
 
             if plugin_item is not None:

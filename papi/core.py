@@ -323,6 +323,8 @@ class Core:
 
         plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
 
+        self.log.printText(2,'create_plugin, Try to create plugin with Name  '+optData.plugin_identifier+ " and UName " + optData.plugin_uname )
+
         if plugin == None:
             self.log.printText(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
             return -1
