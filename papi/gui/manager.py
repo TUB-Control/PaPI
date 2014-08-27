@@ -32,7 +32,7 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QTreeWidgetItem
+from PySide.QtGui import QMainWindow, QTreeWidgetItem, QComboBox, QTableWidget, QTableWidgetItem
 from PySide import QtGui
 from PySide.QtGui import QAction
 from PySide.QtCore import Qt
@@ -61,7 +61,6 @@ class Overview(QMainWindow, Ui_Manager):
 
         self.callback_functions = callback_functions
 
-
         self.treePlugin.currentItemChanged.connect(self.itemChanged)
 
         # ----------------------------------------
@@ -82,6 +81,21 @@ class Overview(QMainWindow, Ui_Manager):
 
 #        self.subscribeButton.clicked.connect(self.subscribe_action)
 
+        # ---------------------------------
+        # Search for PCP Plugins
+        # ---------------------------------
+
+        self.plugin_manager = PluginManager()
+        self.plugin_path = "../plugin/"
+
+        self.plugin_manager.setPluginPlaces(
+            [
+                # self.plugin_path + "visual", 'plugin/visual',
+                # self.plugin_path + "io", 'plugin/io',
+                # self.plugin_path + "dpp", 'plugin/dpp',
+                self.plugin_path + "pcp", 'plugin/pcp'
+            ]
+        )
 
         # myAction = QAction('RechtsKLick', self)
         # self.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -184,17 +198,67 @@ class Overview(QMainWindow, Ui_Manager):
             # Add DParameterItem for DPluginItem
             # ------------------------------
 
-            dparameter_root = self.treeParameter
+            dparameter_table = self.tableParameter
 
             dparameter_names = dplugin.get_parameters()
 
-            for dparameter_name in dparameter_names:
-                dparameter = dparameter_names[dparameter_name]
-                parameter_item = QTreeWidgetItem(dparameter_root)
-                parameter_item.object = dparameter
-                parameter_item.setText(self.get_column_by_name("PARAMETER"), dparameter.name)
+            row = 0
 
-        print('itemChanged')
+            dparameter_table.setRowCount(len(dparameter_names.keys()))
+
+            for dparameter_name in dparameter_names:
+
+                dparameter = dparameter_names[dparameter_name]
+                # ---------------------
+                # Set Parameter Name
+                # ---------------------
+                parameter_item_name = QTableWidgetItem( str(dparameter.name) )
+                parameter_item_name.setFlags( Qt.ItemIsSelectable and not Qt.ItemIsEditable and Qt.ItemIsEnabled)
+                dparameter_table.setItem(row, 0, parameter_item_name)
+
+                # ---------------------
+                # Set PCPs
+                # ---------------------
+                combo_box = QComboBox()
+                combo_box.currentIndexChanged.connect( lambda : self.combo_box_parameter_changed(dplugin, dparameter, combo_box))
+#
+                dparameter_table.setCellWidget(row, 1, combo_box)
+
+                self.plugin_manager.collectPlugins()
+
+                combo_box.addItem("None", None)
+
+                for pluginfo in self.plugin_manager.getAllPlugins():
+
+                    combo_box.addItem(pluginfo.name, pluginfo)
+
+                # ---------------------
+                # Set Current Value
+                # ---------------------
+                parameter_item_value = QTableWidgetItem( str(dparameter.value) )
+                dparameter_table.setItem(row, 2, parameter_item_value)
+
+                dparameter_table.itemChanged.connect( lambda  : self.dparameter_table_value_coloumn_changed(dplugin, dparameter, parameter_item_value.text()))
+
+                row+=1
+
+    def dparameter_table_value_coloumn_changed(self, dplugin, dparameter, nvalue):
+
+        self.callback_functions['set_parameter'](dplugin.uname, dparameter.name, float(nvalue))
+
+        # print('Parameter Change Request for ' + dparameter.name + " of Plugin " + dplugin.uname + " Value: " + nvalue)
+
+    def combo_box_parameter_changed(self, dplugin, dparameter, box):
+        dparameter_name = dparameter.name
+        index = box.currentIndex()
+
+        pcp = box.itemData(index)
+
+        if pcp is not None:
+            print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
+        else:
+            print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
+        pass
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
@@ -253,7 +317,9 @@ class Overview(QMainWindow, Ui_Manager):
         # Remove items in block tree
         #------------------
 
-        self.treeParameter.clear()
+        #self.treeParameter.clear()
+
+        #self.tableParameter.clear()
 
     def hideEvent(self, *args, **kwargs):
         """

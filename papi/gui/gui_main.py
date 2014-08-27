@@ -73,7 +73,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             'create_plugin' : self.do_create_plugin,
             'set_parameter' : self.do_set_parameter,
             'subscribe'     : self.do_subsribe,
-            'unsubscribe'   : self.do_unsubscribe
+            'unsubscribe'   : self.do_unsubscribe,
+            'set_parameter' : self.do_set_parameter
         }
 
 
