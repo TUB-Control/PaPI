@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Mon Aug 25 17:19:45 2014
+# Created: Wed Aug 27 13:09:45 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,10 +62,20 @@ class Ui_Manager(object):
         self.le_Path.setObjectName("le_Path")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.le_Path)
         self.verticalLayout.addLayout(self.formLayout)
-        self.treeParameter = QtGui.QTreeWidget(self.verticalLayoutWidget)
-        self.treeParameter.setObjectName("treeParameter")
-        self.treeParameter.headerItem().setText(0, "Parameter")
-        self.verticalLayout.addWidget(self.treeParameter)
+        self.tableParameter = QtGui.QTableWidget(self.verticalLayoutWidget)
+        self.tableParameter.setRowCount(0)
+        self.tableParameter.setColumnCount(3)
+        self.tableParameter.setObjectName("tableParameter")
+        self.tableParameter.setColumnCount(3)
+        self.tableParameter.setRowCount(0)
+        item = QtGui.QTableWidgetItem()
+        self.tableParameter.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableParameter.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableParameter.setHorizontalHeaderItem(2, item)
+        self.tableParameter.horizontalHeader().setDefaultSectionSize(100)
+        self.verticalLayout.addWidget(self.tableParameter)
         self.treeBlock = QtGui.QTreeWidget(self.verticalLayoutWidget)
         self.treeBlock.setObjectName("treeBlock")
         self.treeBlock.header().setDefaultSectionSize(80)
@@ -96,6 +106,9 @@ class Ui_Manager(object):
         self.label.setText(QtGui.QApplication.translate("Manager", "ID", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Manager", "Type", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Manager", "Path", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableParameter.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Manager", "Parameter", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableParameter.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Manager", "PCP", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableParameter.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Manager", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Block", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(1, QtGui.QApplication.translate("Manager", "Subscriber", None, QtGui.QApplication.UnicodeUTF8))
         self.createplugin.setText(QtGui.QApplication.translate("Manager", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
