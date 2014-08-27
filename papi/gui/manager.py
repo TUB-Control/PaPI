@@ -44,6 +44,7 @@ from papi.gui.add_plugin import AddPlugin
 from yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
 
+
 class Overview(QMainWindow, Ui_Manager):
     def __init__(self, callback_functions, parent=None):
         """

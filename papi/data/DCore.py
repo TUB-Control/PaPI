@@ -183,8 +183,14 @@ class DCore():
             return False
 
         #Create relation between DPlugin and DBlock
-        subscriber.subscribe(dblock)
-        dblock.add_subscribers(subscriber)
+
+        if subscriber.subscribe(dblock) is False:
+            self.log.printText(1, "Subscriber " + subscriber_id + " has already subscribed " + dblock_name)
+            return False
+
+        if dblock.add_subscribers(subscriber) is False:
+            self.log.printText(1, "DBlock " + dblock_name + " was already subscribed by Subscriber" + subscriber_id)
+            return False
 
         return True
 
@@ -215,8 +221,17 @@ class DCore():
             return False
 
         #Destroy relation between DPlugin and DBlock
-        subscriber.unsubscribe(dblock)
-        dblock.rm_subscriber(subscriber)
+
+
+
+        if subscriber.unsubscribe(dblock) is False:
+            self.log.printText(1, "Subscriber " + subscriber_id + " has already unsubscribed " + dblock_name)
+            return False
+
+        if dblock.rm_subscriber(subscriber) is False:
+            self.log.printText(1, "DBlock " + dblock_name + " was already unsubscribed by Subscriber" + subscriber_id)
+            return False
+
 
     def unsubscribe_all(self, dplugin_id):
         """
