@@ -415,12 +415,16 @@ class Core:
             dplug.alive_count = self.alive_count
 
             # set plugin info for gui
-            opt = DOptionalData()
-            opt.plugin_identifier = plugin.name
-            opt.plugin_id = plugin_id
-            opt.plugin_uname = dplug.uname
-            opt.plugin_type = dplug.type
-            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',opt)
+            # opt = DOptionalData()
+            # opt.plugin_identifier = plugin.name
+            # opt.plugin_id = plugin_id
+            # opt.plugin_uname = dplug.uname
+            # opt.plugin_type = dplug.type
+            optData.plugin_identifier = plugin.name
+            optData.plugin_id = plugin_id
+            optData.plugin_type = dplug.type
+
+            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
             self.gui_event_queue.put(event)
 
 
@@ -430,14 +434,19 @@ class Core:
             dplug.type = plugin.plugin_object.get_type()
 
 
-            opt = DOptionalData()
-            opt.plugin_identifier = plugin.name
-            opt.plugin_id = plugin_id
-            opt.plugin_uname = dplug.uname
-            opt.plugin_type = dplug.type
-            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',opt)
+            # opt = DOptionalData()
+            # opt.plugin_identifier = plugin.name
+            # opt.plugin_id = plugin_id
+            # opt.plugin_uname = dplug.uname
+            # opt.plugin_type = dplug.type
+            optData.plugin_identifier = plugin.name
+            optData.plugin_id = plugin_id
+            optData.plugin_type = dplug.type
+
+
+            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
             self.gui_event_queue.put(event)
-            self.log.printText(1,'core sent create event to gui for plugin: '+str(opt.plugin_uname))
+            self.log.printText(1,'core sent create event to gui for plugin: '+str(optData.plugin_uname))
 
         return True
 
