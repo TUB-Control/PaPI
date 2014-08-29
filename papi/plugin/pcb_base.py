@@ -31,6 +31,9 @@ __author__ = 'knuths'
 from papi.plugin.plugin_base import plugin_base
 from PySide.QtGui import QMdiSubWindow
 from abc import ABCMeta, abstractmethod
+from papi.data.DParameter import DParameter
+from papi.data.DOptionalData import DOptionalData
+from papi.PapiEvent import PapiEvent
 
 
 class pcb_base(plugin_base):
@@ -115,5 +118,35 @@ class pcb_base(plugin_base):
     def get_type(self):
         return 'ViP'
 
+
+    def send_paramter_change(self, pl_id, parameter_object, value):
+        """
+
+        :param pl_id:
+        :param parameter_object:
+        :param value:
+        :type parameter_object: DParameter
+        :return:
+        """
+        if parameter_object is not None:
+            if self.check_range_of_value(value,parameter_object.range):
+                parameter_object.value = value
+                opt = DOptionalData()
+                opt.parameter_list = [parameter_object]
+                opt.plugin_id = pl_id
+                e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
+                self._Core_event_queue__.put(e)
+            else:
+                return -1
+
+
+    def check_range_of_value(self,value,range):
+        min = range[0]
+        max = range[1]
+        if value > max:
+            return False
+        if value < min:
+            return False
+        return True
 
 
