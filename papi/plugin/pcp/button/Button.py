@@ -28,11 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.pcb_base import pcb_base
+from papi.plugin.pcp_base import pcp_base
 from PySide.QtGui import QPushButton
 
 
-class Button(pcb_base):
+class Button(pcp_base):
+
+    def start_init(self, config=None):
+        super(Button, self).start_init(config)
 
     def create_widget(self):
         button = QPushButton('Click ' + self.name)

@@ -35,17 +35,45 @@ from papi.data.DParameter import DParameter
 from papi.data.DOptionalData import DOptionalData
 from papi.PapiEvent import PapiEvent
 
-class pcb_base(plugin_base):
+
+class pcp_base(plugin_base):
 
     _metaclass__= ABCMeta
 
-    def setConfig(self, name="PCB_Plugin", sampleinterval=1, timewindow=1000., size=(150,150)):
+    def start_init(self, config=None):
 
-        self.name = name
-        self._widget = self.create_widget()
+        default_config = self.get_default_config()
 
-        self._subWindow = QMdiSubWindow()
-        self._subWindow.setWidget(self._widget)
+
+        if config is None:
+            config = default_config
+
+        if 'name' not in config:
+            self.name=default_config['name']
+        else:
+            self.name=config['name']
+
+
+        self.__dplugin_id__ = config['dplugin_id']
+        self.__dparameter__ = config['dparameter']
+
+        self.__dparameter__.plugin_id = self.__id__
+        self.__dparameter__.pcp_name = "Button"
+
+        self.__widget__ = self.create_widget()
+
+        self.__subWindow__ = QMdiSubWindow()
+        self.__subWindow__.setWidget(self.__widget__)
+
+
+    def get_default_config(self):
+        config = {}
+        config['name']="PCP_Plugin"
+        return config
+
+    def set_value(self, new_value):
+
+        self.__send_parameter_change__(self.__dplugin_id__, self.__dparameter__, new_value)
 
     @abstractmethod
     def create_widget(self):
@@ -62,20 +90,16 @@ class pcb_base(plugin_base):
         :return:
         :rtype QMdiSubWindow:
         """
-        return self._subWindow
-
+        return self.__subWindow__
 
     def init_plugin(self,CoreQueue,pluginQueue,id):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
-        print('Plot init')
 
     def get_output_sizes(self):
         pass
 
-    def start_init(self):
-        pass
 
     def pause(self):
         pass
@@ -96,7 +120,7 @@ class pcb_base(plugin_base):
         return 'ViP'
 
 
-    def send_paramter_change(self, pl_id, parameter_object, value):
+    def __send_parameter_change__(self, pl_id, parameter_object, value):
         """
 
         :param pl_id:

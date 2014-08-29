@@ -42,6 +42,8 @@ class DParameter(DObject):
         self.range = prange
         self.live = live
         self.name = name
+        self.plugin_id = None
+        self.pcp_name = None
 
 class DButton(DParameter):
 

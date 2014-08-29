@@ -96,6 +96,7 @@ class DPlugin(DObject):
         self.pid = None
         self.queue = None
         self.plugin = None
+        self.plugin_identifier = None
 
         self.__subscriptions = {}
         self.state = None
