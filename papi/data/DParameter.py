@@ -43,7 +43,7 @@ class DParameter(DObject):
         self.live = live
         self.name = name
         self.plugin_id = None
-        self.pcp_name = None
+        self.plugin_identifier = None
 
 class DButton(DParameter):
 
