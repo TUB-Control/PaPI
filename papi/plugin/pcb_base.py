@@ -111,7 +111,7 @@ class pcb_base(plugin_base):
                 opt = DOptionalData()
                 opt.parameter_list = [parameter_object]
                 opt.plugin_id = pl_id
-                e = PapiEvent(self.gui_id,pl_id,'instr_event','set_parameter',opt)
+                e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
                 self._Core_event_queue__.put(e)
             else:
                 return -1
