@@ -28,14 +28,17 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.pcb_base import pcb_base
+from papi.plugin.pcp_base import pcp_base
 from PySide.QtGui import QSlider
 from PySide import QtCore
 
-class Slider(pcb_base):
+
+class Slider(pcp_base):
+
+    def start_init(self, config=None):
+        super(Slider, self).start_init(config)
 
     def create_widget(self):
-        print("Create slider widget")
         slider = QSlider()
         slider.sliderPressed.connect(self.clicked)
         slider.valueChanged.connect(self.valueChanged)
@@ -49,8 +52,7 @@ class Slider(pcb_base):
 
     def valueChanged(self, change):
         cur_value = change/100
-
         self.set_value(cur_value)
 
     def clicked(self):
-        print('slider pressed: ', self.name )
+        pass

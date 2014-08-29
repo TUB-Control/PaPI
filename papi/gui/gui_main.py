@@ -71,12 +71,12 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.callback_functions = {
             'do_create_plugin' : self.do_create_plugin,
+            'do_delete_plugin' : self.do_delete_plugin,
             'do_set_parameter' : self.do_set_parameter,
             'do_subscribe'     : self.do_subsribe,
             'do_unsubscribe'   : self.do_unsubscribe,
             'do_set_parameter' : self.do_set_parameter
         }
-
 
         self.gui_data = DGui()
 
@@ -422,7 +422,12 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
             dplugin.plugin.get_sub_window().show()
+
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
+
+
+            if 'dparameter' in config:
+                print('just create a PCP Plugin')
 
         else:
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
@@ -449,10 +454,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         event = PapiEvent(1,0,'status_event','alive',None)
         self.core_queue.put(event)
-
-
-
-
 
     def test(self,event):
         """
@@ -486,6 +487,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)
         self.core_queue.put(event)
+
+    def do_delete_plugin(self, uname):
+        self.log.printText(1, " Do delete plugin with uname " + uname)
 
     def do_subsribe(self,subscriber_id,source_id,block_name):
         opt = DOptionalData()

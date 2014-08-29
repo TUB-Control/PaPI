@@ -36,7 +36,7 @@ from papi.data.DOptionalData import DOptionalData
 from papi.PapiEvent import PapiEvent
 
 
-class pcb_base(plugin_base):
+class pcp_base(plugin_base):
 
     _metaclass__= ABCMeta
 
@@ -54,15 +54,16 @@ class pcb_base(plugin_base):
             self.name=config['name']
 
 
-        self._dplugin_id = config['dplugin_id']
-        self._dparameter = config['dparameter']
-        #
-        self._callback_set_parameter = config['do_set_parameter']
+        self.__dplugin_id__ = config['dplugin_id']
+        self.__dparameter__ = config['dparameter']
 
-        self._widget = self.create_widget()
+        self.__dparameter__.plugin_id = self.__id__
+        self.__dparameter__.pcp_name = "Button"
 
-        self._subWindow = QMdiSubWindow()
-        self._subWindow.setWidget(self._widget)
+        self.__widget__ = self.create_widget()
+
+        self.__subWindow__ = QMdiSubWindow()
+        self.__subWindow__.setWidget(self.__widget__)
 
 
     def get_default_config(self):
@@ -72,7 +73,7 @@ class pcb_base(plugin_base):
 
     def set_value(self, new_value):
 
-        self._callback_set_parameter(self._dplugin_uname, self._dparameter.name, new_value)
+        self.__send_parameter_change__(self.__dplugin_id__, self.__dparameter__, new_value)
 
     @abstractmethod
     def create_widget(self):
@@ -89,7 +90,7 @@ class pcb_base(plugin_base):
         :return:
         :rtype QMdiSubWindow:
         """
-        return self._subWindow
+        return self.__subWindow__
 
     def init_plugin(self,CoreQueue,pluginQueue,id):
         self._Core_event_queue__ = CoreQueue
@@ -119,7 +120,7 @@ class pcb_base(plugin_base):
         return 'ViP'
 
 
-    def send_paramter_change(self, pl_id, parameter_object, value):
+    def __send_parameter_change__(self, pl_id, parameter_object, value):
         """
 
         :param pl_id:
