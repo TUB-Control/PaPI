@@ -48,8 +48,9 @@ class Slider(pcb_base):
         return slider
 
     def valueChanged(self, change):
-        cur_value = change
-        print('slider changed value: ', cur_value )
+        cur_value = change/100
+
+        self.set_value(cur_value)
 
     def clicked(self):
         print('slider pressed: ', self.name )

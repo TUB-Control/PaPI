@@ -14,8 +14,11 @@ __author__ = 'knuths'
 
 class Plot(visual_base):
 
-    def start_init(self):
-        print("start_init")
+    def start_init(self, config=None):
+        super(Plot,self).start_init(config)
+
+
+        print("Plot: start_init")
         self.max_counter = 0
         self.counter = 0
 

@@ -34,6 +34,9 @@ from PySide.QtGui import QPushButton
 
 class Button(pcb_base):
 
+    def start_init(self, config=None):
+        super(Button, self).start_init(config)
+
     def create_widget(self):
         button = QPushButton('Click ' + self.name)
         button.clicked.connect(self.clicked)

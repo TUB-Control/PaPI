@@ -37,16 +37,37 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import collections
 
+
 class visual_base(plugin_base):
 
     _metaclass__= ABCMeta
 
-    def setConfig(self, name='Plot', sampleinterval=1, timewindow=1000., size=(150,150)):
+    def start_init(self, config=None):
+        print('visual_base: start_init')
 
-        self.name = name
-        #PlotWidget.__init__(self)
+        default_config = self.get_default_config()
 
-        # Set internal variables
+        if config is None:
+
+            config = default_config
+
+        sampleinterval=None
+        timewindow=None
+        size=None
+
+        print(default_config)
+
+        if 'sampleintervall' not in config:
+            sampleinterval=default_config['sampleinterval']
+
+        if 'timewindow' not in config:
+            timewindow=default_config['timewindow']
+
+        if 'size' not in config:
+            size=default_config['size']
+
+        if 'name' not in config:
+            self.name=default_config['name']
 
         self._interval = int(sampleinterval*timewindow)
         self._bufsize = int(timewindow/sampleinterval)
@@ -70,7 +91,13 @@ class visual_base(plugin_base):
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
 
-
+    def get_default_config(self):
+        config = {}
+        config["sampleinterval"]=1
+        config['timewindow']=1000.
+        config['size']=(150,150)
+        config['name']='ViP_Plugin'
+        return config
 
 
     def update(self):

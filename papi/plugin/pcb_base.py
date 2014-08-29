@@ -32,17 +32,44 @@ from papi.plugin.plugin_base import plugin_base
 from PySide.QtGui import QMdiSubWindow
 from abc import ABCMeta, abstractmethod
 
+
 class pcb_base(plugin_base):
 
     _metaclass__= ABCMeta
 
-    def setConfig(self, name="PCB_Plugin", sampleinterval=1, timewindow=1000., size=(150,150)):
+    def start_init(self, config=None):
 
-        self.name = name
+        default_config = self.get_default_config()
+
+
+        if config is None:
+            config = default_config
+
+        if 'name' not in config:
+            self.name=default_config['name']
+        else:
+            self.name=config['name']
+
+
+        self._dplugin_id = config['dplugin_id']
+        self._dparameter = config['dparameter']
+        #
+        self._callback_set_parameter = config['do_set_parameter']
+
         self._widget = self.create_widget()
 
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._widget)
+
+
+    def get_default_config(self):
+        config = {}
+        config['name']="PCP_Plugin"
+        return config
+
+    def set_value(self, new_value):
+
+        self._callback_set_parameter(self._dplugin_uname, self._dparameter.name, new_value)
 
     @abstractmethod
     def create_widget(self):
@@ -61,18 +88,14 @@ class pcb_base(plugin_base):
         """
         return self._subWindow
 
-
     def init_plugin(self,CoreQueue,pluginQueue,id):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
-        print('Plot init')
 
     def get_output_sizes(self):
         pass
 
-    def start_init(self):
-        pass
 
     def pause(self):
         pass

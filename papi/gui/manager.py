@@ -61,8 +61,8 @@ class Overview(QMainWindow, Ui_Manager):
 
         self.callback_functions = callback_functions
 
-        self.treePlugin.currentItemChanged.connect(self.itemChanged)
-
+        self.treePlugin.currentItemChanged.connect(self.pluginItemChanged)
+        #self.tableParameter.cellChanged.connect(self.parameterCellChanged)
         # ----------------------------------------
         # Create Root Elements for TreeWidget
         # ----------------------------------------
@@ -119,7 +119,7 @@ class Overview(QMainWindow, Ui_Manager):
         r = AddPlu.exec_()
 
         if r == 1 :
-            self.callback_functions['create_plugin'](AddPlu.plugin_name, AddPlu.plugin_uname)
+            self.callback_functions['do_create_plugin'](AddPlu.plugin_name, AddPlu.plugin_uname)
 
         print("ReturnCode ", str(r))
 
@@ -137,7 +137,7 @@ class Overview(QMainWindow, Ui_Manager):
             target_id = AddSub.targetID
             block_name = AddSub.blockName
 
-            self.callback_functions['subscribe'](subscriber_id, target_id, block_name)
+            self.callback_functions['do_subscribe'](subscriber_id, target_id, block_name)
 
         print("ReturnCode " , str(r))
 
@@ -149,19 +149,32 @@ class Overview(QMainWindow, Ui_Manager):
             target_id = int(self.target_id.text())
             block_name = str(self.block_name.text())
 #            print(sub_id + " - " + target_id + " - " + block_name)
-            self.callback_functions['subscribe'](sub_id, target_id, block_name)
+            self.callback_functions['do_subscribe'](sub_id, target_id, block_name)
 
         print('itemCreate')
 
-    def itemChanged(self, item):
+    def pluginItemChanged(self, item):
         """
-        Function is called when a new item is selected
+        Function is called when a new item/plugin is selected
         :param item:
         :return:
         """
+
+        # ------------------------------
+        # Remove slot for signal cellChanged
+        # if possible
+        # ------------------------------
+        try:
+            self.tableParameter.cellChanged.disconnect(self.parameterCellChanged)
+        except:
+            pass
+
         if hasattr(item, 'dplugin'):
             self.clean()
             dplugin = item.dplugin
+
+
+
             # ------------------------------
             # Add Meta information of DPlugin
             # ------------------------------
@@ -217,7 +230,7 @@ class Overview(QMainWindow, Ui_Manager):
                 dparameter_table.setItem(row, 0, parameter_item_name)
 
                 # ---------------------
-                # Set PCPs
+                # Set PCPs in table
                 # ---------------------
                 combo_box = QComboBox()
 
@@ -235,47 +248,75 @@ class Overview(QMainWindow, Ui_Manager):
                     combo_box.addItem(pluginfo.name, pluginfo)
 
                 # ---------------------
-                # Set Current Value
+                # Set Current Value in table
                 # ---------------------
                 parameter_item_value = QTableWidgetItem( str(dparameter.value) )
+                parameter_item_value.dplugin = dplugin
+                parameter_item_value.dparameter = dparameter
                 dparameter_table.setItem(row, 2, parameter_item_value)
 
+                # ---------------------------------
+                # Add slot for signal cellChanged
+                # ---------------------------------
 
-                #TODO: Erzeugt Fehler, da objekte beim Wechsel von Plugins geloescht werden.
-                dparameter_table.itemChanged.connect( lambda  : self.dparameter_table_value_coloumn_changed(dplugin, dparameter, parameter_item_value))
+                self.tableParameter.cellChanged.connect(self.parameterCellChanged)
 
                 row+=1
 
-    def dparameter_table_value_coloumn_changed(self, dplugin, dparameter, parameter_item_value):
-
-        if parameter_item_value is None:
+    def parameterCellChanged(self, row, column):
+        """
+        This function is always called when
+        an (text)-item within the table is changed
+        :param row:
+        :param column:
+        :return:
+        """
+        # -----------------------------------------------
+        # Only interested in changes of the third column
+        # -----------------------------------------------
+        if column == 0:
             return 0
 
-        nvalue = parameter_item_value.text()
-        self.callback_functions['set_parameter'](dplugin.uname, dparameter.name, float(nvalue))
+        item = self.tableParameter.item(row, column)
+        nvalue = item.text()
 
-        # print('Parameter Change Request for ' + dparameter.name + " of Plugin " + dplugin.uname + " Value: " + nvalue)
+        self.callback_functions['do_set_parameter'](item.dplugin.uname, item.dparameter.name, float(nvalue))
+
+        #print('Parameter Change Request for ' + item.dparameter.name + " of Plugin " + item.dplugin.uname + " Value: " + str(nvalue))
 
     def combo_box_parameter_changed(self, dplugin, dparameter, box):
+        """
+        This function is always called when
+        an item within a combox box is changed
 
-        if dplugin == None or dparameter == None or box == None:
-            return 0
+        :param dplugin:
+        :param dparameter:
+        :param box:
+        :return:
+        """
+        # if dplugin == None or dparameter == None or box == None:
+        #     return 0
 
         dparameter_name = dparameter.name
         index = box.currentIndex()
 
         pcp = box.itemData(index)
 
-        if pcp == None:
+        if pcp is None:
             return 0
 
-        self.callback_functions['create_plugin'](pcp.name, dparameter.name + "_" + pcp.name)
+        config={}
 
-        if pcp is not None:
-            print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
-        else:
-            print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
-        pass
+        config['dplugin_id']=dplugin.id
+        config['dparameter']=dparameter
+
+        self.callback_functions['do_create_plugin'](pcp.name, dparameter.name + "_" + pcp.name, config=config)
+
+        # if pcp is not None:
+        #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
+        # else:
+        #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
+        # pass
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
