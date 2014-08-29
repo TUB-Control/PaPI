@@ -98,7 +98,8 @@ class GUI(QMainWindow, Ui_MainGUI):
                                 'check_alive_status': self.process_check_alive_status,
                                 'create_plugin':self.process_create_plugin,
                                 'update_meta': self.process_update_meta,
-                                'test': self.test
+                                'test': self.test,
+                                'plugin_closed': self.process_plugin_closed
         }
 
 
@@ -252,11 +253,13 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
 
     def stefan_at_his_best(self):
-        s = self.stefans_text_field.text()
-        val = float(s)
+        #s = self.stefans_text_field.text()
+        #val = float(s)
 
-        self.do_set_parameter('Add1','Count',val)
+        #self.do_set_parameter('Add1','Count',val)
 
+        event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
+        self.core_queue.put(event)
 
 
 
@@ -356,6 +359,20 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
 
+    def process_plugin_closed(self,event):
+        """
+        Processes plugin_closed event.
+        Gui now knows, that a plugin was closed by core and needs to update its DGui data base
+        :param event:
+        :type event: PapiEvent
+        :return:
+        """
+        opt = event.get_optional_parameter()
+        # remove plugin from DGui data base
+        if self.gui_data.rm_dplugin(opt.plugin_id) is True:
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+'was removed in GUI')
+        else:
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+'was NOT removed in GUI')
 
 
     def process_new_data_event(self,event):

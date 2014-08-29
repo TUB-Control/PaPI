@@ -362,7 +362,19 @@ class Core:
             # get process of plugin and join it
             dplugin.process.join()
             # remove plugin from DCore, because process was joined
-            return self.core_data.rm_dplugin(dplugin.id)
+            if self.core_data.rm_dplugin(dplugin.id) is False:
+                # remove failed
+                self.log.printText(1,'join request, remove plugin with id '+str(dplugin.id)+'failed')
+                return -1
+            else:
+                # remove from DCore in core successfull
+                if self.gui_alive is True:
+                    # GUI is still alive, so tell GUI, that this plugin was closed
+                    opt = DOptionalData()
+                    opt.plugin_id = dplugin.id
+                    event = PapiEvent(self.core_id,self.gui_id,'status_event','plugin_closed',opt)
+                    self.gui_event_queue.put(event)
+                return 1
         else:
             # Plug does not exist
             self.log.printText(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
@@ -529,7 +541,6 @@ class Core:
             # DPlugin does not exist
             self.log.printText(1,'stop_plugin, plugin with id '+str(id)+' not found')
             return -1
-
 
     def __process_close_programm__(self,event):
         """
