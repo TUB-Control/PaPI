@@ -29,8 +29,7 @@ Stefan Ruppin
 __author__ = 'control'
 
 import os
-import time
-from multiprocessing import Process, Queue, Manager
+from multiprocessing import Process, Queue
 
 from yapsy.PluginManager import PluginManager
 from threading import Timer
@@ -47,7 +46,11 @@ from papi.data.DOptionalData import DOptionalData
 
 class Core:
     def __init__(self):
-
+        """
+        Init funciton of core.
+        Will create all data needed to use core and core.run() function
+        :return:
+        """
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {  'status_event': self.__process_status_event__,
                                             'data_event': self.__process_data_event__,
@@ -100,6 +103,11 @@ class Core:
         self.gui_alive_count = 0
 
     def run(self):
+        """
+        Main operation function of core.
+        Got Event loop in here.
+        :return:
+        """
         # some start up information
         self.log.printText(1,'Initialize PaPI - Plugin based Process Interaction')
         self.log.printText(1,'core process id: '+str(os.getpid()))
@@ -200,6 +208,7 @@ class Core:
         """
         self.log.printText(1,'Plugin '+dplug.uname+' is DEAD')
         dplug.state = 'dead'
+        self.update_meta_data_to_gui(dplug.id)
 
     def check_alive_callback(self):
         """
@@ -501,18 +510,23 @@ class Core:
 
     def __process_stop_plugin__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
-         :type dplugin: DPlugin
+        Process stop_plugin event.
+        Will send an event to destination plugin to close itself. Will lead to a join request of this plugin.
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
         """
-
+        # get destination id
         id = event.get_destinatioID()
 
-        dplugin =  self.core_data.get_dplugin_by_id(id)
-        if dplugin != None:
+        # get DPlugin object and check if plugin exists
+        dplugin = self.core_data.get_dplugin_by_id(id)
+        if dplugin is not None:
+            # dplugin exist, get queue and route event to plugin
             dplugin.queue.put(event)
             return 1
         else:
+            # DPlugin does not exist
             self.log.printText(1,'stop_plugin, plugin with id '+str(id)+' not found')
             return -1
 
@@ -655,7 +669,7 @@ class Core:
 
     def __process_new_parameter__(self,event):
         """
-        Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI informations
+        Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI information
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
