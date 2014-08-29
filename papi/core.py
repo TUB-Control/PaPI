@@ -33,35 +33,34 @@ import time
 from multiprocessing import Process, Queue, Manager
 
 from yapsy.PluginManager import PluginManager
-
+from threading import Timer
 
 from papi.PapiEvent import PapiEvent
-from papi.DebugOut import debug_print
 from papi.data.DCore import DCore
 from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
 from papi.data.DOptionalData import DOptionalData
-from threading import Timer
+
 
 
 
 class Core:
-
     def __init__(self):
+
+        # switch case structure for processing incoming events
         self.__process_event_by_type__ = {  'status_event': self.__process_status_event__,
                                             'data_event': self.__process_data_event__,
                                             'instr_event': self.__process_instr_event__,
         }
+
         self.__process_status_event_l__ = { 'start_successfull': self.__process_start_successfull__,
                                             'start_failed': self.__process_start_failed__,
-                                            'check_alive_status': self.__process_check_alive__,
                                             'alive': self.__process_alive__,
                                             'join_request': self.__process_join_request__
         }
+
         self.__process_data_event_l__ = {   'new_data': self.__process_new_data__,
-                                            'get_output_size': self.__process_get_output_size__,
-                                            'response_output_size': self.__process_response_output_size__,
                                             'new_block': self.__process_new_block__,
                                             'new_parameter': self.__process_new_parameter__
         }
@@ -74,114 +73,184 @@ class Core:
                                             'set_parameter': self.__process_set_parameter__
         }
 
-        self.msg_lvl = 1
-        self.__debugLevel__ = 1
-        self.__debug_var = ''
-
+        #creating the main core data object DCore and core queue
         self.core_data = DCore()
+        self.core_event_queue = Queue()
+        self.core_goOn = 1
+        self.core_id = 0
 
+        # setting up the yapsy plguin manager for directory structure
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
-        self.core_event_queue = Queue()
-
+        # define gui information. ID and alive status as well as gui queue for events
         self.gui_event_queue = Queue()
         self.gui_id = self.core_data.create_id()
+        self.gui_alive = False
 
-        self.gui_alive = 0
-
-        self.core_goOn = 1
-
+        # set information for console logging part (debug information)
+        self.msg_lvl = 1
         self.log = ConsoleLog(self.msg_lvl,'Core-Process: ')
 
-        self.core_id = 0
-
-        self.alive_intervall = 2
+        # define variables for check alive system, e.a. timer and counts
+        self.enable_check_alive_status = True
+        self.alive_intervall = 2  # in seconds
         self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
 
     def run(self):
-        debug_print(self.__debugLevel__,'Core: initialize PaPI - Plugin based Process Interaction')
-        debug_print(self.__debugLevel__, ['Core: core process id: ',os.getpid()] )
+        # some start up information
+        self.log.printText(1,'Initialize PaPI - Plugin based Process Interaction')
+        self.log.printText(1,'core process id: '+str(os.getpid()))
 
         # check PlugIn directory for Plugins and collect them
         self.plugin_manager.collectPlugins()
 
+        # start the GUI process to show GUI, set GUI alive status to TRUE
         self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
         self.gui_process.start()
         self.gui_alive = True
 
-        self.alive_timer.start()
+        # start the check alive timer
+        if self.enable_check_alive_status is True:
+            self.alive_timer.start()
 
-        debug_print(self.__debugLevel__,'Core:  entering event loop')
+        # core main operation loop
         while self.core_goOn:
-
+            # get event from queue, blocks until there is a new event
             event = self.core_event_queue.get()
 
+            # debung out
             self.log.printText(2,'Event->'+event.get_eventtype()+'   '+event.get_event_operation())
 
+            # process the next event of queue
             self.__process_event__(event)
 
+            # check if there are still plugins alive or gui is still alive before ending core main loop
             self.core_goOn = self.core_data.get_dplugins_count() != 0 or self.gui_alive
 
-
+        # core main loop ended, so cancel active alive timer
         self.alive_timer.cancel()
+
+        # core finished operation and did clean shutdown
         self.log.printText(1,'Core finished operation')
 
-
-
-
     def send_alive_check_events(self):
+        """
+        function for check_alive_status timer to send check_alive events to all running processes
+        :return:
+        """
+        # get list of all plugins [hash: id->dplug]
         dplugs = self.core_data.get_all_plugins()
         for id in dplugs:
+            # get dplug object
             plug = dplugs[id]
+            # check if this plugins runs in a separate process
             if plug.own_process is True:
+                # send check_alive_status event to plugin process (via queue)
                 event = PapiEvent(self.core_id,plug.id,'status_event','check_alive_status',None)
                 plug.queue.put(event)
 
+        # send check_alive_status event to gui process (via queue)
         event = PapiEvent(self.core_id,self.gui_id,'status_event','check_alive_status',None)
         self.gui_event_queue.put(event)
 
-
     def handle_alive_situation(self):
+        """
+        Function which handles the check for the alive situation of all plugins in data base
+        Will distribute to error_handling methods to handle dead processes
+        :return:
+        """
+        #get all plugins from core data [hash: id->DPlugin]
         dplugs = self.core_data.get_all_plugins()
         for id in dplugs:
+            # get DPlugin object
             plug = dplugs[id]
+            # check if plugins runs in a separate process
             if plug.own_process is True:
+                # check if counts are equal: equal indicates that plugin is alive
                 if plug.alive_count is self.alive_count:
                     self.log.printText(2,'Plugin '+plug.uname+' is still alive')
+                    # change plugin state in DCore
                     plug.state = 'alive'
                 else:
-                    self.log.printText(1,'Plugin '+plug.uname+' is DEAD')
-                    plug.state = 'dead'
+                    # Plugin is not alive anymore, so do error handling
+                    self.plugin_process_is_dead_error_handler(plug)
 
+        # check for gui status and do error handling
         if self.gui_alive_count is self.alive_count:
             self.log.printText(2,'GUI  is still ALIVE')
         else:
-            self.log.printText(1,'GUI  is  DEAD')
+            self.gui_is_dead_error_handler()
 
+    def gui_is_dead_error_handler(self):
+        """
+        error handler when gui is dead
+        :return:
+        """
+        self.log.printText(1,'GUI  is  DEAD')
+
+    def plugin_process_is_dead_error_handler(self,dplug):
+        """
+        Error handler for a dead plugin process
+        :param dplug: Plugin which is dead
+        :type dplug: DPlugin
+        :return:
+        """
+        self.log.printText(1,'Plugin '+dplug.uname+' is DEAD')
+        dplug.state = 'dead'
 
     def check_alive_callback(self):
+        """
+        callback function for check_alive status timer
+        handles sending events to processes and checking their answer
+        :return:
+        """
         self.log.printText(2,'check alive')
 
+        # check for answer status of all plugins
         self.handle_alive_situation()
 
+        # increase the global check_alive counter
         self.alive_count += 1
 
+        # send new check alive events to plugins
         self.send_alive_check_events()
 
-        self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
-        self.alive_timer.start()
+        # start a new one shot timer with this callback function
+        if self.enable_check_alive_status is True:
+            self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
+            self.alive_timer.start()
 
-
-
+    def update_meta_data_to_gui(self,pl_id):
+        """
+        On call this function will send the meta information of pl_id to GUI
+        :param pl_id: id of plugin with new meta information
+        :return:
+        """
+        # get DPlugin object with id and check if it exists
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # DPlugin object exists,so build optinalData for Event
+            o = DOptionalData()
+            # get meta information of DPlugin
+            o.plugin_object = dplugin.get_meta()
+            # build event and send it to GUI with meta information
+            eventMeta = PapiEvent(pl_id,self.gui_id,'instr_event','update_meta',o)
+            self.gui_event_queue.put(eventMeta)
+            return 1
+        else:
+            # Dplugin object with pl_id does not exist in DCore of core
+            self.log.printText(1,'update_meta, cannonot update meta information because there is no plugin with id: '+str(pl_id))
+            return -1
 
     # ------- Event processing initial stage ---------
     def __process_event__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        Initial stage of event processing, dividing to event type
+        :param event: event to process
+        :type event: PapiEvent
         """
         t = event.get_eventtype()
         self.__process_event_by_type__[t](event)
@@ -189,222 +258,210 @@ class Core:
     # ------- Event processing first stage ---------
     def __process_status_event__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        First stage of event processing, deciding which status_event this is
+        :param event: event to process
+        :type event: PapiEvent
         """
         op = event.get_event_operation()
         return self.__process_status_event_l__[op](event)
 
     def __process_data_event__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        First stage of event processing, deciding which data_event this is
+        :param event: event to process
+        :type event: PapiEvent
         """
         op = event.get_event_operation()
         return self.__process_data_event_l__[op](event)
 
     def __process_instr_event__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        First stage of event processing, deciding which instr_event this is
+        :param event: event to process
+        :type event: PapiEvent
         """
         op = event.get_event_operation()
         return self.__process_instr_event_l__[op](event)
 
-
-
-
-
-
-
     # ------- Event processing second stage: status events ---------
-
     def __process_start_successfull__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        Process start_successfull event
+        :param event: event to process
+        :type event: PapiEvent
         """
-        self.__debug_var__ = 'start_successfull'
+        # get plugin from DCore with id of event origin and check if it exists
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
         if (dplug != None):
+            # plugin exists and sent successfull event, so change it state
             dplug.state = 'start_successfull'
             return 1
         else:
+            # plugin does not exist
             self.log.printText(1,'start_successfull_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
-
     def __process_start_failed__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        Process start failed event and do error handling
+        :param event: event to process
+        :type event: PapiEvent
         """
-        self.__debug_var__ = 'start_failed'
-
+        # get plugin from DCore with id of event origin and check if it exists
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
         if (dplug != None):
+            # plugin exists but start failed, so change it state
             dplug.state = 'start_failed'
             return 1
         else:
+            # plugin does not exist in DCore
             self.log.printText(1,'start_failed_event, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
-
-    def __process_check_alive__(self,event):
-        """
-         :param event: event to process
-         :type event: PapiEvent
-        """
-        self.__debug_var__ = 'check_alive_status'
-
-        return True
-
-
     def __process_alive__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
+        Processes alive response from processes/plugins and GUI, organising the counter
+        :param event: event to process
+        :type event: PapiEvent
         """
-        self.__debug_var__ = 'alive'
-
+        # get event origin
         oID = event.get_originID()
-
+        # check if its the gui
         if oID is self.gui_id:
+            # increment GUI counter
             self.gui_alive_count += 1
         else:
+            # its not the Gui, so search for plugin in DCore
             dplug = self.core_data.get_dplugin_by_id(oID)
-
+            # check if plugin exists. If plugin exists, increment its counter
             if dplug is not None:
                 dplug.alive_count += 1
-
-
-
         return True
-
 
     def __process_join_request__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
-         :type dplugin: DPlugin
+        Process join requests of processes
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
         """
-        self.__debug_var__ = 'join_request'
-
+        # get event origin id and its corresponding plugin object
         pl_id = event.get_originID()
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
-        if (dplugin != None):
+        # check for existance
+        if dplugin is not None:
+            # get process of plugin and join it
             dplugin.process.join()
+            # remove plugin from DCore, because process was joined
             return self.core_data.rm_dplugin(dplugin.id)
         else:
+            # Plug does not exist
             self.log.printText(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
             return -1
 
-
-
-
-
-
-
     # ------- Event processing second stage: data events ---------
-
     def __process_new_data__(self,event):
         """
-         :param event: event to process
-         :type event: PapiEvent
-         :type tar_plug: DPlugin
+        Process new_data event from plugins.
+        Will do the routing: Subscriber/Subscription
+        :param event: event to process
+        :type event: PapiEvent
+        :type tar_plug: DPlugin
         """
-        self.__debug_var__ = 'new_data'
-
+        # just proceed with new_data events if GUI is still alive (indicates that program will close)
         if self.gui_alive:
+            # get event origin and optional parameter
             oID = event.get_originID()
             opt = event.get_optional_parameter()
 
+            # get origin plugin from DCore
             dplug = self.core_data.get_dplugin_by_id(oID)
-            if dplug != None:
+            # check for existence
+            if dplug is not None:
+                # get data block of DPlugin with block_name from event
                 block= dplug.get_dblock_by_name(opt.block_name)
-                subscriber = block.get_subscribers()
-                #print(subscriber)
-                id_list = []
-                for sub_id in subscriber:
-                    pl = self.core_data.get_dplugin_by_id(sub_id)
-                    if pl.type == 'ViP':
-                        id_list.append(pl.id)
-                    else:
-                        new_event = PapiEvent(oID,[pl.id],'data_event','new_data',event.get_optional_parameter())
-                        pl.queue.put(new_event)
-
-                if len(id_list)> 0:
-                    #print(id_list)
-                    new_event = PapiEvent(oID,id_list,'data_event','new_data',event.get_optional_parameter())
-                    self.gui_event_queue.put(new_event)
-
-                return 1
+                # check for existence of block with block_bame
+                if block is not None:
+                    # get subscriber list of block
+                    subscriber = block.get_subscribers()
+                    # id list dummy for event destination id list
+                    id_list = []
+                    # for all subscriber in subscriber list
+                    for sub_id in subscriber:
+                        # get plugin with sub_id and check for existence
+                        pl = self.core_data.get_dplugin_by_id(sub_id)
+                        if pl is not None:
+                            # plugin exists, check whether it is a ViP or not
+                            if pl.type == 'ViP':
+                                # Because its a ViP, we need a list of destination ID for new_data
+                                id_list.append(pl.id)
+                            else:
+                                # Plugin is not running in GUI, so just 1:1 relation for event and destinations
+                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', event.get_optional_parameter())
+                                pl.queue.put(new_event)
+                        else:
+                            # pluign with sub_id does not exist in DCore of core
+                            self.log.printText(1, 'new_data, subscriber plugin with id '+str(sub_id)+' does not exists')
+                            return -1
+                    # check if our list with id is greater than 1, which will indicate that there is at least one ViP
+                    # which will need to get this new data event
+                    if len(id_list)> 0:
+                        # send new_data event to GUI with id_list of destinations
+                        new_event = PapiEvent(oID,id_list,'data_event','new_data',event.get_optional_parameter())
+                        self.gui_event_queue.put(new_event)
+                    # process new_data seemed correct
+                    return 1
+                else:
+                    # block is None
+                    self.log.printText(1, 'new_data, block with name '+opt.block_name+' does not exists')
+                    return -1
             else:
+                # Plugin of event origin does not exist in DCore of core
                 self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
-        return 1
-
-
-    def __process_get_output_size__(self,event):
-        """
-         :param event: event to process
-         :type event: PapiEvent
-        """
-        self.__debug_var__ = 'get_output_size'
-        return True
-
-
-    def __process_response_output_size__(self,event):
-        """
-         :param event: event to process
-         :type event: PapiEvent
-        """
-        self.__debug_var__ = 'response_output_size'
-        return True
-
-
-
-
-
-
-
 
     # ------- Event processing second stage: instr events ---------
-
     def __process_create_plugin__(self,event):
         """
-         :param event: event to process
-         :param optData: optional Data Object of event
-         :type event: PapiEvent
-         :type optData: DOptionalData
+        Processes create_plugin event.
+        So it will create a plugin, start a process if needed, send events to GUI to create a plugin and do the pre configuration
+        :param event:
+        :param optData: optional Data Object of event
+        :type event: PapiEvent
+        :type optData: DOptionalData
+        :return:
         """
-        self.__debug_var__ = 'create_plugin'
-
-
-        #decide which Plugin to start
+        # get optData to get information about which plugin to start
         optData = event.get_optional_parameter()
-
-        plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
-
         self.log.printText(2,'create_plugin, Try to create plugin with Name  '+optData.plugin_identifier+ " and UName " + optData.plugin_uname )
 
+        # search yapsy plugin object with plugin_idientifier and check if it exists
+        plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
         if plugin == None:
             self.log.printText(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
             return -1
 
-        #creates a new plugin id
+        #creates a new plugin id because plugin exsits
         plugin_id = self.core_data.create_id()
 
-
+        # checks if plugin is of not of type ViP or PCP, because these two will run in GUI process
         if plugin.plugin_object.get_type() != 'ViP' and plugin.plugin_object.get_type() != 'PCP':
+            # So plugin will not run in GUI
+            # it will need an own process and queue to function
+
+            # create Queue for plugin process
             plugin_queue = Queue()
 
+            # decide if plugin will need to get Data from another plugin
             if plugin.plugin_object.get_type()=='DPP':
+                # plugin will get data from another, so make its execution triggered by events
                 eventTriggered = True
             else:
+                # stand alone plugin, so it will do its permanent execute loop
                 eventTriggered = False
 
             # create Process object for new plugin
+            # set parameter for work function of plugin, such as queues, id and eventTriggered
             PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue,plugin_queue,plugin_id,eventTriggered ) )
             PluginProcess.start()
 
@@ -414,42 +471,33 @@ class Core:
             dplug.type = plugin.plugin_object.get_type()
             dplug.alive_count = self.alive_count
 
-            # set plugin info for gui
-            # opt = DOptionalData()
-            # opt.plugin_identifier = plugin.name
-            # opt.plugin_id = plugin_id
-            # opt.plugin_uname = dplug.uname
-            # opt.plugin_type = dplug.type
+            # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
             optData.plugin_id = plugin_id
             optData.plugin_type = dplug.type
 
+            # send create_plugin event to GUI for local creation, now with new information like id and type
             event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
             self.gui_event_queue.put(event)
-
-
+            return 1
         else:
+            # Plugin will run in GUI, thats why core does not need to create a new process
+
+            # Adding plugin information to DCore of core for organisation
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
 
-
-            # opt = DOptionalData()
-            # opt.plugin_identifier = plugin.name
-            # opt.plugin_id = plugin_id
-            # opt.plugin_uname = dplug.uname
-            # opt.plugin_type = dplug.type
+            # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
             optData.plugin_id = plugin_id
             optData.plugin_type = dplug.type
 
-
+            # send create_plugin event to GUI for local creation, now with new information like id and type
             event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
             self.gui_event_queue.put(event)
-            self.log.printText(1,'core sent create event to gui for plugin: '+str(optData.plugin_uname))
-
-        return True
-
+            self.log.printText(2,'core sent create event to gui for plugin: '+str(optData.plugin_uname))
+            return 1
 
     def __process_stop_plugin__(self,event):
         """
@@ -457,7 +505,6 @@ class Core:
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
-        self.__debug_var__ = 'stop_plugin'
 
         id = event.get_destinatioID()
 
@@ -472,13 +519,11 @@ class Core:
 
     def __process_close_programm__(self,event):
         """
-         This functions processes a close_programm event from GUI and
-         sends events to all processes to close themselves
-
-         :param event: event to process
-         :type event: PapiEvent
+        This functions processes a close_programm event from GUI and
+        sends events to all processes to close themselves
+        :param event: event to process
+        :type event: PapiEvent
         """
-        self.__debug_var__ = 'close_program'
 
         # GUI wants to close, so join process
         self.gui_process.join()
@@ -504,136 +549,136 @@ class Core:
         for dplugin_ID in toDelete:
             self.core_data.rm_dplugin(dplugin_ID)
 
-
     def __process_subscribe__(self,event):
         """
+        Process subscribe_event.
+        Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-
+        # get event origin id and optional parameters
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
-        p = self.core_data.get_dplugin_by_id(opt.source_ID)
-        b = p.get_dblocks()
-
-
-        if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) == False:
+        # try subscibe for subsribe request
+        if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) is False:
+            # subscribtion failed
             self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
         else:
+            # subscribtion correct
             self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
             self.update_meta_data_to_gui(oID)
             self.update_meta_data_to_gui(opt.source_ID)
 
-
-
-
-
-
     def __process_unsubsribe__(self,event):
         """
-        Case A:
-          Plugin wants to unsubscribe from another plugin
-
-        Case B:
-          Plugin wants to close all his subscribtions
-
+        Process unsubscribe_event. Will try to remove a subscription from DCore
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-
+        # get event origin id and optional parameters
         opt = event.get_optional_parameter()
         oID = event.get_originID()
-
+        # try to unsubscribe
         if self.core_data.unsubscribe(oID,opt.source_ID,opt.block_name) is False:
+            # unsubscribe failed
             self.log.printText(1,'unsubscribe, something failed in unsubsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
         else:
+            # unsubscribe correct
             self.log.printText(1,'unsubscribe, unsubscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
             self.update_meta_data_to_gui(oID)
             self.update_meta_data_to_gui(opt.source_ID)
 
-
     def __process_set_parameter__(self,event):
         """
+        Process set_parameter event. Core will just route this event from GUI to destination plugin and update DCore
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
+        # get destination id and optional parameter
         opt = event.get_optional_parameter()
         pl_id = event.get_destinatioID()
-        dplugin =  self.core_data.get_dplugin_by_id(pl_id)
-        if dplugin != None:
+
+        # get DPlugin object of destination id from DCore and check for existence
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # Plugin exists
+            # get parameter list of plugin [hash]
             pl_parameter = dplugin.get_parameters()
+            # looping through all parameter in events parameter list (parameters that changed)
             for new_para in opt.parameter_list:
                 p = pl_parameter[new_para.name]
+                # check if parameter exists in Dcore list
                 if p is not None:
+                    # it exists, so change its values
                     p.value = new_para.value
-
+            # route the event to the destination plugin queue
             dplugin.queue.put(event)
             return 1
         else:
+            # destination plugin does not exist
             self.log.printText(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')
             return -1
 
-
     def __process_new_block__(self,event):
         """
+        Processes new_block event.
+        Will try to add a new data block to a DPlugin object
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
+        # get event origin id and optional parameter
         opt = event.get_optional_parameter()
         pl_id = event.get_originID()
+        # get DPlugin object with origin id of event to add new parameter to THIS DPlugin
         dplugin =  self.core_data.get_dplugin_by_id(pl_id)
-
-        if dplugin != None:
+        # check for existence
+        if dplugin is not None:
+            # dplugin exists, so add blocks to DPlugin
             for b in opt.block_list:
                 dplugin.add_dblock(b)
-
-            self.update_meta_data_to_gui(pl_id)
-        else:
-            self.log.printText(1,'new_block, plugin with id '+str(pl_id)+' not found')
-        return -1
-
-
-    def __process_new_parameter__(self,event):
-        """
-        :param event: event to process
-        :type event: PapiEvent
-        :type dplugin_sub: DPlugin
-        :type dplugin_source: DPlugin
-        """
-        opt = event.get_optional_parameter()
-        pl_id = event.get_originID()
-
-        dplugin = self.core_data.get_dplugin_by_id(pl_id)
-        if dplugin != None:
-            for p in opt.parameter_list:
-                dplugin.add_parameter(p)
+            # update meta information of GUI after new blocks were added
             self.update_meta_data_to_gui(pl_id)
             return 1
         else:
+            # plugin does not exist
+            self.log.printText(1,'new_block, plugin with id '+str(pl_id)+' not found')
+            return -1
+
+    def __process_new_parameter__(self,event):
+        """
+        Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI informations
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        # get event origin and optional parameter
+        opt = event.get_optional_parameter()
+        pl_id = event.get_originID()
+
+        # get DPlugin object of event origin id which is the plugin that wants to add parameter
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # Plugin exists so loop through parameter list to add all parameter
+            for p in opt.parameter_list:
+                # add parameter to DPlugin
+                dplugin.add_parameter(p)
+            # update meta of GUI to introduce new parameter to user
+            self.update_meta_data_to_gui(pl_id)
+            return 1
+        else:
+            # plugin does not exist
             self.log.printText(1,'new_parameter, plugin with id '+str(pl_id)+' not found')
             return -1
 
 
 
-    def update_meta_data_to_gui(self,pl_id):
-        """
-        :param event: event to process
-        :type event: PapiEvent
-        :type dplugin_sub: DPlugin
-        :type dplugin_source: DPlugin
-        """
-        dplugin = self.core_data.get_dplugin_by_id(pl_id)
-        if dplugin != None:
-            o = DOptionalData()
-            o.plugin_object = dplugin.get_meta()
-            eventMeta = PapiEvent(pl_id,self.gui_id,'instr_event','update_meta',o)
-            self.gui_event_queue.put(eventMeta)
