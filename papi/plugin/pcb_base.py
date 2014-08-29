@@ -96,7 +96,7 @@ class pcb_base(plugin_base):
         return 'ViP'
 
 
-    def send_paramter_change(self,pl_id,parameter_object,value):
+    def send_paramter_change(self, pl_id, parameter_object, value):
         """
 
         :param pl_id:
@@ -117,5 +117,13 @@ class pcb_base(plugin_base):
                 return -1
 
 
+    def check_range_of_value(self,value,range):
+        min = range[0]
+        max = range[1]
+        if value > max:
+            return False
+        if value < min:
+            return False
+        return True
 
 
