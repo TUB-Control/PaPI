@@ -42,7 +42,6 @@ class plugin_base(IPlugin):
 
     __metaclass__= ABCMeta
 
-
     def __init_(self,CoreQueue,pluginQueue,id):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
@@ -92,7 +91,6 @@ class plugin_base(IPlugin):
             except:
                 self.execute()
 
-
     def send_new_data(self,data,block_name):
         opt = DOptionalData(DATA=data)
         opt.block_name = block_name
@@ -111,11 +109,6 @@ class plugin_base(IPlugin):
 
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
-
-
-    @abstractmethod
-    def get_output_sizes(self):
-        raise Exception("Unable to create an instance of abstract class")
 
     @abstractmethod
     def start_init(self, config=None):
