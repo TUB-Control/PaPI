@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-#-*- coding: latin-1 -*-
+#-*- coding: utf-8 -*-
 
 """
-Copyright (C) 2014 Technische Universit‰t Berlin,
-Fakult‰t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit√§t Berlin,
+Fakult√§t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
  
@@ -42,29 +42,37 @@ class plugin_base(IPlugin):
 
     __metaclass__= ABCMeta
 
-    def __init_(self,CoreQueue,pluginQueue,id):
+    def __init_(self, CoreQueue, pluginQueue, id):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
 
-    def work_process(self,CoreQueue,pluginQueue,id,EventTriggered=False):
+    def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
         print("Plugin work_process called")
+        # set queues and id
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
 
+        # working should go at least one time
         self.goOn = 1
 
+        # call start_init function to use developers init
         if self.start_init():
+            # report start successfull event
             event = PapiEvent(self.__id__,0,'status_event','start_successfull',None)
             self._Core_event_queue__.put(event)
         else:
+            # init failed, so report it to core
             event = PapiEvent(self.__id__,0,'status_event','start_failed',None)
             self._Core_event_queue__.put(event)
+            # end plugin
             self.goOn = 0
+            # sent join request to core
             event = PapiEvent(self.__id__,0,'status_event','join_request',None)
             self._Core_event_queue__.put(event)
 
+        # main working loop
         while self.goOn:
             try:
                 event = self.__plugin_queue__.get(EventTriggered)
@@ -91,48 +99,50 @@ class plugin_base(IPlugin):
             except:
                 self.execute()
 
-    def send_new_data(self,data,block_name):
+    def send_new_data(self, data, block_name):
         opt = DOptionalData(DATA=data)
         opt.block_name = block_name
         event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
         self._Core_event_queue__.put(event)
 
-    def send_new_block_list(self,blocks):
+    def send_new_block_list(self, blocks):
         opt = DOptionalData()
         opt.block_list = blocks
         event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
         self._Core_event_queue__.put(event)
 
-    def send_new_parameter_list(self,parameters):
+    def send_new_parameter_list(self, parameters):
         opt = DOptionalData()
-        opt.parameter_list= parameters
+        opt.parameter_list = parameters
 
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
 
+
+
     @abstractmethod
     def start_init(self, config=None):
-        raise Exception("Unable to create an instance of abstract class")
+        raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
     def pause(self):
-        raise Exception("Unable to create an instance of abstract class")
+        raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
     def resume(self):
-        raise Exception("Unable to create an instance of abstract class")
+        raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
-    def execute(self,Data=None):
-        raise Exception("Unable to create an instance of abstract class")
+    def execute(self, Data=None):
+        raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
-    def set_parameter(self,para_list):
-        raise Exception("Unable to create an instance of abstract class")
+    def set_parameter(self, para_list):
+        raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
     def quit(self):
-        raise Exception("Unable to create an instance of abstract class")
+        raise NotImplementedError("Please Implement this method")
 
     def get_type(self):
-        raise Exception("Unable to create an instance of abstract class")
+        raise NotImplementedError("Please Implement this method")

@@ -101,7 +101,8 @@ class GUI(QMainWindow, Ui_MainGUI):
                                 'check_alive_status': self.process_check_alive_status,
                                 'create_plugin':self.process_create_plugin,
                                 'update_meta': self.process_update_meta,
-                                'plugin_closed': self.process_plugin_closed
+                                'plugin_closed': self.process_plugin_closed,
+                                'set_parameter': self.process_set_parameter
         }
 
 
@@ -258,8 +259,12 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #self.do_set_parameter('Add1','Count',val)
 
-        event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
-        self.core_queue.put(event)
+        #event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
+        #self.core_queue.put(event)
+
+        pl = self.gui_data.get_dplugin_by_uname('Sinus1')
+        b = pl.get_dblock_by_name('SinMit_f3')
+        print(b.signal_names_internal)
 
     def stefan(self):
         self.count += 1
@@ -500,6 +505,31 @@ class GUI(QMainWindow, Ui_MainGUI):
         else:
             # plugin does not exist
             self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
+
+    def process_set_parameter(self,event):
+        """
+
+        :param event:
+        :return:
+        """
+        # debug print
+        self.log.printText(2,'set parameter event')
+
+        dID = event.get_destinatioID()
+        # get optional data of event
+        opt = event.get_optional_parameter()
+
+
+        # get destination plugin from DGUI
+        dplugin = self.gui_data.get_dplugin_by_id(dID)
+        # check if it exists
+        if dplugin != None:
+            # it exists, so call its execute function
+            dplugin.plugin.set_parameter(opt.parameter_list)
+        else:
+            # plugin does not exist in DGUI
+            self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
+
 
     def do_create_plugin(self, plugin_identifier, uname, config={}):
         """

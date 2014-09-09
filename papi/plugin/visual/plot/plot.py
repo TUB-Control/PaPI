@@ -7,6 +7,7 @@
 
 from papi.plugin.visual_base import visual_base
 from papi.PapiEvent import PapiEvent
+from papi.data.DParameter import DParameter
 import time
 import numpy
 __author__ = 'knuths'
@@ -21,6 +22,14 @@ class Plot(visual_base):
         print("Plot: start_init")
         self.max_counter = 0
         self.counter = 0
+
+
+        self.para1 = DParameter(None,'Singale',1,[1,2],1)
+        self.para1.id = 1
+        para_l = [self.para1]
+
+        self.send_new_parameter_list(para_l)
+
 
         pass
 
@@ -37,11 +46,11 @@ class Plot(visual_base):
 
         l = len(Data)
 
-        t = Data[0:l/2]
+        t = Data[0]
 
         #self.sinus_curve = 22
         #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
-        y = Data[l/2:l]
+        y = Data[self.para1.value]
 
         if self.counter > self.max_counter:
             self.add_data(t, y)
@@ -50,8 +59,11 @@ class Plot(visual_base):
 
         self.counter += 1
 
-    def set_parameter(self):
-        pass
+    def set_parameter(self, parameter_list):
+        for p in parameter_list:
+            if p.name == self.para1.name:
+                self.para1 = p
+
 
     def get_type(self):
         return "ViP"
