@@ -1,9 +1,0 @@
-[Core]
-Name = TestPL1
-Module = TestPL1
-
-[Documentation]
-Author = S.R
-Version = 0.1
-Website = www
-Description = test plugin1 shared memory

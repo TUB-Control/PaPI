@@ -1,9 +1,0 @@
-[Core]
-Name = Plot2
-Module = plot2
-
-[Documentation]
-Author = S.K.
-Version = 0.1
-Website = www
-Description = simple plot plugin
