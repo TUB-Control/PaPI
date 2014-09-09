@@ -54,9 +54,7 @@ class AddPlugin(QDialog, Ui_AddPlugin):
             [
                 self.plugin_path + "visual", 'plugin/visual',
                 self.plugin_path + "io", 'plugin/io',
-                self.plugin_path + "dpp", 'plugin/dpp',
-                self.plugin_path + "pcp", 'plugin/pcp'
-
+                self.plugin_path + "dpp", 'plugin/dpp'
             ]
         )
         self.setWindowTitle('Available Plugins')

@@ -29,9 +29,8 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.pcp_base import pcp_base
-from PySide.QtGui import QSlider
+from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
 from PySide import QtCore
-
 
 class Slider(pcp_base):
 
@@ -39,20 +38,30 @@ class Slider(pcp_base):
         super(Slider, self).start_init(config)
 
     def create_widget(self):
-        slider = QSlider()
-        slider.sliderPressed.connect(self.clicked)
-        slider.valueChanged.connect(self.valueChanged)
-        slider.setMinimum(0)
-        slider.setMaximum(100)
-        slider.setSingleStep(1)
+        self.central_widget = QWidget()
 
-        slider.setOrientation(QtCore.Qt.Horizontal)
+        self.slider = QSlider()
+        self.slider.sliderPressed.connect(self.clicked)
+        self.slider.valueChanged.connect(self.valueChanged)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(100)
+        self.slider.setSingleStep(1)
 
-        return slider
+        self.slider.setOrientation(QtCore.Qt.Horizontal)
+
+        self.text_field = QLineEdit()
+        self.text_field.setReadOnly(True)
+        self.layout = QHBoxLayout(self.central_widget)
+
+        self.layout.addWidget(self.slider)
+        self.layout.addWidget(self.text_field)
+
+        return self.central_widget
 
     def valueChanged(self, change):
         cur_value = change/100
         self.set_value(cur_value)
+        self.text_field.setText(str(cur_value))
 
     def clicked(self):
         pass

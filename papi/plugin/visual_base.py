@@ -43,7 +43,6 @@ class visual_base(plugin_base):
     _metaclass__= ABCMeta
 
     def start_init(self, config=None):
-        print('visual_base: start_init')
 
         default_config = self.get_default_config()
 
@@ -51,24 +50,27 @@ class visual_base(plugin_base):
 
             config = default_config
 
-        sampleinterval=None
-        timewindow=None
-        size=None
-
-        print(default_config)
-
         if 'sampleintervall' not in config:
             sampleinterval=default_config['sampleinterval']
+        else:
+            sampleinterval=config['sampleinterval']
 
         if 'timewindow' not in config:
             timewindow=default_config['timewindow']
+        else:
+            timewindow=config['timewindow']
 
         if 'size' not in config:
             size=default_config['size']
+        else:
+            size=config['size']
 
         if 'name' not in config:
-            self.name=default_config['name']
+            name=default_config['name']
+        else:
+            name=config['name']
 
+        self.name = name
         self._interval = int(sampleinterval*timewindow)
         self._bufsize = int(timewindow/sampleinterval)
         self.tDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
@@ -90,6 +92,7 @@ class visual_base(plugin_base):
 
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
+        self._subWindow.setWindowTitle(self.name)
 
     def get_default_config(self):
         config = {}

@@ -53,7 +53,6 @@ class pcp_base(plugin_base):
         else:
             self.name=config['name']
 
-
         self.__dplugin_id__ = config['dplugin_id']
         self.__dparameter__ = config['dparameter']
 
@@ -64,7 +63,8 @@ class pcp_base(plugin_base):
 
         self.__subWindow__ = QMdiSubWindow()
         self.__subWindow__.setWidget(self.__widget__)
-
+        self.__subWindow__.setWindowTitle(self.name)
+        self.__subWindow__.resize(250, 100)
 
     def get_default_config(self):
         config = {}

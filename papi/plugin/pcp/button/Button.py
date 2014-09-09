@@ -38,6 +38,11 @@ class Button(pcp_base):
         super(Button, self).start_init(config)
 
     def create_widget(self):
+        """
+
+        :return:
+        :rtype QWidget:
+        """
         button = QPushButton('Click ' + self.name)
         button.clicked.connect(self.clicked)
 
