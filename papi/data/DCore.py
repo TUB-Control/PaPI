@@ -172,7 +172,7 @@ class DCore():
         target = self.get_dplugin_by_id(target_id)
 
         if target is None:
-            self.log.printText(1, "Found no Target with ID " + target_id)
+            self.log.printText(1, "Found no Target with ID " + str(target_id))
             return False
 
         dblock = target.get_dblock_by_name(dblock_name)
@@ -185,7 +185,7 @@ class DCore():
         #Create relation between DPlugin and DBlock
 
         if subscriber.subscribe(dblock) is False:
-            self.log.printText(1, "Subscriber " + subscriber_id + " has already subscribed " + dblock_name)
+            self.log.printText(1, "Subscriber " + str(subscriber_id) + " has already subscribed " + dblock_name)
             return False
 
         if dblock.add_subscribers(subscriber) is False:

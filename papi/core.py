@@ -98,6 +98,7 @@ class Core:
         # define variables for check alive system, e.a. timer and counts
         self.enable_check_alive_status = True
         self.alive_intervall = 2  # in seconds
+        self.alive_count_max = 200
         self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
@@ -198,8 +199,9 @@ class Core:
         :return:
         """
         self.log.printText(1,'GUI  is  DEAD')
+        self.log.printText(1,'core count: '+str(self.alive_count)+' vs. '+ str(self.gui_alive_count)+' :gui count')
 
-    def plugin_process_is_dead_error_handler(self,dplug):
+    def plugin_process_is_dead_error_handler(self, dplug):
         """
         Error handler for a dead plugin process
         :param dplug: Plugin which is dead
@@ -207,6 +209,7 @@ class Core:
         :return:
         """
         self.log.printText(1,'Plugin '+dplug.uname+' is DEAD')
+        self.log.printText(1,'core count: '+str(self.alive_count)+' vs. '+ str(dplug.alive_count)+' :plugin count')
         dplug.state = 'dead'
         self.update_meta_data_to_gui(dplug.id)
 
@@ -223,6 +226,7 @@ class Core:
 
         # increase the global check_alive counter
         self.alive_count += 1
+        self.alive_count = self.alive_count % self.alive_count_max
 
         # send new check alive events to plugins
         self.send_alive_check_events()
@@ -339,12 +343,14 @@ class Core:
         if oID is self.gui_id:
             # increment GUI counter
             self.gui_alive_count += 1
+            self.gui_alive_count = self.gui_alive_count % self.alive_count_max
         else:
             # its not the Gui, so search for plugin in DCore
             dplug = self.core_data.get_dplugin_by_id(oID)
             # check if plugin exists. If plugin exists, increment its counter
             if dplug is not None:
                 dplug.alive_count += 1
+                dplug.alive_count = dplug.alive_count % self.alive_count_max
         return True
 
     def __process_join_request__(self,event):
