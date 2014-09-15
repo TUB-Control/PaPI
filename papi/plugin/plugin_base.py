@@ -124,17 +124,45 @@ class plugin_base(IPlugin):
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
 
-    def update_meta(self, dblock:DBlock):
+    def update_meta(self, dblock: DBlock):
         """
-        A DBlock should be updated (or added unless exists)
+        A DBlock should be updated (or added unless it exists)
         :param dblock:
         :return:
         """
         dplugin_id = dblock.dplugin_id
 
+        # Add hash for dplugin_id which is used to store DBlock names
+        if dplugin_id not in self.__dplugin_ids__:
+            self.__dplugin_ids__[dplugin_id] = {}
 
-    def remove_meta(self, dblock:DBlock):
-        pass
+        # Update or add if necessary
+        self.__dplugin_ids__[dplugin_id][dblock.name] = dblock
+
+    def remove_meta(self, dblock: DBlock):
+        """
+        This function is used to remove the meta information for a specific DBlock.
+        :param dblock:
+        :return:
+        :return Bool:
+        """
+        dplugin_id = dblock.dplugin_id
+
+        # Found no dplugin with the dplugin_id mentioned in dblock
+        if dplugin_id not in self.__dplugin_ids__:
+            return False
+
+        # Found no dblock for the dplugin_id
+        if dblock.name not in self.__dplugin_ids__[dplugin_id]:
+            return False
+
+        del self.__dplugin_ids__[dplugin_id][dblock.name]
+
+        # Check if all dblock,names were deleted
+        if len(self.__dplugin_ids__[dplugin_id].keys()) == 0:
+            del self.__dplugin_ids__[dplugin_id]
+
+        return True
 
     def demux(self, source_id, block_name, data):
 
