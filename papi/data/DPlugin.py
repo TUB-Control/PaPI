@@ -151,7 +151,6 @@ class DPlugin(DObject):
                 return False
         return False
 
-
         # if self.id in dblock.get_subscribers():
         #     dblock.rm_subscribers(self)
         #     del self.__subscriptions[dblock.id]
@@ -211,7 +210,6 @@ class DPlugin(DObject):
         :rtype boolean:
         """
         dblock.dplugin_id = self.id
-
         if dblock.name not in self.__blocks:
             self.__blocks[dblock.name] = dblock
             return True

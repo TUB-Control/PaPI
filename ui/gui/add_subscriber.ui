@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
-    <height>199</height>
+    <width>531</width>
+    <height>197</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>381</width>
+     <width>511</width>
      <height>141</height>
     </rect>
    </property>
@@ -62,6 +62,15 @@
       <column>
        <property name="text">
         <string>Block</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTreeWidget" name="treeSignal">
+      <column>
+       <property name="text">
+        <string>Signal</string>
        </property>
       </column>
      </widget>

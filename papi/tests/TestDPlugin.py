@@ -45,10 +45,13 @@ class TestDPlugin(unittest.TestCase):
         dpl_2 = DPlugin()
         dpl_2.id = 2
 
-        dbl_1 = DBlock(dpl_2,1,5)
+        dbl_1 = DBlock(dpl_2,1,5,'DBlock1')
         dbl_1.id = 3
-        dbl_2 = DBlock(dpl_2,1,5)
+        dbl_2 = DBlock(dpl_2,1,5,'DBlock2')
         dbl_2.id = 4
+
+        dpl_2.add_dblock(dbl_1)
+        dpl_2.add_dblock(dbl_2)
 
         #Check: subscribe DBlocks
         self.assertTrue(dpl_1.subscribe(dbl_1))
@@ -58,19 +61,16 @@ class TestDPlugin(unittest.TestCase):
         self.assertFalse(dpl_1.subscribe(dbl_2))
 
         #Check: count of subscribtions
-        self.assertEqual(len(dpl_1.get_subscribtions().keys()), 2)
-        #Check: count of subscribers
-        self.assertEqual(len(dbl_1.get_subscribers().keys()), 1)
-        self.assertEqual(len(dbl_1.get_subscribers().keys()),1)
+        self.assertEqual(len(dpl_1.get_subscribtions()[dpl_2.id].keys()), 2)
 
         #Check: unsubscribe DBlock
         self.assertTrue(dpl_1.unsubscribe(dbl_1))
 
         #Check: count of subscribtions
         self.assertEqual(len(dpl_1.get_subscribtions().keys()), 1)
-        #Check: count of subscribers
-        self.assertEqual(len(dbl_1.get_subscribers().keys()), 0)
-        self.assertEqual(len(dbl_2.get_subscribers().keys()), 1)
+        #Check: count of subscribtions
+        self.assertEqual(len(dpl_1.get_subscribtions()[dpl_2.id].keys()), 1)
+
 
 
         pass
@@ -79,9 +79,9 @@ class TestDPlugin(unittest.TestCase):
         dpl_1 = DPlugin()
         dpl_1.id = 1
 
-        dp_1 = DParameter(1)
+        dp_1 = DParameter(1, 'parameter1')
         dp_1.id = 2
-        dp_2 = DParameter(2)
+        dp_2 = DParameter(2, 'parameter2')
         dp_2.id = 3
 
         #check: add Parameter

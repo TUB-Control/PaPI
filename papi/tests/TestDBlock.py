@@ -43,7 +43,7 @@ class TestCore(unittest.TestCase):
 
     def test_add_susbcribers(self):
 
-        dbl = DBlock(None, 1,5)
+        dbl = DBlock(None, 1,5, 'DBlock1')
         dbl.id = 1
 
         dpl_1 = DPlugin()
@@ -54,10 +54,10 @@ class TestCore(unittest.TestCase):
         self.assertTrue(dbl.add_subscribers(dpl_1))
         self.assertTrue(dbl.add_subscribers(dpl_2))
 
-        self.assertEqual(len(dbl.get_subscribers().keys()),2)
+        self.assertEqual(len(dbl.get_subscribers()),2)
 
     def test_rm_subscribers(self):
-        dbl = DBlock(None, 1,5)
+        dbl = DBlock(None, 1,5, 'DBlock1')
         dbl.id = 1
 
         dpl_1 = DPlugin()
@@ -68,15 +68,15 @@ class TestCore(unittest.TestCase):
         dbl.add_subscribers(dpl_1)
         dbl.add_subscribers(dpl_2)
 
-        self.assertEqual(len(dbl.get_subscribers().keys()),2)
+        self.assertEqual(len(dbl.get_subscribers()),2)
 
         dbl.rm_subscriber(dpl_1)
 
-        self.assertEqual(len(dbl.get_subscribers().keys()),1)
+        self.assertEqual(len(dbl.get_subscribers()),1)
 
         dbl.rm_subscriber(dpl_2)
 
-        self.assertEqual(len(dbl.get_subscribers().keys()),0)
+        self.assertEqual(len(dbl.get_subscribers()),0)
 
         self.assertFalse(dbl.rm_subscriber(dpl_1))
 
