@@ -95,6 +95,9 @@ class plugin_base(IPlugin):
                     opt = event.get_optional_parameter()
                     data = self.demux(opt.data_source_id, opt.block_name, opt.data)
                     self.execute(data)
+                if op == 'update_meta':
+                    opt = event.get_optional_parameter()
+                    self.update_meta(opt.dblock_object)
                 if op=='set_parameter':
                     opt = event.get_optional_parameter()
                     self.set_parameter(opt.parameter_list)
@@ -134,6 +137,8 @@ class plugin_base(IPlugin):
         pass
 
     def demux(self, source_id, block_name, data):
+
+
         return data
 
     @abstractmethod

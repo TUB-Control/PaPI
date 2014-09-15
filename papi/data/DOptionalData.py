@@ -46,5 +46,6 @@ class DOptionalData(object):
         self.plugin_object = None
         self.plugin_type = None
         self.plugin_config = {}
+        self.dblock_object = None
 
 

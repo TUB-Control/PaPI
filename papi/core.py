@@ -250,12 +250,30 @@ class Core:
             # get meta information of DPlugin
             o.plugin_object = dplugin.get_meta()
             # build event and send it to GUI with meta information
-            eventMeta = PapiEvent(pl_id,self.gui_id,'instr_event','update_meta',o)
+            eventMeta = PapiEvent(pl_id, self.gui_id, 'instr_event', 'update_meta', o)
             self.gui_event_queue.put(eventMeta)
+
+            # check if plugin got some subscribers which run in own process
+            blocks = dplugin.get_dblocks()
+            for bname in blocks:
+                block = blocks[bname]
+                subscribers = block.get_subscribers()
+                for sub in subscribers:
+                    sub_plugin = self.core_data.get_dplugin_by_id(sub)
+                    if sub_plugin is not None:
+                        if sub_plugin.own_process is True:
+                            # TODO
+                            opt = DOptionalData()
+                            opt.dblock_object = block
+                            opt.data_source_id = pl_id
+                            opt.block_name = block.name
+                            event_pl_meta = PapiEvent(self.core_id, sub, 'instr_event', 'update_meta', opt)
+                            sub_plugin.queue.put(event_pl_meta)
+
             return 1
         else:
             # Dplugin object with pl_id does not exist in DCore of core
-            self.log.printText(1,'update_meta, cannonot update meta information because there is no plugin with id: '+str(pl_id))
+            self.log.printText(1,'update_meta, cannot update meta information because there is no plugin with id: '+str(pl_id))
             return -1
 
     # ------- Event processing initial stage ---------
