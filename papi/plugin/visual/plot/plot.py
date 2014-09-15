@@ -23,14 +23,6 @@ class Plot(visual_base):
         self.max_counter = 0
         self.counter = 0
 
-
-        self.para1 = DParameter(None,'Singale',1,[1,2],1)
-        self.para1.id = 1
-        para_l = [self.para1]
-
-        self.send_new_parameter_list(para_l)
-
-
         pass
 
 
@@ -44,18 +36,28 @@ class Plot(visual_base):
     def execute(self,Data):
         #print(Data)
 
-        l = len(Data)
-
-        t = Data[0]
+        t = Data['t']
 
         #self.sinus_curve = 22
         #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
-        y = Data[self.para1.value]
 
-        if self.counter > self.max_counter:
-            self.add_data(t, y)
-            self.update()
-            self.counter = 0
+        for key in Data:
+            if key is 't':
+                t = Data['t']
+            else:
+                y = Data[key]
+                self.add_data(t, y)
+
+
+
+        self.update()
+
+
+
+
+        #y = [1]#Data[self.para1.value]
+
+
 
         self.counter += 1
 

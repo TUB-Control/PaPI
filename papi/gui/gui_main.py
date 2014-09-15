@@ -307,12 +307,12 @@ class GUI(QMainWindow, Ui_MainGUI):
         if op == 2:
             self.do_create_plugin('Sinus','Sinus1') #id 2
             self.do_create_plugin('Plot','Plot1')   #id 3
-            self.do_create_plugin('Plot','Plot2')   #id 4
+            #self.do_create_plugin('Plot','Plot2')   #id 4
 
             time.sleep(0.1)
 
-            self.do_subsribe(3,2,'SinMit_f1')
-            self.do_subsribe(4,2,'SinMit_f3')
+            self.do_subsribe(3,2,'SinMit_f3')
+            #self.do_subsribe(4,2,'SinMit_f3')
 
     def gui_working_v2(self):
         """

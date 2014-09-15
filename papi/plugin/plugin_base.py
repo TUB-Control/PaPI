@@ -46,7 +46,13 @@ class plugin_base(IPlugin):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
+        #self.__dplugin_ids__ = {}
+
+    def papi_init(self):
         self.__dplugin_ids__ = {}
+        # add signal_choice_parameter:
+        self.signal_choice = DParameter(None,'Signal_choice',None,None,1)
+        self.send_new_parameter_list([self.signal_choice])
 
     def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
         print("Plugin work_process called")
@@ -54,6 +60,8 @@ class plugin_base(IPlugin):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
+
+        self.papi_init()
 
         # working should go at least one time
         self.goOn = 1
@@ -165,9 +173,17 @@ class plugin_base(IPlugin):
         return True
 
     def demux(self, source_id, block_name, data):
-
-
-        return data
+        block = self.__dplugin_ids__[source_id][block_name]
+        names = block.signal_names_internal
+        tmp_par = [[2,'SinMit_f3',1]]
+        if names is not None:
+            returnData = {}
+            returnData['t'] = data[0]
+            for ele in tmp_par:
+                if ele[0] == source_id:
+                    if ele[1] == block_name:
+                        returnData[names[ele[2]]] = data[ele[2]]
+            return returnData
 
     @abstractmethod
     def start_init(self, config=None):

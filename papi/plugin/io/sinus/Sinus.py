@@ -42,9 +42,9 @@ class Sinus(plugin_base):
         self.amax = 20
         self.f =0.1
 
-        block1 = DBlock(None,1,10,'SinMit_f1')
-        block2 = DBlock(None,1,10,'SinMit_f2')
-        block3 = DBlock(None,1,10,'SinMit_f3',['f3_1','f3_2'])
+        block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
+        block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
+        block3 = DBlock(None,1,10,'SinMit_f3',['t','f3_1','f3_2'])
 
         self.send_new_block_list([block1, block2, block3])
 

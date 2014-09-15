@@ -720,6 +720,7 @@ class Core:
             # Plugin exists so loop through parameter list to add all parameter
             for p in opt.parameter_list:
                 # add parameter to DPlugin
+                print(p.name)
                 dplugin.add_parameter(p)
             # update meta of GUI to introduce new parameter to user
             self.update_meta_data_to_gui(pl_id)
