@@ -92,7 +92,8 @@ class plugin_base(IPlugin):
                     self._Core_event_queue__.put(alive_event)
                 if op=='new_data':
                     opt = event.get_optional_parameter()
-                    self.execute(opt.data)
+                    data = self.demux(opt.data_source_id, opt.block_name, opt.data)
+                    self.execute(data)
                 if op=='set_parameter':
                     opt = event.get_optional_parameter()
                     self.set_parameter(opt.parameter_list)
@@ -101,8 +102,9 @@ class plugin_base(IPlugin):
 
     def send_new_data(self, data, block_name):
         opt = DOptionalData(DATA=data)
+        opt.data_source_id = self.__id__
         opt.block_name = block_name
-        event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
+        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
         self._Core_event_queue__.put(event)
 
     def send_new_block_list(self, blocks):
@@ -118,7 +120,8 @@ class plugin_base(IPlugin):
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
 
-
+    def demux(self, source_id, block_name, data):
+        return data
 
     @abstractmethod
     def start_init(self, config=None):

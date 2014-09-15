@@ -385,7 +385,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             # check if it exists
             if dplugin != None:
                 # it exists, so call its execute function
-                dplugin.plugin.execute(opt.data)
+                dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
             else:
                 # plugin does not exist in DGUI
                 self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -502,6 +502,14 @@ class GUI(QMainWindow, Ui_MainGUI):
         if dplugin is not None:
             # plugin exists, so update its meta information
             dplugin.update_meta(opt.plugin_object)
+            # check for block subscriber to update their meta as well
+            blocks = dplugin.get_dblocks()
+            for bname in blocks:
+                block = blocks[bname]
+                subscribers = block.get_subscribers()
+                for sub in subscribers:
+                    
+
         else:
             # plugin does not exist
             self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')

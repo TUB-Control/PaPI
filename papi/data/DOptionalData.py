@@ -33,6 +33,7 @@ class DOptionalData(object):
 
     def __init__(self,DATA=None,pluginID=None):
         self.data = DATA
+        self.data_source_id = None
         self.plugin_identifier = None
         self.plugin_uname = None
         self.plugin_id = pluginID

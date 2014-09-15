@@ -74,11 +74,8 @@ class Fourier_Rect(plugin_base):
 
     def execute(self):
 
-
-
         # As you can see, there is no connect() call; UDP has no connections.
         # Instead, data is directly sent to the recipient via sendto().
-
         self.sock.sendto(b'GET', (self.HOST, self.PORT) )
 
         received = self.sock.recv(60000)
