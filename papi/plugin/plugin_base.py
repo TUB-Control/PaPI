@@ -46,6 +46,7 @@ class plugin_base(IPlugin):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
+        self.__dplugin_ids__ = {}
 
     def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
         print("Plugin work_process called")
@@ -117,6 +118,18 @@ class plugin_base(IPlugin):
 
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
+
+    def update_meta(self, dblock:DBlock):
+        """
+        A DBlock should be updated (or added unless exists)
+        :param dblock:
+        :return:
+        """
+        dplugin_id = dblock.dplugin_id
+
+
+    def remove_meta(self, dblock:DBlock):
+        pass
 
 
 
