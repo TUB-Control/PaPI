@@ -508,7 +508,9 @@ class GUI(QMainWindow, Ui_MainGUI):
                 block = blocks[bname]
                 subscribers = block.get_subscribers()
                 for sub in subscribers:
-                    
+                    sub_plugin = self.gui_data.get_dplugin_by_id(sub)
+                    if sub_plugin is not None:
+                        sub_plugin.plugin.update_meta(block)
 
         else:
             # plugin does not exist
