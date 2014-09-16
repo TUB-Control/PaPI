@@ -29,18 +29,23 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.ui.gui.add_plugin import Ui_AddPlugin
-from PySide.QtGui import QDialog
+from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem
 from yapsy.PluginManager import PluginManager
 
 class AddPlugin(QDialog, Ui_AddPlugin):
 
-    def __init__(self, parent=None):
+    def __init__(self, callback_function, parent=None):
         super(AddPlugin, self).__init__(parent)
         self.setupUi(self)
         self.dgui = None
 
+        self.callback_functions = callback_function
+
         self.treePlugin.currentItemChanged.connect(self.pluginItemChanged)
+
+
+        self.buttonBox.clicked.connect(self.button_clicked)
 
         self.subscriberID = None
         self.targetID = None
@@ -110,14 +115,15 @@ class AddPlugin(QDialog, Ui_AddPlugin):
                 plugin_item.pluginfo = pluginfo
                 plugin_item.setText(0, pluginfo.name)
 
+    def button_clicked(self, button : QAbstractButton):
 
+        if self.buttonBox.buttonRole(button) == QDialogButtonBox.ApplyRole:
 
+            plugin_item = self.treePlugin.currentItem()
 
-    def accept(self, *args, **kwargs):
-        plugin_item = self.treePlugin.currentItem()
+            self.plugin_name = plugin_item.pluginfo.name
+            self.plugin_uname = self.le_uname.text()
 
-        self.plugin_name = plugin_item.pluginfo.name
-        self.plugin_uname = self.le_uname.text()
+            self.callback_functions['do_create_plugin'](self.plugin_name, self.plugin_uname)
 
-        print("Accepted")
-        self.done(1)
+            self.le_uname.setText('')

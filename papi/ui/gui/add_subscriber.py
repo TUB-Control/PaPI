@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_subscriber.ui'
 #
-# Created: Tue Sep 16 10:43:03 2014
+# Created: Tue Sep 16 12:07:50 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,9 +14,11 @@ class Ui_AddSubscriber(object):
         AddSubscriber.setObjectName("AddSubscriber")
         AddSubscriber.resize(531, 197)
         self.buttonBox = QtGui.QDialogButtonBox(AddSubscriber)
-        self.buttonBox.setGeometry(QtCore.QRect(170, 160, 351, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(10, 160, 511, 32))
+        self.buttonBox.setAutoFillBackground(False)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
         self.horizontalLayoutWidget = QtGui.QWidget(AddSubscriber)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 511, 141))

@@ -29,12 +29,12 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.ui.gui.add_subscriber import Ui_AddSubscriber
-from PySide.QtGui import QDialog
+from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem
 
 class AddSubscriber(QDialog, Ui_AddSubscriber):
 
-    def __init__(self, parent=None):
+    def __init__(self, callback_functions, parent=None):
         super(AddSubscriber, self).__init__(parent)
         self.setupUi(self)
         self.dgui = None
@@ -43,12 +43,16 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
         self.treeTarget.currentItemChanged.connect(self.targetItemChanged)
         self.treeBlock.currentItemChanged.connect(self.blockItemChanged)
 
+        self.buttonBox.clicked.connect(self.button_clicked)
+
         self.subscriberID = None
         self.targetID = None
         self.blockName = None
         self.signalName = None
         self.signalIndex = None
         self.setWindowTitle("Create Subscribtion")
+
+        self.callback_functions = callback_functions
 
     def setDGui(self, dgui):
         self.dgui = dgui
@@ -136,18 +140,20 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
             #
             # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
 
+    def button_clicked(self, button : QAbstractButton):
 
-    def accept(self, *args, **kwargs):
-        subscriber_item = self.treeSubscriber.currentItem()
-        target_item = self.treeTarget.currentItem()
-        block_item = self.treeBlock.currentItem()
-        signal_item = self.treeSignal.currentItem()
+        if self.buttonBox.buttonRole(button) == QDialogButtonBox.ApplyRole:
 
-        self.subscriberID = subscriber_item.dplugin.id
-        self.targetID = target_item.dplugin.id
-        self.blockName = block_item.dblock.name
-        self.signalName = signal_item.text(0)
+            subscriber_item = self.treeSubscriber.currentItem()
+            target_item = self.treeTarget.currentItem()
+            block_item = self.treeBlock.currentItem()
+            signal_item = self.treeSignal.currentItem()
 
-        self.signalIndex = block_item.dblock.get_signals().index(self.signalName)
+            self.subscriberID = subscriber_item.dplugin.id
+            self.targetID = target_item.dplugin.id
+            self.blockName = block_item.dblock.name
+            self.signalName = signal_item.text(0)
 
-        self.done(1)
+            self.signalIndex = block_item.dblock.get_signals().index(self.signalName)
+
+            self.callback_functions['do_subscribe'](self.subscriberID, self.targetID, self.blockName, [self.signalIndex])
