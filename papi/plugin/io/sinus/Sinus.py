@@ -62,24 +62,6 @@ class Sinus(plugin_base):
     def resume(self):
         pass
 
-    def execute_OLD(self):
-        vec = numpy.zeros(self.amax*2)
-        vec2 = numpy.zeros(self.amax*2)
-        vec3 = numpy.zeros(self.amax*2)
-        for i in range(self.amax):
-            vec[i] = self.t
-            vec[i+self.amax] = math.sin(2*math.pi*0.01*self.t)
-            vec2[i] = self.t
-            vec2[i+self.amax] = math.sin(2*math.pi*0.15*self.t)
-            vec3[i] = self.t
-            vec3[i+self.amax] = math.sin(2*math.pi*self.para3.value*self.t)
-            self.t += 0.1
-
-        self.send_new_data(vec,'SinMit_f1')
-        self.send_new_data(vec2,'SinMit_f2')
-        self.send_new_data(vec3,'SinMit_f3')
-        time.sleep(0.02)
-
     def execute(self):
         vec = numpy.zeros( (2,self.amax))
         vec2 = numpy.zeros((2,self.amax))
