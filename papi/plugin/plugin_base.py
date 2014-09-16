@@ -108,7 +108,7 @@ class plugin_base(IPlugin):
                     self.update_meta(opt.dblock_object)
                 if op=='set_parameter':
                     opt = event.get_optional_parameter()
-                    self.set_parameter(opt.parameter_list)
+                    self.set_parameter_internal(opt.parameter_list)
             except:
                 self.execute()
 
@@ -175,15 +175,23 @@ class plugin_base(IPlugin):
     def demux(self, source_id, block_name, data):
         block = self.__dplugin_ids__[source_id][block_name]
         names = block.signal_names_internal
-        tmp_par = [[2,'SinMit_f3',1]]
+
         if names is not None:
             returnData = {}
             returnData['t'] = data[0]
-            for ele in tmp_par:
+            for ele in self.signal_choice.value:
                 if ele[0] == source_id:
                     if ele[1] == block_name:
                         returnData[names[ele[2]]] = data[ele[2]]
             return returnData
+
+    def set_parameter_internal(self, para_list):
+        for parameter in para_list:
+            if parameter.name == self.signal_choice.name:
+                self.signal_choice.value = parameter.value
+            else:
+                self.set_parameter(parameter)
+
 
     @abstractmethod
     def start_init(self, config=None):
@@ -202,7 +210,7 @@ class plugin_base(IPlugin):
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
-    def set_parameter(self, para_list):
+    def set_parameter(self, parameter):
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod

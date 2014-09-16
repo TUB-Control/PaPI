@@ -61,11 +61,10 @@ class Plot(visual_base):
 
         self.counter += 1
 
-    def set_parameter(self, parameter_list):
-        for p in parameter_list:
-            #if p.name == self.para1.name:
-                #self.para1 = p
-            pass
+    def set_parameter(self, parameter):
+        #if p.name == self.para1.name:
+            #self.para1 = p
+        pass
 
 
     def get_type(self):

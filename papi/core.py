@@ -669,6 +669,8 @@ class Core:
                     p.value = new_para.value
             # route the event to the destination plugin queue
             dplugin.queue.put(event)
+            #update GUI
+            self.update_meta_data_to_gui(pl_id)
             return 1
         else:
             # destination plugin does not exist

@@ -531,7 +531,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         # check if it exists
         if dplugin != None:
             # it exists, so call its execute function
-            dplugin.plugin.set_parameter(opt.parameter_list)
+            dplugin.plugin.set_parameter_internal(opt.parameter_list)
         else:
             # plugin does not exist in DGUI
             self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -570,7 +570,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #TODO: implement
         self.log.printText(1, " Do delete plugin with uname " + uname + '..NOT IMPLEMENTED YET ')
 
-    def do_subsribe(self,subscriber_id,source_id,block_name, signal_index = None):
+    def do_subsribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -587,12 +587,19 @@ class GUI(QMainWindow, Ui_MainGUI):
         opt = DOptionalData()
         opt.source_ID = source_id
         opt.block_name = block_name
-        # send event with subscriber id as the origin to CORE
-        event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
-        self.core_queue.put(event)
+
+        # pre check if subscription already exists
+        dplug = self.gui_data.get_dplugin_by_id(source_id)
+        if dplug is not None:
+            block = dplug.get_dblock_by_name(block_name)
+            if block is not None:
+                subs_list = block.get_subscribers()
+                if subscriber_id not in subs_list:
+                    # send event with subscriber id as the origin to CORE
+                    event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
+                    self.core_queue.put(event)
 
         # change parameter of subscriber plugin for signal index
-        print('do_subscribe',[source_id,block_name,signal_index])
         self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
 
 
@@ -727,7 +734,6 @@ class GUI(QMainWindow, Ui_MainGUI):
                     # parameter with name parameter_name exists
                     for signal in signal_index:
                         p.value.append([source_id, block_name, signal])
-
                     # build an event to send this information to Core
                     opt = DOptionalData()
                     opt.parameter_list = [p]
