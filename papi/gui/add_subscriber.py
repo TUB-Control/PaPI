@@ -46,7 +46,9 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
         self.subscriberID = None
         self.targetID = None
         self.blockName = None
-        self.setWindowTitle("Add Subscribtion")
+        self.signalName = None
+        self.signalIndex = None
+        self.setWindowTitle("Create Subscribtion")
 
     def setDGui(self, dgui):
         self.dgui = dgui
@@ -96,8 +98,16 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
                 block_item.setText(0, dblock.name)
 
     def blockItemChanged(self, item):
-        pass
+        self.treeSignal.clear()
 
+        if hasattr(item, 'dblock'):
+            dblock = item.dblock
+
+            signal_names = dblock.get_signals()
+
+            for signal_name in signal_names:
+                signal_item = QTreeWidgetItem(self.treeSignal)
+                signal_item.setText(0, signal_name)
 
     def showEvent(self, *args, **kwargs):
 
@@ -131,9 +141,13 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
         subscriber_item = self.treeSubscriber.currentItem()
         target_item = self.treeTarget.currentItem()
         block_item = self.treeBlock.currentItem()
+        signal_item = self.treeSignal.currentItem()
 
         self.subscriberID = subscriber_item.dplugin.id
         self.targetID = target_item.dplugin.id
         self.blockName = block_item.dblock.name
-        print("Accepted")
+        self.signalName = signal_item.text(0)
+
+        self.signalIndex = block_item.dblock.get_signals().index(self.signalName)
+
         self.done(1)

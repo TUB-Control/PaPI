@@ -6,24 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>791</width>
-    <height>943</height>
+    <width>792</width>
+    <height>742</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>791</width>
+     <height>16777215</height>
+    </size>
+   </property>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>20</y>
       <width>771</width>
-      <height>751</height>
+      <height>681</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
      <item>
       <widget class="QTreeWidget" name="treePlugin">
        <property name="sortingEnabled">
@@ -175,41 +193,18 @@
          </column>
         </widget>
        </item>
+       <item>
+        <widget class="QTreeWidget" name="treeSignal">
+         <column>
+          <property name="text">
+           <string>Signal</string>
+          </property>
+         </column>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
-   </widget>
-   <widget class="QPushButton" name="createplugin">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>790</y>
-      <width>106</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CreatePlugin</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="createsubscribtion">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>790</y>
-      <width>151</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CreateSubscribtion</string>
-    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

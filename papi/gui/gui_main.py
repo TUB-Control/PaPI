@@ -218,10 +218,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             subscriber_id = AddSub.subscriberID
             target_id = AddSub.targetID
             block_name = AddSub.blockName
+            signal_index = AddSub.signalIndex
 
-            self.do_subsribe(subscriber_id, target_id, block_name)
-
-        print("ReturnCode " , str(r))
+            self.do_subsribe(subscriber_id, target_id, block_name,[signal_index])
 
     def menu_license(self):
         pass

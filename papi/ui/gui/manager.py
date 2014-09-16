@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Wed Aug 27 13:09:45 2014
+# Created: Tue Sep 16 10:43:03 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,13 +12,21 @@ from PySide import QtCore, QtGui
 class Ui_Manager(object):
     def setupUi(self, Manager):
         Manager.setObjectName("Manager")
-        Manager.resize(791, 943)
+        Manager.resize(792, 742)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Manager.sizePolicy().hasHeightForWidth())
+        Manager.setSizePolicy(sizePolicy)
         self.centralwidget = QtGui.QWidget(Manager)
+        self.centralwidget.setEnabled(True)
+        self.centralwidget.setMaximumSize(QtCore.QSize(791, 16777215))
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 20, 771, 751))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 20, 771, 681))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.verticalLayoutWidget)
+        self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.treePlugin = QtGui.QTreeWidget(self.verticalLayoutWidget)
@@ -80,15 +88,10 @@ class Ui_Manager(object):
         self.treeBlock.setObjectName("treeBlock")
         self.treeBlock.header().setDefaultSectionSize(80)
         self.verticalLayout.addWidget(self.treeBlock)
+        self.treeSignal = QtGui.QTreeWidget(self.verticalLayoutWidget)
+        self.treeSignal.setObjectName("treeSignal")
+        self.verticalLayout.addWidget(self.treeSignal)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.createplugin = QtGui.QPushButton(self.centralwidget)
-        self.createplugin.setEnabled(False)
-        self.createplugin.setGeometry(QtCore.QRect(10, 790, 106, 27))
-        self.createplugin.setObjectName("createplugin")
-        self.createsubscribtion = QtGui.QPushButton(self.centralwidget)
-        self.createsubscribtion.setEnabled(False)
-        self.createsubscribtion.setGeometry(QtCore.QRect(130, 790, 151, 27))
-        self.createsubscribtion.setObjectName("createsubscribtion")
         Manager.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(Manager)
         self.statusbar.setObjectName("statusbar")
@@ -111,6 +114,5 @@ class Ui_Manager(object):
         self.tableParameter.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Manager", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Block", None, QtGui.QApplication.UnicodeUTF8))
         self.treeBlock.headerItem().setText(1, QtGui.QApplication.translate("Manager", "Subscriber", None, QtGui.QApplication.UnicodeUTF8))
-        self.createplugin.setText(QtGui.QApplication.translate("Manager", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
-        self.createsubscribtion.setText(QtGui.QApplication.translate("Manager", "CreateSubscribtion", None, QtGui.QApplication.UnicodeUTF8))
+        self.treeSignal.headerItem().setText(0, QtGui.QApplication.translate("Manager", "Signal", None, QtGui.QApplication.UnicodeUTF8))
 

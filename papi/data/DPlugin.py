@@ -36,7 +36,7 @@ import copy
 
 class DBlock(DObject):
 
-    def __init__(self, dplugin_id, count, freq,name, signal_names_internal={}):
+    def __init__(self, dplugin_id, count, freq,name, signal_names_internal=[]):
         super(DObject, self).__init__()
         self.signals_count = count
         self.freq = freq
@@ -88,6 +88,12 @@ class DBlock(DObject):
         """
         return self.subscribers.copy().values()
 
+    def get_signals(self):
+        """
+        Returns a copy of the internal signal names
+        :return:
+        """
+        return self.signal_names_internal.copy()
 
 class DPlugin(DObject):
 

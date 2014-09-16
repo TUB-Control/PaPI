@@ -61,7 +61,8 @@ class Overview(QMainWindow, Ui_Manager):
 
         self.callback_functions = callback_functions
 
-        self.treePlugin.currentItemChanged.connect(self.pluginItemChanged)
+        self.treePlugin.currentItemChanged.connect(self.plugin_item_changed)
+        self.treeBlock.currentItemChanged.connect(self.block_item_changed)
         #self.tableParameter.cellChanged.connect(self.parameterCellChanged)
         # ----------------------------------------
         # Create Root Elements for TreeWidget
@@ -75,9 +76,6 @@ class Overview(QMainWindow, Ui_Manager):
         self.pcb_root = QTreeWidgetItem(self.treePlugin)
         self.pcb_root.setText(self.get_column_by_name("PLUGIN"), '[PCB]')
         self.dgui = None
-
-        self.createsubscribtion.clicked.connect(self.add_subscribtion)
-        self.createplugin.clicked.connect(self.add_plugin)
 
 #        self.subscribeButton.clicked.connect(self.subscribe_action)
 
@@ -153,12 +151,13 @@ class Overview(QMainWindow, Ui_Manager):
 
         print('itemCreate')
 
-    def pluginItemChanged(self, item):
+    def plugin_item_changed(self, item):
         """
         Function is called when a new item/plugin is selected
         :param item:
         :return:
         """
+        self.clean()
 
         # ------------------------------
         # Remove slot for signal cellChanged
@@ -170,7 +169,7 @@ class Overview(QMainWindow, Ui_Manager):
             pass
 
         if hasattr(item, 'dplugin'):
-            self.clean()
+
             dplugin = item.dplugin
 
 
@@ -191,7 +190,7 @@ class Overview(QMainWindow, Ui_Manager):
             for dblock_id in dblock_ids:
                 dblock = dblock_ids[dblock_id]
                 block_item = QTreeWidgetItem(dblock_root)
-                block_item.object = dblock
+                block_item.dblock = dblock
                 block_item.setText(self.get_column_by_name("BLOCK"), dblock.name)
 
                 # ---------------------------
@@ -318,6 +317,19 @@ class Overview(QMainWindow, Ui_Manager):
         #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
         # pass
 
+    def block_item_changed(self, item):
+        self.treeSignal.clear()
+
+        if hasattr(item, 'dblock'):
+            dblock = item.dblock
+
+            signals = dblock.get_signals()
+
+            for signal in signals:
+                print(signal)
+                signal_item = QTreeWidgetItem(self.treeSignal)
+                signal_item.setText(self.get_column_by_name("SIGNAL"), signal)
+
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
 
@@ -374,6 +386,10 @@ class Overview(QMainWindow, Ui_Manager):
         #------------------
         # Remove items in block tree
         #------------------
+
+        self.treeSignal.clear()
+
+        self.tableParameter.clear()
 
         #self.treeParameter.clear()
 
@@ -433,4 +449,7 @@ class Overview(QMainWindow, Ui_Manager):
             return 0
 
         if name == "PARAMETER":
+            return 0
+
+        if name == "SIGNAL":
             return 0
