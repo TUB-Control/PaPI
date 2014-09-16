@@ -189,17 +189,12 @@ class GUI(QMainWindow, Ui_MainGUI):
         This function is called to create an QDialog, which is used to create Plugins
         :return:
         """
-        AddPlu = AddPlugin()
+        AddPlu = AddPlugin(self.callback_functions)
         AddPlu.setDGui(self.gui_data)
         AddPlu.show()
         AddPlu.raise_()
         AddPlu.activateWindow()
         r = AddPlu.exec_()
-
-        if r == 1 :
-            self.do_create_plugin(AddPlu.plugin_name, AddPlu.plugin_uname)
-
-        print("ReturnCode ", str(r))
 
     def create_subscription(self):
         """
@@ -207,20 +202,22 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
 
-        AddSub = AddSubscriber()
+        AddSub = AddSubscriber(self.callback_functions)
         AddSub.setDGui(self.gui_data)
         AddSub.show()
         AddSub.raise_()
         AddSub.activateWindow()
         r = AddSub.exec_()
 
-        if r == 1 :
-            subscriber_id = AddSub.subscriberID
-            target_id = AddSub.targetID
-            block_name = AddSub.blockName
-            signal_index = AddSub.signalIndex
-
-            self.do_subsribe(subscriber_id, target_id, block_name,[signal_index])
+        # if r == 1 :
+        #     answer = AddSub.get_values()
+        #
+        #     subscriber_id = answer['subscriber_id']
+        #     target_id = answer['target_id']
+        #     block_name = answer['block_name']
+        #     signal_index = answer['signal_index']
+        #
+        #     self.do_subsribe(subscriber_id, target_id, block_name,[signal_index])
 
     def menu_license(self):
         pass
