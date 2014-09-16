@@ -261,10 +261,10 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
         #self.core_queue.put(event)
-
-        pl = self.gui_data.get_dplugin_by_uname('Sinus1')
-        b = pl.get_dblock_by_name('SinMit_f3')
-        print(b.signal_names_internal)
+        self.do_subsribe(3,2,'SinMit_f3',[2])
+        #pl = self.gui_data.get_dplugin_by_uname('Sinus1')
+        #b = pl.get_dblock_by_name('SinMit_f3')
+        #print(b.signal_names_internal)
 
     def stefan(self):
         self.count += 1
@@ -311,7 +311,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             time.sleep(0.1)
 
-            self.do_subsribe(3,2,'SinMit_f3')
+            #self.do_subsribe(3,2,'SinMit_f3',2)
             #self.do_subsribe(4,2,'SinMit_f3')
 
     def gui_working_v2(self):
@@ -540,7 +540,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             # plugin does not exist in DGUI
             self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
 
-
     def do_create_plugin(self, plugin_identifier, uname, config={}):
         """
         Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.
@@ -575,7 +574,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #TODO: implement
         self.log.printText(1, " Do delete plugin with uname " + uname + '..NOT IMPLEMENTED YET ')
 
-    def do_subsribe(self,subscriber_id,source_id,block_name):
+    def do_subsribe(self,subscriber_id,source_id,block_name, signal_index = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -596,7 +595,12 @@ class GUI(QMainWindow, Ui_MainGUI):
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name):
+        # change parameter of subscriber plugin for signal index
+        print('do_subscribe',[source_id,block_name,signal_index])
+        self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
+
+
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -639,7 +643,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         # call do_subscribe with ids to subscribe
         if source_id is not None and subscriber_id is not None:
-            self.do_subsribe(subscriber_id, source_id, block_name)
+            self.do_subsribe(subscriber_id, source_id, block_name, signal_index = None)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name):
         """
@@ -704,6 +708,37 @@ class GUI(QMainWindow, Ui_MainGUI):
         # call do_subscripe with ids to subscribe
         if subscriber_id is not None and source_id is not None:
             self.do_unsubscribe(subscriber_id, source_id, block_name)
+
+    def do_set_signal_choice_parameter(self, subscriber_id, source_id, block_name, signal_index):
+        """
+        :param plugin_uname: name of plugin which owns the parameter
+        :type plugin_uname: basestring
+        """
+        # get plugin from DGUI
+        dplug = self.gui_data.get_dplugin_by_id(subscriber_id)
+        # check for existance
+        if dplug is not None:
+            # it exists
+            # get its parameter list
+            parameters = dplug.get_parameters()
+            # check if there are any parameter
+            if parameters is not None:
+                # there is a parameter list
+                # get the parameter with parameter_name
+                p = parameters['Signal_choice']
+                # check if this specific parameter exists
+                if p is not None:
+                    # parameter with name parameter_name exists
+                    for signal in signal_index:
+                        p.value.append([source_id, block_name, signal])
+
+                    # build an event to send this information to Core
+                    opt = DOptionalData()
+                    opt.parameter_list = [p]
+                    opt.plugin_id = dplug.id
+                    e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
+                    self.core_queue.put(e)
+
 
     def do_set_parameter(self, plugin_uname, parameter_name, value):
         """

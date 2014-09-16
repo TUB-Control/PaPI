@@ -51,7 +51,7 @@ class plugin_base(IPlugin):
     def papi_init(self):
         self.__dplugin_ids__ = {}
         # add signal_choice_parameter:
-        self.signal_choice = DParameter(None,'Signal_choice',None,None,1)
+        self.signal_choice = DParameter(None,'Signal_choice',[],None,1)
         self.send_new_parameter_list([self.signal_choice])
 
     def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
