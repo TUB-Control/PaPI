@@ -86,7 +86,7 @@ class visual_base(plugin_base):
         self._plotWidget.showGrid(x=True, y=True)
         self._plotWidget.setLabel('left', 'amplitude', 'V')
         self._plotWidget.setLabel('bottom', 'time', 's')
-        self.curve = self._plotWidget.plot(self.x, self.y, pen=(255,0,0))
+        self.curve = self._plotWidget.plot(self.x, self.y, pen=(255,0,0), symbole='o')
         self._interval = sampleinterval
         self.curve.setPen((200,200,100))
 
@@ -101,7 +101,6 @@ class visual_base(plugin_base):
         config['size']=(150,150)
         config['name']='ViP_Plugin'
         return config
-
 
     def update(self):
         self.x[:] = self.tDatabuffer

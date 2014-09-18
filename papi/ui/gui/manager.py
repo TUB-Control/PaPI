@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Tue Sep 16 12:07:50 2014
+# Created: Thu Sep 18 15:41:21 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,9 +21,10 @@ class Ui_Manager(object):
         self.centralwidget = QtGui.QWidget(Manager)
         self.centralwidget.setEnabled(True)
         self.centralwidget.setMaximumSize(QtCore.QSize(791, 16777215))
+        self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 20, 771, 681))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 0, 771, 701))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.verticalLayoutWidget)
         self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
@@ -96,6 +97,10 @@ class Ui_Manager(object):
         self.statusbar = QtGui.QStatusBar(Manager)
         self.statusbar.setObjectName("statusbar")
         Manager.setStatusBar(self.statusbar)
+        self.menuBar = QtGui.QMenuBar(Manager)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 792, 25))
+        self.menuBar.setObjectName("menuBar")
+        Manager.setMenuBar(self.menuBar)
 
         self.retranslateUi(Manager)
         QtCore.QMetaObject.connectSlotsByName(Manager)

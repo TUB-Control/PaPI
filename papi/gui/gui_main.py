@@ -198,7 +198,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
     def create_subscription(self):
         """
-        This function is called to create an QDialog, which is used to create a subscribtion for a single Plugin
+        This function is called to create an QDialog, which is used to create a subscription for a single Plugin
         :return:
         """
 
@@ -209,16 +209,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         AddSub.activateWindow()
         r = AddSub.exec_()
 
-        # if r == 1 :
-        #     answer = AddSub.get_values()
-        #
-        #     subscriber_id = answer['subscriber_id']
-        #     target_id = answer['target_id']
-        #     block_name = answer['block_name']
-        #     signal_index = answer['signal_index']
-        #
-        #     self.do_subsribe(subscriber_id, target_id, block_name,[signal_index])
-
     def menu_license(self):
         pass
 
@@ -226,18 +216,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.close()
         pass
 
-    def ap_available(self):
-        self.manager_available.show()
-        pass
-
     def ap_overview(self):
         self.manager_overview.show()
-        pass
-
-    def rp_visual(self):
-        pass
-
-    def rp_io(self):
         pass
 
     def closeEvent(self, *args, **kwargs):

@@ -32,7 +32,7 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QTreeWidgetItem, QComboBox, QTableWidget, QTableWidgetItem
+from PySide.QtGui import QMainWindow, QTreeWidgetItem, QComboBox, QTableWidget, QTableWidgetItem, QHBoxLayout
 from PySide import QtGui
 from PySide.QtGui import QAction
 from PySide.QtCore import Qt
@@ -426,6 +426,11 @@ class Overview(QMainWindow, Ui_Manager):
         while item is not None:
             self.pcb_root.removeChild(item)
             item = self.pcb_root.child(0)
+
+    def resizeEvent(self, event):
+        h = event.size().height()
+        w = event.size().width()
+
 
     def get_column_by_name(self, name):
         """
