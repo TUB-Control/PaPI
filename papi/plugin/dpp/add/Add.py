@@ -49,10 +49,10 @@ class Add(plugin_base):
         self.fac= 1
         self.amax = 20
         self.approx = self.approx_max*self.fac
-        self.vec = numpy.zeros(self.amax*2)
+        self.vec = numpy.zeros(2, self.amax)
 
 
-        self.block1 = DBlock(None,1,10,'AddOut1')
+        self.block1 = DBlock(None,1,10,'AddOut1',['Sum'])
 
         self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
 
@@ -71,15 +71,17 @@ class Add(plugin_base):
 
     def execute(self,Data):
         self.approx = round(self.approx_max*self.para1.value)
-        self.vec[:] = 0
-        self.vec[0:self.amax] = Data[0:self.amax]
+        self.vec[1] = 0
+        self.vec[0] = Data[0]
 
-        for i in range(self.amax):
-            for k in range(self.approx):
-                self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
+        #for i in range(self.amax):
+            #for k in range(1,self.approx):
+               # self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
+                #self.vec[1, i] = Data[k, i]
 
-        #event = PapiEvent(self.__id__,0,'data_event','new_data',DOptionalData(DATA=self.vec))
-        #self._Core_event_queue__.put(event)
+        for i in range(1,self.approx):
+            self.vec[1] += Data[i]
+
         self.send_new_data(self.vec,'AddOut1')
         #while(1):
         #    pass

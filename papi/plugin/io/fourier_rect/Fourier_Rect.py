@@ -61,7 +61,12 @@ class Fourier_Rect(plugin_base):
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        self.block1 = DBlock(None,300,10,'Rect1')
+        names = []
+        for i in range(0,self.max_approx):
+            names.append('rect'+str(i))
+
+
+        self.block1 = DBlock(None,300,10,'Rect1',names)
         self.send_new_block_list([self.block1])
 
         return True

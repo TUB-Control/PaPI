@@ -40,13 +40,13 @@ class IOP_DPP_template(plugin_base):
         # define vars, connect to rtai .....
 
         # create a block object
-        #   block1 = DBlock(None,1,10,'SinMit_f1')
+        #   block1 = DBlockself.__id__.,signal count,frequnce,'Blockname',['Signalname1','name1'])
 
         # send block list
         #   self.send_new_block_list([block1, block2, block3])
 
         # create a parameter object
-        #   self.para = DParameter(None,'Frequenz Block SinMit_f3',0.1,[0,1],1)
+        #   self.para = DParameter('type','ParameterName',InitWert,RangeArray,1)
 
         # build parameter list to send to Core
         #   para_list = [self.para]
@@ -67,12 +67,13 @@ class IOP_DPP_template(plugin_base):
         pass
 
 
-    def set_parameter(self, parameter_list):
-        for p in parameter_list:
-            if p.name == self.para.name:
-                # implement action for value change of parameter "para"
-                pass
+    def set_parameter(self, parameter):
+        # if parameter.name == 'irgendeinParameter':
+        #   do that...
+        pass
+
     def quit(self):
+        # do something before plugin will close, e.a. close connections ...
         pass
 
     def get_type(self):

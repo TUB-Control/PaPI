@@ -8,6 +8,8 @@
 from papi.plugin.plugin_base import plugin_base
 from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
+from papi.data.DPlugin import DBlock
+from papi.data.DParameter import DParameter
 
 import time
 import math
@@ -20,6 +22,13 @@ class CPU_Load(plugin_base):
     INTERVAL = 0.1
     def start_init(self):
         self.t = 0
+        self.delta_t = 0.01
+        self.para_delta_t = DParameter('', 'Delta_t', 0.01, [0,2],1)
+
+        self.send_new_parameter_list([self.para_delta_t])
+
+        block1 = DBlock(None,1,1,'load',['t','load_percent'])
+        self.send_new_block_list([block1])
         return True
 
     def pause(self):
@@ -30,29 +39,27 @@ class CPU_Load(plugin_base):
         pass
 
     def execute(self):
-        vec = numpy.zeros(2)
+        vec = numpy.zeros((2,1))
 
-        vec[0] = self.t
-        vec[1] = self.getCpuLoad() * 100
+        vec[0,0] = self.t
+        vec[1,0] = self.getCpuLoad() * 100
 
-        self.t += 0.01
+        self.t += self.delta_t
 
-        opt = DOptionalData(DATA=vec)
-        event = PapiEvent(self.__id__,0,'data_event','new_data',opt)
-        self._Core_event_queue__.put(event)
-        time.sleep(0.01)
 
-    def set_parameter(self):
-        pass
+        self.send_new_data(vec,'load')
+
+        time.sleep(self.delta_t)
+
+    def set_parameter(self, parameter):
+        if parameter.name == self.para_delta_t.name:
+            self.delta_t = parameter.value
 
     def quit(self):
         print('Sinus: will quit')
 
     def get_type(self):
         return 'IOP'
-
-    def get_output_sizes(self):
-        return [1,10]
 
     def getTimeList(self):
         """
