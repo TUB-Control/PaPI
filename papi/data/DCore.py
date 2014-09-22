@@ -357,7 +357,7 @@ class DCore():
         dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
-            self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
+            self.log.printText(1, " Target " + target.uname + " has no DBlock " + dblock_name)
 
             return False
 

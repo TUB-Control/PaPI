@@ -145,7 +145,7 @@ class plugin_base(IPlugin):
         subcribtions = self.dplugin_info.get_subscribtions()
         dblocksub = subcribtions[source_id][block_name]
         if dblocksub.signals == []:
-            sig_range = len(dblocksub.signal_names_internal)
+            sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
         else:
             sig_range = dblocksub.signals
 
