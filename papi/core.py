@@ -609,23 +609,26 @@ class Core:
                 if oID in subs:
                     already_sub = True
 
+        if already_sub is False:
+            if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) is False:
+                # subscribtion failed
+                self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+                return -1
+            else:
+                # subscribtion correct
+                pass
 
+        if opt.signals != []:
+            if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is False:
+                 # subscribtion failed
+                self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+                return -1
+            else:
+                pass
 
-        # try subscibe for subsribe request
-        if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) is False:
-            # subscribtion failed
-            self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
-        else:
-            # subscribtion correct
-            if opt.signals != []:
-                print('sub signals in core')
-                print(opt.signals)
-                self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals)
-
-
-            self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
-            self.update_meta_data_to_gui(oID)
-            self.update_meta_data_to_gui(opt.source_ID)
+        self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
+        self.update_meta_data_to_gui(oID)
+        self.update_meta_data_to_gui(opt.source_ID)
 
     def __process_unsubsribe__(self,event):
         """
@@ -638,15 +641,21 @@ class Core:
         # get event origin id and optional parameters
         opt = event.get_optional_parameter()
         oID = event.get_originID()
-        # try to unsubscribe
-        if self.core_data.unsubscribe(oID,opt.source_ID,opt.block_name) is False:
-            # unsubscribe failed
-            self.log.printText(1,'unsubscribe, something failed in unsubsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+
+        if opt.signals == []:
+            # try to unsubscribe
+            if self.core_data.unsubscribe(oID,opt.source_ID,opt.block_name) is False:
+                # unsubscribe failed
+                self.log.printText(1,'unsubscribe, something failed in unsubsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
+                return -1
         else:
-            # unsubscribe correct
-            self.log.printText(1,'unsubscribe, unsubscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
-            self.update_meta_data_to_gui(oID)
-            self.update_meta_data_to_gui(opt.source_ID)
+            if self.core_data.unsubscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is False:
+                return -1
+
+        # unsubscribe correct
+        self.log.printText(1,'unsubscribe, unsubscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
+        self.update_meta_data_to_gui(oID)
+        self.update_meta_data_to_gui(opt.source_ID)
 
     def __process_set_parameter__(self,event):
         """

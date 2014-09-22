@@ -242,7 +242,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #b = pl.get_dblock_by_name('SinMit_f3')
         #print(b.signal_names_internal)
 
-        self.do_remove_signal_choice_parameter(3,2,'SinMit_f3',[2])
+        self.do_unsubscribe(3,2,'SinMit_f3',[2])
 
     def stefan(self):
         self.count += 1
@@ -614,7 +614,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         if source_id is not None and subscriber_id is not None:
             self.do_subscribe(subscriber_id, source_id, block_name, signal_index = None)
 
-    def do_unsubscribe(self, subscriber_id, source_id, block_name):
+    def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
         Something like a callback function for gui triggered events.
         User wants one plugin to do not get any more data from another plugin
@@ -630,11 +630,12 @@ class GUI(QMainWindow, Ui_MainGUI):
         opt = DOptionalData()
         opt.source_ID = source_id
         opt.block_name = block_name
+        opt.signals = signal_index
         # sent event to Core with origin subscriber_id
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
         self.core_queue.put(event)
 
-    def do_unsubscribe_uname(self, subscriber_uname, source_uname, block_name):
+    def do_unsubscribe_uname(self, subscriber_uname, source_uname, block_name, signal_index=None):
         """
         Something like a callback function for gui triggered events.
         User wants one plugin to do not get any more data from another plugin
@@ -676,7 +677,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         # call do_subscripe with ids to subscribe
         if subscriber_id is not None and source_id is not None:
-            self.do_unsubscribe(subscriber_id, source_id, block_name)
+            self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
 
     def do_set_signal_choice_parameter(self, subscriber_id, source_id, block_name, signal_index):
         """
