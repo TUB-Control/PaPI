@@ -53,7 +53,7 @@ class Add(plugin_base):
         self.vec = numpy.zeros((2, self.amax))
 
 
-        self.block1 = DBlock(None,1,10,'AddOut1',['Sum'])
+        self.block1 = DBlock(None,1,10,'AddOut1',['t','Sum'])
 
         self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
 

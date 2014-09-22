@@ -61,8 +61,8 @@ class Fourier_Rect(plugin_base):
         self.sock.setblocking(0)
 
 
-        names = []
-        for i in range(0,self.max_approx):
+        names = ['t']
+        for i in range(1,self.max_approx):
             names.append('rect'+str(i))
 
         self.block1 = DBlock(None,300,10,'Rect1',names)
