@@ -122,8 +122,9 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
-        if dblock.dplugin_id not in self.__subscriptions:
-            if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
+
+        if dblock.dplugin_id in self.__subscriptions:
+            if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
                     subscription.attach_signal(signal)
@@ -141,8 +142,9 @@ class DPlugin(DObject):
         :return:
         :rtype boolean:
         """
-        if dblock.dplugin_id not in self.__subscriptions:
-            if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
+
+        if dblock.dplugin_id in self.__subscriptions:
+            if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
                     subscription.remove_signal(signal)
@@ -160,17 +162,15 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
-        subscribtion = DSubscription(dblock)
-
         if dblock.dplugin_id not in self.__subscriptions:
             #dblock.add_subscribers(self)
             #self.__subscriptions.append(dblock.id)
             self.__subscriptions[dblock.dplugin_id] = {}
-            self.__subscriptions[dblock.dplugin_id][dblock.name] = subscribtion
+            self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
             return True
         else:
             if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
-                self.__subscriptions[dblock.dplugin_id][dblock.name] = subscribtion
+                self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
                 return True
             else:
                 return False
@@ -196,13 +196,6 @@ class DPlugin(DObject):
             else:
                 return False
         return False
-
-        # if self.id in dblock.get_subscribers():
-        #     dblock.rm_subscribers(self)
-        #     del self.__subscriptions[dblock.id]
-        #     return True
-        # else:
-        #     return False
 
     def get_subscribtions(self):
         """
@@ -337,9 +330,12 @@ class DPlugin(DObject):
 
 class DSubscription(DObject):
 
-    def __init__(self, dblock: DBlock, signals=[]):
+    def __init__(self, dblock: DBlock, signals=None):
         self.dblock = dblock
-        self.signals = signals
+        if signals is None:
+            self.signals = []
+        else:
+            self.signals = signals
 
     def attach_signal(self, signal):
         if signal not in self.signals:
