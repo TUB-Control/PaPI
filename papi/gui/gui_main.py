@@ -197,7 +197,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.AddPlu.raise_()
         self.AddPlu.activateWindow()
         r = self.AddPlu.exec_()
+
         del self.AddPlu
+        self.AddPlu = None
 
     def create_subscription(self):
         """
@@ -214,6 +216,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         r = self.AddSub.exec_()
 
         del self.AddSub
+        self.AddSub = None
 
     def menu_license(self):
         pass
