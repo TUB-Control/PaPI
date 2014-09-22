@@ -642,7 +642,7 @@ class Core:
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
-        if opt.signals == [] or len(opt.signals) == 1:
+        if opt.signals == []:
             # try to unsubscribe
             if self.core_data.unsubscribe(oID, opt.source_ID, opt.block_name) is False:
                 # unsubscribe failed
