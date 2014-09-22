@@ -337,7 +337,7 @@ class DPlugin(DObject):
 
 class DSubscription(DObject):
 
-    def __init__(self, dblock: DBlock, signals: []):
+    def __init__(self, dblock: DBlock, signals=[]):
         self.dblock = dblock
         self.signals = signals
 
