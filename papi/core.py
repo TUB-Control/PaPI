@@ -597,12 +597,32 @@ class Core:
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
+
+        already_sub = False
+        # test if already subscribe
+        source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
+        if source_pl is not None:
+            blocks = source_pl.get_dblocks()
+            b = blocks[opt.block_name]
+            if b is not None:
+                subs = b.get_subscribers()
+                if oID in subs:
+                    already_sub = True
+
+
+
         # try subscibe for subsribe request
         if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) is False:
             # subscribtion failed
             self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
         else:
             # subscribtion correct
+            if opt.signals != []:
+                print('sub signals in core')
+                print(opt.signals)
+                self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals)
+
+
             self.log.printText(1,'subscribe, subscribtion correct: '+str(oID)+'->('+str(opt.source_ID)+','+str(opt.block_name)+')')
             self.update_meta_data_to_gui(oID)
             self.update_meta_data_to_gui(opt.source_ID)
