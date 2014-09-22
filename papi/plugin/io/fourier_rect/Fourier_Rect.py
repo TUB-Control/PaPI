@@ -60,6 +60,8 @@ class Fourier_Rect(plugin_base):
         self.PORT = 9999
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setblocking(0)
+
 
         names = []
         for i in range(0,self.max_approx):
@@ -83,12 +85,14 @@ class Fourier_Rect(plugin_base):
         # Instead, data is directly sent to the recipient via sendto().
         self.sock.sendto(b'GET', (self.HOST, self.PORT) )
 
-        received = self.sock.recv(60000)
 
-        data = pickle.loads(received)
-
-
-        self.send_new_data(data,'Rect1')
+        try:
+            received = self.sock.recv(60000)
+        except socket.error:
+            pass
+        else:
+            data = pickle.loads(received)
+            self.send_new_data(data,'Rect1')
 
         time.sleep(0.001*self.amax )
 
