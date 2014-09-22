@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/manager.ui'
 #
-# Created: Thu Sep 18 15:41:21 2014
+# Created: Mon Sep 22 15:57:25 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Manager(object):
     def setupUi(self, Manager):
         Manager.setObjectName("Manager")
-        Manager.resize(792, 742)
+        Manager.resize(883, 748)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -20,6 +20,11 @@ class Ui_Manager(object):
         Manager.setSizePolicy(sizePolicy)
         self.centralwidget = QtGui.QWidget(Manager)
         self.centralwidget.setEnabled(True)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setMaximumSize(QtCore.QSize(791, 16777215))
         self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.centralwidget.setObjectName("centralwidget")
@@ -98,7 +103,7 @@ class Ui_Manager(object):
         self.statusbar.setObjectName("statusbar")
         Manager.setStatusBar(self.statusbar)
         self.menuBar = QtGui.QMenuBar(Manager)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 792, 25))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 883, 25))
         self.menuBar.setObjectName("menuBar")
         Manager.setMenuBar(self.menuBar)
 

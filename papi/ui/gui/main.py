@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Thu Sep 18 15:41:21 2014
+# Created: Mon Sep 22 15:57:25 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainGUI(object):
     def setupUi(self, MainGUI):
         MainGUI.setObjectName("MainGUI")
-        MainGUI.resize(1084, 918)
+        MainGUI.resize(979, 918)
         self.centralwidget = QtGui.QWidget(MainGUI)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -54,7 +54,7 @@ class Ui_MainGUI(object):
         self.statusbar.setObjectName("statusbar")
         MainGUI.setStatusBar(self.statusbar)
         self.menubar = QtGui.QMenuBar(MainGUI)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1084, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 979, 25))
         self.menubar.setObjectName("menubar")
         self.menuMenu = QtGui.QMenu(self.menubar)
         self.menuMenu.setObjectName("menuMenu")

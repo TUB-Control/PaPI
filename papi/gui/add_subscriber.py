@@ -49,7 +49,7 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
         self.targetID = None
         self.blockName = None
         self.signalName = None
-        self.signalIndex = None
+        self.signalIndex = []
         self.setWindowTitle("Create Subscribtion")
 
         self.callback_functions = callback_functions
@@ -152,8 +152,16 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
             self.subscriberID = subscriber_item.dplugin.id
             self.targetID = target_item.dplugin.id
             self.blockName = block_item.dblock.name
-            self.signalName = signal_item.text(0)
 
-            self.signalIndex = block_item.dblock.get_signals().index(self.signalName)
+            self.signalIndex = []
 
-            self.callback_functions['do_subscribe'](self.subscriberID, self.targetID, self.blockName, [self.signalIndex])
+            for item in self.treeSignal.selectedItems():
+                signalName = item.text(0)
+
+                index = block_item.dblock.get_signals().index(signalName)
+
+                self.signalIndex.append(index)
+
+            button.setFocus()
+
+            self.callback_functions['do_subscribe'](self.subscriberID, self.targetID, self.blockName, self.signalIndex)

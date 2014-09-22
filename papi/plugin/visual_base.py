@@ -74,7 +74,12 @@ class visual_base(plugin_base):
         self._interval = int(sampleinterval*timewindow)
         self._bufsize = int(timewindow/sampleinterval)
         self.tDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
-        self.yDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+        #self.yDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+
+        self.Databuffer = []
+
+        for i in range(3):
+            self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
 
         self.x = np.linspace(-timewindow, 0.0, self._bufsize)
         self.y = np.zeros(self._bufsize, dtype=np.float)
@@ -87,9 +92,16 @@ class visual_base(plugin_base):
         self._plotWidget.showGrid(x=True, y=True)
         self._plotWidget.setLabel('left', 'amplitude', 'V')
         self._plotWidget.setLabel('bottom', 'time', 's')
-        self.curve = self._plotWidget.plot(self.x, self.y, pen=(255,0,0), symbole='o')
+
+        # self.curve = self._plotWidget.plot(self.x, self.y, pen=(255,0,0), symbole='o')
+        # self.curve2 = self._plotWidget.plot(self.x, self.y, pen=(128,0,0), symbole='o')
+
         self._interval = sampleinterval
-        self.curve.setPen((200,200,100))
+        self.curves = []
+        for i in range(3):
+            self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*80,0), symbole='o'))
+
+        #self.curve.setPen((200,200,100))
 
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
@@ -105,15 +117,26 @@ class visual_base(plugin_base):
 
     def update(self):
         self.x[:] = self.tDatabuffer
-        self.y[:] = self.yDatabuffer
-        self.curve.setData(self.x, self.y)
 
-    def add_data(self,t,y):
+        # self.y[:] = self.yDatabuffer
+        # self.curve.setData(self.x, self.y)
+
+        for i in range(3):
+            curve = self.curves[i]
+            y = self.Databuffer[i]
+
+            curve.setData(self.x, y)
+
+        #self._plotWidget.plot(self.x, self.y)
+
+    def add_data(self,t,data:[]):
         for elem in t:
             self.tDatabuffer.append( elem )
 
-        for elem in y:
-            self.yDatabuffer.append( elem )
+        for i in range(len(data)):
+            y = data[i]
+            for elem in y:
+                self.Databuffer[i].append(elem)
 
     def get_sub_window(self):
         return self._subWindow

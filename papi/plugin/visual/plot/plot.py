@@ -41,13 +41,15 @@ class Plot(visual_base):
         #self.sinus_curve = 22
         #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
 
+        y = []
+
         for key in Data:
             if key is 't':
                 t = Data['t']
             else:
-                y = Data[key]
-                self.add_data(t, y)
+                y.append(Data[key])
 
+        self.add_data(t, y)
 
 
         self.update()
