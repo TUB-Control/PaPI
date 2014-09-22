@@ -95,14 +95,11 @@ class Fourier_Rect(plugin_base):
             pass
         else:
             data = pickle.loads(received)
-            self.send_new_data(data,'Rect1')
-        data = pickle.loads(received)
 
+            for i in range(self.max_approx):
+                vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
 
-        for i in range(self.max_approx):
-            vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
-
-        self.send_new_data(vec,'Rect1')
+            self.send_new_data(vec,'Rect1')
 
         time.sleep(0.001*self.amax )
 
