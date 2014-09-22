@@ -114,6 +114,44 @@ class DPlugin(DObject):
         self.type = None
         self.alive_count = 0
 
+    def subscribe_signals(self, dblock: DBlock, signals:[]):
+        """
+        This function is used to subscribe a bunch of signals
+        :param dblock:
+        :param signals:
+        :return:
+        :rtype boolean:
+        """
+        if dblock.dplugin_id not in self.__subscriptions:
+            if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
+                subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
+                for signal in signals:
+                    subscription.attach_signal(signal)
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def unsubscribe_signals(self, dblock: DBlock, signals:[]):
+        """
+        This function is used to unsubscribe a bunch of signals
+        :param dblock:
+        :param signals:
+        :return:
+        :rtype boolean:
+        """
+        if dblock.dplugin_id not in self.__subscriptions:
+            if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
+                subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
+                for signal in signals:
+                    subscription.remove_signal(signal)
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def subscribe(self, dblock: DBlock):
         """
         This plugins subscribes 'dblock' by remembering the dblog id
@@ -122,15 +160,17 @@ class DPlugin(DObject):
         :rtype boolean:
         """
 
+        subscribtion = DSubscription(dblock)
+
         if dblock.dplugin_id not in self.__subscriptions:
             #dblock.add_subscribers(self)
             #self.__subscriptions.append(dblock.id)
             self.__subscriptions[dblock.dplugin_id] = {}
-            self.__subscriptions[dblock.dplugin_id][dblock.name] = 1
+            self.__subscriptions[dblock.dplugin_id][dblock.name] = subscribtion
             return True
         else:
             if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
-                self.__subscriptions[dblock.dplugin_id][dblock.name] = 1
+                self.__subscriptions[dblock.dplugin_id][dblock.name] = subscribtion
                 return True
             else:
                 return False
@@ -293,3 +333,27 @@ class DPlugin(DObject):
         self.__parameters = meta.__parameters
         self.__subscriptions = meta.__subscriptions
         self.__blocks = meta.__blocks
+
+
+class DSubscription(DObject):
+
+    def __init__(self, dblock: DBlock, signals: []):
+        self.dblock = dblock
+        self.signals = signals
+
+    def attach_signal(self, signal):
+        if signal not in self.signals:
+            self.signals.append(signal)
+            return True
+
+        return False
+
+    def remove_signal(self, signal):
+        if signal in self.signals:
+            self.signals.remove(signal)
+            return True
+
+        return False
+
+    def get_signals(self):
+        return copy.copy(self.signals)

@@ -82,7 +82,8 @@ class visual_base(plugin_base):
         # create
 
         self._plotWidget = PlotWidget()
-        self._plotWidget.resize(*size)
+
+        self._plotWidget.resize(size[0], size[1])
         self._plotWidget.showGrid(x=True, y=True)
         self._plotWidget.setLabel('left', 'amplitude', 'V')
         self._plotWidget.setLabel('bottom', 'time', 's')
