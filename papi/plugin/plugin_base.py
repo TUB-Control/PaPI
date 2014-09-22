@@ -136,18 +136,23 @@ class plugin_base(IPlugin):
 
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
+        print('synced')
 
 
     def demux(self, source_id, block_name, data):
 
-        print('TODO: demux')
-        print(self.dplugin_info.get_subscribtions())
-
         returnData = {}
 
+        subcribtions = self.dplugin_info.get_subscribtions()
+        dblocksub = subcribtions[source_id][block_name]
+        for ind in dblocksub.signals:
+            returnData[dblocksub.dblock.signal_names_internal] = data[ind]
 
+        returnData['t'] = data[1]
 
-        return {}
+        print(dblocksub.signals)
+
+        return returnData
 
 
     def set_parameter_internal(self, para_list):

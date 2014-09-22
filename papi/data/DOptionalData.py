@@ -47,5 +47,6 @@ class DOptionalData(object):
         self.plugin_type = None
         self.plugin_config = {}
         self.dblock_object = None
+        self.signals = []
 
 

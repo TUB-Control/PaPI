@@ -573,32 +573,16 @@ class GUI(QMainWindow, Ui_MainGUI):
         :type block_name: basestring
         :return:
         """
-        # pre check if subscription already exists, if it does, do not send a subscription event to core
-        # get dplugin object of source plugin
-        dplug = self.gui_data.get_dplugin_by_id(source_id)
-        # check for existence
-        if dplug is not None:
-            # get the specific block
-            block = dplug.get_dblock_by_name(block_name)
-            # check for existence
-            if block is not None:
-                # get a list of subscribers of this block
-                subs_list = block.get_subscribers()
-                # check if the subscriber id is not in this list which means that a
-                # new subscription of a block need to be done
-                if subscriber_id not in subs_list:
-                    # build optional data object and add id and block name to it
-                    opt = DOptionalData()
-                    opt.source_ID = source_id
-                    opt.block_name = block_name
-                    # send event with subscriber id as the origin to CORE
-                    event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
-                    self.core_queue.put(event)
+        # build optional data object and add id and block name to it
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        opt.signals = signal_index
+        # send event with subscriber id as the origin to CORE
+        event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
+        self.core_queue.put(event)
 
-        # change parameter of subscriber plugin for signal index
-        #self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
-
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index = None):
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
