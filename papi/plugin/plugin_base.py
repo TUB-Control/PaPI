@@ -107,7 +107,7 @@ class plugin_base(IPlugin):
                     self.execute(data)
                 if op == 'update_meta':
                     opt = event.get_optional_parameter()
-                    self.update_meta(opt.dblock_object)
+                    self.update_plugin_meta(opt.plugin_object)
                 if op=='set_parameter':
                     opt = event.get_optional_parameter()
                     self.set_parameter_internal(opt.parameter_list)
@@ -134,74 +134,21 @@ class plugin_base(IPlugin):
         event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
         self._Core_event_queue__.put(event)
 
-    def update_meta(self, dblock: DBlock):
-        """
-        A DBlock should be updated (or added unless it exists)
-        :param dblock:
-        :return:
-        """
-        dplugin_id = dblock.dplugin_id
-
-        # Add hash for dplugin_id which is used to store DBlock names
-        if dplugin_id not in self.__dplugin_ids__:
-            self.__dplugin_ids__[dplugin_id] = {}
-
-        # Update or add if necessary
-        self.__dplugin_ids__[dplugin_id][dblock.name] = dblock
-
-    def remove_meta(self, dblock: DBlock):
-        """
-        This function is used to remove the meta information for a specific DBlock.
-        :param dblock:
-        :return:
-        :return Bool:
-        """
-        dplugin_id = dblock.dplugin_id
-
-        # Found no dplugin with the dplugin_id mentioned in dblock
-        if dplugin_id not in self.__dplugin_ids__:
-            return False
-
-        # Found no dblock for the dplugin_id
-        if dblock.name not in self.__dplugin_ids__[dplugin_id]:
-            return False
-
-        del self.__dplugin_ids__[dplugin_id][dblock.name]
-
-        # Check if all dblock,names were deleted
-        if len(self.__dplugin_ids__[dplugin_id].keys()) == 0:
-            del self.__dplugin_ids__[dplugin_id]
-
-        return True
-
-    def update_plugin_meta(self, dplug: DPlugin):
+    def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
 
 
     def demux(self, source_id, block_name, data):
-        #block = self.__dplugin_ids__[source_id][block_name]
-        #names = block.signal_names_internal
-
-        #pl_list = self.signal_choice.value
-        #block_list = pl_list[source_id]
-        #block_inds = block_list[block_name]
 
         print('TODO: demux')
         print(self.dplugin_info.get_subscribtions())
 
         returnData = {}
-        
+
 
 
         return {}
-        #if names is not None:
-        #    returnData = {}
-        #    returnData['t'] = data[0]
-        #    for ele in self.signal_choice.value:
-        #        if ele[0] == source_id:
-        #            if ele[1] == block_name:
-        #                returnData[names[ele[2]]] = data[ele[2]]
-        #    return returnData
+
 
     def set_parameter_internal(self, para_list):
         for parameter in para_list:
