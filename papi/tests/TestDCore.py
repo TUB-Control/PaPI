@@ -232,5 +232,85 @@ class TestDCore(unittest.TestCase):
 
         pass
 
+    def test_subscribe_signals(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block2')
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name)
+        self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_2.name)
+
+
+        self.assertTrue(self.dcore.subscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_1.name, [1, 2, 3]))
+
+        self.assertTrue(self.dcore.subscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_2.name, [6, 4, 5]))
+
+        self.assertTrue(self.dcore.subscribe_signals(d_pl_3.id, d_pl_1.id, d_bl_1.name, [9]))
+
+        self.assertTrue(self.dcore.subscribe_signals(d_pl_3.id, d_pl_1.id, d_bl_2.name, [17,19,18]))
+
+
+        subscription = d_pl_2.get_subscribtions()[d_pl_1.id][d_bl_1.name]
+
+        self.assertIn(1, subscription.get_signals())
+        self.assertIn(2, subscription.get_signals())
+        self.assertIn(3, subscription.get_signals())
+
+        subscription = d_pl_3.get_subscribtions()[d_pl_1.id][d_bl_2.name]
+
+        self.assertIn(19, subscription.get_signals())
+        self.assertIn(17, subscription.get_signals())
+        self.assertIn(18, subscription.get_signals())
+
+        subscription = d_pl_3.get_subscribtions()[d_pl_1.id][d_bl_1.name]
+
+        self.assertIn(9, subscription.get_signals())
+
+
+    def test_unsubscribe_signals(self):
+        #Create dplugins
+        d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+        d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
+
+        #Create dblocks
+        d_bl_1 = DBlock(None, 0, 0, 'Block1')
+        d_bl_2 = DBlock(None, 0, 0, 'Block2')
+
+        #assign dblocks to DPlugin d_pl_1
+        d_pl_1.add_dblock(d_bl_1)
+        d_pl_1.add_dblock(d_bl_2)
+
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name)
+        self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_1.name)
+        self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_2.name)
+
+
+        self.dcore.subscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_1.name, [1, 2, 3])
+        self.dcore.subscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_2.name, [6, 4, 5])
+        self.dcore.subscribe_signals(d_pl_3.id, d_pl_1.id, d_bl_1.name, [9])
+        self.dcore.subscribe_signals(d_pl_3.id, d_pl_1.id, d_bl_2.name, [17,19,18])
+
+        self.assertTrue(self.dcore.unsubscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_1.name, [1, 2]))
+
+        subscription = d_pl_2.get_subscribtions()[d_pl_1.id][d_bl_1.name]
+
+        self.assertNotIn(1, subscription.get_signals())
+        self.assertNotIn(2, subscription.get_signals())
+        self.assertIn(3, subscription.get_signals())
+
+
 if __name__ == "__main__":
     unittest.main();
