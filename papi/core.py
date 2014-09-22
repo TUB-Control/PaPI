@@ -642,9 +642,9 @@ class Core:
         opt = event.get_optional_parameter()
         oID = event.get_originID()
 
-        if opt.signals == []:
+        if opt.signals == [] or len(opt.signals) == 1:
             # try to unsubscribe
-            if self.core_data.unsubscribe(oID,opt.source_ID,opt.block_name) is False:
+            if self.core_data.unsubscribe(oID, opt.source_ID, opt.block_name) is False:
                 # unsubscribe failed
                 self.log.printText(1,'unsubscribe, something failed in unsubsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
                 return -1
