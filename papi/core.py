@@ -254,22 +254,8 @@ class Core:
             self.gui_event_queue.put(eventMeta)
 
             # check if plugin got some subscribers which run in own process
-            blocks = dplugin.get_dblocks()
-            for bname in blocks:
-                block = blocks[bname]
-                subscribers = block.get_subscribers()
-                for sub in subscribers:
-                    sub_plugin = self.core_data.get_dplugin_by_id(sub)
-                    if sub_plugin is not None:
-                        if sub_plugin.own_process is True:
-                            # TODO
-                            opt = DOptionalData()
-                            opt.dblock_object = block
-                            opt.data_source_id = pl_id
-                            opt.block_name = block.name
-                            event_pl_meta = PapiEvent(self.core_id, sub, 'instr_event', 'update_meta', opt)
-                            sub_plugin.queue.put(event_pl_meta)
-
+            if dplugin.own_process is True:
+                dplugin.queue.put(eventMeta)
             return 1
         else:
             # Dplugin object with pl_id does not exist in DCore of core
