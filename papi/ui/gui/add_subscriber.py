@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_subscriber.ui'
 #
-# Created: Thu Sep 18 15:41:21 2014
+# Created: Mon Sep 22 15:57:25 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,6 +36,7 @@ class Ui_AddSubscriber(object):
         self.treeBlock.setObjectName("treeBlock")
         self.horizontalLayout.addWidget(self.treeBlock)
         self.treeSignal = QtGui.QTreeWidget(self.horizontalLayoutWidget)
+        self.treeSignal.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
         self.treeSignal.setObjectName("treeSignal")
         self.horizontalLayout.addWidget(self.treeSignal)
 

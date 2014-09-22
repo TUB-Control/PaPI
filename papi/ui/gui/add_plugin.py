@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_plugin.ui'
 #
-# Created: Thu Sep 18 15:41:21 2014
+# Created: Mon Sep 22 15:57:25 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!

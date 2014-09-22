@@ -74,6 +74,9 @@
     </item>
     <item>
      <widget class="QTreeWidget" name="treeSignal">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::MultiSelection</enum>
+      </property>
       <column>
        <property name="text">
         <string>Signal</string>

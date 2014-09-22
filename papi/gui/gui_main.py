@@ -253,12 +253,12 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
         #self.core_queue.put(event)
-        #self.do_subscribe(3,2,'SinMit_f3',[2])
+        self.do_subscribe(3,2,'SinMit_f3',[1,2])
         #pl = self.gui_data.get_dplugin_by_uname('Sinus1')
         #b = pl.get_dblock_by_name('SinMit_f3')
         #print(b.signal_names_internal)
 
-        self.do_unsubscribe(3,2,'SinMit_f3',[2])
+        #self.do_unsubscribe(3,2,'SinMit_f3',[2])
 
     def stefan(self):
         self.count += 1

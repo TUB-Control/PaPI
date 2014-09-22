@@ -127,3 +127,5 @@ class AddPlugin(QDialog, Ui_AddPlugin):
             self.callback_functions['do_create_plugin'](self.plugin_name, self.plugin_uname)
 
             self.le_uname.setText('')
+
+            button.setFocus()
