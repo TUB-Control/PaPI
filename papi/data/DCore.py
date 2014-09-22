@@ -292,3 +292,71 @@ class DCore():
             return True
         else:
             return False
+
+    def subscribe_signals(self, subscriber_id, target_id, dblock_name, signals:[]):
+        """
+        This function is used to subscribe a bunch of signals
+        :param subscriber_id: DPlugin which likes to subscribes signals of the chosen  dblock
+        :param target_id: DPlugin which contains the dblock for subscribtion
+        :param dblock_name: DBlock for subscribtion
+        :param signals: List of signals which are needed to be added
+        :return:
+        """
+
+        #Get Susbcriber DPlugin
+        subscriber = self.get_dplugin_by_id(subscriber_id)
+
+        if subscriber is None:
+            self.log.printText(1, "Found no Subscriber with ID " + subscriber_id)
+            return False
+
+        #Get Target DPlugin
+        target = self.get_dplugin_by_id(target_id)
+
+        if target is None:
+            self.log.printText(1, "Found no Target with ID " + str(target_id))
+            return False
+
+        dblock = target.get_dblock_by_name(dblock_name)
+
+        if dblock is None:
+            self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
+
+            return False
+
+        return subscriber.subscribe_signals(dblock, signals)
+
+
+    def unsubscribe_signals(self, subscriber_id, target_id, dblock_name, signals:[]):
+        """
+        This function is used to unubscribe a bunch of signals
+        :param subscriber_id: DPlugin which likes to unsubscribes signals of the chosen dblock
+        :param target_id: DPlugin which contains the dblock for subscribtion
+        :param dblock_name: DBlock for subscribtion
+        :param signals: List of signals which are needed to be added
+        :return:
+        """
+
+        #Get Susbcriber DPlugin
+        subscriber = self.get_dplugin_by_id(subscriber_id)
+
+        if subscriber is None:
+            self.log.printText(1, "Found no Subscriber with ID " + subscriber_id)
+            return False
+
+        #Get Target DPlugin
+        target = self.get_dplugin_by_id(target_id)
+
+        if target is None:
+            self.log.printText(1, "Found no Target with ID " + str(target_id))
+            return False
+
+        dblock = target.get_dblock_by_name(dblock_name)
+
+        if dblock is None:
+            self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
+
+            return False
+
+
+        return subscriber.unsubscribe_signals(dblock, signals)

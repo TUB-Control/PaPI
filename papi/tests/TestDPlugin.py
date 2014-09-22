@@ -128,6 +128,23 @@ class TestDPlugin(unittest.TestCase):
         self.assertTrue(dpl_1.rm_dblock(dbl_2))
         self.assertEqual(len(dpl_1.get_dblocks().keys()), 0)
 
+    def test_append_subscribed_signals(self):
+        dpl_1 = DPlugin()
+        dpl_1.id = 1
+
+        dbl_1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
+
+        dbl_2 = DBlock(None,1,12,'SinMit_f2',['t','f1_1','f1_2'])
+
+        dpl_1.add_dblock(dbl_1)
+        dpl_1.add_dblock(dbl_2)
+
+
+
+        pass
+
+    def test_remove_subscribed_signals(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main();
