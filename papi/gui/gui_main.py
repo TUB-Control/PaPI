@@ -109,6 +109,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.log = ConsoleLog(1, 'Gui-Process: ')
 
         self.plugin_manager = PluginManager()
+        self.AddSub = None
+        self.AddPlu = None
         self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
 
         self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
@@ -189,12 +191,13 @@ class GUI(QMainWindow, Ui_MainGUI):
         This function is called to create an QDialog, which is used to create Plugins
         :return:
         """
-        AddPlu = AddPlugin(self.callback_functions)
-        AddPlu.setDGui(self.gui_data)
-        AddPlu.show()
-        AddPlu.raise_()
-        AddPlu.activateWindow()
-        r = AddPlu.exec_()
+        self.AddPlu = AddPlugin(self.callback_functions)
+        self.AddPlu.setDGui(self.gui_data)
+        self.AddPlu.show()
+        self.AddPlu.raise_()
+        self.AddPlu.activateWindow()
+        r = self.AddPlu.exec_()
+        del self.AddPlu
 
     def create_subscription(self):
         """
@@ -202,12 +205,15 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
 
-        AddSub = AddSubscriber(self.callback_functions)
-        AddSub.setDGui(self.gui_data)
-        AddSub.show()
-        AddSub.raise_()
-        AddSub.activateWindow()
-        r = AddSub.exec_()
+        self.AddSub = AddSubscriber(self.callback_functions)
+
+        self.AddSub.setDGui(self.gui_data)
+        self.AddSub.show()
+        self.AddSub.raise_()
+        self.AddSub.activateWindow()
+        r = self.AddSub.exec_()
+
+        del self.AddSub
 
     def menu_license(self):
         pass
@@ -227,6 +233,13 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.core_queue.put(event)
 
         self.manager_overview.close()
+
+        if self.AddPlu is not None:
+            self.AddPlu.close()
+
+        if self.AddSub is not None:
+            self.AddSub.close()
+
         self.close()
 
     def stefan_at_his_best(self):
