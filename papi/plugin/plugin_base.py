@@ -54,6 +54,8 @@ class plugin_base(IPlugin):
         self.signal_choice = DParameter(None,'Signal_choice',[],None,1)
         self.send_new_parameter_list([self.signal_choice])
 
+        self.dplugin_info = None
+
     def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
         print("Plugin work_process called")
         # set queues and id
@@ -172,18 +174,34 @@ class plugin_base(IPlugin):
 
         return True
 
-    def demux(self, source_id, block_name, data):
-        block = self.__dplugin_ids__[source_id][block_name]
-        names = block.signal_names_internal
+    def update_plugin_meta(self, dplug: DPlugin):
+        self.dplugin_info = dplug
 
-        if names is not None:
-            returnData = {}
-            returnData['t'] = data[0]
-            for ele in self.signal_choice.value:
-                if ele[0] == source_id:
-                    if ele[1] == block_name:
-                        returnData[names[ele[2]]] = data[ele[2]]
-            return returnData
+
+    def demux(self, source_id, block_name, data):
+        #block = self.__dplugin_ids__[source_id][block_name]
+        #names = block.signal_names_internal
+
+        #pl_list = self.signal_choice.value
+        #block_list = pl_list[source_id]
+        #block_inds = block_list[block_name]
+
+        print('TODO: demux')
+        print(self.dplugin_info.get_subscribtions())
+
+        returnData = {}
+        
+
+
+        return {}
+        #if names is not None:
+        #    returnData = {}
+        #    returnData['t'] = data[0]
+        #    for ele in self.signal_choice.value:
+        #        if ele[0] == source_id:
+        #            if ele[1] == block_name:
+        #                returnData[names[ele[2]]] = data[ele[2]]
+        #    return returnData
 
     def set_parameter_internal(self, para_list):
         for parameter in para_list:

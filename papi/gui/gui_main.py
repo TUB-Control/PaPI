@@ -422,6 +422,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
+            # first set meta to plugin
+            dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+
             # set name to config object
             config['name'] = dplugin.uname
             # call the plugin developers init function with config
@@ -480,16 +483,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         if dplugin is not None:
             # plugin exists, so update its meta information
             dplugin.update_meta(opt.plugin_object)
-            # check for block subscriber to update their meta as well
-            blocks = dplugin.get_dblocks()
-            for bname in blocks:
-                block = blocks[bname]
-                subscribers = block.get_subscribers()
-                for sub in subscribers:
-                    sub_plugin = self.gui_data.get_dplugin_by_id(sub)
-                    if sub_plugin is not None:
-                        sub_plugin.plugin.update_meta(block)
-
+            # check if plugin runs in gui to update its copy of meta informations
+            if dplugin.own_process is False:
+                dplugin.plugin.update_plugin_meta(dplugin.get_meta())
         else:
             # plugin does not exist
             self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
@@ -587,7 +583,7 @@ class GUI(QMainWindow, Ui_MainGUI):
                     self.core_queue.put(event)
 
         # change parameter of subscriber plugin for signal index
-        self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
+        #self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
 
     def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index = None):
         """
@@ -726,8 +722,32 @@ class GUI(QMainWindow, Ui_MainGUI):
                 # check if this specific parameter exists
                 if p is not None:
                     # parameter with name parameter_name exists
-                    for signal in signal_index:
-                        p.value.append([source_id, block_name, signal])
+                    plug_list = p.value
+                    block_list = plug_list[source_id]
+                    if block_list is not None:
+                        block_inds = block_list[block_name]
+                        if block_inds is not None:
+                            for signal in signal_index:
+                                block_inds.append(signal)
+                        else:
+                            # no block with block_name yet
+                            # add block
+                            block_list[block_name] = []
+                            block_inds = block_list[block_name]
+                            for signal in signal_index:
+                                block_inds.append(signal)
+                    else:
+                        # no pl with this id yet
+                        plug_list[source_id] = {}
+                        block_list = plug_list[source_id]
+                        block_list[block_name] = []
+                        block_inds = block_list[block_name]
+                        for signal in signal_index:
+                            block_inds.append(signal)
+
+
+                    #for signal in signal_index:
+                    #    p.value.append([source_id, block_name, signal])
                     # build an event to send this information to Core
                     opt = DOptionalData()
                     opt.parameter_list = [p]
