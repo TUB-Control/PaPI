@@ -81,10 +81,9 @@ class Sinus(plugin_base):
         self.send_new_data(vec3,'SinMit_f3')
         time.sleep(0.02)
 
-    def set_parameter(self, parameter_list):
-        for p in parameter_list:
-            if p.name == self.para3.name:
-                self.para3 = p
+    def set_parameter(self, parameter):
+        if parameter.name == self.para3.name:
+            self.para3 = parameter
 
     def quit(self):
         print('Sinus: will quit')
