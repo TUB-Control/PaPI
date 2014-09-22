@@ -155,9 +155,6 @@ class plugin_base(IPlugin):
 
     def set_parameter_internal(self, para_list):
         for parameter in para_list:
-            if parameter.name == self.signal_choice.name:
-                self.signal_choice.value = parameter.value
-            else:
                 self.set_parameter(parameter)
 
 
