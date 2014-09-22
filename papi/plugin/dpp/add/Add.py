@@ -49,7 +49,8 @@ class Add(plugin_base):
         self.fac= 1
         self.amax = 20
         self.approx = self.approx_max*self.fac
-        self.vec = numpy.zeros(2, self.amax)
+
+        self.vec = numpy.zeros((2, self.amax))
 
 
         self.block1 = DBlock(None,1,10,'AddOut1',['Sum'])
@@ -71,20 +72,45 @@ class Add(plugin_base):
 
     def execute(self,Data):
         self.approx = round(self.approx_max*self.para1.value)
-        self.vec[1] = 0
-        self.vec[0] = Data[0]
+#        self.vec[1] = 0
+#        self.vec[0] = Data[0]
+
+#        vec = numpy.zeros( (1, 2) )
 
         #for i in range(self.amax):
             #for k in range(1,self.approx):
                # self.vec[i+self.amax] += Data[i + (k+1)*self.amax]
                 #self.vec[1, i] = Data[k, i]
 
-        for i in range(1,self.approx):
-            self.vec[1] += Data[i]
+        # Get Time Vector
 
-        self.send_new_data(self.vec,'AddOut1')
-        #while(1):
-        #    pass
+#        vec[0, :] = Data['t']
+
+        # n_rows = Data.shape[0]
+        # n_cols = Data.shape[1]
+
+        first_element = True
+
+        for signal_name in Data:
+            if signal_name is not 't':
+                signal = Data[signal_name]
+
+                if first_element is True:
+                    first_element = False
+
+                    result = signal
+                else:
+                    result = numpy.add(result, signal)
+
+
+        vec = numpy.zeros((2, len(result)))
+
+        vec[0,:] = Data['t']
+        vec[1,:] = result
+
+        self.send_new_data(vec,'AddOut1')
+
+
 
     def set_parameter(self,parameter_list):
         for p in parameter_list:

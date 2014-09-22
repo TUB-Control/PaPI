@@ -311,6 +311,11 @@ class TestDCore(unittest.TestCase):
         self.assertNotIn(2, subscription.get_signals())
         self.assertIn(3, subscription.get_signals())
 
+        self.assertEqual(len(d_bl_1.get_subscribers()), 2)
+
+        self.assertTrue(self.dcore.unsubscribe_signals(d_pl_2.id, d_pl_1.id, d_bl_1.name, [3]))
+
+        self.assertEqual(len(d_bl_1.get_subscribers()), 1)
 
 if __name__ == "__main__":
     unittest.main();

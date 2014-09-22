@@ -29,17 +29,14 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.plugin_base import plugin_base
-from papi.PapiEvent import PapiEvent
-from papi.data.DOptionalData import DOptionalData
 from papi.data.DPlugin import DBlock
+from papi.data.DParameter import DParameter
 
 import time
-import math
 import numpy
 import os
 
 import socket
-import sys
 import pickle
 
 
@@ -53,6 +50,7 @@ class Fourier_Rect(plugin_base):
         self.max_approx = Fourier_Rect.max_approx
         self.freq = 1
         self.vec = numpy.ones(self.amax* ( self.max_approx + 1) )
+
         print(['Fourier: process id: ',os.getpid()] )
 
 
@@ -64,7 +62,6 @@ class Fourier_Rect(plugin_base):
         names = []
         for i in range(0,self.max_approx):
             names.append('rect'+str(i))
-
 
         self.block1 = DBlock(None,300,10,'Rect1',names)
         self.send_new_block_list([self.block1])
@@ -78,6 +75,12 @@ class Fourier_Rect(plugin_base):
         pass
 
     def execute(self):
+        # amount of elements per vector: self.amax
+        # amount of vectors : self.max_approx+1
+        vec = numpy.zeros( (self.max_approx,  (self.amax) ))
+
+#        print("Amax: " + str(self.amax+1))
+#        print("Max_Approx"  + str(self.max_approx))
 
         # As you can see, there is no connect() call; UDP has no connections.
         # Instead, data is directly sent to the recipient via sendto().
@@ -88,7 +91,10 @@ class Fourier_Rect(plugin_base):
         data = pickle.loads(received)
 
 
-        self.send_new_data(data,'Rect1')
+        for i in range(self.max_approx):
+            vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
+
+        self.send_new_data(vec,'Rect1')
 
         time.sleep(0.001*self.amax )
 
