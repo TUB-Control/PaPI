@@ -201,6 +201,7 @@ class DCore():
         :param target_id: DPlugin which contains the dblock for subscribtion
         :param dblock_name: DBlock for unsubscribtion
         :return:
+        :rtype boolean:
         """
 
         #Get Susbcriber DPlugin
@@ -231,6 +232,8 @@ class DCore():
         if dblock.rm_subscriber(subscriber) is False:
             self.log.printText(1, "DBlock " + dblock_name + " was already unsubscribed by Subscriber" + subscriber_id)
             return False
+
+        return True
 
 
     def unsubscribe_all(self, dplugin_id):
@@ -358,5 +361,12 @@ class DCore():
 
             return False
 
+        subscription = subscriber.unsubscribe_signals(dblock, signals)
 
-        return subscriber.unsubscribe_signals(dblock, signals)
+        if subscription is None:
+            return False
+
+        if len(subscription.get_signals()) == 0:
+            return self.unsubscribe(subscriber_id, target_id, dblock_name)
+
+        return True
