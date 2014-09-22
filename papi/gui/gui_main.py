@@ -237,10 +237,12 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
         #self.core_queue.put(event)
-        self.do_subscribe(3,2,'SinMit_f3',[2])
+        #self.do_subscribe(3,2,'SinMit_f3',[2])
         #pl = self.gui_data.get_dplugin_by_uname('Sinus1')
         #b = pl.get_dblock_by_name('SinMit_f3')
         #print(b.signal_names_internal)
+
+        self.do_remove_signal_choice_parameter(3,2,'SinMit_f3',[2])
 
     def stefan(self):
         self.count += 1
@@ -420,6 +422,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
+            # first set meta to plugin
+            dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+
             # set name to config object
             config['name'] = dplugin.uname
             # call the plugin developers init function with config
@@ -478,16 +483,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         if dplugin is not None:
             # plugin exists, so update its meta information
             dplugin.update_meta(opt.plugin_object)
-            # check for block subscriber to update their meta as well
-            blocks = dplugin.get_dblocks()
-            for bname in blocks:
-                block = blocks[bname]
-                subscribers = block.get_subscribers()
-                for sub in subscribers:
-                    sub_plugin = self.gui_data.get_dplugin_by_id(sub)
-                    if sub_plugin is not None:
-                        sub_plugin.plugin.update_meta(block)
-
+            # check if plugin runs in gui to update its copy of meta informations
+            if dplugin.own_process is False:
+                dplugin.plugin.update_plugin_meta(dplugin.get_meta())
         else:
             # plugin does not exist
             self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
@@ -562,12 +560,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         :type block_name: basestring
         :return:
         """
-        #TODO: typo in function name
-        # build optional data object and add id and block name to it
-        opt = DOptionalData()
-        opt.source_ID = source_id
-        opt.block_name = block_name
-
         # pre check if subscription already exists, if it does, do not send a subscription event to core
         # get dplugin object of source plugin
         dplug = self.gui_data.get_dplugin_by_id(source_id)
@@ -582,12 +574,16 @@ class GUI(QMainWindow, Ui_MainGUI):
                 # check if the subscriber id is not in this list which means that a
                 # new subscription of a block need to be done
                 if subscriber_id not in subs_list:
+                    # build optional data object and add id and block name to it
+                    opt = DOptionalData()
+                    opt.source_ID = source_id
+                    opt.block_name = block_name
                     # send event with subscriber id as the origin to CORE
                     event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
                     self.core_queue.put(event)
 
         # change parameter of subscriber plugin for signal index
-        self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
+        #self.do_set_signal_choice_parameter(subscriber_id, source_id, block_name, signal_index)
 
     def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index = None):
         """
@@ -726,8 +722,70 @@ class GUI(QMainWindow, Ui_MainGUI):
                 # check if this specific parameter exists
                 if p is not None:
                     # parameter with name parameter_name exists
+                    plug_list = p.value
+                    block_list = plug_list[source_id]
+                    if block_list is not None:
+                        block_inds = block_list[block_name]
+                        if block_inds is not None:
+                            for signal in signal_index:
+                                block_inds.append(signal)
+                        else:
+                            # no block with block_name yet
+                            # add block
+                            block_list[block_name] = []
+                            block_inds = block_list[block_name]
+                            for signal in signal_index:
+                                block_inds.append(signal)
+                    else:
+                        # no pl with this id yet
+                        plug_list[source_id] = {}
+                        block_list = plug_list[source_id]
+                        block_list[block_name] = []
+                        block_inds = block_list[block_name]
+                        for signal in signal_index:
+                            block_inds.append(signal)
+
+
+                    #for signal in signal_index:
+                    #    p.value.append([source_id, block_name, signal])
+                    # build an event to send this information to Core
+                    opt = DOptionalData()
+                    opt.parameter_list = [p]
+                    opt.plugin_id = dplug.id
+                    e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
+                    self.core_queue.put(e)
+
+    def do_remove_signal_choice_parameter(self, subscriber_id, source_id, block_name, signal_index):
+        """
+        Function to remove a signal_choice parameter, just deleting entry from the signal list
+        :param subscriber_id: id of plugin which wants to unsubsrcibe signals
+        :type: subscriber_id: int
+        :param source_id: id of plugin which should not provice data anymore
+        :type source_id: int
+        :param block_name: name of block for the new data
+        :type block_name: basestring
+        :param signal_index: a list of indices for signal of block block_name
+        :type signal_index: list
+        :return:
+        """
+        # get plugin from DGUI
+        dplug = self.gui_data.get_dplugin_by_id(subscriber_id)
+        # check for existance
+        if dplug is not None:
+            # it exists
+            # get its parameter list
+            parameters = dplug.get_parameters()
+            # check if there are any parameter
+            if parameters is not None:
+                # there is a parameter list
+                # get the parameter with parameter_name
+                p = parameters['Signal_choice']
+                # check if this specific parameter exists
+                if p is not None:
+                    # parameter with name parameter_name exists
                     for signal in signal_index:
-                        p.value.append([source_id, block_name, signal])
+                        if [source_id, block_name, signal] in p.value:
+                            p.value.remove([source_id, block_name, signal])
                     # build an event to send this information to Core
                     opt = DOptionalData()
                     opt.parameter_list = [p]
