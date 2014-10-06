@@ -52,12 +52,15 @@ class plugin_base(IPlugin):
         self.__dplugin_ids__ = {}
         self.dplugin_info = None
 
-    def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False, config=None):
+    def work_process(self, CoreQueue, pluginQueue, id, defaultEventTriggered=False, config=None):
         print("Plugin work_process called")
         # set queues and id
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
+        self.EventTriggered = defaultEventTriggered
+        self.user_event_triggered = 'default'
+        self.paused = False
 
         self.papi_init()
 
@@ -81,8 +84,9 @@ class plugin_base(IPlugin):
 
         # main working loop
         while self.goOn:
+            self.evaluate_event_trigger(defaultEventTriggered)
             try:
-                event = self.__plugin_queue__.get(EventTriggered)
+                event = self.__plugin_queue__.get( self.paused or self.EventTriggered)
                 #process event
                 op = event.get_event_operation()
                 if (op=='stop_plugin'):
@@ -91,13 +95,15 @@ class plugin_base(IPlugin):
                     event = PapiEvent(self.__id__,0,'status_event','join_request',None)
                     self._Core_event_queue__.put(event)
                 if op=='pause_plugin':
+                    self.paused = True
                     self.pause()
                 if op=='resume_plugin':
+                    self.paused = False
                     self.resume()
                 if op=='check_alive_status':
                     alive_event = PapiEvent(self.__id__,0,'status_event','alive',None)
                     self._Core_event_queue__.put(alive_event)
-                if op=='new_data':
+                if op=='new_data' and self.paused is not True:
                     opt = event.get_optional_parameter()
                     data = self.demux(opt.data_source_id, opt.block_name, opt.data)
                     self.execute(data)
@@ -109,6 +115,18 @@ class plugin_base(IPlugin):
                     self.set_parameter_internal(opt.parameter_list)
             except:
                 self.execute()
+
+    def evaluate_event_trigger(self,default):
+        if self.user_event_triggered == 'default':
+            self.EventTriggered = default
+        if self.user_event_triggered is True:
+            self.EventTriggered = True
+        if self.user_event_triggered is False:
+            self.EventTriggered = False
+
+    def set_event_trigger_mode(self, mode):
+        if mode is True or mode is False or mode == 'default':
+            self.user_event_triggered = mode
 
     def send_new_data(self, data, block_name):
         opt = DOptionalData(DATA=data)

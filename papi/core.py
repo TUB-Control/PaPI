@@ -73,7 +73,9 @@ class Core:
                                             'close_program':self.__process_close_programm__,
                                             'subscribe': self.__process_subscribe__,
                                             'unsubscribe':self.__process_unsubsribe__,
-                                            'set_parameter': self.__process_set_parameter__
+                                            'set_parameter': self.__process_set_parameter__,
+                                            'pause_plugin': self.__process_pause_plugin__,
+                                            'resume_plugin': self.__process_resume_plugin__
         }
 
         #creating the main core data object DCore and core queue
@@ -182,7 +184,8 @@ class Core:
                 if plug.alive_count is self.alive_count:
                     self.log.printText(2,'Plugin '+plug.uname+' is still alive')
                     # change plugin state in DCore
-                    plug.state = 'alive'
+                    if plug.state != 'paused':
+                        plug.state = 'alive'
                 else:
                     # Plugin is not alive anymore, so do error handling
                     self.plugin_process_is_dead_error_handler(plug)
@@ -502,6 +505,7 @@ class Core:
 
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
+            dplug.plugin_identifier = plugin.name
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
             dplug.alive_count = self.alive_count
@@ -522,6 +526,8 @@ class Core:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
+            dplug.plugin_identifier = plugin.name
+
 
             # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
@@ -750,5 +756,44 @@ class Core:
             self.log.printText(1,'new_parameter, plugin with id '+str(pl_id)+' not found')
             return -1
 
+    def __process_pause_plugin__(self, event):
+        """
+        Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
 
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            if dplugin.state != 'paused':
+                # set pause info
+                dplugin.state = 'paused'
+                # send event to plugin
+                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
+                dplugin.queue.put(event)
 
+                # update meta for Gui
+                self.update_meta_data_to_gui(pl_id)
+
+    def __process_resume_plugin__(self, event):
+        """
+        Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            if dplugin.state == 'paused':
+                # set resume info
+                dplugin.state = 'resumed'
+                # send event to plugin
+                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
+                dplugin.queue.put(event)
+
+                # update meta for Gui
+                self.update_meta_data_to_gui(pl_id)

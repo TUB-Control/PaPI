@@ -43,6 +43,7 @@ class DBlock(DObject):
         self.subscribers = {}
         self.dplugin_id = dplugin_id
         self.name = name
+
         if signal_names_internal is not None:
             self.signal_names_internal = signal_names_internal
         else:
@@ -110,6 +111,7 @@ class DPlugin(DObject):
 
         self.__subscriptions = {}
         self.state = None
+        self.paused = False
         self.own_process = None
         self.uname = None
         self.__parameters = {}
