@@ -974,7 +974,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             cfg_xml = ET.SubElement(pl_xml,'StartConfig')
             # TODO: save config in xml
-            cfg_xml.text = 'default'
+
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
             subs = dplugin.get_subscribtions()
