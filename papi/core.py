@@ -760,14 +760,15 @@ class Core:
 
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            # set pause info
-            dplugin.state = 'paused'
-            # send event to plugin
-            event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
-            dplugin.queue.put(event)
+            if dplugin.state != 'paused':
+                # set pause info
+                dplugin.state = 'paused'
+                # send event to plugin
+                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
+                dplugin.queue.put(event)
 
-            # update meta for Gui
-            self.update_meta_data_to_gui(pl_id)
+                # update meta for Gui
+                self.update_meta_data_to_gui(pl_id)
 
     def __process_resume_plugin__(self, event):
         """
@@ -780,11 +781,12 @@ class Core:
 
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            # set resume info
-            dplugin.state = 'resumed'
-            # send event to plugin
-            event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
-            dplugin.queue.put(event)
+            if dplugin.state == 'paused':
+                # set resume info
+                dplugin.state = 'resumed'
+                # send event to plugin
+                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
+                dplugin.queue.put(event)
 
-            # update meta for Gui
-            self.update_meta_data_to_gui(pl_id)
+                # update meta for Gui
+                self.update_meta_data_to_gui(pl_id)
