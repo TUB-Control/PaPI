@@ -33,10 +33,11 @@ from PySide.QtGui import QMdiSubWindow
 from pyqtgraph import PlotWidget
 from pyqtgraph import QtCore
 from abc import ABCMeta, abstractmethod
+from papi.data.DParameter import DParameter
 
 import numpy as np
 import collections
-
+import re
 
 class visual_base(plugin_base):
 
@@ -78,8 +79,9 @@ class visual_base(plugin_base):
 
         self.Databuffer = []
 
-        for i in range(3):
-            self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
+
+        #for i in range(3):
+        #    self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
 
         self.x = np.linspace(-timewindow, 0.0, self._bufsize)
         self.y = np.zeros(self._bufsize, dtype=np.float)
@@ -98,14 +100,18 @@ class visual_base(plugin_base):
 
         self._interval = sampleinterval
         self.curves = []
-        for i in range(3):
-            self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*80,0), symbole='o'))
+
+        # for i in range(3):
+        #     self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*80,0), symbole='o'))
 
         #self.curve.setPen((200,200,100))
 
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
         self._subWindow.setWindowTitle(self.name)
+
+        # create parameter
+        self.parameters = []
 
     def get_default_config(self):
         config = {}
@@ -121,7 +127,7 @@ class visual_base(plugin_base):
         # self.y[:] = self.yDatabuffer
         # self.curve.setData(self.x, self.y)
 
-        for i in range(3):
+        for i in range(len(self.Databuffer)):
             curve = self.curves[i]
             y = self.Databuffer[i]
 
@@ -151,6 +157,54 @@ class visual_base(plugin_base):
         super(visual_base,self).papi_init()
         # TODO mache das mit super init
         #self.__dplugin_ids__ = {}
+
+    def set_parameter_internal(self, para_list):
+        a = re.compile("^Color\_[0-9]")
+
+        for parameter in para_list:
+
+            if a.match(parameter.name):
+                print(parameter.name)
+            else:
+                self.set_parameter(parameter)
+
+    def hook_update_plugin_meta(self):
+
+        signal_count = 0;
+
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        for sub in subscriptions:
+            for dblock_name in subscriptions[sub]:
+                subscription = subscriptions[sub][dblock_name]
+
+                for signal in subscription.get_signals():
+                    signal_count += 1
+
+        diff_count = len(self.Databuffer) - signal_count
+
+        # print(str(diff_count) + " diff_count")
+        # print(str(len(self.Databuffer)) + " len buffer")
+#        self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
+
+        #There are too many buffers
+        if diff_count > 0:
+            for i in range(abs(diff_count)):
+                # print("Remove")
+                self.curves.pop()
+                self.Databuffer.pop()
+                self.parameters.pop()
+
+        #Some Buffers are missing
+        if diff_count < 0:
+            for i in range(self.signal_count, signal_count):
+                # print("Append ")
+                self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o'))
+                self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
+                self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
+
+        self.signal_count = signal_count
+        self.send_new_parameter_list(self.parameters)
 
 
 

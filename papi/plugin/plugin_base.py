@@ -133,6 +133,8 @@ class plugin_base(IPlugin):
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
 
+        if hasattr(self, 'hook_update_plugin_meta'):
+            self.hook_update_plugin_meta()
 
     def demux(self, source_id, block_name, data):
 
@@ -152,14 +154,9 @@ class plugin_base(IPlugin):
 
         return returnData
 
-
     def set_parameter_internal(self, para_list):
         for parameter in para_list:
-            if parameter.name == self.signal_choice.name:
-                self.signal_choice.value = parameter.value
-            else:
-                self.set_parameter(parameter)
-
+            self.set_parameter(parameter)
 
     @abstractmethod
     def start_init(self, config=None):

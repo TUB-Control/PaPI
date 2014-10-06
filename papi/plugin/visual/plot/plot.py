@@ -22,7 +22,6 @@ class Plot(visual_base):
         print("Plot: start_init")
         self.max_counter = 0
         self.counter = 0
-
         pass
 
 
@@ -54,9 +53,6 @@ class Plot(visual_base):
 
         self.update()
 
-
-
-
         #y = [1]#Data[self.para1.value]
 
 
@@ -64,6 +60,7 @@ class Plot(visual_base):
         self.counter += 1
 
     def set_parameter(self, parameter):
+
         #if p.name == self.para1.name:
             #self.para1 = p
         pass
@@ -78,3 +75,4 @@ class Plot(visual_base):
 
     def quit(self):
         print('Plot: will quit')
+

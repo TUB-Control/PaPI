@@ -438,13 +438,15 @@ class GUI(QMainWindow, Ui_MainGUI):
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
+            # call the plugin developers init function with config
+            dplugin.plugin.start_init(config)
+
             # first set meta to plugin
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             # set name to config object
             config['name'] = dplugin.uname
-            # call the plugin developers init function with config
-            dplugin.plugin.start_init(config)
+
             # add a window to gui for new plugin and show it
             self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
             dplugin.plugin.get_sub_window().show()
