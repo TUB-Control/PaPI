@@ -37,81 +37,15 @@ from papi.data.DParameter import DParameter
 
 import numpy as np
 import collections
-import re
+
 
 class visual_base(plugin_base):
 
     _metaclass__= ABCMeta
 
+    @abstractmethod
     def start_init(self, config=None):
-
-        default_config = self.get_default_config()
-
-        if config is None:
-
-            config = default_config
-
-        if 'sampleintervall' not in config:
-            sampleinterval=default_config['sampleinterval']
-        else:
-            sampleinterval=config['sampleinterval']
-
-        if 'timewindow' not in config:
-            timewindow=default_config['timewindow']
-        else:
-            timewindow=config['timewindow']
-
-        if 'size' not in config:
-            size=default_config['size']
-        else:
-            size=config['size']
-
-        if 'name' not in config:
-            name=default_config['name']
-        else:
-            name=config['name']
-
-        self.name = name
-        self._interval = int(sampleinterval*timewindow)
-        self._bufsize = int(timewindow/sampleinterval)
-        self.tDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
-        #self.yDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
-
-        self.Databuffer = []
-
-
-        #for i in range(3):
-        #    self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
-
-        self.x = np.linspace(-timewindow, 0.0, self._bufsize)
-        self.y = np.zeros(self._bufsize, dtype=np.float)
-
-        # create
-
-        self._plotWidget = PlotWidget()
-
-        self._plotWidget.resize(size[0], size[1])
-        self._plotWidget.showGrid(x=True, y=True)
-        self._plotWidget.setLabel('left', 'amplitude', 'V')
-        self._plotWidget.setLabel('bottom', 'time', 's')
-
-        # self.curve = self._plotWidget.plot(self.x, self.y, pen=(255,0,0), symbole='o')
-        # self.curve2 = self._plotWidget.plot(self.x, self.y, pen=(128,0,0), symbole='o')
-
-        self._interval = sampleinterval
-        self.curves = []
-
-        # for i in range(3):
-        #     self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*80,0), symbole='o'))
-
-        #self.curve.setPen((200,200,100))
-
-        self._subWindow = QMdiSubWindow()
-        self._subWindow.setWidget(self._plotWidget)
-        self._subWindow.setWindowTitle(self.name)
-
-        # create parameter
-        self.parameters = []
+        pass
 
     def get_default_config(self):
         config = {}
@@ -121,34 +55,26 @@ class visual_base(plugin_base):
         config['name']='ViP_Plugin'
         return config
 
-    def update(self):
-        self.x[:] = self.tDatabuffer
-
-        # self.y[:] = self.yDatabuffer
-        # self.curve.setData(self.x, self.y)
-
-        for i in range(len(self.Databuffer)):
-            curve = self.curves[i]
-            y = self.Databuffer[i]
-
-            curve.setData(self.x, y)
-
-        #self._plotWidget.plot(self.x, self.y)
-
-    def add_data(self,t,data:[]):
-        for elem in t:
-            self.tDatabuffer.append( elem )
-
-        for i in range(len(data)):
-            y = data[i]
-            for elem in y:
-                self.Databuffer[i].append(elem)
-
+    @abstractmethod
     def get_sub_window(self):
         return self._subWindow
 
-    def get_plot_widget(self):
-        return self._plotWidget
+    @abstractmethod
+    def get_widget(self):
+        pass
+
+    def set_parameter_internal(self, para_list):
+
+        for parameter in para_list:
+            self.set_parameter(parameter)
+
+    @abstractmethod
+    def set_parameter(self, parameter):
+        pass
+
+    @abstractmethod
+    def update(self):
+        pass
 
     def init_plugin(self,CoreQueue,pluginQueue,id):
         self._Core_event_queue__ = CoreQueue
@@ -158,53 +84,7 @@ class visual_base(plugin_base):
         # TODO mache das mit super init
         #self.__dplugin_ids__ = {}
 
-    def set_parameter_internal(self, para_list):
-        a = re.compile("^Color\_[0-9]")
 
-        for parameter in para_list:
-
-            if a.match(parameter.name):
-                print(parameter.name)
-            else:
-                self.set_parameter(parameter)
-
-    def hook_update_plugin_meta(self):
-
-        signal_count = 0;
-
-        subscriptions = self.dplugin_info.get_subscribtions()
-
-        for sub in subscriptions:
-            for dblock_name in subscriptions[sub]:
-                subscription = subscriptions[sub][dblock_name]
-
-                for signal in subscription.get_signals():
-                    signal_count += 1
-
-        diff_count = len(self.Databuffer) - signal_count
-
-        # print(str(diff_count) + " diff_count")
-        # print(str(len(self.Databuffer)) + " len buffer")
-#        self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
-
-        #There are too many buffers
-        if diff_count > 0:
-            for i in range(abs(diff_count)):
-                # print("Remove")
-                self.curves.pop()
-                self.Databuffer.pop()
-                self.parameters.pop()
-
-        #Some Buffers are missing
-        if diff_count < 0:
-            for i in range(self.signal_count, signal_count):
-                # print("Append ")
-                self.curves.append(self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o'))
-                self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
-                self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
-
-        self.signal_count = signal_count
-        self.send_new_parameter_list(self.parameters)
 
 
 

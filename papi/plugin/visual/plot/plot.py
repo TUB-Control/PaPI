@@ -8,37 +8,92 @@
 from papi.plugin.visual_base import visual_base
 from papi.PapiEvent import PapiEvent
 from papi.data.DParameter import DParameter
-import time
+from pyqtgraph import PlotWidget
+from PySide.QtGui import QMdiSubWindow
+from PySide.QtCore import QTimer
+import pyqtgraph as pg
+
 import numpy
+import re
+import collections
+import numpy as np
+
 __author__ = 'knuths'
 
 
 class Plot(visual_base):
 
     def start_init(self, config=None):
-        super(Plot,self).start_init(config)
+ #       super(Plot,self).start_init(config)
 
+        default_config = self.get_default_config()
 
-        print("Plot: start_init")
-        self.max_counter = 0
-        self.counter = 0
+        if config is None:
+            config = default_config
+        else:
+            config = dict(list(default_config.items()) + list(config.items()))
+
+        sampleinterval=config['sampleinterval']
+        timewindow=config['timewindow']
+        size=config['size']
+        name=config['name']
+
+        self.name = name
+        self._interval = int(sampleinterval*timewindow)
+        self._bufsize = int(timewindow/sampleinterval)
+        self.tDatabuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+
+        self.Databuffer = []
+
+        self.x = np.linspace(-timewindow, 0.0, self._bufsize)
+        self.y = np.zeros(self._bufsize, dtype=np.float)
+
+        # -----------------------------
+        # create plot widget
+        # ----------------------------
+
+        self._plotWidget = PlotWidget()
+
+        self._plotWidget.resize(size[0], size[1])
+        self._plotWidget.showGrid(x=True, y=True)
+        self._plotWidget.setLabel('left', 'amplitude', 'V')
+        self._plotWidget.setLabel('bottom', 'time', 's')
+
+        self._interval = sampleinterval
+        self.curves = []
+
+        # -----------------------------
+        # create QMdiSubWindow
+        # ----------------------------
+
+        self._subWindow = QMdiSubWindow()
+        self._subWindow.setWidget(self._plotWidget)
+        self._subWindow.setWindowTitle(self.name)
+
+        # -----------------------------
+        # create array for parameters
+        #  ----------------------------
+        self.parameters = []
+
+        # -----------------------------
+        # Create QTimer
+        # -----------------------------
+
+        self.timer = pg.QtCore.QTimer()
+        self.timer.timeout.connect(self.update)
+        self.timer.start(50)
         pass
-
 
     def pause(self):
         pass
 
-
     def resume(self):
         pass
 
-    def execute(self,Data):
+    def execute(self, Data):
         #print(Data)
 
         t = Data['t']
-
-        #self.sinus_curve = 22
-        #y = Data[self.sinus_curve*l/23:(self.sinus_curve + 1)*l/23]
 
         y = []
 
@@ -50,21 +105,20 @@ class Plot(visual_base):
 
         self.add_data(t, y)
 
-
-        self.update()
-
-        #y = [1]#Data[self.para1.value]
-
-
-
-        self.counter += 1
+        #self.update()
 
     def set_parameter(self, parameter):
+        a = re.compile("^Color\_[0-9]")
 
-        #if p.name == self.para1.name:
-            #self.para1 = p
+        if a.match(parameter.name):
+            print(parameter.name)
+        else:
+            self.set_parameter(parameter)
+
         pass
 
+    def get_widget(self):
+        return self._plotWidget
 
     def get_type(self):
         return "ViP"
@@ -72,7 +126,70 @@ class Plot(visual_base):
     def get_output_sizes(self):
         return [0,0]
 
-
     def quit(self):
         print('Plot: will quit')
 
+    def update(self):
+        self.x[:] = self.tDatabuffer
+
+        for i in range(len(self.Databuffer)):
+            curve = self.curves[i]
+            y = self.Databuffer[i]
+
+            curve.setData(self.x, y)
+
+    def add_data(self,t,data:[]):
+        for elem in t:
+            self.tDatabuffer.append( elem )
+
+        for i in range(len(data)):
+            y = data[i]
+            for elem in y:
+                self.Databuffer[i].append(elem)
+
+    def get_sub_window(self):
+        return self._subWindow
+
+    def get_default_config(self):
+        config = {}
+        config["sampleinterval"]=1
+        config['timewindow']=1000.
+        config['size']=(200,200)
+        config['name']='Plot_Plugin'
+        return config
+
+    def hook_update_plugin_meta(self):
+
+        signal_count = 0;
+
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        for sub in subscriptions:
+            for dblock_name in subscriptions[sub]:
+                subscription = subscriptions[sub][dblock_name]
+
+                for signal in subscription.get_signals():
+                    signal_count += 1
+
+        diff_count = len(self.Databuffer) - signal_count
+
+        #There are too many buffers
+        if diff_count > 0:
+            for i in range(abs(diff_count)):
+                # print("Remove")
+                self.curves.pop()
+                self.Databuffer.pop()
+                self.parameters.pop()
+
+        #Some Buffers are missing
+        if diff_count < 0:
+            for i in range(self.signal_count, signal_count):
+                # print("Append ")
+                new_plot = self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o')
+                new_plot.setDownsampling(method='mean')
+                self.curves.append(new_plot)
+                self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
+                self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
+
+        self.signal_count = signal_count
+        self.send_new_parameter_list(self.parameters)
