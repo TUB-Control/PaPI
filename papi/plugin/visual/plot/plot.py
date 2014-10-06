@@ -85,10 +85,10 @@ class Plot(visual_base):
         pass
 
     def pause(self):
-        pass
+        print('plot paused')
 
     def resume(self):
-        pass
+        print('plot resumed')
 
     def execute(self, Data):
         #print(Data)

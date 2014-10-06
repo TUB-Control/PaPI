@@ -102,7 +102,9 @@ class GUI(QMainWindow, Ui_MainGUI):
                                 'create_plugin':self.process_create_plugin,
                                 'update_meta': self.process_update_meta,
                                 'plugin_closed': self.process_plugin_closed,
-                                'set_parameter': self.process_set_parameter
+                                'set_parameter': self.process_set_parameter,
+                                'pause_plugin': self.process_pause_plugin,
+                                'resume_plugin': self.process_resume_plugin
         }
 
 
@@ -260,11 +262,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #self.do_unsubscribe(3,2,'SinMit_f3',[2])
 
-        self.do_pause_plugin_by_id(2)
+        self.do_pause_plugin_by_id(3)
 
-        time.sleep(3)
 
-        self.do_resume_plugin_by_id(2)
 
     def stefan(self):
         self.count += 1
@@ -384,8 +384,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             dplugin = self.gui_data.get_dplugin_by_id(dID)
             # check if it exists
             if dplugin != None:
-                # it exists, so call its execute function
-                dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
+                if dplugin.state != 'paused':
+                    dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
             else:
                 # plugin does not exist in DGUI
                 self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -537,6 +538,32 @@ class GUI(QMainWindow, Ui_MainGUI):
         else:
             # plugin does not exist in DGUI
             self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
+
+    def process_pause_plugin(self, event):
+        """
+        Core sent event to pause a plugin in GUI, so call the pause function of this plugin
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.gui_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            dplugin.plugin.pause()
+
+    def process_resume_plugin(self, event):
+        """
+        Core sent event to resume a plugin in GUI, so call the resume function of this plugin
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.gui_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            dplugin.plugin.resume()
 
     def do_create_plugin(self, plugin_identifier, uname, config={}):
         """
