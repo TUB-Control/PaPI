@@ -20,7 +20,7 @@ __author__ = 'knuths'
 
 class CPU_Load(plugin_base):
     INTERVAL = 0.1
-    def start_init(self):
+    def start_init(self, config=None):
         self.t = 0
         self.delta_t = 0.01
         self.para_delta_t = DParameter('', 'Delta_t', 0.01, [0,2],1)

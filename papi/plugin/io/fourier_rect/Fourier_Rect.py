@@ -123,9 +123,9 @@ class Fourier_Rect(plugin_base):
 
     def get_default_config(self):
         config = {}
-        config['name']='IOD_DPP_template'
-        config['host']="130.149.155.73"
-        config['port']=9999
+        config['name']={'value' : 'IOD_DPP_template'}
+        config['host']={'value' : "130.149.155.73", 'regex' : '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'}
+        config['port']={'value' : 9999}
         return config
 
 

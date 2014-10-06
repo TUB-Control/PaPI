@@ -211,6 +211,10 @@ class plugin_base(IPlugin):
         raise NotImplementedError("Please Implement this method")
 
     def get_default_config(self):
+        """
+        OnlineRegexTester: http://regexpal.com/
+        :return:
+        """
         config = {}
         return config
 

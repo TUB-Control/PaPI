@@ -47,8 +47,8 @@ class Sinus(plugin_base):
             config = dict(list(default_config.items()) + list(config.items()))
 
         self.t = 0
-        self.amax = int(config['amax'])
-        self.f = float(config['f'])
+        self.amax = int( self.get_config_value(config, 'amax'))
+        self.f = float( self.get_config_value(config, 'f') )
 
         block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
         block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
@@ -97,21 +97,12 @@ class Sinus(plugin_base):
 
     def get_default_config(self):
         config = {
-            "sampleinterval": {
+            "amax": {
                 'value': 1,
                 'regex': '[0-9]+'
-        }, 'timewindow': {
-                'value': "1000",
-                'regex': '[0-9]+'
-        }, 'size': {
-                'value': "(200,200)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        }, 'name': 'Plot_Plugin', 'label_y': {
-                'value': "amplitude, V",
-                'regex': '\w+,\s+\w+'
-        }, 'label_x': {
-                'value': "time, s",
-                'regex': '\w+,\s*\w+'
+        }, 'f': {
+                'value': "1",
+                'regex': '\d+.{0,1}\d*'
         }}
         return config
 

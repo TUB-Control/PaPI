@@ -81,8 +81,23 @@ class IOP_DPP_template(plugin_base):
         return 'IOP'
 
     def get_default_config(self):
-        config = {}
-        config['name']='IOD_DPP_template'
+        config = {
+            "sampleinterval": {
+                'value': 1,
+                'regex': '[0-9]+'
+        }, 'timewindow': {
+                'value': "1000",
+                'regex': '[0-9]+'
+        }, 'size': {
+                'value': "(200,200)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
+        }, 'name': 'Plot_Plugin', 'label_y': {
+                'value': "amplitude, V",
+                'regex': '\w+,\s+\w+'
+        }, 'label_x': {
+                'value': "time, s",
+                'regex': '\w+,\s*\w+'
+        }}
         return config
 
     # def hook_update_plugin_meta(self):
