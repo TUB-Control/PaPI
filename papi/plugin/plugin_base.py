@@ -154,9 +154,10 @@ class plugin_base(IPlugin):
 
         return returnData
 
+
     def set_parameter_internal(self, para_list):
         for parameter in para_list:
-            self.set_parameter(parameter)
+                self.set_parameter(parameter)
 
     @abstractmethod
     def start_init(self, config=None):
