@@ -57,9 +57,11 @@ class Sinus(plugin_base):
         return True
 
     def pause(self):
+        print('Sinus pause')
         pass
 
     def resume(self):
+        print('Sinus resume')
         pass
 
     def execute(self):

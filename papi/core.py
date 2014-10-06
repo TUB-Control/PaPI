@@ -73,7 +73,9 @@ class Core:
                                             'close_program':self.__process_close_programm__,
                                             'subscribe': self.__process_subscribe__,
                                             'unsubscribe':self.__process_unsubsribe__,
-                                            'set_parameter': self.__process_set_parameter__
+                                            'set_parameter': self.__process_set_parameter__,
+                                            'pause_plugin': self.__process_pause_plugin__,
+                                            'resume_plugin': self.__process_resume_plugin__
         }
 
         #creating the main core data object DCore and core queue
@@ -182,7 +184,8 @@ class Core:
                 if plug.alive_count is self.alive_count:
                     self.log.printText(2,'Plugin '+plug.uname+' is still alive')
                     # change plugin state in DCore
-                    plug.state = 'alive'
+                    if plug.state != 'paused':
+                        plug.state = 'alive'
                 else:
                     # Plugin is not alive anymore, so do error handling
                     self.plugin_process_is_dead_error_handler(plug)
@@ -746,5 +749,38 @@ class Core:
             self.log.printText(1,'new_parameter, plugin with id '+str(pl_id)+' not found')
             return -1
 
+    def __process_pause_plugin__(self, event):
+        """
+        Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # set pause info
+            dplugin.state = 'pasued'
+            # send event to plugin
+            event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
+            dplugin.queue.put(event)
 
 
+
+    def __process_resume_plugin__(self, event):
+        """
+        Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.
+        :param event: event to process
+        :type event: PapiEvent
+        :type dplugin: DPlugin
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # set resume info
+            dplugin.state = 'resumed'
+            # send event to plugin
+            event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
+            dplugin.queue.put(event)

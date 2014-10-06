@@ -253,12 +253,18 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #event = PapiEvent(self.gui_id,2,'instr_event','stop_plugin',None)
         #self.core_queue.put(event)
-        self.do_subscribe(3,2,'SinMit_f3',[1,2])
+        #self.do_subscribe(3,2,'SinMit_f3',[1,2])
         #pl = self.gui_data.get_dplugin_by_uname('Sinus1')
         #b = pl.get_dblock_by_name('SinMit_f3')
         #print(b.signal_names_internal)
 
         #self.do_unsubscribe(3,2,'SinMit_f3',[2])
+
+        self.do_pause_plugin_by_id(2)
+
+        time.sleep(3)
+
+        self.do_resume_plugin_by_id(2)
 
     def stefan(self):
         self.count += 1
@@ -305,7 +311,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             time.sleep(0.1)
 
-            #self.do_subsribe(3,2,'SinMit_f3',2)
+            #self.do_subscribe(3,2,'SinMit_f3',2)
             #self.do_subsribe(4,2,'SinMit_f3')
 
     def gui_working_v2(self):
@@ -837,6 +843,36 @@ class GUI(QMainWindow, Ui_MainGUI):
                     else:
                         # value did not pass value check
                         self.log.printText(1,'do_set_parameter, value out of range')
+
+    def do_pause_plugin_by_id(self, plugin_id):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to pause a plugin, so this method will send an event to core.
+        :param plugin_id: id of plugin to pause
+        :type plugin_id: int
+        """
+
+        if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
+            opt = DOptionalData()
+            event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'pause_plugin', opt)
+            self.core_queue.put(event)
+
+    def do_pause_plugin_by_uname(self, plugin_uname):
+        pass
+
+    def do_resume_plugin_by_id(self, plugin_id):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to pause a plugin, so this method will send an event to core.
+        :param plugin_id: id of plugin to pause
+        :type plugin_id: int
+        """
+
+        if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
+            opt = DOptionalData()
+            event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'resume_plugin', opt)
+            self.core_queue.put(event)
+
 
     def check_range_of_value(self, value, ranges):
         min_val = ranges[0]
