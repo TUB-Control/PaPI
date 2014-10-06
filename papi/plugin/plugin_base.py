@@ -52,7 +52,7 @@ class plugin_base(IPlugin):
         self.__dplugin_ids__ = {}
         self.dplugin_info = None
 
-    def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False):
+    def work_process(self, CoreQueue, pluginQueue, id, EventTriggered=False, config=None):
         print("Plugin work_process called")
         # set queues and id
         self._Core_event_queue__ = CoreQueue
@@ -65,7 +65,7 @@ class plugin_base(IPlugin):
         self.goOn = 1
 
         # call start_init function to use developers init
-        if self.start_init():
+        if self.start_init(config):
             # report start successfull event
             event = PapiEvent(self.__id__,0,'status_event','start_successfull',None)
             self._Core_event_queue__.put(event)
@@ -159,6 +159,15 @@ class plugin_base(IPlugin):
         for parameter in para_list:
                 self.set_parameter(parameter)
 
+    def get_config_value(self,config, name):
+        if name in config:
+            if type(config[name]) is dict:
+                return config[name]['value']
+            else:
+                return config[name]
+        else:
+            return None
+
     @abstractmethod
     def start_init(self, config=None):
         raise NotImplementedError("Please Implement this method")
@@ -183,5 +192,10 @@ class plugin_base(IPlugin):
     def quit(self):
         raise NotImplementedError("Please Implement this method")
 
+    def get_default_config(self):
+        config = {}
+        return config
+
+    @abstractmethod
     def get_type(self):
         raise NotImplementedError("Please Implement this method")

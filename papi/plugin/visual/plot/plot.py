@@ -10,7 +10,9 @@ from papi.PapiEvent import PapiEvent
 from papi.data.DParameter import DParameter
 from pyqtgraph import PlotWidget
 from PySide.QtGui import QMdiSubWindow
-from PySide.QtCore import QTimer
+from PySide.QtCore import QRegExp
+
+
 import pyqtgraph as pg
 
 import numpy
@@ -26,6 +28,8 @@ class Plot(visual_base):
     def start_init(self, config=None):
  #       super(Plot,self).start_init(config)
 
+        size_re = re.compile(r'([0-9]+)')
+
         default_config = self.get_default_config()
 
         if config is None:
@@ -33,10 +37,14 @@ class Plot(visual_base):
         else:
             config = dict(list(default_config.items()) + list(config.items()))
 
-        sampleinterval=config['sampleinterval']
-        timewindow=config['timewindow']
-        size=config['size']
-        name=config['name']
+
+        sampleinterval = float( self.get_config_value(config, 'sampleinterval'))
+
+        timewindow = int( self.get_config_value(config, 'timewindow'))
+
+        name = self.get_config_value(config, 'name')
+
+        size = size_re.findall( self.get_config_value(config, 'size') )
 
         self.name = name
         self._interval = int(sampleinterval*timewindow)
@@ -54,7 +62,7 @@ class Plot(visual_base):
 
         self._plotWidget = PlotWidget()
 
-        self._plotWidget.resize(size[0], size[1])
+        self._plotWidget.resize(int(size[0]), int(size[1]))
         self._plotWidget.showGrid(x=True, y=True)
         self._plotWidget.setLabel('left', 'amplitude', 'V')
         self._plotWidget.setLabel('bottom', 'time', 's')
@@ -81,7 +89,7 @@ class Plot(visual_base):
 
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.update)
-        self.timer.start(50)
+        self.timer.start(33)
         pass
 
     def pause(self):
@@ -151,11 +159,24 @@ class Plot(visual_base):
         return self._subWindow
 
     def get_default_config(self):
-        config = {}
-        config["sampleinterval"]=1
-        config['timewindow']=1000.
-        config['size']=(200,200)
-        config['name']='Plot_Plugin'
+        config = {
+            "sampleinterval": {
+                'value': 1,
+                'regex': '[0-9]+'
+        }, 'timewindow': {
+                'value': "1000",
+                'regex': '[0-9]+'
+        }, 'size': {
+                'value': "(200,200)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
+        }, 'name': 'Plot_Plugin', 'label_y': {
+                'value': "amplitude, V",
+                'regex': '\w+,\s+\w+'
+        }, 'label_x': {
+                'value': "time, s",
+                'regex': '\w+,\s*\w+'
+        }}
+
         return config
 
     def hook_update_plugin_meta(self):
@@ -186,7 +207,7 @@ class Plot(visual_base):
             for i in range(self.signal_count, signal_count):
                 # print("Append ")
                 new_plot = self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o')
-                new_plot.setDownsampling(method='mean')
+                new_plot.setDownsampling(method='peak')
                 self.curves.append(new_plot)
                 self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
                 self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )

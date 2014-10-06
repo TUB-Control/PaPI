@@ -37,10 +37,18 @@ import numpy
 
 class Sinus(plugin_base):
 
-    def start_init(self):
+    def start_init(self, config=None):
+
+        default_config = self.get_default_config()
+
+        if config is None:
+            config = default_config
+        else:
+            config = dict(list(default_config.items()) + list(config.items()))
+
         self.t = 0
-        self.amax = 20
-        self.f =0.1
+        self.amax = int(config['amax'])
+        self.f = float(config['f'])
 
         block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
         block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
@@ -84,6 +92,26 @@ class Sinus(plugin_base):
     def set_parameter(self, parameter):
         if parameter.name == self.para3.name:
             self.para3 = parameter
+
+    def get_default_config(self):
+        config = {
+            "sampleinterval": {
+                'value': 1,
+                'regex': '[0-9]+'
+        }, 'timewindow': {
+                'value': "1000",
+                'regex': '[0-9]+'
+        }, 'size': {
+                'value': "(200,200)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
+        }, 'name': 'Plot_Plugin', 'label_y': {
+                'value': "amplitude, V",
+                'regex': '\w+,\s+\w+'
+        }, 'label_x': {
+                'value': "time, s",
+                'regex': '\w+,\s*\w+'
+        }}
+        return config
 
     def quit(self):
         print('Sinus: will quit')

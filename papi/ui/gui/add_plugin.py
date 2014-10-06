@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_plugin.ui'
 #
-# Created: Mon Sep 22 15:57:25 2014
+# Created: Mon Oct  6 14:58:35 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui
 class Ui_AddPlugin(object):
     def setupUi(self, AddPlugin):
         AddPlugin.setObjectName("AddPlugin")
-        AddPlugin.resize(582, 416)
+        AddPlugin.resize(579, 558)
         self.buttonBox = QtGui.QDialogButtonBox(AddPlugin)
-        self.buttonBox.setGeometry(QtCore.QRect(230, 380, 341, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(230, 510, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Apply|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(True)
@@ -23,9 +23,10 @@ class Ui_AddPlugin(object):
         self.treePlugin.setGeometry(QtCore.QRect(10, 10, 561, 171))
         self.treePlugin.setObjectName("treePlugin")
         self.formLayoutWidget = QtGui.QWidget(AddPlugin)
-        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 190, 561, 181))
+        self.formLayoutWidget.setGeometry(QtCore.QRect(10, 190, 561, 62))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
         self.formLayout = QtGui.QFormLayout(self.formLayoutWidget)
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setContentsMargins(0, 0, 0, 0)
         self.formLayout.setObjectName("formLayout")
         self.label = QtGui.QLabel(self.formLayoutWidget)
@@ -41,6 +42,17 @@ class Ui_AddPlugin(object):
         self.le_path.setReadOnly(True)
         self.le_path.setObjectName("le_path")
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.le_path)
+        self.formLayoutWidget_2 = QtGui.QWidget(AddPlugin)
+        self.formLayoutWidget_2.setGeometry(QtCore.QRect(10, 270, 561, 241))
+        self.formLayoutWidget_2.setObjectName("formLayoutWidget_2")
+        self.customFormLayout = QtGui.QFormLayout(self.formLayoutWidget_2)
+        self.customFormLayout.setContentsMargins(0, 0, 0, 0)
+        self.customFormLayout.setObjectName("customFormLayout")
+        self.line = QtGui.QFrame(AddPlugin)
+        self.line.setGeometry(QtCore.QRect(7, 250, 561, 20))
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
 
         self.retranslateUi(AddPlugin)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), AddPlugin.accept)

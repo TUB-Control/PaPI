@@ -80,9 +80,14 @@ class IOP_DPP_template(plugin_base):
         # return type: IOP or DPP
         return 'IOP'
 
+    def get_default_config(self):
+        config = {}
+        config['name']='IOD_DPP_template'
+        return config
+
     # def hook_update_plugin_meta(self):
     #     """
-    #     Whenever the meta information is updated this function is called if this function is implemented.
+    #     Whenever the meta information is updated this function is called (if implemented).
     #     :return:
     #     """
     #     dplugin_info = self.dplugin_info

@@ -43,7 +43,15 @@ import pickle
 class Fourier_Rect(plugin_base):
     max_approx = 300
     amax = 20
-    def start_init(self):
+    def start_init(self, config=None):
+
+        default_config = self.get_default_config()
+
+        if config is None:
+            config = default_config
+        else:
+            config = dict(list(default_config.items()) + list(config.items()))
+
         self.t = 0
         self.amax = Fourier_Rect.amax
         self.amplitude = 1
@@ -51,11 +59,12 @@ class Fourier_Rect(plugin_base):
         self.freq = 1
         self.vec = numpy.ones(self.amax* ( self.max_approx + 1) )
 
+
         print(['Fourier: process id: ',os.getpid()] )
 
 
-        self.HOST = "130.149.155.73"
-        self.PORT = 9999
+        self.HOST = config['host']
+        self.PORT = int(config['port'])
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setblocking(0)
@@ -111,6 +120,14 @@ class Fourier_Rect(plugin_base):
 
     def get_output_sizes(self):
         return [1, int( Fourier_Rect.amax*(Fourier_Rect.max_approx + 1) ) ]
+
+    def get_default_config(self):
+        config = {}
+        config['name']='IOD_DPP_template'
+        config['host']="130.149.155.73"
+        config['port']=9999
+        return config
+
 
     def get_type(self):
         return 'IOP'
