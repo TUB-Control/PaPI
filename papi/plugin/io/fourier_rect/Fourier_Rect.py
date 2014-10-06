@@ -63,8 +63,9 @@ class Fourier_Rect(plugin_base):
         print(['Fourier: process id: ',os.getpid()] )
 
 
-        self.HOST = config['host']
-        self.PORT = int(config['port'])
+        self.HOST = self.get_config_value(config, 'host')
+        self.PORT = int( self.get_config_value(config, 'port'))
+
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setblocking(0)
@@ -125,7 +126,7 @@ class Fourier_Rect(plugin_base):
         config = {}
         config['name']={'value' : 'IOD_DPP_template'}
         config['host']={'value' : "130.149.155.73", 'regex' : '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'}
-        config['port']={'value' : 9999}
+        config['port']={'value' : 9999, 'regex' : '\d{1,5}'}
         return config
 
 
