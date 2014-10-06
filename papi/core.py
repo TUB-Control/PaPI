@@ -501,6 +501,7 @@ class Core:
 
             #Add new Plugin process to DCore
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
+            dplug.plugin_identifier = plugin.name
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
             dplug.alive_count = self.alive_count
@@ -521,6 +522,8 @@ class Core:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue, plugin, plugin_id)
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
+            dplug.plugin_identifier = plugin.name
+
 
             # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name

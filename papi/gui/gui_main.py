@@ -53,6 +53,9 @@ from papi.gui.add_subscriber import AddSubscriber
 from PySide.QtGui import QIcon
 from PySide.QtCore import QSize
 
+import configparser
+import xml.etree.cElementTree as ET
+
 from yapsy.PluginManager import PluginManager
 import importlib.machinery
 
@@ -262,25 +265,20 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         #self.do_unsubscribe(3,2,'SinMit_f3',[2])
 
-        self.do_pause_plugin_by_id(3)
+        #self.do_pause_plugin_by_id(3)
 
+        #self.do_save_config()
+        #self.do_save_xml_config()
 
+        self.do_load_xml()
 
     def stefan(self):
         self.count += 1
 
-        op=2
+        op= 0
 
         if op == 0:
-            # 1 test uname subsribe
-
-            self.do_create_plugin('Fourier_Rect','Four')    #id 2
-            self.do_create_plugin('Add','Add1')             #id 3
-            self.do_create_plugin('Plot','Plot1')           #id 4
-
-            time.sleep(0.1)
-            self.do_subscribe(3,2,'Rect1')
-            self.do_subscribe(4,3,'AddOut1')
+            self.do_save_xml_config()
 
         if op == 1:
             # 1 Sinus IOP und 1 Plot
@@ -441,6 +439,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
+            dplugin.plugin_identifier = plugin_identifier
 
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
@@ -465,6 +464,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             # plugin will not be running in gui process, so we just need to add information to DGui
             # so add a new dplugin to DGUI and set name und type
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
+            dplugin.plugin_identifier = plugin_identifier
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
             # debug print
@@ -663,7 +663,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         # call do_subscribe with ids to subscribe
         if source_id is not None and subscriber_id is not None:
-            self.do_subscribe(subscriber_id, source_id, block_name, signal_index = None)
+            self.do_subscribe(subscriber_id, source_id, block_name, signal_index)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
@@ -885,6 +885,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.core_queue.put(event)
 
     def do_pause_plugin_by_uname(self, plugin_uname):
+        # TODO
         pass
 
     def do_resume_plugin_by_id(self, plugin_id):
@@ -900,6 +901,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'resume_plugin', opt)
             self.core_queue.put(event)
 
+    def do_resume_plugin_by_uname(self, plugin_uname):
+        # TODO
+        pass
 
     def check_range_of_value(self, value, ranges):
         min_val = ranges[0]
@@ -909,6 +913,103 @@ class GUI(QMainWindow, Ui_MainGUI):
         if value < min_val:
             return False
         return True
+
+    def do_load_xml(self):
+        tree = ET.parse('testcfg.xml')
+
+        root = tree.getroot()
+
+        plugins_to_start = []
+        subs_to_make = []
+
+        for plugin_xml in root:
+            pl_uname = plugin_xml.attrib['uname']
+            identifier = plugin_xml.find('Identifier').text
+            config = plugin_xml.find('StartConfig').text
+
+            plugins_to_start.append([identifier, pl_uname, config])
+
+            subs_xml = plugin_xml.find('Subscriptions')
+            for sub_xml in subs_xml.findall('Subscription'):
+                data_source = sub_xml.find('data_source').text
+                for block_xml in sub_xml.findall('block'):
+                    block_name = block_xml.attrib['Name']
+                    signals = []
+                    for sig_xml in block_xml.findall('Signal'):
+                        signals.append(int(sig_xml.text))
+                    subs_to_make.append([pl_uname,data_source,block_name,signals])
+
+        print(plugins_to_start)
+        print(subs_to_make)
+
+        # TODO: cfg
+        for pl in plugins_to_start:
+            self.do_create_plugin(pl[0], pl[1], {})
+
+        QtCore.QTimer.singleShot(1000, lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
+
+
+    def config_loader_subs(self, pl_to_start, subs_to_make ):
+        for sub in subs_to_make:
+            print(sub[3])
+
+            self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3])
+
+
+    def do_save_xml_config(self):
+        root = ET.Element('Config1 ')
+
+
+
+        # get plugins
+        plugins = self.gui_data.get_all_plugins()
+        for dplugin_id in plugins:
+            dplugin = plugins[dplugin_id]
+            pl_xml = ET.SubElement(root,'Plugin')
+            pl_xml.set('uname',dplugin.uname)
+
+            identifier_xml =ET.SubElement(pl_xml,'Identifier')
+            identifier_xml.text = dplugin.plugin_identifier
+
+            cfg_xml = ET.SubElement(pl_xml,'StartConfig')
+            cfg_xml.text = 'default'
+
+            subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
+            subs = dplugin.get_subscribtions()
+            for sub in subs:
+                sub_xml = ET.SubElement(subs_xml, 'Subscription')
+                source_xml = ET.SubElement(sub_xml, 'data_source')
+                source_xml.text = self.gui_data.get_dplugin_by_id(sub).uname
+                for block in subs[sub]:
+                    block_xml = ET.SubElement(sub_xml, 'block')
+                    block_xml.set('Name',block)
+                    for s in subs[sub][block].get_signals():
+                        signal_xml = ET.SubElement(block_xml,'Signal')
+                        signal_xml.text = str(s)
+
+
+        self.indent(root)
+        tree = ET.ElementTree(root)
+        tree.write('testcfg.xml')
+
+
+    def indent(self,elem, level=0):
+    # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
+      i = "\n" + level*"  "
+      if len(elem):
+        if not elem.text or not elem.text.strip():
+          elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+          elem.tail = i
+        for elem in elem:
+          self.indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+          elem.tail = i
+      else:
+        if level and (not elem.tail or not elem.tail.strip()):
+          elem.tail = i
+
+
 
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
