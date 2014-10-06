@@ -440,7 +440,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
-
+            dplugin.startup_config = opt.plugin_config
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
@@ -466,6 +466,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
             dplugin.plugin_identifier = plugin_identifier
             dplugin.uname = uname
+            dplugin.startup_config = opt.plugin_config
             dplugin.type = opt.plugin_type
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
@@ -972,6 +973,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             identifier_xml.text = dplugin.plugin_identifier
 
             cfg_xml = ET.SubElement(pl_xml,'StartConfig')
+            # TODO: save config in xml
             cfg_xml.text = 'default'
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')

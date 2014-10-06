@@ -108,7 +108,7 @@ class DPlugin(DObject):
         self.queue = None
         self.plugin = None
         self.plugin_identifier = None
-
+        self.startup_config = None
         self.__subscriptions = {}
         self.state = None
         self.paused = False
