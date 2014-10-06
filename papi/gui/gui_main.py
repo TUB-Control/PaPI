@@ -973,7 +973,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             identifier_xml.text = dplugin.plugin_identifier
 
             cfg_xml = ET.SubElement(pl_xml,'StartConfig')
-            cfg_xml.text = dplugin.startup_config
+            # TODO: save config in xml
+            cfg_xml.text = 'default'
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
             subs = dplugin.get_subscribtions()
