@@ -169,7 +169,10 @@ class Plot(visual_base):
         }, 'size': {
                 'value': "(200,200)",
                 'regex': '\(([0-9]+),([0-9]+)\)'
-        }, 'name': 'Plot_Plugin', 'label_y': {
+        }, 'name': {
+                'value' : 'Plot_Plugin',
+        },
+            'label_y': {
                 'value': "amplitude, V",
                 'regex': '\w+,\s+\w+'
         }, 'label_x': {
