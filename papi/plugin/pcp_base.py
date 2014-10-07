@@ -42,19 +42,18 @@ class pcp_base(plugin_base):
 
     def start_init(self, config=None):
 
-        default_config = self.get_default_config()
+        default_config = self.get_startup_configuration()
 
 
         if config is None:
             config = default_config
 
-        if 'name' not in config:
-            self.name=default_config['name']
-        else:
-            self.name=config['name']
+        print(config)
 
-        self.__dplugin_id__ = config['dplugin_id']
-        self.__dparameter__ = config['dparameter']
+        self.name = config['name']['value']
+
+        self.__dplugin_id__ = config['dplugin_id']['value']
+        self.__dparameter__ = config['dparameter']['value']
 
         self.__dparameter__.plugin_id = self.__id__
         self.__dparameter__.pcp_name = "Button"
@@ -66,9 +65,11 @@ class pcp_base(plugin_base):
         self.__subWindow__.setWindowTitle(self.name)
         self.__subWindow__.resize(250, 100)
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         config = {}
-        config['name']="PCP_Plugin"
+        config['name']={
+            'value' : "PCP_Plugin"
+        }
         return config
 
     def set_value(self, new_value):

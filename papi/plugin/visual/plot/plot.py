@@ -30,21 +30,18 @@ class Plot(visual_base):
 
         size_re = re.compile(r'([0-9]+)')
 
-        default_config = self.get_default_config()
+        default_config = self.get_startup_configuration()
 
         if config is None:
             config = default_config
-        else:
-            config = dict(list(default_config.items()) + list(config.items()))
 
+        sampleinterval = float(config['sampleinterval']['value'])
 
-        sampleinterval = float( self.get_config_value(config, 'sampleinterval'))
+        timewindow = int(config['timewindow']['value'])
 
-        timewindow = int( self.get_config_value(config, 'timewindow'))
+        name = config['name']['value']
 
-        name = self.get_config_value(config, 'name')
-
-        size = size_re.findall( self.get_config_value(config, 'size') )
+        size = size_re.findall(config['size']['value'])
 
         self.name = name
         self._interval = int(sampleinterval*timewindow)
@@ -158,7 +155,7 @@ class Plot(visual_base):
     def get_sub_window(self):
         return self._subWindow
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         config = {
             "sampleinterval": {
                 'value': 1,

@@ -39,7 +39,7 @@ class Sinus(plugin_base):
 
     def start_init(self, config=None):
 
-        default_config = self.get_default_config()
+        default_config = self.get_startup_configuration()
 
         if config is None:
             config = default_config
@@ -47,8 +47,8 @@ class Sinus(plugin_base):
             config = dict(list(default_config.items()) + list(config.items()))
 
         self.t = 0
-        self.amax = int( self.get_config_value(config, 'amax'))
-        self.f = float( self.get_config_value(config, 'f') )
+        self.amax = int(config['amax']['value'])
+        self.f = float(config['f']['value'])
 
         block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
         block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
@@ -95,7 +95,7 @@ class Sinus(plugin_base):
         if parameter.name == self.para3.name:
             self.para3 = parameter
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         config = {
             "amax": {
                 'value': 1,

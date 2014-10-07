@@ -45,7 +45,7 @@ import pickle
 class Fourier_Rect_MOD(plugin_base):
     max_approx = 300
     amax = 20
-    def start_init(self):
+    def start_init(self, config=None):
         self.t = 0
         self.amax = Fourier_Rect_MOD.amax
         self.amplitude = 1

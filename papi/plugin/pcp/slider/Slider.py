@@ -42,7 +42,8 @@ class Slider(pcp_base):
 
         self.slider = QSlider()
         self.slider.sliderPressed.connect(self.clicked)
-        self.slider.valueChanged.connect(self.valueChanged)
+        self.slider.valueChanged.connect(self.value_changed)
+
         self.slider.setMinimum(0)
         self.slider.setMaximum(100)
         self.slider.setSingleStep(1)
@@ -58,7 +59,7 @@ class Slider(pcp_base):
 
         return self.central_widget
 
-    def valueChanged(self, change):
+    def value_changed(self, change):
         cur_value = change/100
         self.set_value(cur_value)
         self.text_field.setText(str(cur_value))

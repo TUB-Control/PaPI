@@ -177,15 +177,6 @@ class plugin_base(IPlugin):
         for parameter in para_list:
                 self.set_parameter(parameter)
 
-    def get_config_value(self,config, name):
-        if name in config:
-            if type(config[name]) is dict:
-                return config[name]['value']
-            else:
-                return config[name]
-        else:
-            return None
-
     @abstractmethod
     def start_init(self, config=None):
         raise NotImplementedError("Please Implement this method")
@@ -210,7 +201,7 @@ class plugin_base(IPlugin):
     def quit(self):
         raise NotImplementedError("Please Implement this method")
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         """
         OnlineRegexTester: http://regexpal.com/
         :return:

@@ -304,10 +304,15 @@ class Overview(QMainWindow, Ui_Manager):
         if pcp is None:
             return 0
 
-        config={}
+        config={
+            'dplugin_id' : {},
+            'dparameter' : {},
+            'name' : {}
+        }
 
-        config['dplugin_id']=dplugin.id
-        config['dparameter']=dparameter
+        config['dplugin_id']['value']=dplugin.id
+        config['dparameter']['value']=dparameter
+        config['name']['value'] = dparameter_name
 
         self.callback_functions['do_create_plugin'](pcp.name, dparameter.name + "_" + pcp.name, config=config)
 
