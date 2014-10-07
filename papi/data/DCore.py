@@ -370,3 +370,9 @@ class DCore():
             return self.unsubscribe(subscriber_id, target_id, dblock_name)
 
         return True
+
+    def subscribe_dparameter(self, subscriber_id, target_id):
+        pass
+
+    def unsubscribe_dparameter(self, subscriber_id, target_id):
+        pass

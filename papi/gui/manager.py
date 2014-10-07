@@ -306,13 +306,14 @@ class Overview(QMainWindow, Ui_Manager):
 
         config={
             'dplugin_id' : {},
-            'dparameter' : {},
+            'default' : {},
             'name' : {}
         }
 
         config['dplugin_id']['value']=dplugin.id
-        config['dparameter']['value']=dparameter
+        config['default']['value']=dparameter.default
         config['name']['value'] = dparameter_name
+
 
         self.callback_functions['do_create_plugin'](pcp.name, dparameter.name + "_" + pcp.name, config=config)
 

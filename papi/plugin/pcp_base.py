@@ -53,7 +53,8 @@ class pcp_base(plugin_base):
         self.name = config['name']['value']
 
         self.__dplugin_id__ = config['dplugin_id']['value']
-        self.__dparameter__ = config['dparameter']['value']
+
+        self.__dparameter__ = DParameter(None, config['name']['value'])
 
         self.__dparameter__.plugin_id = self.__id__
         self.__dparameter__.pcp_name = "Button"
@@ -131,24 +132,12 @@ class pcp_base(plugin_base):
         :return:
         """
         if parameter_object is not None:
-            if self.check_range_of_value(value,parameter_object.range):
-                parameter_object.value = value
-                opt = DOptionalData()
-                opt.parameter_list = [parameter_object]
-                opt.plugin_id = pl_id
-                e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
-                self._Core_event_queue__.put(e)
-            else:
-                return -1
+            parameter_object.value = value
+            opt = DOptionalData()
+            opt.parameter_list = [parameter_object]
+            opt.plugin_id = pl_id
+            e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
+            self._Core_event_queue__.put(e)
 
-
-    def check_range_of_value(self,value,range):
-        min = range[0]
-        max = range[1]
-        if value > max:
-            return False
-        if value < min:
-            return False
-        return True
 
 
