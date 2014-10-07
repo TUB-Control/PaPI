@@ -886,8 +886,23 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.core_queue.put(event)
 
     def do_pause_plugin_by_uname(self, plugin_uname):
-        # TODO
-        pass
+        """
+        Something like a callback function for gui triggered events.
+        User wants to pause a plugin, so this method will send an event to core.
+        :param plugin_uname: uname of plugin to pause
+        :type plugin_uname: basestring
+        """
+        # get plugin from DGui with given uname
+        # purpose: get its id
+        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+         # check for existance
+        if dplug is not None:
+            # it does exist, so get its id
+            self.do_pause_plugin_by_id(dplug.id)
+        else:
+            # plugin with uname does not exist
+            self.log.printText(1, 'do_pause, plugin uname worng')
+            return -1
 
     def do_resume_plugin_by_id(self, plugin_id):
         """
@@ -896,15 +911,29 @@ class GUI(QMainWindow, Ui_MainGUI):
         :param plugin_id: id of plugin to pause
         :type plugin_id: int
         """
-
         if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
             opt = DOptionalData()
             event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'resume_plugin', opt)
             self.core_queue.put(event)
 
     def do_resume_plugin_by_uname(self, plugin_uname):
-        # TODO
-        pass
+        """
+        Something like a callback function for gui triggered events.
+        User wants to resume a plugin, so this method will send an event to core.
+        :param plugin_uname: uname of plugin to resume
+        :type plugin_uname: basestring
+        """
+        # get plugin from DGui with given uname
+        # purpose: get its id
+        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+         # check for existance
+        if dplug is not None:
+            # it does exist, so get its id
+            self.do_resume_plugin_by_id(dplug.id)
+        else:
+            # plugin with uname does not exist
+            self.log.printText(1, 'do_resume, plugin uname worng')
+            return -1
 
     def check_range_of_value(self, value, ranges):
         min_val = ranges[0]
@@ -948,7 +977,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.do_create_plugin(pl[0], pl[1], {})
 
         QtCore.QTimer.singleShot(1000, lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
-
 
     def config_loader_subs(self, pl_to_start, subs_to_make ):
         for sub in subs_to_make:
