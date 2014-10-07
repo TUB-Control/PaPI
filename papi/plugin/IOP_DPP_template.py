@@ -67,9 +67,9 @@ class IOP_DPP_template(plugin_base):
         pass
 
 
-    def set_parameter(self, parameter):
-        # if parameter.name == 'irgendeinParameter':
-        #   do that...
+    def set_parameter(self, name, value):
+        # if name == 'irgendeinParameter':
+        #   do that .... with value
         pass
 
     def quit(self):

@@ -979,7 +979,9 @@ class GUI(QMainWindow, Ui_MainGUI):
                     signals = []
                     for sig_xml in block_xml.findall('Signal'):
                         signals.append(int(sig_xml.text))
-                    subs_to_make.append([pl_uname,data_source,block_name,signals])
+                    alias_xml = block_xml.find('alias')
+                    alias = alias_xml.text
+                    subs_to_make.append([pl_uname,data_source,block_name,signals, alias])
 
         for pl in plugins_to_start:
             self.do_create_plugin(pl[0], pl[1], pl[2])
@@ -988,9 +990,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
     def config_loader_subs(self, pl_to_start, subs_to_make ):
         for sub in subs_to_make:
-            print(sub[3])
-
-            self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3])
+            self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
     def do_save_xml_config(self, path):
         root = ET.Element('Config')
@@ -1024,6 +1024,10 @@ class GUI(QMainWindow, Ui_MainGUI):
                 for block in subs[sub]:
                     block_xml = ET.SubElement(sub_xml, 'block')
                     block_xml.set('Name',block)
+
+                    alias_xml = ET.SubElement(block_xml,'alias')
+                    alias_xml.text = subs[sub][block].alias
+
                     for s in subs[sub][block].get_signals():
                         signal_xml = ET.SubElement(block_xml,'Signal')
                         signal_xml.text = str(s)
