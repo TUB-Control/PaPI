@@ -53,7 +53,7 @@ from papi.gui.add_subscriber import AddSubscriber
 from PySide.QtGui import QIcon
 from PySide.QtCore import QSize
 
-import configparser
+import datetime
 import xml.etree.cElementTree as ET
 
 from yapsy.PluginManager import PluginManager
@@ -270,7 +270,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #self.do_save_config()
         #self.do_save_xml_config()
 
-        self.do_load_xml()
+        self.do_load_xml('testcfg.xml')
 
     def stefan(self):
         self.count += 1
@@ -278,7 +278,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         op= 0
 
         if op == 0:
-            self.do_save_xml_config()
+            self.do_save_xml_config('testcfg.xml')
 
         if op == 1:
             # 1 Sinus IOP und 1 Plot
@@ -943,8 +943,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             return False
         return True
 
-    def do_load_xml(self):
-        tree = ET.parse('testcfg.xml')
+    def do_load_xml(self, path):
+        tree = ET.parse(path)
 
         root = tree.getroot()
 
@@ -954,9 +954,16 @@ class GUI(QMainWindow, Ui_MainGUI):
         for plugin_xml in root:
             pl_uname = plugin_xml.attrib['uname']
             identifier = plugin_xml.find('Identifier').text
-            config = plugin_xml.find('StartConfig').text
+            config_xml = plugin_xml.find('StartConfig')
+            config_hash = {}
+            for parameter_xml in config_xml.findall('Parameter'):
+                para_name = parameter_xml.attrib['Name']
+                config_hash[para_name] = {}
+                for detail_xml in parameter_xml:
+                    detail_name = detail_xml.tag
+                    config_hash[para_name][detail_name]= detail_xml.text
 
-            plugins_to_start.append([identifier, pl_uname, config])
+            plugins_to_start.append([identifier, pl_uname, config_hash])
 
             subs_xml = plugin_xml.find('Subscriptions')
             for sub_xml in subs_xml.findall('Subscription'):
@@ -968,12 +975,8 @@ class GUI(QMainWindow, Ui_MainGUI):
                         signals.append(int(sig_xml.text))
                     subs_to_make.append([pl_uname,data_source,block_name,signals])
 
-        print(plugins_to_start)
-        print(subs_to_make)
-
-        # TODO: cfg
         for pl in plugins_to_start:
-            self.do_create_plugin(pl[0], pl[1], {})
+            self.do_create_plugin(pl[0], pl[1], pl[2])
 
         QtCore.QTimer.singleShot(1000, lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
 
@@ -983,11 +986,10 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3])
 
-
-    def do_save_xml_config(self):
-        root = ET.Element('Config1 ')
-
-
+    def do_save_xml_config(self, path):
+        root = ET.Element('Config')
+        root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+        root.set('PaPI_version','PLATZHALTER')
 
         # get plugins
         plugins = self.gui_data.get_all_plugins()
@@ -1000,8 +1002,12 @@ class GUI(QMainWindow, Ui_MainGUI):
             identifier_xml.text = dplugin.plugin_identifier
 
             cfg_xml = ET.SubElement(pl_xml,'StartConfig')
-            # TODO: save config in xml
-
+            for parameter in dplugin.startup_config:
+                para_xml = ET.SubElement(cfg_xml, 'Parameter')
+                para_xml.set('Name',parameter)
+                for detail in dplugin.startup_config[parameter]:
+                    detail_xml = ET.SubElement(para_xml, detail)
+                    detail_xml.text = dplugin.startup_config[parameter][detail]
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
             subs = dplugin.get_subscribtions()
@@ -1016,11 +1022,9 @@ class GUI(QMainWindow, Ui_MainGUI):
                         signal_xml = ET.SubElement(block_xml,'Signal')
                         signal_xml.text = str(s)
 
-
         self.indent(root)
         tree = ET.ElementTree(root)
-        tree.write('testcfg.xml')
-
+        tree.write(path)
 
     def indent(self,elem, level=0):
     # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
@@ -1037,8 +1041,6 @@ class GUI(QMainWindow, Ui_MainGUI):
       else:
         if level and (not elem.tail or not elem.tail.strip()):
           elem.tail = i
-
-
 
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
