@@ -173,14 +173,14 @@ class DPlugin(DObject):
             #self.__subscriptions.append(dblock.id)
             self.__subscriptions[dblock.dplugin_id] = {}
             self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
-            return True
+            return self.__subscriptions[dblock.dplugin_id][dblock.name]
         else:
             if dblock.name not in self.__subscriptions[dblock.dplugin_id]:
                 self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
-                return True
+                return self.__subscriptions[dblock.dplugin_id][dblock.name]
             else:
-                return False
-        return False
+                return None
+        return None
 
     def unsubscribe(self, dblock:DBlock):
         """
@@ -339,6 +339,7 @@ class DSubscription(DObject):
 
     def __init__(self, dblock: DBlock, signals=None):
         self.dblock = dblock
+        self.alias = None
         if signals is None:
             self.signals = []
         else:

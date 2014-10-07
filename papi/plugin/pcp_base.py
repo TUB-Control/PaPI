@@ -139,5 +139,17 @@ class pcp_base(plugin_base):
             e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
             self._Core_event_queue__.put(e)
 
+    def set_parameter_name(self, name):
+        pass
+
+
+    def check_range_of_value(self,value,range):
+        min = range[0]
+        max = range[1]
+        if value > max:
+            return False
+        if value < min:
+            return False
+        return True
 
 

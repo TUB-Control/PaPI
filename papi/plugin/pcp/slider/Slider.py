@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.pcp_base import pcp_base
 from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
 from PySide import QtCore
+from papi.data.DPlugin import DBlock
 
 class Slider(pcp_base):
 
@@ -59,12 +60,18 @@ class Slider(pcp_base):
         self.layout.addWidget(self.slider)
         self.layout.addWidget(self.text_field)
 
+        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        self.send_new_block_list([block])
+
+
+
         return self.central_widget
 
     def value_changed(self, change):
         cur_value = change/100
-        self.set_value(cur_value)
+        #self.set_value(cur_value)
         self.text_field.setText(str(cur_value))
+        self.send_parameter_change(cur_value, 'Parameter_1', 'TESTALIAS')
 
     def clicked(self):
         pass

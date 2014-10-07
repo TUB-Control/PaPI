@@ -115,8 +115,9 @@ class Fourier_Rect(plugin_base):
 
         time.sleep(0.001*self.amax )
 
-    def set_parameter(self):
+    def set_parameter(self, name, value):
         pass
+
 
     def quit(self):
         print('Fourier_Rect: will quit')

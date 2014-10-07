@@ -91,9 +91,10 @@ class Sinus(plugin_base):
         self.send_new_data(vec3,'SinMit_f3')
         time.sleep(0.02)
 
-    def set_parameter(self, parameter):
-        if parameter.name == self.para3.name:
-            self.para3 = parameter
+    def set_parameter(self, name, value):
+        if name == self.para3.name:
+            self.para3.value = value
+
 
     def get_startup_configuration(self):
         config = {

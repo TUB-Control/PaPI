@@ -51,9 +51,9 @@ class CPU_Load(plugin_base):
 
         time.sleep(self.delta_t)
 
-    def set_parameter(self, parameter):
-        if parameter.name == self.para_delta_t.name:
-            self.delta_t = parameter.value
+    def set_parameter(self, name, value):
+        pass
+
 
     def quit(self):
         print('Sinus: will quit')
