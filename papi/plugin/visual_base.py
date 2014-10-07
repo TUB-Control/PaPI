@@ -47,7 +47,7 @@ class visual_base(plugin_base):
     def start_init(self, config=None):
         pass
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         config = {}
         config["sampleinterval"]=1
         config['timewindow']=1000.

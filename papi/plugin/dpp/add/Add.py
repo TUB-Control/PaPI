@@ -40,9 +40,10 @@ import math
 import numpy
 import os
 
+
 class Add(plugin_base):
 
-    def start_init(self,config=None):
+    def start_init(self, config=None):
         self.t = 0
         print(['ADD: process id: ',os.getpid()] )
         self.approx_max = 300

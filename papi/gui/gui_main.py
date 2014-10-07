@@ -430,13 +430,15 @@ class GUI(QMainWindow, Ui_MainGUI):
         class_name = plugin_orginal.name[:1].upper() + plugin_orginal.name[1:]
         # get the plugin class of the source code loaded and init class as a new object
         plugin = getattr(current_modul, class_name)()
-        #
-        config['do_set_parameter'] = self.callback_functions['do_set_parameter']
+        # get default startup configuration for merge with user defined startup_configuration
+        start_config = plugin.get_startup_configuration()
+        config = dict(list(start_config.items()) + list(config.items()) )
+
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
         if plugin.get_type() == "ViP":
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
-            dplugin =self.gui_data.add_plugin(None,None,False,self.gui_queue,plugin,id)
+            dplugin =self.gui_data.add_plugin(None, None, False, self.gui_queue,plugin,id)
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
@@ -449,9 +451,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             # first set meta to plugin
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
-
-            # set name to config object
-            config['name'] = dplugin.uname
 
             # add a window to gui for new plugin and show it
             self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())

@@ -43,9 +43,11 @@ import pickle
 class Fourier_Rect(plugin_base):
     max_approx = 300
     amax = 20
+
+
     def start_init(self, config=None):
 
-        default_config = self.get_default_config()
+        default_config = self.get_startup_configuration()
 
         if config is None:
             config = default_config
@@ -63,8 +65,8 @@ class Fourier_Rect(plugin_base):
         print(['Fourier: process id: ',os.getpid()] )
 
 
-        self.HOST = self.get_config_value(config, 'host')
-        self.PORT = int( self.get_config_value(config, 'port'))
+        self.HOST = config['host']['value']
+        self.PORT = int( config['port']['value'] )
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -122,13 +124,19 @@ class Fourier_Rect(plugin_base):
     def get_output_sizes(self):
         return [1, int( Fourier_Rect.amax*(Fourier_Rect.max_approx + 1) ) ]
 
-    def get_default_config(self):
-        config = {}
-        config['name']={'value' : 'IOD_DPP_template'}
-        config['host']={'value' : "130.149.155.73", 'regex' : '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'}
-        config['port']={'value' : 9999, 'regex' : '\d{1,5}'}
+    def get_startup_configuration(self):
+        config = {
+            'name': {
+                    'value': 'IOD_DPP_template'
+                    },
+            'host': {
+                     'value': "130.149.155.73",
+                     'regex': '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'},
+            'port': {
+                    'value': 9999,
+                    'regex': '\d{1,5}'
+            }}
         return config
-
 
     def get_type(self):
         return 'IOP'

@@ -80,7 +80,7 @@ class AddPlugin(QDialog, Ui_AddPlugin):
         self.plugin_uname = None
         self.plugin_name = None
 
-        self.attrs = {}
+        self.configuration_inputs = {}
 
     def setDGui(self, dgui):
         self.dgui = dgui
@@ -99,20 +99,16 @@ class AddPlugin(QDialog, Ui_AddPlugin):
 
             self.le_path.setText(pluginfo.path)
 
-            config = pluginfo.plugin_object.get_default_config()
+            startup_config = pluginfo.plugin_object.get_startup_configuration()
 
             position = 0;
 
-            attrs = self.attrs.copy()
-            for attr in attrs:
-                del self.attrs[attr]
+            self.configuration_inputs.clear()
 
+            self.clear_layout(self.customFormLayout)
 
-
-            self.clearLayout(self.customFormLayout)
-
-            for attr in config:
-                value = self.get_config_value(config, attr)
+            for attr in startup_config:
+                value = startup_config[attr]['value']
                 label = QtGui.QLabel(self.formLayoutWidget_2)
                 label.setText(attr)
                 label.setObjectName(attr  + "_label")
@@ -127,14 +123,14 @@ class AddPlugin(QDialog, Ui_AddPlugin):
                 # -------------------------------
                 # Check for regex description
                 # -------------------------------
-                regex = self.get_config_regex(config, attr)
-                if regex is not None:
+
+                if 'regex' in startup_config[attr]:
+                    regex = startup_config[attr]['regex']
                     rx = QRegExp(regex)
                     validator = QRegExpValidator(rx, self)
                     line_edit.setValidator(validator)
 
-
-                self.attrs[attr] = line_edit
+                self.configuration_inputs[attr] = line_edit
 
                 position+=1
 
@@ -166,12 +162,10 @@ class AddPlugin(QDialog, Ui_AddPlugin):
             self.plugin_name = plugin_item.pluginfo.name
             self.plugin_uname = self.le_uname.text()
 
-            config = plugin_item.pluginfo.plugin_object.get_default_config()
+            config = plugin_item.pluginfo.plugin_object.get_startup_configuration()
 
-#            config['uname'] = self.plugin_uname
-
-            for attr in self.attrs:
-                config = self.update_config_value(config, attr, self.attrs[attr].text())
+            for attr in self.configuration_inputs:
+                config[attr]['value'] = self.configuration_inputs[attr].text()
 
             self.callback_functions['do_create_plugin'](self.plugin_name, self.plugin_uname, config=config)
 
@@ -179,34 +173,10 @@ class AddPlugin(QDialog, Ui_AddPlugin):
 
             button.setFocus()
 
-    def get_config_value(self,config, name):
-        if name in config:
-            if type(config[name]) is dict:
-                return config[name]['value']
-            else:
-                return config[name]
-        else:
-            return None
-
-    def get_config_regex(self,config, name):
-        if name in config:
-            if type(config[name]) is dict:
-                if 'regex' in config[name]:
-                    return config[name]['regex']
-        return None
-
-    def update_config_value(self,config, name, value):
-        if name in config:
-            if type(config[name]) is dict:
-                config[name]['value'] = value
-            else:
-                config[name] = value
-        return config
-
-    def clearLayout(self, layout):
+    def clear_layout(self, layout):
         while layout.count():
             child = layout.takeAt(0)
             if child.widget() is not None:
                 child.widget().deleteLater()
             elif child.layout() is not None:
-                self.clearLayout(child.layout())
+                self.clear_layout(child.layout())

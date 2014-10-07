@@ -80,7 +80,7 @@ class IOP_DPP_template(plugin_base):
         # return type: IOP or DPP
         return 'IOP'
 
-    def get_default_config(self):
+    def get_startup_configuration(self):
         config = {
             "sampleinterval": {
                 'value': 1,
