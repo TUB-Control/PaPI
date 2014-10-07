@@ -310,8 +310,8 @@ class Overview(QMainWindow, Ui_Manager):
             'name' : {}
         }
 
-        config['dplugin_id']['value']=dplugin.id
-        config['default']['value']=dparameter.default
+        config['dplugin_id']['value']= str(dplugin.id)
+        config['default']['value']= str(dparameter.default)
         config['name']['value'] = dparameter_name
 
 

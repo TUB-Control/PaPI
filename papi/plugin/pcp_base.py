@@ -48,7 +48,7 @@ class pcp_base(plugin_base):
         if config is None:
             config = default_config
 
-        print(config)
+        self.config = config
 
         self.name = config['name']['value']
 
@@ -73,9 +73,9 @@ class pcp_base(plugin_base):
         }
         return config
 
-    def set_value(self, new_value):
-
-        self.__send_parameter_change__(self.__dplugin_id__, self.__dparameter__, new_value)
+    # def set_value(self, new_value):
+    #
+    #     self.__send_parameter_change__(self.__dplugin_id__, self.__dparameter__, new_value)
 
     @abstractmethod
     def create_widget(self):
@@ -102,7 +102,6 @@ class pcp_base(plugin_base):
     def get_output_sizes(self):
         pass
 
-
     def pause(self):
         pass
 
@@ -121,35 +120,5 @@ class pcp_base(plugin_base):
     def get_type(self):
         return 'ViP'
 
-
-    def __send_parameter_change__(self, pl_id, parameter_object, value):
-        """
-
-        :param pl_id:
-        :param parameter_object:
-        :param value:
-        :type parameter_object: DParameter
-        :return:
-        """
-        if parameter_object is not None:
-            parameter_object.value = value
-            opt = DOptionalData()
-            opt.parameter_list = [parameter_object]
-            opt.plugin_id = pl_id
-            e = PapiEvent(1,pl_id,'instr_event','set_parameter',opt)
-            self._Core_event_queue__.put(e)
-
     def set_parameter_name(self, name):
         pass
-
-
-    def check_range_of_value(self,value,range):
-        min = range[0]
-        max = range[1]
-        if value > max:
-            return False
-        if value < min:
-            return False
-        return True
-
-

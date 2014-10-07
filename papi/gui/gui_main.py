@@ -1007,6 +1007,8 @@ class GUI(QMainWindow, Ui_MainGUI):
             identifier_xml =ET.SubElement(pl_xml,'Identifier')
             identifier_xml.text = dplugin.plugin_identifier
 
+            print(dplugin.startup_config)
+
             cfg_xml = ET.SubElement(pl_xml,'StartConfig')
             for parameter in dplugin.startup_config:
                 para_xml = ET.SubElement(cfg_xml, 'Parameter')

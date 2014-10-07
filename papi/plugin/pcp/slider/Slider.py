@@ -37,7 +37,6 @@ class Slider(pcp_base):
 
     def start_init(self, config=None):
         super(Slider, self).start_init(config)
-        self.config = config
 
     def create_widget(self):
         self.central_widget = QWidget()
@@ -54,7 +53,7 @@ class Slider(pcp_base):
 
         self.text_field = QLineEdit()
         self.text_field.setReadOnly(True)
-        self.text_field.text( self.config['default']['value'] )
+        self.text_field.text = self.config['default']['value']
         self.layout = QHBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
@@ -69,7 +68,6 @@ class Slider(pcp_base):
 
     def value_changed(self, change):
         cur_value = change/100
-        #self.set_value(cur_value)
         self.text_field.setText(str(cur_value))
         self.send_parameter_change(cur_value, 'Parameter_1', 'TESTALIAS')
 
