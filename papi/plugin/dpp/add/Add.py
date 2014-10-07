@@ -112,11 +112,8 @@ class Add(plugin_base):
         self.send_new_data(vec,'AddOut1')
 
 
-
-    def set_parameter(self,parameter_list):
-        for p in parameter_list:
-            if p.name == self.para1.name:
-                self.para1 = p
+    def set_parameter(self, name, value):
+        pass
 
     def quit(self):
         print('Add: will quit')

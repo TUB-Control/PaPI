@@ -105,14 +105,14 @@ class plugin_base(IPlugin):
                     self._Core_event_queue__.put(alive_event)
                 if op=='new_data' and self.paused is not True:
                     opt = event.get_optional_parameter()
-                    data = self.demux(opt.data_source_id, opt.block_name, opt.data)
-                    self.execute(data)
+                    if opt.is_parameter is False:
+                        data = self.demux(opt.data_source_id, opt.block_name, opt.data)
+                        self.execute(data)
+                    if opt.is_parameter is True:
+                        self.set_parameter_internal(opt.parameter_alias, opt.data)
                 if op == 'update_meta':
                     opt = event.get_optional_parameter()
                     self.update_plugin_meta(opt.plugin_object)
-                if op=='set_parameter':
-                    opt = event.get_optional_parameter()
-                    self.set_parameter_internal(opt.parameter_list)
             except:
                 self.execute()
 
@@ -132,6 +132,15 @@ class plugin_base(IPlugin):
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
+        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
+        self._Core_event_queue__.put(event)
+
+    def send_parameter_change(self, data, block_name, alias):
+        opt = DOptionalData(DATA=data)
+        opt.data_source_id = self.__id__
+        opt.is_parameter = True
+        opt.block_name = block_name
+        opt.parameter_alias = alias
         event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
         self._Core_event_queue__.put(event)
 
@@ -172,10 +181,8 @@ class plugin_base(IPlugin):
 
         return returnData
 
-
-    def set_parameter_internal(self, para_list):
-        for parameter in para_list:
-                self.set_parameter(parameter)
+    def set_parameter_internal(self, name, value):
+        self.set_parameter(name, value)
 
     @abstractmethod
     def start_init(self, config=None):

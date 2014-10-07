@@ -166,33 +166,35 @@ class DCore():
 
         if subscriber is None:
             self.log.printText(1, "Found no Subscriber with ID " + subscriber_id)
-            return False
+            return None
 
         #Get Target DPlugin
         target = self.get_dplugin_by_id(target_id)
 
         if target is None:
             self.log.printText(1, "Found no Target with ID " + str(target_id))
-            return False
+            return None
 
         dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
             self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
 
-            return False
+            return None
 
         #Create relation between DPlugin and DBlock
 
-        if subscriber.subscribe(dblock) is False:
+        dsubscription = subscriber.subscribe(dblock)
+
+        if dsubscription is None:
             self.log.printText(1, "Subscriber " + str(subscriber_id) + " has already subscribed " + dblock_name)
-            return False
+            return None
 
         if dblock.add_subscribers(subscriber) is False:
             self.log.printText(1, "DBlock " + dblock_name + " was already subscribed by Subscriber" + subscriber_id)
-            return False
+            return None
 
-        return True
+        return dsubscription
 
     def unsubscribe(self, subscriber_id, target_id, dblock_name):
         """
@@ -311,21 +313,21 @@ class DCore():
 
         if subscriber is None:
             self.log.printText(1, "Found no Subscriber with ID " + subscriber_id)
-            return False
+            return None
 
         #Get Target DPlugin
         target = self.get_dplugin_by_id(target_id)
 
         if target is None:
             self.log.printText(1, "Found no Target with ID " + str(target_id))
-            return False
+            return None
 
         dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
             self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
 
-            return False
+            return None
 
         return subscriber.subscribe_signals(dblock, signals)
 

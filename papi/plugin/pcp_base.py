@@ -141,6 +141,9 @@ class pcp_base(plugin_base):
             else:
                 return -1
 
+    def set_parameter_name(self, name):
+        pass
+
 
     def check_range_of_value(self,value,range):
         min = range[0]

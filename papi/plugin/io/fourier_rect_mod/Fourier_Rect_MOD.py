@@ -110,7 +110,7 @@ class Fourier_Rect_MOD(plugin_base):
         print("EXECUTE FUNC")
         pass
 
-    def set_parameter(self):
+    def set_parameter(self, name, value):
         pass
 
     def quit(self):

@@ -414,7 +414,7 @@ class Core:
             if dplug is not None:
                 # get data block of DPlugin with block_name from event
                 block= dplug.get_dblock_by_name(opt.block_name)
-                # check for existence of block with block_bame
+                # check for existence of block with block_name
                 if block is not None:
                     # get subscriber list of block
                     subscriber = block.get_subscribers()
@@ -431,7 +431,9 @@ class Core:
                                 id_list.append(pl.id)
                             else:
                                 # Plugin is not running in GUI, so just 1:1 relation for event and destinations
-                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', event.get_optional_parameter())
+                                optPara = event.get_optional_parameter()
+                                optPara.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', optPara)
                                 pl.queue.put(new_event)
                         else:
                             # pluign with sub_id does not exist in DCore of core
@@ -621,16 +623,17 @@ class Core:
                     already_sub = True
 
         if already_sub is False:
-            if self.core_data.subscribe(oID, opt.source_ID, opt.block_name) is False:
+            dsubscription = self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
+            if dsubscription is None:
                 # subscribtion failed
                 self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
                 return -1
             else:
                 # subscribtion correct
-                pass
+                dsubscription.alias = opt.subscription_alias
 
         if opt.signals != []:
-            if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is False:
+            if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is None:
                  # subscribtion failed
                 self.log.printText(1,'subscribe, something failed in subsription process with subscriber id: '+str(oID)+'..target id:'+str(opt.source_ID)+'..and block '+str(opt.block_name))
                 return -1

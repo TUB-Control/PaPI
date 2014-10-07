@@ -47,7 +47,7 @@ class visual_base(plugin_base):
     def start_init(self, config=None):
         pass
 
-    def get_startup_configuration(self):
+    def get_startup_configuration(self): # TODO SVEN
         config = {}
         config["sampleinterval"]=1
         config['timewindow']=1000.
@@ -62,11 +62,6 @@ class visual_base(plugin_base):
     @abstractmethod
     def get_widget(self):
         pass
-
-    def set_parameter_internal(self, para_list):
-
-        for parameter in para_list:
-            self.set_parameter(parameter)
 
     @abstractmethod
     def set_parameter(self, parameter):

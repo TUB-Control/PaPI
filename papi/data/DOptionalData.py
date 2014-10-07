@@ -39,8 +39,8 @@ class DOptionalData(object):
         self.plugin_id = pluginID
         self.source_ID = None
         self.unsubscribe_all = None
-        self.reason = None
-        self.parameter_list = None
+        self.reason = None # muss raus
+        self.parameter_list = None # muss raus
         self.block_name = None
         self.block_list = None
         self.plugin_object = None
@@ -48,5 +48,7 @@ class DOptionalData(object):
         self.plugin_config = {}
         self.dblock_object = None
         self.signals = []
+        self.is_parameter = False
+        self.subscription_alias = None
 
 

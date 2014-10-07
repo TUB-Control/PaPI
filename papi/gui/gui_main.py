@@ -599,7 +599,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #TODO: implement
         self.log.printText(1, " Do delete plugin with uname " + uname + '..NOT IMPLEMENTED YET ')
 
-    def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None):
+    def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -616,11 +616,12 @@ class GUI(QMainWindow, Ui_MainGUI):
         opt.source_ID = source_id
         opt.block_name = block_name
         opt.signals = signal_index
+        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias
         # send event with subscriber id as the origin to CORE
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None):
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -663,7 +664,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         # call do_subscribe with ids to subscribe
         if source_id is not None and subscriber_id is not None:
-            self.do_subscribe(subscriber_id, source_id, block_name, signal_index)
+            self.do_subscribe(subscriber_id, source_id, block_name, signal_index, sub_alias)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
@@ -933,6 +934,11 @@ class GUI(QMainWindow, Ui_MainGUI):
             # plugin with uname does not exist
             self.log.printText(1, 'do_resume, plugin uname worng')
             return -1
+
+    def do_set_parameter_alias(self, plugin_id, alias):
+        pass
+
+
 
     def check_range_of_value(self, value, ranges):
         min_val = ranges[0]
