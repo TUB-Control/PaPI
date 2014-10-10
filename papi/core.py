@@ -26,7 +26,7 @@ Contributors
 Stefan Ruppin
 """
 
-__author__ = 'control'
+__author__ = 'ruppin'
 
 import os
 from multiprocessing import Process, Queue
@@ -41,82 +41,83 @@ from papi.ConsoleLog import ConsoleLog
 from papi.gui.gui_main import startGUI
 from papi.data.DOptionalData import DOptionalData
 
+# import contants
+from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE,  \
+    CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
+    CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
 
-
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+    PLUGIN_DPP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
+    PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE
 
 class Core:
     def __init__(self):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
-        :return:
         """
+
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {  'status_event': self.__process_status_event__,
-                                            'data_event': self.__process_data_event__,
-                                            'instr_event': self.__process_instr_event__,
+                                            'data_event':   self.__process_data_event__,
+                                            'instr_event':  self.__process_instr_event__,
         }
 
-        self.__process_status_event_l__ = { 'start_successfull': self.__process_start_successfull__,
-                                            'start_failed': self.__process_start_failed__,
-                                            'alive': self.__process_alive__,
-                                            'join_request': self.__process_join_request__
+        self.__process_status_event_l__ = { 'start_successfull':    self.__process_start_successfull__,
+                                            'start_failed':         self.__process_start_failed__,
+                                            'alive':                self.__process_alive__,
+                                            'join_request':         self.__process_join_request__
         }
 
-        self.__process_data_event_l__ = {   'new_data': self.__process_new_data__,
-                                            'new_block': self.__process_new_block__,
-                                            'new_parameter': self.__process_new_parameter__
+        self.__process_data_event_l__ = {   'new_data':         self.__process_new_data__,
+                                            'new_block':        self.__process_new_block__,
+                                            'new_parameter':    self.__process_new_parameter__
         }
 
-        self.__process_instr_event_l__ = { 'create_plugin': self.__process_create_plugin__,
-                                           'stop_plugin': self.__process_stop_plugin__,
-                                            'close_program':self.__process_close_programm__,
-                                            'subscribe': self.__process_subscribe__,
-                                            'unsubscribe':self.__process_unsubsribe__,
-                                            'set_parameter': self.__process_set_parameter__,
-                                            'pause_plugin': self.__process_pause_plugin__,
-                                            'resume_plugin': self.__process_resume_plugin__
+        self.__process_instr_event_l__ = { 'create_plugin':     self.__process_create_plugin__,
+                                           'stop_plugin':       self.__process_stop_plugin__,
+                                            'close_program':    self.__process_close_programm__,
+                                            'subscribe':        self.__process_subscribe__,
+                                            'unsubscribe':      self.__process_unsubsribe__,
+                                            'set_parameter':    self.__process_set_parameter__,
+                                            'pause_plugin':     self.__process_pause_plugin__,
+                                            'resume_plugin':    self.__process_resume_plugin__
         }
 
-        #creating the main core data object DCore and core queue
-        self.core_data = DCore()
-        self.core_event_queue = Queue()
-        self.core_goOn = 1
-        self.core_id = 0
+        # creating the main core data object DCore and core queue
+        self.core_data          = DCore()
+        self.core_event_queue   = Queue()
+        self.core_goOn          = 1
+        self.core_id            = 0
 
         # setting up the yapsy plguin manager for directory structure
-        self.plugin_manager = PluginManager()
-        self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
+        self.plugin_manager     = PluginManager()
+        self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
         # define gui information. ID and alive status as well as gui queue for events
-        self.gui_event_queue = Queue()
-        self.gui_id = self.core_data.create_id()
-        self.gui_alive = False
+        self.gui_event_queue    = Queue()
+        self.gui_id             = self.core_data.create_id()
+        self.gui_alive          = False
 
         # set information for console logging part (debug information)
-        self.msg_lvl = 1
-        self.log = ConsoleLog(self.msg_lvl,'Core-Process: ')
+        self.log                = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
 
         # define variables for check alive system, e.a. timer and counts
-        self.enable_check_alive_status = True
-        self.alive_intervall = 2  # in seconds
-        self.alive_count_max = 200
-        self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
-        self.alive_count = 0
-        self.gui_alive_count = 0
+        self.alive_intervall            = CORE_ALIVE_CHECK_INTERVAL
+        self.alive_count_max            = CORE_ALIVE_MAX_COUNT
+        self.alive_timer                = Timer(self.alive_intervall,self.check_alive_callback)
+        self.alive_count                = 0
+        self.gui_alive_count            = 0
 
     def run(self):
         """
         Main operation function of core.
-        Got Event loop in here.
-        :return:
+        Event loop is in here.
         """
-        # some start up information
-        self.log.printText(1,'Initialize PaPI - Plugin based Process Interaction')
-        self.log.printText(1,'core process id: '+str(os.getpid()))
 
-        # check PlugIn directory for Plugins and collect them
-        self.plugin_manager.collectPlugins()
+        # some start up information
+        self.log.printText(1,CORE_PAPI_CONSOLE_START_MESSAGE)
+        self.log.printText(1,CORE_CORE_CONSOLE_START_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
         self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
@@ -124,7 +125,8 @@ class Core:
         self.gui_alive = True
 
         # start the check alive timer
-        if self.enable_check_alive_status is True:
+        if CORE_ALIVE_CHECK_ENABLED is True:
+            self.log.printText(1, 'Alive check of processes is enabled')
             self.alive_timer.start()
 
         # core main operation loop
@@ -145,22 +147,22 @@ class Core:
         self.alive_timer.cancel()
 
         # core finished operation and did clean shutdown
-        self.log.printText(1,'Core finished operation')
+        self.log.printText(1, CORE_STOP_CONSOLE_MESSAGE)
 
     def send_alive_check_events(self):
         """
-        function for check_alive_status timer to send check_alive events to all running processes
-        :return:
+        Function for check_alive_status timer to send check_alive events to all running processes
+        This will trigger all correctly running processes to send an answer to core
         """
-        # get list of all plugins [hash: id->dplug]
+        # get list of all plugins [hash: id->dplug], type DPlugin
         dplugs = self.core_data.get_all_plugins()
         for id in dplugs:
-            # get dplug object
+            # get dplugin object
             plug = dplugs[id]
-            # check if this plugins runs in a separate process
+            # check if this plugin runs in a separate process
             if plug.own_process is True:
                 # send check_alive_status event to plugin process (via queue)
-                event = PapiEvent(self.core_id,plug.id,'status_event','check_alive_status',None)
+                event = PapiEvent(self.core_id,plug.id, 'status_event', 'check_alive_status', None)
                 plug.queue.put(event)
 
         # send check_alive_status event to gui process (via queue)
@@ -184,8 +186,8 @@ class Core:
                 if plug.alive_count is self.alive_count:
                     self.log.printText(2,'Plugin '+plug.uname+' is still alive')
                     # change plugin state in DCore
-                    if plug.state != 'paused':
-                        plug.state = 'alive'
+                    if plug.state != PLUGIN_STATE_PAUSE:
+                        plug.state = PLUGIN_STATE_ALIVE
                 else:
                     # Plugin is not alive anymore, so do error handling
                     self.plugin_process_is_dead_error_handler(plug)
@@ -235,7 +237,7 @@ class Core:
         self.send_alive_check_events()
 
         # start a new one shot timer with this callback function
-        if self.enable_check_alive_status is True:
+        if CORE_ALIVE_CHECK_ENABLED is True:
             self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
             self.alive_timer.start()
 
@@ -314,7 +316,7 @@ class Core:
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
         if (dplug != None):
             # plugin exists and sent successfull event, so change it state
-            dplug.state = 'start_successfull'
+            dplug.state = PLUGIN_STATE_START_SUCCESFUL
             return 1
         else:
             # plugin does not exist
@@ -331,7 +333,7 @@ class Core:
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
         if (dplug != None):
             # plugin exists but start failed, so change it state
-            dplug.state = 'start_failed'
+            dplug.state = PLUGIN_STATE_START_FAILED
             return 1
         else:
             # plugin does not exist in DCore
@@ -426,7 +428,7 @@ class Core:
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
                             # plugin exists, check whether it is a ViP or not
-                            if pl.type == 'ViP':
+                            if pl.type == PLUGIN_VIP_IDENTIFIER:
                                 # Because its a ViP, we need a list of destination ID for new_data
                                 id_list.append(pl.id)
                             else:
@@ -465,7 +467,7 @@ class Core:
         :param optData: optional Data Object of event
         :type event: PapiEvent
         :type optData: DOptionalData
-        :return:
+        :return: -1: Error
         """
         # get optData to get information about which plugin to start
         optData = event.get_optional_parameter()
@@ -473,15 +475,21 @@ class Core:
 
         # search yapsy plugin object with plugin_idientifier and check if it exists
         plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
-        if plugin == None:
-            self.log.printText(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
-            return -1
+        if plugin is None:
+            # Plugin does not exist in yapsy manger, maybe it is new
+            # collect plugin information from file system again and recheck
+            self.plugin_manager.collectPlugins()
+            plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
+            if plugin is None:
+                self.log.printText(1,'create_plugin, Plugin with Name  '+optData.plugin_identifier+'  does not exist in file system')
+                return -1
 
         #creates a new plugin id because plugin exsits
         plugin_id = self.core_data.create_id()
 
         # checks if plugin is of not of type ViP or PCP, because these two will run in GUI process
-        if plugin.plugin_object.get_type() != 'ViP' and plugin.plugin_object.get_type() != 'PCP':
+        if plugin.plugin_object.get_type() != PLUGIN_VIP_IDENTIFIER and \
+                        plugin.plugin_object.get_type() != PLUGIN_PCP_IDENTIFIER:
             # So plugin will not run in GUI
             # it will need an own process and queue to function
 
@@ -489,7 +497,7 @@ class Core:
             plugin_queue = Queue()
 
             # decide if plugin will need to get Data from another plugin
-            if plugin.plugin_object.get_type()=='DPP':
+            if plugin.plugin_object.get_type()== PLUGIN_DPP_IDENTIFIER:
                 # plugin will get data from another, so make its execution triggered by events
                 eventTriggered = True
             else:
@@ -771,9 +779,9 @@ class Core:
 
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            if dplugin.state != 'paused':
+            if dplugin.state != PLUGIN_STATE_PAUSE:
                 # set pause info
-                dplugin.state = 'paused'
+                dplugin.state = PLUGIN_STATE_PAUSE
                 # send event to plugin
                 event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
                 dplugin.queue.put(event)
@@ -792,9 +800,9 @@ class Core:
 
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            if dplugin.state == 'paused':
+            if dplugin.state == PLUGIN_STATE_PAUSE:
                 # set resume info
-                dplugin.state = 'resumed'
+                dplugin.state = PLUGIN_STATE_RESUMED
                 # send event to plugin
                 event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
                 dplugin.queue.put(event)
