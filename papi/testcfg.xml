@@ -1,7 +1,11 @@
-<Config Date="2014-10-10 19:57:02" PaPI_version="PLATZHALTER">
+<PaPiConfig Date="2014-10-10 22:49:39" PaPI_version="v_0.1">
   <Plugin uname="P1">
     <Identifier>Plot</Identifier>
     <StartConfig>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
@@ -10,9 +14,9 @@
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
       </Parameter>
       <Parameter Name="size">
         <value>(200,200)</value>
@@ -20,10 +24,6 @@
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
       </Parameter>
     </StartConfig>
     <Subscriptions>
@@ -40,13 +40,13 @@
   <Plugin uname="Sin1">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
       <Parameter Name="amax">
         <value>1</value>
         <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
       </Parameter>
     </StartConfig>
     <Subscriptions>
@@ -62,16 +62,16 @@
   <Plugin uname="Frequenz Block SinMit_f3_Slider">
     <Identifier>Slider</Identifier>
     <StartConfig>
-      <Parameter Name="name">
-        <value>Frequenz Block SinMit_f3</value>
-      </Parameter>
       <Parameter Name="default">
         <value>0.1</value>
       </Parameter>
       <Parameter Name="dplugin_id">
         <value>3</value>
       </Parameter>
+      <Parameter Name="name">
+        <value>Frequenz Block SinMit_f3</value>
+      </Parameter>
     </StartConfig>
     <Subscriptions />
   </Plugin>
-</Config>
+</PaPiConfig>

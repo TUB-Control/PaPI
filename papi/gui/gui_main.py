@@ -23,7 +23,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Sven Knuth, Stefan Ruppin
 """
 
 __author__ = 'knuths'
@@ -31,38 +31,48 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QApplication
+from PySide.QtGui               import QMainWindow, QApplication
+from PySide.QtGui               import QIcon
+from PySide.QtCore              import QSize
 
 
+from papi.ui.gui.main           import Ui_MainGUI
+from papi.gui.manager           import Overview
+from papi.PapiEvent             import PapiEvent
+from papi.data.DGui             import DGui
+from papi.ConsoleLog            import ConsoleLog
+from papi.data.DOptionalData    import DOptionalData
+from papi.gui.add_plugin        import AddPlugin
+from papi.gui.add_subscriber    import AddSubscriber
 
+from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
 
-import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER
 
-# Enable antialiasing for prettier plots
-pg.setConfigOptions(antialias=False)
+from papi.constants import CONFIG_DEFAULT_FILE, CONFIG_LOADER_SUBCRIBE_DELAY, CONFIG_ROOT_ELEMENT_NAME
 
-from papi.ui.gui.main import Ui_MainGUI
-from papi.gui.manager import Overview
-from papi.PapiEvent import PapiEvent
-from papi.data.DGui import DGui
-from papi.ConsoleLog import ConsoleLog
-from papi.data.DOptionalData import DOptionalData
-from papi.gui.add_plugin import AddPlugin
-from papi.gui.add_subscriber import AddSubscriber
-from PySide.QtGui import QIcon
-from PySide.QtCore import QSize
+from papi.constants import CORE_PAPI_VERSION
+
+from multiprocessing import Queue
+
+import os
 
 import datetime
+
 import xml.etree.cElementTree as ET
 
 from yapsy.PluginManager import PluginManager
+
 import importlib.machinery
 
+import pyqtgraph as pg
 
-from multiprocessing import Queue
-import os
+from pyqtgraph import QtGui, QtCore
 
+
+# Enable antialiasing for prettier plots
+pg.setConfigOptions(antialias=False)
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -85,7 +95,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.manager_overview = Overview(self.callback_functions)
         self.manager_overview.dgui = self.gui_data
-        self.setWindowTitle('PaPI')
+        self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
         self.core_queue = core_queue
         self.gui_queue = gui_queue
@@ -95,30 +105,30 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count = 0
 
         # create a timer and set interval for processing events with working loop
-        self.working_interval = 40
+        self.working_interval = GUI_WOKRING_INTERVAL
         QtCore.QTimer.singleShot(self.working_interval, self.gui_working_v2)
 
         # switch case for event processing
-        self.process_event = {  'new_data': self.process_new_data_event,
-                                'close_programm': self.process_close_program_event,
-                                'check_alive_status': self.process_check_alive_status,
-                                'create_plugin':self.process_create_plugin,
-                                'update_meta': self.process_update_meta,
-                                'plugin_closed': self.process_plugin_closed,
-                                'set_parameter': self.process_set_parameter,
-                                'pause_plugin': self.process_pause_plugin,
-                                'resume_plugin': self.process_resume_plugin
+        self.process_event = {  'new_data':             self.process_new_data_event,
+                                'close_programm':       self.process_close_program_event,
+                                'check_alive_status':   self.process_check_alive_status,
+                                'create_plugin':        self.process_create_plugin,
+                                'update_meta':          self.process_update_meta,
+                                'plugin_closed':        self.process_plugin_closed,
+                                'set_parameter':        self.process_set_parameter,
+                                'pause_plugin':         self.process_pause_plugin,
+                                'resume_plugin':        self.process_resume_plugin
         }
 
 
-        self.log = ConsoleLog(1, 'Gui-Process: ')
+        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
         self.plugin_manager = PluginManager()
         self.AddSub = None
         self.AddPlu = None
-        self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
+        self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
-        self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
+        self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.stefans_text_field.setText('1')
         # -------------------------------------
@@ -270,7 +280,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #self.do_save_config()
         #self.do_save_xml_config()
 
-        self.do_load_xml('testcfg.xml')
+        self.do_load_xml(CONFIG_DEFAULT_FILE)
 
     def stefan(self):
         self.count += 1
@@ -278,7 +288,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         op= 0
 
         if op == 0:
-            self.do_save_xml_config('testcfg.xml')
+            self.do_save_xml_config(CONFIG_DEFAULT_FILE)
 
         if op == 1:
             # 1 Sinus IOP und 1 Plot
@@ -383,7 +393,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             # check if it exists
             if dplugin != None:
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
-                if dplugin.state != 'paused':
+                if dplugin.state != PLUGIN_STATE_PAUSE:
                     dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
             else:
                 # plugin does not exist in DGUI
@@ -435,7 +445,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         config = dict(list(start_config.items()) + list(config.items()) )
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == "ViP":
+        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin =self.gui_data.add_plugin(None, None, False, self.gui_queue,plugin,id)
@@ -532,7 +542,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         # get destination plugin from DGUI
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         # check if it exists
-        if dplugin != None:
+        if dplugin is not None:
             # it exists, so call its execute function
             dplugin.plugin.set_parameter_internal(opt.parameter_list)
         else:
@@ -612,11 +622,11 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # build optional data object and add id and block name to it
-        opt = DOptionalData()
-        opt.source_ID = source_id
-        opt.block_name = block_name
-        opt.signals = signal_index
-        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias
+        opt             =   DOptionalData()
+        opt.source_ID   = source_id
+        opt.block_name  = block_name
+        opt.signals     = signal_index
+        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias #TODO delete (just for testing)
         # send event with subscriber id as the origin to CORE
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)
@@ -634,8 +644,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # placeholder for ids
-        source_id = None
-        subscriber_id = None
+        source_id       = None
+        subscriber_id   = None
 
         # get plugin from DGui with given uname
         # purpose: get its id
@@ -679,10 +689,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # create optional data with source id and block_name
-        opt = DOptionalData()
-        opt.source_ID = source_id
-        opt.block_name = block_name
-        opt.signals = signal_index
+        opt             = DOptionalData()
+        opt.source_ID   = source_id
+        opt.block_name  = block_name
+        opt.signals     = signal_index
         # sent event to Core with origin subscriber_id
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
         self.core_queue.put(event)
@@ -700,8 +710,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # placeholders for ids
-        source_id = None
-        subscriber_id = None
+        source_id       = None
+        subscriber_id   = None
 
         # get plugin from DGui with given uname
         # purpose: get its id
@@ -936,11 +946,11 @@ class GUI(QMainWindow, Ui_MainGUI):
             return -1
 
     def do_set_parameter_alias(self, plugin_id, alias):
+        # TODO: DO IT
         pass
 
-
-
     def check_range_of_value(self, value, ranges):
+        # TODO: delete?
         min_val = ranges[0]
         max_val = ranges[1]
         if value > max_val:
@@ -986,16 +996,17 @@ class GUI(QMainWindow, Ui_MainGUI):
         for pl in plugins_to_start:
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        QtCore.QTimer.singleShot(1000, lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
+        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBCRIBE_DELAY,\
+                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
 
     def config_loader_subs(self, pl_to_start, subs_to_make ):
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
     def do_save_xml_config(self, path):
-        root = ET.Element('Config')
+        root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        root.set('PaPI_version','PLATZHALTER')
+        root.set('PaPI_version',CORE_PAPI_VERSION)
 
         # get plugins
         plugins = self.gui_data.get_all_plugins()

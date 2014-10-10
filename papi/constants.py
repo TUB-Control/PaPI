@@ -30,11 +30,12 @@ __author__ = 'ruppin'
 
 
 # CORE CONSTANTS
-CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core-Process: '
+CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
-CORE_PAPI_VERSION               = 'v_0.1'
-CORE_CORE_VERSION               = 'v_0.3'
+
+CORE_PAPI_VERSION               = 'v_0.1' # no spaces allowed
+CORE_CORE_VERSION               = 'v_0.3' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -50,6 +51,13 @@ CORE_ALIVE_MAX_COUNT            = 2
 
 
 # GUI CONSTANTS
+GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
+GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
+GUI_VESION                      = 'v_0.1_dev'
+GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VESION + ' started'
+
+GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
+GUI_WOKRING_INTERVAL            = 40 # in ms
 
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin','papi/plugin']
@@ -70,3 +78,8 @@ PLUGIN_STATE_RESUMED            = 'resumed'
 PLUGIN_STATE_START_SUCCESFUL    = 'start_successfull'
 PLUGIN_STATE_START_FAILED       = 'start_failed'
 PLUGIN_STATE_ALIVE              = 'alive'
+
+# CONFIG/PROFILE SYSTEM CONSTANTS
+CONFIG_DEFAULT_FILE             = 'testcfg.xml'
+CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'
+CONFIG_LOADER_SUBCRIBE_DELAY    = 1000 # ms
