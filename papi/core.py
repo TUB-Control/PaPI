@@ -267,6 +267,28 @@ class Core:
             self.log.printText(1,'update_meta, cannot update meta information because there is no plugin with id: '+str(pl_id))
             return -1
 
+    def handle_parameter_change(self, plugin, parameter_name, value):
+        """
+        This function should be called, when there is a new_data event for changing a parameter value
+        This function will change the value in DCore and update this information to GUI via meta update
+        :param plugin: Plugin which owns the parameter
+        :type plugin: DPlugin
+        :param parameter_name: Name of the parameter which value should be changed
+        :type parameter_name: basestring
+        :param value: new value for the parameter
+        :type value: all possible, depends on plugin
+        :return: -1 for error(parameter with parameter_name does not exist in plugin), 1 for o.k., done
+        """
+        allparas = plugin.get_parameters()
+        if parameter_name in allparas:
+            para = allparas[parameter_name]
+            para.value = value
+            self.update_meta_data_to_gui(plugin.id)
+            return 1
+        else:
+            return -1
+
+
     # ------- Event processing initial stage ---------
     def __process_event__(self,event):
         """
@@ -433,10 +455,13 @@ class Core:
                                 id_list.append(pl.id)
                             else:
                                 # Plugin is not running in GUI, so just 1:1 relation for event and destinations
-                                optPara = event.get_optional_parameter()
-                                optPara.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', optPara)
+                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', opt)
                                 pl.queue.put(new_event)
+
+                                # TODO: Check this experimental code and comment it
+                                if opt.is_parameter is True:
+                                    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                         else:
                             # pluign with sub_id does not exist in DCore of core
                             self.log.printText(1, 'new_data, subscriber plugin with id '+str(sub_id)+' does not exists')

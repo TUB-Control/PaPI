@@ -1,17 +1,13 @@
-<PaPiConfig Date="2014-10-10 22:49:39" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-12 19:54:05" PaPI_version="v_0.1">
   <Plugin uname="P1">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-      </Parameter>
       <Parameter Name="sampleinterval">
         <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
         <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="label_y">
@@ -25,7 +21,15 @@
       <Parameter Name="name">
         <value>Plot_Plugin</value>
       </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
     </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Color_0">0</Parameter>
+      <Parameter Name="Color_1">10</Parameter>
+    </PreviousParameters>
     <Subscriptions>
       <Subscription>
         <data_source>Sin1</data_source>
@@ -49,6 +53,9 @@
         <regex>\d+.{0,1}\d*</regex>
       </Parameter>
     </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
+    </PreviousParameters>
     <Subscriptions>
       <Subscription>
         <data_source>Frequenz Block SinMit_f3_Slider</data_source>
@@ -72,6 +79,7 @@
         <value>Frequenz Block SinMit_f3</value>
       </Parameter>
     </StartConfig>
+    <PreviousParameters />
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
