@@ -1,2 +1,2 @@
-CHAGENLOG
+CHANGENLOG
 ==================

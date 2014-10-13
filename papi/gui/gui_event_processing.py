@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, \
+from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     PLUGIN_ROOT_FOLDER_LIST
 
@@ -143,7 +143,7 @@ class GuiEventProcessing:
         config = dict(list(start_config.items()) + list(config.items()) )
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
+        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER or plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin =self.gui_data.add_plugin(None, None, False, self.gui_queue,plugin,id)

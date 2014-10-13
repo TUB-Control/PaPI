@@ -1,34 +1,34 @@
-<PaPiConfig Date="2014-10-13 13:46:34" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-13 14:10:58" PaPI_version="v_0.1">
   <Plugin uname="plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
       <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
         <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(200,200)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
         <regex>[0-9]+</regex>
-        <value>1</value>
       </Parameter>
       <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
         <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(200,200)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Color_0">0</Parameter>
       <Parameter Name="Color_1">10</Parameter>
+      <Parameter Name="Color_0">0</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -44,11 +44,11 @@
   <Plugin uname="Slider">
     <Identifier>Slider</Identifier>
     <StartConfig>
-      <Parameter Name="default">
-        <value>1</value>
-      </Parameter>
       <Parameter Name="name">
         <value>PCP_Plugin</value>
+      </Parameter>
+      <Parameter Name="default">
+        <value>1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -57,18 +57,44 @@
   <Plugin uname="Sinus">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="amax">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
       <Parameter Name="f">
-        <regex>\d+.{0,1}\d*</regex>
         <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
+      </Parameter>
+      <Parameter Name="amax">
+        <value>1</value>
+        <regex>[0-9]+</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
     </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Slider</data_source>
+        <block Name="Parameter_1">
+          <alias>Frequenz Block SinMit_f3</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Button</data_source>
+        <block Name="Parameter_1">
+          <alias>Frequenz Block SinMit_f3</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Button">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="default">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Button</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
     <Subscriptions />
   </Plugin>
 </PaPiConfig>

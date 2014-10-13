@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.ui.gui.add_subscriber import Ui_AddSubscriber
 from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem
+from papi.constants import PLUGIN_PCP_IDENTIFIER
 
 class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
 
@@ -77,8 +78,6 @@ class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
             dplugin = item.dplugin
             dblock_ids = dplugin.get_dblocks()
 
-            print(dplugin.type)
-
             for dblock_id in dblock_ids:
                 dblock = dblock_ids[dblock_id]
                 block_item = QTreeWidgetItem(self.treeTarget)
@@ -103,7 +102,7 @@ class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
                 # Sort DPluginItem in TreeWidget of Subscriber and Target
                 # ------------------------------
 
-                if subscriber.id is not dplugin_id and len(dplugin.get_parameters()) is not 0:
+                if subscriber.id is not dplugin_id and len(dplugin.get_parameters()) is not 0 and dplugin.type != PLUGIN_PCP_IDENTIFIER:
 
                     target_item = QTreeWidgetItem(self.treeBlock)
 
@@ -140,17 +139,19 @@ class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
             # Sort DPluginItem in TreeWidget of Subscriber and Target
             # ------------------------------
 
-            subscriber_item = QTreeWidgetItem(self.treeSubscriber)
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER:
 
-            subscriber_item.dplugin = dplugin
-            subscriber_item.setText(0, str(dplugin.uname) )
+                subscriber_item = QTreeWidgetItem(self.treeSubscriber)
 
-            # # -------------------------------
-            # # Set amount of blocks and parameters as meta information
-            # # -------------------------------
-            # dblock_ids = dplugin.get_dblocks()
-            #
-            # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
+                subscriber_item.dplugin = dplugin
+                subscriber_item.setText(0, str(dplugin.uname) )
+
+                # # -------------------------------
+                # # Set amount of blocks and parameters as meta information
+                # # -------------------------------
+                # dblock_ids = dplugin.get_dblocks()
+                #
+                # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
 
     def button_clicked(self, button : QAbstractButton):
 
