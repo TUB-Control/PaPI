@@ -997,7 +997,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         root.set('PaPI_version','PLATZHALTER')
 
-        # get plugins
+        # get plugins #
         plugins = self.gui_data.get_all_plugins()
         for dplugin_id in plugins:
             dplugin = plugins[dplugin_id]
