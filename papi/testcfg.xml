@@ -1,10 +1,13 @@
-<PaPiConfig Date="2014-10-13 14:10:58" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-13 14:42:14" PaPI_version="v_0.1">
   <Plugin uname="plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
       </Parameter>
       <Parameter Name="label_y">
         <value>amplitude, V</value>
@@ -14,16 +17,13 @@
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
       <Parameter Name="size">
         <value>(200,200)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -67,7 +67,7 @@
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
+      <Parameter Name="Frequenz Block SinMit_f3">0.82</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -87,11 +87,11 @@
   <Plugin uname="Button">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="default">
-        <value>1</value>
-      </Parameter>
       <Parameter Name="name">
         <value>Button</value>
+      </Parameter>
+      <Parameter Name="default">
+        <value>1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />

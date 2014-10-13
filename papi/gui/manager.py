@@ -43,6 +43,7 @@ from papi.gui.add_plugin import AddPlugin
 
 from yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER
 
 
 class Overview(QMainWindow, Ui_Manager):
@@ -83,17 +84,17 @@ class Overview(QMainWindow, Ui_Manager):
         # Search for PCP Plugins
         # ---------------------------------
 
-        self.plugin_manager = PluginManager()
-        self.plugin_path = "../plugin/"
-
-        self.plugin_manager.setPluginPlaces(
-            [
-                # self.plugin_path + "visual", 'plugin/visual',
-                # self.plugin_path + "io", 'plugin/io',
-                # self.plugin_path + "dpp", 'plugin/dpp',
-                self.plugin_path + "pcp", 'plugin/pcp'
-            ]
-        )
+        # self.plugin_manager = PluginManager()
+        # self.plugin_path = "../plugin/"
+        #
+        # self.plugin_manager.setPluginPlaces(
+        #     [
+        #         # self.plugin_path + "visual", 'plugin/visual',
+        #         # self.plugin_path + "io", 'plugin/io',
+        #         # self.plugin_path + "dpp", 'plugin/dpp',
+        #         self.plugin_path + "pcp", 'plugin/pcp'
+        #     ]
+        # )
 
         # myAction = QAction('RechtsKLick', self)
         # self.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -108,48 +109,48 @@ class Overview(QMainWindow, Ui_Manager):
     #         print(item.object)
     #     print('itemContextMenu')
 
-    def add_plugin(self):
-        AddPlu = AddPlugin()
-        AddPlu.setDGui(self.dgui)
-        AddPlu.show()
-        AddPlu.raise_()
-        AddPlu.activateWindow()
-        r = AddPlu.exec_()
+    # def add_plugin(self):
+    #     AddPlu = AddPlugin()
+    #     AddPlu.setDGui(self.dgui)
+    #     AddPlu.show()
+    #     AddPlu.raise_()
+    #     AddPlu.activateWindow()
+    #     r = AddPlu.exec_()
+    #
+    #     if r == 1 :
+    #         self.callback_functions['do_create_plugin'](AddPlu.plugin_name, AddPlu.plugin_uname)
+    #
+    #     print("ReturnCode ", str(r))
 
-        if r == 1 :
-            self.callback_functions['do_create_plugin'](AddPlu.plugin_name, AddPlu.plugin_uname)
+    # def add_subscribtion(self):
+    #
+    #     AddSub = AddSubscriber()
+    #     AddSub.setDGui(self.dgui)
+    #     AddSub.show()
+    #     AddSub.raise_()
+    #     AddSub.activateWindow()
+    #     r = AddSub.exec_()
+    #
+    #     if r == 1 :
+    #         subscriber_id = AddSub.subscriberID
+    #         target_id = AddSub.targetID
+    #         block_name = AddSub.blockName
+    #
+    #         self.callback_functions['do_subscribe'](subscriber_id, target_id, block_name)
+    #
+    #     print("ReturnCode " , str(r))
 
-        print("ReturnCode ", str(r))
-
-    def add_subscribtion(self):
-
-        AddSub = AddSubscriber()
-        AddSub.setDGui(self.dgui)
-        AddSub.show()
-        AddSub.raise_()
-        AddSub.activateWindow()
-        r = AddSub.exec_()
-
-        if r == 1 :
-            subscriber_id = AddSub.subscriberID
-            target_id = AddSub.targetID
-            block_name = AddSub.blockName
-
-            self.callback_functions['do_subscribe'](subscriber_id, target_id, block_name)
-
-        print("ReturnCode " , str(r))
-
-    def subscribe_action(self):
-        item = self.treePlugin.currentItem()
-        if hasattr(item, 'object'):
-            print(item.object)
-            sub_id = item.object.id
-            target_id = int(self.target_id.text())
-            block_name = str(self.block_name.text())
-#            print(sub_id + " - " + target_id + " - " + block_name)
-            self.callback_functions['do_subscribe'](sub_id, target_id, block_name)
-
-        print('itemCreate')
+#     def subscribe_action(self):
+#         item = self.treePlugin.currentItem()
+#         if hasattr(item, 'object'):
+#             print(item.object)
+#             sub_id = item.object.id
+#             target_id = int(self.target_id.text())
+#             block_name = str(self.block_name.text())
+# #            print(sub_id + " - " + target_id + " - " + block_name)
+#             self.callback_functions['do_subscribe'](sub_id, target_id, block_name)
+#
+#         print('itemCreate')
 
     def plugin_item_changed(self, item):
         """
@@ -348,13 +349,13 @@ class Overview(QMainWindow, Ui_Manager):
             # Sort DPluginItem in TreeWidget
             # ------------------------------
 
-            if dplugin.type == "ViP":
+            if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 plugin_item = QTreeWidgetItem(self.visual_root)
-            if dplugin.type == "IOP":
+            if dplugin.type == PLUGIN_IOP_IDENTIFIER:
                 plugin_item = QTreeWidgetItem(self.io_root)
-            if dplugin.type == "DPP":
+            if dplugin.type == PLUGIN_DPP_IDENTIFIER:
                 plugin_item = QTreeWidgetItem(self.dpp_root)
-            if dplugin.type == "PCB":
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER:
                 plugin_item = QTreeWidgetItem(self.pcb_root)
 
             plugin_item.dplugin = dplugin
