@@ -98,7 +98,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             'do_set_parameter' : self.gui_api.do_set_parameter,
             'do_subscribe'     : self.gui_api.do_subscribe,
             'do_unsubscribe'   : self.gui_api.do_unsubscribe,
-            'do_set_parameter' : self.gui_api.do_set_parameter
+            'do_set_parameter' : self.gui_api.do_set_parameter_uname
         }
 
         self.manager_overview = Overview(self.callback_functions)
