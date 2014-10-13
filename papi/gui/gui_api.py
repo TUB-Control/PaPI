@@ -98,7 +98,7 @@ class Gui_api:
         opt.source_ID   = source_id
         opt.block_name  = block_name
         opt.signals     = signal_index
-        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias #TODO delete (just for testing)
+        opt.subscription_alias =  sub_alias
         # send event with subscriber id as the origin to CORE
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)

@@ -117,6 +117,12 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>41</height>
+    </size>
+   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -133,8 +139,14 @@
        <height>831</height>
       </rect>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="vip">
       <property name="geometry">
@@ -142,7 +154,7 @@
         <x>0</x>
         <y>0</y>
         <width>161</width>
-        <height>738</height>
+        <height>707</height>
        </rect>
       </property>
       <attribute name="label">
@@ -154,12 +166,12 @@
          <x>0</x>
          <y>0</y>
          <width>161</width>
-         <height>191</height>
+         <height>701</height>
         </rect>
        </property>
        <column>
         <property name="text">
-         <string notr="true">1</string>
+         <string>Plugin</string>
         </property>
        </column>
       </widget>
@@ -170,17 +182,67 @@
         <x>0</x>
         <y>0</y>
         <width>161</width>
-        <height>738</height>
+        <height>707</height>
        </rect>
       </property>
       <attribute name="label">
        <string>Process Con. Plugins</string>
       </attribute>
+      <widget class="QTreeWidget" name="treeWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>161</width>
+         <height>701</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
      </widget>
      <widget class="QWidget" name="dpp">
       <attribute name="label">
        <string>Data Pro. Plugin</string>
       </attribute>
+      <widget class="QTreeWidget" name="treeWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>10</y>
+         <width>161</width>
+         <height>691</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="iop">
+      <attribute name="label">
+       <string>IO Plugin</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>161</width>
+         <height>701</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
      </widget>
     </widget>
    </widget>

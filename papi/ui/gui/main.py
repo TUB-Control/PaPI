@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Mon Oct 13 11:56:46 2014
+# Created: Mon Oct 13 14:28:10 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -66,28 +66,44 @@ class Ui_MainGUI(object):
         MainGUI.setMenuBar(self.menubar)
         self.dockWidget_3 = QtGui.QDockWidget(MainGUI)
         self.dockWidget_3.setEnabled(True)
+        self.dockWidget_3.setMinimumSize(QtCore.QSize(100, 41))
         self.dockWidget_3.setFloating(False)
         self.dockWidget_3.setObjectName("dockWidget_3")
         self.dockWidgetContents_3 = QtGui.QWidget()
         self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
         self.toolBox = QtGui.QToolBox(self.dockWidgetContents_3)
         self.toolBox.setGeometry(QtCore.QRect(12, 4, 161, 831))
+        self.toolBox.setMinimumSize(QtCore.QSize(100, 0))
         self.toolBox.setObjectName("toolBox")
         self.vip = QtGui.QWidget()
-        self.vip.setGeometry(QtCore.QRect(0, 0, 161, 738))
+        self.vip.setGeometry(QtCore.QRect(0, 0, 161, 707))
         self.vip.setObjectName("vip")
         self.treeWidget = QtGui.QTreeWidget(self.vip)
-        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 161, 191))
+        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 161, 701))
         self.treeWidget.setObjectName("treeWidget")
-        self.treeWidget.headerItem().setText(0, "1")
         self.toolBox.addItem(self.vip, "")
         self.pcp = QtGui.QWidget()
-        self.pcp.setGeometry(QtCore.QRect(0, 0, 161, 738))
+        self.pcp.setGeometry(QtCore.QRect(0, 0, 161, 707))
         self.pcp.setObjectName("pcp")
+        self.treeWidget_2 = QtGui.QTreeWidget(self.pcp)
+        self.treeWidget_2.setGeometry(QtCore.QRect(0, 0, 161, 701))
+        self.treeWidget_2.setObjectName("treeWidget_2")
+        self.treeWidget_2.headerItem().setText(0, "1")
         self.toolBox.addItem(self.pcp, "")
         self.dpp = QtGui.QWidget()
         self.dpp.setObjectName("dpp")
+        self.treeWidget_3 = QtGui.QTreeWidget(self.dpp)
+        self.treeWidget_3.setGeometry(QtCore.QRect(0, 10, 161, 691))
+        self.treeWidget_3.setObjectName("treeWidget_3")
+        self.treeWidget_3.headerItem().setText(0, "1")
         self.toolBox.addItem(self.dpp, "")
+        self.iop = QtGui.QWidget()
+        self.iop.setObjectName("iop")
+        self.treeWidget_4 = QtGui.QTreeWidget(self.iop)
+        self.treeWidget_4.setGeometry(QtCore.QRect(0, 0, 161, 701))
+        self.treeWidget_4.setObjectName("treeWidget_4")
+        self.treeWidget_4.headerItem().setText(0, "1")
+        self.toolBox.addItem(self.iop, "")
         self.dockWidget_3.setWidget(self.dockWidgetContents_3)
         MainGUI.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget_3)
         self.actionP_Available = QtGui.QAction(MainGUI)
@@ -110,7 +126,7 @@ class Ui_MainGUI(object):
         self.menubar.addAction(self.menuAvailablePlugins.menuAction())
 
         self.retranslateUi(MainGUI)
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainGUI)
 
     def retranslateUi(self, MainGUI):
@@ -125,9 +141,11 @@ class Ui_MainGUI(object):
         self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("MainGUI", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAvailablePlugins.setTitle(QtGui.QApplication.translate("MainGUI", "Plugins", None, QtGui.QApplication.UnicodeUTF8))
+        self.treeWidget.headerItem().setText(0, QtGui.QApplication.translate("MainGUI", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.vip), QtGui.QApplication.translate("MainGUI", "Visual Plugins", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.pcp), QtGui.QApplication.translate("MainGUI", "Process Con. Plugins", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.dpp), QtGui.QApplication.translate("MainGUI", "Data Pro. Plugin", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.iop), QtGui.QApplication.translate("MainGUI", "IO Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.actionP_Available.setText(QtGui.QApplication.translate("MainGUI", "Available", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAP_IO.setText(QtGui.QApplication.translate("MainGUI", "IO", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRP_Visual.setText(QtGui.QApplication.translate("MainGUI", "Visual", None, QtGui.QApplication.UnicodeUTF8))

@@ -121,7 +121,7 @@ class pcp_base(plugin_base):
         pass
 
     def get_type(self):
-        return 'ViP'
+        return 'PCP'
 
     def set_parameter_name(self, name):
         pass

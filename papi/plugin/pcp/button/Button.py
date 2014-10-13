@@ -30,12 +30,17 @@ __author__ = 'knuths'
 
 from papi.plugin.pcp_base import pcp_base
 from PySide.QtGui import QPushButton
-
+from papi.data.DPlugin import DBlock
 
 class Button(pcp_base):
 
     def start_init(self, config=None):
         super(Button, self).start_init(config)
+
+        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        self.send_new_block_list([block])
+
+        self.cur_value = 0
 
     def create_widget(self):
         """
@@ -49,4 +54,10 @@ class Button(pcp_base):
         return button
 
     def clicked(self):
-        print('button pushed: ', self.name )
+
+        if self.cur_value == 0.5:
+            self.cur_value = 0.1
+        else:
+            self.cur_value = 0.5
+
+        self.send_parameter_change(self.cur_value, 'Parameter_1', 'TESTALIAS')

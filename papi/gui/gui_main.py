@@ -101,8 +101,6 @@ class GUI(QMainWindow, Ui_MainGUI):
             'do_set_parameter' : self.gui_api.do_set_parameter
         }
 
-        self.gui_data = DGui()
-
         self.manager_overview = Overview(self.callback_functions)
         self.manager_overview.dgui = self.gui_data
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
