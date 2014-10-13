@@ -84,17 +84,17 @@ class Overview(QMainWindow, Ui_Manager):
         # Search for PCP Plugins
         # ---------------------------------
 
-        # self.plugin_manager = PluginManager()
-        # self.plugin_path = "../plugin/"
-        #
-        # self.plugin_manager.setPluginPlaces(
-        #     [
-        #         # self.plugin_path + "visual", 'plugin/visual',
-        #         # self.plugin_path + "io", 'plugin/io',
-        #         # self.plugin_path + "dpp", 'plugin/dpp',
-        #         self.plugin_path + "pcp", 'plugin/pcp'
-        #     ]
-        # )
+        self.plugin_manager = PluginManager()
+        self.plugin_path = "../plugin/"
+
+        self.plugin_manager.setPluginPlaces(
+            [
+                # self.plugin_path + "visual", 'plugin/visual',
+                # self.plugin_path + "io", 'plugin/io',
+                # self.plugin_path + "dpp", 'plugin/dpp',
+                self.plugin_path + "pcp", 'plugin/pcp'
+            ]
+        )
 
         # myAction = QAction('RechtsKLick', self)
         # self.setContextMenuPolicy(Qt.ActionsContextMenu)
@@ -232,20 +232,20 @@ class Overview(QMainWindow, Ui_Manager):
                 # ---------------------
                 # Set PCPs in table
                 # ---------------------
-                combo_box = QComboBox()
-
-                #TODO: Erzeugt Fehler, da objekte beim Wechsel von Plugins geloescht werden.
-                combo_box.currentIndexChanged.connect( lambda : self.combo_box_parameter_changed(dplugin, dparameter, combo_box))
+#                 combo_box = QComboBox()
 #
-                dparameter_table.setCellWidget(row, 1, combo_box)
-
-                self.plugin_manager.collectPlugins()
-
-                combo_box.addItem("None", None)
-
-                for pluginfo in self.plugin_manager.getAllPlugins():
-
-                    combo_box.addItem(pluginfo.name, pluginfo)
+#                 #TODO: Erzeugt Fehler, da objekte beim Wechsel von Plugins geloescht werden.
+#                 # combo_box.currentIndexChanged.connect( lambda : self.combo_box_parameter_changed(dplugin, dparameter, combo_box))
+# #
+#                 dparameter_table.setCellWidget(row, 1, combo_box)
+#
+#                 self.plugin_manager.collectPlugins()
+#
+#                 combo_box.addItem("None", None)
+#
+#                 for pluginfo in self.plugin_manager.getAllPlugins():
+#
+#                     combo_box.addItem(pluginfo.name, pluginfo)
 
                 # ---------------------
                 # Set Current Value in table
@@ -284,45 +284,45 @@ class Overview(QMainWindow, Ui_Manager):
 
         #print('Parameter Change Request for ' + item.dparameter.name + " of Plugin " + item.dplugin.uname + " Value: " + str(nvalue))
 
-    def combo_box_parameter_changed(self, dplugin, dparameter, box):
-        """
-        This function is always called when
-        an item within a combox box is changed
-
-        :param dplugin:
-        :param dparameter:
-        :param box:
-        :return:
-        """
-        # if dplugin == None or dparameter == None or box == None:
-        #     return 0
-
-        dparameter_name = dparameter.name
-        index = box.currentIndex()
-
-        pcp = box.itemData(index)
-
-        if pcp is None:
-            return 0
-
-        config={
-            'dplugin_id' : {},
-            'default' : {},
-            'name' : {}
-        }
-
-        config['dplugin_id']['value']= str(dplugin.id)
-        config['default']['value']= str(dparameter.default)
-        config['name']['value'] = dparameter_name
-
-
-        self.callback_functions['do_create_plugin'](pcp.name, dparameter.name + "_" + pcp.name, config=config)
-
-        # if pcp is not None:
-        #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
-        # else:
-        #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
-        # pass
+    # def combo_box_parameter_changed(self, dplugin, dparameter, box):
+    #     """
+    #     This function is always called when
+    #     an item within a combox box is changed
+    #
+    #     :param dplugin:
+    #     :param dparameter:
+    #     :param box:
+    #     :return:
+    #     """
+    #     # if dplugin == None or dparameter == None or box == None:
+    #     #     return 0
+    #
+    #     dparameter_name = dparameter.name
+    #     index = box.currentIndex()
+    #
+    #     pcp = box.itemData(index)
+    #
+    #     if pcp is None:
+    #         return 0
+    #
+    #     config={
+    #         'dplugin_id' : {},
+    #         'default' : {},
+    #         'name' : {}
+    #     }
+    #
+    #     config['dplugin_id']['value']= str(dplugin.id)
+    #     config['default']['value']= str(dparameter.default)
+    #     config['name']['value'] = dparameter_name
+    #
+    #
+    #     self.callback_functions['do_create_plugin'](pcp.name, dparameter.name + "_" + pcp.name, config=config)
+    #
+    #     # if pcp is not None:
+    #     #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB " + pcp.name )
+    #     # else:
+    #     #     print('GUI:Manager: PCP Change Request for Parameter ' + dparameter.name + " of Plugin " + dplugin.uname + " PCB None " )
+    #     # pass
 
     def block_item_changed(self, item):
         self.treeSignal.clear()
