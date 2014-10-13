@@ -38,10 +38,10 @@ from PySide.QtCore              import QSize
 
 from papi.ui.gui.main           import Ui_MainGUI
 from papi.gui.manager           import Overview
-from papi.PapiEvent             import PapiEvent
+
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
-from papi.data.DOptionalData    import DOptionalData
+
 from papi.gui.add_plugin        import AddPlugin
 from papi.gui.add_subscriber    import AddSubscriber
 from papi.gui.add_pcp_subscriber import AddPCPSubscriber
@@ -54,19 +54,11 @@ from papi.constants import CONFIG_DEFAULT_FILE
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
 
-from papi.constants import CORE_PAPI_VERSION
+
 
 from multiprocessing import Queue
 
 import os
-
-import datetime
-
-import xml.etree.cElementTree as ET
-
-from yapsy.PluginManager import PluginManager
-
-import importlib.machinery
 
 import pyqtgraph as pg
 
@@ -91,7 +83,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
         self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.scopeArea)
 
-
         self.callback_functions = {
             'do_create_plugin' : self.gui_api.do_create_plugin,
             'do_delete_plugin' : self.gui_api.do_delete_plugin,
@@ -113,21 +104,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count = 0
 
         # create a timer and set interval for processing events with working loop
-        self.working_interval = GUI_WOKRING_INTERVAL
-        QtCore.QTimer.singleShot(self.working_interval, self.gui_working_v2)
-
-        # switch case for event processing
-        self.process_event = {  'new_data':             self.gui_event_processing.process_new_data_event,
-                                'close_programm':       self.gui_event_processing.process_close_program_event,
-                                'check_alive_status':   self.gui_event_processing.process_check_alive_status,
-                                'create_plugin':        self.gui_event_processing.process_create_plugin,
-                                'update_meta':          self.gui_event_processing.process_update_meta,
-                                'plugin_closed':        self.gui_event_processing.process_plugin_closed,
-                                'set_parameter':        self.gui_event_processing.process_set_parameter,
-                                'pause_plugin':         self.gui_event_processing.process_pause_plugin,
-                                'resume_plugin':        self.gui_event_processing.process_resume_plugin
-        }
-
+        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, self.gui_event_processing.gui_working )
 
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
@@ -321,46 +298,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             #self.do_subscribe(3,2,'SinMit_f3',2)
             #self.do_subsribe(4,2,'SinMit_f3')
-
-
-    def gui_working_v2(self):
-        """
-         Event processing loop of gui. Build to get called every 40ms after a run through.
-         Will process all events of the queue at the time of call.
-         Procedure was built this way, so that the processing of an event is not covered by the try/except structure.
-         :type event: PapiEvent
-         :type dplugin: DPlugin
-        """
-        # event flag, true for first loop iteration to enter loop
-        isEvent = True
-        # event object, if there is an event
-        event = None
-        while(isEvent):
-            # look at queue and try to get a new element
-            try:
-                event = self.gui_queue.get_nowait()
-                # if there is a new element, event flag remains true
-                isEvent = True
-            except:
-                # there was no new element, so event flag is set to false
-                isEvent = False
-
-            # check if there was a new element to process it
-            if(isEvent):
-                # get the event operation
-                op = event.get_event_operation()
-                # debug out
-                self.log.printText(2,'Event: ' + op)
-                # process this event
-                self.process_event[op](event)
-
-        # after the loop ended, which means that there are no more new events, a new timer will be created to start
-        # this method again in a specific time
-        QtCore.QTimer.singleShot(self.working_interval, self.gui_working_v2)
-
-
-
-
 
 
 

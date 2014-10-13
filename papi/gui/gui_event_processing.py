@@ -27,7 +27,7 @@ Contributors:
 """
 
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
     PLUGIN_ROOT_FOLDER_LIST
 
 from papi.PapiEvent import PapiEvent
@@ -38,6 +38,7 @@ from yapsy.PluginManager import PluginManager
 
 import importlib.machinery
 
+from pyqtgraph import QtCore
 
 from papi.data.DOptionalData import DOptionalData
 
@@ -54,6 +55,53 @@ class GuiEventProcessing:
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
         self.gui_queue = gui_queue
         self.scopeArea = scopeArea
+
+        # switch case for event processing
+        self.process_event = {  'new_data':             self.process_new_data_event,
+                                'close_programm':       self.process_close_program_event,
+                                'check_alive_status':   self.process_check_alive_status,
+                                'create_plugin':        self.process_create_plugin,
+                                'update_meta':          self.process_update_meta,
+                                'plugin_closed':        self.process_plugin_closed,
+                                'set_parameter':        self.process_set_parameter,
+                                'pause_plugin':         self.process_pause_plugin,
+                                'resume_plugin':        self.process_resume_plugin
+        }
+
+    def gui_working(self):
+        """
+         Event processing loop of gui. Build to get called every 40ms after a run through.
+         Will process all events of the queue at the time of call.
+         Procedure was built this way, so that the processing of an event is not covered by the try/except structure.
+         :type event: PapiEvent
+         :type dplugin: DPlugin
+        """
+        # event flag, true for first loop iteration to enter loop
+        isEvent = True
+        # event object, if there is an event
+        event = None
+        while(isEvent):
+            # look at queue and try to get a new element
+            try:
+                event = self.gui_queue.get_nowait()
+                # if there is a new element, event flag remains true
+                isEvent = True
+            except:
+                # there was no new element, so event flag is set to false
+                isEvent = False
+
+            # check if there was a new element to process it
+            if(isEvent):
+                # get the event operation
+                op = event.get_event_operation()
+                # debug out
+                self.log.printText(2,'Event: ' + op)
+                # process this event
+                self.process_event[op](event)
+
+        # after the loop ended, which means that there are no more new events, a new timer will be created to start
+        # this method again in a specific time
+        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, self.gui_working)
 
     def process_new_data_event(self, event):
         """
