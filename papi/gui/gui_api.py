@@ -178,19 +178,19 @@ class Gui_api:
         # call do_subscribe with ids to subscribe
         self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
 
-    def do_set_parameter(self, plugin_uname, parameter_name, value):
+    def do_set_parameter(self, plugin_id, parameter_name, value):
         """
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
-        :param plugin_uname: name of plugin which owns the parameter
-        :type plugin_uname: basestring
+        :param plugin_id: id of plugin which owns the parameter
+        :type plugin_id: int
         :param parameter_name: name of parameter to change
         :type parameter_name: basestring
         :param value: new parameter value to set
         :type value:
         """
         # get plugin from DGUI
-        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+        dplug = self.gui_data.get_dplugin_by_id(plugin_id)
         # check for existance
         if dplug is not None:
             # it exists
@@ -215,6 +215,20 @@ class Gui_api:
                         e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
                         self.core_queue.put(e)
 
+    def do_set_parameter_uname(self, plugin_uname, parameter_name, value):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to change a parameter of a plugin
+        :param plugin_uname: name of plugin which owns the parameter
+        :type plugin_uname: basestring
+        :param parameter_name: name of parameter to change
+        :type parameter_name: basestring
+        :param value: new parameter value to set
+        :type value:
+        """
+        id = self.do_get_plugin_id_from_uname(plugin_uname)
+        if id is not None:
+            self.do_set_parameter(id, parameter_name, value)
 
     def do_pause_plugin_by_id(self, plugin_id):
         """
@@ -301,10 +315,6 @@ class Gui_api:
             # plugin with uname does not exist
             self.log.printText(1, 'do_resume, plugin uname worng')
             return -1
-
-    def do_set_parameter_alias(self, plugin_id, alias):
-        # TODO: DO IT
-        pass
 
     def do_get_plugin_id_from_uname(self, uname):
         """
