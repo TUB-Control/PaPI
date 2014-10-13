@@ -200,25 +200,21 @@ class Gui_api:
             if parameters is not None:
                 # there is a parameter list
                 # get the parameter with parameter_name
-                p = parameters[parameter_name]
-                # check if this specific parameter exists
-                if p is not None:
-                    # parameter with name parameter_name exists
-                    # check new value against type and range
-                    # TODO: check against range AND type of parameter
-                    if self.check_range_of_value(value,p.range):
-                        # new values meets requirements
-                        # set new value
-                        p.value = value
+                if parameter_name in parameters:
+                    p = parameters[parameter_name]
+                    # check if this specific parameter exists
+                    if p is not None:
+                        # parameter with name parameter_name exists
+
                         # build an event to send this information to Core
                         opt = DOptionalData()
-                        opt.parameter_list = [p]
-                        opt.plugin_id = dplug.id
+                        opt.data = value
+                        opt.is_parameter = True
+                        opt.parameter_alias = parameter_name
+                        opt.block_name = None
                         e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
                         self.core_queue.put(e)
-                    else:
-                        # value did not pass value check
-                        self.log.printText(1,'do_set_parameter, value out of range')
+
 
     def do_pause_plugin_by_id(self, plugin_id):
         """
@@ -338,6 +334,7 @@ class Gui_api:
 
         plugins_to_start = []
         subs_to_make = []
+        parameters_to_change = []
 
         for plugin_xml in root:
             pl_uname = plugin_xml.attrib['uname']
@@ -365,15 +362,25 @@ class Gui_api:
                     alias = alias_xml.text
                     subs_to_make.append([pl_uname,data_source,block_name,signals, alias])
 
+
+            prev_parameters_xml = plugin_xml.find('PreviousParameters')
+            for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                para_name = prev_parameter_xml.attrib['Name']
+                para_value = prev_parameter_xml.text
+                parameters_to_change.append([pl_uname, para_name, float(para_value)])
+
         for pl in plugins_to_start:
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
         QtCore.QTimer.singleShot(CONFIG_LOADER_SUBCRIBE_DELAY,\
-                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
+                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change) )
 
-    def config_loader_subs(self, pl_to_start, subs_to_make ):
+    def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change ):
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
+
+        for para in parameters_to_change:
+            self.do_set_parameter(para[0], para[1], para[2])
 
     def do_save_xml_config(self, path):
         root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
