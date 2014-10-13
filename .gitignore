@@ -9,6 +9,10 @@
 # Astah Backupfile
 *.bak
 
+# PAPI config file
+
+testcfg.xml
+
 # #### GitHub .gitignore template for Python
 
 # Byte-compiled / optimized / DLL files
