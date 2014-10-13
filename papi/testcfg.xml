@@ -1,29 +1,29 @@
-<PaPiConfig Date="2014-10-12 19:54:05" PaPI_version="v_0.1">
-  <Plugin uname="P1">
+<PaPiConfig Date="2014-10-13 13:46:34" PaPI_version="v_0.1">
+  <Plugin uname="plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="sampleinterval">
-        <value>1</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
       <Parameter Name="timewindow">
-        <value>1000</value>
         <regex>[0-9]+</regex>
+        <value>1000</value>
       </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
       </Parameter>
       <Parameter Name="size">
-        <value>(200,200)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(200,200)</value>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <regex>[0-9]+</regex>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -32,7 +32,7 @@
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>Sin1</data_source>
+        <data_source>Sinus</data_source>
         <block Name="SinMit_f3">
           <alias>Frequenz Block SinMit_f3</alias>
           <Signal>1</Signal>
@@ -41,45 +41,34 @@
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Sin1">
+  <Plugin uname="Slider">
+    <Identifier>Slider</Identifier>
+    <StartConfig>
+      <Parameter Name="default">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Sinus">
     <Identifier>Sinus</Identifier>
     <StartConfig>
       <Parameter Name="amax">
-        <value>1</value>
         <regex>[0-9]+</regex>
+        <value>1</value>
       </Parameter>
       <Parameter Name="f">
-        <value>1</value>
         <regex>\d+.{0,1}\d*</regex>
+        <value>1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
     </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Frequenz Block SinMit_f3_Slider</data_source>
-        <block Name="Parameter_1">
-          <alias>Frequenz Block SinMit_f3</alias>
-          <Signal>0</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Frequenz Block SinMit_f3_Slider">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="default">
-        <value>0.1</value>
-      </Parameter>
-      <Parameter Name="dplugin_id">
-        <value>3</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Frequenz Block SinMit_f3</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
     <Subscriptions />
   </Plugin>
 </PaPiConfig>

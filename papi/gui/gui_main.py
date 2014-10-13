@@ -44,6 +44,7 @@ from papi.ConsoleLog            import ConsoleLog
 from papi.data.DOptionalData    import DOptionalData
 from papi.gui.add_plugin        import AddPlugin
 from papi.gui.add_subscriber    import AddSubscriber
+from papi.gui.add_pcp_subscriber import AddPCPSubscriber
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
@@ -126,6 +127,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.plugin_manager = PluginManager()
         self.AddSub = None
         self.AddPlu = None
+        self.AddPCPSub = None
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
@@ -137,6 +139,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         self.buttonCreateSubscription.clicked.connect(self.create_subscription)
+        self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
         self.buttonShowOverview.clicked.connect(self.ap_overview)
         self.buttonExit.clicked.connect(self.close)
 
@@ -165,6 +168,9 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.buttonCreateSubscription.setIcon(addsubscription_icon)
         self.buttonCreateSubscription.setIconSize(QSize(30, 30))
 
+        self.buttonCreatePCPSubscription.setIcon(addsubscription_icon)
+        self.buttonCreatePCPSubscription.setIconSize(QSize(30, 30))
+
         # -------------------------------------
         # Set Tooltipps for buttons
         # -------------------------------------
@@ -172,6 +178,8 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.buttonExit.setToolTip("Exit PaPI")
         self.buttonCreatePlugin.setToolTip("Add New Plugin")
         self.buttonCreateSubscription.setToolTip("Create New Subscription")
+        self.buttonCreatePCPSubscription.setToolTip("Create New PCP Subscription")
+
         self.buttonShowOverview.setToolTip("Show Overview")
 
         # -------------------------------------
@@ -181,6 +189,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.buttonExit.setText('')
         self.buttonCreatePlugin.setText('')
         self.buttonCreateSubscription.setText('')
+        self.buttonCreatePCPSubscription.setText('')
         self.buttonShowLicence.setText('')
         self.buttonShowOverview.setText('')
 
@@ -232,6 +241,24 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         del self.AddSub
         self.AddSub = None
+
+    def create_pcp_subscription(self):
+        """
+        This function is called to create an QDialog, which is used to create a subscription for a single Plugin
+        :return:
+        """
+
+        self.AddPCPSub = AddPCPSubscriber(self.callback_functions)
+
+        self.AddPCPSub.setDGui(self.gui_data)
+        self.AddPCPSub.show()
+        self.AddPCPSub.raise_()
+        self.AddPCPSub.activateWindow()
+        r = self.AddPCPSub.exec_()
+
+        del self.AddPCPSub
+        self.AddPCPSub = None
+
 
     def menu_license(self):
         pass
