@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/add_subscriber.ui'
 #
-# Created: Mon Oct  6 14:58:34 2014
+# Created: Tue Oct  7 15:46:22 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!

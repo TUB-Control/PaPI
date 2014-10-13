@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Mon Oct  6 14:58:34 2014
+# Created: Tue Oct  7 15:46:22 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,6 +61,12 @@ class Ui_MainGUI(object):
         self.menuAvailablePlugins = QtGui.QMenu(self.menubar)
         self.menuAvailablePlugins.setObjectName("menuAvailablePlugins")
         MainGUI.setMenuBar(self.menubar)
+        self.dockWidget_3 = QtGui.QDockWidget(MainGUI)
+        self.dockWidget_3.setObjectName("dockWidget_3")
+        self.dockWidgetContents_3 = QtGui.QWidget()
+        self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
+        self.dockWidget_3.setWidget(self.dockWidgetContents_3)
+        MainGUI.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget_3)
         self.actionP_Available = QtGui.QAction(MainGUI)
         self.actionP_Available.setObjectName("actionP_Available")
         self.actionAP_IO = QtGui.QAction(MainGUI)
@@ -90,8 +96,8 @@ class Ui_MainGUI(object):
         self.buttonShowOverview.setText(QtGui.QApplication.translate("MainGUI", "ShowOverview", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonCreateSubscription.setText(QtGui.QApplication.translate("MainGUI", "CreateSubscription", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonShowLicence.setText(QtGui.QApplication.translate("MainGUI", "ShowLicence", None, QtGui.QApplication.UnicodeUTF8))
-        self.stefans_button.setText(QtGui.QApplication.translate("MainGUI", "Action", None, QtGui.QApplication.UnicodeUTF8))
-        self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Wayne", None, QtGui.QApplication.UnicodeUTF8))
+        self.stefans_button.setText(QtGui.QApplication.translate("MainGUI", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("MainGUI", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAvailablePlugins.setTitle(QtGui.QApplication.translate("MainGUI", "Plugins", None, QtGui.QApplication.UnicodeUTF8))
         self.actionP_Available.setText(QtGui.QApplication.translate("MainGUI", "Available", None, QtGui.QApplication.UnicodeUTF8))

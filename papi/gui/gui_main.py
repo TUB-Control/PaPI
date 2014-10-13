@@ -23,7 +23,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Sven Knuth, Stefan Ruppin
 """
 
 __author__ = 'knuths'
@@ -31,38 +31,48 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QApplication
+from PySide.QtGui               import QMainWindow, QApplication
+from PySide.QtGui               import QIcon
+from PySide.QtCore              import QSize
 
 
+from papi.ui.gui.main           import Ui_MainGUI
+from papi.gui.manager           import Overview
+from papi.PapiEvent             import PapiEvent
+from papi.data.DGui             import DGui
+from papi.ConsoleLog            import ConsoleLog
+from papi.data.DOptionalData    import DOptionalData
+from papi.gui.add_plugin        import AddPlugin
+from papi.gui.add_subscriber    import AddSubscriber
 
+from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
 
-import pyqtgraph as pg
-from pyqtgraph import QtGui, QtCore
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER
 
-# Enable antialiasing for prettier plots
-pg.setConfigOptions(antialias=False)
+from papi.constants import CONFIG_DEFAULT_FILE, CONFIG_LOADER_SUBCRIBE_DELAY, CONFIG_ROOT_ELEMENT_NAME
 
-from papi.ui.gui.main import Ui_MainGUI
-from papi.gui.manager import Overview
-from papi.PapiEvent import PapiEvent
-from papi.data.DGui import DGui
-from papi.ConsoleLog import ConsoleLog
-from papi.data.DOptionalData import DOptionalData
-from papi.gui.add_plugin import AddPlugin
-from papi.gui.add_subscriber import AddSubscriber
-from PySide.QtGui import QIcon
-from PySide.QtCore import QSize
+from papi.constants import CORE_PAPI_VERSION
+
+from multiprocessing import Queue
+
+import os
 
 import datetime
+
 import xml.etree.cElementTree as ET
 
 from yapsy.PluginManager import PluginManager
+
 import importlib.machinery
 
+import pyqtgraph as pg
 
-from multiprocessing import Queue
-import os
+from pyqtgraph import QtGui, QtCore
 
+
+# Enable antialiasing for prettier plots
+pg.setConfigOptions(antialias=False)
 
 class GUI(QMainWindow, Ui_MainGUI):
 
@@ -85,7 +95,7 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.manager_overview = Overview(self.callback_functions)
         self.manager_overview.dgui = self.gui_data
-        self.setWindowTitle('PaPI')
+        self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
         self.core_queue = core_queue
         self.gui_queue = gui_queue
@@ -95,30 +105,30 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.count = 0
 
         # create a timer and set interval for processing events with working loop
-        self.working_interval = 40
+        self.working_interval = GUI_WOKRING_INTERVAL
         QtCore.QTimer.singleShot(self.working_interval, self.gui_working_v2)
 
         # switch case for event processing
-        self.process_event = {  'new_data': self.process_new_data_event,
-                                'close_programm': self.process_close_program_event,
-                                'check_alive_status': self.process_check_alive_status,
-                                'create_plugin':self.process_create_plugin,
-                                'update_meta': self.process_update_meta,
-                                'plugin_closed': self.process_plugin_closed,
-                                'set_parameter': self.process_set_parameter,
-                                'pause_plugin': self.process_pause_plugin,
-                                'resume_plugin': self.process_resume_plugin
+        self.process_event = {  'new_data':             self.process_new_data_event,
+                                'close_programm':       self.process_close_program_event,
+                                'check_alive_status':   self.process_check_alive_status,
+                                'create_plugin':        self.process_create_plugin,
+                                'update_meta':          self.process_update_meta,
+                                'plugin_closed':        self.process_plugin_closed,
+                                'set_parameter':        self.process_set_parameter,
+                                'pause_plugin':         self.process_pause_plugin,
+                                'resume_plugin':        self.process_resume_plugin
         }
 
 
-        self.log = ConsoleLog(1, 'Gui-Process: ')
+        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
         self.plugin_manager = PluginManager()
         self.AddSub = None
         self.AddPlu = None
-        self.plugin_manager.setPluginPlaces(["plugin","papi/plugin"])
+        self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
-        self.log.printText(1,'Gui: Gui process id: '+str(os.getpid()))
+        self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.stefans_text_field.setText('1')
         # -------------------------------------
@@ -250,6 +260,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
         self.close()
 
+
+
+
     def stefan_at_his_best(self):
         #s = self.stefans_text_field.text()
         #val = float(s)
@@ -270,7 +283,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         #self.do_save_config()
         #self.do_save_xml_config()
 
-        self.do_load_xml('testcfg.xml')
+        self.do_load_xml(CONFIG_DEFAULT_FILE)
 
     def stefan(self):
         self.count += 1
@@ -278,29 +291,17 @@ class GUI(QMainWindow, Ui_MainGUI):
         op= 0
 
         if op == 0:
-            self.do_save_xml_config('testcfg.xml')
+            self.do_save_xml_config(CONFIG_DEFAULT_FILE)
 
         if op == 1:
-            # 1 Sinus IOP und 1 Plot
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Sinus'
-            opt.plugin_uname = 'Sinus1'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)  #id 2
-            self.core_queue.put(event)
+            allplugs = self.gui_data.get_all_plugins()
 
-            opt = DOptionalData()
-            opt.plugin_identifier = 'Plot'
-            opt.plugin_uname = 'Plot'
-            event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt) #id 3
-            self.core_queue.put(event)
-
-            time.sleep(2)
-
-            opt =  DOptionalData()
-            opt.source_ID = 2
-            opt.block_name = 'SinMit_f1'
-            event = PapiEvent(3,0,'instr_event','subscribe',opt)
-            self.core_queue.put(event)
+            for plug_id in allplugs:
+                plugin = allplugs[plug_id]
+                allpara = plugin.get_parameters()
+                for para_id in allpara:
+                    para = allpara[para_id]
+                    print(plugin.uname, para.name, para.value)
 
         if op == 2:
             self.do_create_plugin('Sinus','Sinus1') #id 2
@@ -311,6 +312,9 @@ class GUI(QMainWindow, Ui_MainGUI):
 
             #self.do_subscribe(3,2,'SinMit_f3',2)
             #self.do_subsribe(4,2,'SinMit_f3')
+
+
+
 
     def gui_working_v2(self):
         """
@@ -383,7 +387,7 @@ class GUI(QMainWindow, Ui_MainGUI):
             # check if it exists
             if dplugin != None:
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
-                if dplugin.state != 'paused':
+                if dplugin.state != PLUGIN_STATE_PAUSE:
                     dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
             else:
                 # plugin does not exist in DGUI
@@ -435,7 +439,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         config = dict(list(start_config.items()) + list(config.items()) )
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == "ViP":
+        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin =self.gui_data.add_plugin(None, None, False, self.gui_queue,plugin,id)
@@ -532,7 +536,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         # get destination plugin from DGUI
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         # check if it exists
-        if dplugin != None:
+        if dplugin is not None:
             # it exists, so call its execute function
             dplugin.plugin.set_parameter_internal(opt.parameter_list)
         else:
@@ -612,11 +616,11 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # build optional data object and add id and block name to it
-        opt = DOptionalData()
-        opt.source_ID = source_id
-        opt.block_name = block_name
-        opt.signals = signal_index
-        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias
+        opt             =   DOptionalData()
+        opt.source_ID   = source_id
+        opt.block_name  = block_name
+        opt.signals     = signal_index
+        opt.subscription_alias =  'Frequenz Block SinMit_f3' #sub_alias #TODO delete (just for testing)
         # send event with subscriber id as the origin to CORE
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
         self.core_queue.put(event)
@@ -633,38 +637,20 @@ class GUI(QMainWindow, Ui_MainGUI):
         :type block_name: basestring
         :return:
         """
-        # placeholder for ids
-        source_id = None
-        subscriber_id = None
-
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug = self.gui_data.get_dplugin_by_uname(subscriber_uname)
-
-        # check for existance
-        if dplug is not None:
-            # it does exist, so get its id
-            subscriber_id = dplug.id
-        else:
+        subscriber_id = self.do_get_plugin_id_from_uname(subscriber_uname)
+        if subscriber_id is None:
             # plugin with uname does not exist
             self.log.printText(1, 'do_subscribe, sub uname worng')
             return -1
 
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug2 = self.gui_data.get_dplugin_by_uname(source_uname)
-        # check for existance
-        if dplug2 is not None:
-             # it does exist, so get its id
-            source_id = dplug2.id
-        else:
+        source_id = self.do_get_plugin_id_from_uname(source_uname)
+        if source_id is None:
             # plugin with uname does not exist
-            self.log.printText(1, 'do_subscribe, target uname  worng')
+            self.log.printText(1, 'do_subscribe, target uname wrong')
             return -1
 
         # call do_subscribe with ids to subscribe
-        if source_id is not None and subscriber_id is not None:
-            self.do_subscribe(subscriber_id, source_id, block_name, signal_index, sub_alias)
+        self.do_subscribe(subscriber_id, source_id, block_name, signal_index, sub_alias)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
@@ -679,10 +665,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         :return:
         """
         # create optional data with source id and block_name
-        opt = DOptionalData()
-        opt.source_ID = source_id
-        opt.block_name = block_name
-        opt.signals = signal_index
+        opt             = DOptionalData()
+        opt.source_ID   = source_id
+        opt.block_name  = block_name
+        opt.signals     = signal_index
         # sent event to Core with origin subscriber_id
         event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
         self.core_queue.put(event)
@@ -699,136 +685,20 @@ class GUI(QMainWindow, Ui_MainGUI):
         :type block_name: basestring
         :return:
         """
-        # placeholders for ids
-        source_id = None
-        subscriber_id = None
-
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug = self.gui_data.get_dplugin_by_uname(subscriber_uname)
-         # check for existance
-        if dplug is not None:
-            # it does exist, so get its id
-            subscriber_id = dplug.id
-        else:
+        subscriber_id = self.do_get_plugin_id_from_uname(subscriber_uname)
+        if subscriber_id is None:
             # plugin with uname does not exist
-            self.log.printText(1, 'do_subscribe, sub uname worng')
+            self.log.printText(1, 'do_unsubscribe, sub uname worng')
             return -1
 
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug2 = self.gui_data.get_dplugin_by_uname(source_uname)
-        # check for existance
-        if dplug2 is not None:
-            # it does exist, so get its id
-            source_id = dplug2.id
-        else:
+        source_id = self.do_get_plugin_id_from_uname(source_uname)
+        if source_id is None:
             # plugin with uname does not exist
-            self.log.printText(1, 'do_subscribe, target uname  worng')
+            self.log.printText(1, 'do_unsubscribe, target uname wrong')
             return -1
 
-        # call do_subscripe with ids to subscribe
-        if subscriber_id is not None and source_id is not None:
-            self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
-
-    def do_set_signal_choice_parameter(self, subscriber_id, source_id, block_name, signal_index):
-        """
-        Function to set a signal_choice parameter, just adding entrys to the signal list
-        :param subscriber_id: id of plugin which wants to subsrcibe signals
-        :type: subscriber_id: int
-        :param source_id: id of plugin which should provice the data
-        :type source_id: int
-        :param block_name: name of block for the new data
-        :type block_name: basestring
-        :param signal_index: a list of indices for signal of block block_name
-        :type signal_index: list
-        :return:
-        """
-        # get plugin from DGUI
-        dplug = self.gui_data.get_dplugin_by_id(subscriber_id)
-        # check for existance
-        if dplug is not None:
-            # it exists
-            # get its parameter list
-            parameters = dplug.get_parameters()
-            # check if there are any parameter
-            if parameters is not None:
-                # there is a parameter list
-                # get the parameter with parameter_name
-                p = parameters['Signal_choice']
-                # check if this specific parameter exists
-                if p is not None:
-                    # parameter with name parameter_name exists
-                    plug_list = p.value
-                    block_list = plug_list[source_id]
-                    if block_list is not None:
-                        block_inds = block_list[block_name]
-                        if block_inds is not None:
-                            for signal in signal_index:
-                                block_inds.append(signal)
-                        else:
-                            # no block with block_name yet
-                            # add block
-                            block_list[block_name] = []
-                            block_inds = block_list[block_name]
-                            for signal in signal_index:
-                                block_inds.append(signal)
-                    else:
-                        # no pl with this id yet
-                        plug_list[source_id] = {}
-                        block_list = plug_list[source_id]
-                        block_list[block_name] = []
-                        block_inds = block_list[block_name]
-                        for signal in signal_index:
-                            block_inds.append(signal)
-
-
-                    #for signal in signal_index:
-                    #    p.value.append([source_id, block_name, signal])
-                    # build an event to send this information to Core
-                    opt = DOptionalData()
-                    opt.parameter_list = [p]
-                    opt.plugin_id = dplug.id
-                    e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
-                    self.core_queue.put(e)
-
-    def do_remove_signal_choice_parameter(self, subscriber_id, source_id, block_name, signal_index):
-        """
-        Function to remove a signal_choice parameter, just deleting entry from the signal list
-        :param subscriber_id: id of plugin which wants to unsubsrcibe signals
-        :type: subscriber_id: int
-        :param source_id: id of plugin which should not provice data anymore
-        :type source_id: int
-        :param block_name: name of block for the new data
-        :type block_name: basestring
-        :param signal_index: a list of indices for signal of block block_name
-        :type signal_index: list
-        :return:
-        """
-        # get plugin from DGUI
-        dplug = self.gui_data.get_dplugin_by_id(subscriber_id)
-        # check for existance
-        if dplug is not None:
-            # it exists
-            # get its parameter list
-            parameters = dplug.get_parameters()
-            # check if there are any parameter
-            if parameters is not None:
-                # there is a parameter list
-                # get the parameter with parameter_name
-                p = parameters['Signal_choice']
-                # check if this specific parameter exists
-                if p is not None:
-                    # parameter with name parameter_name exists
-                    for signal in signal_index:
-                        if [source_id, block_name, signal] in p.value:
-                            p.value.remove([source_id, block_name, signal])
-                    # build an event to send this information to Core
-                    opt = DOptionalData()
-                    opt.parameter_list = [p]
-                    opt.plugin_id = dplug.id
-                    e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
-                    self.core_queue.put(e)
+        # call do_subscribe with ids to subscribe
+        self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
 
     def do_set_parameter(self, plugin_uname, parameter_name, value):
         """
@@ -884,6 +754,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             opt = DOptionalData()
             event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'pause_plugin', opt)
             self.core_queue.put(event)
+            return 1
+        else:
+            return -1
 
     def do_pause_plugin_by_uname(self, plugin_uname):
         """
@@ -892,13 +765,22 @@ class GUI(QMainWindow, Ui_MainGUI):
         :param plugin_uname: uname of plugin to pause
         :type plugin_uname: basestring
         """
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-         # check for existance
-        if dplug is not None:
-            # it does exist, so get its id
-            self.do_pause_plugin_by_id(dplug.id)
+        # # get plugin from DGui with given uname
+        # # purpose: get its id
+        # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+        #  # check for existance
+        # if dplug is not None:
+        #     # it does exist, so get its id
+        #     self.do_pause_plugin_by_id(dplug.id)
+        # else:
+        #     # plugin with uname does not exist
+        #     self.log.printText(1, 'do_pause, plugin uname worng')
+        #     return -1
+
+        #TODO: Check new code
+        plugin_id = self.do_get_plugin_id_from_uname(plugin_uname)
+        if plugin_id is not None:
+            return self.do_pause_plugin_by_id(plugin_id)
         else:
             # plugin with uname does not exist
             self.log.printText(1, 'do_pause, plugin uname worng')
@@ -915,6 +797,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             opt = DOptionalData()
             event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'resume_plugin', opt)
             self.core_queue.put(event)
+            return 1
+        else:
+            return -1
 
     def do_resume_plugin_by_uname(self, plugin_uname):
         """
@@ -923,24 +808,48 @@ class GUI(QMainWindow, Ui_MainGUI):
         :param plugin_uname: uname of plugin to resume
         :type plugin_uname: basestring
         """
-        # get plugin from DGui with given uname
-        # purpose: get its id
-        dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-         # check for existance
-        if dplug is not None:
-            # it does exist, so get its id
-            self.do_resume_plugin_by_id(dplug.id)
+        # # get plugin from DGui with given uname
+        # # purpose: get its id
+        # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
+        #  # check for existance
+        # if dplug is not None:
+        #     # it does exist, so get its id
+        #     self.do_resume_plugin_by_id(dplug.id)
+        # else:
+        #     # plugin with uname does not exist
+        #     self.log.printText(1, 'do_resume, plugin uname worng')
+        #     return -1
+
+        plugin_id = self.do_get_plugin_id_from_uname(plugin_uname)
+        if plugin_id is not None:
+            return self.do_resume_plugin_by_id(plugin_id)
         else:
             # plugin with uname does not exist
             self.log.printText(1, 'do_resume, plugin uname worng')
             return -1
 
     def do_set_parameter_alias(self, plugin_id, alias):
+        # TODO: DO IT
         pass
 
+    def do_get_plugin_id_from_uname(self, uname):
+        """
+        Returns the plugin id of the plugin with unique name uname
+        :param uname: uname of plugin
+        :type uname: basestring
+        :return: None: plugin with uname does not exist, id: id of plugin
+        """
+        dplugin = self.gui_data.get_dplugin_by_uname(uname)
+         # check for existance
+        if dplugin is not None:
+            # it does exist, so get its id
+            return dplugin.id
+        else:
+            return None
 
 
     def check_range_of_value(self, value, ranges):
+        # TODO: delete?
         min_val = ranges[0]
         max_val = ranges[1]
         if value > max_val:
@@ -986,16 +895,17 @@ class GUI(QMainWindow, Ui_MainGUI):
         for pl in plugins_to_start:
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        QtCore.QTimer.singleShot(1000, lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
+        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBCRIBE_DELAY,\
+                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make) )
 
     def config_loader_subs(self, pl_to_start, subs_to_make ):
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
     def do_save_xml_config(self, path):
-        root = ET.Element('Config')
+        root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        root.set('PaPI_version','PLATZHALTER')
+        root.set('PaPI_version',CORE_PAPI_VERSION)
 
         # get plugins #
         plugins = self.gui_data.get_all_plugins()
@@ -1014,6 +924,14 @@ class GUI(QMainWindow, Ui_MainGUI):
                 for detail in dplugin.startup_config[parameter]:
                     detail_xml = ET.SubElement(para_xml, detail)
                     detail_xml.text = dplugin.startup_config[parameter][detail]
+
+            last_paras_xml = ET.SubElement(pl_xml, 'PreviousParameters')
+            allparas = dplugin.get_parameters()
+            for para_key in allparas:
+                para = allparas[para_key]
+                last_para_xml = ET.SubElement(last_paras_xml,'Parameter')
+                last_para_xml.set('Name',para_key)
+                last_para_xml.text = str(para.value)
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
             subs = dplugin.get_subscribtions()
