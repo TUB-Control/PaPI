@@ -721,19 +721,17 @@ class Core:
         if dplugin is not None:
             # Plugin exists
             # get parameter list of plugin [hash]
-            pl_parameter = dplugin.get_parameters()
-            # looping through all parameter in events parameter list (parameters that changed)
-            for new_para in opt.parameter_list:
-                p = pl_parameter[new_para.name]
-                # check if parameter exists in Dcore list
-                if p is not None:
-                    # it exists, so change its values
-                    p.value = new_para.value
-            # route the event to the destination plugin queue
-            dplugin.queue.put(event)
-            #update GUI
-            self.update_meta_data_to_gui(pl_id)
-            return 1
+            parameters = dplugin.get_parameters()
+
+            para = parameters[opt.parameter_alias]
+            if para is not None:
+                para.value = opt.data
+                # route the event to the destination plugin queue
+                dplugin.queue.put(event)
+                #change event type for plugin
+                #update GUI
+                self.update_meta_data_to_gui(pl_id)
+                return 1
         else:
             # destination plugin does not exist
             self.log.printText(1,'set_paramenter, plugin with id '+str(pl_id)+' not found')

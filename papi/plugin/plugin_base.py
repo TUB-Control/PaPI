@@ -110,6 +110,10 @@ class plugin_base(IPlugin):
                         self.execute(data)
                     if opt.is_parameter is True:
                         self.set_parameter_internal(opt.parameter_alias, opt.data)
+                if op == 'set_parameter':
+                    opt = event.get_optional_parameter()
+                    self.set_parameter_internal(opt.parameter_alias, opt.data)
+
                 if op == 'update_meta':
                     opt = event.get_optional_parameter()
                     self.update_plugin_meta(opt.plugin_object)
