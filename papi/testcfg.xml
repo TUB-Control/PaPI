@@ -1,21 +1,10 @@
-<PaPiConfig Date="2014-10-13 14:42:14" PaPI_version="v_0.1">
-  <Plugin uname="plot">
+<PaPiConfig Date="2014-10-13 15:06:46" PaPI_version="v_0.1">
+  <Plugin uname="Plo1">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <value>1</value>
-        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="timewindow">
         <value>1000</value>
@@ -25,76 +14,71 @@
         <value>(200,200)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
       </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Four_Plot</value>
+      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Color_1">10</Parameter>
       <Parameter Name="Color_0">0</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>Sinus</data_source>
-        <block Name="SinMit_f3">
-          <alias>Frequenz Block SinMit_f3</alias>
+        <data_source>AddIt</data_source>
+        <block Name="AddOut1">
+          <alias />
           <Signal>1</Signal>
-          <Signal>2</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Slider">
-    <Identifier>Slider</Identifier>
+  <Plugin uname="Fourier">
+    <Identifier>Fourier_Rect</Identifier>
     <StartConfig>
-      <Parameter Name="name">
-        <value>PCP_Plugin</value>
+      <Parameter Name="host">
+        <value>130.149.155.73</value>
+        <regex>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}</regex>
       </Parameter>
-      <Parameter Name="default">
-        <value>1</value>
+      <Parameter Name="name">
+        <value>IOD_DPP_template</value>
+      </Parameter>
+      <Parameter Name="port">
+        <value>9999</value>
+        <regex>\d{1,5}</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <Subscriptions />
   </Plugin>
-  <Plugin uname="Sinus">
-    <Identifier>Sinus</Identifier>
-    <StartConfig>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
-      <Parameter Name="amax">
-        <value>1</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-    </StartConfig>
+  <Plugin uname="AddIt">
+    <Identifier>Add</Identifier>
+    <StartConfig />
     <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.82</Parameter>
+      <Parameter Name="Count">1</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>Slider</data_source>
-        <block Name="Parameter_1">
-          <alias>Frequenz Block SinMit_f3</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Button</data_source>
-        <block Name="Parameter_1">
-          <alias>Frequenz Block SinMit_f3</alias>
+        <data_source>Fourier</data_source>
+        <block Name="Rect1">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+          <Signal>3</Signal>
+          <Signal>4</Signal>
+          <Signal>5</Signal>
+          <Signal>6</Signal>
+          <Signal>7</Signal>
+          <Signal>8</Signal>
+          <Signal>9</Signal>
         </block>
       </Subscription>
     </Subscriptions>
-  </Plugin>
-  <Plugin uname="Button">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="name">
-        <value>Button</value>
-      </Parameter>
-      <Parameter Name="default">
-        <value>1</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
   </Plugin>
 </PaPiConfig>
