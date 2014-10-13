@@ -46,6 +46,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="buttonCreatePCPSubscription">
+        <property name="text">
+         <string>CreatePCPSubscription</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="buttonShowLicence">
         <property name="text">
          <string>ShowLicence</string>
@@ -107,10 +114,76 @@
    <addaction name="menuAvailablePlugins"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_3">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3"/>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <widget class="QToolBox" name="toolBox">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>4</y>
+       <width>161</width>
+       <height>831</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="vip">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>161</width>
+        <height>738</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Visual Plugins</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>161</width>
+         <height>191</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="pcp">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>161</width>
+        <height>738</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Process Con. Plugins</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="dpp">
+      <attribute name="label">
+       <string>Data Pro. Plugin</string>
+      </attribute>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <action name="actionP_Available">
    <property name="text">

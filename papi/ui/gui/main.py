@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/main.ui'
 #
-# Created: Tue Oct  7 15:46:22 2014
+# Created: Mon Oct 13 11:56:46 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,6 +31,9 @@ class Ui_MainGUI(object):
         self.buttonCreateSubscription = QtGui.QPushButton(self.centralwidget)
         self.buttonCreateSubscription.setObjectName("buttonCreateSubscription")
         self.horizontalLayout.addWidget(self.buttonCreateSubscription)
+        self.buttonCreatePCPSubscription = QtGui.QPushButton(self.centralwidget)
+        self.buttonCreatePCPSubscription.setObjectName("buttonCreatePCPSubscription")
+        self.horizontalLayout.addWidget(self.buttonCreatePCPSubscription)
         self.buttonShowLicence = QtGui.QPushButton(self.centralwidget)
         self.buttonShowLicence.setObjectName("buttonShowLicence")
         self.horizontalLayout.addWidget(self.buttonShowLicence)
@@ -62,9 +65,29 @@ class Ui_MainGUI(object):
         self.menuAvailablePlugins.setObjectName("menuAvailablePlugins")
         MainGUI.setMenuBar(self.menubar)
         self.dockWidget_3 = QtGui.QDockWidget(MainGUI)
+        self.dockWidget_3.setEnabled(True)
+        self.dockWidget_3.setFloating(False)
         self.dockWidget_3.setObjectName("dockWidget_3")
         self.dockWidgetContents_3 = QtGui.QWidget()
         self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
+        self.toolBox = QtGui.QToolBox(self.dockWidgetContents_3)
+        self.toolBox.setGeometry(QtCore.QRect(12, 4, 161, 831))
+        self.toolBox.setObjectName("toolBox")
+        self.vip = QtGui.QWidget()
+        self.vip.setGeometry(QtCore.QRect(0, 0, 161, 738))
+        self.vip.setObjectName("vip")
+        self.treeWidget = QtGui.QTreeWidget(self.vip)
+        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 161, 191))
+        self.treeWidget.setObjectName("treeWidget")
+        self.treeWidget.headerItem().setText(0, "1")
+        self.toolBox.addItem(self.vip, "")
+        self.pcp = QtGui.QWidget()
+        self.pcp.setGeometry(QtCore.QRect(0, 0, 161, 738))
+        self.pcp.setObjectName("pcp")
+        self.toolBox.addItem(self.pcp, "")
+        self.dpp = QtGui.QWidget()
+        self.dpp.setObjectName("dpp")
+        self.toolBox.addItem(self.dpp, "")
         self.dockWidget_3.setWidget(self.dockWidgetContents_3)
         MainGUI.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget_3)
         self.actionP_Available = QtGui.QAction(MainGUI)
@@ -87,6 +110,7 @@ class Ui_MainGUI(object):
         self.menubar.addAction(self.menuAvailablePlugins.menuAction())
 
         self.retranslateUi(MainGUI)
+        self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainGUI)
 
     def retranslateUi(self, MainGUI):
@@ -95,11 +119,15 @@ class Ui_MainGUI(object):
         self.buttonCreatePlugin.setText(QtGui.QApplication.translate("MainGUI", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonShowOverview.setText(QtGui.QApplication.translate("MainGUI", "ShowOverview", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonCreateSubscription.setText(QtGui.QApplication.translate("MainGUI", "CreateSubscription", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonCreatePCPSubscription.setText(QtGui.QApplication.translate("MainGUI", "CreatePCPSubscription", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonShowLicence.setText(QtGui.QApplication.translate("MainGUI", "ShowLicence", None, QtGui.QApplication.UnicodeUTF8))
         self.stefans_button.setText(QtGui.QApplication.translate("MainGUI", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.stefans_button_2.setText(QtGui.QApplication.translate("MainGUI", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMenu.setTitle(QtGui.QApplication.translate("MainGUI", "Menu", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAvailablePlugins.setTitle(QtGui.QApplication.translate("MainGUI", "Plugins", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.vip), QtGui.QApplication.translate("MainGUI", "Visual Plugins", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.pcp), QtGui.QApplication.translate("MainGUI", "Process Con. Plugins", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.dpp), QtGui.QApplication.translate("MainGUI", "Data Pro. Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.actionP_Available.setText(QtGui.QApplication.translate("MainGUI", "Available", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAP_IO.setText(QtGui.QApplication.translate("MainGUI", "IO", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRP_Visual.setText(QtGui.QApplication.translate("MainGUI", "Visual", None, QtGui.QApplication.UnicodeUTF8))

@@ -34,6 +34,8 @@ from PySide.QtGui import QTreeWidgetItem, QRegExpValidator
 from PySide import QtGui
 from PySide.QtCore import QRegExp
 
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST
+
 from yapsy.PluginManager import PluginManager
 
 class AddPlugin(QDialog, Ui_AddPlugin):
@@ -59,11 +61,7 @@ class AddPlugin(QDialog, Ui_AddPlugin):
         self.plugin_path = "../plugin/"
 
         self.plugin_manager.setPluginPlaces(
-            [
-                self.plugin_path + "visual", 'plugin/visual',
-                self.plugin_path + "io", 'plugin/io',
-                self.plugin_path + "dpp", 'plugin/dpp'
-            ]
+            PLUGIN_ROOT_FOLDER_LIST
         )
         self.setWindowTitle('Available Plugins')
 

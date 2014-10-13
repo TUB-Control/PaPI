@@ -52,7 +52,7 @@ class pcp_base(plugin_base):
 
         self.name = config['name']['value']
 
-        self.__dplugin_id__ = config['dplugin_id']['value']
+#        self.__dplugin_id__ = config['dplugin_id']['value']
 
         self.__dparameter__ = DParameter(None, config['name']['value'])
 
@@ -70,6 +70,9 @@ class pcp_base(plugin_base):
         config = {}
         config['name']={
             'value' : "PCP_Plugin"
+        }
+        config['default']={
+            'value' : '1'
         }
         return config
 
