@@ -32,17 +32,14 @@ __author__ = 'knuths'
 import sys
 import time
 
-from PySide.QtGui import QMainWindow, QTreeWidgetItem, QComboBox, QTableWidget, QTableWidgetItem, QHBoxLayout
-from PySide import QtGui
-from PySide.QtGui import QAction
+from PySide.QtGui import QMainWindow, QTreeWidgetItem, QTableWidgetItem
 from PySide.QtCore import Qt
 
 from papi.ui.gui.manager import Ui_Manager
-from papi.gui.add_subscriber import AddSubscriber
-from papi.gui.add_plugin import AddPlugin
+
 
 from yapsy.PluginManager import PluginManager
-from papi.data.DPlugin import DPlugin
+
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER
 
 
