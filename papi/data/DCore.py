@@ -298,7 +298,7 @@ class DCore():
         else:
             return False
 
-    def subscribe_signals(self, subscriber_id, target_id, dblock_name, signals:[]):
+    def subscribe_signals(self, subscriber_id, target_id, dblock_name, signals):
         """
         This function is used to subscribe a bunch of signals
         :param subscriber_id: DPlugin which likes to subscribes signals of the chosen  dblock
@@ -332,7 +332,7 @@ class DCore():
         return subscriber.subscribe_signals(dblock, signals)
 
 
-    def unsubscribe_signals(self, subscriber_id, target_id, dblock_name, signals:[]):
+    def unsubscribe_signals(self, subscriber_id, target_id, dblock_name, signals):
         """
         This function is used to unubscribe a bunch of signals
         :param subscriber_id: DPlugin which likes to unsubscribes signals of the chosen dblock

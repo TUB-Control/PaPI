@@ -151,7 +151,7 @@ class AddPlugin(QDialog, Ui_AddPlugin):
                 plugin_item.pluginfo = pluginfo
                 plugin_item.setText(0, pluginfo.name)
 
-    def button_clicked(self, button : QAbstractButton):
+    def button_clicked(self, button):
 
         if self.buttonBox.buttonRole(button) == QDialogButtonBox.ApplyRole:
 
