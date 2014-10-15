@@ -68,7 +68,7 @@ class GuiEventProcessing:
                                 'resume_plugin':        self.process_resume_plugin
         }
 
-    def gui_working(self):
+    def gui_working(self, close_mock):
         """
          Event processing loop of gui. Build to get called every 40ms after a run through.
          Will process all events of the queue at the time of call.
@@ -92,16 +92,20 @@ class GuiEventProcessing:
 
             # check if there was a new element to process it
             if(isEvent):
-                # get the event operation
+                                # get the event operation
                 op = event.get_event_operation()
                 # debug out
                 self.log.printText(2,'Event: ' + op)
                 # process this event
-                self.process_event[op](event)
+                if op == 'test_close':
+                    close_mock()
+                else:
+                    self.process_event[op](event)
+
 
         # after the loop ended, which means that there are no more new events, a new timer will be created to start
         # this method again in a specific time
-        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, self.gui_working)
+        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_working(close_mock))
 
     def process_new_data_event(self, event):
         """
