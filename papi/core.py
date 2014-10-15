@@ -51,10 +51,13 @@ from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGI
     PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE
 
 class Core:
-    def __init__(self):
+    def __init__(self, use_gui = True):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
+
+        .. document private functions
+        .. automethod:: _*
         """
 
         # switch case structure for processing incoming events
@@ -98,6 +101,7 @@ class Core:
         self.gui_event_queue    = Queue()
         self.gui_id             = self.core_data.create_id()
         self.gui_alive          = False
+        self.use_gui            = use_gui
 
         # set information for console logging part (debug information)
         self.log                = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
@@ -120,9 +124,11 @@ class Core:
         self.log.printText(1,CORE_CORE_CONSOLE_START_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
-        self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
-        self.gui_process.start()
-        self.gui_alive = True
+        if self.use_gui is True:
+            self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
+            self.gui_process.start()
+            self.gui_alive = True
+        
 
         # start the check alive timer
         if CORE_ALIVE_CHECK_ENABLED is True:
@@ -177,26 +183,27 @@ class Core:
         """
         #get all plugins from core data [hash: id->DPlugin]
         dplugs = self.core_data.get_all_plugins()
-        for id in dplugs:
-            # get DPlugin object
-            plug = dplugs[id]
-            # check if plugins runs in a separate process
-            if plug.own_process is True:
-                # check if counts are equal: equal indicates that plugin is alive
-                if plug.alive_count is self.alive_count:
-                    self.log.printText(2,'Plugin '+plug.uname+' is still alive')
-                    # change plugin state in DCore
-                    if plug.state != PLUGIN_STATE_PAUSE:
-                        plug.state = PLUGIN_STATE_ALIVE
-                else:
-                    # Plugin is not alive anymore, so do error handling
-                    self.plugin_process_is_dead_error_handler(plug)
+        if dplugs is not None:
+            for id in dplugs:
+                # get DPlugin object
+                plug = dplugs[id]
+                # check if plugins runs in a separate process
+                if plug.own_process is True:
+                    # check if counts are equal: equal indicates that plugin is alive
+                    if plug.alive_count is self.alive_count:
+                        self.log.printText(2,'Plugin '+plug.uname+' is still alive')
+                        # change plugin state in DCore
+                        if plug.state != PLUGIN_STATE_PAUSE:
+                            plug.state = PLUGIN_STATE_ALIVE
+                    else:
+                        # Plugin is not alive anymore, so do error handling
+                        self.plugin_process_is_dead_error_handler(plug)
 
-        # check for gui status and do error handling
-        if self.gui_alive_count is self.alive_count:
-            self.log.printText(2,'GUI  is still ALIVE')
-        else:
-            self.gui_is_dead_error_handler()
+            # check for gui status and do error handling
+            if self.gui_alive_count is self.alive_count:
+                self.log.printText(2,'GUI  is still ALIVE')
+            else:
+                self.gui_is_dead_error_handler()
 
     def gui_is_dead_error_handler(self):
         """
@@ -607,7 +614,8 @@ class Core:
         """
 
         # GUI wants to close, so join process
-        self.gui_process.join()
+        if self.gui_alive is True:
+            self.gui_process.join()
 
         # Set gui_alive to false for core loop to know that is it closed
         self.gui_alive = False

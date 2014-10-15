@@ -36,6 +36,14 @@ papi.tests.TestDPlugin module
     :undoc-members:
     :show-inheritance:
 
+papi.tests.TestDSubscription module
+-----------------------------------
+
+.. automodule:: papi.tests.TestDSubscription
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.tests.TestGUI module
 -------------------------
 

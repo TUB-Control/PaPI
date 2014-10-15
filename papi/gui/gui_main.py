@@ -70,13 +70,16 @@ pg.setConfigOptions(antialias=False)
 
 class GUI(QMainWindow, Ui_MainGUI):
 
-    def __init__(self, core_queue, gui_queue,gui_id, parent=None):
+    def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
         super(GUI, self).__init__(parent)
         self.setupUi(self)
 
         self.create_actions()
 
-        self.gui_data = DGui()
+        if gui_data is None:
+            self.gui_data = DGui()
+        else:
+            self.gui_data = gui_data
 
         # TODO:
         # callback functions for create plugin (intead scopeArea parameter) and for delete Plugin in ..GuiEventProcessing
@@ -102,9 +105,6 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.gui_id = gui_id
 
         self.count = 0
-
-        # create a timer and set interval for processing events with working loop
-        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, self.gui_event_processing.gui_working )
 
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
@@ -172,6 +172,10 @@ class GUI(QMainWindow, Ui_MainGUI):
         self.buttonCreateSubscription.setText('')
         self.buttonShowLicence.setText('')
         self.buttonShowOverview.setText('')
+
+    def run(self):
+        # create a timer and set interval for processing events with working loop
+        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
     def set_dgui_data(self, dgui):
         self.gui_data = dgui
@@ -314,6 +318,27 @@ def startGUI(CoreQueue, GUIQueue,gui_id):
     """
     app = QApplication(sys.argv)
     gui = GUI(CoreQueue, GUIQueue,gui_id)
+    gui.run()
+    gui.show()
+    app.exec_()
+
+def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
+    """
+    Function to call to start gui operation
+    :param CoreQueue: link to queue of core
+    :type CoreQueue: Queue
+    :param GUIQueue: queue where gui receives messages
+    :type GUIQueue: Queue
+    :param gui_id: id of gui for events
+    :type gui_id: int
+    :return:
+    """
+    app = QApplication(sys.argv)
+    app.aboutToQuit.connect(app.deleteLater)
+
+    gui = GUI(CoreQueue, GUIQueue,gui_id, data_mock)
+
+    gui.run()
     gui.show()
     app.exec_()
 

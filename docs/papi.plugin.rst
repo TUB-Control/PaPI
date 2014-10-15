@@ -4,18 +4,18 @@ papi.plugin package
 Submodules
 ----------
 
-papi.plugin.TestPL1 module
---------------------------
+papi.plugin.IOP_DPP_template module
+-----------------------------------
 
-.. automodule:: papi.plugin.TestPL1
+.. automodule:: papi.plugin.IOP_DPP_template
     :members:
     :undoc-members:
     :show-inheritance:
 
-papi.plugin.plot module
------------------------
+papi.plugin.pcp_base module
+---------------------------
 
-.. automodule:: papi.plugin.plot
+.. automodule:: papi.plugin.pcp_base
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,14 +24,6 @@ papi.plugin.plugin_base module
 ------------------------------
 
 .. automodule:: papi.plugin.plugin_base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.plugin.template module
----------------------------
-
-.. automodule:: papi.plugin.template
     :members:
     :undoc-members:
     :show-inheritance:

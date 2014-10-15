@@ -60,7 +60,7 @@ GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
 GUI_WOKRING_INTERVAL            = 40 # in ms
 
 # PLUGIN LOCATION CONSTANTS
-PLUGIN_ROOT_FOLDER_LIST         = ['plugin','papi/plugin']
+PLUGIN_ROOT_FOLDER_LIST         = ['plugin','papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''
 PLUGIN_VIP_FOLDER               = ''
 PLUGIN_DPP_FOLDER               = ''
