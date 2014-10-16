@@ -49,7 +49,7 @@ class TestCoreMock(unittest.TestCase):
         self.core_queue.put(create_event)
 
 
-        time.sleep(2)
+        time.sleep(1)
         #
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
@@ -73,7 +73,7 @@ class TestCoreMock(unittest.TestCase):
         self.core_queue.put(create_event)
 
 
-        time.sleep(2)
+        time.sleep(1)
         #
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
@@ -98,7 +98,7 @@ class TestCoreMock(unittest.TestCase):
         self.gui_api.do_create_plugin('Sinus','Sin1')
 
 
-        time.sleep(2)
+        time.sleep(1)
         #
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
@@ -139,7 +139,7 @@ class TestCoreMock(unittest.TestCase):
         self.gui_queue.put(  PapiEvent(1,1,'instr_event','test_close',DOptionalData())  )
 
         # wait for close
-        time.sleep(1)
+        # time.sleep(1)
 
         # join threads
         self.gui_thread.join()
