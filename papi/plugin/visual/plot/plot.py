@@ -213,4 +213,4 @@ class Plot(visual_base):
                 self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
 
         self.signal_count = signal_count
-        self.send_new_parameter_list(self.parameters)
+        #self.send_new_parameter_list(self.parameters)

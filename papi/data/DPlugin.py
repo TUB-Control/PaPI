@@ -119,7 +119,7 @@ class DPlugin(DObject):
         self.type = None
         self.alive_count = 0
 
-    def subscribe_signals(self, dblock: DBlock, signals:[]):
+    def subscribe_signals(self, dblock, signals):
         """
         This function is used to subscribe a bunch of signals
         :param dblock:
@@ -139,7 +139,7 @@ class DPlugin(DObject):
         else:
             return None
 
-    def unsubscribe_signals(self, dblock: DBlock, signals:[]):
+    def unsubscribe_signals(self, dblock, signals):
         """
         This function is used to unsubscribe a bunch of signals
         :param dblock:
@@ -160,7 +160,7 @@ class DPlugin(DObject):
         else:
             return None
 
-    def subscribe(self, dblock: DBlock):
+    def subscribe(self, dblock):
         """
         This plugins subscribes 'dblock' by remembering the dblog id
         :param dblock: DBlock which should be subscribed
@@ -182,7 +182,7 @@ class DPlugin(DObject):
                 return None
         return None
 
-    def unsubscribe(self, dblock:DBlock):
+    def unsubscribe(self, dblock):
         """
         This plugins unsubscribes 'dblock' by forgetting the dblog id
         :param dblock: DBlock which should be unsubscribed
@@ -213,7 +213,7 @@ class DPlugin(DObject):
 
         return copy.deepcopy(self.__subscriptions.copy())
 
-    def add_parameter(self, parameter: DParameter):
+    def add_parameter(self, parameter):
         """
 
         :param parameter:
@@ -226,7 +226,7 @@ class DPlugin(DObject):
         else:
             return False
 
-    def rm_parameter(self, parameter : DParameter):
+    def rm_parameter(self, parameter):
         """
 
         :param parameter_id:
@@ -248,7 +248,7 @@ class DPlugin(DObject):
         """
         return self.__parameters
 
-    def add_dblock(self, dblock: DBlock):
+    def add_dblock(self, dblock):
         """
 
         :param dblock:
@@ -262,7 +262,7 @@ class DPlugin(DObject):
         else:
             return False
 
-    def rm_dblock(self, dblock:DBlock):
+    def rm_dblock(self, dblock):
         """
 
         :param dblock:
@@ -337,7 +337,7 @@ class DPlugin(DObject):
 
 class DSubscription(DObject):
 
-    def __init__(self, dblock: DBlock, signals=None):
+    def __init__(self, dblock, signals=None):
         self.dblock = dblock
         self.alias = None
         if signals is None:

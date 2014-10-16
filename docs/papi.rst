@@ -39,6 +39,14 @@ papi.PapiEvent module
     :undoc-members:
     :show-inheritance:
 
+papi.constants module
+---------------------
+
+.. automodule:: papi.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.core module
 ----------------
 

@@ -153,7 +153,7 @@ class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
                 #
                 # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
 
-    def button_clicked(self, button : QAbstractButton):
+    def button_clicked(self, button):
 
         if self.buttonBox.buttonRole(button) == QDialogButtonBox.ApplyRole:
 
