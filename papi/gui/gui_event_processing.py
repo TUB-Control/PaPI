@@ -30,6 +30,8 @@ from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
     PLUGIN_ROOT_FOLDER_LIST
 
+import papi.error_codes as ERROR
+
 from papi.PapiEvent import PapiEvent
 
 from papi.ConsoleLog import ConsoleLog
@@ -37,6 +39,9 @@ from papi.ConsoleLog import ConsoleLog
 from yapsy.PluginManager import PluginManager
 
 import importlib.machinery
+
+from papi.plugin.visual_base import visual_base
+from papi.plugin.pcp_base import pcp_base
 
 from pyqtgraph import QtCore
 
@@ -143,11 +148,18 @@ class GuiEventProcessing:
         :return:
         """
         opt = event.get_optional_parameter()
+
+        dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
+        if dplugin is not None:
+            # TODO: Should be coded with a callback function for gui replaceability?
+            if isinstance(dplugin.plugin, visual_base) or isinstance(dplugin.plugin, pcp_base):
+                self.scopeArea.removeSubWindow(dplugin.plugin.get_sub_window())
+
         # remove plugin from DGui data base
-        if self.gui_data.rm_dplugin(opt.plugin_id) is True:
-            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+'was removed in GUI')
+        if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
         else:
-            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+'was NOT removed in GUI')
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was NOT removed in GUI')
 
     def process_create_plugin(self, event):
         """

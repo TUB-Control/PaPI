@@ -2,21 +2,17 @@ __author__ = 'stefan'
 
 
 import unittest
-from papi.data.DCore import DCore
 from papi.data.DGui import DGui
 from papi.core import Core
 from papi.gui.gui_main import startGUI_TESTMOCK
 from papi.gui.gui_api import Gui_api
 
 from papi.PapiEvent import PapiEvent
-from papi.data.DOptionalData import DOptionalData
 from threading import Thread
 from multiprocessing import Queue
 
-import os
 import time
 
-from PySide import QtCore
 
 class dummyProcess(object):
     def __init__(self):
@@ -25,55 +21,17 @@ class dummyProcess(object):
         pass
 
 
-class gui_data_mock(object):
-    def __init__(self):
-        self.gui_data = None
-
-
 class TestCoreMock(unittest.TestCase):
 
-
-    def test_create_plugin(self):
-        # create a Plot plugin
-        opt = DOptionalData()
-        opt.plugin_identifier = 'Plot'
-        opt.plugin_uname = 'Plot1'
-        create_event = PapiEvent(1, 1, 'instr_event', 'create_plugin',opt)
-        self.core_queue.put(create_event)
-
-        # create a Plot plugin
-        opt = DOptionalData()
-        opt.plugin_identifier = 'Sinus'
-        opt.plugin_uname = 'Sin1'
-        create_event = PapiEvent(1, 1, 'instr_event', 'create_plugin',opt)
-        self.core_queue.put(create_event)
-
-
-        time.sleep(1)
-        #
-        self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
-        self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
-        self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Sin1'))
-        self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Sin1'))
-
+    DELAY_TIME = 0.2
 
     def test_create_plugin_sub(self):
-        # create a Plot plugin
-        opt = DOptionalData()
-        opt.plugin_identifier = 'Plot'
-        opt.plugin_uname = 'Plot1'
-        create_event = PapiEvent(1, 1, 'instr_event', 'create_plugin',opt)
-        self.core_queue.put(create_event)
-
-        # create a Plot plugin
-        opt = DOptionalData()
-        opt.plugin_identifier = 'Sinus'
-        opt.plugin_uname = 'Sin1'
-        create_event = PapiEvent(1, 1, 'instr_event', 'create_plugin',opt)
-        self.core_queue.put(create_event)
+        # create a Plot and Sinus plugin
+        self.gui_api.do_create_plugin('Plot','Plot1')
+        self.gui_api.do_create_plugin('Sinus','Sin1')
 
 
-        time.sleep(1)
+        time.sleep(TestCoreMock.DELAY_TIME)
         #
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
@@ -82,14 +40,12 @@ class TestCoreMock(unittest.TestCase):
 
         self.gui_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',[1])
 
-        time.sleep(1)
+        time.sleep(TestCoreMock.DELAY_TIME)
 
         subs = self.gui_data.get_dplugin_by_uname('Plot1').get_subscribtions()
         for id in subs:
             dsub = self.gui_data.get_dplugin_by_id(id)
             self.assertEqual('Sin1',dsub.uname)
-
-
 
     def test_do_create_api(self):
 
@@ -98,15 +54,67 @@ class TestCoreMock(unittest.TestCase):
         self.gui_api.do_create_plugin('Sinus','Sin1')
 
 
-        time.sleep(1)
+        time.sleep(TestCoreMock.DELAY_TIME)
         #
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Plot1'))
         self.assertIsNotNone(self.core_data.get_dplugin_by_uname('Sin1'))
         self.assertIsNotNone(self.gui_data.get_dplugin_by_uname('Sin1'))
 
+        self.assertEqual(self.core_data.get_dplugins_count(), 2, 'Core PL Count not 2')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 2, 'Gui PL Count not 2')
+
         self.assertIsNone(self.core_data.get_dplugin_by_uname('Sinus'))
         self.assertIsNone(self.gui_data.get_dplugin_by_uname('Sinus'))
+
+    def test_delete_plugin_no_VIP_PCP(self):
+        PL_1_NAME = 'Sin1'
+        PL_1_IDENT = 'Sinus'
+        self.gui_api.do_create_plugin(PL_1_IDENT,PL_1_NAME)
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNotNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in CoreData with uname '+PL_1_NAME)
+        self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in GuiData with uname '+PL_1_NAME)
+        self.assertEqual(self.core_data.get_dplugins_count(), 1, 'Core PL Count not 1')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 1, 'Gui PL Count not 1')
+
+        self.gui_api.do_delete_plugin_uname(PL_1_NAME)
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in core_data')
+        self.assertIsNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in gui_data')
+        self.assertEqual(self.core_data.get_dplugins_count(), 0, 'Core PL Count not 0')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 0, 'Gui PL Count not 0')
+
+    def test_delete_plugin_is_VIP_PCP(self):
+        PL_1_NAME = 'Plot1'
+        PL_1_IDENT = 'Plot'
+        self.gui_api.do_create_plugin(PL_1_IDENT,PL_1_NAME)
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNotNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in CoreData with uname '+PL_1_NAME)
+        self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in GuiData with uname '+PL_1_NAME)
+        self.assertEqual(self.core_data.get_dplugins_count(), 1, 'Core PL Count not 1')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 1, 'Gui PL Count not 1')
+
+        self.gui_api.do_delete_plugin_uname(PL_1_NAME)
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in core_data')
+        self.assertIsNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in gui_data')
+        self.assertEqual(self.core_data.get_dplugins_count(), 0, 'Core PL Count not 0')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 0, 'Gui PL Count not 0')
+
+        time.sleep(0.1)
+
+        #self.assertEqual(True, False, 'Delete Window handler in GUI and check it')
+
+
+
 
 
 
@@ -118,7 +126,6 @@ class TestCoreMock(unittest.TestCase):
         self.core_thread = Thread(target=core.run)
         self.core_thread.start()
 
-        #self.gui_data_m = gui_data_mock()
 
         self.gui_data = DGui()
 
@@ -130,13 +137,14 @@ class TestCoreMock(unittest.TestCase):
         self.core_queue = core.core_event_queue
         self.gui_queue = core.gui_event_queue
         self.core_data = core.core_data
-        #self.gui_data = self.gui_data_m.gui_data
 
         self.gui_api = Gui_api(self.gui_data, self.core_queue, core.gui_id)
 
+        time.sleep(0.8)
+
     def tearDown(self):
         # close Gui
-        self.gui_queue.put(  PapiEvent(1,1,'instr_event','test_close',DOptionalData())  )
+        self.gui_queue.put(  PapiEvent(1,1,'instr_event','test_close', None)  )
 
         # wait for close
         # time.sleep(1)
@@ -144,23 +152,6 @@ class TestCoreMock(unittest.TestCase):
         # join threads
         self.gui_thread.join()
         self.core_thread.join()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

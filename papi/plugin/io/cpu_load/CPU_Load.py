@@ -56,7 +56,7 @@ class CPU_Load(plugin_base):
 
 
     def quit(self):
-        print('Sinus: will quit')
+        print('CPU Load: will quit')
 
     def get_type(self):
         return 'IOP'

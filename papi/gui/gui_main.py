@@ -284,14 +284,9 @@ class GUI(QMainWindow, Ui_MainGUI):
             self.gui_api.do_save_xml_config(CONFIG_DEFAULT_FILE)
 
         if op == 1:
-            allplugs = self.gui_data.get_all_plugins()
-
-            for plug_id in allplugs:
-                plugin = allplugs[plug_id]
-                allpara = plugin.get_parameters()
-                for para_id in allpara:
-                    para = allpara[para_id]
-                    print(plugin.uname, para.name, para.value)
+            self.gui_api.do_delete_plugin_uname('Plot1')
+            self.gui_api.do_delete_plugin_uname('SInus1')
+            self.gui_api.do_delete_plugin_uname('Butt')
 
         if op == 2:
             self.do_create_plugin('Sinus','Sinus1') #id 2

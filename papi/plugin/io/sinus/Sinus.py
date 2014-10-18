@@ -30,6 +30,7 @@ from papi.plugin.plugin_base import plugin_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
+
 import time
 import math
 import numpy

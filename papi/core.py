@@ -50,6 +50,10 @@ from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGI
     PLUGIN_DPP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
     PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE
 
+import papi.error_codes as ERROR
+
+import papi.event as Event
+
 class Core:
     def __init__(self, use_gui = True):
         """
@@ -168,11 +172,11 @@ class Core:
             # check if this plugin runs in a separate process
             if plug.own_process is True:
                 # send check_alive_status event to plugin process (via queue)
-                event = PapiEvent(self.core_id,plug.id, 'status_event', 'check_alive_status', None)
+                event = Event.status.CheckAliveStatus(self.core_id, plug.id, None)
                 plug.queue.put(event)
 
         # send check_alive_status event to gui process (via queue)
-        event = PapiEvent(self.core_id,self.gui_id,'status_event','check_alive_status',None)
+        event = Event.status.CheckAliveStatus(self.core_id, self.gui_id, None)
         self.gui_event_queue.put(event)
 
     def handle_alive_situation(self):
@@ -416,9 +420,12 @@ class Core:
                     # GUI is still alive, so tell GUI, that this plugin was closed
                     opt = DOptionalData()
                     opt.plugin_id = dplugin.id
-                    event = PapiEvent(self.core_id,self.gui_id,'status_event','plugin_closed',opt)
+                   # event = PapiEvent(self.core_id,self.gui_id,'status_event','plugin_closed',opt)
+                    event = Event.status.PluginClosed(self.core_id, self.gui_id, opt)
                     self.gui_event_queue.put(event)
-                return 1
+
+                self.log.printText(1, 'join_request, plugin with id '+str(dplugin.id) + ' was joined (uname: ' +dplugin.uname+' )')
+            return ERROR.NO_ERROR
         else:
             # Plug does not exist
             self.log.printText(1,'join_request, Event with id ' +str(event.get_originID())+ ' but plugin does not exist')
@@ -463,10 +470,10 @@ class Core:
                             else:
                                 # Plugin is not running in GUI, so just 1:1 relation for event and destinations
                                 opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                new_event = PapiEvent(oID, [pl.id], 'data_event', 'new_data', opt)
+                                new_event = Event.data.NewData(oID, [pl.id], opt)
                                 pl.queue.put(new_event)
 
-                                # TODO: Check this experimental code and comment it
+                                # this event will be a new parameter value for a plugin
                                 if opt.is_parameter is True:
                                     self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                         else:
@@ -477,7 +484,7 @@ class Core:
                     # which will need to get this new data event
                     if len(id_list)> 0:
                         # send new_data event to GUI with id_list of destinations
-                        new_event = PapiEvent(oID,id_list,'data_event','new_data',event.get_optional_parameter())
+                        new_event = Event.data.NewData(oID, id_list, event.get_optional_parameter())
                         self.gui_event_queue.put(new_event)
                     # process new_data seemed correct
                     return 1
@@ -559,7 +566,7 @@ class Core:
             optData.plugin_type = dplug.type
 
             # send create_plugin event to GUI for local creation, now with new information like id and type
-            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
+            event = Event.instruction.CreatePlugin(0, self.gui_id, optData)
             self.gui_event_queue.put(event)
             return 1
         else:
@@ -578,7 +585,7 @@ class Core:
             optData.plugin_type = dplug.type
 
             # send create_plugin event to GUI for local creation, now with new information like id and type
-            event = PapiEvent(0,self.gui_id,'instr_event','create_plugin',optData)
+            event = Event.instruction.CreatePlugin(0, self.gui_id, optData)
             self.gui_event_queue.put(event)
             self.log.printText(2,'core sent create event to gui for plugin: '+str(optData.plugin_uname))
             return 1
@@ -598,12 +605,27 @@ class Core:
         dplugin = self.core_data.get_dplugin_by_id(id)
         if dplugin is not None:
             # dplugin exist, get queue and route event to plugin
-            dplugin.queue.put(event)
-            return 1
+            if dplugin.own_process is True:
+                # dplugin is not running in gui
+                # tell plugin to quit
+                dplugin.queue.put(event)
+            else:
+                # plugin is running in GUI
+                # tell gui to close plugin
+                opt = DOptionalData()
+                opt.plugin_id = id
+                dplugin.queue.put( Event.status.PluginClosed(self.core_id, self.gui_id, opt))
+
+                # remove plugin from DCore
+                if self.core_data.rm_dplugin(id) != ERROR.NO_ERROR:
+                    self.log.printText(1, 'stop plugin, unable to remove plugin von core_data')
+                    return ERROR.UNKNOWN_ERROR
+
+            return ERROR.NO_ERROR
         else:
             # DPlugin does not exist
             self.log.printText(1,'stop_plugin, plugin with id '+str(id)+' not found')
-            return -1
+            return ERROR.UNKNOWN_ERROR
 
     def __process_close_programm__(self,event):
         """
@@ -630,7 +652,7 @@ class Core:
             dplugin = all_plugins[dplugin_key]
             # just send event to plugins running in own process
             if dplugin.own_process:
-                event = PapiEvent(0,dplugin.id,'instr_event','stop_plugin',None)
+                event = Event.instruction.StopPlugin(0, dplugin.id, None)
                 dplugin.queue.put(event)
             else:
                 toDelete.append(dplugin.id)
@@ -814,7 +836,8 @@ class Core:
                 # set pause info
                 dplugin.state = PLUGIN_STATE_PAUSE
                 # send event to plugin
-                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
+                # event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
+                event = Event.instruction.PausePlugin(self.core_id, pl_id, None)
                 dplugin.queue.put(event)
 
                 # update meta for Gui
@@ -835,8 +858,10 @@ class Core:
                 # set resume info
                 dplugin.state = PLUGIN_STATE_RESUMED
                 # send event to plugin
-                event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
+                # event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
+                event = Event.instruction.ResumePlugin(self.core_id, pl_id, None)
                 dplugin.queue.put(event)
 
                 # update meta for Gui
                 self.update_meta_data_to_gui(pl_id)
+

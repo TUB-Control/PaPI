@@ -28,7 +28,7 @@ Stefan Ruppin
 
 __author__ = 'control'
 
-class PapiEvent(object):
+class PapiEventBase(object):
     count = 0
 
     def __init__(self,orID,destID,type_,op,optParameter):
@@ -50,7 +50,7 @@ class PapiEvent(object):
         self.__eventtype__ = type_
         self.__operation__ = op
         self.__optional_parameter__ = optParameter
-        PapiEvent.count += 1
+        PapiEventBase.count += 1
 
     def get_originID(self):
         return self.__originID__

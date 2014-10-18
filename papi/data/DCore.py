@@ -27,6 +27,9 @@ Sven Knuth
 """
 from papi.data.DPlugin import DPlugin, DBlock
 from papi.ConsoleLog import ConsoleLog
+
+import papi.error_codes as ERROR
+
 __author__ = 'control'
 
 import copy
@@ -97,9 +100,9 @@ class DCore():
 
             del self.__DPlugins[dplugin_id]
 
-            return True
+            return ERROR.NO_ERROR
         else:
-            return False
+            return ERROR.UNKNOWN_ERROR
 
     def get_dplugins_count(self):
         """

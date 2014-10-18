@@ -28,12 +28,17 @@ Stefan Ruppin
 __author__ = 'stefan'
 
 from papi.PapiEvent import PapiEvent
+
+import papi.event as Event
+
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION
 
 from pyqtgraph import QtCore
+
+import papi.error_codes as ERROR
 
 import datetime
 import time
@@ -71,15 +76,35 @@ class Gui_api:
         event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)
         self.core_queue.put(event)
 
-    def do_delete_plugin(self, uname):
+    def do_delete_plugin(self, id):
+        """
+        Delete plugin with given id.
+        :param id: Plugin id to delete
+        :type id: int
+        :return:
+        """
+
+        opt = DOptionalData()
+
+        #event = PapiEvent(self.gui_id, id, 'instr_event', 'delete_plugin', opt)
+
+        event = Event.instruction.StopPlugin(self.gui_id, id, None)
+
+        self.core_queue.put(event)
+
+    def do_delete_plugin_uname(self, uname):
         """
         Delete plugin with given uname.
         :param uname: Plugin uname to delete
         :type uname: basestring
         :return:
         """
-        #TODO: implement
-        self.log.printText(1, " Do delete plugin with uname " + uname + '..NOT IMPLEMENTED YET ')
+        pl_id = self.do_get_plugin_id_from_uname(uname)
+
+        if pl_id is not None:
+            self.do_delete_plugin(pl_id)
+        else:
+            self.log.printText(1, " Do delete plugin with uname " + uname + ' failed')
 
     def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None, sub_alias = None):
         """

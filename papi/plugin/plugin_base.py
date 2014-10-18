@@ -36,6 +36,7 @@ from papi.data.DOptionalData import DOptionalData
 from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DPlugin,DBlock
 
+import papi.event as Event
 
 
 class plugin_base(IPlugin):
@@ -70,16 +71,16 @@ class plugin_base(IPlugin):
         # call start_init function to use developers init
         if self.start_init(config):
             # report start successfull event
-            event = PapiEvent(self.__id__,0,'status_event','start_successfull',None)
+            event = Event.status.StartSuccessfull(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
         else:
             # init failed, so report it to core
-            event = PapiEvent(self.__id__,0,'status_event','start_failed',None)
+            event = Event.status.StartFailed(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
             # end plugin
             self.goOn = 0
             # sent join request to core
-            event = PapiEvent(self.__id__,0,'status_event','join_request',None)
+            event = Event.status.JoinRequest(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
 
         # main working loop
@@ -92,7 +93,7 @@ class plugin_base(IPlugin):
                 if (op=='stop_plugin'):
                     self.quit()
                     self.goOn = 0
-                    event = PapiEvent(self.__id__,0,'status_event','join_request',None)
+                    event = Event.status.JoinRequest(self.__id__, 0, None)
                     self._Core_event_queue__.put(event)
                 if op=='pause_plugin':
                     self.paused = True
@@ -101,7 +102,7 @@ class plugin_base(IPlugin):
                     self.paused = False
                     self.resume()
                 if op=='check_alive_status':
-                    alive_event = PapiEvent(self.__id__,0,'status_event','alive',None)
+                    alive_event = Event.status.Alive(self.__id__, 0, None)
                     self._Core_event_queue__.put(alive_event)
                 if op=='new_data' and self.paused is not True:
                     opt = event.get_optional_parameter()
@@ -136,7 +137,9 @@ class plugin_base(IPlugin):
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
-        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
+        #event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
+
+        event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def send_parameter_change(self, data, block_name, alias):
@@ -145,20 +148,20 @@ class plugin_base(IPlugin):
         opt.is_parameter = True
         opt.block_name = block_name
         opt.parameter_alias = alias
-        event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
+        event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def send_new_block_list(self, blocks):
         opt = DOptionalData()
         opt.block_list = blocks
-        event = PapiEvent(self.__id__,0,'data_event','new_block',opt)
+        event = Event.data.NewBlock(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def send_new_parameter_list(self, parameters):
         opt = DOptionalData()
         opt.parameter_list = parameters
 
-        event = PapiEvent(self.__id__,0,'data_event','new_parameter',opt)
+        event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def update_plugin_meta(self, dplug):
