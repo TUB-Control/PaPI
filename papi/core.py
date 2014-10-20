@@ -644,6 +644,13 @@ class Core:
                 dplugin.queue.put(event)
 
     def __process_plugin_stopped__(self, event):
+        """
+        Process plugin_stopped event.
+        Will change plugins state and delete its parameters and blocks.
+        Will update meta to gui
+        :param event:
+        :return:
+        """
         pl_id = event.get_originID()
         plugin = self.core_data.get_dplugin_by_id(pl_id)
         if plugin is not None:
@@ -651,8 +658,27 @@ class Core:
 
             self.core_data.rm_all_subscribers(pl_id)
 
-            # TODO: delete blocks and parameters
+            # delete all blocks of plugin
+            blocks = plugin.get_dblocks()
+            block_to_delete = []
+            for block_key in blocks:
+                block = blocks[block_key]
+                block_to_delete.append(block)
 
+            for b in block_to_delete:
+                plugin.rm_dblock(b)
+
+            # delete all parameters of plugin
+            paras = plugin.get_parameters()
+            paras_to_delete = []
+            for key in paras:
+                para = paras[key]
+                paras_to_delete.append(para)
+
+            for p in paras_to_delete:
+                plugin.rm_parameter(p)
+
+            # update to gui
             self.update_meta_data_to_gui(pl_id)
 
     def __process_close_programm__(self,event):

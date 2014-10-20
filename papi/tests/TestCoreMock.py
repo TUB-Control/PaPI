@@ -205,6 +205,12 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
         self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
 
+        self.assertNotEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+        self.assertNotEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+
+        self.assertNotEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
+        self.assertNotEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
+
 
         self.gui_api.do_stopReset_plugin_uname('Sinus1')
 
@@ -218,12 +224,24 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_STOPPED)
 
 
+        self.assertEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+        self.assertEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+
+        self.assertEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
+        self.assertEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
+
         self.gui_api.do_start_plugin_uname('Sinus1')
 
         time.sleep(TestCoreMock.DELAY_TIME)
 
         self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_START_SUCCESFUL)
         self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_START_SUCCESFUL)
+
+        self.assertNotEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+        self.assertNotEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_dblocks().keys() ), 0)
+
+        self.assertNotEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
+        self.assertNotEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
 
 
 
