@@ -244,16 +244,118 @@ class TestCoreMock(unittest.TestCase):
         self.assertNotEqual( len( self.core_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
         self.assertNotEqual( len( self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters().keys() ), 0)
 
+    def test_gui_api_valid_name(self):
+
+        Plugins = [  ['Sinus1', 'Sinus'], ['ABC', 'Sinus'] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
 
 
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('test') )
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('Plot1') )
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('ABWDDJDWKADOI123347AJBHBEH') )
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('sjdfhefuiefhu2334823482ujdjbdj') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique('eiwofueifheufh)wejkdhejdh') )
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('Sinus2') )
+        self.assertTrue( self.gui_api.do_test_name_to_be_unique('ABCD') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique('tt_tt') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique(' ttewf') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique('Sinus1') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique('ABC') )
+        self.assertFalse( self.gui_api.do_test_name_to_be_unique('tt tt') )
+
+    def test_do_subscribe(self):
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
 
 
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+        self.gui_api.do_subscribe_uname('Plot1','Sinus1','SinMit_f3',[1])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        subs = self.gui_data.get_dplugin_by_uname('Plot1').get_subscribtions()
+        for id in subs:
+            dsub = self.gui_data.get_dplugin_by_id(id)
+            self.assertEqual('Sinus1',dsub.uname)
+
+    def test_do_unsubscribe(self):
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
 
 
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+        self.gui_api.do_subscribe_uname('Plot1','Sinus1','SinMit_f3',[1])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        subs = self.gui_data.get_dplugin_by_uname('Plot1').get_subscribtions()
+        for id in subs:
+            dsub = self.gui_data.get_dplugin_by_id(id)
+            self.assertEqual('Sinus1',dsub.uname)
+
+        self.gui_api.do_unsubscribe_uname('Plot1', 'Sinus1', 'SinMit_f3',[])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
 
 
+        subs = self.gui_data.get_dplugin_by_uname('Plot1').get_subscribtions()
+        self.assertEqual(len(subs.keys()), 0)
+
+    def test_do_set_parameter(self):
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
 
 
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+        self.gui_api.do_subscribe_uname('Plot1','Sinus1','SinMit_f3',[1])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertEqual(0.1, \
+                         self.core_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
+
+        self.gui_api.do_set_parameter_uname('Sinus1', 'Frequenz Block SinMit_f3', 0.9)
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertEqual(0.9, \
+                         self.core_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
+        self.assertEqual(0.9, \
+                         self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
 
 
 

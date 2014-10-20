@@ -50,7 +50,8 @@ from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEV
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
     PLUGIN_DPP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
-    PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE, PLUGIN_STATE_STOPPED
+    PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE, PLUGIN_STATE_STOPPED, \
+    PLUGIN_STATE_DEAD
 
 import papi.error_codes as ERROR
 
@@ -202,8 +203,7 @@ class Core:
                     if plug.alive_count is self.alive_count:
                         self.log.printText(2,'Plugin '+plug.uname+' is still alive')
                         # change plugin state in DCore
-                        #if plug.state != PLUGIN_STATE_PAUSE:
-                        #   plug.state = PLUGIN_STATE_ALIVE
+                        plug.alive_state = PLUGIN_STATE_ALIVE
                     else:
                         # Plugin is not alive anymore, so do error handling
                         self.plugin_process_is_dead_error_handler(plug)
@@ -231,7 +231,7 @@ class Core:
         """
         self.log.printText(1,'Plugin '+dplug.uname+' is DEAD')
         self.log.printText(1,'core count: '+str(self.alive_count)+' vs. '+ str(dplug.alive_count)+' :plugin count')
-        # dplug.state = 'dead'
+        dplug.alive_state =  PLUGIN_STATE_DEAD
         self.update_meta_data_to_gui(dplug.id)
 
     def check_alive_callback(self):

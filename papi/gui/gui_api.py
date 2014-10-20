@@ -27,7 +27,6 @@ Stefan Ruppin
 """
 __author__ = 'stefan'
 
-from papi.PapiEvent import PapiEvent
 
 import papi.event as Event
 
@@ -75,7 +74,7 @@ class Gui_api:
         opt.autostart = autostart
 
         # create event object and sent it to core
-        event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)
+        event = Event.instruction.CreatePlugin(self.gui_id, 0, opt)
         self.core_queue.put(event)
 
     def do_delete_plugin(self, id):
@@ -85,11 +84,6 @@ class Gui_api:
         :type id: int
         :return:
         """
-
-        opt = DOptionalData()
-
-        #event = PapiEvent(self.gui_id, id, 'instr_event', 'delete_plugin', opt)
-
         event = Event.instruction.StopPlugin(self.gui_id, id, None)
 
         self.core_queue.put(event)
@@ -178,7 +172,7 @@ class Gui_api:
         opt.signals     = signal_index
         opt.subscription_alias =  sub_alias
         # send event with subscriber id as the origin to CORE
-        event = PapiEvent(subscriber_id, 0, 'instr_event', 'subscribe', opt)
+        event = Event.instruction.Subscribe(subscriber_id, 0, opt)
         self.core_queue.put(event)
 
     def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None, sub_alias = None):
@@ -226,7 +220,7 @@ class Gui_api:
         opt.block_name  = block_name
         opt.signals     = signal_index
         # sent event to Core with origin subscriber_id
-        event = PapiEvent(subscriber_id, 0, 'instr_event', 'unsubscribe', opt)
+        event = Event.instruction.Unsubscribe(subscriber_id, 0, opt)
         self.core_queue.put(event)
 
     def do_unsubscribe_uname(self, subscriber_uname, source_uname, block_name, signal_index=None):
@@ -290,7 +284,7 @@ class Gui_api:
                         opt.is_parameter = True
                         opt.parameter_alias = parameter_name
                         opt.block_name = None
-                        e = PapiEvent(self.gui_id,dplug.id,'instr_event','set_parameter',opt)
+                        e = Event.instruction.SetParameter(self.gui_id, dplug.id, opt)
                         self.core_queue.put(e)
 
     def do_set_parameter_uname(self, plugin_uname, parameter_name, value):
@@ -318,7 +312,7 @@ class Gui_api:
 
         if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
             opt = DOptionalData()
-            event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'pause_plugin', opt)
+            event = Event.instruction.PausePlugin(self.gui_id, plugin_id, opt)
             self.core_queue.put(event)
             return 1
         else:
@@ -360,7 +354,7 @@ class Gui_api:
         """
         if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
             opt = DOptionalData()
-            event = PapiEvent(self.gui_id, plugin_id, 'instr_event', 'resume_plugin', opt)
+            event = Event.instruction.ResumePlugin(self.gui_id, plugin_id, opt)
             self.core_queue.put(event)
             return 1
         else:
@@ -411,7 +405,7 @@ class Gui_api:
     def do_close_program(self):
         opt = DOptionalData()
         opt.reason = 'User clicked close Button'
-        event = PapiEvent(self.gui_id, 0, 'instr_event','close_program',opt)
+        event = Event.instruction.CloseProgram(self.gui_id, 0, opt)
         self.core_queue.put(event)
 
     def do_load_xml(self, path):
@@ -435,7 +429,9 @@ class Gui_api:
                     detail_name = detail_xml.tag
                     config_hash[para_name][detail_name]= detail_xml.text
 
-            plugins_to_start.append([identifier, pl_uname, config_hash])
+            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+
+            plugins_to_start.append([identifier, pl_uname_new, config_hash])
 
             subs_xml = plugin_xml.find('Subscriptions')
             for sub_xml in subs_xml.findall('Subscription'):
@@ -447,20 +443,40 @@ class Gui_api:
                         signals.append(int(sig_xml.text))
                     alias_xml = block_xml.find('alias')
                     alias = alias_xml.text
-                    subs_to_make.append([pl_uname,data_source,block_name,signals, alias])
+                    pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                    data_source_new = self.change_uname_to_uniqe(data_source)
+                    subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
 
 
             prev_parameters_xml = plugin_xml.find('PreviousParameters')
             for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
                 para_name = prev_parameter_xml.attrib['Name']
                 para_value = prev_parameter_xml.text
-                parameters_to_change.append([pl_uname, para_name, float(para_value)])
+                pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                parameters_to_change.append([pl_uname_new, para_name, float(para_value)])
 
         for pl in plugins_to_start:
+            # 0: ident, 1: uname, 2: config
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
         QtCore.QTimer.singleShot(CONFIG_LOADER_SUBCRIBE_DELAY,\
                                  lambda: self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change) )
+
+    def change_uname_to_uniqe(self, uname):
+        """
+        Function will search for unames and add an indentifier to it to make it unique in case of existence
+        :param uname: uname to make unique
+        :type uname: basestring
+        :return: uname
+        """
+        i=1
+        while self.gui_data.get_dplugin_by_uname(uname) is not None:
+                i = i+1
+                if i == 2:
+                    uname = uname + '_' +str(i)
+                else:
+                    uname = uname[:-1] + str(i)
+        return uname
 
     def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change ):
         for sub in subs_to_make:
@@ -551,3 +567,19 @@ class Gui_api:
             for plugin_key in all_plugins:
                 plugin = all_plugins[plugin_key]
                 self.do_delete_plugin(plugin.id)
+
+    def do_test_name_to_be_unique(self, name):
+        """
+        Will check if a given name would be a valid, unique name for a plugin.
+        :param name: name to check
+        :type name: basestring
+        :return: True or False
+        """
+        reg =QtCore.QRegExp('\S[^_][^\W_]+')
+        if reg.exactMatch(name):
+           if self.gui_data.get_dplugin_by_uname(name) is None:
+               return True
+           else:
+               return False
+        else:
+            return False
