@@ -258,7 +258,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
 
-
     def stefan_at_his_best(self):
 
         self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
@@ -324,7 +323,6 @@ def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     gui.run()
     gui.show()
     app.exec_()
-
 if __name__ == '__main__':
     # main of GUI, just for stand alone gui testing
     app = QApplication(sys.argv)
