@@ -30,16 +30,16 @@ __author__ = 'ruppin'
 
 import os
 from multiprocessing import Process, Queue
-
-from yapsy.PluginManager import PluginManager
 from threading import Timer
 
+from yapsy.PluginManager import PluginManager
 from papi.PapiEvent import PapiEvent
 from papi.data.DCore import DCore
 from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
-from papi.gui.gui_main import startGUI
+from papi.gui.qt_dev.gui_main import startGUI
 from papi.data.DOptionalData import DOptionalData
+
 
 # import contants
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE,  \
@@ -47,7 +47,7 @@ from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEV
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
-    PLUGIN_DPP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
+    PLUGIN_DPP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
     PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE
 
 import papi.error_codes as ERROR

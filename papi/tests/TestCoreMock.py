@@ -1,17 +1,14 @@
 __author__ = 'stefan'
 
-
 import unittest
+from threading import Thread
+import time
+
 from papi.data.DGui import DGui
 from papi.core import Core
-from papi.gui.gui_main import startGUI_TESTMOCK
+from papi.gui.qt_dev.gui_main import startGUI_TESTMOCK
 from papi.gui.gui_api import Gui_api
-
 from papi.PapiEvent import PapiEvent
-from threading import Thread
-from multiprocessing import Queue
-
-import time
 
 
 class dummyProcess(object):

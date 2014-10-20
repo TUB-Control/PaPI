@@ -28,21 +28,26 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.ui.gui.add_subscriber import Ui_AddSubscriber
+from papi.ui.gui.qt_dev.add_subscriber import Ui_AddSubscriber
 from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem
 from papi.constants import PLUGIN_PCP_IDENTIFIER
 
-class AddSubscriber(QDialog, Ui_AddSubscriber):
+class AddPCPSubscriber(QDialog, Ui_AddSubscriber):
 
     def __init__(self, callback_functions, parent=None):
-        super(AddSubscriber, self).__init__(parent)
+        super(AddPCPSubscriber, self).__init__(parent)
         self.setupUi(self)
         self.dgui = None
 
         self.treeSubscriber.currentItemChanged.connect(self.subscriberItemChanged)
         self.treeTarget.currentItemChanged.connect(self.targetItemChanged)
         self.treeBlock.currentItemChanged.connect(self.blockItemChanged)
+
+        self.treeSubscriber.setHeaderLabel('PCP')
+        self.treeTarget.setHeaderLabel('PCP_BLOCK')
+        self.treeBlock.setHeaderLabel('Plugin')
+        self.treeSignal.setHeaderLabel('Parameter')
 
         self.buttonBox.clicked.connect(self.button_clicked)
 
@@ -70,6 +75,22 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
         self.treeTarget.clear()
         if hasattr(item, 'dplugin'):
 
+            dplugin = item.dplugin
+            dblock_ids = dplugin.get_dblocks()
+
+            for dblock_id in dblock_ids:
+                dblock = dblock_ids[dblock_id]
+                block_item = QTreeWidgetItem(self.treeTarget)
+                block_item.dblock = dblock
+                block_item.setText(0, dblock.name)
+                block_item.dplugin = dplugin
+
+    def targetItemChanged(self, item):
+
+        self.treeBlock.clear()
+
+        if hasattr(item, 'dplugin'):
+
             subscriber = self.treeSubscriber.currentItem().dplugin
 
             dplugin_ids = self.dgui.get_all_plugins()
@@ -81,38 +102,27 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
                 # Sort DPluginItem in TreeWidget of Subscriber and Target
                 # ------------------------------
 
-                if subscriber.id is not dplugin_id and len(dplugin.get_dblocks()) is not 0 and dplugin.type != PLUGIN_PCP_IDENTIFIER:
+                if subscriber.id is not dplugin_id and len(dplugin.get_parameters()) is not 0 and dplugin.type != PLUGIN_PCP_IDENTIFIER:
 
-                    target_item = QTreeWidgetItem(self.treeTarget)
+                    target_item = QTreeWidgetItem(self.treeBlock)
 
                     target_item.dplugin = dplugin
                     target_item.setText(0, str(dplugin.uname) )
 
-    def targetItemChanged(self, item):
-
-        self.treeBlock.clear()
-
-        if hasattr(item, 'dplugin'):
-            dplugin = item.dplugin
-            dblock_ids = dplugin.get_dblocks()
-
-            for dblock_id in dblock_ids:
-                dblock = dblock_ids[dblock_id]
-                block_item = QTreeWidgetItem(self.treeBlock)
-                block_item.dblock = dblock
-                block_item.setText(0, dblock.name)
 
     def blockItemChanged(self, item):
         self.treeSignal.clear()
 
-        if hasattr(item, 'dblock'):
-            dblock = item.dblock
+        if hasattr(item, 'dplugin'):
+            dplugin = item.dplugin
+            dparameters = dplugin.get_parameters()
 
-            signal_names = dblock.get_signals()
+            for dparameter_key in dparameters:
+                dparameter = dparameters[dparameter_key]
+                parameter_item = QTreeWidgetItem(self.treeSignal)
+                parameter_item.dparameter = dparameter
+                parameter_item.setText(0, dparameter.name)
 
-            for signal_name in signal_names:
-                signal_item = QTreeWidgetItem(self.treeSignal)
-                signal_item.setText(0, signal_name)
 
     def showEvent(self, *args, **kwargs):
 
@@ -129,7 +139,7 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
             # Sort DPluginItem in TreeWidget of Subscriber and Target
             # ------------------------------
 
-            if dplugin.type != PLUGIN_PCP_IDENTIFIER:
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER:
 
                 subscriber_item = QTreeWidgetItem(self.treeSubscriber)
 
@@ -152,19 +162,19 @@ class AddSubscriber(QDialog, Ui_AddSubscriber):
             block_item = self.treeBlock.currentItem()
             signal_item = self.treeSignal.currentItem()
 
-            self.subscriberID = subscriber_item.dplugin.id
-            self.targetID = target_item.dplugin.id
-            self.blockName = block_item.dblock.name
+            self.pcpID = subscriber_item.dplugin.id
+            self.pcpBlock = target_item.dblock
 
-            self.signalIndex = []
+            self.pluginID = block_item.dplugin.id
 
-            for item in self.treeSignal.selectedItems():
-                signalName = item.text(0)
 
-                index = block_item.dblock.get_signals().index(signalName)
+            self.parameter = signal_item.dparameter
 
-                self.signalIndex.append(index)
 
             button.setFocus()
+            print(self.pluginID)
+            print(self.pcpID)
+            print(self.pcpBlock)
+            print(self.parameter)
 
-            self.callback_functions['do_subscribe'](self.subscriberID, self.targetID, self.blockName, self.signalIndex)
+            self.callback_functions['do_subscribe'](self.pluginID, self.pcpID, self.pcpBlock.name , [], self.parameter.name)
