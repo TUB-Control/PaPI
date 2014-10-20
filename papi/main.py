@@ -35,7 +35,7 @@ from papi.gui.qt_new.main import startGUI as new_startGui
 
 
 def main():
-    core = Core(dev_startGui())
+    core = Core(dev_startGui)
     core.run()
 
 
