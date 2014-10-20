@@ -106,9 +106,6 @@ class Gui_api:
         else:
             self.log.printText(1, " Do delete plugin with uname " + uname + ' failed')
 
-
-
-
     def do_stopReset_pluign(self, id):
         """
         Stop and reset plugin with given id without deleting it.
@@ -135,7 +132,6 @@ class Gui_api:
             self.log.printText(1, " Do stopReset plugin with uname " + uname + ' failed')
             return ERROR.NOT_EXISTING
 
-
     def do_start_plugin(self, id):
         """
         Start plugin with given id.
@@ -160,8 +156,6 @@ class Gui_api:
         else:
             self.log.printText(1, " Do start_plugin with uname " + uname + ' failed')
             return ERROR.NOT_EXISTING
-
-
 
     def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None, sub_alias = None):
         """
