@@ -28,7 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.ui.gui.add_plugin import Ui_AddPlugin
+from papi.ui.gui.qt_dev.add_plugin import Ui_AddPlugin
 from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem, QRegExpValidator
 from PySide import QtGui

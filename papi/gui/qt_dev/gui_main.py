@@ -30,39 +30,27 @@ __author__ = 'knuths'
 
 import sys
 import time
+import os
 
 from PySide.QtGui               import QMainWindow, QApplication
 from PySide.QtGui               import QIcon
 from PySide.QtCore              import QSize
 
-
-from papi.ui.gui.main           import Ui_MainGUI
-from papi.gui.manager           import Overview
-
+from papi.ui.gui.qt_dev.main           import Ui_MainGUI
+from papi.gui.qt_dev.manager           import Overview
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
-
-from papi.gui.add_plugin        import AddPlugin
-from papi.gui.add_subscriber    import AddSubscriber
-from papi.gui.add_pcp_subscriber import AddPCPSubscriber
-
+from papi.gui.qt_dev.add_plugin        import AddPlugin
+from papi.gui.qt_dev.add_subscriber import AddSubscriber
+from papi.gui.qt_dev.add_pcp_subscriber import AddPCPSubscriber
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
-
 from papi.constants import CONFIG_DEFAULT_FILE
-
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
-
-
-
-from multiprocessing import Queue
-
-import os
-
 import pyqtgraph as pg
+from pyqtgraph import QtCore
 
-from pyqtgraph import QtGui, QtCore
 
 
 # Enable antialiasing for prettier plots
@@ -270,7 +258,6 @@ class GUI(QMainWindow, Ui_MainGUI):
 
 
 
-
     def stefan_at_his_best(self):
 
         self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
@@ -336,7 +323,6 @@ def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     gui.run()
     gui.show()
     app.exec_()
-
 if __name__ == '__main__':
     # main of GUI, just for stand alone gui testing
     app = QApplication(sys.argv)

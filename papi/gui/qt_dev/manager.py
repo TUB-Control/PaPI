@@ -35,7 +35,7 @@ import time
 from PySide.QtGui import QMainWindow, QTreeWidgetItem, QTableWidgetItem
 from PySide.QtCore import Qt
 
-from papi.ui.gui.manager import Ui_Manager
+from papi.ui.gui.qt_dev.manager import Ui_Manager
 
 
 from yapsy.PluginManager import PluginManager

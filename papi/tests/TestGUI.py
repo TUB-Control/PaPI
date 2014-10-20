@@ -28,13 +28,13 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-
-from PySide.QtGui import QMainWindow, QApplication
 import sys
-from papi.gui.gui_main import GUI
+
+from PySide.QtGui import QApplication
+
+from papi.gui.qt_dev.gui_main import GUI
 from papi.data.DGui import DGui
-from papi.data.DCore import DPlugin, DBlock
-from papi.data.DParameter import DParameter
+from papi.data.DCore import DBlock
 
 
 def get_gui_data():
