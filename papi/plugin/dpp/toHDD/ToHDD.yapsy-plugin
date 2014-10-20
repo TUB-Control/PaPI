@@ -1,6 +1,6 @@
 [Core]
-Name = toHDD
-Module = toHDD
+Name = ToHDD
+Module = ToHDD
 
 [Documentation]
 Author = S.R.

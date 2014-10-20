@@ -36,32 +36,41 @@ import math
 import numpy
 
 
-class toHDD(plugin_base):
+class ToHDD(plugin_base):
 
     def start_init(self, config=None):
 
         default_config = self.get_startup_configuration()
 
         if config is None:
-            config = default_config
+            self.config = default_config
         else:
-            config = dict(list(default_config.items()) + list(config.items()))
+            self.config = dict(list(default_config.items()) + list(config.items()))
 
+        self.set_event_trigger_mode(True)
 
+        self.file = open(self.config['file']['value'], 'w+')
 
         print('toHDD started working')
 
         return True
 
     def pause(self):
+        self.file.close()
         print('toHDD pause')
         pass
 
     def resume(self):
+        self.file = open(self.config['file'], 'a')
         print('toHDD resume')
         pass
 
-    def execute(self):
+    def execute(self, data):
+        t = str(data['t'])
+        self.file.write(t)
+        for k in data:
+            pass
+
         pass
 
     def set_parameter(self, name, value):
@@ -73,10 +82,13 @@ class toHDD(plugin_base):
             "log-type": {
                 'value': 1,
                 'regex': '[0-9]+'
+        }, "file": {
+                'value': 'log1',
         }}
         return config
 
     def quit(self):
+        self.file.close()
         print('toHDD: will quit')
 
     def get_type(self):

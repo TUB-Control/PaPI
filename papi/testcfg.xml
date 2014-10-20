@@ -1,18 +1,7 @@
-<PaPiConfig Date="2014-10-13 15:56:23" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-20 18:17:07" PaPI_version="v_0.1">
   <Plugin uname="Plot1">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotSin</value>
-      </Parameter>
       <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <value>(200,200)</value>
@@ -25,11 +14,19 @@
         <regex>[0-9]+</regex>
         <value>1000</value>
       </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PlotSin</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Color_0">0</Parameter>
-      <Parameter Name="Color_1">10</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <Subscriptions>
       <Subscription>
         <data_source>SInus1</data_source>
@@ -44,17 +41,6 @@
   <Plugin uname="Plot2">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotCPU</value>
-      </Parameter>
       <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <value>(200,200)</value>
@@ -67,10 +53,19 @@
         <regex>[0-9]+</regex>
         <value>1000</value>
       </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PlotCPU</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Color_0">0</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <Subscriptions>
       <Subscription>
         <data_source>CPULoad</data_source>
@@ -84,17 +79,6 @@
   <Plugin uname="PlotFour">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotFour</value>
-      </Parameter>
       <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <value>(200,200)</value>
@@ -107,10 +91,19 @@
         <regex>[0-9]+</regex>
         <value>1000</value>
       </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PlotFour</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Color_0">0</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <Subscriptions>
       <Subscription>
         <data_source>Add1</data_source>
@@ -481,6 +474,20 @@
       </Parameter>
       <Parameter Name="name">
         <value>PCP_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="HDD">
+    <Identifier>ToHDD</Identifier>
+    <StartConfig>
+      <Parameter Name="log-type">
+        <regex>[0-9]+</regex>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="file">
+        <value>log1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
