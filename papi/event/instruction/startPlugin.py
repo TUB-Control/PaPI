@@ -26,30 +26,10 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'ruppins'
+__author__ = 'stefan'
 
+from papi.event.instruction.InstructionBase import InstructionBase
 
-class DOptionalData(object):
-
-    def __init__(self,DATA=None,pluginID=None):
-        self.data = DATA
-        self.data_source_id = None
-        self.plugin_identifier = None
-        self.plugin_uname = None
-        self.plugin_id = pluginID
-        self.source_ID = None
-        self.unsubscribe_all = None
-        self.reason = None # muss raus
-        self.parameter_list = None # muss raus
-        self.block_name = None
-        self.block_list = None
-        self.plugin_object = None
-        self.plugin_type = None
-        self.plugin_config = {}
-        self.dblock_object = None
-        self.signals = []
-        self.is_parameter = False
-        self.subscription_alias = None
-
-
-
+class StartPlugin(InstructionBase):
+    def __init__(self, oID, destID, opt):
+        super().__init__(oID, destID, 'start_plugin', opt)

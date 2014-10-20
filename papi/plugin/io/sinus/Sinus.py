@@ -63,6 +63,8 @@ class Sinus(plugin_base):
 
         self.send_new_parameter_list(para_l)
 
+        print('Sinus started working')
+
         return True
 
     def pause(self):

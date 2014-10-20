@@ -106,6 +106,63 @@ class Gui_api:
         else:
             self.log.printText(1, " Do delete plugin with uname " + uname + ' failed')
 
+
+
+
+    def do_stopReset_pluign(self, id):
+        """
+        Stop and reset plugin with given id without deleting it.
+        :param id: Plugin id to stopReset
+        :type id: int
+        :return:
+        """
+
+        event = Event.instruction.StopPlugin(self.gui_id, id, None, delete=False)
+        self.core_queue.put(event)
+
+    def do_stopReset_plugin_uname(self, uname):
+        """
+        Stop and reset plugin with given uname without deleting it.
+        :param uname: Plugin uname to stop
+        :type uname: basestring
+        :return:
+        """
+        pl_id = self.do_get_plugin_id_from_uname(uname)
+
+        if pl_id is not None:
+            self.do_stopReset_pluign(pl_id)
+        else:
+            self.log.printText(1, " Do stopReset plugin with uname " + uname + ' failed')
+            return ERROR.NOT_EXISTING
+
+
+    def do_start_plugin(self, id):
+        """
+        Start plugin with given id.
+        :param id: Plugin id to start
+        :type id: int
+        :return:
+        """
+        event = Event.instruction.StartPlugin(self.gui_id, id, None)
+        self.core_queue.put(event)
+
+    def do_start_plugin_uname(self, uname):
+        """
+        Start plugin with given uname.
+        :param uname: Plugin uname to start
+        :type uname: basestring
+        :return:
+        """
+        pl_id = self.do_get_plugin_id_from_uname(uname)
+
+        if pl_id is not None:
+            self.do_start_plugin(pl_id)
+        else:
+            self.log.printText(1, " Do start_plugin with uname " + uname + ' failed')
+            return ERROR.NOT_EXISTING
+
+
+
     def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
@@ -484,3 +541,18 @@ class Gui_api:
       else:
         if level and (not elem.tail or not elem.tail.strip()):
           elem.tail = i
+
+    def do_reset_papi(self):
+        """
+        APi call to reset PaPI.
+        Reset in this case means to delete all plugins cleanly and keep PaPI running.
+        Will free all unames.
+        Is using the do_delete_plugin api call and the delete plugin mechanism
+        :return: ERROR CODE
+        """
+
+        all_plugins = self.gui_data.get_all_plugins()
+        if all_plugins is not None:
+            for plugin_key in all_plugins:
+                plugin = all_plugins[plugin_key]
+                self.do_delete_plugin(plugin.id)

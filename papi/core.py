@@ -30,6 +30,8 @@ __author__ = 'ruppin'
 
 import os
 from multiprocessing import Process, Queue
+
+from yapsy.PluginManager import PluginManager
 from threading import Timer
 
 from yapsy.PluginManager import PluginManager
@@ -47,8 +49,8 @@ from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEV
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
-    PLUGIN_DPP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
-    PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE
+    PLUGIN_DPP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
+    PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE, PLUGIN_STATE_STOPPED
 
 import papi.error_codes as ERROR
 
@@ -73,7 +75,8 @@ class Core:
         self.__process_status_event_l__ = { 'start_successfull':    self.__process_start_successfull__,
                                             'start_failed':         self.__process_start_failed__,
                                             'alive':                self.__process_alive__,
-                                            'join_request':         self.__process_join_request__
+                                            'join_request':         self.__process_join_request__,
+                                            'plugin_stopped':   self.__process_plugin_stopped__
         }
 
         self.__process_data_event_l__ = {   'new_data':         self.__process_new_data__,
@@ -88,7 +91,8 @@ class Core:
                                             'unsubscribe':      self.__process_unsubsribe__,
                                             'set_parameter':    self.__process_set_parameter__,
                                             'pause_plugin':     self.__process_pause_plugin__,
-                                            'resume_plugin':    self.__process_resume_plugin__
+                                            'resume_plugin':    self.__process_resume_plugin__,
+                                            'start_plugin':     self.__process_start_plugin__
         }
 
         # creating the main core data object DCore and core queue
@@ -197,8 +201,8 @@ class Core:
                     if plug.alive_count is self.alive_count:
                         self.log.printText(2,'Plugin '+plug.uname+' is still alive')
                         # change plugin state in DCore
-                        if plug.state != PLUGIN_STATE_PAUSE:
-                            plug.state = PLUGIN_STATE_ALIVE
+                        #if plug.state != PLUGIN_STATE_PAUSE:
+                        #   plug.state = PLUGIN_STATE_ALIVE
                     else:
                         # Plugin is not alive anymore, so do error handling
                         self.plugin_process_is_dead_error_handler(plug)
@@ -226,7 +230,7 @@ class Core:
         """
         self.log.printText(1,'Plugin '+dplug.uname+' is DEAD')
         self.log.printText(1,'core count: '+str(self.alive_count)+' vs. '+ str(dplug.alive_count)+' :plugin count')
-        dplug.state = 'dead'
+        # dplug.state = 'dead'
         self.update_meta_data_to_gui(dplug.id)
 
     def check_alive_callback(self):
@@ -350,6 +354,7 @@ class Core:
         if (dplug != None):
             # plugin exists and sent successfull event, so change it state
             dplug.state = PLUGIN_STATE_START_SUCCESFUL
+            self.update_meta_data_to_gui(dplug.id)
             return 1
         else:
             # plugin does not exist
@@ -626,6 +631,31 @@ class Core:
             # DPlugin does not exist
             self.log.printText(1,'stop_plugin, plugin with id '+str(id)+' not found')
             return ERROR.UNKNOWN_ERROR
+
+    def __process_start_plugin__(self, event):
+         # get destination id
+        id = event.get_destinatioID()
+
+        # get DPlugin object and check if plugin exists
+        dplugin = self.core_data.get_dplugin_by_id(id)
+        if dplugin is not None:
+            # dplugin exist, get queue and route event to plugin
+            if dplugin.own_process is True:
+                # dplugin is not running in gui
+                # tell plugin to quit
+                dplugin.queue.put(event)
+
+    def __process_plugin_stopped__(self, event):
+        pl_id = event.get_originID()
+        plugin = self.core_data.get_dplugin_by_id(pl_id)
+        if plugin is not None:
+            plugin.state = PLUGIN_STATE_STOPPED
+
+            self.core_data.rm_all_subscribers(pl_id)
+
+            # TODO: delete blocks and parameters
+
+            self.update_meta_data_to_gui(pl_id)
 
     def __process_close_programm__(self,event):
         """
