@@ -52,7 +52,7 @@ class Gui_api:
         self.core_queue = core_queue
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
-    def do_create_plugin(self, plugin_identifier, uname, config={}):
+    def do_create_plugin(self, plugin_identifier, uname, config={}, autostart = True):
         """
         Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.
         :param plugin_identifier: plugin to create
@@ -72,6 +72,8 @@ class Gui_api:
         opt.plugin_uname = uname
         # additional config
         opt.plugin_config = config
+        opt.autostart = autostart
+
         # create event object and sent it to core
         event = PapiEvent(self.gui_id, 0, 'instr_event','create_plugin',opt)
         self.core_queue.put(event)
@@ -341,7 +343,6 @@ class Gui_api:
         #     self.log.printText(1, 'do_pause, plugin uname worng')
         #     return -1
 
-        #TODO: Check new code
         plugin_id = self.do_get_plugin_id_from_uname(plugin_uname)
         if plugin_id is not None:
             return self.do_pause_plugin_by_id(plugin_id)

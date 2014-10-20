@@ -50,6 +50,6 @@ class DOptionalData(object):
         self.signals = []
         self.is_parameter = False
         self.subscription_alias = None
-
+        self.autostart = None
 
 

@@ -554,7 +554,9 @@ class Core:
 
             # create Process object for new plugin
             # set parameter for work function of plugin, such as queues, id and eventTriggered
-            PluginProcess = Process(target=plugin.plugin_object.work_process, args=(self.core_event_queue, plugin_queue, plugin_id, eventTriggered, plugin_config))
+            PluginProcess = Process(target=plugin.plugin_object.work_process,\
+                                    args=(self.core_event_queue, plugin_queue, plugin_id, eventTriggered, \
+                                          plugin_config, optData.autostart))
             PluginProcess.start()
 
             #Add new Plugin process to DCore
