@@ -31,5 +31,6 @@ __author__ = 'stefan'
 from papi.event.instruction.InstructionBase import InstructionBase
 
 class StopPlugin(InstructionBase):
-    def __init__(self, oID, destID, opt):
+    def __init__(self, oID, destID, opt, delete = True):
+        self.delete = delete
         super().__init__(oID, destID, 'stop_plugin', opt)

@@ -7,3 +7,4 @@ from .JoinRequest import JoinRequest
 from .Alive import Alive
 from .CheckAliveStatus import CheckAliveStatus
 from .PluginClosed import PluginClosed
+from .PluginStopped import PluginStopped

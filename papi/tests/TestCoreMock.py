@@ -10,6 +10,7 @@ from papi.gui.gui_api import Gui_api
 from papi.PapiEvent import PapiEvent
 from threading import Thread
 from multiprocessing import Queue
+import papi.constants as const
 
 import time
 
@@ -23,7 +24,7 @@ class dummyProcess(object):
 
 class TestCoreMock(unittest.TestCase):
 
-    DELAY_TIME = 0.2
+    DELAY_TIME = 0.3
 
     def test_create_plugin_sub(self):
         # create a Plot and Sinus plugin
@@ -109,9 +110,133 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(self.core_data.get_dplugins_count(), 0, 'Core PL Count not 0')
         self.assertEqual(self.gui_data.get_dplugins_count(), 0, 'Gui PL Count not 0')
 
-        time.sleep(0.1)
+    def test_reset_papi_1(self):
+        PL_1_NAME = 'Plot1'
+        PL_1_IDENT = 'Plot'
+        self.gui_api.do_create_plugin(PL_1_IDENT,PL_1_NAME)
 
-        #self.assertEqual(True, False, 'Delete Window handler in GUI and check it')
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNotNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in CoreData with uname '+PL_1_NAME)
+        self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'No Plugin in GuiData with uname '+PL_1_NAME)
+        self.assertEqual(self.core_data.get_dplugins_count(), 1, 'Core PL Count not 1')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 1, 'Gui PL Count not 1')
+
+        self.gui_api.do_reset_papi()
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertIsNone(self.core_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in core_data')
+        self.assertIsNone(self.gui_data.get_dplugin_by_uname(PL_1_NAME), 'Plugin still in gui_data')
+        self.assertEqual(self.core_data.get_dplugins_count(), 0, 'Core PL Count not 0')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 0, 'Gui PL Count not 0')
+
+    def test_reset_papi_2(self):
+
+        Plugins = [ ['Plot1', 'Plot'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
+
+
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+
+        self.gui_api.do_reset_papi()
+
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNone(self.core_data.get_dplugin_by_uname(pl[0]), 'Plugin in CoreData with uname '+pl[0])
+            self.assertIsNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'Plugin in GuiData with uname '+pl[0])
+
+
+        self.assertEqual(self.core_data.get_dplugins_count(), 0, 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), 0, 'Gui PL Count not correct')
+
+    def test_stopReset_iop(self):
+
+        Plugins = [ ['Plot1', 'Plot'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
+
+
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+
+        self.gui_api.do_stopReset_plugin_uname('Sinus1')
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
+
+    def test_stopReset_restart_iop(self):
+
+        Plugins = [  ['Sinus1', 'Sinus'] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
+
+
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+
+        self.gui_api.do_stopReset_plugin_uname('Sinus1')
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
+
+        self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_STOPPED)
+        self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_STOPPED)
+
+
+        self.gui_api.do_start_plugin_uname('Sinus1')
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_START_SUCCESFUL)
+        self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_START_SUCCESFUL)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -140,7 +265,7 @@ class TestCoreMock(unittest.TestCase):
 
         self.gui_api = Gui_api(self.gui_data, self.core_queue, core.gui_id)
 
-        time.sleep(0.8)
+        time.sleep(1)
 
     def tearDown(self):
         # close Gui
