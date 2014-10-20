@@ -263,7 +263,7 @@ class TestCoreMock(unittest.TestCase):
 
 
     def setUp(self):
-        core = Core(use_gui=False)
+        core = Core(None,use_gui=False)
         core.gui_process = dummyProcess()
         core.gui_alive = True
 

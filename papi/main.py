@@ -30,10 +30,12 @@ __author__ = 'control'
 
 import sys
 from papi.core import Core
+from papi.gui.qt_dev.gui_main import startGUI as dev_startGui
+from papi.gui.qt_new.main import startGUI as new_startGui
 
 
 def main():
-    core = Core()
+    core = Core(dev_startGui())
     core.run()
 
 

@@ -57,7 +57,7 @@ import papi.error_codes as ERROR
 import papi.event as Event
 
 class Core:
-    def __init__(self, use_gui = True):
+    def __init__(self, gui_start_function, use_gui = True):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -65,6 +65,7 @@ class Core:
         .. document private functions
         .. automethod:: _*
         """
+        self.gui_start_function = gui_start_function
 
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {  'status_event': self.__process_status_event__,
@@ -133,7 +134,7 @@ class Core:
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
         if self.use_gui is True:
-            self.gui_process = Process(target=startGUI, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
+            self.gui_process = Process(target=self.gui_start_function, args=(self.core_event_queue,self.gui_event_queue,self.gui_id))
             self.gui_process.start()
             self.gui_alive = True
         
