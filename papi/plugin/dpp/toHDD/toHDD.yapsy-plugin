@@ -1,0 +1,9 @@
+[Core]
+Name = toHDD
+Module = toHDD
+
+[Documentation]
+Author = S.R.
+Version = 0.1
+Website = www
+Description = simple write to HDD plugin
