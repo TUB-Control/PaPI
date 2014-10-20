@@ -70,7 +70,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # TODO:
         # callback functions for create plugin (intead scopeArea parameter) and for delete Plugin in ..GuiEventProcessing
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.scopeArea)
+        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.widgetArea)
 
         self.callback_functions = {
             'do_create_plugin' : self.gui_api.do_create_plugin,
