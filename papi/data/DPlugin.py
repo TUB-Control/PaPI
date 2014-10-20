@@ -111,6 +111,7 @@ class DPlugin(DObject):
         self.startup_config = None
         self.__subscriptions = {}
         self.state = None
+        self.alive_state = None
         self.paused = False
         self.own_process = None
         self.uname = None
@@ -306,6 +307,7 @@ class DPlugin(DObject):
         DPlugin_new.id = self.id
         DPlugin_new.pid = self.pid
         DPlugin_new.state = self.state
+        DPlugin_new.alive_state = self.alive_state
         DPlugin_new.own_process = self.own_process
         DPlugin_new.uname = self.uname
         DPlugin_new.type = self.type
@@ -326,6 +328,7 @@ class DPlugin(DObject):
         self.id = meta.id
         self.pid = meta.pid
         self.state = meta.state
+        self.alive_state = meta.alive_state
         self.own_process = meta.own_process
         self.uname = meta.uname
         self.type = meta.type

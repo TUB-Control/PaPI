@@ -78,6 +78,7 @@ PLUGIN_STATE_RESUMED            = 'resumed'
 PLUGIN_STATE_START_SUCCESFUL    = 'start_successfull'
 PLUGIN_STATE_START_FAILED       = 'start_failed'
 PLUGIN_STATE_ALIVE              = 'alive'
+PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
 
