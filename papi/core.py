@@ -648,6 +648,11 @@ class Core:
         plugin = self.core_data.get_dplugin_by_id(pl_id)
         if plugin is not None:
             plugin.state = PLUGIN_STATE_STOPPED
+
+            self.core_data.rm_all_subscribers(pl_id)
+
+            # TODO: delete blocks and parameters
+
             self.update_meta_data_to_gui(pl_id)
 
     def __process_close_programm__(self,event):

@@ -93,7 +93,6 @@ class plugin_base(IPlugin):
                         # plugin should stop but is not getting deleted
                         print('TODO: stop no delete')
                         # response to core and rm_all_subs
-                        # TODO
                         self.plugin_stopped = True
                         event = Event.status.PluginStopped(self.__id__, 0, None)
                         self._Core_event_queue__.put(event)
