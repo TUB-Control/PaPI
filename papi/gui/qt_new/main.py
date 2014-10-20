@@ -48,6 +48,7 @@ from papi.gui.gui_event_processing import GuiEventProcessing
 import pyqtgraph as pg
 from pyqtgraph import QtCore
 
+from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 
 
 # Enable antialiasing for prettier plots
@@ -59,8 +60,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
         super(GUI, self).__init__(parent)
         self.setupUi(self)
-
-        self.create_actions()
 
         if gui_data is None:
             self.gui_data = DGui()
@@ -95,15 +94,31 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         # -------------------------------------
-        # Create actions for buttons
+        # Create placeholder
         # -------------------------------------
-
+        self.overview_menu = None
+        self.create_plugin_menu = None
+        # -------------------------------------
+        # Create callback functions for buttons
+        # -------------------------------------
+        self.loadButton.clicked.connect(self.load_triggered)
+        self.saveButton.clicked.connect(self.save_triggered)
+        self.createButton.clicked.connect(self.show_create_plugin_menu)
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
         # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
         # self.buttonShowOverview.clicked.connect(self.ap_overview)
         # self.buttonExit.clicked.connect(self.close)
 
+        # -------------------------------------
+        # Create actions
+        # -------------------------------------
+
+        self.actionLoad.triggered.connect(self.load_triggered)
+        self.actionSave.triggered.connect(self.save_triggered)
+
+        self.actionOverview.triggered.connect(self.show_overview_menu)
+        self.actionCreate.triggered.connect(self.show_create_plugin_menu)
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -164,24 +179,38 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def dbg(self):
         print("Action")
 
-    def create_actions(self):
-        pass
-
     def menu_license(self):
         pass
 
     def menu_quit(self):
-        self.close()
         pass
 
-    def ap_overview(self):
-        self.manager_overview.show()
+    def show_create_plugin_menu(self):
+        self.create_plugin_menu = CreatePluginMenu(self.callback_functions)
+        self.create_plugin_menu.setDGui(self.gui_data)
+
+        self.create_plugin_menu.show()
+        # self.create_plugin_menu.raise_()
+        # self.create_plugin_menu.activateWindow()
+
+        # del self.create_plugin_menu
+        #
+        # self.create_plugin_menu = None
+
+    def show_overview_menu(self):
+        print("ShowOverview")
+        pass
+
+    def load_triggered(self):
+        print("Load")
+        pass
+
+    def save_triggered(self):
+        print("Save")
         pass
 
     def closeEvent(self, *args, **kwargs):
-
         self.gui_api.do_close_program()
-
         self.close()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
