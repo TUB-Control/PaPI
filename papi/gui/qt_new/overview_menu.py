@@ -29,37 +29,27 @@ from papi.gui.qt_new.item import PaPITreeItem, RootItem, PaPItreeModel
 
 __author__ = 'knuths'
 
-from papi.ui.gui.qt_new.create import Ui_Create
+from papi.ui.gui.qt_new.overview import Ui_Overview
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
 from PySide.QtGui import QMainWindow, QStandardItem, QStandardItemModel
-
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
 
 from yapsy.PluginManager import PluginManager
 
 
-class CreatePluginMenu(QMainWindow, Ui_Create):
+class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
     def __init__(self, callback_functions, parent=None):
-        super(CreatePluginMenu, self).__init__(parent)
+        super(OverviewPluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = None
 
         self.callback_functions = callback_functions
 
-        self.subscriberID = None
-        self.targetID = None
-        self.blockName = None
-        self.setWindowTitle("Add Plugin")
+        self.setWindowTitle("OverviewMenu")
 
-        self.plugin_manager = PluginManager()
-        self.plugin_path = "../plugin/"
-
-        self.plugin_manager.setPluginPlaces(
-            PLUGIN_ROOT_FOLDER_LIST
-        )
-        self.setWindowTitle('Available Plugins')
 
         model = PaPItreeModel()
         model.setHorizontalHeaderLabels(['Name'])
@@ -77,12 +67,9 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         model.appendRow(self.dpp_root)
         model.appendRow(self.pcp_root)
 
-        self.configuration_inputs = {}
 
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
-        self.plugin_create_dialog = CreatePluginDialog(self.callback_functions)
-        self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
     def setDGui(self, dgui):
         self.dgui = dgui
@@ -93,10 +80,10 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         if item is None:
             return
 
-        self.nameEdit.setText(item.name)
-        self.authorEdit.setText(item.author)
-        self.descriptionText.setText(item.description)
-        self.pathEdit.setText(item.path)
+        # self.nameEdit.setText(item.name)
+        # self.authorEdit.setText(item.author)
+        # self.descriptionText.setText(item.description)
+        # self.pathEdit.setText(item.path)
 
 
 
@@ -110,19 +97,35 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
             self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
-        self.plugin_manager.collectPlugins()
-        for pluginfo in self.plugin_manager.getAllPlugins():
+        dplugin_ids = self.dgui.get_all_plugins()
 
-            plugin_item = PaPITreeItem(pluginfo, pluginfo.name)
+        #Add DPlugins in QTree
 
-            if '/visual/' in pluginfo.path:
+        for dplugin_id in dplugin_ids:
+            dplugin = dplugin_ids[dplugin_id]
+
+            # ------------------------------
+            # Sort DPluginItem in TreeWidget
+            # ------------------------------
+            plugin_item = PaPITreeItem(dplugin, dplugin.uname)
+
+            if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 self.visual_root.appendRow(plugin_item)
-            if '/io/' in pluginfo.path:
-                self.io_root.appendRow(plugin_item)
-            if '/dpp/' in pluginfo.path:
+            if dplugin.type == PLUGIN_IOP_IDENTIFIER:
+                 self.io_root.appendRow(plugin_item)
+            if dplugin.type == PLUGIN_DPP_IDENTIFIER:
                 self.dpp_root.appendRow(plugin_item)
-            if '/pcp/' in pluginfo.path:
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER:
                 self.pcp_root.appendRow(plugin_item)
 
-    def closeEvent(self, *args, **kwargs):
-        self.plugin_create_dialog.close()
+            # plugin_item.dplugin = dplugin
+            # plugin_item.setText(self.get_column_by_name("PLUGIN"), str(dplugin.uname) )
+            #
+            # # -------------------------------
+            # # Set amount of blocks and parameters as meta information
+            # # -------------------------------
+            # dparameter_names = dplugin.get_parameters()
+            # dblock_ids = dplugin.get_dblocks()
+            #
+            # plugin_item.setText(self.get_column_by_name("#PARAMETERS"), str(len(dparameter_names.keys())))
+            # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
