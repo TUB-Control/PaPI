@@ -50,11 +50,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.setWindowTitle("OverviewMenu")
 
+        # ----------------------------------
+        # Build structure of plugin tree
+        # ----------------------------------
 
-        model = PaPItreeModel()
-        model.setHorizontalHeaderLabels(['Name'])
+        self.model = PaPItreeModel()
+        self.model.setHorizontalHeaderLabels(['Name'])
 
-        self.pluginTree.setModel(model)
+        self.pluginTree.setModel(self.model)
         self.pluginTree.setUniformRowHeights(True)
 
         self.visual_root = RootItem('ViP')
@@ -62,11 +65,32 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.dpp_root = RootItem('DPP')
         self.pcp_root = RootItem('PCP')
 
-        model.appendRow(self.visual_root)
-        model.appendRow(self.io_root)
-        model.appendRow(self.dpp_root)
-        model.appendRow(self.pcp_root)
+        self.model.appendRow(self.visual_root)
+        self.model.appendRow(self.io_root)
+        self.model.appendRow(self.dpp_root)
+        self.model.appendRow(self.pcp_root)
 
+        # -----------------------------------
+        # Build structure of parameter tree
+        # -----------------------------------
+
+        self.pModel = PaPItreeModel()
+        self.pModel.setHorizontalHeaderLabels(['Name'])
+        self.parameterTree.setModel(self.pModel)
+        self.parameterTree.setUniformRowHeights(True)
+
+        # -----------------------------------
+        # Build structure of block tree
+        # -----------------------------------
+
+        self.bModel = PaPItreeModel()
+        self.bModel.setHorizontalHeaderLabels(['Name'])
+        self.blockTree.setModel(self.bModel)
+        self.blockTree.setUniformRowHeights(True)
+
+        # -----------------------------------
+        # signal/slots
+        # -----------------------------------
 
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
@@ -86,28 +110,34 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.typeEdit.setText(dplugin.type)
         self.alivestateEdit.setText(dplugin.alive_state)
 
-        # dblock_ids = dplugin.get_dblocks()
+        self.bModel.clear()
+        dblock_ids = dplugin.get_dblocks()
+
+        for dblock_id in dblock_ids:
+            dblock = dblock_ids[dblock_id]
+
+            block_item = PaPITreeItem(dblock, dblock.name)
+            self.bModel.appendRow(block_item)
+
+        #     block_item = QTreeWidgetItem(dblock_root)
+        #     block_item.dblock = dblock
+        #     block_item.setText(self.get_column_by_name("BLOCK"), dblock.name)
         #
-        # # self.bloc
-        # #
-        # # for dblock_id in dblock_ids:
-        # #     dblock = dblock_ids[dblock_id]
-        # #     block_item = QTreeWidgetItem(dblock_root)
-        # #     block_item.dblock = dblock
-        # #     block_item.setText(self.get_column_by_name("BLOCK"), dblock.name)
-        # #
-        # #     # ---------------------------
-        # #     # Add Subscribers of DBlock
-        # #     # ---------------------------
-        # #
-        # #     subscriber_ids = dblock.get_subscribers()
-        # #
-        # #     for subscriber_id in subscriber_ids:
-        # #         subscriber_item = QTreeWidgetItem(block_item)
-        # #
-        # #         subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
-        # #
-        # #         subscriber_item.setText(self.get_column_by_name("SUBSCRIBER"), str(subscriber.uname))
+            # ---------------------------
+            # Add Subscribers of DBlock
+            # ---------------------------
+        #
+            subscriber_ids = dblock.get_subscribers()
+
+            for subscriber_id in subscriber_ids:
+                subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
+                subscriber_item = PaPITreeItem(subscriber, subscriber.uname)
+                block_item.appendRow(subscriber_item)
+        #       subscriber_item = QTreeWidgetItem(block_item)
+        #
+        #         subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
+        #
+        #         subscriber_item.setText(self.get_column_by_name("SUBSCRIBER"), str(subscriber.uname))
 
 
 

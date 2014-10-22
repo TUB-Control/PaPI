@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Wed Oct 22 17:19:33 2014
+# Created: Wed Oct 22 17:38:13 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -87,15 +87,15 @@ class Ui_Overview(object):
         self.tabWidget_2.setObjectName("tabWidget_2")
         self.parameterTab = QtGui.QWidget()
         self.parameterTab.setObjectName("parameterTab")
-        self.treeView = QtGui.QTreeView(self.parameterTab)
-        self.treeView.setGeometry(QtCore.QRect(10, 10, 351, 221))
-        self.treeView.setObjectName("treeView")
+        self.parameterTree = QtGui.QTreeView(self.parameterTab)
+        self.parameterTree.setGeometry(QtCore.QRect(10, 10, 351, 221))
+        self.parameterTree.setObjectName("parameterTree")
         self.tabWidget_2.addTab(self.parameterTab, "")
         self.blockTab = QtGui.QWidget()
         self.blockTab.setObjectName("blockTab")
-        self.treeView_2 = QtGui.QTreeView(self.blockTab)
-        self.treeView_2.setGeometry(QtCore.QRect(10, 10, 351, 221))
-        self.treeView_2.setObjectName("treeView_2")
+        self.blockTree = QtGui.QTreeView(self.blockTab)
+        self.blockTree.setGeometry(QtCore.QRect(10, 10, 351, 221))
+        self.blockTree.setObjectName("blockTree")
         self.tabWidget_2.addTab(self.blockTab, "")
         self.tabWidget.addTab(self.pluginTab, "")
         self.connectionTab = QtGui.QWidget()
