@@ -174,9 +174,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # create a timer and set interval for processing events with working loop
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
-    def set_dgui_data(self, dgui):
-        self.gui_data = dgui
-        self.manager_overview.dgui =dgui
 
     def dbg(self):
         print("Action")
@@ -188,8 +185,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         pass
 
     def show_create_plugin_menu(self):
-        self.create_plugin_menu = CreatePluginMenu(self.callback_functions)
-        self.create_plugin_menu.setDGui(self.gui_data)
+        self.create_plugin_menu = CreatePluginMenu(self.gui_api)
 
         self.create_plugin_menu.show()
         # self.create_plugin_menu.raise_()
@@ -200,8 +196,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.create_plugin_menu = None
 
     def show_overview_menu(self):
-        self.overview_menu = OverviewPluginMenu(self.callback_functions)
-        self.overview_menu.setDGui(self.gui_data)
+        self.overview_menu = OverviewPluginMenu(self.gui_api)
         self.overview_menu.show()
 
     def load_triggered(self):
