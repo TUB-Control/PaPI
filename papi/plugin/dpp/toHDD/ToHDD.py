@@ -34,7 +34,7 @@ from papi.data.DParameter import DParameter
 import time
 import math
 import numpy
-
+import csv
 
 class ToHDD(plugin_base):
 
@@ -49,7 +49,11 @@ class ToHDD(plugin_base):
 
         self.set_event_trigger_mode(True)
 
-        self.file = open(self.config['file']['value'], 'w+')
+        self.file = open(self.config['file']['value']+'.csv', 'w+')
+
+        self.csvw = csv.writer(self.file, delimiter=self.config['delimiter']['value'],
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
 
         print('toHDD started working')
 
@@ -61,17 +65,30 @@ class ToHDD(plugin_base):
         pass
 
     def resume(self):
-        self.file = open(self.config['file'], 'a')
+        self.file = open(self.config['file']['value']+'.csv', 'a')
         print('toHDD resume')
         pass
 
     def execute(self, data):
-        t = str(data['t'])
-        self.file.write(t)
-        for k in data:
-            pass
+        t = data['t']
 
-        pass
+
+
+        rows = []
+
+        #self.csvw.writerows([[1,2], [3,4]])
+
+        for i in range(len(t)):
+            row = []
+            row.append(t[i])
+            for k in data:
+                if k != 't':
+                    vals = data[k][i]
+                    row.append(vals)
+            rows.append(row)
+
+        self.csvw.writerows(rows)
+
 
     def set_parameter(self, name, value):
        pass
@@ -84,6 +101,8 @@ class ToHDD(plugin_base):
                 'regex': '[0-9]+'
         }, "file": {
                 'value': 'log1',
+        }, "delimiter": {
+                'value': ' ',
         }}
         return config
 

@@ -102,7 +102,7 @@ class Sinus(plugin_base):
     def get_startup_configuration(self):
         config = {
             "amax": {
-                'value': 1,
+                'value': 3,
                 'regex': '[0-9]+'
         }, 'f': {
                 'value': "1",

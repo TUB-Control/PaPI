@@ -1,129 +1,52 @@
-<PaPiConfig Date="2014-10-20 18:17:07" PaPI_version="v_0.1">
-  <Plugin uname="Plot1">
+<PaPiConfig Date="2014-10-22 15:32:16" PaPI_version="v_0.1">
+  <Plugin uname="Plo1">
     <Identifier>Plot</Identifier>
     <StartConfig>
       <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
         <value>(200,200)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotSin</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
       </Parameter>
       <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
         <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <Subscriptions>
       <Subscription>
-        <data_source>SInus1</data_source>
+        <data_source>Sinus1</data_source>
         <block Name="SinMit_f3">
           <alias />
           <Signal>1</Signal>
-          <Signal>2</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Plot2">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(200,200)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotCPU</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>CPULoad</data_source>
-        <block Name="load">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="PlotFour">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(200,200)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PlotFour</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Add1</data_source>
-        <block Name="AddOut1">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="SInus1">
+  <Plugin uname="Sinus1">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="f">
-        <regex>\d+.{0,1}\d*</regex>
-        <value>1</value>
-      </Parameter>
       <Parameter Name="amax">
+        <value>3</value>
         <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="f">
         <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -131,342 +54,14 @@
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>Butt</data_source>
+        <data_source>Button1</data_source>
         <block Name="Parameter_1">
           <alias>Frequenz Block SinMit_f3</alias>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="FourMod">
-    <Identifier>Fourier_Rect_MOD</Identifier>
-    <StartConfig />
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="CPULoad">
-    <Identifier>CPU_Load</Identifier>
-    <StartConfig />
-    <PreviousParameters>
-      <Parameter Name="Delta_t">0.01</Parameter>
-    </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Add1">
-    <Identifier>Add</Identifier>
-    <StartConfig />
-    <PreviousParameters>
-      <Parameter Name="Count">1</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>FourMod</data_source>
-        <block Name="Rect1">
-          <alias />
-          <Signal>1</Signal>
-          <Signal>2</Signal>
-          <Signal>3</Signal>
-          <Signal>4</Signal>
-          <Signal>5</Signal>
-          <Signal>6</Signal>
-          <Signal>7</Signal>
-          <Signal>8</Signal>
-          <Signal>9</Signal>
-          <Signal>10</Signal>
-          <Signal>11</Signal>
-          <Signal>12</Signal>
-          <Signal>13</Signal>
-          <Signal>14</Signal>
-          <Signal>15</Signal>
-          <Signal>16</Signal>
-          <Signal>17</Signal>
-          <Signal>18</Signal>
-          <Signal>19</Signal>
-          <Signal>20</Signal>
-          <Signal>21</Signal>
-          <Signal>22</Signal>
-          <Signal>23</Signal>
-          <Signal>24</Signal>
-          <Signal>25</Signal>
-          <Signal>26</Signal>
-          <Signal>27</Signal>
-          <Signal>28</Signal>
-          <Signal>29</Signal>
-          <Signal>30</Signal>
-          <Signal>31</Signal>
-          <Signal>32</Signal>
-          <Signal>33</Signal>
-          <Signal>34</Signal>
-          <Signal>35</Signal>
-          <Signal>36</Signal>
-          <Signal>37</Signal>
-          <Signal>38</Signal>
-          <Signal>39</Signal>
-          <Signal>40</Signal>
-          <Signal>41</Signal>
-          <Signal>42</Signal>
-          <Signal>43</Signal>
-          <Signal>44</Signal>
-          <Signal>45</Signal>
-          <Signal>46</Signal>
-          <Signal>47</Signal>
-          <Signal>48</Signal>
-          <Signal>49</Signal>
-          <Signal>50</Signal>
-          <Signal>51</Signal>
-          <Signal>52</Signal>
-          <Signal>53</Signal>
-          <Signal>54</Signal>
-          <Signal>55</Signal>
-          <Signal>56</Signal>
-          <Signal>57</Signal>
-          <Signal>58</Signal>
-          <Signal>59</Signal>
-          <Signal>60</Signal>
-          <Signal>61</Signal>
-          <Signal>62</Signal>
-          <Signal>63</Signal>
-          <Signal>64</Signal>
-          <Signal>65</Signal>
-          <Signal>66</Signal>
-          <Signal>67</Signal>
-          <Signal>68</Signal>
-          <Signal>69</Signal>
-          <Signal>70</Signal>
-          <Signal>71</Signal>
-          <Signal>72</Signal>
-          <Signal>73</Signal>
-          <Signal>74</Signal>
-          <Signal>75</Signal>
-          <Signal>76</Signal>
-          <Signal>77</Signal>
-          <Signal>78</Signal>
-          <Signal>79</Signal>
-          <Signal>80</Signal>
-          <Signal>81</Signal>
-          <Signal>82</Signal>
-          <Signal>83</Signal>
-          <Signal>84</Signal>
-          <Signal>85</Signal>
-          <Signal>86</Signal>
-          <Signal>87</Signal>
-          <Signal>88</Signal>
-          <Signal>89</Signal>
-          <Signal>90</Signal>
-          <Signal>91</Signal>
-          <Signal>92</Signal>
-          <Signal>93</Signal>
-          <Signal>94</Signal>
-          <Signal>95</Signal>
-          <Signal>96</Signal>
-          <Signal>97</Signal>
-          <Signal>98</Signal>
-          <Signal>99</Signal>
-          <Signal>100</Signal>
-          <Signal>101</Signal>
-          <Signal>102</Signal>
-          <Signal>103</Signal>
-          <Signal>104</Signal>
-          <Signal>105</Signal>
-          <Signal>106</Signal>
-          <Signal>107</Signal>
-          <Signal>108</Signal>
-          <Signal>109</Signal>
-          <Signal>110</Signal>
-          <Signal>111</Signal>
-          <Signal>112</Signal>
-          <Signal>113</Signal>
-          <Signal>114</Signal>
-          <Signal>115</Signal>
-          <Signal>116</Signal>
-          <Signal>117</Signal>
-          <Signal>118</Signal>
-          <Signal>119</Signal>
-          <Signal>120</Signal>
-          <Signal>121</Signal>
-          <Signal>122</Signal>
-          <Signal>123</Signal>
-          <Signal>124</Signal>
-          <Signal>125</Signal>
-          <Signal>126</Signal>
-          <Signal>127</Signal>
-          <Signal>128</Signal>
-          <Signal>129</Signal>
-          <Signal>130</Signal>
-          <Signal>131</Signal>
-          <Signal>132</Signal>
-          <Signal>133</Signal>
-          <Signal>134</Signal>
-          <Signal>135</Signal>
-          <Signal>136</Signal>
-          <Signal>137</Signal>
-          <Signal>138</Signal>
-          <Signal>139</Signal>
-          <Signal>140</Signal>
-          <Signal>141</Signal>
-          <Signal>142</Signal>
-          <Signal>143</Signal>
-          <Signal>144</Signal>
-          <Signal>145</Signal>
-          <Signal>146</Signal>
-          <Signal>147</Signal>
-          <Signal>148</Signal>
-          <Signal>149</Signal>
-          <Signal>150</Signal>
-          <Signal>151</Signal>
-          <Signal>152</Signal>
-          <Signal>153</Signal>
-          <Signal>154</Signal>
-          <Signal>155</Signal>
-          <Signal>156</Signal>
-          <Signal>157</Signal>
-          <Signal>158</Signal>
-          <Signal>159</Signal>
-          <Signal>160</Signal>
-          <Signal>161</Signal>
-          <Signal>162</Signal>
-          <Signal>163</Signal>
-          <Signal>164</Signal>
-          <Signal>165</Signal>
-          <Signal>166</Signal>
-          <Signal>167</Signal>
-          <Signal>168</Signal>
-          <Signal>169</Signal>
-          <Signal>170</Signal>
-          <Signal>171</Signal>
-          <Signal>172</Signal>
-          <Signal>173</Signal>
-          <Signal>174</Signal>
-          <Signal>175</Signal>
-          <Signal>176</Signal>
-          <Signal>177</Signal>
-          <Signal>178</Signal>
-          <Signal>179</Signal>
-          <Signal>180</Signal>
-          <Signal>181</Signal>
-          <Signal>182</Signal>
-          <Signal>183</Signal>
-          <Signal>184</Signal>
-          <Signal>185</Signal>
-          <Signal>186</Signal>
-          <Signal>187</Signal>
-          <Signal>188</Signal>
-          <Signal>189</Signal>
-          <Signal>190</Signal>
-          <Signal>191</Signal>
-          <Signal>192</Signal>
-          <Signal>193</Signal>
-          <Signal>194</Signal>
-          <Signal>195</Signal>
-          <Signal>196</Signal>
-          <Signal>197</Signal>
-          <Signal>198</Signal>
-          <Signal>199</Signal>
-          <Signal>200</Signal>
-          <Signal>201</Signal>
-          <Signal>202</Signal>
-          <Signal>203</Signal>
-          <Signal>204</Signal>
-          <Signal>205</Signal>
-          <Signal>206</Signal>
-          <Signal>207</Signal>
-          <Signal>208</Signal>
-          <Signal>209</Signal>
-          <Signal>210</Signal>
-          <Signal>211</Signal>
-          <Signal>212</Signal>
-          <Signal>213</Signal>
-          <Signal>214</Signal>
-          <Signal>215</Signal>
-          <Signal>216</Signal>
-          <Signal>217</Signal>
-          <Signal>218</Signal>
-          <Signal>219</Signal>
-          <Signal>220</Signal>
-          <Signal>221</Signal>
-          <Signal>222</Signal>
-          <Signal>223</Signal>
-          <Signal>224</Signal>
-          <Signal>225</Signal>
-          <Signal>226</Signal>
-          <Signal>227</Signal>
-          <Signal>228</Signal>
-          <Signal>229</Signal>
-          <Signal>230</Signal>
-          <Signal>231</Signal>
-          <Signal>232</Signal>
-          <Signal>233</Signal>
-          <Signal>234</Signal>
-          <Signal>235</Signal>
-          <Signal>236</Signal>
-          <Signal>237</Signal>
-          <Signal>238</Signal>
-          <Signal>239</Signal>
-          <Signal>240</Signal>
-          <Signal>241</Signal>
-          <Signal>242</Signal>
-          <Signal>243</Signal>
-          <Signal>244</Signal>
-          <Signal>245</Signal>
-          <Signal>246</Signal>
-          <Signal>247</Signal>
-          <Signal>248</Signal>
-          <Signal>249</Signal>
-          <Signal>250</Signal>
-          <Signal>251</Signal>
-          <Signal>252</Signal>
-          <Signal>253</Signal>
-          <Signal>254</Signal>
-          <Signal>255</Signal>
-          <Signal>256</Signal>
-          <Signal>257</Signal>
-          <Signal>258</Signal>
-          <Signal>259</Signal>
-          <Signal>260</Signal>
-          <Signal>261</Signal>
-          <Signal>262</Signal>
-          <Signal>263</Signal>
-          <Signal>264</Signal>
-          <Signal>265</Signal>
-          <Signal>266</Signal>
-          <Signal>267</Signal>
-          <Signal>268</Signal>
-          <Signal>269</Signal>
-          <Signal>270</Signal>
-          <Signal>271</Signal>
-          <Signal>272</Signal>
-          <Signal>273</Signal>
-          <Signal>274</Signal>
-          <Signal>275</Signal>
-          <Signal>276</Signal>
-          <Signal>277</Signal>
-          <Signal>278</Signal>
-          <Signal>279</Signal>
-          <Signal>280</Signal>
-          <Signal>281</Signal>
-          <Signal>282</Signal>
-          <Signal>283</Signal>
-          <Signal>284</Signal>
-          <Signal>285</Signal>
-          <Signal>286</Signal>
-          <Signal>287</Signal>
-          <Signal>288</Signal>
-          <Signal>289</Signal>
-          <Signal>290</Signal>
-          <Signal>291</Signal>
-          <Signal>292</Signal>
-          <Signal>293</Signal>
-          <Signal>294</Signal>
-          <Signal>295</Signal>
-          <Signal>296</Signal>
-          <Signal>297</Signal>
-          <Signal>298</Signal>
-          <Signal>299</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Butt">
+  <Plugin uname="Button1">
     <Identifier>Button</Identifier>
     <StartConfig>
       <Parameter Name="default">
@@ -479,18 +74,30 @@
     <PreviousParameters />
     <Subscriptions />
   </Plugin>
-  <Plugin uname="HDD">
+  <Plugin uname="CSVHD">
     <Identifier>ToHDD</Identifier>
     <StartConfig>
-      <Parameter Name="log-type">
-        <regex>[0-9]+</regex>
-        <value>1</value>
+      <Parameter Name="delimiter">
+        <value> </value>
       </Parameter>
       <Parameter Name="file">
         <value>log1</value>
       </Parameter>
+      <Parameter Name="log-type">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <Subscriptions />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Sinus1</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
 </PaPiConfig>
