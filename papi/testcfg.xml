@@ -1,13 +1,10 @@
-<PaPiConfig Date="2014-10-22 16:28:08" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-22 17:07:31" PaPI_version="v_0.1">
   <Plugin uname="P1">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="size">
         <value>(200,200)</value>
@@ -17,13 +14,16 @@
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -40,12 +40,9 @@
   <Plugin uname="P2">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="size">
         <value>(300,300)</value>
@@ -55,13 +52,16 @@
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -97,7 +97,14 @@
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
     </PreviousParameters>
-    <Subscriptions />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Buttton1</data_source>
+        <block Name="Parameter_1">
+          <alias>Frequenz Block SinMit_f3</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
   <Plugin uname="Add1">
     <Identifier>Add</Identifier>
@@ -153,5 +160,21 @@
         </block>
       </Subscription>
     </Subscriptions>
+  </Plugin>
+  <Plugin uname="Buttton1">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="low">
+        <value>0.1</value>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
   </Plugin>
 </PaPiConfig>
