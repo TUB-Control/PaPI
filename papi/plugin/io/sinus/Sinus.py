@@ -57,7 +57,7 @@ class Sinus(plugin_base):
 
         self.send_new_block_list([block1, block2, block3])
 
-        self.para3 = DParameter(None,'Frequenz Block SinMit_f3',0.1,[0,1],1)
+        self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1)
         self.para3.id = 1
         para_l = [self.para3]
 
@@ -81,12 +81,12 @@ class Sinus(plugin_base):
         vec3 = numpy.zeros((3,self.amax))
         for i in range(self.amax):
             vec[0, i] = self.t
-            vec[1, i] = math.sin(2*math.pi*0.01*self.t)
+            vec[1, i] = math.sin(2*math.pi*0.8*self.t)
             vec2[0, i] = self.t
-            vec2[1, i] = math.sin(2*math.pi*0.15*self.t)
+            vec2[1, i] = math.sin(2*math.pi*0.5*self.t)
             vec3[0, i] = self.t
             vec3[1, i] = math.sin(2*math.pi*self.para3.value*self.t)
-            vec3[2, i] = math.sin(2*math.pi*0.01*self.t)
+            vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
             self.t += 0.01
 
         self.send_new_data(vec,'SinMit_f1')

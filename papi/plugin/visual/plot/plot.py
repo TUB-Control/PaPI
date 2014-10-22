@@ -43,6 +43,7 @@ class Plot(visual_base):
 
         size = size_re.findall(config['size']['value'])
 
+
         self.name = name
         self._interval = int(sampleinterval*timewindow)
         self._bufsize = int(timewindow/sampleinterval)
@@ -59,7 +60,6 @@ class Plot(visual_base):
 
         self._plotWidget = PlotWidget()
 
-        self._plotWidget.resize(int(size[0]), int(size[1]))
         self._plotWidget.showGrid(x=True, y=True)
         self._plotWidget.setLabel('left', 'amplitude', 'V')
         self._plotWidget.setLabel('bottom', 'time', 's')
@@ -74,6 +74,7 @@ class Plot(visual_base):
         self._subWindow = QMdiSubWindow()
         self._subWindow.setWidget(self._plotWidget)
         self._subWindow.setWindowTitle(self.name)
+        self._subWindow.resize(int(size[0]), int(size[1]))
 
         # -----------------------------
         # create array for parameters
@@ -165,7 +166,7 @@ class Plot(visual_base):
                 'value': "1000",
                 'regex': '[0-9]+'
         }, 'size': {
-                'value': "(200,200)",
+                'value': "(300,300)",
                 'regex': '\(([0-9]+),([0-9]+)\)'
         }, 'name': {
                 'value' : 'Plot_Plugin',
