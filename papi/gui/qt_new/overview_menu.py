@@ -41,12 +41,12 @@ from yapsy.PluginManager import PluginManager
 
 class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
-    def __init__(self, callback_functions, parent=None):
+    def __init__(self, gui_api, parent=None):
         super(OverviewPluginMenu, self).__init__(parent)
         self.setupUi(self)
-        self.dgui = None
+        self.dgui = gui_api.gui_data
 
-        self.callback_functions = callback_functions
+        self.gui_api = gui_api
 
         self.setWindowTitle("OverviewMenu")
 

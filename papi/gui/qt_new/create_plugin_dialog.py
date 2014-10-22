@@ -41,12 +41,12 @@ from yapsy.PluginManager import PluginManager
 
 class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
 
-    def __init__(self, callback_functions, parent=None):
+    def __init__(self, gui_api, parent=None):
         super(CreatePluginDialog, self).__init__(parent)
         self.setupUi(self)
         self.cfg = None
         self.configuration_inputs = {}
-        self.callback_functions = callback_functions
+        self.gui_api = gui_api
 
     def set_plugin(self, plugin):
         startup_config = plugin.plugin_object.get_startup_configuration()
@@ -69,7 +69,8 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
         if self.plugin_type == 'IOP' or self.plugin_type == 'DPP':
             autostart = self.autostartBox.isChecked()
 
-        self.callback_functions['do_create_plugin'](self.plugin_name, config['uname']['value'], config=config, autostart=autostart)
+        self.gui_api.do_create_plugin(self.plugin_name, config['uname']['value'], config=config, autostart=autostart)
+
 
     def reject(self):
         self.close()
