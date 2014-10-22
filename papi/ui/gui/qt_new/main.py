@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Wed Oct 22 17:19:33 2014
+# Created: Wed Oct 22 17:38:13 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,12 +21,12 @@ class Ui_QtNewMain(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.saveButton = QtGui.QPushButton(self.centralwidget)
-        self.saveButton.setObjectName("saveButton")
-        self.horizontalLayout.addWidget(self.saveButton)
         self.loadButton = QtGui.QPushButton(self.centralwidget)
         self.loadButton.setObjectName("loadButton")
         self.horizontalLayout.addWidget(self.loadButton)
+        self.saveButton = QtGui.QPushButton(self.centralwidget)
+        self.saveButton.setObjectName("saveButton")
+        self.horizontalLayout.addWidget(self.saveButton)
         self.createButton = QtGui.QPushButton(self.centralwidget)
         self.createButton.setObjectName("createButton")
         self.horizontalLayout.addWidget(self.createButton)
@@ -67,8 +67,8 @@ class Ui_QtNewMain(object):
 
     def retranslateUi(self, QtNewMain):
         QtNewMain.setWindowTitle(QtGui.QApplication.translate("QtNewMain", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveButton.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))
-        self.loadButton.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.loadButton.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveButton.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.createButton.setText(QtGui.QApplication.translate("QtNewMain", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("QtNewMain", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlugin.setTitle(QtGui.QApplication.translate("QtNewMain", "Plugin", None, QtGui.QApplication.UnicodeUTF8))

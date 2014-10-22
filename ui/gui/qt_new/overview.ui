@@ -169,7 +169,7 @@
            <attribute name="title">
             <string>Parameters</string>
            </attribute>
-           <widget class="QTreeView" name="treeView">
+           <widget class="QTreeView" name="parameterTree">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -184,7 +184,7 @@
            <attribute name="title">
             <string>Blocks</string>
            </attribute>
-           <widget class="QTreeView" name="treeView_2">
+           <widget class="QTreeView" name="blockTree">
             <property name="geometry">
              <rect>
               <x>10</x>
