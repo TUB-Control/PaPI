@@ -81,7 +81,7 @@ class PaPItreeModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(PaPItreeModel, self).__init__(parent)
 
-class PaPITreeView(QTreeView)
+class PaPITreeView(QTreeView):
     def __init__(self, parent=None):
         super(PaPITreeView, self).__init__(parent)
 
