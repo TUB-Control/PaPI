@@ -86,10 +86,28 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.typeEdit.setText(dplugin.type)
         self.alivestateEdit.setText(dplugin.alive_state)
 
-        # self.nameEdit.setText(item.name)
-        # self.authorEdit.setText(item.author)
-        # self.descriptionText.setText(item.description)
-        # self.pathEdit.setText(item.path)
+        dblock_ids = dplugin.get_dblocks()
+
+        self.bloc
+
+        for dblock_id in dblock_ids:
+            dblock = dblock_ids[dblock_id]
+            block_item = QTreeWidgetItem(dblock_root)
+            block_item.dblock = dblock
+            block_item.setText(self.get_column_by_name("BLOCK"), dblock.name)
+
+            # ---------------------------
+            # Add Subscribers of DBlock
+            # ---------------------------
+
+            subscriber_ids = dblock.get_subscribers()
+
+            for subscriber_id in subscriber_ids:
+                subscriber_item = QTreeWidgetItem(block_item)
+
+                subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
+
+                subscriber_item.setText(self.get_column_by_name("SUBSCRIBER"), str(subscriber.uname))
 
 
 
