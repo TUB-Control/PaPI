@@ -28,20 +28,45 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PySide.QtGui import QStandardItem
+from PySide.QtGui import QStandardItem, QStandardItemModel
+# from PySide.QtCore import QStandardItemModel
 
+from PySide.QtCore import *
+from PySide.QtGui import *
 
-class PluginItem(QStandardItem):
-    def __init__(self, name, plugin):
-        super(PluginItem, self).__init__(name)
-        self.plugin = plugin
+class PaPITreeItem(QStandardItem):
+    def __init__(self, object,  name):
+        super(PaPITreeItem, self).__init__(name)
+        self.object = object
         self.setEditable(False)
-        self.tmp = 12
-    def get_plugin(self):
-        self.plugin
+        self.name = name
 
+    def data(self, role):
+        '''
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        '''
+
+        if role == Qt.ToolTipRole:
+            return "Plugin: " + self.name
+
+        if role == Qt.DisplayRole:
+            return self.name
+
+        if role == Qt.DecorationRole:
+            return QColor(255, 0, 0, 127)
+
+        if role == Qt.UserRole:
+            return self.object
+
+        return None
 
 class RootItem(QStandardItem):
     def __init__(self, name):
         super(RootItem, self).__init__(name)
         self.setEditable(False)
+
+class PaPItreeModel(QStandardItemModel):
+    def __init__(self, parent=None):
+        super(PaPItreeModel, self).__init__(parent)

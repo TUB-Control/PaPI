@@ -42,14 +42,16 @@ from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
+
 from papi.constants import CONFIG_DEFAULT_FILE
+
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
 import pyqtgraph as pg
 from pyqtgraph import QtCore
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
-
+from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 
 # Enable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
@@ -198,12 +200,15 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.create_plugin_menu = None
 
     def show_overview_menu(self):
-        print("ShowOverview")
-        pass
+        self.overview_menu = OverviewPluginMenu(self.callback_functions)
+        self.overview_menu.setDGui(self.gui_data)
+        self.overview_menu.show()
 
     def load_triggered(self):
-        print("Load")
-        pass
+        print('Load')
+        print(CONFIG_DEFAULT_FILE)
+        self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
+
 
     def save_triggered(self):
         print("Save")
@@ -211,6 +216,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()
+        if self.create_plugin_menu is not None:
+            self.create_plugin_menu.close()
+
         self.close()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):

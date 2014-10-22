@@ -88,6 +88,68 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="formLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>10</y>
+            <width>371</width>
+            <height>451</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="unameLabel">
+             <property name="text">
+              <string>Unique name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="usedpluginLabel">
+             <property name="text">
+              <string>Used plugin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="stateLabel">
+             <property name="text">
+              <string>State</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="typeLabel">
+             <property name="text">
+              <string>Type</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="alivestateLabel">
+             <property name="text">
+              <string>Alive state</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="usedpluginEdit"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="stateEdit"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="typeEdit"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="alivestateEdit"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
         <widget class="QWidget" name="connectionTab">
          <attribute name="title">
