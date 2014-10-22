@@ -111,7 +111,7 @@ class pcp_base(plugin_base):
     def resume(self):
         pass
 
-    def execute(self,Data=None):
+    def execute(self, Data=None, block_name = None):
         pass
 
     def set_parameter(self,para_list):

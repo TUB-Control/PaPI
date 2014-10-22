@@ -1,6 +1,6 @@
 [Core]
-Name = toHDD
-Module = toHDD
+Name = ToHDD_CSV
+Module = ToHDD_CSV
 
 [Documentation]
 Author = S.R.

@@ -88,7 +88,7 @@ class Fourier_Rect(plugin_base):
     def resume(self):
         pass
 
-    def execute(self):
+    def execute(self, Data=None, block_name = None):
         # amount of elements per vector: self.amax
         # amount of vectors : self.max_approx+1
         vec = numpy.zeros( (self.max_approx,  (self.amax) ))

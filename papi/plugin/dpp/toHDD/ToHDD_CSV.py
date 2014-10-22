@@ -34,35 +34,63 @@ from papi.data.DParameter import DParameter
 import time
 import math
 import numpy
+import csv
 
-
-class toHDD(plugin_base):
+class ToHDD_CSV(plugin_base):
 
     def start_init(self, config=None):
 
         default_config = self.get_startup_configuration()
 
         if config is None:
-            config = default_config
+            self.config = default_config
         else:
-            config = dict(list(default_config.items()) + list(config.items()))
+            self.config = dict(list(default_config.items()) + list(config.items()))
 
+        self.set_event_trigger_mode(True)
 
+        self.known_blocks = {}
 
         print('toHDD started working')
 
         return True
 
     def pause(self):
+        for b in self.known_blocks.values():
+            b['file'].close()
         print('toHDD pause')
         pass
 
     def resume(self):
+        for b in self.known_blocks.values():
+            b['file'] = open(self.config['file']['value']+'.csv', 'a')
+            b['csv'] =  csv.writer( b['file'], delimiter=self.config['delimiter']['value'],
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
         print('toHDD resume')
         pass
 
-    def execute(self):
-        pass
+    def execute(self, Data=None, block_name = None):
+        t = Data['t']
+
+        if block_name not in self.known_blocks.keys():
+            self.known_blocks[block_name] = {}
+            self.known_blocks[block_name]['file'] = open(self.config['file']['value']+'_'+block_name+'.csv', 'w+')
+            self.known_blocks[block_name]['csv'] =  csv.writer( self.known_blocks[block_name]['file'], delimiter=self.config['delimiter']['value'],
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        else:
+            rows = []
+
+            for i in range(len(t)):
+                row = []
+                row.append(t[i])
+                for k in Data:
+                    if k != 't':
+                        vals = Data[k][i]
+                        row.append(vals)
+                rows.append(row)
+
+            self.known_blocks[block_name]['csv'].writerows(rows)
+
 
     def set_parameter(self, name, value):
        pass
@@ -73,10 +101,17 @@ class toHDD(plugin_base):
             "log-type": {
                 'value': 1,
                 'regex': '[0-9]+'
+        }, "file": {
+                'value': 'log',
+        }, "delimiter": {
+                'value': ' ',
         }}
         return config
 
     def quit(self):
+        for b in self.known_blocks.values():
+            b['file'].close()
+
         print('toHDD: will quit')
 
     def get_type(self):

@@ -95,8 +95,9 @@ class Plot(visual_base):
     def resume(self):
         print('plot resumed')
 
-    def execute(self, Data):
+    def execute(self, Data=None, block_name = None):
         #print(Data)
+
 
         t = Data['t']
 

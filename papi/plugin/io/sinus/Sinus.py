@@ -75,7 +75,7 @@ class Sinus(plugin_base):
         print('Sinus resume')
         pass
 
-    def execute(self):
+    def execute(self, Data=None, block_name = None):
         vec = numpy.zeros( (2,self.amax))
         vec2 = numpy.zeros((2,self.amax))
         vec3 = numpy.zeros((3,self.amax))
@@ -87,12 +87,12 @@ class Sinus(plugin_base):
             vec3[0, i] = self.t
             vec3[1, i] = math.sin(2*math.pi*self.para3.value*self.t)
             vec3[2, i] = math.sin(2*math.pi*0.01*self.t)
-            self.t += 0.1
+            self.t += 0.01
 
         self.send_new_data(vec,'SinMit_f1')
         self.send_new_data(vec2,'SinMit_f2')
         self.send_new_data(vec3,'SinMit_f3')
-        time.sleep(0.02)
+        time.sleep(self.amax*0.01)
 
     def set_parameter(self, name, value):
         if name == self.para3.name:
@@ -102,7 +102,7 @@ class Sinus(plugin_base):
     def get_startup_configuration(self):
         config = {
             "amax": {
-                'value': 1,
+                'value': 3,
                 'regex': '[0-9]+'
         }, 'f': {
                 'value': "1",
