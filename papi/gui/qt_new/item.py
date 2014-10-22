@@ -31,6 +31,8 @@ __author__ = 'knuths'
 from PySide.QtGui import QStandardItem, QStandardItemModel
 # from PySide.QtCore import QStandardItemModel
 
+
+
 from PySide.QtCore import *
 from PySide.QtGui import *
 
@@ -56,6 +58,11 @@ class PaPITreeItem(QStandardItem):
 
         if role == Qt.DecorationRole:
             return QColor(255, 0, 0, 127)
+            # path = self.object.path+'/box.png'
+            # print(path)
+            # image = QPixmap()
+            # print(image.load(path) )
+            # return image
 
         if role == Qt.UserRole:
             return self.object
