@@ -48,7 +48,7 @@
         <value>Plot_Plugin</value>
       </Parameter>
       <Parameter Name="size">
-        <value>(200,200)</value>
+        <value>(300,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
       </Parameter>
       <Parameter Name="sampleinterval">
