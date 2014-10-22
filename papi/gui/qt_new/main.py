@@ -219,6 +219,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if self.create_plugin_menu is not None:
             self.create_plugin_menu.close()
 
+        if self.overview_menu is not None:
+            self.overview_menu.close()
+
         self.close()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):

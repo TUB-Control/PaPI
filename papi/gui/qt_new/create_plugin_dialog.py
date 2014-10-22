@@ -52,7 +52,7 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
         startup_config = plugin.plugin_object.get_startup_configuration()
         self.cfg = startup_config
         self.plugin_name = plugin.name
-
+        self.plugin_type = plugin.plugin_object.get_type()
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
 
@@ -65,7 +65,11 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
 
         self.close()
 
-        self.callback_functions['do_create_plugin'](self.plugin_name, config['uname']['value'], config=config)
+        autostart = True
+        if self.plugin_type == 'IOP' or self.plugin_type == 'DPP':
+            autostart = self.autostartBox.isChecked()
+
+        self.callback_functions['do_create_plugin'](self.plugin_name, config['uname']['value'], config=config, autostart=autostart)
 
     def reject(self):
         self.close()

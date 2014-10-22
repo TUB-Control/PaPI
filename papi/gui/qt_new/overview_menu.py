@@ -75,10 +75,16 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.dgui = dgui
 
     def pluginItemChanged(self, index):
-        item = self.pluginTree.model().data(index, Qt.UserRole)
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
-        if item is None:
+        if dplugin is None:
             return
+
+        self.unameEdit.setText(dplugin.uname)
+        self.usedpluginEdit.setText(dplugin.plugin_identifier)
+        self.stateEdit.setText(dplugin.state)
+        self.typeEdit.setText(dplugin.type)
+        self.alivestateEdit.setText(dplugin.alive_state)
 
         # self.nameEdit.setText(item.name)
         # self.authorEdit.setText(item.author)
