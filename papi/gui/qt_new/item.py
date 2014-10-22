@@ -41,7 +41,9 @@ class PaPITreeItem(QStandardItem):
         super(PaPITreeItem, self).__init__(name)
         self.object = object
         self.setEditable(False)
+        self.setSelectable(False)
         self.name = name
+
 
     def data(self, role):
         '''
@@ -69,21 +71,23 @@ class PaPITreeItem(QStandardItem):
 
         return None
 
-    def mousePressEvent(self, event):
-        print('mouse event')
-
-class RootItem(QStandardItem):
+class PaPIRootItem(QStandardItem):
     def __init__(self, name):
-        super(RootItem, self).__init__(name)
+        super(PaPIRootItem, self).__init__(name)
         self.setEditable(False)
+        self.setSelectable(False)
+
+
 
 class PaPItreeModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(PaPItreeModel, self).__init__(parent)
 
-class PaPITreeView(QTreeView):
-    def __init__(self, parent=None):
-        super(PaPITreeView, self).__init__(parent)
+    # def setData(self, index, value, role):
+    #     pass
 
-    def mousePressEvent(self, *args, **kwargs):
-        pass
+    # def data(self, index, role):
+    #     row = index.row()
+    #     col = index.column()
+    #
+    #     pass

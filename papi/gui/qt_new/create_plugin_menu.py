@@ -25,7 +25,7 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, RootItem, PaPItreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
 
 __author__ = 'knuths'
 
@@ -67,10 +67,10 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
 
-        self.visual_root = RootItem('ViP')
-        self.io_root = RootItem('IOP')
-        self.dpp_root = RootItem('DPP')
-        self.pcp_root = RootItem('PCP')
+        self.visual_root = PaPIRootItem('ViP')
+        self.io_root = PaPIRootItem('IOP')
+        self.dpp_root = PaPIRootItem('DPP')
+        self.pcp_root = PaPIRootItem('PCP')
 
         model.appendRow(self.visual_root)
         model.appendRow(self.io_root)
