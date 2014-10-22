@@ -111,6 +111,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.alivestateEdit.setText(dplugin.alive_state)
 
         self.bModel.clear()
+        self.pModel.clear()
+
+        self.bModel.setHorizontalHeaderLabels(['Name'])
+        self.pModel.setHorizontalHeaderLabels(['Name'])
+
         dblock_ids = dplugin.get_dblocks()
 
         for dblock_id in dblock_ids:
@@ -119,26 +124,23 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             block_item = PaPITreeItem(dblock, dblock.name)
             self.bModel.appendRow(block_item)
 
-        #     block_item = QTreeWidgetItem(dblock_root)
-        #     block_item.dblock = dblock
-        #     block_item.setText(self.get_column_by_name("BLOCK"), dblock.name)
-        #
-            # ---------------------------
-            # Add Subscribers of DBlock
-            # ---------------------------
-        #
             subscriber_ids = dblock.get_subscribers()
 
             for subscriber_id in subscriber_ids:
                 subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
                 subscriber_item = PaPITreeItem(subscriber, subscriber.uname)
                 block_item.appendRow(subscriber_item)
-        #       subscriber_item = QTreeWidgetItem(block_item)
-        #
-        #         subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
-        #
-        #         subscriber_item.setText(self.get_column_by_name("SUBSCRIBER"), str(subscriber.uname))
 
+        dparameter_names = dplugin.get_parameters()
+        for dparameter_name in dparameter_names:
+            dparameter = dparameter_names[dparameter_name]
+            dparameter_item = PaPITreeItem(dparameter, dparameter_name)
+            self.pModel.appendRow(dparameter_item)
+
+            dparameter_item_value = PaPITreeItem(dparameter, str(dparameter.value))
+            self.pModel.appendColumn([dparameter_item_value])
+            self.parameterTree.resizeColumnToContents(0)
+            self.parameterTree.resizeColumnToContents(1)
 
 
     def show_create_plugin_dialog(self):

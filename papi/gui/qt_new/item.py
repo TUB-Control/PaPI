@@ -62,6 +62,9 @@ class PaPITreeItem(QStandardItem):
 
         return None
 
+    def mousePressEvent(self, event):
+        print('mouse event')
+
 class RootItem(QStandardItem):
     def __init__(self, name):
         super(RootItem, self).__init__(name)
@@ -70,3 +73,10 @@ class RootItem(QStandardItem):
 class PaPItreeModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(PaPItreeModel, self).__init__(parent)
+
+class PaPITreeView(QTreeView)
+    def __init__(self, parent=None):
+        super(PaPITreeView, self).__init__(parent)
+
+    def mousePressEvent(self, *args, **kwargs):
+        pass
