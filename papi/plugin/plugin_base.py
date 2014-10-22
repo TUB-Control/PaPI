@@ -199,7 +199,7 @@ class plugin_base(IPlugin):
                     opt = event.get_optional_parameter()
                     if opt.is_parameter is False:
                         data = self.demux(opt.data_source_id, opt.block_name, opt.data)
-                        self.execute(data)
+                        self.execute(Data=data, block_name = opt.block_name)
                     if opt.is_parameter is True:
                         self.set_parameter_internal(opt.parameter_alias, opt.data)
                 if op == 'set_parameter' and self.plugin_stopped is False:
@@ -314,7 +314,7 @@ class plugin_base(IPlugin):
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
-    def execute(self, Data=None):
+    def execute(self, Data=None, block_name = None):
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod

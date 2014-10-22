@@ -106,7 +106,7 @@ class Fourier_Rect_MOD(plugin_base):
             time.sleep(0.001*self.amax )
 
 
-    def execute(self):
+    def execute(self, Data=None, block_name = None):
         print("EXECUTE FUNC")
         pass
 

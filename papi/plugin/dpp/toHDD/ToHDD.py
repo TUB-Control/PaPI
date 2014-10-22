@@ -69,8 +69,8 @@ class ToHDD(plugin_base):
         print('toHDD resume')
         pass
 
-    def execute(self, data):
-        t = data['t']
+    def execute(self, Data=None, block_name = None):
+        t = Data['t']
 
 
 
@@ -81,9 +81,9 @@ class ToHDD(plugin_base):
         for i in range(len(t)):
             row = []
             row.append(t[i])
-            for k in data:
+            for k in Data:
                 if k != 't':
-                    vals = data[k][i]
+                    vals = Data[k][i]
                     row.append(vals)
             rows.append(row)
 

@@ -61,7 +61,7 @@ class IOP_DPP_template(plugin_base):
     def resume(self):
         pass
 
-    def execute(self):
+    def execute(self, Data=None, block_name = None):
         # implement execute and send new data
         #   self.send_new_data(data,'block_name')
         pass

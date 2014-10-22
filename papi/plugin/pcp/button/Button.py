@@ -55,9 +55,21 @@ class Button(pcp_base):
 
     def clicked(self):
 
-        if self.cur_value == 0.5:
-            self.cur_value = 0.1
+        if self.cur_value == float(self.config['up']['value']):
+            self.cur_value = float(self.config['low']['value'])
         else:
-            self.cur_value = 0.5
+            self.cur_value = float(self.config['up']['value'])
 
         self.send_parameter_change(self.cur_value, 'Parameter_1', 'TESTALIAS')
+
+
+    def get_startup_configuration(self):
+        config = {
+            "low": {
+                'value':0.1,
+        }, "up": {
+                'value': 1,
+        },"name": {
+            'value' : "PCP_Plugin"
+        }}
+        return config
