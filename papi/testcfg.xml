@@ -130,7 +130,7 @@
     </Subscriptions>
   </Plugin>
   <Plugin uname="CSV">
-    <Identifier>ToHDD</Identifier>
+    <Identifier>ToHDD_CSV</Identifier>
     <StartConfig>
       <Parameter Name="file">
         <value>log1</value>

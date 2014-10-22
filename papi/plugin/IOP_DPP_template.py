@@ -35,12 +35,12 @@ from papi.data.DParameter import DParameter
 
 class IOP_DPP_template(plugin_base):
 
-    def start_init(self):
+    def start_init(self, config=None):
         # do user init
         # define vars, connect to rtai .....
 
         # create a block object
-        #   block1 = DBlockself.__id__.,signal count,frequnce,'Blockname',['Signalname1','name1'])
+        #   block1 = DBlockself.__id__.,signal count,frequnce,'Blockname',['Signalname1','Signalname2'])
 
         # send block list
         #   self.send_new_block_list([block1, block2, block3])
@@ -52,6 +52,20 @@ class IOP_DPP_template(plugin_base):
         #   para_list = [self.para]
         #   self.send_new_parameter_list(para_list)
 
+        # if wanted, change event mode to True, False, 'default'
+        # self.set_event_trigger_mode()
+
+        # use startup config like this:
+        # default_config = self.get_startup_configuration()
+        # self.config = None
+        # if config is None:
+        #     self.config = default_config
+        # else:
+        #     self.config = dict(list(default_config.items()) + list(config.items()))
+        #
+        # self.sample = self.config['sampleinterval']['value']
+
+
         # return init success, important
         return True
 
@@ -62,8 +76,14 @@ class IOP_DPP_template(plugin_base):
         pass
 
     def execute(self, Data=None, block_name = None):
+        # param: Data is a Data hash send to this  Plugin and block_name is the block_name of Data origin
+        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...]
         # implement execute and send new data
-        #   self.send_new_data(data,'block_name')
+        #   self.send_new_data(data_vec,'block_name')
+        # data_vec has to be a numpy array and used like this
+        # data_vec[0] = [t1, t2, ...]      data_vec[0] has to be the time line!
+        # data_vec[1] = data....
+
         pass
 
 

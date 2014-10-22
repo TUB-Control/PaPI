@@ -98,6 +98,7 @@ class Plot(visual_base):
     def execute(self, Data=None, block_name = None):
         #print(Data)
 
+
         t = Data['t']
 
         y = []
