@@ -41,6 +41,8 @@ import os
 import socket
 import pickle
 
+import struct
+
 
 class ORTD_UDP(plugin_base):
     max_approx = 300
@@ -60,14 +62,20 @@ class ORTD_UDP(plugin_base):
 
         print(['Fourier: process id: ',os.getpid()] )
 
-
-        self.HOST = "130.149.155.73"
-        self.PORT = 9999
+        # open UDP
+        self.HOST = "127.0.0.1"
+        self.PORT = 20001
         # SOCK_DGRAM is the socket type to use for UDP sockets
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.setblocking(0)
+        self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock2.setblocking(1)
+        
+        # Register parameters
+        self.para_1 = DParameter('', 'Par1', 0.01, [0,2],1)
+        
+        self.send_new_parameter_list([self.para_1])
 
 
+        # Register signals
         names = ['t']
         names.append('Testsignal')
 
@@ -89,8 +97,10 @@ class ORTD_UDP(plugin_base):
 
     def thread_execute(self,host,port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind( ('127.0.0.1', 20000) )
+        
         #self.sock.setblocking(0)
-        vec = numpy.zeros( (self.max_approx,  (self.amax) ))
+        #vec = numpy.zeros( (self.max_approx,  (self.amax) ))
 
         while True:
             #   self.sock.sendto(b'GET', (self.HOST, self.PORT) )
@@ -102,17 +112,34 @@ class ORTD_UDP(plugin_base):
 #            else:
 #                data = pickle.loads(received)
 
-            vec = numpy.zeros((2,1))
-    
-            vec[0,0] = self.t
-            vec[1,0] = 1.23
-        
-            self.t += 0.1
 
-
-            self.send_new_data(vec,'SourceFrq1')
             
-            print("Hallo")
+            try:
+                #print("Waiting for data")
+                rev = self.sock.recv(20)
+                #rev = str.encode(rev_)
+                #print("Got data")
+            except socket.error:
+                pass
+            else:
+                SenderId, Counter, SourceId, val1 = struct.unpack('<iiid', rev)
+                
+                print(Counter)
+                print(val1)
+                
+                vec = numpy.zeros((2,1))
+    
+                vec[0,0] = self.t
+                vec[1,0] = val1
+        
+                self.t += 0.1
+
+                self.send_new_data(vec,'SourceFrq1')
+            
+            
+            
+            
+            #print("Hallo")
             
 
             time.sleep(0.1)
@@ -123,7 +150,17 @@ class ORTD_UDP(plugin_base):
         pass
 
     def set_parameter(self, name, value):
-        pass
+        print("Setting parameter " + name + " ")
+        print(value)
+        
+        ParameterId = 0
+        Counter = 111;
+        data = struct.pack('<iiid', 12, Counter, ParameterId, value)
+        
+        self.sock2.sendto(data, (self.HOST, self.PORT) )
+        print("sent")
+        print(data)
+        
 
     def quit(self):
         print('Fourier_Rect: will quit')
