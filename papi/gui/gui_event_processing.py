@@ -28,9 +28,12 @@ Contributors:
 
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
-    PLUGIN_ROOT_FOLDER_LIST
+    PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_RESUMED, PLUGIN_STATE_STOPPED, \
+    PLUGIN_STATE_START_FAILED
 
 import papi.error_codes as ERROR
+
+import papi.event as Event
 
 from papi.PapiEvent import PapiEvent
 
@@ -219,7 +222,11 @@ class GuiEventProcessing:
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
             # call the plugin developers init function with config
-            dplugin.plugin.start_init(config)
+            if dplugin.plugin.start_init(config) is True:
+                #start succcessfull
+                self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
+            else:
+                self.core_queue.put( Event.status.StartFailed(dplugin.id, 0, None))
 
             # first set meta to plugin
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())

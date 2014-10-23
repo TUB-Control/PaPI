@@ -78,7 +78,7 @@ class Core:
                                             'start_failed':         self.__process_start_failed__,
                                             'alive':                self.__process_alive__,
                                             'join_request':         self.__process_join_request__,
-                                            'plugin_stopped':   self.__process_plugin_stopped__
+                                            'plugin_stopped':       self.__process_plugin_stopped__
         }
 
         self.__process_data_event_l__ = {   'new_data':         self.__process_new_data__,
@@ -924,3 +924,21 @@ class Core:
                 # update meta for Gui
                 self.update_meta_data_to_gui(pl_id)
 
+    # def __process_plugin_paused__(self, event):
+    #     """
+    #     Processes plugin_paused event from GUI. Will add information that a plugin was paused in gui and
+    #     send update meta.
+    #     :param event: event to process
+    #     :type event: PapiEvent
+    #     :type dplugin: DPlugin
+    #     """
+    #     id = event.get_originID()
+    #
+    #     dplugin = self.core_data.get_dplugin_by_id(id)
+    #     if dplugin is not None:
+    #         dplugin.state = PLUGIN_STATE_PAUSE
+    #
+    #         self.update_meta_data_to_gui(id)
+    #
+    # def __process_plugin_resumed__(self, event):
+    #     pass
