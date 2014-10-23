@@ -92,6 +92,9 @@ class Sinus(plugin_base):
         self.send_new_data(vec,'SinMit_f1')
         self.send_new_data(vec2,'SinMit_f2')
         self.send_new_data(vec3,'SinMit_f3')
+
+
+
         time.sleep(self.amax*0.01)
 
     def set_parameter(self, name, value):
