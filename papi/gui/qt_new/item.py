@@ -50,6 +50,7 @@ class PaPITreeItem(QStandardItem):
         self.name = name
         self.tool_tip = "Plugin: " + self.name
 
+
     def data(self, role):
         '''
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'

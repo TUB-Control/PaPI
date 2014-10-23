@@ -33,7 +33,8 @@ __author__ = 'knuths'
 from papi.ui.gui.qt_new.overview import Ui_Overview
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
 from PySide.QtGui import QMainWindow, QStandardItem, QStandardItemModel, QMenu, QAbstractItemView, QAction
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
+    PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
 from papi.data.DPlugin import DPlugin, DBlock
@@ -111,7 +112,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # -----------------------------------
         # signal/slots
         # -----------------------------------
-
+        self.playButton.clicked.connect(self.play_button_callback)
+        self.pauseButton.clicked.connect(self.pause_button_callback)
+        self.stopButton.clicked.connect(self.stop_start_button_callback)
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
         # ----------------------------------
@@ -149,6 +152,27 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.pModel.setHorizontalHeaderLabels(['Name'])
         self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
         self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
+
+        if dplugin.type != PLUGIN_PCP_IDENTIFIER:
+            self.pauseButton.setDisabled(False)
+            self.playButton.setDisabled(False)
+            self.stopButton.setDisabled(False)
+        else:
+            self.pauseButton.setDisabled(True)
+            self.playButton.setDisabled(True)
+            self.stopButton.setDisabled(True)
+
+        if dplugin.alive_state != PLUGIN_STATE_DEAD:
+            if dplugin.state == PLUGIN_STATE_PAUSE:
+                self.pauseButton.setDisabled(True)
+            if dplugin.state == PLUGIN_STATE_STOPPED:
+                self.pauseButton.setDisabled(True)
+                self.playButton.setDisabled(True)
+            if dplugin.state == PLUGIN_STATE_RESUMED:
+                self.playButton.setDisabled(True)
+            if dplugin.state == PLUGIN_STATE_START_SUCCESFUL:
+                self.playButton.setDisabled(True)
+
 
         # ---------------------------
         # Add DBlocks
@@ -374,3 +398,38 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             #
             # plugin_item.setText(self.get_column_by_name("#PARAMETERS"), str(len(dparameter_names.keys())))
             # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
+
+    def play_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            self.gui_api.do_resume_plugin_by_id(item.id)
+            self.playButton.setDisabled(True)
+            self.pauseButton.setDisabled(False)
+            self.stopButton.setDisabled(False)
+
+    def pause_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            self.pauseButton.setDisabled(True)
+            self.playButton.setDisabled(False)
+            self.gui_api.do_pause_plugin_by_id(item.id)
+
+    def stop_start_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            if self.stopButton.text() == 'STOP':
+                self.gui_api.do_stopReset_pluign(item.id)
+                self.stopButton.setText('START')
+                self.pauseButton.setDisabled(True)
+                self.playButton.setDisabled(True)
+                self.stopButton.setDisabled(False)
+
+            else:
+                self.gui_api.do_start_plugin(item.id)
+                self.stopButton.setText('START')
+                self.pauseButton.setDisabled(False)
+                self.playButton.setDisabled(False)
+                self.stopButton.setDisabled(False)
