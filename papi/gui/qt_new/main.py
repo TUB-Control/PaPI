@@ -68,19 +68,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
-        # TODO:
-        # callback functions for create plugin (intead scopeArea parameter) and for delete Plugin in ..GuiEventProcessing
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
         self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.widgetArea)
-
-        self.callback_functions = {
-            'do_create_plugin' : self.gui_api.do_create_plugin,
-            'do_delete_plugin' : self.gui_api.do_delete_plugin,
-            'do_set_parameter' : self.gui_api.do_set_parameter,
-            'do_subscribe'     : self.gui_api.do_subscribe,
-            'do_unsubscribe'   : self.gui_api.do_unsubscribe,
-            'do_set_parameter' : self.gui_api.do_set_parameter_uname
-        }
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 

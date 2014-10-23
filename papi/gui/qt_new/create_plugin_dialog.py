@@ -37,7 +37,7 @@ from PySide.QtCore import *
 from PySide import QtGui
 import PySide
 from yapsy.PluginManager import PluginManager
-
+import operator
 
 class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
 
@@ -83,32 +83,54 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
 
         position = 0
 
-        for attr in startup_config:
-            value = startup_config[attr]['value']
+        if 'uname' in startup_config.keys():
+            value = startup_config['uname']['value']
             label = QLabel(self.formLayoutWidget)
-            label.setText(attr)
-            label.setObjectName(attr  + "_label")
+            label.setText('uname')
+            label.setObjectName('uname'  + "_label")
 
             line_edit = QLineEdit(self.formLayoutWidget)
             line_edit.setText(str(value))
-            line_edit.setObjectName(attr + "_line_edit")
+            line_edit.setObjectName('uname' + "_line_edit")
 
             self.formLayout.setWidget(position, QtGui.QFormLayout.LabelRole, label)
             self.formLayout.setWidget(position, QtGui.QFormLayout.FieldRole, line_edit)
 
-            # -------------------------------
-            # Check for regex description
-            # -------------------------------
-
-            if 'regex' in startup_config[attr]:
-                regex = startup_config[attr]['regex']
-                rx = QRegExp(regex)
-                validator = QRegExpValidator(rx, self)
-                line_edit.setValidator(validator)
-
-            self.configuration_inputs[attr] = line_edit
+            self.configuration_inputs['uname'] = line_edit
 
             position+=1
+
+            startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
+
+
+        for attr in startup_config_sorted:
+            attr = attr[0]
+            if attr != 'uname':
+                value = startup_config[attr]['value']
+                label = QLabel(self.formLayoutWidget)
+                label.setText(attr)
+                label.setObjectName(attr  + "_label")
+
+                line_edit = QLineEdit(self.formLayoutWidget)
+                line_edit.setText(str(value))
+                line_edit.setObjectName(attr + "_line_edit")
+
+                self.formLayout.setWidget(position, QtGui.QFormLayout.LabelRole, label)
+                self.formLayout.setWidget(position, QtGui.QFormLayout.FieldRole, line_edit)
+
+                # -------------------------------
+                # Check for regex description
+                # -------------------------------
+
+                if 'regex' in startup_config[attr]:
+                    regex = startup_config[attr]['regex']
+                    rx = QRegExp(regex)
+                    validator = QRegExpValidator(rx, self)
+                    line_edit.setValidator(validator)
+
+                self.configuration_inputs[attr] = line_edit
+
+                position+=1
 
     def clear_layout(self, layout):
         while layout.count():
