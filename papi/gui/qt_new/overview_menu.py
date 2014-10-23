@@ -92,7 +92,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # -----------------------------------
         # signal/slots
         # -----------------------------------
-
+        self.playButton.clicked.connect(self.play_button_callback)
+        self.pauseButton.clicked.connect(self.pause_button_callback)
+        self.stopButton.clicked.connect(self.stop_start_button_callback)
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
         # ----------------------------------
@@ -284,3 +286,23 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             #
             # plugin_item.setText(self.get_column_by_name("#PARAMETERS"), str(len(dparameter_names.keys())))
             # plugin_item.setText(self.get_column_by_name("#BLOCKS"), str(len(dblock_ids.keys())))
+
+    def play_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            self.gui_api.do_resume_plugin_by_id(item.id)
+
+    def pause_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            self.gui_api.do_pause_plugin_by_id(item.id)
+
+    def stop_start_button_callback(self):
+        index=self.pluginTree.currentIndex()
+        item = self.pluginTree.model().data(index, Qt.UserRole)
+        if item is not None:
+            if self.stopButton.text() == 'stop':
+                self.gui_api.do_stopReset_pluign(item.id)
+                

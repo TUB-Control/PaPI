@@ -59,13 +59,13 @@ class PaPITreeItem(QStandardItem):
             return self.name
 
         if role == Qt.DecorationRole:
-            #return QColor(255, 0, 0, 127)
+            return QColor(255, 0, 0, 127)
 
-            l = len(self.object.name)
-            path = self.object.path[:-l]
-            path = path+'box.png'
-            px = QPixmap(path)
-            return px
+            # l = len(self.object.name)
+            # path = self.object.path[:-l]
+            # path = path+'box.png'
+            # px = QPixmap(path)
+            # return px
 
         if role == Qt.UserRole:
             return self.object
