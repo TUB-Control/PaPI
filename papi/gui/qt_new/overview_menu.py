@@ -26,6 +26,7 @@ Contributors
 Sven Knuth
 """
 from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
+from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
 
 __author__ = 'knuths'
 
@@ -90,6 +91,24 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.blockTree.setUniformRowHeights(True)
 
         # -----------------------------------
+        # Build structure of subscriber tree
+        # -----------------------------------
+
+        self.subscriberModel = PaPItreeModel()
+        self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
+        self.subscribersTree.setModel(self.subscriberModel)
+        self.subscribersTree.setUniformRowHeights(True)
+
+        # -----------------------------------
+        # Build structure of subscriptions tree
+        # -----------------------------------
+
+        self.subscriptionModel = PaPItreeModel()
+        self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
+        self.subscriptionsTree.setModel(self.subscriptionModel)
+        self.subscriptionsTree.setUniformRowHeights(True)
+
+        # -----------------------------------
         # signal/slots
         # -----------------------------------
 
@@ -111,6 +130,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if dplugin is None:
             return
 
+        # ------------------------------------
+        # Get all needed dplugin information
+        # ------------------------------------
+
         self.unameEdit.setText(dplugin.uname)
         self.usedpluginEdit.setText(dplugin.plugin_identifier)
         self.stateEdit.setText(dplugin.state)
@@ -119,9 +142,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.bModel.clear()
         self.pModel.clear()
+        self.subscriberModel.clear()
+        self.subscriptionModel.clear()
 
         self.bModel.setHorizontalHeaderLabels(['Name'])
         self.pModel.setHorizontalHeaderLabels(['Name'])
+        self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
+        self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
 
         # ---------------------------
         # Add DBlocks
@@ -132,36 +159,71 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         for dblock_id in dblock_ids:
             dblock = dblock_ids[dblock_id]
 
-            block_item = PaPITreeItem(dblock, dblock.name)
+            block_item = DBlockTreeItem(dblock)
             self.bModel.appendRow(block_item)
 
             # -------------------------
             # Add Signals
             # -------------------------
-            signals_item = PaPIRootItem('Signals')
-            block_item.appendRow(signals_item)
 
             signal_names = dblock.get_signals()
 
-            for signal_name in signal_names:
-                signal_item = PaPITreeItem(None, signal_name)
-                signals_item.appendRow(signal_item)
+            for signal_index in range(len(signal_names)):
+                if signal_index != 0:
+                    signal_name = signal_names[signal_index]
+                    signal_item = PaPITreeItem(signal_index, signal_name)
+                    block_item.appendRow(signal_item)
 
-            #signals_item.setSelectable(True)
-
+            # for signal_name in signal_names:
+            #     signal_item = PaPITreeItem(signal_name, signal_name)
+            #     signals_item.appendRow(signal_item)
 
             # -------------------------
-            # Add Subscriber
+            # Add Subscribers
             # -------------------------
-            subscribers_item = PaPIRootItem('Subscribers')
 
-            block_item.appendRow(subscribers_item)
             subscriber_ids = dblock.get_subscribers()
 
             for subscriber_id in subscriber_ids:
                 subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
-                subscriber_item = PaPITreeItem(subscriber, subscriber.uname)
-                subscribers_item.appendRow(subscriber_item)
+                subscriber_item = DPluginTreeItem(subscriber)
+
+                block_item = DBlockTreeItem(dblock)
+
+                subscriber_item.appendRow(block_item)
+
+                self.subscriberModel.appendRow(subscriber_item)
+
+
+
+
+        # -------------------------
+        # Add Subscriptions
+        # -------------------------
+
+        dplugin_sub_ids = dplugin.get_subscribtions()
+
+        for dplugin_sub_id in dplugin_sub_ids:
+
+            dblock_names = dplugin_sub_ids[dplugin_sub_id]
+            dplugin_sub = self.gui_api.gui_data.get_dplugin_by_id(dplugin_sub_id)
+            dplugin_sub_item = DPluginTreeItem(dplugin_sub)
+            self.subscriptionModel.appendRow(dplugin_sub_item)
+
+            for dblock_name in dblock_names:
+
+                dblock_sub = dplugin_sub.get_dblock_by_name(dblock_name)
+                dblock_sub_item = DBlockTreeItem(dblock_sub)
+                dplugin_sub_item.appendRow(dblock_sub_item)
+
+                subscription =  dblock_names[dblock_name]
+                signals = subscription.get_signals()
+
+                for signal in signals:
+
+                    signal_item = QStandardItem(str(signal))
+                    dblock_sub_item.appendRow(signal_item)
+
 
         # --------------------------
         # Add DParameters
@@ -170,7 +232,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         dparameter_names = dplugin.get_parameters()
         for dparameter_name in dparameter_names:
             dparameter = dparameter_names[dparameter_name]
-            dparameter_item = PaPITreeItem(dparameter, dparameter_name)
+            dparameter_item = DParameterTreeItem(dparameter)
             self.pModel.appendRow(dparameter_item)
 
             dparameter_item_value = PaPITreeItem(dparameter, str(dparameter.value))
@@ -237,19 +299,47 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
             menu.exec_(self.blockTree.viewport().mapToGlobal(position))
 
+    def open_context_menu_subscriber_tree(self, position):
+        pass
+
+    def open_context_menu_susbcription_tree(self, position):
+        pass
+
+    def open_context_menu_parameter_tree(self, position):
+        pass
+
     def add_subscription_action(self, dplugin_uname):
         """
 
         :rtype :
         """
 
+        subscriber_id = None
+        source_id = None
+        block_name = None
+        signals = []
+
         dplugin = self.gui_api.gui_data.get_dplugin_by_uname(dplugin_uname)
+
         indexes = self.blockTree.selectedIndexes()
 
         print('Add Subscriotion for ' + dplugin.uname)
         print('There are ' + str(len(indexes)) + " signals to subscribe")
         for index in indexes:
-            pass
+            if index.isValid():
+
+                signal_index = self.blockTree.model().data(index, Qt.UserRole)
+                signals.append(signal_index)
+
+        index_dblock = index.parent()
+
+        dblock = self.blockTree.model().data(index_dblock, Qt.UserRole)
+
+        index = self.pluginTree.currentIndex()
+
+        dplugin_source = self.pluginTree.model().data(index, Qt.UserRole)
+
+        self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
@@ -262,7 +352,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # ------------------------------
             # Sort DPluginItem in TreeWidget
             # ------------------------------
-            plugin_item = PaPITreeItem(dplugin, dplugin.uname)
+            plugin_item = DPluginTreeItem(dplugin)
 
             if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 self.visual_root.appendRow(plugin_item)

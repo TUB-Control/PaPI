@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
-
+from papi.gui.qt_new.item import PluginTreeItem
 __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
@@ -111,7 +111,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.plugin_manager.collectPlugins()
         for pluginfo in self.plugin_manager.getAllPlugins():
 
-            plugin_item = PaPITreeItem(pluginfo, pluginfo.name)
+            plugin_item = PluginTreeItem(pluginfo)
 
             if '/visual/' in pluginfo.path:
                 self.visual_root.appendRow(plugin_item)

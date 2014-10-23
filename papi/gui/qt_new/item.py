@@ -35,6 +35,11 @@ from PySide.QtGui import QStandardItem, QStandardItemModel
 
 from PySide.QtCore import *
 from PySide.QtGui import *
+from papi.data.DPlugin import *
+# ------------------------------------
+# Item Object
+# ------------------------------------
+
 
 class PaPITreeItem(QStandardItem):
     def __init__(self, object,  name):
@@ -43,7 +48,7 @@ class PaPITreeItem(QStandardItem):
         self.setEditable(False)
         self.setSelectable(False)
         self.name = name
-
+        self.tool_tip = "Plugin: " + self.name
 
     def data(self, role):
         '''
@@ -53,23 +58,20 @@ class PaPITreeItem(QStandardItem):
         '''
 
         if role == Qt.ToolTipRole:
-            return "Plugin: " + self.name
+            return self.tool_tip
 
         if role == Qt.DisplayRole:
             return self.name
 
         if role == Qt.DecorationRole:
-            #return QColor(255, 0, 0, 127)
-
-            l = len(self.object.name)
-            path = self.object.path[:-l]
-            path = path+'box.png'
-            px = QPixmap(path)
-            return px
+            return self.get_decoration()
 
         if role == Qt.UserRole:
             return self.object
 
+        return None
+
+    def get_decoration(self):
         return None
 
 class PaPIRootItem(QStandardItem):
@@ -78,6 +80,9 @@ class PaPIRootItem(QStandardItem):
         self.setEditable(False)
         self.setSelectable(False)
 
+# ------------------------------------
+# Model Objects
+# ------------------------------------
 
 
 class PaPItreeModel(QStandardItemModel):
@@ -92,3 +97,70 @@ class PaPItreeModel(QStandardItemModel):
     #     col = index.column()
     #
     #     pass
+
+# ------------------------------------
+# Item Custom
+# ------------------------------------
+
+
+class PluginTreeItem(PaPITreeItem):
+    def __init__(self,  plugin):
+        super(PluginTreeItem, self).__init__(plugin, plugin.name)
+        self.plugin = plugin
+
+    def get_decoration(self):
+        l = len(self.object.name)
+        path = self.object.path[:-l]
+        path = path+'box.png'
+        px = QPixmap(path)
+        return px
+
+
+class DPluginTreeItem(PaPITreeItem):
+    def __init__(self,  dplugin: DPlugin):
+        super(DPluginTreeItem, self).__init__(dplugin, dplugin.uname)
+        self.dplugin = dplugin
+
+    def get_decoration(self):
+        return None
+
+
+class DParameterTreeItem(PaPITreeItem):
+    def __init__(self,  dparameter : DParameter):
+        super(DParameterTreeItem, self).__init__(dparameter, dparameter.name)
+        self.dparameter = dparameter
+
+    def get_decoration(self):
+        return None
+
+
+class DBlockTreeItem(PaPITreeItem):
+    def __init__(self,  dblock: DBlock):
+        super(DBlockTreeItem, self).__init__(dblock, dblock.name)
+        self.setSelectable(False)
+
+    def get_decoration(self):
+        return None
+
+# ------------------------------------
+# Model Custom
+# ------------------------------------
+
+class PluginTreeModel(PaPItreeModel):
+    def __init__(self, parent=None):
+        super(PluginTreeModel, self).__init__(parent)
+
+
+class DPluginTreeModel(PaPItreeModel):
+    def __init__(self, parent=None):
+        super(PluginTreeModel, self).__init__(parent)
+
+
+class DParameterTreeModel(PaPItreeModel):
+    def __init__(self, parent=None):
+        super(PluginTreeModel, self).__init__(parent)
+
+
+class DBlockTreeModel(PaPItreeModel):
+    def __init__(self, parent=None):
+        super(PluginTreeModel, self).__init__(parent)

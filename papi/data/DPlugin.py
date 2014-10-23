@@ -99,6 +99,7 @@ class DBlock(DObject):
         """
         return self.signal_names_internal.copy()
 
+
 class DPlugin(DObject):
 
     def __init__(self):
