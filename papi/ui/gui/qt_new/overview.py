@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Wed Oct 22 17:38:13 2014
+# Created: Thu Oct 23 14:47:06 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,11 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_Overview(object):
     def setupUi(self, Overview):
         Overview.setObjectName("Overview")
-        Overview.resize(806, 632)
+        Overview.resize(803, 614)
         self.centralwidget = QtGui.QWidget(Overview)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.pluginTree = QtGui.QTreeView(self.centralwidget)
@@ -100,12 +100,24 @@ class Ui_Overview(object):
         self.tabWidget.addTab(self.pluginTab, "")
         self.connectionTab = QtGui.QWidget()
         self.connectionTab.setObjectName("connectionTab")
+        self.verticalLayoutWidget = QtGui.QWidget(self.connectionTab)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 381, 511))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.subscribersTree = QtGui.QTreeView(self.verticalLayoutWidget)
+        self.subscribersTree.setObjectName("subscribersTree")
+        self.verticalLayout.addWidget(self.subscribersTree)
+        self.subscriptionsTree = QtGui.QTreeView(self.verticalLayoutWidget)
+        self.subscriptionsTree.setObjectName("subscriptionsTree")
+        self.verticalLayout.addWidget(self.subscriptionsTree)
         self.tabWidget.addTab(self.connectionTab, "")
         self.horizontalLayout.addWidget(self.tabWidget)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.horizontalLayout_3.addLayout(self.horizontalLayout)
         Overview.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(Overview)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 806, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
         self.menubar.setObjectName("menubar")
         Overview.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(Overview)
@@ -114,7 +126,7 @@ class Ui_Overview(object):
 
         self.retranslateUi(Overview)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Overview)
 
     def retranslateUi(self, Overview):

@@ -88,7 +88,9 @@ class Plot(visual_base):
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.update)
         self.timer.start(33)
-        pass
+
+
+        return True
 
     def pause(self):
         print('plot paused')

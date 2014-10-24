@@ -261,6 +261,14 @@ class plugin_base(IPlugin):
         event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
+    def create_new_block(self, name, signalNames, types, frequency):
+        if isinstance(signalNames, []) is not True:
+            raise Exception
+        count = len(signalNames)
+        #TODO:
+
+
+
     def send_new_block_list(self, blocks):
         opt = DOptionalData()
         opt.block_list = blocks

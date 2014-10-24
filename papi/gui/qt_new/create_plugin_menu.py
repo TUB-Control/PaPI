@@ -25,8 +25,8 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, RootItem, PaPItreeModel
-
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
+from papi.gui.qt_new.item import PluginTreeItem
 __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
@@ -41,12 +41,12 @@ from yapsy.PluginManager import PluginManager
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
 
-    def __init__(self, callback_functions, parent=None):
+    def __init__(self, gui_api, parent=None):
         super(CreatePluginMenu, self).__init__(parent)
         self.setupUi(self)
-        self.dgui = None
+        self.dgui = gui_api.gui_data
 
-        self.callback_functions = callback_functions
+        self.gui_api = gui_api
 
         self.subscriberID = None
         self.targetID = None
@@ -67,10 +67,10 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
 
-        self.visual_root = RootItem('ViP')
-        self.io_root = RootItem('IOP')
-        self.dpp_root = RootItem('DPP')
-        self.pcp_root = RootItem('PCP')
+        self.visual_root = PaPIRootItem('ViP')
+        self.io_root = PaPIRootItem('IOP')
+        self.dpp_root = PaPIRootItem('DPP')
+        self.pcp_root = PaPIRootItem('PCP')
 
         model.appendRow(self.visual_root)
         model.appendRow(self.io_root)
@@ -81,11 +81,9 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
-        self.plugin_create_dialog = CreatePluginDialog(self.callback_functions)
+        self.plugin_create_dialog = CreatePluginDialog(self.gui_api)
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
-    def setDGui(self, dgui):
-        self.dgui = dgui
 
     def pluginItemChanged(self, index):
         item = self.pluginTree.model().data(index, Qt.UserRole)
@@ -113,7 +111,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.plugin_manager.collectPlugins()
         for pluginfo in self.plugin_manager.getAllPlugins():
 
-            plugin_item = PaPITreeItem(pluginfo, pluginfo.name)
+            plugin_item = PluginTreeItem(pluginfo)
 
             if '/visual/' in pluginfo.path:
                 self.visual_root.appendRow(plugin_item)
