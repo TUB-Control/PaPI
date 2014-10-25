@@ -345,7 +345,7 @@ class TestCoreMock(unittest.TestCase):
 
         time.sleep(TestCoreMock.DELAY_TIME)
 
-        self.assertEqual(0.1, \
+        self.assertEqual(0.6, \
                          self.core_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
 
         self.gui_api.do_set_parameter_uname('Sinus1', 'Frequenz Block SinMit_f3', 0.9)
