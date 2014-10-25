@@ -99,7 +99,7 @@ class ORTD_UDP(plugin_base):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind( ('127.0.0.1', 20000) )
         
-        #self.sock.setblocking(0)
+        self.sock.setblocking(1)
         #vec = numpy.zeros( (self.max_approx,  (self.amax) ))
 
         while True:
@@ -118,23 +118,24 @@ class ORTD_UDP(plugin_base):
                 #print("Waiting for data")
                 rev = self.sock.recv(20)
                 #rev = str.encode(rev_)
-                #print("Got data")
+                print("Got data")
             except socket.error:
                 pass
             else:
                 SenderId, Counter, SourceId, val1 = struct.unpack('<iiid', rev)
                 
-                print(Counter)
-                print(val1)
+                if SourceId == 0:
+                    print(Counter)
+                    print(val1)
                 
-                vec = numpy.zeros((2,1))
+                    vec = numpy.zeros((2,1))
     
-                vec[0,0] = self.t
-                vec[1,0] = val1
+                    vec[0,0] = self.t
+                    vec[1,0] = val1
         
-                self.t += 0.1
+                    self.t += 0.1
 
-                self.send_new_data(vec,'SourceFrq1')
+                    self.send_new_data(vec,'SourceFrq1')
             
             
             
@@ -142,7 +143,7 @@ class ORTD_UDP(plugin_base):
             #print("Hallo")
             
 
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
 
     def execute(self, Data=None, block_name = None):
