@@ -1,7 +1,11 @@
-<PaPiConfig Date="2014-10-22 17:07:31" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-10-27 13:42:43" PaPI_version="v_0.1">
   <Plugin uname="P1">
     <Identifier>Plot</Identifier>
     <StartConfig>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
       <Parameter Name="timewindow">
         <value>1000</value>
         <regex>[0-9]+</regex>
@@ -17,10 +21,6 @@
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
@@ -40,6 +40,10 @@
   <Plugin uname="P2">
     <Identifier>Plot</Identifier>
     <StartConfig>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
       <Parameter Name="timewindow">
         <value>1000</value>
         <regex>[0-9]+</regex>
@@ -55,10 +59,6 @@
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
@@ -85,17 +85,17 @@
   <Plugin uname="Sin1">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
       <Parameter Name="amax">
         <value>3</value>
         <regex>[0-9]+</regex>
       </Parameter>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
+      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -139,15 +139,15 @@
   <Plugin uname="CSV">
     <Identifier>ToHDD_CSV</Identifier>
     <StartConfig>
-      <Parameter Name="file">
-        <value>log1</value>
+      <Parameter Name="delimiter">
+        <value> </value>
       </Parameter>
       <Parameter Name="log-type">
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="delimiter">
-        <value> </value>
+      <Parameter Name="file">
+        <value>log1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -164,17 +164,70 @@
   <Plugin uname="Buttton1">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="low">
-        <value>0.1</value>
-      </Parameter>
       <Parameter Name="up">
         <value>1</value>
       </Parameter>
       <Parameter Name="name">
         <value>PCP_Plugin</value>
       </Parameter>
+      <Parameter Name="low">
+        <value>0.1</value>
+      </Parameter>
     </StartConfig>
     <PreviousParameters />
     <Subscriptions />
+  </Plugin>
+  <Plugin uname="Load1">
+    <Identifier>CPU_Load</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>Load1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Delta_t">0.01</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Plot_Load">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot_Load</value>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Load1</data_source>
+        <block Name="load">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
 </PaPiConfig>

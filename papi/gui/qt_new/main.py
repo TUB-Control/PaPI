@@ -196,7 +196,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
     def save_triggered(self):
         print("Save")
-        pass
+        self.gui_api.do_save_xml_config(CONFIG_DEFAULT_FILE)
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()
