@@ -25,21 +25,20 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
-from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
 
 __author__ = 'knuths'
 
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel, DPluginTreeModel
+from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
+
 from papi.ui.gui.qt_new.overview import Ui_Overview
-from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow, QStandardItem, QStandardItemModel, QMenu, QAbstractItemView, QAction
+
+from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST
+
 from PySide.QtCore import *
 from papi.data.DPlugin import DPlugin, DBlock
-
-from yapsy.PluginManager import PluginManager
 
 
 class OverviewPluginMenu(QMainWindow, Ui_Overview):
@@ -57,7 +56,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of plugin tree
         # ----------------------------------
 
-        self.model = PaPItreeModel()
+        self.model = DPluginTreeModel()
         self.model.setHorizontalHeaderLabels(['Name'])
 
         self.pluginTree.setModel(self.model)
@@ -123,6 +122,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.blockTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.blockTree.customContextMenuRequested.connect(self.open_context_menu_block_tree)
 
+        self.parameterTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.parameterTree.customContextMenuRequested.connect(self.open_context_menu_parameter_tree)
+
+        self.subscribersTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.subscribersTree.customContextMenuRequested.connect(self.open_context_menu_subscriber_tree)
+
+        self.subscriptionsTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.subscriptionsTree.customContextMenuRequested.connect(self.open_context_menu_subscription_tree)
 
     def setDGui(self, dgui):
         self.dgui = dgui
@@ -259,7 +266,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             dparameter_item = DParameterTreeItem(dparameter)
             self.pModel.appendRow(dparameter_item)
 
-            dparameter_item_value = PaPITreeItem(dparameter, str(dparameter.value))
+            dparameter_item_value = DParameterTreeItem(dparameter)
             self.pModel.appendColumn([dparameter_item_value])
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
@@ -315,8 +322,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 if dplugin_sel.id != dplugin_id:
                     action = QAction(self.tr(dplugin.uname), self)
                     sub_menu.addAction(action)
-                    dplugin_uname = dplugin.uname
-                    action.triggered.connect(lambda: self.add_subscription_action(self.tr(dplugin_uname)))
+                    action.triggered.connect(lambda p=dplugin.uname: self.add_subscription_action(p))
 
             menu = QMenu()
             menu.addMenu(sub_menu)
@@ -324,13 +330,73 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             menu.exec_(self.blockTree.viewport().mapToGlobal(position))
 
     def open_context_menu_subscriber_tree(self, position):
-        pass
+        '''
 
-    def open_context_menu_susbcription_tree(self, position):
-        pass
+        :param position:
+        :return:
+        '''
+        index = self.subscribersTree.indexAt(position)
+
+        if index.isValid() is False:
+            return None
+
+        if self.subscribersTree.isIndexHidden(index):
+            return
+
+        item = self.subscribersTree.model().data(index, Qt.UserRole)
+
+        sub_menu = QMenu('Remove Subscriber')
+
+        menu = QMenu()
+        menu.addMenu(sub_menu)
+
+        menu.exec_(self.subscribersTree.viewport().mapToGlobal(position))
+
+    def open_context_menu_subscription_tree(self, position):
+        '''
+
+        :param position:
+        :return:
+        '''
+        index = self.subscriptionsTree.indexAt(position)
+
+        if index.isValid() is False:
+            return None
+
+        if self.subscriptionsTree.isIndexHidden(index):
+            return
+
+        item = self.subscriptionsTree.model().data(index, Qt.UserRole)
+
+        sub_menu = QMenu('Cancel Subscription')
+
+        menu = QMenu()
+        menu.addMenu(sub_menu)
+
+        menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
     def open_context_menu_parameter_tree(self, position):
-        pass
+        '''
+
+        :param position:
+        :return:
+        '''
+        index = self.parameterTree.indexAt(position)
+
+        if index.isValid() is False:
+            return None
+
+        if self.parameterTree.isIndexHidden(index):
+            return
+
+        item = self.parameterTree.model().data(index, Qt.UserRole)
+
+        sub_menu = QMenu('Add PCP_Plugin')
+
+        menu = QMenu()
+        menu.addMenu(sub_menu)
+
+        menu.exec_(self.parameterTree.viewport().mapToGlobal(position))
 
     def add_subscription_action(self, dplugin_uname):
         """
@@ -377,7 +443,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # Sort DPluginItem in TreeWidget
             # ------------------------------
             plugin_item = DPluginTreeItem(dplugin)
-
+            # print('Change Editable')
+            # print(plugin_item.isEditable())
+            #
+            # plugin_item.setEditable(False)
+            # print(plugin_item.isEditable())
             if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 self.visual_root.appendRow(plugin_item)
             if dplugin.type == PLUGIN_IOP_IDENTIFIER:
