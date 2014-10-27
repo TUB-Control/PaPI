@@ -111,7 +111,7 @@ class Fourier_Rect(plugin_base):
             for i in range(self.max_approx):
                 vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
 
-            self.send_new_data(vec,'Rect1')
+            self.send_new_data(vec[0],vec[1:] ,'Rect1')
 
         time.sleep(0.001*self.amax )
 

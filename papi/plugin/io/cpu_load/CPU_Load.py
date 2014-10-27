@@ -47,7 +47,7 @@ class CPU_Load(plugin_base):
         self.t += self.delta_t
 
 
-        self.send_new_data(vec,'load')
+        self.send_new_data(vec[0], [vec[1]], 'load')
 
         time.sleep(self.delta_t)
 
