@@ -52,8 +52,11 @@ class Sinus(plugin_base):
         self.f = float(config['f']['value'])
 
         block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
+        #block1 = self.create_new_block('SinMit_f1', ['t', 'f1_1'], ['numpy_array', 'numpy_array'], 100)
         block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
-        block3 = DBlock(None,1,10,'SinMit_f3',['t','f3_1','f3_2'])
+        block3 = DBlock(None,1,10,'SinMit_f3',['t','f3_1','f3_2', 'Scalar'], ['numpy_vec', 'numpy_vec', 'int'] )
+
+        block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
 
         self.send_new_block_list([block1, block2, block3])
 
@@ -89,10 +92,9 @@ class Sinus(plugin_base):
             vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
             self.t += 0.01
 
-        self.send_new_data(vec,'SinMit_f1')
-        self.send_new_data(vec2,'SinMit_f2')
-        self.send_new_data(vec3,'SinMit_f3')
-
+        self.send_new_data(vec[0], [ vec[1] ], 'SinMit_f1')
+        self.send_new_data(vec2[0], [ vec2[1] ], 'SinMit_f2')
+        self.send_new_data(vec3[0], [ vec3[1], vec3[2], 10 ], 'SinMit_f3')
 
 
         time.sleep(self.amax*0.01)

@@ -36,13 +36,14 @@ import copy
 
 class DBlock(DObject):
 
-    def __init__(self, dplugin_id, count, freq,name, signal_names_internal=None):
+    def __init__(self, dplugin_id, count, freq,name, signal_names_internal=None, signal_types=None):
         super(DObject, self).__init__()
         self.signals_count = count
         self.freq = freq
         self.subscribers = {}
         self.dplugin_id = dplugin_id
         self.name = name
+        self.singal_types = signal_types
 
         if signal_names_internal is not None:
             self.signal_names_internal = signal_names_internal
