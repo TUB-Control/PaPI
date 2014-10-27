@@ -28,12 +28,13 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel, DPluginTreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
+from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
-from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction
+from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction, QStandardItemModel
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
@@ -76,7 +77,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of parameter tree
         # -----------------------------------
 
-        self.pModel = PaPItreeModel()
+        self.pModel = DParameterTreeModel()
         self.pModel.setHorizontalHeaderLabels(['Name'])
         self.parameterTree.setModel(self.pModel)
         self.parameterTree.setUniformRowHeights(True)
@@ -85,7 +86,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of block tree
         # -----------------------------------
 
-        self.bModel = PaPItreeModel()
+        self.bModel = DBlockTreeModel()
         self.bModel.setHorizontalHeaderLabels(['Name'])
         self.blockTree.setModel(self.bModel)
         self.blockTree.setUniformRowHeights(True)
@@ -94,7 +95,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of subscriber tree
         # -----------------------------------
 
-        self.subscriberModel = PaPItreeModel()
+        self.subscriberModel = PaPITreeModel()
         self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
         self.subscribersTree.setModel(self.subscriberModel)
         self.subscribersTree.setUniformRowHeights(True)
@@ -103,7 +104,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of subscriptions tree
         # -----------------------------------
 
-        self.subscriptionModel = PaPItreeModel()
+        self.subscriptionModel = PaPITreeModel()
         self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
         self.subscriptionsTree.setModel(self.subscriptionModel)
         self.subscriptionsTree.setUniformRowHeights(True)

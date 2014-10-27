@@ -79,16 +79,15 @@ class PaPIRootItem(QStandardItem):
     def __init__(self, name):
         super(PaPIRootItem, self).__init__(name)
         self.setEditable(False)
-        self.setSelectable(False)
 
 # ------------------------------------
 # Model Objects
 # ------------------------------------
 
 
-class PaPItreeModel(QStandardItemModel):
+class PaPITreeModel(QStandardItemModel):
     def __init__(self, parent=None):
-        super(PaPItreeModel, self).__init__(parent)
+        super(PaPITreeModel, self).__init__(parent)
 
     # def setData(self, index, value, role):
     #     pass
@@ -126,13 +125,6 @@ class DPluginTreeItem(PaPITreeItem):
 
         self.setEditable(False)
 
-        print(self.flags())
-#        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
-        self.setFlags(Qt.NoItemFlags )
-
-        print(self.flags())
-        #self.setFlags(self.flags() & ~Qt.ItemIsEditable)
-
     def get_decoration(self):
         return None
 
@@ -151,6 +143,7 @@ class DBlockTreeItem(PaPITreeItem):
     def __init__(self,  dblock: DBlock):
         super(DBlockTreeItem, self).__init__(dblock, dblock.name)
         self.setSelectable(False)
+        self.setEditable(False)
 
     def get_decoration(self):
         return None
@@ -160,21 +153,33 @@ class DBlockTreeItem(PaPITreeItem):
 # ------------------------------------
 
 
-class PluginTreeModel(PaPItreeModel):
+class PluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
 
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-class DPluginTreeModel(PaPItreeModel):
+
+class DPluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DPluginTreeModel, self).__init__(parent)
 
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-class DParameterTreeModel(PaPItreeModel):
+
+class DParameterTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DParameterTreeModel, self).__init__(parent)
 
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
-class DBlockTreeModel(PaPItreeModel):
+
+class DBlockTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DBlockTreeModel, self).__init__(parent)
+
+    def flags(self, index):
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
