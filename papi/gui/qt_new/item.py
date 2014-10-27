@@ -45,11 +45,10 @@ class PaPITreeItem(QStandardItem):
     def __init__(self, object,  name):
         super(PaPITreeItem, self).__init__(name)
         self.object = object
-        self.setEditable(False)
-        self.setSelectable(False)
+        # self.setEditable(False)
+        # self.setSelectable(False)
         self.name = name
         self.tool_tip = "Plugin: " + self.name
-
 
     def data(self, role):
         '''
@@ -74,6 +73,7 @@ class PaPITreeItem(QStandardItem):
 
     def get_decoration(self):
         return None
+
 
 class PaPIRootItem(QStandardItem):
     def __init__(self, name):
@@ -108,11 +108,13 @@ class PluginTreeItem(PaPITreeItem):
     def __init__(self,  plugin):
         super(PluginTreeItem, self).__init__(plugin, plugin.name)
         self.plugin = plugin
+        self.setEditable(False)
+
 
     def get_decoration(self):
         l = len(self.object.name)
         path = self.object.path[:-l]
-        path = path+'box.png'
+        path += 'box.png'
         px = QPixmap(path)
         return px
 
@@ -121,6 +123,20 @@ class DPluginTreeItem(PaPITreeItem):
     def __init__(self,  dplugin: DPlugin):
         super(DPluginTreeItem, self).__init__(dplugin, dplugin.uname)
         self.dplugin = dplugin
+        self.name = dplugin.uname
+
+#        print(self.isEditable())
+
+        # super(PaPITreeItem, self).setEditable(False)
+        self.setEditable(True)
+        # self.setEditable(False)
+
+#        print(self.isEditable())
+
+        print(self.flags())
+        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
+        print(self.flags())
+        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
 
     def get_decoration(self):
         return None
@@ -130,6 +146,7 @@ class DParameterTreeItem(PaPITreeItem):
     def __init__(self,  dparameter : DParameter):
         super(DParameterTreeItem, self).__init__(dparameter, dparameter.name)
         self.dparameter = dparameter
+        self.setEditable(False)
 
     def get_decoration(self):
         return None
@@ -147,6 +164,7 @@ class DBlockTreeItem(PaPITreeItem):
 # Model Custom
 # ------------------------------------
 
+
 class PluginTreeModel(PaPItreeModel):
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
@@ -154,14 +172,14 @@ class PluginTreeModel(PaPItreeModel):
 
 class DPluginTreeModel(PaPItreeModel):
     def __init__(self, parent=None):
-        super(PluginTreeModel, self).__init__(parent)
+        super(DPluginTreeModel, self).__init__(parent)
 
 
 class DParameterTreeModel(PaPItreeModel):
     def __init__(self, parent=None):
-        super(PluginTreeModel, self).__init__(parent)
+        super(DParameterTreeModel, self).__init__(parent)
 
 
 class DBlockTreeModel(PaPItreeModel):
     def __init__(self, parent=None):
-        super(PluginTreeModel, self).__init__(parent)
+        super(DBlockTreeModel, self).__init__(parent)
