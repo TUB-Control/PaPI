@@ -175,10 +175,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if dplugin.state == PLUGIN_STATE_STOPPED:
                 self.pauseButton.setDisabled(True)
                 self.playButton.setDisabled(True)
+                self.stopButton.setText('START')
             if dplugin.state == PLUGIN_STATE_RESUMED:
                 self.playButton.setDisabled(True)
             if dplugin.state == PLUGIN_STATE_START_SUCCESFUL:
                 self.playButton.setDisabled(True)
+                self.stopButton.setText('STOP')
+
+
 
 
         # ---------------------------
@@ -499,7 +503,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
             else:
                 self.gui_api.do_start_plugin(item.id)
-                self.stopButton.setText('START')
+                self.stopButton.setText('STOP')
                 self.pauseButton.setDisabled(False)
                 self.playButton.setDisabled(False)
                 self.stopButton.setDisabled(False)
