@@ -101,7 +101,7 @@ class Sinus(plugin_base):
 
     def set_parameter(self, name, value):
         if name == self.para3.name:
-            self.para3.value = value
+            self.para3.value = float(value)
 
 
     def get_startup_configuration(self):

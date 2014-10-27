@@ -79,7 +79,7 @@ class PaPIRootItem(QStandardItem):
     def __init__(self, name):
         super(PaPIRootItem, self).__init__(name)
         self.setEditable(False)
-
+        self.setSelectable(False)
 # ------------------------------------
 # Model Objects
 # ------------------------------------
@@ -97,6 +97,17 @@ class PaPITreeModel(QStandardItemModel):
     #     col = index.column()
     #
     #     pass
+
+    def flags(self, index):
+        row = index.row()
+        col = index.column()
+
+        parent = index.parent()
+
+        if not parent.isValid():
+            return Qt.ItemIsEnabled
+
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 # ------------------------------------
 # Item Custom
@@ -131,7 +142,7 @@ class DPluginTreeItem(PaPITreeItem):
 
 class DParameterTreeItem(PaPITreeItem):
     def __init__(self,  dparameter: DParameter):
-        super(DParameterTreeItem, self).__init__(dparameter, dparameter.name)
+        super(DParameterTreeItem, self).__init__(dparameter, str(dparameter.value))
         self.dparameter = dparameter
         self.setEditable(False)
 
@@ -157,16 +168,10 @@ class PluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
 
-    def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
-
 
 class DPluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DPluginTreeModel, self).__init__(parent)
-
-    def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 
 class DParameterTreeModel(PaPITreeModel):
@@ -174,12 +179,81 @@ class DParameterTreeModel(PaPITreeModel):
         super(DParameterTreeModel, self).__init__(parent)
 
     def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        row = index.row()
+        col = index.column()
 
+        parent = index.parent()
+
+        # if not parent.isValid():
+        #     return ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable
+
+        if col == 0:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
+        if col == 1:
+            return Qt.ItemIsEditable | Qt.ItemIsEnabled
+
+    def data(self, index, role):
+        '''
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        '''
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.ToolTipRole:
+            return super(DParameterTreeModel, self).data(index, Qt.ToolTipRole)
+
+        if role == Qt.DisplayRole:
+
+            if col == 0:
+                dparameter = super(DParameterTreeModel, self).data(index, Qt.UserRole)
+                return dparameter.name
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
+                return dparameter.value
+
+        if role == Qt.DecorationRole:
+            return super(DParameterTreeModel, self).data(index, Qt.DecorationRole)
+
+        if role == Qt.UserRole:
+            return super(DParameterTreeModel, self).data(index, Qt.UserRole)
+
+        return None
+
+    def setData(self, index, value, role):
+        '''
+
+        :param index:
+        :param value:
+        :param role:
+        :return:
+        '''
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.EditRole:
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
+                dparameter.value = value
+
+                self.dataChanged.emit(index_sibling, None)
+                return True
+
+        return False
 
 class DBlockTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DBlockTreeModel, self).__init__(parent)
 
-    def flags(self, index):
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled

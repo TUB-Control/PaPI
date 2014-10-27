@@ -81,6 +81,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.pModel.setHorizontalHeaderLabels(['Name'])
         self.parameterTree.setModel(self.pModel)
         self.parameterTree.setUniformRowHeights(True)
+        self.pModel.dataChanged.connect(self.data_changed_parameter_model)
 
         # -----------------------------------
         # Build structure of block tree
@@ -90,6 +91,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.bModel.setHorizontalHeaderLabels(['Name'])
         self.blockTree.setModel(self.bModel)
         self.blockTree.setUniformRowHeights(True)
+
 
         # -----------------------------------
         # Build structure of subscriber tree
@@ -115,7 +117,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.playButton.clicked.connect(self.play_button_callback)
         self.pauseButton.clicked.connect(self.pause_button_callback)
         self.stopButton.clicked.connect(self.stop_start_button_callback)
-        self.pluginTree.clicked.connect(self.pluginItemChanged)
+        self.pluginTree.clicked.connect(self.plugin_item_changed)
 
         # ----------------------------------
         # Add context menu
@@ -135,7 +137,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def setDGui(self, dgui):
         self.dgui = dgui
 
-    def pluginItemChanged(self, index):
+    def plugin_item_changed(self, index):
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
         if dplugin is None:
@@ -157,7 +159,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.subscriptionModel.clear()
 
         self.bModel.setHorizontalHeaderLabels(['Name'])
-        self.pModel.setHorizontalHeaderLabels(['Name'])
+        self.pModel.setHorizontalHeaderLabels(['Name', 'Value'])
         self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
         self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
 
@@ -182,9 +184,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if dplugin.state == PLUGIN_STATE_START_SUCCESFUL:
                 self.playButton.setDisabled(True)
                 self.stopButton.setText('STOP')
-
-
-
 
         # ---------------------------
         # Add DBlocks
@@ -270,9 +269,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
             self.pModel.appendRow(dparameter_item)
-
-            dparameter_item_value = DParameterTreeItem(dparameter)
-            self.pModel.appendColumn([dparameter_item_value])
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
 
@@ -345,15 +341,21 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if index.isValid() is False:
             return None
 
+        if index.parent().isValid() is False:
+            return None
+
         if self.subscribersTree.isIndexHidden(index):
             return
 
-        item = self.subscribersTree.model().data(index, Qt.UserRole)
+        dblock = self.subscribersTree.model().data(index, Qt.UserRole)
+        dplugin = self.subscribersTree.model().data(index.parent(), Qt.UserRole)
 
-        sub_menu = QMenu('Remove Subscriber')
+        menu = QMenu('Remove')
 
-        menu = QMenu()
-        menu.addMenu(sub_menu)
+        action = QAction('Remove Subscriber', self)
+        menu.addAction(action)
+
+        action.triggered.connect(lambda p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
 
         menu.exec_(self.subscribersTree.viewport().mapToGlobal(position))
 
@@ -368,15 +370,22 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if index.isValid() is False:
             return None
 
+        if index.parent().isValid() is False:
+            return None
+
         if self.subscriptionsTree.isIndexHidden(index):
             return
 
-        item = self.subscriptionsTree.model().data(index, Qt.UserRole)
 
-        sub_menu = QMenu('Cancel Subscription')
+        dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
+        dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
 
         menu = QMenu()
-        menu.addMenu(sub_menu)
+
+        action = QAction('Remove Subscriber', self)
+        menu.addAction(action)
+
+        action.triggered.connect(lambda p=dblock, m=dplugin: self.cancel_subscription_action(m, p))
 
         menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
@@ -418,7 +427,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         indexes = self.blockTree.selectedIndexes()
 
-        print('Add Subscriotion for ' + dplugin.uname)
+        print('Add Subscription for ' + dplugin.uname)
         print('There are ' + str(len(indexes)) + " signals to subscribe")
         for index in indexes:
             if index.isValid():
@@ -435,6 +444,24 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         dplugin_source = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
+
+    def remove_subscriber_action(self, subscriber: DPlugin, dblock: DBlock):
+
+        index = self.pluginTree.currentIndex()
+
+        source = self.pluginTree.model().data(index, Qt.UserRole)
+
+        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
+
+        self.pluginTree.clicked.emit(index)
+
+    def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
+        print('Cancel ' + dblock.name + ' from' + str(source.id))
+
+        index = self.pluginTree.currentIndex()
+        subscriber = self.pluginTree.model().data(index, Qt.UserRole)
+
+        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
@@ -508,3 +535,18 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.pauseButton.setDisabled(False)
                 self.playButton.setDisabled(False)
                 self.stopButton.setDisabled(False)
+
+    def data_changed_parameter_model(self, index, n):
+        '''
+        This function is called when a dparameter value is changed by editing the 'value'-column.
+        :param index: Index of current changed dparameter
+        :param n: None
+        :return:
+        '''
+
+        dparameter = self.parameterTree.model().data(index, Qt.UserRole)
+        index = self.pluginTree.currentIndex()
+
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
+
+        self.gui_api.do_set_parameter(dplugin.id, dparameter.name, dparameter.value)
