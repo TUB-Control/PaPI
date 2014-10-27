@@ -110,7 +110,6 @@ class PluginTreeItem(PaPITreeItem):
         self.plugin = plugin
         self.setEditable(False)
 
-
     def get_decoration(self):
         l = len(self.object.name)
         path = self.object.path[:-l]
@@ -125,25 +124,21 @@ class DPluginTreeItem(PaPITreeItem):
         self.dplugin = dplugin
         self.name = dplugin.uname
 
-#        print(self.isEditable())
-
-        # super(PaPITreeItem, self).setEditable(False)
-        self.setEditable(True)
-        # self.setEditable(False)
-
-#        print(self.isEditable())
+        self.setEditable(False)
 
         print(self.flags())
-        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
+#        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
+        self.setFlags(Qt.NoItemFlags )
+
         print(self.flags())
-        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
+        #self.setFlags(self.flags() & ~Qt.ItemIsEditable)
 
     def get_decoration(self):
         return None
 
 
 class DParameterTreeItem(PaPITreeItem):
-    def __init__(self,  dparameter : DParameter):
+    def __init__(self,  dparameter: DParameter):
         super(DParameterTreeItem, self).__init__(dparameter, dparameter.name)
         self.dparameter = dparameter
         self.setEditable(False)
