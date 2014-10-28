@@ -51,11 +51,10 @@ class PlotPerformance(visual_base):
         #self.plot.setLabel('bottom', 'Index', units='B')
         self.curve = self.plot.plot()
 
-        self.time_buffer = np.zeros(1000)
+        #self.time_buffer = np.zeros(1000)
         self.data_buffer = np.linspace(1,1000,1000)#np.zeros(1000)
 
         self._subWindow.setWidget(self.plot)
-
 
 
         return True
@@ -75,7 +74,8 @@ class PlotPerformance(visual_base):
         #self.data_buffer[:len(Data['f3_1'])] = Data['f3_1']
         #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
 
-        self.data_buffer = np.roll(self.data_buffer, 10)
+        self.data_buffer = np.roll(self.data_buffer, 3)
+
 
         self.curve.setData(self.data_buffer)
 

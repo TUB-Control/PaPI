@@ -90,14 +90,14 @@ class Sinus(plugin_base):
             vec3[0, i] = self.t
             vec3[1, i] = math.sin(2*math.pi*self.para3.value*self.t)
             vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
-            self.t += 0.01
+            self.t += 0.005
 
         self.send_new_data(vec[0], [ vec[1] ], 'SinMit_f1')
         self.send_new_data(vec2[0], [ vec2[1] ], 'SinMit_f2')
         self.send_new_data(vec3[0], [ vec3[1], vec3[2], 10 ], 'SinMit_f3')
 
 
-        time.sleep(self.amax*0.01)
+        time.sleep(self.amax*0.005)
 
     def set_parameter(self, name, value):
         if name == self.para3.name:

@@ -87,7 +87,7 @@ class Plot(visual_base):
 
         self.timer = pg.QtCore.QTimer()
         self.timer.timeout.connect(self.update)
-        self.timer.start(33)
+        self.timer.start(50)
 
 
         return True
