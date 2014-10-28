@@ -44,4 +44,4 @@ class DParameter(DObject):
         self.name = name
         self.plugin_id = None
         self.plugin_identifier = None
-        self.regex = None
+        self.regex = Regex
