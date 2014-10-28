@@ -30,14 +30,33 @@ __author__ = 'Stefan'
 
 from papi.plugin.visual_base import visual_base
 from PySide.QtGui import QMdiSubWindow
+import pyqtgraph as pq
 
+import numpy as np
+
+from pyqtgraph.Qt import QtGui, QtCore
 
 class PlotPerformance(visual_base):
 
     def start_init(self, config=None):
 
-
         self._subWindow = QMdiSubWindow()
+
+
+
+        self.plot = pq.PlotWidget()
+        self.plot.setWindowTitle('PlotPerformanceTitle')
+
+        #self.plot.setRange(QtCore.QRectF(0, -10, 5000, 20))
+        #self.plot.setLabel('bottom', 'Index', units='B')
+        self.curve = self.plot.plot()
+
+        self.time_buffer = np.zeros(1000)
+        self.data_buffer = np.linspace(1,1000,1000)#np.zeros(1000)
+
+        self._subWindow.setWidget(self.plot)
+
+
 
         return True
 
@@ -48,13 +67,23 @@ class PlotPerformance(visual_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
-        pass
+
+        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
+        #self.data_buffer[-len(Data['f3_1']):] = Data['f3_1']
+
+        #print(self.data_buffer[Data['f3_1']])
+        #self.data_buffer[:len(Data['f3_1'])] = Data['f3_1']
+        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
+
+        self.data_buffer = np.roll(self.data_buffer, 10)
+
+        self.curve.setData(self.data_buffer)
 
     def set_parameter(self, parameter):
         pass
 
     def get_widget(self):
-        return self._plotWidget
+        return Exception
 
     def get_type(self):
         return "ViP"
