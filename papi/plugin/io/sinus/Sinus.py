@@ -60,7 +60,7 @@ class Sinus(plugin_base):
 
         self.send_new_block_list([block1, block2, block3])
 
-        self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1, Regex='[0-9]+')
+        self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1, Regex='[0-9]+.[0-9]+')
         self.para3.id = 1
         para_l = [self.para3]
 

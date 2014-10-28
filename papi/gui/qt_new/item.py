@@ -51,11 +51,11 @@ class PaPITreeItem(QStandardItem):
         self.tool_tip = "Plugin: " + self.name
 
     def data(self, role):
-        '''
+        """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param role:
         :return:
-        '''
+        """
 
         if role == Qt.ToolTipRole:
             return self.tool_tip
@@ -88,15 +88,6 @@ class PaPIRootItem(QStandardItem):
 class PaPITreeModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(PaPITreeModel, self).__init__(parent)
-
-    # def setData(self, index, value, role):
-    #     pass
-
-    # def data(self, index, role):
-    #     row = index.row()
-    #     col = index.column()
-    #
-    #     pass
 
     def flags(self, index):
         row = index.row()
@@ -153,6 +144,7 @@ class DParameterTreeItem(PaPITreeItem):
 class DBlockTreeItem(PaPITreeItem):
     def __init__(self,  dblock: DBlock):
         super(DBlockTreeItem, self).__init__(dblock, dblock.name)
+        self.dblock = dblock
         self.setSelectable(False)
         self.setEditable(False)
 
@@ -165,20 +157,36 @@ class DBlockTreeItem(PaPITreeItem):
 
 
 class PluginTreeModel(PaPITreeModel):
+    """
+    This model is used to handle Plugin objects in TreeView create by the yapsy plugin manager.
+    """
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
 
 
 class DPluginTreeModel(PaPITreeModel):
+    """
+    This model is used to handle DPlugin objects in TreeView.
+    """
     def __init__(self, parent=None):
         super(DPluginTreeModel, self).__init__(parent)
 
 
 class DParameterTreeModel(PaPITreeModel):
+    """
+    This model is used to handle DParameter objects in TreeView.
+    """
     def __init__(self, parent=None):
         super(DParameterTreeModel, self).__init__(parent)
 
     def flags(self, index):
+        """
+        This function returns the flags for a specific index.
+
+        For Qt.ItemFlags see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum'
+        :param index:
+        :return:
+        """
         row = index.row()
         col = index.column()
 
@@ -194,11 +202,12 @@ class DParameterTreeModel(PaPITreeModel):
             return Qt.ItemIsEditable | Qt.ItemIsEnabled
 
     def data(self, index, role):
-        '''
+        """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param index:
         :param role:
         :return:
-        '''
+        """
 
         if not index.isValid():
             return None
@@ -228,13 +237,14 @@ class DParameterTreeModel(PaPITreeModel):
         return None
 
     def setData(self, index, value, role):
-        '''
+        """
+        This function is called when a content in a row is edited by the user.
 
-        :param index:
-        :param value:
+        :param index: Current selected index.
+        :param value: New value from user
         :param role:
         :return:
-        '''
+        """
 
         if not index.isValid():
             return None
@@ -246,12 +256,20 @@ class DParameterTreeModel(PaPITreeModel):
             if col == 1:
                 index_sibling = index.sibling(row, col-1)
                 dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
-                dparameter.value = value
 
-                self.dataChanged.emit(index_sibling, None)
+                if dparameter.regex is not None:
+                    rx = QRegExp(dparameter.regex)
+                    if rx.exactMatch(value):
+                        dparameter.value = value
+                        self.dataChanged.emit(index_sibling, None)
+                else:
+                    dparameter.value = value
+                    self.dataChanged.emit(index_sibling, None)
+
                 return True
 
         return False
+
 
 class DBlockTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
