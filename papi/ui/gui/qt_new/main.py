@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Tue Oct 28 15:32:39 2014
+# Created: Tue Oct 28 15:54:38 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,6 @@ class Ui_QtNewMain(object):
         self.saveButton = QtGui.QPushButton(self.centralwidget)
         self.saveButton.setObjectName("saveButton")
         self.horizontalLayout.addWidget(self.saveButton)
-        self.createButton = QtGui.QPushButton(self.centralwidget)
-        self.createButton.setObjectName("createButton")
-        self.horizontalLayout.addWidget(self.createButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.widgetArea = QtGui.QMdiArea(self.centralwidget)
         self.widgetArea.setObjectName("widgetArea")
@@ -73,7 +70,6 @@ class Ui_QtNewMain(object):
         QtNewMain.setWindowTitle(QtGui.QApplication.translate("QtNewMain", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.loadButton.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
-        self.createButton.setText(QtGui.QApplication.translate("QtNewMain", "CreatePlugin", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("QtNewMain", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlugin.setTitle(QtGui.QApplication.translate("QtNewMain", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/create.ui'
 #
-# Created: Tue Oct 28 15:32:39 2014
+# Created: Tue Oct 28 15:54:38 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,6 +25,7 @@ class Ui_Create(object):
         self.pluginTree.header().setCascadingSectionResizes(True)
         self.horizontalLayout.addWidget(self.pluginTree)
         self.scrollArea = QtGui.QScrollArea(self.centralwidget)
+        self.scrollArea.setEnabled(False)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget()

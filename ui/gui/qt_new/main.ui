@@ -33,13 +33,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="createButton">
-          <property name="text">
-           <string>CreatePlugin</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>

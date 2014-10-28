@@ -94,7 +94,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
         self.saveButton.clicked.connect(self.save_triggered)
-        self.createButton.clicked.connect(self.show_create_plugin_menu)
+
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
         # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
@@ -114,6 +114,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create Icons for buttons
         # -------------------------------------
 
+        load_icon = QIcon.fromTheme("document-open")
+        save_icon = QIcon.fromTheme("document-save")
+
         # addplugin_icon = QIcon.fromTheme("list-add")
         # close_icon = QIcon.fromTheme("application-exit")
         # overview_icon = QIcon.fromTheme("view-fullscreen")
@@ -122,6 +125,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
+
+        self.loadButton.setIconSize(QSize(30, 30))
+        self.loadButton.setIcon(load_icon)
+
+        self.saveButton.setIconSize(QSize(30, 30))
+        self.saveButton.setIcon(save_icon)
 
         # self.buttonCreatePlugin.setIconSize(QSize(30, 30))
         # self.buttonCreatePlugin.setIcon(addplugin_icon)

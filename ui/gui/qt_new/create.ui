@@ -29,6 +29,9 @@
       </item>
       <item>
        <widget class="QScrollArea" name="scrollArea">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="widgetResizable">
          <bool>true</bool>
         </property>
