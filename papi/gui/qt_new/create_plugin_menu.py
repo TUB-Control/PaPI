@@ -25,7 +25,7 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import PluginTreeItem
 __author__ = 'knuths'
 
@@ -61,7 +61,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         )
         self.setWindowTitle('Available Plugins')
 
-        model = PaPItreeModel()
+        model = PaPITreeModel()
         model.setHorizontalHeaderLabels(['Name'])
 
         self.pluginTree.setModel(model)

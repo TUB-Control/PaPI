@@ -80,15 +80,14 @@ class PaPIRootItem(QStandardItem):
         super(PaPIRootItem, self).__init__(name)
         self.setEditable(False)
         self.setSelectable(False)
-
 # ------------------------------------
 # Model Objects
 # ------------------------------------
 
 
-class PaPItreeModel(QStandardItemModel):
+class PaPITreeModel(QStandardItemModel):
     def __init__(self, parent=None):
-        super(PaPItreeModel, self).__init__(parent)
+        super(PaPITreeModel, self).__init__(parent)
 
     # def setData(self, index, value, role):
     #     pass
@@ -98,6 +97,17 @@ class PaPItreeModel(QStandardItemModel):
     #     col = index.column()
     #
     #     pass
+
+    def flags(self, index):
+        row = index.row()
+        col = index.column()
+
+        parent = index.parent()
+
+        if not parent.isValid():
+            return Qt.ItemIsEnabled
+
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 # ------------------------------------
 # Item Custom
@@ -109,7 +119,6 @@ class PluginTreeItem(PaPITreeItem):
         super(PluginTreeItem, self).__init__(plugin, plugin.name)
         self.plugin = plugin
         self.setEditable(False)
-
 
     def get_decoration(self):
         l = len(self.object.name)
@@ -125,26 +134,15 @@ class DPluginTreeItem(PaPITreeItem):
         self.dplugin = dplugin
         self.name = dplugin.uname
 
-#        print(self.isEditable())
-
-        # super(PaPITreeItem, self).setEditable(False)
-        self.setEditable(True)
-        # self.setEditable(False)
-
-#        print(self.isEditable())
-
-        print(self.flags())
-        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
-        print(self.flags())
-        self.setFlags(self.flags() & ~Qt.ItemIsEditable)
+        self.setEditable(False)
 
     def get_decoration(self):
         return None
 
 
 class DParameterTreeItem(PaPITreeItem):
-    def __init__(self,  dparameter : DParameter):
-        super(DParameterTreeItem, self).__init__(dparameter, dparameter.name)
+    def __init__(self,  dparameter: DParameter):
+        super(DParameterTreeItem, self).__init__(dparameter, str(dparameter.value))
         self.dparameter = dparameter
         self.setEditable(False)
 
@@ -156,6 +154,7 @@ class DBlockTreeItem(PaPITreeItem):
     def __init__(self,  dblock: DBlock):
         super(DBlockTreeItem, self).__init__(dblock, dblock.name)
         self.setSelectable(False)
+        self.setEditable(False)
 
     def get_decoration(self):
         return None
@@ -165,21 +164,96 @@ class DBlockTreeItem(PaPITreeItem):
 # ------------------------------------
 
 
-class PluginTreeModel(PaPItreeModel):
+class PluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
 
 
-class DPluginTreeModel(PaPItreeModel):
+class DPluginTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DPluginTreeModel, self).__init__(parent)
 
 
-class DParameterTreeModel(PaPItreeModel):
+class DParameterTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DParameterTreeModel, self).__init__(parent)
 
+    def flags(self, index):
+        row = index.row()
+        col = index.column()
 
-class DBlockTreeModel(PaPItreeModel):
+        parent = index.parent()
+
+        # if not parent.isValid():
+        #     return ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable
+
+        if col == 0:
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+
+        if col == 1:
+            return Qt.ItemIsEditable | Qt.ItemIsEnabled
+
+    def data(self, index, role):
+        '''
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        '''
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.ToolTipRole:
+            return super(DParameterTreeModel, self).data(index, Qt.ToolTipRole)
+
+        if role == Qt.DisplayRole:
+
+            if col == 0:
+                dparameter = super(DParameterTreeModel, self).data(index, Qt.UserRole)
+                return dparameter.name
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
+                return dparameter.value
+
+        if role == Qt.DecorationRole:
+            return super(DParameterTreeModel, self).data(index, Qt.DecorationRole)
+
+        if role == Qt.UserRole:
+            return super(DParameterTreeModel, self).data(index, Qt.UserRole)
+
+        return None
+
+    def setData(self, index, value, role):
+        '''
+
+        :param index:
+        :param value:
+        :param role:
+        :return:
+        '''
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.EditRole:
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
+                dparameter.value = value
+
+                self.dataChanged.emit(index_sibling, None)
+                return True
+
+        return False
+
+class DBlockTreeModel(PaPITreeModel):
     def __init__(self, parent=None):
         super(DBlockTreeModel, self).__init__(parent)
+

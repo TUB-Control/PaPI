@@ -25,7 +25,7 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 
 __author__ = 'knuths'
 
