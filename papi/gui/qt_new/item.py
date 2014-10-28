@@ -80,6 +80,28 @@ class PaPIRootItem(QStandardItem):
         super(PaPIRootItem, self).__init__(name)
         self.setEditable(False)
         self.setSelectable(False)
+        self.name = name
+
+    def data(self, role):
+        """
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        """
+
+        # if role == Qt.ToolTipRole:
+        #     return self.tool_tip
+
+        if role == Qt.DisplayRole:
+            return self.name + " (" + str(self.rowCount()) + ")"
+
+        # if role == Qt.DecorationRole:
+        #     return self.get_decoration()
+
+        # if role == Qt.UserRole:
+        #     return self.object
+
+        return None
 # ------------------------------------
 # Model Objects
 # ------------------------------------
@@ -128,7 +150,7 @@ class DPluginTreeItem(PaPITreeItem):
         self.setEditable(False)
 
     def get_decoration(self):
-        return None
+        return QIcon.fromTheme("list-add")
 
 
 class DParameterTreeItem(PaPITreeItem):
@@ -229,7 +251,10 @@ class DParameterTreeModel(PaPITreeModel):
                 return dparameter.value
 
         if role == Qt.DecorationRole:
-            return super(DParameterTreeModel, self).data(index, Qt.DecorationRole)
+            if col == 0:
+                return super(DParameterTreeModel, self).data(index, Qt.DecorationRole)
+            if col == 1:
+                return QIcon.fromTheme("edit-clear")
 
         if role == Qt.UserRole:
             return super(DParameterTreeModel, self).data(index, Qt.UserRole)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Thu Oct 23 14:47:06 2014
+# Created: Tue Oct 28 15:54:38 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_Overview(object):
         self.pluginTree.setObjectName("pluginTree")
         self.horizontalLayout.addWidget(self.pluginTree)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
+        self.tabWidget.setEnabled(False)
         self.tabWidget.setObjectName("tabWidget")
         self.pluginTab = QtGui.QWidget()
         self.pluginTab.setObjectName("pluginTab")
@@ -126,7 +127,7 @@ class Ui_Overview(object):
 
         self.retranslateUi(Overview)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Overview)
 
     def retranslateUi(self, Overview):

@@ -12,6 +12,14 @@ papi.tests.TestCore module
     :undoc-members:
     :show-inheritance:
 
+papi.tests.TestCoreMock module
+------------------------------
+
+.. automodule:: papi.tests.TestCoreMock
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.tests.TestDBlock module
 ----------------------------
 

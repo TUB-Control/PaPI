@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_dev/manager.ui'
 #
-# Created: Thu Oct 23 14:47:06 2014
+# Created: Tue Oct 28 15:54:39 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!

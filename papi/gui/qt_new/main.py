@@ -32,7 +32,7 @@ import sys
 import time
 import os
 
-from PySide.QtGui               import QMainWindow, QApplication
+from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
 from PySide.QtCore              import QSize
 
@@ -94,7 +94,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
         self.saveButton.clicked.connect(self.save_triggered)
-        self.createButton.clicked.connect(self.show_create_plugin_menu)
+
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
         # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
@@ -114,6 +114,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create Icons for buttons
         # -------------------------------------
 
+        load_icon = QIcon.fromTheme("document-open")
+        save_icon = QIcon.fromTheme("document-save")
+
         # addplugin_icon = QIcon.fromTheme("list-add")
         # close_icon = QIcon.fromTheme("application-exit")
         # overview_icon = QIcon.fromTheme("view-fullscreen")
@@ -122,6 +125,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
+
+        self.loadButton.setIconSize(QSize(30, 30))
+        self.loadButton.setIcon(load_icon)
+
+        self.saveButton.setIconSize(QSize(30, 30))
+        self.saveButton.setIcon(save_icon)
 
         # self.buttonCreatePlugin.setIconSize(QSize(30, 30))
         # self.buttonCreatePlugin.setIcon(addplugin_icon)
@@ -189,14 +198,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.overview_menu.show()
 
     def load_triggered(self):
-        print('Load')
-        print(CONFIG_DEFAULT_FILE)
-        self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
 
+        fileName = QFileDialog.getOpenFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_load_xml(fileName[0])
 
     def save_triggered(self):
-        print("Save")
-        self.gui_api.do_save_xml_config(CONFIG_DEFAULT_FILE)
+
+        fileName = QFileDialog.getSaveFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_save_xml_config(fileName[0])
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()
