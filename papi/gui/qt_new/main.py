@@ -32,7 +32,7 @@ import sys
 import time
 import os
 
-from PySide.QtGui               import QMainWindow, QApplication
+from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
 from PySide.QtCore              import QSize
 
@@ -189,14 +189,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.overview_menu.show()
 
     def load_triggered(self):
-        print('Load')
-        print(CONFIG_DEFAULT_FILE)
-        self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
 
+        fileName = QFileDialog.getOpenFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_load_xml(fileName[0])
 
     def save_triggered(self):
-        print("Save")
-        self.gui_api.do_save_xml_config(CONFIG_DEFAULT_FILE)
+
+        fileName = QFileDialog.getSaveFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_save_xml_config(fileName[0])
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()

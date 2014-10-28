@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Thu Oct 23 14:47:06 2014
+# Created: Tue Oct 28 15:32:39 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,14 +55,18 @@ class Ui_QtNewMain(object):
         self.actionOverview.setObjectName("actionOverview")
         self.actionCreate = QtGui.QAction(QtNewMain)
         self.actionCreate.setObjectName("actionCreate")
+        self.actionExit = QtGui.QAction(QtNewMain)
+        self.actionExit.setObjectName("actionExit")
         self.menuFile.addAction(self.actionLoad)
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.actionExit)
         self.menuPlugin.addAction(self.actionOverview)
         self.menuPlugin.addAction(self.actionCreate)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuPlugin.menuAction())
 
         self.retranslateUi(QtNewMain)
+        QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), QtNewMain.close)
         QtCore.QMetaObject.connectSlotsByName(QtNewMain)
 
     def retranslateUi(self, QtNewMain):
@@ -76,4 +80,5 @@ class Ui_QtNewMain(object):
         self.actionSave.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOverview.setText(QtGui.QApplication.translate("QtNewMain", "Overview", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCreate.setText(QtGui.QApplication.translate("QtNewMain", "Create", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("QtNewMain", "Exit", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -64,6 +64,7 @@
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuPlugin">
     <property name="title">
@@ -96,7 +97,29 @@
     <string>Create</string>
    </property>
   </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>QtNewMain</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
