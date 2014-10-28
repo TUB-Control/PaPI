@@ -34,7 +34,7 @@ import os
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize
+from PySide.QtCore              import QSize, Qt
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -69,7 +69,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.gui_data = gui_data
 
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.widgetArea)
+
+        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
+        self.gui_event_processing.add_dplugin = self.add_dplugin
+        self.gui_event_processing.remove_dplugin = self.remove_dplugin
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
@@ -222,6 +225,18 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.close()
 
         self.close()
+
+    def add_dplugin(self, dplugin):
+        sub_window = dplugin.plugin.get_sub_window()
+        self.widgetArea.addSubWindow(sub_window)
+        sub_window.show()
+        # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
+
+        sub_window.setWindowFlags( Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
+
+    def remove_dplugin(self, dplugin):
+        self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
     """
