@@ -232,7 +232,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         sub_window.show()
         # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
 
-        sub_window.setWindowFlags( Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+        sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
 
     def remove_dplugin(self, dplugin):
