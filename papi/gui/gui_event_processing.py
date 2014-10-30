@@ -344,7 +344,7 @@ class GuiEventProcessing:
             dplugin.plugin.resume()
 
     def add_dplugin(self, dplugin):
-        print('add_dplugin')
+        pass
 
     def remove_dplugin(self, dplugin):
-        print('remove_dplugin')
+        pass
