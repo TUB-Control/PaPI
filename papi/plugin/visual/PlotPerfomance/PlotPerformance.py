@@ -34,18 +34,53 @@ import pyqtgraph as pq
 
 import numpy as np
 
+import re
+
 from pyqtgraph.Qt import QtGui, QtCore
 
 class PlotPerformance(visual_base):
 
     def start_init(self, config=None):
 
+        # load startup config and merge it
+        default_config = self.get_startup_configuration()
+
+        if config is None:
+            self.config = default_config
+        else:
+            self.config = config
+        # --------------------------------
+
+        # get needed data from config
+        size_re = re.compile(r'([0-9]+)')
+        self.window_size = size_re.findall(self.config['size']['value'])
+
+        self.window_name = self.config['name']['value']
+
+        self.show_grid_x = int(self.config['show_grid']['value']) == 1
+        self.show_grid_y = int(self.config['show_grid']['value']) == 1
+        # --------------------------------
+
+
+        # set QWindow options
         self._subWindow = QMdiSubWindow()
+        self._subWindow.setWindowTitle(self.window_name)
+        self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
+        self.original_resize_function = self._subWindow.resizeEvent
+        self._subWindow.resizeEvent = self.window_resize
 
 
+        # --------------------------------
 
+        # set pq graph plot widget options
         self.plot = pq.PlotWidget()
         self.plot.setWindowTitle('PlotPerformanceTitle')
+        self.plot.showGrid(x=self.show_grid_x, y=self.show_grid_y)
+        # --------------------------------
+
+
+
+
 
         #self.plot.setRange(QtCore.QRectF(0, -10, 5000, 20))
         #self.plot.setLabel('bottom', 'Index', units='B')
@@ -58,6 +93,15 @@ class PlotPerformance(visual_base):
 
 
         return True
+
+    def window_resize(self, event):
+        size = event.size()
+        w = size.width()
+        h = size.height()
+        self.config['size']['value'] = '('+str(w)+','+str(h)+')'
+        self.original_resize_function(event)
+        print(self._subWindow.pos())
+
 
     def pause(self):
         print('PlotPerformance paused')
@@ -98,13 +142,7 @@ class PlotPerformance(visual_base):
 
     def get_startup_configuration(self):
         config = {
-            "sampleinterval": {
-                'value': 1,
-                'regex': '[0-9]+'
-        }, 'timewindow': {
-                'value': "1000",
-                'regex': '[0-9]+'
-        }, 'size': {
+        'size': {
                 'value': "(300,300)",
                 'regex': '\(([0-9]+),([0-9]+)\)'
         }, 'name': {
@@ -116,9 +154,13 @@ class PlotPerformance(visual_base):
         }, 'label_x': {
                 'value': "time, s",
                 'regex': '\w+,\s*\w+'
+        }, 'show_grid': {
+                'value': "0",
+                'regex': '^(1|0)$'
         }}
-
+        # http://www.regexr.com/
         return config
+
 
     # def hook_update_plugin_meta(self):
     #   pass

@@ -183,7 +183,7 @@ class ORTD_UDP(plugin_base):
                         vec[1,0] = val1
                             
                         self.t += 0.1
-                        
+
                         self.send_new_data([self.t], [[val1]], 'SourceFrq1')
             
                 

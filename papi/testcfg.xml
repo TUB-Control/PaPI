@@ -1,92 +1,38 @@
-<<<<<<< HEAD
-<PaPiConfig Date="2014-10-30 18:03:41" PaPI_version="v_0.1">
-  <Plugin uname="o">
-    <Identifier>ORTD_UDP</Identifier>
-    <StartConfig />
-    <PreviousParameters>
-      <Parameter Name="Par1">0.01</Parameter>
-    </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="p">
+<PaPiConfig Date="2014-11-03 11:29:25" PaPI_version="v_0.1">
+  <Plugin uname="Plot1">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
+      <Parameter Name="name">
+        <value>PlotOld</value>
       </Parameter>
       <Parameter Name="size">
         <value>(300,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
       </Parameter>
-      <Parameter Name="sampleinterval">
-        <value>1</value>
-=======
-<PaPiConfig Date="2014-10-28 16:09:23" PaPI_version="v_0.1">
-  <Plugin uname="Test">
-    <Identifier>PlotPerformance</Identifier>
-    <StartConfig>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
       <Parameter Name="uname">
-        <value>Test</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
+        <value>Plot1</value>
       </Parameter>
       <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
         <value>1</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(300,300)</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
-      <Parameter Name="timewindow">
->>>>>>> FETCH_HEAD
         <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-<<<<<<< HEAD
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
       </Parameter>
       <Parameter Name="timewindow">
         <value>1000</value>
         <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="default">
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PCP_Plugin</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-=======
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <Subscriptions>
       <Subscription>
-        <data_source>S1</data_source>
+        <data_source>Sinus1</data_source>
         <block Name="SinMit_f3">
           <alias />
           <Signal>1</Signal>
@@ -94,66 +40,65 @@
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="S1">
+  <Plugin uname="Plot2">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <value>PlotPerform</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot2</value>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Sinus1</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>2</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Sinus1">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>S1</value>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
       </Parameter>
       <Parameter Name="amax">
-        <regex>[0-9]+</regex>
         <value>3</value>
+        <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="f">
-        <regex>\d+.{0,1}\d*</regex>
-        <value>1</value>
+      <Parameter Name="uname">
+        <value>Sinus1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
     </PreviousParameters>
     <Subscriptions />
-  </Plugin>
-  <Plugin uname="oldPlot">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>oldPlot</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(300,300)</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>S1</data_source>
-        <block Name="SinMit_f3">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
->>>>>>> FETCH_HEAD
   </Plugin>
 </PaPiConfig>

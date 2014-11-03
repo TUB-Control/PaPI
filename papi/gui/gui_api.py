@@ -33,7 +33,7 @@ import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
 from pyqtgraph import QtCore
 
@@ -494,6 +494,10 @@ class Gui_api:
         plugins = self.gui_data.get_all_plugins()
         for dplugin_id in plugins:
             dplugin = plugins[dplugin_id]
+
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                dplugin.startup_config = dplugin.plugin.get_current_config()
+
             pl_xml = ET.SubElement(root,'Plugin')
             pl_xml.set('uname',dplugin.uname)
 

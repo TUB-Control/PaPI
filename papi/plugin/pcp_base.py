@@ -125,3 +125,6 @@ class pcp_base(plugin_base):
 
     def set_parameter_name(self, name):
         pass
+
+    def get_current_config(self):
+        return self.config

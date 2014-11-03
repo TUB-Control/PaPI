@@ -57,7 +57,7 @@ GUI_VESION                      = 'v_0.1_dev'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VESION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
-GUI_WOKRING_INTERVAL            = 1 # in ms
+GUI_WOKRING_INTERVAL            = 5 # in ms
 GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 
 # PLUGIN LOCATION CONSTANTS
