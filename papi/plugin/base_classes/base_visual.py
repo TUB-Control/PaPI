@@ -60,3 +60,5 @@ class base_visual(base_plugin):
 
     def initiate_layer_1(self, config):
         raise NotImplementedError("Please Implement this method")
+
+

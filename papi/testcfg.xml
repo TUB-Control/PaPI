@@ -1,40 +1,48 @@
-<PaPiConfig Date="2014-11-03 16:39:45" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-11-03 17:15:02" PaPI_version="v_0.1">
   <Plugin uname="PloOLD">
     <Identifier>Plot</Identifier>
     <StartConfig>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
       <Parameter Name="name">
         <value>Plot_PluginOLD</value>
       </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
       </Parameter>
-      <Parameter Name="size">
+      <Parameter Name="position">
+        <value>(29,169)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(249,300)</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
       </Parameter>
       <Parameter Name="uname">
         <value>PloOLD</value>
       </Parameter>
-      <Parameter Name="position">
+      <Parameter Name="size">
+        <value>(249,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(29,169)</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <Subscriptions />
+    <Subscriptions>
+      <Subscription>
+        <data_source>LOAD1</data_source>
+        <block Name="load">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
   <Plugin uname="PlotNEW">
     <Identifier>PlotPerformance</Identifier>
@@ -42,31 +50,51 @@
       <Parameter Name="name">
         <value>Plot_Plugin</value>
       </Parameter>
-      <Parameter Name="size">
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(303,27)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(369,311)</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
       </Parameter>
       <Parameter Name="uname">
         <value>PlotNEW</value>
       </Parameter>
-      <Parameter Name="position">
+      <Parameter Name="size">
+        <value>(369,311)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(303,27)</value>
       </Parameter>
       <Parameter Name="show_grid">
-        <regex>^(1|0)$</regex>
         <value>0</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
+        <regex>^(1|0)$</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>LOAD1</data_source>
+        <block Name="load">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="LOAD1">
+    <Identifier>CPU_Load</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>LOAD1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Delta_t">0.01</Parameter>
+    </PreviousParameters>
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
