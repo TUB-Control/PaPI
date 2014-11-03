@@ -565,11 +565,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
     def refresh_action(self):
         index = self.pluginTree.currentIndex()
-        print('refresh action')
         self.pluginTree.clicked.emit(index)
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
-        print('Cancel ' + dblock.name + ' from' + str(source.id))
 
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
