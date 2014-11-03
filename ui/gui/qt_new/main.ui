@@ -51,13 +51,15 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="menuPaPI">
     <property name="title">
-     <string>File</string>
+     <string>PaPI</string>
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionExit"/>
+    <addaction name="actionReloadConfig"/>
+    <addaction name="actionResetPaPI"/>
    </widget>
    <widget class="QMenu" name="menuPlugin">
     <property name="title">
@@ -66,7 +68,7 @@
     <addaction name="actionOverview"/>
     <addaction name="actionCreate"/>
    </widget>
-   <addaction name="menuFile"/>
+   <addaction name="menuPaPI"/>
    <addaction name="menuPlugin"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -93,6 +95,16 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionReloadConfig">
+   <property name="text">
+    <string>ReloadConfig</string>
+   </property>
+  </action>
+  <action name="actionResetPaPI">
+   <property name="text">
+    <string>ResetPaPI</string>
    </property>
   </action>
  </widget>

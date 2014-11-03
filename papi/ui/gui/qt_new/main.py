@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Mon Nov  3 11:16:34 2014
+# Created: Mon Nov  3 12:30:46 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,8 +36,8 @@ class Ui_QtNewMain(object):
         self.menubar = QtGui.QMenuBar(QtNewMain)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 693, 25))
         self.menubar.setObjectName("menubar")
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
+        self.menuPaPI = QtGui.QMenu(self.menubar)
+        self.menuPaPI.setObjectName("menuPaPI")
         self.menuPlugin = QtGui.QMenu(self.menubar)
         self.menuPlugin.setObjectName("menuPlugin")
         QtNewMain.setMenuBar(self.menubar)
@@ -54,12 +54,18 @@ class Ui_QtNewMain(object):
         self.actionCreate.setObjectName("actionCreate")
         self.actionExit = QtGui.QAction(QtNewMain)
         self.actionExit.setObjectName("actionExit")
-        self.menuFile.addAction(self.actionLoad)
-        self.menuFile.addAction(self.actionSave)
-        self.menuFile.addAction(self.actionExit)
+        self.actionReloadConfig = QtGui.QAction(QtNewMain)
+        self.actionReloadConfig.setObjectName("actionReloadConfig")
+        self.actionResetPaPI = QtGui.QAction(QtNewMain)
+        self.actionResetPaPI.setObjectName("actionResetPaPI")
+        self.menuPaPI.addAction(self.actionLoad)
+        self.menuPaPI.addAction(self.actionSave)
+        self.menuPaPI.addAction(self.actionExit)
+        self.menuPaPI.addAction(self.actionReloadConfig)
+        self.menuPaPI.addAction(self.actionResetPaPI)
         self.menuPlugin.addAction(self.actionOverview)
         self.menuPlugin.addAction(self.actionCreate)
-        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuPaPI.menuAction())
         self.menubar.addAction(self.menuPlugin.menuAction())
 
         self.retranslateUi(QtNewMain)
@@ -70,11 +76,13 @@ class Ui_QtNewMain(object):
         QtNewMain.setWindowTitle(QtGui.QApplication.translate("QtNewMain", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.loadButton.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.saveButton.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFile.setTitle(QtGui.QApplication.translate("QtNewMain", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuPaPI.setTitle(QtGui.QApplication.translate("QtNewMain", "PaPI", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlugin.setTitle(QtGui.QApplication.translate("QtNewMain", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad.setText(QtGui.QApplication.translate("QtNewMain", "Load", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("QtNewMain", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOverview.setText(QtGui.QApplication.translate("QtNewMain", "Overview", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCreate.setText(QtGui.QApplication.translate("QtNewMain", "Create", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setText(QtGui.QApplication.translate("QtNewMain", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionReloadConfig.setText(QtGui.QApplication.translate("QtNewMain", "ReloadConfig", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionResetPaPI.setText(QtGui.QApplication.translate("QtNewMain", "ResetPaPI", None, QtGui.QApplication.UnicodeUTF8))
 
