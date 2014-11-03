@@ -31,6 +31,8 @@ from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP
     PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_RESUMED, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_START_FAILED
 
+import copy
+
 import papi.error_codes as ERROR
 
 import papi.event as Event
@@ -221,23 +223,22 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
-            dplugin.startup_config = opt.plugin_config
+            dplugin.startup_config = config
             # call the init function of plugin and set queues and id
             dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id)
 
             # call the plugin developers init function with config
-            if dplugin.plugin.start_init(config) is True:
+            if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
                 #start succcessfull
                 self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
             else:
                 self.core_queue.put( Event.status.StartFailed(dplugin.id, 0, None))
 
-            # first set meta to plugin
+            # first set meta to plugin (meta infos in plugin)
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             # add a window to gui for new plugin and show it
             self.added_dplugin.emit(dplugin)
-
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
             self.dgui_changed.emit()

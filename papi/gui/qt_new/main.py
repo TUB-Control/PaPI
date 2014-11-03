@@ -55,6 +55,8 @@ from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 
 from threading import Thread
 
+import re
+
 # Enable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
 
@@ -239,9 +241,16 @@ class GUI(QMainWindow, Ui_QtNewMain):
         sub_window = dplugin.plugin.get_sub_window()
         self.widgetArea.addSubWindow(sub_window)
         sub_window.show()
+        size_re = re.compile(r'([0-9]+)')
+        config = dplugin.startup_config
+        pos = config['position']['value']
+        window_pos = size_re.findall(pos)
+        sub_window.move(int(window_pos[0]), int(window_pos[1]))
+
         # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
 
         sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
 
     def remove_dplugin(self, dplugin):
         self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())

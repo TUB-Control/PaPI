@@ -585,7 +585,7 @@ class Core:
             dplug.uname = optData.plugin_uname
             dplug.type = plugin.plugin_object.get_type()
             dplug.plugin_identifier = plugin.name
-
+            dplug.startup_config = optData.plugin_config
 
             # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
