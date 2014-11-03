@@ -1,48 +1,18 @@
-<PaPiConfig Date="2014-10-22 17:07:31" PaPI_version="v_0.1">
-  <Plugin uname="P1">
+<PaPiConfig Date="2014-10-30 18:03:41" PaPI_version="v_0.1">
+  <Plugin uname="o">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig />
+    <PreviousParameters>
+      <Parameter Name="Par1">0.01</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="p">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(200,200)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <value>1</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Add1</data_source>
-        <block Name="AddOut1">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="P2">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="size">
         <value>(300,300)</value>
@@ -52,122 +22,25 @@
         <value>1</value>
         <regex>[0-9]+</regex>
       </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-      </Parameter>
       <Parameter Name="label_y">
         <value>amplitude, V</value>
         <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Sin1</data_source>
-        <block Name="SinMit_f3">
-          <alias />
-          <Signal>1</Signal>
-          <Signal>2</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Four">
-    <Identifier>Fourier_Rect_MOD</Identifier>
-    <StartConfig />
-    <PreviousParameters />
     <Subscriptions />
   </Plugin>
-  <Plugin uname="Sin1">
-    <Identifier>Sinus</Identifier>
+  <Plugin uname="">
+    <Identifier>Slider</Identifier>
     <StartConfig>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
-      <Parameter Name="amax">
-        <value>3</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.1</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Buttton1</data_source>
-        <block Name="Parameter_1">
-          <alias>Frequenz Block SinMit_f3</alias>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Add1">
-    <Identifier>Add</Identifier>
-    <StartConfig />
-    <PreviousParameters>
-      <Parameter Name="Count">1</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Four</data_source>
-        <block Name="Rect1">
-          <alias />
-          <Signal>1</Signal>
-          <Signal>2</Signal>
-          <Signal>3</Signal>
-          <Signal>4</Signal>
-          <Signal>5</Signal>
-          <Signal>6</Signal>
-          <Signal>7</Signal>
-          <Signal>8</Signal>
-          <Signal>9</Signal>
-          <Signal>10</Signal>
-          <Signal>11</Signal>
-          <Signal>12</Signal>
-          <Signal>13</Signal>
-          <Signal>14</Signal>
-          <Signal>15</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="CSV">
-    <Identifier>ToHDD_CSV</Identifier>
-    <StartConfig>
-      <Parameter Name="file">
-        <value>log1</value>
-      </Parameter>
-      <Parameter Name="log-type">
-        <value>1</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="delimiter">
-        <value> </value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Add1</data_source>
-        <block Name="AddOut1">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Buttton1">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="low">
-        <value>0.1</value>
-      </Parameter>
-      <Parameter Name="up">
+      <Parameter Name="default">
         <value>1</value>
       </Parameter>
       <Parameter Name="name">
