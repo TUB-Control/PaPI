@@ -72,7 +72,7 @@ class GUI(QMainWindow, Ui_MainGUI):
         # TODO:
         # callback functions for create plugin (intead scopeArea parameter) and for delete Plugin in ..GuiEventProcessing
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.scopeArea)
+        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
 
         self.callback_functions = {
             'do_create_plugin' : self.gui_api.do_create_plugin,
@@ -323,6 +323,7 @@ def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     gui.run()
     gui.show()
     app.exec_()
+
 if __name__ == '__main__':
     # main of GUI, just for stand alone gui testing
     app = QApplication(sys.argv)

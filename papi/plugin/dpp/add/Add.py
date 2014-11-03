@@ -109,7 +109,8 @@ class Add(plugin_base):
         vec[0,:] = Data['t']
         vec[1,:] = result
 
-        self.send_new_data(vec,'AddOut1')
+        self.send_new_data(Data['t'], [result], 'AddOut1')
+
 
 
     def set_parameter(self, name, value):

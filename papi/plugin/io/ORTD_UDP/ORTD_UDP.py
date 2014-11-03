@@ -167,6 +167,7 @@ class ORTD_UDP(plugin_base):
                 
                     print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
 
+<<<<<<< HEAD
                     # Read NVales from the received packet (TODO)
                     val1 = struct.unpack_from('<d', rev, 3*4)[0]
                     print(val1)
@@ -210,6 +211,9 @@ class ORTD_UDP(plugin_base):
                 #
                 #           self.send_new_data(vec,'SourceFrq1')
             
+=======
+                    self.send_new_data([self.t], [[val1]], 'SourceFrq1')
+>>>>>>> FETCH_HEAD
             
             
             

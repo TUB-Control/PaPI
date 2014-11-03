@@ -27,17 +27,15 @@ Stefan Ruppin
 """
 
 from abc import ABCMeta, abstractmethod
-import os
 
 from yapsy.IPlugin import IPlugin
 
-from papi.PapiEvent import PapiEvent
 from papi.data.DOptionalData import DOptionalData
-from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DPlugin,DBlock
 
 import papi.event as Event
 
+from papi.exceptions.block_exceptions import Wrong_type, Wrong_length
 
 class plugin_base(IPlugin):
 
@@ -243,11 +241,10 @@ class plugin_base(IPlugin):
         if mode is True or mode is False or mode == 'default':
             self.user_event_triggered = mode
 
-    def send_new_data(self, data, block_name):
+    def send_new_data_old(self, data, block_name):
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
-        #event = PapiEvent(self.__id__, 0, 'data_event', 'new_data', opt)
 
         event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
@@ -262,12 +259,32 @@ class plugin_base(IPlugin):
         self._Core_event_queue__.put(event)
 
     def create_new_block(self, name, signalNames, types, frequency):
-        if isinstance(signalNames, []) is not True:
-            raise Exception
+        if isinstance(signalNames, list) is not True:
+            raise Wrong_type('signalNames')
+
+        if isinstance(types, list) is not True:
+            raise Wrong_type('types')
+
+        if len(signalNames) != len(types):
+            raise Wrong_length('signalNames', 'types')
+
         count = len(signalNames)
-        #TODO:
 
+        return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
 
+    def send_new_data(self, time_line, data, block_name):
+
+        vec_data = []
+        vec_data.append(time_line)
+        for item in data:
+            vec_data.append(item)
+
+        opt = DOptionalData(DATA=vec_data)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
 
     def send_new_block_list(self, blocks):
         opt = DOptionalData()

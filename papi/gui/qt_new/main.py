@@ -32,9 +32,9 @@ import sys
 import time
 import os
 
-from PySide.QtGui               import QMainWindow, QApplication
+from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize
+from PySide.QtCore              import QSize, Qt
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -53,6 +53,8 @@ from pyqtgraph import QtCore
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 
+from threading import Thread
+
 # Enable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
 
@@ -69,7 +71,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.gui_data = gui_data
 
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, self.widgetArea)
+
+        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
+        self.gui_event_processing.add_dplugin = self.add_dplugin
+        self.gui_event_processing.remove_dplugin = self.remove_dplugin
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
@@ -94,7 +99,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
         self.saveButton.clicked.connect(self.save_triggered)
-        self.createButton.clicked.connect(self.show_create_plugin_menu)
+
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
         # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
@@ -114,6 +119,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create Icons for buttons
         # -------------------------------------
 
+        load_icon = QIcon.fromTheme("document-open")
+        save_icon = QIcon.fromTheme("document-save")
+
         # addplugin_icon = QIcon.fromTheme("list-add")
         # close_icon = QIcon.fromTheme("application-exit")
         # overview_icon = QIcon.fromTheme("view-fullscreen")
@@ -122,6 +130,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
+
+        self.loadButton.setIconSize(QSize(30, 30))
+        self.loadButton.setIcon(load_icon)
+
+        self.saveButton.setIconSize(QSize(30, 30))
+        self.saveButton.setIcon(save_icon)
 
         # self.buttonCreatePlugin.setIconSize(QSize(30, 30))
         # self.buttonCreatePlugin.setIcon(addplugin_icon)
@@ -164,6 +178,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
 
+
+
     def dbg(self):
         print("Action")
 
@@ -189,14 +205,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.overview_menu.show()
 
     def load_triggered(self):
-        print('Load')
-        print(CONFIG_DEFAULT_FILE)
-        self.gui_api.do_load_xml(CONFIG_DEFAULT_FILE)
 
+        fileName = QFileDialog.getOpenFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_load_xml(fileName[0])
 
     def save_triggered(self):
-        print("Save")
-        pass
+
+        fileName = QFileDialog.getSaveFileName(self,
+            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+
+        if fileName[0] != '':
+            self.gui_api.do_save_xml_config(fileName[0])
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()
@@ -207,6 +229,18 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.close()
 
         self.close()
+
+    def add_dplugin(self, dplugin):
+        sub_window = dplugin.plugin.get_sub_window()
+        self.widgetArea.addSubWindow(sub_window)
+        sub_window.show()
+        # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
+
+        sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
+
+    def remove_dplugin(self, dplugin):
+        self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
     """

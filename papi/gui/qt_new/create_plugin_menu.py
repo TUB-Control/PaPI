@@ -25,7 +25,7 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPItreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import PluginTreeItem
 __author__ = 'knuths'
 
@@ -61,7 +61,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         )
         self.setWindowTitle('Available Plugins')
 
-        model = PaPItreeModel()
+        model = PaPITreeModel()
         model.setHorizontalHeaderLabels(['Name'])
 
         self.pluginTree.setModel(model)
@@ -88,8 +88,14 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
     def pluginItemChanged(self, index):
         item = self.pluginTree.model().data(index, Qt.UserRole)
 
+        self.clear()
+
+        self.scrollArea.setDisabled(True)
+
         if item is None:
             return
+
+        self.scrollArea.setDisabled(False)
 
         self.nameEdit.setText(item.name)
         self.authorEdit.setText(item.author)
@@ -102,13 +108,16 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         index = self.pluginTree.currentIndex()
         item = self.pluginTree.model().data(index, Qt.UserRole)
 
+
         if item is not None:
+
             self.plugin_create_dialog.set_plugin(item)
 
             self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
         self.plugin_manager.collectPlugins()
+
         for pluginfo in self.plugin_manager.getAllPlugins():
 
             plugin_item = PluginTreeItem(pluginfo)
@@ -121,6 +130,12 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
                 self.dpp_root.appendRow(plugin_item)
             if '/pcp/' in pluginfo.path:
                 self.pcp_root.appendRow(plugin_item)
+
+    def clear(self):
+        self.nameEdit.setText('')
+        self.authorEdit.setText('')
+        self.descriptionText.setText('')
+        self.pathEdit.setText('')
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()

@@ -54,7 +54,7 @@ __author__ = 'Stefan'
 
 class GuiEventProcessing:
 
-    def __init__(self, gui_data, core_queue, gui_id, gui_queue, scopeArea):
+    def __init__(self, gui_data, core_queue, gui_id, gui_queue):
         self.gui_data = gui_data
         self.core_queue = core_queue
         self.gui_id = gui_id
@@ -62,7 +62,6 @@ class GuiEventProcessing:
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
         self.gui_queue = gui_queue
-        self.scopeArea = scopeArea
 
         # switch case for event processing
         self.process_event = {  'new_data':             self.process_new_data_event,
@@ -156,8 +155,7 @@ class GuiEventProcessing:
         if dplugin is not None:
             # TODO: Should be coded with a callback function for gui replaceability?
             if isinstance(dplugin.plugin, visual_base) or isinstance(dplugin.plugin, pcp_base):
-                self.scopeArea.removeSubWindow(dplugin.plugin.get_sub_window())
-
+                self.remove_dplugin(dplugin)
         # remove plugin from DGui data base
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
@@ -232,8 +230,7 @@ class GuiEventProcessing:
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             # add a window to gui for new plugin and show it
-            self.scopeArea.addSubWindow(dplugin.plugin.get_sub_window())
-            dplugin.plugin.get_sub_window().show()
+            self.add_dplugin(dplugin)
 
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
@@ -345,3 +342,9 @@ class GuiEventProcessing:
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
             dplugin.plugin.resume()
+
+    def add_dplugin(self, dplugin):
+        pass
+
+    def remove_dplugin(self, dplugin):
+        pass
