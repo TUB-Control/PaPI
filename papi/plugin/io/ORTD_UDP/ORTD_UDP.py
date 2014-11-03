@@ -135,7 +135,7 @@ class ORTD_UDP(plugin_base):
         
                     self.t += 0.1
 
-                    self.send_new_data([self.t], [[val1]], 'SourceFrq1')
+                    self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
             
             
             
