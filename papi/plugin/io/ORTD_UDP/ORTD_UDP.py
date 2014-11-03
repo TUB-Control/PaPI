@@ -167,8 +167,8 @@ class ORTD_UDP(plugin_base):
                 
                     print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
 
-                    self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
-<<<<<<< HEAD
+                    #self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
+
                     # Read NVales from the received packet (TODO)
                     val1 = struct.unpack_from('<d', rev, 3*4)[0]
                     print(val1)
@@ -184,7 +184,7 @@ class ORTD_UDP(plugin_base):
                             
                         self.t += 0.1
                         
-                        self.send_new_data(vec,'SourceFrq1')
+                        self.send_new_data([self.t], [[val1]], 'SourceFrq1')
             
                 
                 #   for Sid in Sources:
@@ -212,9 +212,9 @@ class ORTD_UDP(plugin_base):
                 #
                 #           self.send_new_data(vec,'SourceFrq1')
             
-=======
-                    self.send_new_data([self.t], [[val1]], 'SourceFrq1')
->>>>>>> FETCH_HEAD
+
+
+
             
             
             
