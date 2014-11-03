@@ -80,6 +80,7 @@ class visual_base(plugin_base):
         #self.__dplugin_ids__ = {}
 
 
-
+    def get_current_config(self):
+        return self.config
 
 

@@ -35,6 +35,8 @@ class Plot(visual_base):
         if config is None:
             config = default_config
 
+        self.config = config
+
         sampleinterval = float(config['sampleinterval']['value'])
 
         timewindow = int(config['timewindow']['value'])
