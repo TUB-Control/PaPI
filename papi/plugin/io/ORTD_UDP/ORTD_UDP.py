@@ -42,6 +42,7 @@ import socket
 import pickle
 
 import struct
+import json
 
 
 class ORTD_UDP(plugin_base):
@@ -69,18 +70,41 @@ class ORTD_UDP(plugin_base):
         self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock2.setblocking(1)
         
-        # Register parameters
+        # Load protocol config. TODO: Transfer this using UDP
+        f = open('plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json', 'r')
+        self.ProtocolConfig = json.load(f)
+        
+        self.Sources = self.ProtocolConfig['SourcesConfig']
+        self.Parameters = self.ProtocolConfig['ParametersConfig']
+        
+        # loop through all groups and create a block for each; each group yields in its own assigned block
+        # TODO
+        
+        
+        # For each group:: loop through all sources (=signals) in the group and register the signals
+        # Register signals
+        names = ['t']
+        #names.append('Testsignal')
+        
+        index = 0
+        
+        for Sid in self.Sources:
+            Source = self.Sources[Sid]
+            print(str(index) + " ) Source " + Source['SourceName'] + " vector length = " + Source['NValues_send'])
+            names.append( Source['SourceName'] )
+            index = index + 1
+
+        self.block1 = DBlock(None,1,2,'SourceFrq1',names)
+        self.send_new_block_list([self.block1])
+
+
+        
+        # Register parameters TODO: read list of parameters from self.Parameters
         self.para_1 = DParameter('', 'Par1', 0.01, [0,2],1)
         
         self.send_new_parameter_list([self.para_1])
 
 
-        # Register signals
-        names = ['t']
-        names.append('Testsignal')
-
-        self.block1 = DBlock(None,1,2,'SourceFrq1',names)
-        self.send_new_block_list([self.block1])
 
         self.set_event_trigger_mode(True)
 
@@ -116,26 +140,81 @@ class ORTD_UDP(plugin_base):
             
             try:
                 #print("Waiting for data")
-                rev = self.sock.recv(20)
+                rev = self.sock.recv(1600)
                 #rev = str.encode(rev_)
-                print("Got data")
+                #print("Got data" + str(len(rev)) )
             except socket.error:
                 pass
             else:
-                SenderId, Counter, SourceId, val1 = struct.unpack('<iiid', rev)
                 
-                if SourceId == 0:
-                    print(Counter)
-                    print(val1)
+                # unpack header
+                SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
                 
-                    vec = numpy.zeros((2,1))
-    
-                    vec[0,0] = self.t
-                    vec[1,0] = val1
-        
-                    self.t += 0.1
+                if SourceId == -1:
+                    # unpack group ID
+                    GroupId = struct.unpack_from('<i', rev, 3*4)[0]
+                    
+                    print("finishing group #" + str(GroupId) )
+                
+                    # flush data to papi
+                
+                else:
+                    # Received a data packet
+                    
+                    # Lookup the Source behind the given SourceId
+                    Source = self.Sources[str(SourceId)]
+                    NValues = Source['NValues_send']
+                
+                    print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
 
                     self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
+<<<<<<< HEAD
+                    # Read NVales from the received packet (TODO)
+                    val1 = struct.unpack_from('<d', rev, 3*4)[0]
+                    print(val1)
+                
+                    # send only if source zero (REMOVE and store all values for all sources into a structure)
+                    if SourceId == 0:
+                        
+                    
+                        vec = numpy.zeros((2,1))
+                        
+                        vec[0,0] = self.t
+                        vec[1,0] = val1
+                            
+                        self.t += 0.1
+                        
+                        self.send_new_data(vec,'SourceFrq1')
+            
+                
+                #   for Sid in Sources:
+                #
+                #   Sid_ = int(Sid)
+                #   print("investigating Source "+ str(Sid_) )
+                #
+                #   if SourceId == Sid_:
+                #       #if SourceId == 0:
+                #       #print(Counter)
+                #       print(val1)
+                #
+                #       SrcCfg = self.ProtocolConfig['SourcesConfig'][str(Sid)]
+                #
+                #       print("Got something from source " + SrcCfg['SourceName'] + " vector length = " + SrcCfg['NValues_send'])
+                #
+                #       # send only if source zero
+                #       if Sid_ == 0:
+                #           vec = numpy.zeros((2,1))
+                #
+                #           vec[0,0] = self.t
+                #           vec[1,0] = val1
+                #
+                #           self.t += 0.1
+                #
+                #           self.send_new_data(vec,'SourceFrq1')
+            
+=======
+                    self.send_new_data([self.t], [[val1]], 'SourceFrq1')
+>>>>>>> FETCH_HEAD
             
             
             
