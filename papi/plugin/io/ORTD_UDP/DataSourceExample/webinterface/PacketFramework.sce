@@ -1,17 +1,21 @@
+
+
 // 
 // 
 //   A packet based communication interface from ORTD using UDP datagrams to e.g.
 //   nodejs. 
 //   webappUDP.js is the counterpart that provides a web-interface 
 // 
-// Current Rev: 5
+// Current Rev: 7
 // 
-// Versions:
+// Revisions:
 // 
 // 27.3.14 - possibility to reservate sources
 // 3.4.14  - small re-arrangements
-// 4.4.13  - Bugfixes
-// 7.4.13  - Bugfix
+// 4.4.14  - Bugfixes
+// 7.4.14  - Bugfix
+// 12.6.14 - Bugfix
+// 2.11.14 - 
 // 
 
 
@@ -65,8 +69,8 @@ function [sim, PacketFramework, Parameter] = ld_PF_Parameter(sim, PacketFramewor
     [PacketFramework,ParameterID,MemoryOfs] = ld_PF_addparameter(PacketFramework, NValues, datatype, ParameterName);
    
     // read data from global memory
-    [sim, readI] = ld_const(sim, ev, MemoryOfs); // start at index 1
-    [sim, Parameter] = ld_read_global_memory(sim, ev, index=readI, ident_str=PacketFramework.InstanceName+"Memory", ...
+    [sim, readI] = ld_const(sim, 0, MemoryOfs); // start at index 1
+    [sim, Parameter] = ld_read_global_memory(sim, 0, index=readI, ident_str=PacketFramework.InstanceName+"Memory", ...
 						datatype, NValues);
 endfunction
 
@@ -79,32 +83,35 @@ function [sim] = ld_PF_ISendUDP(sim, PacketFramework, Signal, NValues_send, data
   [sim,one] = ld_const(sim, 0, 1);
 
   // Packet counter, so the order of the network packages can be determined
-  [sim, Counter] = ld_modcounter(sim, ev, in=one, initial_count=0, mod=100000);
-  [sim, Counter_int32] = ld_ceilInt32(sim, ev, Counter);
+  [sim, Counter] = ld_modcounter(sim, 0, in=one, initial_count=0, mod=100000);
+  [sim, Counter_int32] = ld_ceilInt32(sim, 0, Counter);
 
   // Source ID
-  [sim, SourceID] = ld_const(sim, ev, SourceID);
-  [sim, SourceID_int32] = ld_ceilInt32(sim, ev, SourceID);
+  [sim, SourceID] = ld_const(sim, 0, SourceID);
+  [sim, SourceID_int32] = ld_ceilInt32(sim, 0, SourceID);
 
   // Sender ID
-  [sim, SenderID] = ld_const(sim, ev, 1295793); // random number
-  [sim, SenderID_int32] = ld_ceilInt32(sim, ev, SenderID);
+  [sim, SenderID] = ld_const(sim, 0, PacketFramework.SenderID); // random number
+  [sim, SenderID_int32] = ld_ceilInt32(sim, 0, SenderID);
 
   // make a binary structure
-  [sim, Data, NBytes] = ld_ConcateData(sim, ev, ...
+  [sim, Data, NBytes] = ld_ConcateData(sim, 0, ...
 			inlist=list(SenderID_int32, Counter_int32, SourceID_int32, Signal ), insizes=[1,1,1,NValues_send], ...
 			intypes=[ ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, datatype ] );
 
   printf("The size of the UDP-packets will be %d bytes.\n", NBytes);
 
   // send to the network 
-  [sim, NBytes__] = ld_constvecInt32(sim, ev, vec=NBytes); // the number of bytes that are actually send is dynamic, but must be smaller or equal to 
-  [sim] = ld_UDPSocket_SendTo(sim, ev, SendSize=NBytes__, ObjectIdentifyer=InstanceName+"aSocket", ...
+  [sim, NBytes__] = ld_constvecInt32(sim, 0, vec=NBytes); // the number of bytes that are actually send is dynamic, but must be smaller or equal to 
+  [sim] = ld_UDPSocket_SendTo(sim, 0, SendSize=NBytes__, ObjectIdentifyer=InstanceName+"aSocket", ...
 			      hostname=PacketFramework.Configuration.DestHost, ...
                               UDPPort=PacketFramework.Configuration.DestPort, in=Data, ...
 			      insize=NBytes);
 
 endfunction
+
+
+
 
 function [sim, PacketFramework] = ld_SendPacket(sim, PacketFramework, Signal, NValues_send, datatype, SourceName) // PARSEDOCU_BLOCK // PARSEDOCU_BLOCK
 // 
@@ -181,6 +188,48 @@ function [sim, PacketFramework] = ld_PF_InitInstance(sim, InstanceName, Configur
   PacketFramework.Parameterid_counter = 0;
   PacketFramework.ParameterMemOfs_counter = 1; // start at the first index in the memory
   PacketFramework.Parameters = list();
+  
+  PacketFramework.SenderID = 1295793;
+endfunction
+
+
+// Send a signal via UDP, a simple protocoll is defined, internal function
+function [sim] = ld_PF_SendGroupFinshUDP(sim, PacketFramework, GroupID)
+  InstanceName = PacketFramework.InstanceName;
+  [sim,one] = ld_const(sim, 0, 1);
+
+  // Packet counter, so the order of the network packages can be determined
+  [sim, Counter] = ld_modcounter(sim, 0, in=one, initial_count=0, mod=100000);
+  [sim, Counter_int32] = ld_ceilInt32(sim, 0, Counter);
+
+  // Source ID
+  [sim, SourceID] = ld_const(sim, 0, -1);                   // -1 means finish a group of sources
+  [sim, SourceID_int32] = ld_ceilInt32(sim, 0, SourceID);
+
+  // Group ID
+  [sim, GroupID_] = ld_const(sim, 0, GroupID);                   // -1 means finish a group of sources
+  [sim, GroupID_int32] = ld_ceilInt32(sim, 0, GroupID_);
+
+  // Sender ID
+  [sim, SenderID] = ld_const(sim, 0, PacketFramework.SenderID); // random number
+  [sim, SenderID_int32] = ld_ceilInt32(sim, 0, SenderID);
+
+  // make a binary structure
+  [sim, Data, NBytes] = ld_ConcateData(sim, 0, ...
+			inlist=list(SenderID_int32, Counter_int32, SourceID_int32, GroupID_int32 ), insizes=[1,1,1,1], ...
+			intypes=[ ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32 ] );
+
+//  printf("The size of the UDP-packets will be %d bytes.\n", NBytes);
+
+  // send to the network 
+  [sim, NBytes__] = ld_constvecInt32(sim, 0, vec=NBytes); // the number of bytes that are actually send is dynamic, but must be smaller or equal to 
+  [sim] = ld_UDPSocket_SendTo(sim, 0, SendSize=NBytes__, ObjectIdentifyer=InstanceName+"aSocket", ...
+			      hostname=PacketFramework.Configuration.DestHost, ...
+                              UDPPort=PacketFramework.Configuration.DestPort, in=Data, ...
+			      insize=NBytes);
+
+
+  [sim] = ld_printf(sim, ev, GroupID_, "Sent finish packet ", 1);
 endfunction
 
 function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOCU_BLOCK
@@ -201,7 +250,7 @@ function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOC
 	    [sim, Data, SrcAddr] = ld_UDPSocket_Recv(sim, 0, ObjectIdentifyer=InstanceName+"aSocket", outsize=PacketSize );
 
 	    // disassemble packet's structure
-	    [sim, DisAsm] = ld_DisassembleData(sim, ev, in=Data, ...
+	    [sim, DisAsm] = ld_DisassembleData(sim, 0, in=Data, ...
 				  outsizes=[1,1,1,TotalElemetsPerPacket], ...
 				  outtypes=[ ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, ORTD.DATATYPE_INT32, ORTD.DATATYPE_FLOAT ] );
 
@@ -209,26 +258,26 @@ function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOC
 
             DisAsm_ = list();
             DisAsm_(4) = DisAsm(4);
-	    [sim, DisAsm_(1)] = ld_Int32ToFloat(sim, ev, DisAsm(1) );
-	    [sim, DisAsm_(2)] = ld_Int32ToFloat(sim, ev, DisAsm(2) );
-	    [sim, DisAsm_(3)] = ld_Int32ToFloat(sim, ev, DisAsm(3) );
+	    [sim, DisAsm_(1)] = ld_Int32ToFloat(sim, 0, DisAsm(1) );
+	    [sim, DisAsm_(2)] = ld_Int32ToFloat(sim, 0, DisAsm(2) );
+	    [sim, DisAsm_(3)] = ld_Int32ToFloat(sim, 0, DisAsm(3) );
 
 
             [sim, memofs] = ld_ArrayInt32(sim, 0, array=ParameterMemory.MemoryOfs, in=DisAsm(3) );
             [sim, Nelements] = ld_ArrayInt32(sim, 0, array=ParameterMemory.Sizes, in=DisAsm(3) );
 
- 	    [sim, memofs_] = ld_Int32ToFloat(sim, ev, memofs );
- 	    [sim, Nelements_] = ld_Int32ToFloat(sim, ev, Nelements );
+ 	    [sim, memofs_] = ld_Int32ToFloat(sim, 0, memofs );
+ 	    [sim, Nelements_] = ld_Int32ToFloat(sim, 0, Nelements );
 
             if PacketFramework.Configuration.debugmode then 
 	      // print the contents of the packet
-	      [sim] = ld_printf(sim, ev, DisAsm_(1), "DisAsm(1) (SenderID)       = ", 1);
-	      [sim] = ld_printf(sim, ev, DisAsm_(2), "DisAsm(2) (Packet Counter) = ", 1);
-	      [sim] = ld_printf(sim, ev, DisAsm_(3), "DisAsm(3) (SourceID)       = ", 1);
-	      [sim] = ld_printf(sim, ev, DisAsm_(4), "DisAsm(4) (Signal)         = ", TotalElemetsPerPacket);
+	      [sim] = ld_printf(sim, 0, DisAsm_(1), "DisAsm(1) (SenderID)       = ", 1);
+	      [sim] = ld_printf(sim, 0, DisAsm_(2), "DisAsm(2) (Packet Counter) = ", 1);
+	      [sim] = ld_printf(sim, 0, DisAsm_(3), "DisAsm(3) (SourceID)       = ", 1);
+	      [sim] = ld_printf(sim, 0, DisAsm_(4), "DisAsm(4) (Signal)         = ", TotalElemetsPerPacket);
 
-	      [sim] = ld_printf(sim, ev, memofs_ ,  "memofs                    = ", 1);
-	      [sim] = ld_printf(sim, ev, memofs_ ,  "Nelements                 = ", 1);
+	      [sim] = ld_printf(sim, 0, memofs_ ,  "memofs                    = ", 1);
+	      [sim] = ld_printf(sim, 0, memofs_ ,  "Nelements                 = ", 1);
             end
 
 	    // Store the input data into a shared memory
@@ -251,12 +300,12 @@ function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOC
         PacketSize = PacketFramework.PacketSize;
 
 	// Open an UDP-Port in server mode
-	[sim] = ld_UDPSocket_shObj(sim, ev, ObjectIdentifyer=InstanceName+"aSocket", Visibility=0, ...
+	[sim] = ld_UDPSocket_shObj(sim, 0, ObjectIdentifyer=InstanceName+"aSocket", Visibility=0, ...
                                   hostname=PacketFramework.Configuration.LocalSocketHost, ...
                                   UDPPort=PacketFramework.Configuration.LocalSocketPort);
 
 	// initialise a global memory for storing the input data for the computation
-	[sim] = ld_global_memory(sim, ev, ident_str=InstanceName+"Memory", ... 
+	[sim] = ld_global_memory(sim, 0, ident_str=InstanceName+"Memory", ... 
 				datatype=ORTD.DATATYPE_FLOAT, len=TotalMemorySize, ...
 				initial_data=[zeros(TotalMemorySize,1)], ... 
 				visibility='global', useMutex=1);
@@ -295,6 +344,10 @@ function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOC
 
   // udp
   [sim] = ld_PF_InitUDP(sim, PacketFramework.InstanceName, PacketFramework.ParameterMemory);
+  
+  // Send to group update notifications for each group (currently only one possible)
+  [sim] = ld_PF_SendGroupFinshUDP(sim, PacketFramework, GroupID=0);
+  
 endfunction
 
 function ld_PF_Export_js(PacketFramework, fname) // PARSEDOCU_BLOCK
@@ -427,10 +480,8 @@ function [sim, PacketFramework, Parameter]=ld_PF_Parameter2(sim, PacketFramework
   end
    
   // read data from global memory
-  [sim, readI] = ld_const(sim, ev, P.MemoryOfs); // start at index 1
-  [sim, Parameter] = ld_read_global_memory(sim, ev, index=readI, ident_str=PacketFramework.InstanceName+"Memory", ...
+  [sim, readI] = ld_const(sim, 0, P.MemoryOfs); // start at index 1
+  [sim, Parameter] = ld_read_global_memory(sim, 0, index=readI, ident_str=PacketFramework.InstanceName+"Memory", ...
                                            P.datatype, P.NValues);
 endfunction
-
-
 

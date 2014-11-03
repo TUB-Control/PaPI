@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+<PaPiConfig Date="2014-10-30 18:03:41" PaPI_version="v_0.1">
+  <Plugin uname="o">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig />
+    <PreviousParameters>
+      <Parameter Name="Par1">0.01</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="p">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+=======
 <PaPiConfig Date="2014-10-28 16:09:23" PaPI_version="v_0.1">
   <Plugin uname="Test">
     <Identifier>PlotPerformance</Identifier>
@@ -21,9 +45,39 @@
         <value>Plot_Plugin</value>
       </Parameter>
       <Parameter Name="timewindow">
+>>>>>>> FETCH_HEAD
         <regex>[0-9]+</regex>
         <value>1000</value>
       </Parameter>
+<<<<<<< HEAD
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="">
+    <Identifier>Slider</Identifier>
+    <StartConfig>
+      <Parameter Name="default">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+=======
       <Parameter Name="label_x">
         <regex>\w+,\s*\w+</regex>
         <value>time, s</value>
@@ -100,5 +154,6 @@
         </block>
       </Subscription>
     </Subscriptions>
+>>>>>>> FETCH_HEAD
   </Plugin>
 </PaPiConfig>

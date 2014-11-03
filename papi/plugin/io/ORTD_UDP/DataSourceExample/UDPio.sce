@@ -13,10 +13,14 @@
 // The name of the program
 ProgramName = 'UDPio'; // must be the filename without .sce
 
-// The following code is integrated into ORTD since rev 494.
-// Thus the following line is commented.
 
-// exec('webinterface/PacketFramework.sce');
+
+
+
+
+
+
+
 
 
 // And example-system that is controlled via UDP and one step further with the Web-gui
@@ -58,7 +62,7 @@ endfunction
 // The main real-time thread
 function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
   // This will run in a thread
-  [sim, Tpause] = ld_const(sim, ev, 1/20);  // The sampling time that is constant at 20 Hz in this example
+  [sim, Tpause] = ld_const(sim, ev, 1/5);  // The sampling time that is constant at 20 Hz in this example
   [sim, out] = ld_ClockSync(sim, ev, in=Tpause); // synchronise this simulation
 
   //
@@ -143,6 +147,14 @@ endfunction
 thispath = get_absolute_file_path(ProgramName+'.sce');
 cd(thispath);
 z = poly(0,'z');
+
+
+// The following code is integrated into ORTD since rev 494.
+// Thus the following line is commented.
+
+exec('webinterface/PacketFramework.sce');
+
+
 
 // defile ev
 ev = [0]; // main event
