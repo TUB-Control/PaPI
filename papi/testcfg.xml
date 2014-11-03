@@ -1,104 +1,72 @@
-<PaPiConfig Date="2014-11-03 11:29:25" PaPI_version="v_0.1">
-  <Plugin uname="Plot1">
+<PaPiConfig Date="2014-11-03 16:39:45" PaPI_version="v_0.1">
+  <Plugin uname="PloOLD">
     <Identifier>Plot</Identifier>
     <StartConfig>
       <Parameter Name="name">
-        <value>PlotOld</value>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(300,300)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Plot1</value>
+        <value>Plot_PluginOLD</value>
       </Parameter>
       <Parameter Name="sampleinterval">
-        <value>1</value>
         <regex>[0-9]+</regex>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(249,300)</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PloOLD</value>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(29,169)</value>
       </Parameter>
       <Parameter Name="timewindow">
-        <value>1000</value>
         <regex>[0-9]+</regex>
+        <value>1000</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Sinus1</data_source>
-        <block Name="SinMit_f3">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
+    <Subscriptions />
   </Plugin>
-  <Plugin uname="Plot2">
+  <Plugin uname="PlotNEW">
     <Identifier>PlotPerformance</Identifier>
     <StartConfig>
       <Parameter Name="name">
-        <value>PlotPerform</value>
+        <value>Plot_Plugin</value>
       </Parameter>
       <Parameter Name="size">
-        <value>(300,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
+        <value>(369,311)</value>
       </Parameter>
       <Parameter Name="uname">
-        <value>Plot2</value>
+        <value>PlotNEW</value>
       </Parameter>
-      <Parameter Name="sampleinterval">
-        <value>1</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(303,27)</value>
       </Parameter>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="show_grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Sinus1</data_source>
-        <block Name="SinMit_f3">
-          <alias />
-          <Signal>2</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Sinus1">
-    <Identifier>Sinus</Identifier>
-    <StartConfig>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
-      <Parameter Name="amax">
-        <value>3</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Sinus1</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
-    </PreviousParameters>
     <Subscriptions />
   </Plugin>
 </PaPiConfig>

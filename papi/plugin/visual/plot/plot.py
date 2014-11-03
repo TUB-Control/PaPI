@@ -73,7 +73,7 @@ class Plot(visual_base):
         # create QMdiSubWindow
         # ----------------------------
 
-        self._subWindow = QMdiSubWindow()
+        self.set_window_for_internal_usage(QMdiSubWindow())
         self._subWindow.setWidget(self._plotWidget)
         self._subWindow.setWindowTitle(self.name)
         self._subWindow.resize(int(size[0]), int(size[1]))
@@ -169,11 +169,6 @@ class Plot(visual_base):
         }, 'timewindow': {
                 'value': "1000",
                 'regex': '[0-9]+'
-        }, 'size': {
-                'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        }, 'name': {
-                'value' : 'Plot_Plugin',
         },
             'label_y': {
                 'value': "amplitude, V",
@@ -183,7 +178,7 @@ class Plot(visual_base):
                 'regex': '\w+,\s*\w+'
         }}
 
-        return config
+        return self.merge_configs(self.get_configuration_base(),config)
 
     def hook_update_plugin_meta(self):
 

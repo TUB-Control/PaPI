@@ -42,17 +42,18 @@ class PlotPerformance(visual_base):
 
     def start_init(self, config=None):
 
+        super(PlotPerformance,self).start_init(config)
         # load startup config and merge it
-        self.config = config
-        # --------------------------------
-
-        # get needed data from config
-        size_re = re.compile(r'([0-9]+)')
-        self.window_size = size_re.findall(self.config['size']['value'])
-        self.window_pos = size_re.findall(self.config['position']['value'])
-
-
-        self.window_name = self.config['name']['value']
+        # self.config = config
+        # # --------------------------------
+        #
+        # # get needed data from config
+        # size_re = re.compile(r'([0-9]+)')
+        # self.window_size = size_re.findall(self.config['size']['value'])
+        # self.window_pos = size_re.findall(self.config['position']['value'])
+        #
+        #
+        # self.window_name = self.config['name']['value']
 
         self.show_grid_x = int(self.config['show_grid']['value']) == 1
         self.show_grid_y = int(self.config['show_grid']['value']) == 1
@@ -60,15 +61,11 @@ class PlotPerformance(visual_base):
 
 
         # set QWindow options
-        self._subWindow = QMdiSubWindow()
+        self.set_window_for_internal_usage(QMdiSubWindow())
         self._subWindow.setWindowTitle(self.window_name)
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
-        #self._subWindow.move(10, 100)
-        #self._subWindow
-        self.original_resize_function = self._subWindow.resizeEvent
-        self._subWindow.resizeEvent = self.window_resize
-        self.original_move_function = self._subWindow.moveEvent
-        self._subWindow.moveEvent = self.window_move
+
+
 
         # --------------------------------
 
@@ -93,23 +90,6 @@ class PlotPerformance(visual_base):
 
 
         return True
-
-    def window_move(self, event):
-        pos = self._subWindow.pos()
-
-        x = pos.x()
-        y = pos.y()
-        self.config['position']['value'] = '('+str(x)+','+str(y)+')'
-        self.original_move_function(event)
-
-
-    def window_resize(self, event):
-        size = event.size()
-        w = size.width()
-        h = size.height()
-        self.config['size']['value'] = '('+str(w)+','+str(h)+')'
-        self.original_resize_function(event)
-
 
 
     def pause(self):
@@ -144,21 +124,8 @@ class PlotPerformance(visual_base):
     def quit(self):
         print('PlotPerformance: will quit')
 
-
-    def get_sub_window(self):
-        return self._subWindow
-
     def get_startup_configuration(self):
         config = {
-        'size': {
-                'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        }, 'position': {
-                'value': "(0,0)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        },'name': {
-                'value' : 'Plot_Plugin',
-        },
             'label_y': {
                 'value': "amplitude, V",
                 'regex': '\w+,\s+\w+'
@@ -170,7 +137,7 @@ class PlotPerformance(visual_base):
                 'regex': '^(1|0)$'
         }}
         # http://www.regexr.com/
-        return config
+        return self.merge_configs(self.get_configuration_base(),config)
 
 
     # def hook_update_plugin_meta(self):
