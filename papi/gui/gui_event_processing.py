@@ -45,16 +45,21 @@ import importlib.machinery
 
 from papi.plugin.visual_base import visual_base
 from papi.plugin.pcp_base import pcp_base
-
+from papi.data.DPlugin import DPlugin
 from pyqtgraph import QtCore
 
-from papi.data.DOptionalData import DOptionalData
 
 __author__ = 'Stefan'
 
-class GuiEventProcessing:
+
+class GuiEventProcessing(QtCore.QObject):
+
+    added_dplugin = QtCore.Signal(DPlugin)
+    removed_dplugin = QtCore.Signal(DPlugin)
+    dgui_changed = QtCore.Signal()
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue):
+        super(GuiEventProcessing, self).__init__()
         self.gui_data = gui_data
         self.core_queue = core_queue
         self.gui_id = gui_id
@@ -155,10 +160,11 @@ class GuiEventProcessing:
         if dplugin is not None:
             # TODO: Should be coded with a callback function for gui replaceability?
             if isinstance(dplugin.plugin, visual_base) or isinstance(dplugin.plugin, pcp_base):
-                self.remove_dplugin(dplugin)
+                self.removed_dplugin.emit(dplugin)
         # remove plugin from DGui data base
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
+            self.dgui_changed.emit()
         else:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was NOT removed in GUI')
 
@@ -230,11 +236,11 @@ class GuiEventProcessing:
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             # add a window to gui for new plugin and show it
-            self.add_dplugin(dplugin)
+            self.added_dplugin.emit(dplugin)
 
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
-
+            self.dgui_changed.emit()
         else:
             # plugin will not be running in gui process, so we just need to add information to DGui
             # so add a new dplugin to DGUI and set name und type
@@ -245,6 +251,7 @@ class GuiEventProcessing:
             dplugin.type = opt.plugin_type
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
+            self.dgui_changed.emit()
 
     def process_close_program_event(self, event):
         """
@@ -287,6 +294,8 @@ class GuiEventProcessing:
             # check if plugin runs in gui to update its copy of meta informations
             if dplugin.own_process is False:
                 dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+
+            self.dgui_changed.emit()
         else:
             # plugin does not exist
             self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
@@ -342,9 +351,3 @@ class GuiEventProcessing:
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
             dplugin.plugin.resume()
-
-    def add_dplugin(self, dplugin):
-        pass
-
-    def remove_dplugin(self, dplugin):
-        pass

@@ -139,6 +139,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.subscriptionsTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.subscriptionsTree.customContextMenuRequested.connect(self.open_context_menu_subscription_tree)
 
+        # ----------------------------------
+        # Add Actions
+        # ----------------------------------
+        self.actionRefresh.triggered.connect(self.refresh_action)
+
         self.clear()
 
     def clear(self):
@@ -170,7 +175,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
 
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
-
         self.clear()
 
         if dplugin is None:
@@ -542,6 +546,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
+    def refresh_action(self):
+        index = self.pluginTree.currentIndex()
+        print('refresh action')
         self.pluginTree.clicked.emit(index)
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):

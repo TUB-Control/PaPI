@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Tue Oct 28 15:54:38 2014
+# Created: Mon Nov  3 11:16:34 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -120,10 +120,16 @@ class Ui_Overview(object):
         self.menubar = QtGui.QMenuBar(Overview)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
         self.menubar.setObjectName("menubar")
+        self.menuAction = QtGui.QMenu(self.menubar)
+        self.menuAction.setObjectName("menuAction")
         Overview.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(Overview)
         self.statusbar.setObjectName("statusbar")
         Overview.setStatusBar(self.statusbar)
+        self.actionRefresh = QtGui.QAction(Overview)
+        self.actionRefresh.setObjectName("actionRefresh")
+        self.menuAction.addAction(self.actionRefresh)
+        self.menubar.addAction(self.menuAction.menuAction())
 
         self.retranslateUi(Overview)
         self.tabWidget.setCurrentIndex(0)
@@ -144,4 +150,6 @@ class Ui_Overview(object):
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), QtGui.QApplication.translate("Overview", "Blocks", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.pluginTab), QtGui.QApplication.translate("Overview", "Plugin", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.connectionTab), QtGui.QApplication.translate("Overview", "Connections", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuAction.setTitle(QtGui.QApplication.translate("Overview", "Actions", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRefresh.setText(QtGui.QApplication.translate("Overview", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
 

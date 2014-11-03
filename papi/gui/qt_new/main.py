@@ -73,9 +73,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
 
         self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
-        self.gui_event_processing.add_dplugin = self.add_dplugin
-        self.gui_event_processing.remove_dplugin = self.remove_dplugin
 
+        self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
+        self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
+        self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
         self.core_queue = core_queue
@@ -241,6 +242,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
     def remove_dplugin(self, dplugin):
         self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
+
+    def changed_dgui(self):
+        if self.overview_menu is not None:
+            self.overview_menu.refresh_action()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
     """
