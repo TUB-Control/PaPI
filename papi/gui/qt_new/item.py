@@ -146,7 +146,6 @@ class DPluginTreeItem(PaPITreeItem):
         super(DPluginTreeItem, self).__init__(dplugin, dplugin.uname)
         self.dplugin = dplugin
         self.name = dplugin.uname
-
         self.setEditable(False)
 
     def get_decoration(self):

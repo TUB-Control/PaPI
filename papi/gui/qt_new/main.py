@@ -41,7 +41,7 @@ from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD
 
 from papi.constants import CONFIG_DEFAULT_FILE
 
@@ -73,9 +73,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
 
         self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
-        self.gui_event_processing.add_dplugin = self.add_dplugin
-        self.gui_event_processing.remove_dplugin = self.remove_dplugin
 
+        self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
+        self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
+        self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
         self.core_queue = core_queue
@@ -88,6 +89,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
 
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
+
+        self.last_config = None
 
         # -------------------------------------
         # Create placeholder
@@ -115,6 +118,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionOverview.triggered.connect(self.show_overview_menu)
         self.actionCreate.triggered.connect(self.show_create_plugin_menu)
+
+        self.actionResetPaPI.triggered.connect(self.reset_papi)
+        self.actionReloadConfig.triggered.connect(self.reload_config)
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -178,8 +184,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
 
-
-
     def dbg(self):
         print("Action")
 
@@ -210,6 +214,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
 
         if fileName[0] != '':
+            self.last_config = fileName[0]
             self.gui_api.do_load_xml(fileName[0])
 
     def save_triggered(self):
@@ -238,9 +243,28 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
-
     def remove_dplugin(self, dplugin):
         self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
+
+    def changed_dgui(self):
+        if self.overview_menu is not None:
+            self.overview_menu.refresh_action()
+
+    def reload_config(self):
+        """
+        This function is used to reset PaPI and to reload the last loaded configuration file.
+        :return:
+        """
+        if self.last_config is not None:
+            self.reset_papi()
+            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_api.do_load_xml(self.last_config))
+
+    def reset_papi(self):
+        """
+        This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
+        :return:
+        """
+        self.gui_api.do_reset_papi()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
     """

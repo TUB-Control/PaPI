@@ -127,6 +127,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # ----------------------------------
         # Add context menu
         # ----------------------------------
+        self.pluginTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.pluginTree.customContextMenuRequested.connect(self.open_context_menu_dplugin_tree)
+
         self.blockTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.blockTree.customContextMenuRequested.connect(self.open_context_menu_block_tree)
 
@@ -138,6 +141,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.subscriptionsTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.subscriptionsTree.customContextMenuRequested.connect(self.open_context_menu_subscription_tree)
+
+        # ----------------------------------
+        # Add Actions
+        # ----------------------------------
+        self.actionRefresh.triggered.connect(self.refresh_action)
 
         self.clear()
 
@@ -170,7 +178,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
 
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
-
         self.clear()
 
         if dplugin is None:
@@ -254,9 +261,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
                 self.subscriberModel.appendRow(subscriber_item)
 
-
-
-
         # -------------------------
         # Add Subscriptions
         # -------------------------
@@ -303,6 +307,34 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # #PySide.QtGui.PySide.QtGui.QAbstractItemView.SelectionMode
         self.blockTree.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
+    def open_context_menu_dplugin_tree(self, position):
+        """
+        This callback function is called to create a context menu
+        for the dplugin tree
+        :param position:
+        :return:
+        """
+        index = self.pluginTree.indexAt(position)
+
+        if index.isValid() is False:
+            return None
+
+        if self.pluginTree.isIndexHidden(index):
+            return
+
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
+
+        menu = QMenu('Remove')
+
+        action = QAction('Remove DPlugin', self)
+        menu.addAction(action)
+
+        action.triggered.connect(lambda p=dplugin: self.gui_api.do_delete_plugin(p.id))
+
+
+
+        menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
+
     def open_context_menu_block_tree(self, position):
         """
         This callback function is called to create a context menu
@@ -316,7 +348,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if index.isValid() is False:
             return None
 
-        if self.pluginTree.isIndexHidden(index):
+        if self.blockTree.isIndexHidden(index):
             return
 
         item = self.blockTree.model().data(index, Qt.UserRole)
@@ -475,17 +507,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                     action.triggered.connect(lambda p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
                                              self.add_pcp_subscription_action(p1, p2, p3, p4))
 
-
-                    #     action.triggered.connect(lambda p=dplugin.uname: self.add_subscription_action(p))
-                    #     self.gui_api.do
-                    #
-                    # print(self.pluginID)
-                    # print(self.pcpID)
-                    # print(self.pcpBlock)
-                    # print(self.parameter)
-                    #
-                    # self.callback_functions['do_subscribe'](self.pluginID, self.pcpID, self.pcpBlock.name , [], self.parameter.name)
-
         menu = QMenu()
         menu.addMenu(sub_menu)
 
@@ -542,6 +563,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
+    def refresh_action(self):
+        index = self.pluginTree.currentIndex()
+        print('refresh action')
         self.pluginTree.clicked.emit(index)
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
