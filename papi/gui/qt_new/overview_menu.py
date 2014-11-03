@@ -39,6 +39,8 @@ from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
 from PySide.QtCore import *
+from PySide.QtGui import QLineEdit
+
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
 
 
@@ -241,10 +243,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                     signal_item = PaPITreeItem(signal_index, signal_name)
                     block_item.appendRow(signal_item)
 
-            # for signal_name in signal_names:
-            #     signal_item = PaPITreeItem(signal_name, signal_name)
-            #     signals_item.appendRow(signal_item)
-
             # -------------------------
             # Add Subscribers
             # -------------------------
@@ -287,7 +285,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                     signal_item = QStandardItem(str(signal))
                     dblock_sub_item.appendRow(signal_item)
 
-
         # --------------------------
         # Add DParameters
         # --------------------------
@@ -329,9 +326,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove DPlugin', self)
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dplugin: self.gui_api.do_delete_plugin(p.id))
-
-
+        action.triggered.connect(lambda p=dplugin,i=index: self.remove_dplugin_action(p, i))
 
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
@@ -513,12 +508,15 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         menu.exec_(self.parameterTree.viewport().mapToGlobal(position))
 
     def add_pcp_subscription_action(self, dplugin: DPlugin, dparameter: DParameter, dplugin_pcp:DPlugin,
-                                    dblock_pcp:DBlock, ):
-
-        # print(dplugin.uname)
-        # print(dparameter.name)
-        # print(dplugin_pcp.uname)
-        # print(dblock_pcp.name)
+                                    dblock_pcp:DBlock):
+        """
+        This function is used to create a subscription for a process control plugin.
+        :param dplugin: Subscriber of a pcp plugin
+        :param dparameter: Parameter of the subscriber which should be controlled by the pcp plugin.
+        :param dplugin_pcp: The pcp plugin
+        :param dblock_pcp: Block of the pcp plugin which is used to control the subscriber's parameter.
+        :return:
+        """
 
         self.gui_api.do_subscribe(dplugin.id, dplugin_pcp.id, dblock_pcp.name, [], dparameter.name)
         pass
@@ -526,7 +524,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def add_subscription_action(self, dplugin_uname):
         """
 
-        :rtype :
+        :param dplugin_uname:
+        :return:
         """
 
         subscriber_id = None
@@ -556,7 +555,12 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
 
     def remove_subscriber_action(self, subscriber: DPlugin, dblock: DBlock):
+        """
 
+        :param subscriber:
+        :param dblock:
+        :return:
+        """
         index = self.pluginTree.currentIndex()
 
         source = self.pluginTree.model().data(index, Qt.UserRole)
@@ -564,15 +568,37 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
     def refresh_action(self):
+        """
+
+        :return:
+        """
         index = self.pluginTree.currentIndex()
+
         self.pluginTree.clicked.emit(index)
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
+        """
 
+        :param source:
+        :param dblock:
+        :return:
+        """
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
+
+    def remove_dplugin_action(self, dplugin : DPlugin, index):
+        '''
+        This function is called
+        :param dplugin:
+        :param index:
+        :return:
+        '''
+
+        self.gui_api.do_delete_plugin(dplugin.id)
+
+        self.model.removeRow(index.row(), index.parent())
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
