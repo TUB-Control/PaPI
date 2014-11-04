@@ -123,7 +123,7 @@ class Fourier_Rect(iop_base):
     def get_plugin_configuration(self):
         config = {
             'name': {
-                    'value': 'IOD_DPP_template'
+                    'value': 'Fourier'
                     },
             'host': {
                      'value': "130.149.155.73",

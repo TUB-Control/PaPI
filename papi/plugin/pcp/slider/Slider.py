@@ -28,15 +28,18 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.pcp_base import pcp_base
+from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
 from PySide import QtCore
 from papi.data.DPlugin import DBlock
 
 class Slider(pcp_base):
 
-    def start_init(self, config=None):
-        super(Slider, self).start_init(config)
+    def initiate_layer_0(self, config):
+
+        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        self.send_new_block_list([block])
+        self.set_widget_for_internal_usage(self.create_widget())
 
     def create_widget(self):
         self.central_widget = QWidget()
@@ -59,11 +62,6 @@ class Slider(pcp_base):
         self.layout.addWidget(self.slider)
         self.layout.addWidget(self.text_field)
 
-        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
-        self.send_new_block_list([block])
-
-
-
         return self.central_widget
 
     def value_changed(self, change):
@@ -73,3 +71,14 @@ class Slider(pcp_base):
 
     def clicked(self):
         pass
+
+    def plugin_meta_updated(self):
+        pass
+
+    def get_plugin_configuration(self):
+        config = {
+            'default': {
+                'value': '1'
+            }
+        }
+        return config
