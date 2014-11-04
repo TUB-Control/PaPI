@@ -82,7 +82,6 @@ class DCore():
 
         return d_pl
 
-    #TODO: Map auf dplugin
     def rm_dplugin(self, dplugin_id):
         """
         Removes DPlugin with dplugin_id
@@ -93,7 +92,7 @@ class DCore():
         """
 
         if dplugin_id in self.__DPlugins:
-
+            self.__DPlugins[dplugin_id].state = 'deleted'
 
             self.rm_all_subscribers(dplugin_id)
             self.unsubscribe_all(dplugin_id)

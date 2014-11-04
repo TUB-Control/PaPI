@@ -43,7 +43,7 @@ from papi.ConsoleLog            import ConsoleLog
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD
 
-from papi.constants import CONFIG_DEFAULT_FILE
+from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER
 
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
@@ -238,22 +238,27 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.close()
 
     def add_dplugin(self, dplugin):
-        sub_window = dplugin.plugin.get_sub_window()
-        self.widgetArea.addSubWindow(sub_window)
-        sub_window.show()
-        size_re = re.compile(r'([0-9]+)')
-        config = dplugin.startup_config
-        pos = config['position']['value']
-        window_pos = size_re.findall(pos)
-        sub_window.move(int(window_pos[0]), int(window_pos[1]))
 
-        # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
+        if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+            sub_window = dplugin.plugin.get_sub_window()
+            self.widgetArea.addSubWindow(sub_window)
+            sub_window.show()
+            size_re = re.compile(r'([0-9]+)')
+            config = dplugin.startup_config
+            pos = config['position']['value']
+            window_pos = size_re.findall(pos)
+            sub_window.move(int(window_pos[0]), int(window_pos[1]))
 
-        sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+            # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
 
+            sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
+        if self.overview_menu is not None:
+            self.overview_menu.refresh_action(dplugin)
 
     def remove_dplugin(self, dplugin):
-        self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
+        if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+            self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
 
     def changed_dgui(self):
         if self.overview_menu is not None:
