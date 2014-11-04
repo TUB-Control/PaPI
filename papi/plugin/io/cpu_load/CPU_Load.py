@@ -5,20 +5,17 @@
 
 """
 
-from papi.plugin.plugin_base import plugin_base
-from papi.PapiEvent import PapiEvent
-from papi.data.DOptionalData import DOptionalData
+from papi.plugin.base_classes.iop_base import iop_base
+
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
-import time
-import math
 import numpy
 import time
 __author__ = 'knuths'
 
 
-class CPU_Load(plugin_base):
+class CPU_Load(iop_base):
     INTERVAL = 0.1
     def start_init(self, config=None):
         self.t = 0
@@ -58,8 +55,6 @@ class CPU_Load(plugin_base):
     def quit(self):
         print('CPU Load: will quit')
 
-    def get_type(self):
-        return 'IOP'
 
     def getTimeList(self):
         """
@@ -90,4 +85,8 @@ class CPU_Load(plugin_base):
         load = 1-(idle_time/total_time)
         return load
 
+    def plugin_meta_updated(self):
+        pass
 
+    def get_plugin_configuration(self):
+        return {}
