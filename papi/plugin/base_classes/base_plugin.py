@@ -43,8 +43,6 @@ class base_plugin(IPlugin):
 
 
 
-    def get_startup_configuration(self):
-         raise NotImplementedError("Please Implement this method")
 
     def get_type(self):
         raise NotImplementedError("Please Implement this method")
@@ -52,7 +50,14 @@ class base_plugin(IPlugin):
     def execute(self, Data=None, block_name = None):
         raise NotImplementedError("Please Implement this method")
 
+    def get_configuration_base(self):
+        raise NotImplementedError("Please Implement this method")
 
+    def get_startup_configuration(self):
+        return self.merge_configs(self.get_configuration_base(), self.get_plugin_configuration())
+
+    def get_plugin_configuration(self):
+        raise NotImplementedError("Please Implement this method")
 
 
 
@@ -72,6 +77,9 @@ class base_plugin(IPlugin):
 
     # some api functions
     # ------------------
+
+    def merge_configs(self, cfg1, cfg2):
+        return dict(list(cfg1.items()) + list(cfg2.items()) )
 
     def evaluate_event_trigger(self,default):
         if self.user_event_triggered == 'default':

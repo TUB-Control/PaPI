@@ -37,12 +37,11 @@ class base_visual(base_plugin):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
-        super(base_plugin, self).papi_init()
+        super(base_visual, self).papi_init()
 
 
 
     def start_init(self, config=None):
-
         self.config = config
         # --------------------------------
 
@@ -56,9 +55,52 @@ class base_visual(base_plugin):
 
         self.initiate_layer_1(self.config)
 
-
+    def get_current_config(self):
+        return self.config
 
     def initiate_layer_1(self, config):
         raise NotImplementedError("Please Implement this method")
 
 
+    def get_configuration_base(self):
+        config = {
+        'size': {
+                'value': "(300,300)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
+        }, 'position': {
+                'value': "(0,0)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
+        },'name': {
+                'value' : 'Plot_Plugin',
+        }}
+        return config
+
+
+    def set_window_for_internal_usage(self, subwindow):
+        self._subWindow = subwindow
+        self.original_resize_function = self._subWindow.resizeEvent
+        self._subWindow.resizeEvent = self.window_resize
+        self.original_move_function = self._subWindow.moveEvent
+        self._subWindow.moveEvent = self.window_move
+        self._subWindow.setWindowTitle(self.window_name)
+        self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
+
+
+    def window_move(self, event):
+        pos = self._subWindow.pos()
+
+        x = pos.x()
+        y = pos.y()
+        self.config['position']['value'] = '('+str(x)+','+str(y)+')'
+        self.original_move_function(event)
+
+
+    def window_resize(self, event):
+        size = event.size()
+        w = size.width()
+        h = size.height()
+        self.config['size']['value'] = '('+str(w)+','+str(h)+')'
+        self.original_resize_function(event)
+
+    def get_sub_window(self):
+        return self._subWindow
