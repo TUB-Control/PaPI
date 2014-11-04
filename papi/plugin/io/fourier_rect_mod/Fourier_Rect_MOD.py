@@ -28,7 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.plugin_base import plugin_base
+from papi.plugin.base_classes.iop_base import iop_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
@@ -42,7 +42,7 @@ import socket
 import pickle
 
 
-class Fourier_Rect_MOD(plugin_base):
+class Fourier_Rect_MOD(iop_base):
     max_approx = 300
     amax = 20
     def start_init(self, config=None):
@@ -116,8 +116,8 @@ class Fourier_Rect_MOD(plugin_base):
     def quit(self):
         print('Fourier_Rect: will quit')
 
-    def get_output_sizes(self):
-        return [1, int( Fourier_Rect_MOD.amax*(Fourier_Rect_MOD.max_approx + 1) ) ]
+    def plugin_meta_updated(self):
+        pass
 
-    def get_type(self):
-        return 'IOP'
+    def get_plugin_configuration(self):
+        return {}

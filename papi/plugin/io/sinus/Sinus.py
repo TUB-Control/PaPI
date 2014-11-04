@@ -26,17 +26,16 @@ Contributors:
 Stefan Ruppin
 """
 
-from papi.plugin.plugin_base import plugin_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
-
+from papi.plugin.base_classes.iop_base import iop_base
 
 import time
 import math
 import numpy
 
 
-class Sinus(plugin_base):
+class Sinus(iop_base):
 
     def start_init(self, config=None):
 
@@ -103,7 +102,7 @@ class Sinus(plugin_base):
             self.para3.value = float(value)
 
 
-    def get_startup_configuration(self):
+    def get_plugin_configuration(self):
         config = {
             "amax": {
                 'value': 3,
@@ -117,5 +116,5 @@ class Sinus(plugin_base):
     def quit(self):
         print('Sinus: will quit')
 
-    def get_type(self):
-        return 'IOP'
+    def plugin_meta_updated(self):
+        pass

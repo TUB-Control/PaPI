@@ -45,8 +45,6 @@ from yapsy.PluginManager import PluginManager
 
 import importlib.machinery
 
-from papi.plugin.visual_base import visual_base
-from papi.plugin.pcp_base import pcp_base
 from papi.data.DPlugin import DPlugin
 from pyqtgraph import QtCore
 

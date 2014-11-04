@@ -29,9 +29,7 @@ Stefan Ruppin
 __author__ = 'ruppins'
 
 
-from papi.plugin.plugin_base import plugin_base
-from papi.PapiEvent import PapiEvent
-from papi.data.DOptionalData import DOptionalData
+from papi.plugin.base_classes.dpp_base import dpp_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
@@ -41,7 +39,7 @@ import numpy
 import os
 
 
-class Add(plugin_base):
+class Add(dpp_base):
 
     def start_init(self, config=None):
         self.t = 0
@@ -56,10 +54,10 @@ class Add(plugin_base):
 
         self.block1 = DBlock(None,1,10,'AddOut1',['t','Sum'])
 
-        self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
+        #self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
 
         self.send_new_block_list([self.block1])
-        self.send_new_parameter_list([self.para1])
+        #self.send_new_parameter_list([self.para1])
 
 
         return True
@@ -72,7 +70,7 @@ class Add(plugin_base):
         pass
 
     def execute(self, Data=None, block_name = None):
-        self.approx = round(self.approx_max*self.para1.value)
+        #self.approx = round(self.approx_max*self.para1.value)
 #        self.vec[1] = 0
 #        self.vec[0] = Data[0]
 
@@ -119,8 +117,8 @@ class Add(plugin_base):
     def quit(self):
         print('Add: will quit')
 
-    def get_type(self):
-        return 'DPP'
+    def plugin_meta_updated(self):
+        pass
 
-    def get_output_sizes(self):
-        return None
+    def get_plugin_configuration(self):
+        return {}

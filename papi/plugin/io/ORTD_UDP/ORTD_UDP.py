@@ -163,8 +163,8 @@ class ORTD_UDP(iop_base):
                     # unpack group ID
                     GroupId = struct.unpack_from('<i', rev, 3*4)[0]
                     
-                    print("finishing group #" + str(GroupId) )
-                
+                    #print("finishing group #" + str(GroupId) )
+                    pass
                     # flush data to papi
                 
                 else:
@@ -174,13 +174,13 @@ class ORTD_UDP(iop_base):
                     Source = self.Sources[str(SourceId)]
                     NValues = Source['NValues_send']
                 
-                    print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
+                    #print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
 
                     #self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
 
                     # Read NVales from the received packet (TODO)
                     val1 = struct.unpack_from('<d', rev, 3*4)[0]
-                    print(val1)
+                    #print(val1)
                 
                     # send only if source zero (REMOVE and store all values for all sources into a structure)
                     if SourceId == 0:

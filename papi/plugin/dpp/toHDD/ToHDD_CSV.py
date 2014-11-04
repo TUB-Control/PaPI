@@ -26,12 +26,11 @@ Contributors:
 Stefan Ruppin
 """
 
-from papi.plugin.plugin_base import plugin_base
-
+from papi.plugin.base_classes.dpp_base import dpp_base
 
 import csv
 
-class ToHDD_CSV(plugin_base):
+class ToHDD_CSV(dpp_base):
 
     def start_init(self, config=None):
 
@@ -91,7 +90,7 @@ class ToHDD_CSV(plugin_base):
        pass
 
 
-    def get_startup_configuration(self):
+    def get_plugin_configuration(self):
         config = {
             "log-type": {
                 'value': 1,
@@ -109,5 +108,5 @@ class ToHDD_CSV(plugin_base):
 
         print('toHDD: will quit')
 
-    def get_type(self):
-        return 'DPP'
+    def plugin_meta_updated(self):
+        pass
