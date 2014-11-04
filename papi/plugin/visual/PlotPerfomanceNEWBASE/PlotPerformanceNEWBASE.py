@@ -43,30 +43,9 @@ class PlotPerformanceNEWBASE(vip_base):
 
     def initiate_layer_0(self, config=None):
 
-        #super(PlotPerformanceNEWBASE,self).start_init(config)
-        # load startup config and merge it
-        # self.config = config
-        # # --------------------------------
-        #
         # get needed data from config
-        size_re = re.compile(r'([0-9]+)')
-        self.window_size = size_re.findall(self.config['size']['value'])
-        self.window_pos = size_re.findall(self.config['position']['value'])
-        #
-        #
-        self.window_name = self.config['name']['value']
-
         self.show_grid_x = int(self.config['show_grid']['value']) == 1
         self.show_grid_y = int(self.config['show_grid']['value']) == 1
-        # --------------------------------
-
-
-        # set QWindow options
-        self.set_window_for_internal_usage(QMdiSubWindow())
-
-
-
-
         # --------------------------------
 
         # set pq graph plot widget options
@@ -75,20 +54,10 @@ class PlotPerformanceNEWBASE(vip_base):
         self.plot.showGrid(x=self.show_grid_x, y=self.show_grid_y)
         # --------------------------------
 
+        self.curve = self.plot.plot()
+        self.data_buffer = np.linspace(1,1000,1000)
 
-
-
-
-        #self.plot.setRange(QtCore.QRectF(0, -10, 5000, 20))
-        #self.plot.setLabel('bottom', 'Index', units='B')
-        #self.curve = self.plot.plot()
-
-        #self.time_buffer = np.zeros(1000)
-        #self.data_buffer = np.linspace(1,1000,1000)#np.zeros(1000)
-
-        self._subWindow.setWidget(self.plot)
-
-
+        self.set_widget_for_internal_usage( self.plot )
         return True
 
 
@@ -99,28 +68,12 @@ class PlotPerformanceNEWBASE(vip_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
+        self.data_buffer = np.roll(self.data_buffer, 3)
+        self.curve.setData(self.data_buffer)
 
-        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
-        #self.data_buffer[-len(Data['f3_1']):] = Data['f3_1']
 
-        #print(self.data_buffer[Data['f3_1']])
-        #self.data_buffer[:len(Data['f3_1'])] = Data['f3_1']
-        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
-
-        #self.data_buffer = np.roll(self.data_buffer, 3)
-
-        #self.curve.setData(self.data_buffer)
-        pass
-
-    def set_parameter(self, parameter):
-        pass
-
-    def get_widget(self):
-        return Exception
-
-    def get_type(self):
-        return "ViP"
-
+    def set_parameter(self, name, value):
+        raise Exception
 
     def quit(self):
         print('PlotPerformance: will quit')
@@ -141,7 +94,8 @@ class PlotPerformanceNEWBASE(vip_base):
         return config
 
 
-    # def hook_update_plugin_meta(self):
-    #   pass
-    #
+    def plugin_meta_updated(self):
+        pass
+
+
 

@@ -77,7 +77,6 @@ class base_plugin(IPlugin):
 
     # some api functions
     # ------------------
-
     def merge_configs(self, cfg1, cfg2):
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
@@ -154,8 +153,10 @@ class base_plugin(IPlugin):
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
 
-        if hasattr(self, 'hook_update_plugin_meta'):
-            self.hook_update_plugin_meta()
+        self.plugin_meta_updated()
+
+    def plugin_meta_updated(self):
+        raise NotImplementedError("Please Implement this method")
 
     def demux(self, source_id, block_name, data):
 

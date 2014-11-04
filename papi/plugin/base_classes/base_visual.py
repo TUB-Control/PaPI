@@ -30,6 +30,7 @@ __author__ = 'stefan'
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
+from PySide.QtGui import QMdiSubWindow
 
 class base_visual(base_plugin):
 
@@ -53,6 +54,7 @@ class base_visual(base_plugin):
 
         self.window_name = self.config['name']['value']
 
+        self.set_window_for_internal_usage(QMdiSubWindow())
         self.initiate_layer_1(self.config)
 
     def get_current_config(self):
@@ -84,6 +86,10 @@ class base_visual(base_plugin):
         self._subWindow.moveEvent = self.window_move
         self._subWindow.setWindowTitle(self.window_name)
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
+
+    def set_widget_for_internal_usage(self, widget):
+        self.widget = widget
+        self._subWindow.setWidget(self.widget)
 
 
     def window_move(self, event):
