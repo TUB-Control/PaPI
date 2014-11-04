@@ -159,14 +159,10 @@ class GuiEventProcessing(QtCore.QObject):
         opt = event.get_optional_parameter()
 
         dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
-        if dplugin is not None:
-            # TODO: Should be coded with a callback function for gui replaceability?
-            if isinstance(dplugin.plugin, visual_base) or isinstance(dplugin.plugin, pcp_base):
-                self.removed_dplugin.emit(dplugin)
-        # remove plugin from DGui data base
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
             self.dgui_changed.emit()
+            self.removed_dplugin.emit(dplugin)
         else:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was NOT removed in GUI')
 
@@ -237,11 +233,8 @@ class GuiEventProcessing(QtCore.QObject):
             # first set meta to plugin (meta infos in plugin)
             dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
-            # add a window to gui for new plugin and show it
-            self.added_dplugin.emit(dplugin)
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
-            self.dgui_changed.emit()
         else:
             # plugin will not be running in gui process, so we just need to add information to DGui
             # so add a new dplugin to DGUI and set name und type
@@ -252,7 +245,9 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.type = opt.plugin_type
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
-            self.dgui_changed.emit()
+
+        self.added_dplugin.emit(dplugin)
+        self.dgui_changed.emit()
 
     def process_close_program_event(self, event):
         """

@@ -64,10 +64,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of plugin tree
         # ----------------------------------
 
-        self.model = DPluginTreeModel()
-        self.model.setHorizontalHeaderLabels(['Name'])
+        self.dpluginModel = DPluginTreeModel()
+        self.dpluginModel.setHorizontalHeaderLabels(['Name'])
 
-        self.pluginTree.setModel(self.model)
+        self.pluginTree.setModel(self.dpluginModel)
         self.pluginTree.setUniformRowHeights(True)
 
         self.visual_root = PaPIRootItem('ViP')
@@ -75,20 +75,20 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.dpp_root = PaPIRootItem('DPP')
         self.pcp_root = PaPIRootItem('PCP')
 
-        self.model.appendRow(self.visual_root)
-        self.model.appendRow(self.io_root)
-        self.model.appendRow(self.dpp_root)
-        self.model.appendRow(self.pcp_root)
+        self.dpluginModel.appendRow(self.visual_root)
+        self.dpluginModel.appendRow(self.io_root)
+        self.dpluginModel.appendRow(self.dpp_root)
+        self.dpluginModel.appendRow(self.pcp_root)
 
         # -----------------------------------
         # Build structure of parameter tree
         # -----------------------------------
 
-        self.pModel = DParameterTreeModel()
-        self.pModel.setHorizontalHeaderLabels(['Name'])
-        self.parameterTree.setModel(self.pModel)
+        self.dparameterModel = DParameterTreeModel()
+        self.dparameterModel.setHorizontalHeaderLabels(['Name'])
+        self.parameterTree.setModel(self.dparameterModel)
         self.parameterTree.setUniformRowHeights(True)
-        self.pModel.dataChanged.connect(self.data_changed_parameter_model)
+        self.dparameterModel.dataChanged.connect(self.data_changed_parameter_model)
 
         # -----------------------------------
         # Build structure of block tree
@@ -157,7 +157,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         :return:
         """
         self.bModel.clear()
-        self.pModel.clear()
+        self.dparameterModel.clear()
         self.subscriberModel.clear()
         self.subscriptionModel.clear()
         self.unameEdit.setText('')
@@ -167,7 +167,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         self.alivestateEdit.setText('')
 
         self.bModel.setHorizontalHeaderLabels(['Name'])
-        self.pModel.setHorizontalHeaderLabels(['Name', 'Value'])
+        self.dparameterModel.setHorizontalHeaderLabels(['Name', 'Value'])
         self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
         self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
 
@@ -293,7 +293,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         for dparameter_name in dparameter_names:
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
-            self.pModel.appendRow(dparameter_item)
+            self.dparameterModel.appendRow(dparameter_item)
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
 
@@ -326,7 +326,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove DPlugin', self)
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dplugin,i=index: self.remove_dplugin_action(p, i))
+        action.triggered.connect(lambda p=dplugin.id: self.gui_api.do_delete_plugin(p))
 
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
@@ -567,14 +567,49 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
-    def refresh_action(self):
+    def refresh_action(self, new_dplugin:DPlugin=None):
         """
-
+        Used to refresh the overview menu view. Will not renew the QTreeView for the dplugins
         :return:
         """
-        index = self.pluginTree.currentIndex()
 
+        # -----------------------------------------
+        # case: no DPlugin was added or removed
+        # -----------------------------------------
+
+        index = self.pluginTree.currentIndex()
         self.pluginTree.clicked.emit(index)
+
+        # -----------------------------------------
+        # case: check for new dplugins or already
+        #       deleted dplugins
+        # -----------------------------------------
+
+        self.visual_root.clean()
+        self.dpp_root.clean()
+        self.io_root.clean()
+        self.pcp_root.clean()
+
+        if new_dplugin is not None:
+            plugin_item = DPluginTreeItem(new_dplugin)
+            if new_dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                self.visual_root.appendRow(plugin_item)
+            if new_dplugin.type == PLUGIN_IOP_IDENTIFIER:
+                plugin_item = DPluginTreeItem(new_dplugin)
+                self.io_root.appendRow(plugin_item)
+            if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
+                self.dpp_root.appendRow(plugin_item)
+            if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
+                self.pcp_root.appendRow(plugin_item)
+
+            # # -----------------------------------------
+            # # case: a DPlugin was removed
+            # # -----------------------------------------
+            # if self.dgui.get_dplugins_count() > self.dpluginModel.rowCount():
+            #     print('removed dplugin')
+            #     print(self.dpluginModel.rowCount())
+
+
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
         """
@@ -597,8 +632,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         '''
 
         self.gui_api.do_delete_plugin(dplugin.id)
-
-        self.model.removeRow(index.row(), index.parent())
 
     def showEvent(self, *args, **kwargs):
         dplugin_ids = self.dgui.get_all_plugins()
