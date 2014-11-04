@@ -28,7 +28,10 @@ Sven Knuth
 
 __author__ = 'CK'
 
-from papi.plugin.plugin_base import plugin_base
+#from papi.plugin.plugin_base import plugin_base
+
+from papi.plugin.base_classes.iop_base import iop_base
+
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
@@ -45,27 +48,33 @@ import struct
 import json
 
 
-class ORTD_UDP(plugin_base):
-    max_approx = 300
-    amax = 20
-    
+class ORTD_UDP(iop_base):
+
+    def get_plugin_configuration(self):
+        config = {
+        'address': {
+                'value': '127.0.0.1'
+            },
+        'port': {
+                'value': '20001'
+        }
+
+        }
+
+        return config
+
     def start_init(self, config=None):
         self.t = 0
         
-        
-        #        self.amax = Fourier_Rect_MOD.amax
-        #        self.amplitude = 1
-        #        self.max_approx = Fourier_Rect_MOD.max_approx
-        #        self.freq = 1
-        
-        
-        # self.vec = numpy.zeros( 2,1 )
 
         print(['Fourier: process id: ',os.getpid()] )
 
         # open UDP
-        self.HOST = "127.0.0.1"
-        self.PORT = 20001
+        ip = config['address']['value']
+        port = int(config['port']['value'])
+        self.HOST = ip
+        self.PORT = port
+
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock2.setblocking(1)
@@ -234,7 +243,7 @@ class ORTD_UDP(plugin_base):
         
         ParameterId = 0
         Counter = 111;
-        data = struct.pack('<iiid', 12, Counter, ParameterId, value)
+        data = struct.pack('<iiid', 12, Counter, ParameterId, float(value))
         
         self.sock2.sendto(data, (self.HOST, self.PORT) )
         print("sent")
@@ -244,8 +253,6 @@ class ORTD_UDP(plugin_base):
     def quit(self):
         print('Fourier_Rect: will quit')
 
-#    def get_output_sizes(self):
-#        return [1, int( Fourier_Rect_MOD.amax*(Fourier_Rect_MOD.max_approx + 1) ) ]
 
-    def get_type(self):
-        return 'IOP'
+    def plugin_meta_updated(self):
+        pass
