@@ -28,69 +28,53 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from papi.plugin.visual_base import visual_base
 from PySide.QtGui import QMdiSubWindow
 import pyqtgraph as pq
 
+from papi.plugin.base_classes.vip_base import vip_base
+from papi.data.DParameter import DParameter
 import numpy as np
 
+import collections
 import re
 
 from pyqtgraph.Qt import QtGui, QtCore
 
-class PlotPerformance(visual_base):
+class PlotPerformance(vip_base):
 
-    def start_init(self, config=None):
+    def __init__(self):
+        super(PlotPerformance, self).__init__()
 
-        super(PlotPerformance,self).start_init(config)
-        # load startup config and merge it
-        # self.config = config
-        # # --------------------------------
-        #
-        # # get needed data from config
-        # size_re = re.compile(r'([0-9]+)')
-        # self.window_size = size_re.findall(self.config['size']['value'])
-        # self.window_pos = size_re.findall(self.config['position']['value'])
-        #
-        #
-        # self.window_name = self.config['name']['value']
+        self.signal_count = 0
 
+    def initiate_layer_0(self, config=None):
+
+        # get needed data from config
         self.show_grid_x = int(self.config['show_grid']['value']) == 1
         self.show_grid_y = int(self.config['show_grid']['value']) == 1
         # --------------------------------
 
-
-        # set QWindow options
-        self.set_window_for_internal_usage(QMdiSubWindow())
-        self._subWindow.setWindowTitle(self.window_name)
-        self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
-
-
-
-        # --------------------------------
-
         # set pq graph plot widget options
-        self.plot = pq.PlotWidget()
-        self.plot.setWindowTitle('PlotPerformanceTitle')
-        self.plot.showGrid(x=self.show_grid_x, y=self.show_grid_y)
+        self.plotWidget = pq.PlotWidget()
+        self.plotWidget.setWindowTitle('PlotPerformanceTitle')
+#        self.plot = pq.plot(title='PlotPerformanceTitle')
+
+        self.plotWidget.showGrid(x=self.show_grid_x, y=self.show_grid_y)
         # --------------------------------
 
+        self.curve = self.plotWidget.plot()
 
+        self.data_buffer = np.linspace(1,1000,1000)
 
+        self.set_widget_for_internal_usage( self.plotWidget )
 
+        self.parameters = {}
+        self.parameters['x-grid'] = DParameter(None, 'X-Grid', 0, [0,1],1, Regex='^(1|0){1}$')
+        self.parameters['y-grid'] = DParameter(None, 'y-Grid', 0, [0,1],1, Regex='^(1|0){1}$')
 
-        #self.plot.setRange(QtCore.QRectF(0, -10, 5000, 20))
-        #self.plot.setLabel('bottom', 'Index', units='B')
-        self.curve = self.plot.plot()
-
-        #self.time_buffer = np.zeros(1000)
-        self.data_buffer = np.linspace(1,1000,1000)#np.zeros(1000)
-
-        self._subWindow.setWidget(self.plot)
-
+        self.send_new_parameter_list(list(self.parameters.values()))
 
         return True
-
 
     def pause(self):
         print('PlotPerformance paused')
@@ -99,32 +83,33 @@ class PlotPerformance(visual_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
+        self.data_buffer = np.roll(self.data_buffer, 1)
 
-        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
-        #self.data_buffer[-len(Data['f3_1']):] = Data['f3_1']
+        t = Data['t']
 
-        #print(self.data_buffer[Data['f3_1']])
-        #self.data_buffer[:len(Data['f3_1'])] = Data['f3_1']
-        #self.data_buffer = np.roll(self.data_buffer, len(Data['f3_1']))
+        y = []
 
-        self.data_buffer = np.roll(self.data_buffer, 3)
+        for key in Data:
+            if key != 't':
+                y = Data[key]
 
-        self.curve.setData(self.data_buffer)
+        #self.curve.addData(t, y)
+        self.curve.setData(t, y)
+        #self.plotWidget.plot(t, y)
 
-    def set_parameter(self, parameter):
-        pass
+#       self.plotWidget.plot(Data[0], Data[0])
+        #self.curve.setData(self.data_buffer)
+        #self.plot.pl
 
-    def get_widget(self):
-        return Exception
-
-    def get_type(self):
-        return "ViP"
-
+    def set_parameter(self, name, value):
+        print('set_parameter')
+        print(name)
+        print(value)
 
     def quit(self):
         print('PlotPerformance: will quit')
 
-    def get_startup_configuration(self):
+    def get_plugin_configuration(self):
         config = {
             'label_y': {
                 'value': "amplitude, V",
@@ -137,10 +122,44 @@ class PlotPerformance(visual_base):
                 'regex': '^(1|0)$'
         }}
         # http://www.regexr.com/
-        return self.merge_configs(self.get_configuration_base(),config)
+        return config
+
+    def plugin_meta_updated(self):
+
+        signal_count = 0;
+
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        for sub in subscriptions:
+            for dblock_name in subscriptions[sub]:
+                subscription = subscriptions[sub][dblock_name]
+
+                for signal in subscription.get_signals():
+                    signal_count += 1
+
+#        diff_count = len(self.Databuffer) - signal_count
+
+        #print(self.signal_count)
+
+        # #There are too many buffers
+        # if diff_count > 0:
+        #     for i in range(abs(diff_count)):
+        #         # print("Remove")
+        #         self.curves.pop()
+        #         self.Databuffer.pop()
+        #         self.parameters.pop()
+        #
+        # #Some Buffers are missing
+        # if diff_count < 0:
+        #     for i in range(self.signal_count, signal_count):
+        #         # print("Append ")
+        #         new_plot = self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o')
+        #         new_plot.setDownsampling(method='peak')
+        #         self.curves.append(new_plot)
+        #         self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
+        #         self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
+        #
+        self.signal_count = signal_count
 
 
-    # def hook_update_plugin_meta(self):
-    #   pass
-    #
 
