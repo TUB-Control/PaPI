@@ -133,3 +133,6 @@ class ownProcess_base(base_plugin):
             # sent join request to core
             event = Event.status.JoinRequest(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
+
+    def start_init(self, config):
+        raise NotImplementedError("Please Implement this method")

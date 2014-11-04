@@ -74,6 +74,9 @@ class base_plugin(IPlugin):
     def quit(self):
         raise NotImplementedError("Please Implement this method")
 
+    def set_parameter_internal(self, name, value):
+        self.set_parameter(name, value)
+
 
     # some api functions
     # ------------------
