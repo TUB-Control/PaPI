@@ -32,12 +32,7 @@ from papi.plugin.base_classes.ownProcess_base import ownProcess_base
 
 from papi.constants import PLUGIN_IOP_IDENTIFIER
 
-class IOP_base(ownProcess_base):
-
-    def get_plugin_configuration(self):
-        print('IOPBASE')
-        raise NotImplementedError("Please Implement this method")
-
+class iop_base(ownProcess_base):
 
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")
