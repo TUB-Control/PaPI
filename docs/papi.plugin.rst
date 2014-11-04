@@ -1,16 +1,15 @@
 papi.plugin package
 ===================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    papi.plugin.base_classes
+
 Submodules
 ----------
-
-papi.plugin.IOP_DPP_template module
------------------------------------
-
-.. automodule:: papi.plugin.IOP_DPP_template
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 papi.plugin.pcp_base module
 ---------------------------

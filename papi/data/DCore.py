@@ -45,6 +45,7 @@ class DCore():
     def create_id(self):
         """
         Creates and returns random unique 64 bit integer
+
         :returns: 64bit random integer
         :rtype: int
         """
@@ -54,7 +55,7 @@ class DCore():
 
     def add_plugin(self, process, pid, own_process, queue, plugin, id):
         """
-        Add plugin with necessary information
+        Add plugin with necessary information.
 
         :param process: Plugin is running in this process
         :param pid: Process ID of the process in which the plugin is running
@@ -68,15 +69,12 @@ class DCore():
 
         d_pl = DPlugin()
 
-
         d_pl.process = process
         d_pl.pid = pid
         d_pl.queue = queue
         d_pl.plugin = plugin
         d_pl.id = id
         d_pl.own_process = own_process
-
-        #print(plugin)
 
         self.__DPlugins[id] = d_pl
 
@@ -226,9 +224,6 @@ class DCore():
             return False
 
         #Destroy relation between DPlugin and DBlock
-
-
-
         if subscriber.unsubscribe(dblock) is False:
             self.log.printText(1, "Subscriber " + subscriber_id + " has already unsubscribed " + dblock_name)
             return False
@@ -239,10 +234,10 @@ class DCore():
 
         return True
 
-
     def unsubscribe_all(self, dplugin_id):
         """
-        This function is used to cancel all subscribtion of the DPlugin with the dplugin_id
+        This function is used to cancel all subscribtion of the DPlugin with the dplugin_id.
+
         :param dplugin_id:
         :return:
         """
@@ -274,7 +269,8 @@ class DCore():
 
     def rm_all_subscribers(self, dplugin_id):
         """
-        This function is used to remove all subscribers of all DBlocks, which are hold by the DPlugin with the dplugin_id
+        This function is used to remove all subscribers of all DBlocks, which are hold by the DPlugin with the dplugin_id.
+
         :param dplugin_id:
         :return:
         """
@@ -302,7 +298,8 @@ class DCore():
 
     def subscribe_signals(self, subscriber_id, target_id, dblock_name, signals):
         """
-        This function is used to subscribe a bunch of signals
+        This function is used to subscribe a bunch of signals.
+
         :param subscriber_id: DPlugin which likes to subscribes signals of the chosen  dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
         :param dblock_name: DBlock for subscribtion
@@ -336,7 +333,8 @@ class DCore():
 
     def unsubscribe_signals(self, subscriber_id, target_id, dblock_name, signals):
         """
-        This function is used to unubscribe a bunch of signals
+        This function is used to unubscribe a bunch of signals.
+
         :param subscriber_id: DPlugin which likes to unsubscribes signals of the chosen dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
         :param dblock_name: DBlock for subscribtion

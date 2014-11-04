@@ -28,19 +28,24 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.pcp_base import pcp_base
+from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QPushButton
 from papi.data.DPlugin import DBlock
 
 class Button(pcp_base):
 
-    def start_init(self, config=None):
-        super(Button, self).start_init(config)
+    def initiate_layer_0(self, config):
 
-        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        #super(Button, self).start_init(config)
+
+        block = DBlock(self.__id__, 1, 1, 'Click_Event', ['Parameter'])
         self.send_new_block_list([block])
 
         self.cur_value = 0
+
+        self.set_widget_for_internal_usage(self.create_widget())
+
+        self.name = config['name']['value']
 
     def create_widget(self):
         """
@@ -48,7 +53,7 @@ class Button(pcp_base):
         :return:
         :rtype QWidget:
         """
-        button = QPushButton('Click ' + self.name)
+        button = QPushButton('Click')
         button.clicked.connect(self.clicked)
 
         return button
@@ -63,7 +68,7 @@ class Button(pcp_base):
         self.send_parameter_change(self.cur_value, 'Parameter_1', 'TESTALIAS')
 
 
-    def get_startup_configuration(self):
+    def get_plugin_configuration(self):
         config = {
             "low": {
                 'value':0.1,
@@ -73,3 +78,6 @@ class Button(pcp_base):
             'value' : "PCP_Plugin"
         }}
         return config
+
+    def plugin_meta_updated(self):
+        pass
