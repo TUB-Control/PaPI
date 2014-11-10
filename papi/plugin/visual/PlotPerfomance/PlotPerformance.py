@@ -40,12 +40,20 @@ import re
 
 from pyqtgraph.Qt import QtGui, QtCore
 
+
 class PlotPerformance(vip_base):
 
     def __init__(self):
         super(PlotPerformance, self).__init__()
 
         self.signal_count = 0
+        self.signals = {}
+        self._bufsize = 1000
+        self.timewindow = 1000
+
+        self._tbuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+        self.x = np.linspace(-self.timewindow, 0.0, self._bufsize)
+        self.y = np.zeros(self._bufsize, dtype=np.float)
 
     def initiate_layer_0(self, config=None):
 
@@ -74,6 +82,18 @@ class PlotPerformance(vip_base):
 
         self.send_new_parameter_list(list(self.parameters.values()))
 
+        # ---------------------------
+        # Create Legend
+        # ---------------------------
+
+        self.legend = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.legend.setParentItem(self.plotWidget.graphicsItem())
+
+#        legend = pq.LegendItem((100,100), 0)
+
+
+        #self.plotWidget.addLegend()
+
         return True
 
     def pause(self):
@@ -83,18 +103,32 @@ class PlotPerformance(vip_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
-        self.data_buffer = np.roll(self.data_buffer, 1)
+        self.data_buffer = np.roll(self.data_buffer, 10)
 
         t = Data['t']
+        for elem in t:
+            self._tbuffer.append( elem )
 
-        y = []
+        self.x[:] = self._tbuffer
 
         for key in Data:
             if key != 't':
                 y = Data[key]
+                if key in self.signals:
+                    for elem in y:
+                        self.signals[key]['buffer'].append(elem)
 
-        #self.curve.addData(t, y)
-        self.curve.setData(t, y)
+        # --------------------------
+        # iterate over all buffers
+        # --------------------------
+        #print(self._tbuffer)
+        for signal_name in self.signals:
+           # print(self.buffers[signal_name])
+
+            #self.curve.setData(self.x, self.buffers[signal_name]['buffer'])
+
+            self.signals[signal_name]['curve'].setData(self.x, self.signals[signal_name]['buffer'])
+
         #self.plotWidget.plot(t, y)
 
 #       self.plotWidget.plot(Data[0], Data[0])
@@ -125,41 +159,57 @@ class PlotPerformance(vip_base):
         return config
 
     def plugin_meta_updated(self):
-
-        signal_count = 0;
-
+        """
+        By this function the plot is able to handle more than one input for plotting.
+        :return:
+        """
         subscriptions = self.dplugin_info.get_subscribtions()
 
-        for sub in subscriptions:
-            for dblock_name in subscriptions[sub]:
-                subscription = subscriptions[sub][dblock_name]
+        current_signals = []
 
-                for signal in subscription.get_signals():
-                    signal_count += 1
+        for dpluginsub_id in subscriptions:
+            for dblock_name in subscriptions[dpluginsub_id]:
+                dblocksub = subscriptions[dpluginsub_id][dblock_name]
 
-#        diff_count = len(self.Databuffer) - signal_count
+                for signal in dblocksub.get_signals():
+                    signal_name = dblocksub.dblock.get_signal_name(signal)
+                    current_signals.append(signal_name)
 
-        #print(self.signal_count)
+        for signal_name in current_signals:
+            if signal_name not in self.signals:
+                self.add_databuffer(signal_name)
 
-        # #There are too many buffers
-        # if diff_count > 0:
-        #     for i in range(abs(diff_count)):
-        #         # print("Remove")
-        #         self.curves.pop()
-        #         self.Databuffer.pop()
-        #         self.parameters.pop()
-        #
-        # #Some Buffers are missing
-        # if diff_count < 0:
-        #     for i in range(self.signal_count, signal_count):
-        #         # print("Append ")
-        #         new_plot = self._plotWidget.plot(self.x, self.y, pen=(100,0+i*10,0), symbole='o')
-        #         new_plot.setDownsampling(method='peak')
-        #         self.curves.append(new_plot)
-        #         self.Databuffer.append( collections.deque([0.0]*self._bufsize, self._bufsize) )
-        #         self.parameters.append( DParameter(None,'Color_' + str(i),0+i*10,[0,255],1) )
-        #
-        self.signal_count = signal_count
+        # Delete old buffers
+        for signal_name in self.signals.copy():
+            if signal_name not in current_signals:
+                self.remove_databuffer(signal_name)
+
+    def add_databuffer(self, signal_name):
+        """
+        Create new buffer for signal_name.
+        :param signal_name:
+        :return:
+        """
+        print('Add buffer for ' + signal_name)
+        if signal_name not in self.signals:
+            self.signals[signal_name] = {}
+            buffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+            curve = self.plotWidget.plot(self.x, self.y, pen=(255,255,255), symbole='o', name=signal_name, clear=False)
+
+            self.signals[signal_name]['buffer'] = buffer
+            self.signals[signal_name]['curve'] = curve
+            self.legend.addItem(curve, signal_name)
 
 
-
+    def remove_databuffer(self, signal_name):
+        """
+        Remove the databuffer for signal_name.
+        :param signal_name:
+        :return:
+        """
+        print('Delete buffer for ' + signal_name)
+        if signal_name in self.signals:
+            curve = self.signals[signal_name]['curve']
+            curve.clear()
+            self.legend.removeItem(signal_name)
+            del self.signals[signal_name]

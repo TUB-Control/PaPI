@@ -76,14 +76,10 @@ class DBlock(DObject):
         else:
             return False
 
-    # def rm_all_subscribers(self):
-    #     """
-    #
-    #     :return:
-    #     :rtype boolean:
-    #     """
-    #
-    #     pass
+    def get_signal_name(self, signal: int):
+        if signal > len(self.signal_names_internal):
+            return None
+        return self.signal_names_internal[signal]
 
     def get_subscribers(self):
         """
