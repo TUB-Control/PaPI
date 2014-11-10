@@ -236,7 +236,7 @@ class DCore():
 
     def unsubscribe_all(self, dplugin_id):
         """
-        This function is used to cancel all subscribtion of the DPlugin with the dplugin_id.
+        This function is used to cancel all subscription of the DPlugin with the dplugin_id.
 
         :param dplugin_id:
         :return:
@@ -259,7 +259,7 @@ class DCore():
                 dblock = sub.get_dblock_by_name(dblock_name)
 
                 dblock.rm_subscriber(dplugin)
-#                print(dblock_names)
+
                 dplugin.unsubscribe(dblock)
 
         if 0 == len(dplugin.get_subscribtions()):

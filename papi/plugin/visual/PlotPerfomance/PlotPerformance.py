@@ -51,34 +51,65 @@ class PlotPerformance(vip_base):
         self._bufsize = 1000
         self.timewindow = 1000
 
-        self._tbuffer = collections.deque([0.0]*self._bufsize, self._bufsize)
+        self._tbuffer = collections.deque([0.0]*0, self._bufsize)
         self.x = np.linspace(-self.timewindow, 0.0, self._bufsize)
         self.y = np.zeros(self._bufsize, dtype=np.float)
 
+        self.styles = {
+            0 : QtCore.Qt.SolidLine,
+            1 : QtCore.Qt.DashDotDotLine,
+            2 : QtCore.Qt.DashDotLine,
+            3 : QtCore.Qt.DashLine,
+            4 : QtCore.Qt.DotLine
+        }
+
+        self.colors = {
+            0 : (255, 255, 255),
+            1 : (255, 0  , 0  ),
+            2 : (0  , 255, 0  ),
+            3 : (0  , 0  , 255),
+            4 : (100, 100, 100)
+
+        }
+
     def initiate_layer_0(self, config=None):
 
-        # get needed data from config
-        self.show_grid_x = int(self.config['show_grid']['value']) == 1
-        self.show_grid_y = int(self.config['show_grid']['value']) == 1
+#        self.config = config
+
+        # ---------------------------
+        # Read configuration
+        # ---------------------------
+
+        self.show_grid_x = int(self.config['x-grid']['value']) == '1'
+        self.show_grid_y = int(self.config['y-grid']['value']) == '1'
+
+        int_re = re.compile(r'(\d+)')
+
+        self.colors_selected = int_re.findall(self.config['color']['value']);
+        self.types_selected = int_re.findall(self.config['style']['value']);
+
+        print(self.colors_selected)
+        print(self.types_selected)
+        # --------------------------------
+        # Create PlotWidget
         # --------------------------------
 
-        # set pq graph plot widget options
         self.plotWidget = pq.PlotWidget()
         self.plotWidget.setWindowTitle('PlotPerformanceTitle')
-#        self.plot = pq.plot(title='PlotPerformanceTitle')
 
         self.plotWidget.showGrid(x=self.show_grid_x, y=self.show_grid_y)
-        # --------------------------------
 
         self.curve = self.plotWidget.plot()
 
-        self.data_buffer = np.linspace(1,1000,1000)
-
         self.set_widget_for_internal_usage( self.plotWidget )
 
+        # ---------------------------
+        # Create Parameters
+        # ---------------------------
+
         self.parameters = {}
-        self.parameters['x-grid'] = DParameter(None, 'X-Grid', 0, [0,1],1, Regex='^(1|0){1}$')
-        self.parameters['y-grid'] = DParameter(None, 'y-Grid', 0, [0,1],1, Regex='^(1|0){1}$')
+        self.parameters['x-grid'] = DParameter(None, 'x-grid', 0, [0,1],1, Regex='^(1|0){1}$')
+        self.parameters['y-grid'] = DParameter(None, 'y-grid', 0, [0,1],1, Regex='^(1|0){1}$')
 
         self.send_new_parameter_list(list(self.parameters.values()))
 
@@ -89,11 +120,6 @@ class PlotPerformance(vip_base):
         self.legend = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.legend.setParentItem(self.plotWidget.graphicsItem())
 
-#        legend = pq.LegendItem((100,100), 0)
-
-
-        #self.plotWidget.addLegend()
-
         return True
 
     def pause(self):
@@ -103,20 +129,18 @@ class PlotPerformance(vip_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
-        self.data_buffer = np.roll(self.data_buffer, 10)
 
         t = Data['t']
-        for elem in t:
-            self._tbuffer.append( elem )
+        #for elem in t:
 
-        self.x[:] = self._tbuffer
+        self._tbuffer.extend( t )
 
         for key in Data:
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    for elem in y:
-                        self.signals[key]['buffer'].append(elem)
+
+                    self.signals[key]['buffer'].extend(y)
 
         # --------------------------
         # iterate over all buffers
@@ -127,18 +151,19 @@ class PlotPerformance(vip_base):
 
             #self.curve.setData(self.x, self.buffers[signal_name]['buffer'])
 
-            self.signals[signal_name]['curve'].setData(self.x, self.signals[signal_name]['buffer'])
-
-        #self.plotWidget.plot(t, y)
-
-#       self.plotWidget.plot(Data[0], Data[0])
-        #self.curve.setData(self.data_buffer)
-        #self.plot.pl
+            self.signals[signal_name]['curve'].setData(self._tbuffer, self.signals[signal_name]['buffer'])
 
     def set_parameter(self, name, value):
         print('set_parameter')
         print(name)
         print(value)
+
+        if name == 'x-grid':
+            self.config['x-grid']['value'] = value
+            self.plotWidget.showGrid(x=value=='1')
+        if name == 'y-grid':
+            self.config['y-grid']['value'] = value
+            self.plotWidget.showGrid(y=value=='1')
 
     def quit(self):
         print('PlotPerformance: will quit')
@@ -151,9 +176,18 @@ class PlotPerformance(vip_base):
         }, 'label_x': {
                 'value': "time, s",
                 'regex': '\w+,\s*\w+'
-        }, 'show_grid': {
+        }, 'x-grid': {
                 'value': "0",
                 'regex': '^(1|0)$'
+        }, 'y-grid': {
+                'value': "0",
+                'regex': '^(1|0)$'
+        }, 'color': {
+                'value': "[1 2 3 4 5]",
+                'regex': '^\[(\s*\d\s*)+\]'
+        }, 'style': {
+                'value': "[1 2 3 4 5]",
+                'regex': '^\[(\s*\d\s*)+\]'
         }}
         # http://www.regexr.com/
         return config
@@ -175,16 +209,17 @@ class PlotPerformance(vip_base):
                     signal_name = dblocksub.dblock.get_signal_name(signal)
                     current_signals.append(signal_name)
 
+        # Add missing buffers
         for signal_name in current_signals:
             if signal_name not in self.signals:
-                self.add_databuffer(signal_name)
+                self.add_databuffer(signal_name, current_signals.index(signal_name))
 
         # Delete old buffers
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
                 self.remove_databuffer(signal_name)
 
-    def add_databuffer(self, signal_name):
+    def add_databuffer(self, signal_name, id):
         """
         Create new buffer for signal_name.
         :param signal_name:
@@ -193,13 +228,15 @@ class PlotPerformance(vip_base):
         print('Add buffer for ' + signal_name)
         if signal_name not in self.signals:
             self.signals[signal_name] = {}
-            buffer = collections.deque([0.0]*self._bufsize, self._bufsize)
-            curve = self.plotWidget.plot(self.x, self.y, pen=(255,255,255), symbole='o', name=signal_name, clear=False)
+            buffer = collections.deque([0.0]*0, self._bufsize)
+
+            pen = self.get_pen(id)
+
+            curve = self.plotWidget.plot(self.x, self.y, pen=pen, name=signal_name)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
             self.legend.addItem(curve, signal_name)
-
 
     def remove_databuffer(self, signal_name):
         """
@@ -213,3 +250,24 @@ class PlotPerformance(vip_base):
             curve.clear()
             self.legend.removeItem(signal_name)
             del self.signals[signal_name]
+
+    def get_pen(self, index):
+
+        index = int(index)
+
+        style_code = int(self.types_selected[index])
+        color_code = int(self.colors_selected[index])
+
+        if style_code in self.styles:
+            style = self.styles[style_code]
+        else:
+            print('default style')
+            style = self.styles[1]
+
+        if color_code in self.colors:
+            color = self.colors[color_code]
+        else:
+            print('default color')
+            color = self.colors[1]
+
+        return pq.mkPen(color=color, style=style)

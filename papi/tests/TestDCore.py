@@ -183,7 +183,7 @@ class TestDCore(unittest.TestCase):
         #Create dplugins
         d_pl_1 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
         d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
-
+        d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
         #Create dblocks
         d_bl_1 = DBlock(None, 0, 0, 'Block_1')
         d_bl_2 = DBlock(None, 0, 0, 'Block_2')
@@ -193,13 +193,20 @@ class TestDCore(unittest.TestCase):
         d_pl_1.add_dblock(d_bl_2)
 
         self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_1.name))
+        self.assertTrue(self.dcore.subscribe(d_pl_3.id, d_pl_1.id, d_bl_1.name))
         self.assertTrue(self.dcore.subscribe(d_pl_2.id, d_pl_1.id, d_bl_2.name))
+
+        print(d_bl_1.get_subscribers())
 
         self.assertEqual(len(d_pl_2.get_subscribtions()[d_pl_1.id].keys()), 2)
 
         self.dcore.unsubscribe_all(d_pl_2.id)
 
         self.assertNotIn(d_pl_1.id, d_pl_2.get_subscribtions())
+
+        print(d_bl_1.get_subscribers())
+        self.assertTrue(len(d_bl_1.get_subscribers())==1)
+        self.assertTrue(len(d_bl_2.get_subscribers())==0)
 
         pass
 
