@@ -52,7 +52,6 @@ class OptionalObject(object):
         self.nvalues = nvalues
 
 
-
 class ORTD_UDP(iop_base):
 
     def get_plugin_configuration(self):
@@ -169,7 +168,7 @@ class ORTD_UDP(iop_base):
                     for key in keys:
                         signals_to_send.append(signal_values[key])
                     # flush data to papi
-                    self.send_new_data([self.t], signals_to_send, 'SourceFrq1')
+                    self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
                     signal_values = {}
                 else:
                     # Received a data packet

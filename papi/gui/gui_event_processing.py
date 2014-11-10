@@ -313,9 +313,7 @@ class GuiEventProcessing(QtCore.QObject):
         # check if it exists
         if dplugin is not None:
             # it exists, so call its execute function
-            #dplugin.plugin.set_parameter_internal(opt.parameter_list)
-            #TODO
-            pass
+            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
         else:
             # plugin does not exist in DGUI
             self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
