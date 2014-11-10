@@ -758,7 +758,7 @@ class Core:
 
 
         already_sub = False
-        # test if already subscribe
+        # test if already subscribed
         source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
         if source_pl is not None:
             blocks = source_pl.get_dblocks()
