@@ -37,6 +37,7 @@ from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_L
 
 from pyqtgraph import QtCore
 
+
 import papi.error_codes as ERROR
 
 import datetime
@@ -44,12 +45,20 @@ import time
 
 import xml.etree.cElementTree as ET
 
-class Gui_api:
+class Gui_api(QtCore.QObject):
+
+    resize_gui = QtCore.Signal(int, int)
+
     def __init__(self, gui_data, core_queue, gui_id):
+        super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
         self.core_queue = core_queue
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
+        self.gui_size_width = None
+        self.gui_size_height = None
+
+
 
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart = True):
         """
@@ -413,47 +422,55 @@ class Gui_api:
 
         root = tree.getroot()
 
+
+
         plugins_to_start = []
         subs_to_make = []
         parameters_to_change = []
 
         for plugin_xml in root:
-            pl_uname = plugin_xml.attrib['uname']
-            identifier = plugin_xml.find('Identifier').text
-            config_xml = plugin_xml.find('StartConfig')
-            config_hash = {}
-            for parameter_xml in config_xml.findall('Parameter'):
-                para_name = parameter_xml.attrib['Name']
-                config_hash[para_name] = {}
-                for detail_xml in parameter_xml:
-                    detail_name = detail_xml.tag
-                    config_hash[para_name][detail_name]= detail_xml.text
+           if plugin_xml.tag == 'Size':
+                w = int(plugin_xml.attrib['w'])
+                h = int(plugin_xml.attrib['h'])
+                print(w,h)
+                self.resize_gui.emit(w,h)
+           else:
+                pl_uname = plugin_xml.attrib['uname']
+                identifier = plugin_xml.find('Identifier').text
+                config_xml = plugin_xml.find('StartConfig')
+                config_hash = {}
+                for parameter_xml in config_xml.findall('Parameter'):
+                    para_name = parameter_xml.attrib['Name']
+                    config_hash[para_name] = {}
+                    for detail_xml in parameter_xml:
+                        detail_name = detail_xml.tag
+                        config_hash[para_name][detail_name]= detail_xml.text
 
-            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-
-            plugins_to_start.append([identifier, pl_uname_new, config_hash])
-
-            subs_xml = plugin_xml.find('Subscriptions')
-            for sub_xml in subs_xml.findall('Subscription'):
-                data_source = sub_xml.find('data_source').text
-                for block_xml in sub_xml.findall('block'):
-                    block_name = block_xml.attrib['Name']
-                    signals = []
-                    for sig_xml in block_xml.findall('Signal'):
-                        signals.append(int(sig_xml.text))
-                    alias_xml = block_xml.find('alias')
-                    alias = alias_xml.text
-                    pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                    data_source_new = self.change_uname_to_uniqe(data_source)
-                    subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
-
-
-            prev_parameters_xml = plugin_xml.find('PreviousParameters')
-            for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
-                para_name = prev_parameter_xml.attrib['Name']
-                para_value = prev_parameter_xml.text
                 pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                parameters_to_change.append([pl_uname_new, para_name, float(para_value)])
+
+                plugins_to_start.append([identifier, pl_uname_new, config_hash])
+
+                subs_xml = plugin_xml.find('Subscriptions')
+                for sub_xml in subs_xml.findall('Subscription'):
+                    data_source = sub_xml.find('data_source').text
+                    for block_xml in sub_xml.findall('block'):
+                        block_name = block_xml.attrib['Name']
+                        signals = []
+                        for sig_xml in block_xml.findall('Signal'):
+                            signals.append(int(sig_xml.text))
+                        alias_xml = block_xml.find('alias')
+                        alias = alias_xml.text
+                        pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                        data_source_new = self.change_uname_to_uniqe(data_source)
+                        subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
+
+
+                prev_parameters_xml = plugin_xml.find('PreviousParameters')
+                for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                    para_name = prev_parameter_xml.attrib['Name']
+                    para_value = prev_parameter_xml.text
+                    pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                    parameters_to_change.append([pl_uname_new, para_name, float(para_value)])
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
@@ -489,6 +506,10 @@ class Gui_api:
         root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         root.set('PaPI_version',CORE_PAPI_VERSION)
+
+        size_xml = ET.SubElement(root, 'Size')
+        size_xml.set('w',str(self.gui_size_width))
+        size_xml.set('h',str(self.gui_size_height))
 
         # get plugins #
         plugins = self.gui_data.get_all_plugins()
