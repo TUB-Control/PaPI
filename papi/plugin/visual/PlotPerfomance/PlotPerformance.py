@@ -183,10 +183,10 @@ class PlotPerformance(vip_base):
                 'value': "0",
                 'regex': '^(1|0)$'
         }, 'color': {
-                'value': "[1 2 3 4 5]",
+                'value': "[0 1 2 3 4]",
                 'regex': '^\[(\s*\d\s*)+\]'
         }, 'style': {
-                'value': "[1 2 3 4 5]",
+                'value': "[0 1 2 3 4]",
                 'regex': '^\[(\s*\d\s*)+\]'
         }}
         # http://www.regexr.com/
