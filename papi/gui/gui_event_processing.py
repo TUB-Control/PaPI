@@ -77,7 +77,9 @@ class GuiEventProcessing(QtCore.QObject):
                                 'plugin_closed':        self.process_plugin_closed,
                                 'set_parameter':        self.process_set_parameter,
                                 'pause_plugin':         self.process_pause_plugin,
-                                'resume_plugin':        self.process_resume_plugin
+                                'resume_plugin':        self.process_resume_plugin,
+                                'stop_plugin':          self.process_stop_plugin,
+                                'start_plugin':         self.process_start_plugin
         }
 
     def gui_working(self, close_mock):
@@ -140,7 +142,7 @@ class GuiEventProcessing(QtCore.QObject):
             # check if it exists
             if dplugin != None:
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
-                if dplugin.state != PLUGIN_STATE_PAUSE:
+                if dplugin.state != PLUGIN_STATE_PAUSE and dplugin.state != PLUGIN_STATE_STOPPED:
                     dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
             else:
                 # plugin does not exist in DGUI
@@ -157,12 +159,39 @@ class GuiEventProcessing(QtCore.QObject):
         opt = event.get_optional_parameter()
 
         dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
+        if dplugin is not None:
+            dplugin.plugin.quit()
+
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
             self.dgui_changed.emit()
             self.removed_dplugin.emit(dplugin)
         else:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was NOT removed in GUI')
+
+
+    def process_stop_plugin(self, event):
+        id = event.get_destinatioID()
+        dplugin = self.gui_data.get_dplugin_by_id(id)
+        if dplugin is not None:
+            dplugin.plugin.quit()
+            dplugin.state = PLUGIN_STATE_STOPPED
+            self.dgui_changed.emit()
+
+    def process_start_plugin(self, event):
+        id = event.get_destinatioID()
+        dplugin = self.gui_data.get_dplugin_by_id(id)
+        if dplugin is not None:
+            if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
+                dplugin.state = PLUGIN_STATE_START_SUCCESFUL
+            else:
+                dplugin.state = PLUGIN_STATE_START_FAILED
+
+            self.dgui_changed.emit()
+
+
+
+
 
     def process_create_plugin(self, event):
         """

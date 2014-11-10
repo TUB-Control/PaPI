@@ -283,6 +283,11 @@ class Core:
             self.log.printText(1,'update_meta, cannot update meta information because there is no plugin with id: '+str(pl_id))
             return -1
 
+    def update_meta_data_to_gui_for_all(self):
+        plugins = self.core_data.get_all_plugins()
+        for id in plugins:
+            self.update_meta_data_to_gui(id)
+
     def handle_parameter_change(self, plugin, parameter_name, value):
         """
         This function should be called, when there is a new_data event for changing a parameter value
@@ -617,17 +622,30 @@ class Core:
                 # dplugin is not running in gui
                 # tell plugin to quit
                 dplugin.queue.put(event)
-            else:
-                # plugin is running in GUI
-                # tell gui to close plugin
-                opt = DOptionalData()
-                opt.plugin_id = id
-                dplugin.queue.put( Event.status.PluginClosed(self.core_id, self.gui_id, opt))
+                dplugin.state = PLUGIN_STATE_STOPPED
+                self.core_data.unsubscribe_all(dplugin.id)
+                self.core_data.rm_all_subscribers(dplugin.id)
+                self.update_meta_data_to_gui_for_all()
 
-                # remove plugin from DCore
-                if self.core_data.rm_dplugin(id) != ERROR.NO_ERROR:
-                    self.log.printText(1, 'stop plugin, unable to remove plugin von core_data')
-                    return ERROR.UNKNOWN_ERROR
+            else:
+                if event.delete is True:
+                    # plugin is running in GUI
+                    # tell gui to close plugin
+                    opt = DOptionalData()
+                    opt.plugin_id = id
+                    dplugin.queue.put( Event.status.PluginClosed(self.core_id, self.gui_id, opt))
+
+                    # remove plugin from DCore
+                    if self.core_data.rm_dplugin(id) != ERROR.NO_ERROR:
+                        self.log.printText(1, 'stop plugin, unable to remove plugin von core_data')
+                        return ERROR.UNKNOWN_ERROR
+
+                else:
+                    dplugin.queue.put( Event.instruction.StopPlugin(self.core_id, id, None, delete=False))
+                    dplugin.state = PLUGIN_STATE_STOPPED
+                    self.core_data.unsubscribe_all(dplugin.id)
+                    self.core_data.rm_all_subscribers(dplugin.id)
+                    self.update_meta_data_to_gui_for_all()
 
             return ERROR.NO_ERROR
         else:
@@ -647,6 +665,12 @@ class Core:
                 # dplugin is not running in gui
                 # tell plugin to quit
                 dplugin.queue.put(event)
+            else:
+                dplugin.state = PLUGIN_STATE_START_SUCCESFUL
+                self.gui_event_queue.put(event)
+                self.update_meta_data_to_gui(id)
+
+
 
     def __process_plugin_stopped__(self, event):
         """
@@ -734,7 +758,7 @@ class Core:
 
 
         already_sub = False
-        # test if already subscribe
+        # test if already subscribed
         source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
         if source_pl is not None:
             blocks = source_pl.get_dblocks()

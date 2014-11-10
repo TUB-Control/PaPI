@@ -41,7 +41,7 @@ from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH
 
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER
 
@@ -79,7 +79,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
         self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
         self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
+
+        self.gui_api.resize_gui.connect(self.resize_gui_window)
+
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
+
+        # set GUI size
+        size = self.size()
+        self.gui_api.gui_size_height    = size.height()
+        self.gui_api.gui_size_width     = size.width()
+
+        self.original_resize_function = self.resizeEvent
+        self.resizeEvent = self.user_window_resize
+
+        self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
 
         self.core_queue = core_queue
         self.gui_queue = gui_queue
@@ -264,6 +277,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if self.overview_menu is not None:
             self.overview_menu.refresh_action()
 
+    def resize_gui_window(self, w, h):
+
+        self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
+        size = self.size()
+        self.gui_api.gui_size_height    = size.height()
+        self.gui_api.gui_size_width     = size.width()
+
+    def user_window_resize(self, event):
+        size = event.size()
+        self.gui_api.gui_size_width = size.width()
+        self.gui_api.gui_size_height = size.height()
+        self.original_resize_function(event)
+
+
     def reload_config(self):
         """
         This function is used to reset PaPI and to reload the last loaded configuration file.
@@ -278,6 +305,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
         :return:
         """
+        h = GUI_DEFAULT_HEIGHT
+        w = GUI_DEFAULT_WIDTH
+        self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
         self.gui_api.do_reset_papi()
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
