@@ -55,7 +55,7 @@ class base_visual(base_plugin):
         self.window_name = self.config['name']['value']
 
         self.set_window_for_internal_usage(QMdiSubWindow())
-        self.initiate_layer_1(self.config)
+        return self.initiate_layer_1(self.config)
 
     def get_current_config(self):
         return self.config

@@ -33,8 +33,7 @@ from papi.constants import PLUGIN_VIP_IDENTIFIER
 class vip_base(base_visual):
 
     def initiate_layer_1(self, config):
-
-        self.initiate_layer_0(config)
+        return self.initiate_layer_0(config)
 
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")

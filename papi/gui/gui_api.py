@@ -432,7 +432,6 @@ class Gui_api(QtCore.QObject):
            if plugin_xml.tag == 'Size':
                 w = int(plugin_xml.attrib['w'])
                 h = int(plugin_xml.attrib['h'])
-                print(w,h)
                 self.resize_gui.emit(w,h)
            else:
                 pl_uname = plugin_xml.attrib['uname']
