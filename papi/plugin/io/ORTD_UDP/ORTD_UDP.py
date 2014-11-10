@@ -23,12 +23,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Christian Klauer
+Stefan Ruppin
 """
 
 __author__ = 'CK'
 
-#from papi.plugin.plugin_base import plugin_base
 
 from papi.plugin.base_classes.iop_base import iop_base
 
@@ -37,15 +37,20 @@ from papi.data.DParameter import DParameter
 
 import threading
 
-import time
-import numpy
+
 import os
 
 import socket
-import pickle
+
 
 import struct
 import json
+
+class OptionalObject(object):
+    def __init__(self, ORTD_par_id, nvalues):
+        self.ORTD_par_id = ORTD_par_id
+        self.nvalues = nvalues
+
 
 
 class ORTD_UDP(iop_base):
@@ -55,8 +60,14 @@ class ORTD_UDP(iop_base):
         'address': {
                 'value': '127.0.0.1'
             },
-        'port': {
+        'source_port': {
+                'value': '20000'
+        },
+        'out_port': {
                 'value': '20001'
+        },
+        'Cfg_Path' : {
+                'value': 'plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json'
         }
 
         }
@@ -64,195 +75,140 @@ class ORTD_UDP(iop_base):
         return config
 
     def start_init(self, config=None):
-        self.t = 0
-        
-
-        print(['Fourier: process id: ',os.getpid()] )
+        print('ORTD', self.__id__, ':process id',os.getpid() )
 
         # open UDP
-        ip = config['address']['value']
-        port = int(config['port']['value'])
-        self.HOST = ip
-        self.PORT = port
+        self.HOST = config['address']['value']
+        self.SOURCE_PORT = int(config['source_port']['value'])
+        self.OUT_PORT =  int(config['out_port']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
-        self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock2.setblocking(1)
+        self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_parameter.setblocking(1)
         
-        # Load protocol config. TODO: Transfer this using UDP
-        f = open('plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json', 'r')
+        # Load protocol config.
+        path = config['Cfg_Path']['value']
+        f = open(path, 'r')
         self.ProtocolConfig = json.load(f)
         
         self.Sources = self.ProtocolConfig['SourcesConfig']
         self.Parameters = self.ProtocolConfig['ParametersConfig']
-        
-        # loop through all groups and create a block for each; each group yields in its own assigned block
-        # TODO
-        
-        
+
         # For each group:: loop through all sources (=signals) in the group and register the signals
         # Register signals
         names = ['t']
-        #names.append('Testsignal')
-        
-        index = 0
-        
+
         for Sid in self.Sources:
             Source = self.Sources[Sid]
-            print(str(index) + " ) Source " + Source['SourceName'] + " vector length = " + Source['NValues_send'])
             names.append( Source['SourceName'] )
-            index = index + 1
 
-        self.block1 = DBlock(None,1,2,'SourceFrq1',names)
+        self.block1 = DBlock(None,1,2,'SourceGroup0',names)
         self.send_new_block_list([self.block1])
 
 
         
-        # Register parameters TODO: read list of parameters from self.Parameters
-        self.para_1 = DParameter('', 'Par1', 0.01, [0,2],1)
-        
-        self.send_new_parameter_list([self.para_1])
+        # Register parameters
+        self.Parameter_List = []
 
+        for Pid in self.Parameters:
+            Para = self.Parameters[Pid]
+            para_name = Para['ParameterName']
+            val_count = Para['NValues']
+            opt_object = OptionalObject(Pid, val_count)
+            Parameter = DParameter('',para_name,0,0, OptionalObject=opt_object)
+            self.Parameter_List.append(Parameter)
 
+        self.send_new_parameter_list(self.Parameter_List)
+
+        self.t = 0
 
         self.set_event_trigger_mode(True)
 
-        thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
-        thread.start()
+        self.thread_goOn = True
+        self.lock = threading.Lock()
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
+        self.thread.start()
 
         return True
 
     def pause(self):
-        pass
+        self.lock.acquire()
+        self.thread_goOn = False
+        self.lock.release()
+        self.thread.join()
 
     def resume(self):
-        pass
+        self.thread_goOn = True
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.SOURCE_PORT) )
+        self.thread.start()
 
-    def thread_execute(self,host,port):
+    def thread_execute(self,host, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind( ('127.0.0.1', 20000) )
+        self.sock.bind( (host, port) )
         
         self.sock.setblocking(1)
-        #vec = numpy.zeros( (self.max_approx,  (self.amax) ))
+        goOn = True
 
-        while True:
-            #   self.sock.sendto(b'GET', (self.HOST, self.PORT) )
-
-#            try:
-#                received = self.sock.recv(60000)
-#            except socket.error:
-#                pass
-#            else:
-#                data = pickle.loads(received)
-
-
-            
+        signal_values = {}
+        while goOn:
             try:
-                #print("Waiting for data")
                 rev = self.sock.recv(1600)
-                #rev = str.encode(rev_)
-                #print("Got data" + str(len(rev)) )
             except socket.error:
-                pass
+                print('ORTD got socket error')
             else:
-                
                 # unpack header
                 SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
-                
                 if SourceId == -1:
                     # unpack group ID
                     GroupId = struct.unpack_from('<i', rev, 3*4)[0]
-                    
-                    #print("finishing group #" + str(GroupId) )
-                    pass
+                    self.t += 1
+
+                    keys = list(signal_values.keys())
+                    keys.sort()
+                    signals_to_send = []
+                    for key in keys:
+                        signals_to_send.append(signal_values[key])
                     # flush data to papi
-                
+                    self.send_new_data([self.t], signals_to_send, 'SourceFrq1')
+                    signal_values = {}
                 else:
                     # Received a data packet
-                    
                     # Lookup the Source behind the given SourceId
                     Source = self.Sources[str(SourceId)]
-                    NValues = Source['NValues_send']
-                
-                    #print("Got something from source " + Source['SourceName'] + " vector length = " + NValues)
+                    NValues = int(Source['NValues_send'])
 
-                    #self.send_new_data([self.t], [   [val1]   ], 'SourceFrq1')
+                    # Read NVales from the received packet
+                    val = []
+                    for i in range(NValues):
+                        val.append(struct.unpack_from('<d', rev, 3*4)[0])
 
-                    # Read NVales from the received packet (TODO)
-                    val1 = struct.unpack_from('<d', rev, 3*4)[0]
-                    #print(val1)
-                
-                    # send only if source zero (REMOVE and store all values for all sources into a structure)
-                    if SourceId == 0:
-                        
-                    
-                        vec = numpy.zeros((2,1))
-                        
-                        vec[0,0] = self.t
-                        vec[1,0] = val1
-                            
-                        self.t += 0.1
+                    signal_values[SourceId] = val
 
-                        self.send_new_data([self.t], [[val1]], 'SourceFrq1')
-            
-                
-                #   for Sid in Sources:
-                #
-                #   Sid_ = int(Sid)
-                #   print("investigating Source "+ str(Sid_) )
-                #
-                #   if SourceId == Sid_:
-                #       #if SourceId == 0:
-                #       #print(Counter)
-                #       print(val1)
-                #
-                #       SrcCfg = self.ProtocolConfig['SourcesConfig'][str(Sid)]
-                #
-                #       print("Got something from source " + SrcCfg['SourceName'] + " vector length = " + SrcCfg['NValues_send'])
-                #
-                #       # send only if source zero
-                #       if Sid_ == 0:
-                #           vec = numpy.zeros((2,1))
-                #
-                #           vec[0,0] = self.t
-                #           vec[1,0] = val1
-                #
-                #           self.t += 0.1
-                #
-                #           self.send_new_data(vec,'SourceFrq1')
-            
-
-
-
-            
-            
-            
-            #print("Hallo")
-            
-
-            #time.sleep(0.1)
-
+            # check if thread should go on
+            self.lock.acquire()
+            goOn = self.thread_goOn
+            self.lock.release()
+        # Thread ended
+        self.sock.close()
 
     def execute(self, Data=None, block_name = None):
-        print("EXECUTE FUNC")
-        pass
+        raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
-        print("Setting parameter " + name + " ")
-        print(value)
-        
-        ParameterId = 0
-        Counter = 111;
-        data = struct.pack('<iiid', 12, Counter, ParameterId, float(value))
-        
-        self.sock2.sendto(data, (self.HOST, self.PORT) )
-        print("sent")
-        print(data)
-        
+        for para in self.Parameter_List:
+            if para.name == name:
+                Pid = para.OptionalObject.ORTD_par_id
+                Counter = 111
+                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT) )
 
     def quit(self):
-        print('Fourier_Rect: will quit')
-
+        self.lock.acquire()
+        self.thread_goOn = False
+        self.lock.release()
+        self.thread.join()
+        self.sock_parameter.close()
+        print('ORTD-Plugin will quit')
 
     def plugin_meta_updated(self):
         pass
