@@ -38,7 +38,7 @@ import collections
 import re
 
 from pyqtgraph.Qt import QtCore
-
+import cProfile, pstats, io
 
 class PlotPerformance(vip_base):
     """
@@ -83,6 +83,9 @@ class PlotPerformance(vip_base):
             3 : (0  , 0  , 255),
             4 : (100, 100, 100)
         }
+
+        self.profile = cProfile.Profile()
+        self.profile.enable()
 
     def initiate_layer_0(self, config=None):
 
@@ -175,7 +178,14 @@ class PlotPerformance(vip_base):
             self.plotWidget.showGrid(y=value == '1')
 
     def quit(self):
-        print('PlotPerformance: will quit')
+        print('---- PlotPerformance: will quit')
+        self.profile.disable()
+        # s = io.StringIO()
+        # sortby = 'cumulative'
+        # ps = pstats.Stats(self.profile, stream=s).sort_stats(sortby)
+        # ps.print_stats()
+        # print(s.getvalue())
+        print('---- PlotPerformance: will quit')
 
     def get_plugin_configuration(self):
         config = {

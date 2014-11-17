@@ -52,9 +52,7 @@ from pyqtgraph import QtCore
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-
-from threading import Thread
-
+import cProfile
 import re
 
 # Enable antialiasing for prettier plots
@@ -194,8 +192,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.buttonShowLicence.setText('')
         # self.buttonShowOverview.setText('')
 
+
     def run(self):
         # create a timer and set interval for processing events with working loop
+        
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
 
@@ -324,6 +324,9 @@ def startGUI(CoreQueue, GUIQueue,gui_id):
     app = QApplication(sys.argv)
     gui = GUI(CoreQueue, GUIQueue,gui_id)
     gui.run()
+
+#   cProfile.runctx('gui.run()', globals(), locals())
+
     gui.show()
     app.exec_()
 
