@@ -39,16 +39,10 @@ class Sinus(iop_base):
 
     def start_init(self, config=None):
 
-        default_config = self.get_startup_configuration()
-
-        if config is None:
-            config = default_config
-        else:
-            config = dict(list(default_config.items()) + list(config.items()))
-
         self.t = 0
         self.amax = int(config['amax']['value'])
         self.f = float(config['f']['value'])
+
 
         block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
         #block1 = self.create_new_block('SinMit_f1', ['t', 'f1_1'], ['numpy_array', 'numpy_array'], 100)

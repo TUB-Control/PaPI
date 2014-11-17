@@ -1,38 +1,54 @@
-<PaPiConfig Date="2014-11-10 15:15:30" PaPI_version="v_0.1">
-  <Size h="458" w="524" />
+<PaPiConfig Date="2014-11-17 12:04:19" PaPI_version="v_0.1">
+  <Size h="879" w="1023" />
   <Plugin uname="PlotP1">
     <Identifier>PlotPerformance</Identifier>
     <StartConfig>
-      <Parameter Name="show_grid">
-        <value>0</value>
+      <Parameter Name="y-grid">
         <regex>^(1|0)$</regex>
+        <value>0</value>
       </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
+      <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,300)</value>
       </Parameter>
       <Parameter Name="name">
         <value>Plot_Plugin</value>
       </Parameter>
-      <Parameter Name="size">
-        <value>(300,300)</value>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="show_grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(566,304)</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
       </Parameter>
       <Parameter Name="label_x">
-        <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
       </Parameter>
       <Parameter Name="uname">
         <value>PlotP1</value>
       </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="X-Grid">0</Parameter>
-      <Parameter Name="y-Grid">0</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -48,25 +64,25 @@
   <Plugin uname="ORTD1">
     <Identifier>ORTD_UDP</Identifier>
     <StartConfig>
+      <Parameter Name="source_port">
+        <value>20000</value>
+      </Parameter>
       <Parameter Name="address">
         <value>127.0.0.1</value>
-      </Parameter>
-      <Parameter Name="out_port">
-        <value>20001</value>
       </Parameter>
       <Parameter Name="Cfg_Path">
         <value>papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
       </Parameter>
-      <Parameter Name="source_port">
-        <value>20000</value>
+      <Parameter Name="out_port">
+        <value>20001</value>
       </Parameter>
       <Parameter Name="uname">
         <value>ORTD1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Test">0</Parameter>
       <Parameter Name="A vectorial parameter">0</Parameter>
+      <Parameter Name="Test">0</Parameter>
       <Parameter Name="Oscillator input">0</Parameter>
     </PreviousParameters>
     <Subscriptions />
