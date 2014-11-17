@@ -67,13 +67,13 @@ class base_visual(base_plugin):
             'size': {
                 'value': "(300,300)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': True,
+                'advanced': 'True',
                 'tooltip': 'Determine size: (height,width)'
             },
             'position': {
                 'value': "(0,0)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': True,
+                'advanced': 'True',
                 'tooltip': 'Determine position: (x,y)'
             },
             'name': {
