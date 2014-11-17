@@ -76,8 +76,14 @@ class Button(pcp_base):
                 'value': 1,
         },"name": {
             'value' : "PCP_Plugin"
+        },'size': {
+                'value': "(150,100)",
+                'regex': '\(([0-9]+),([0-9]+)\)'
         }}
         return config
 
     def plugin_meta_updated(self):
+        pass
+
+    def quit(self):
         pass

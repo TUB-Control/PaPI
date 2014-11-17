@@ -82,3 +82,6 @@ class Slider(pcp_base):
             }
         }
         return config
+
+    def quit(self):
+        pass

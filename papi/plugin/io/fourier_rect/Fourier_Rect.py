@@ -46,13 +46,6 @@ class Fourier_Rect(iop_base):
 
     def start_init(self, config=None):
 
-        default_config = self.get_startup_configuration()
-
-        if config is None:
-            config = default_config
-        else:
-            config = dict(list(default_config.items()) + list(config.items()))
-
         self.t = 0
         self.amax = Fourier_Rect.amax
         self.amplitude = 1
