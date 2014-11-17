@@ -1,9 +1,0 @@
-[Core]
-Name = PlotPerformanceNEWBASE
-Module = PlotPerformanceNEWBASE
-
-[Documentation]
-Author = S.R.
-Version = 0.1
-Website = www
-Description =new plot plugin
