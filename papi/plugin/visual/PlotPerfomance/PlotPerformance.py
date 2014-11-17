@@ -36,6 +36,7 @@ import numpy as np
 
 import collections
 import re
+import time
 
 from pyqtgraph.Qt import QtCore
 
@@ -100,8 +101,6 @@ class PlotPerformance(vip_base):
         self.colors_selected = int_re.findall(self.config['color']['value']);
         self.types_selected = int_re.findall(self.config['style']['value']);
 
-        print(self.colors_selected)
-        print(self.types_selected)
         # --------------------------------
         # Create PlotWidget
         # --------------------------------
@@ -141,7 +140,7 @@ class PlotPerformance(vip_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
-
+        startTime = time.time()
         t = Data['t']
         #for elem in t:
 
@@ -160,6 +159,10 @@ class PlotPerformance(vip_base):
         #print(self._tbuffer)
         for signal_name in self.signals:
             self.signals[signal_name]['curve'].setData(self._tbuffer, self.signals[signal_name]['buffer'],  _callSync='off')
+
+        endTime = time.time()
+        diffTime = endTime - startTime
+        print(diffTime)
 
     def set_parameter(self, name, value):
         print('set_parameter')
