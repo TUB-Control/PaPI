@@ -143,7 +143,11 @@ class GuiEventProcessing(QtCore.QObject):
             if dplugin != None:
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
                 if dplugin.state != PLUGIN_STATE_PAUSE and dplugin.state != PLUGIN_STATE_STOPPED:
-                    dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                    # check if new_data is a parameter or new raw data
+                    if opt.is_parameter is False:
+                        dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                    else:
+                        dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
             else:
                 # plugin does not exist in DGUI
                 self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')

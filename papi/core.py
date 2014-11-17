@@ -475,7 +475,7 @@ class Core:
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
                             # plugin exists, check whether it is a ViP or not
-                            if pl.type == PLUGIN_VIP_IDENTIFIER:
+                            if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
                                 # Because its a ViP, we need a list of destination ID for new_data
                                 id_list.append(pl.id)
                             else:
@@ -495,7 +495,9 @@ class Core:
                     # which will need to get this new data event
                     if len(id_list)> 0:
                         # send new_data event to GUI with id_list of destinations
-                        new_event = Event.data.NewData(oID, id_list, event.get_optional_parameter())
+                        opt =  event.get_optional_parameter()
+                        opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                        new_event = Event.data.NewData(oID, id_list, opt)
                         self.gui_event_queue.put(new_event)
                     # process new_data seemed correct
                     return 1
