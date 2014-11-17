@@ -87,6 +87,6 @@ PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
 
 # CONFIG/PROFILE SYSTEM CONSTANTS
-CONFIG_DEFAULT_FILE             = 'testcfg.xml'
-CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'
+CONFIG_DEFAULT_FILE             = '../cfg_collection/testcfg.xml'
+CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
 CONFIG_LOADER_SUBCRIBE_DELAY    = 1000 # ms
