@@ -1,0 +1,133 @@
+<PaPiConfig Date="2014-11-04 17:00:53" PaPI_version="v_0.1">
+  <Plugin uname="PlotPerf">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="show_grid">
+        <value>0</value>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PlotPerf</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="y-Grid">0</Parameter>
+      <Parameter Name="X-Grid">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Sinus</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>x-grid</data_source>
+        <block Name="Click_Event">
+          <alias>X-Grid</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>y-grid</data_source>
+        <block Name="Click_Event">
+          <alias>y-Grid</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Sinus">
+    <Identifier>Sinus</Identifier>
+    <StartConfig>
+      <Parameter Name="amax">
+        <value>3</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Sinus</value>
+      </Parameter>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="x-grid">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <value>x-grid</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(123,56)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>x-grid</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(307,80)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="low">
+        <value>0</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="y-grid">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <value>y-grid</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(124,57)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>y-grid</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(306,6)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="low">
+        <value>0</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>
