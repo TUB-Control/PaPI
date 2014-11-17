@@ -28,7 +28,6 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtGui import QMdiSubWindow
 import pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
@@ -38,11 +37,25 @@ import numpy as np
 import collections
 import re
 
-from pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtCore
 
 
 class PlotPerformance(vip_base):
+    """
+    style_codes:
+            0 : QtCore.Qt.SolidLine,
+            1 : QtCore.Qt.DashDotDotLine,
+            2 : QtCore.Qt.DashDotLine,
+            3 : QtCore.Qt.DashLine,
+            4 : QtCore.Qt.DotLine
 
+    color_codes:
+            0 : (255, 255, 255),
+            1 : (255, 0  , 0  ),
+            2 : (0  , 255, 0  ),
+            3 : (0  , 0  , 255),
+            4 : (100, 100, 100)
+    """
     def __init__(self):
         super(PlotPerformance, self).__init__()
 
@@ -69,7 +82,6 @@ class PlotPerformance(vip_base):
             2 : (0  , 255, 0  ),
             3 : (0  , 0  , 255),
             4 : (100, 100, 100)
-
         }
 
     def initiate_layer_0(self, config=None):
@@ -147,11 +159,7 @@ class PlotPerformance(vip_base):
         # --------------------------
         #print(self._tbuffer)
         for signal_name in self.signals:
-           # print(self.buffers[signal_name])
-
-            #self.curve.setData(self.x, self.buffers[signal_name]['buffer'])
-
-            self.signals[signal_name]['curve'].setData(self._tbuffer, self.signals[signal_name]['buffer'])
+            self.signals[signal_name]['curve'].setData(self._tbuffer, self.signals[signal_name]['buffer'],  _callSync='off')
 
     def set_parameter(self, name, value):
         print('set_parameter')
@@ -160,10 +168,11 @@ class PlotPerformance(vip_base):
 
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
-            self.plotWidget.showGrid(x=value=='1')
+            self.plotWidget.showGrid(x=value == '1')
+
         if name == 'y-grid':
             self.config['y-grid']['value'] = value
-            self.plotWidget.showGrid(y=value=='1')
+            self.plotWidget.showGrid(y=value == '1')
 
     def quit(self):
         print('PlotPerformance: will quit')
@@ -195,6 +204,7 @@ class PlotPerformance(vip_base):
     def plugin_meta_updated(self):
         """
         By this function the plot is able to handle more than one input for plotting.
+
         :return:
         """
         subscriptions = self.dplugin_info.get_subscribtions()
@@ -222,7 +232,9 @@ class PlotPerformance(vip_base):
     def add_databuffer(self, signal_name, id):
         """
         Create new buffer for signal_name.
+
         :param signal_name:
+        :param id:
         :return:
         """
         print('Add buffer for ' + signal_name)
@@ -258,19 +270,20 @@ class PlotPerformance(vip_base):
 
         index = int(index)
 
-        style_code = int(self.types_selected[index])
-        color_code = int(self.colors_selected[index])
+        style_index = index % len(self.types_selected)
+        style_code = int(self.types_selected[style_index])
+
+        color_index = index % len(self.types_selected)
+        color_code = int(self.colors_selected[color_index])
 
         if style_code in self.styles:
             style = self.styles[style_code]
         else:
-            print('default style')
             style = self.styles[1]
 
         if color_code in self.colors:
             color = self.colors[color_code]
         else:
-            print('default color')
             color = self.colors[1]
 
         return pq.mkPen(color=color, style=style)

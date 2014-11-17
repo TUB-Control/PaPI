@@ -63,6 +63,11 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
         for attr in self.configuration_inputs:
             config[attr]['value'] = self.configuration_inputs[attr].text()
 
+        if not self.gui_api.do_test_name_to_be_unique(config['uname']['value']) :
+            self.configuration_inputs['uname'].setStyleSheet("QLineEdit  { border : 2px solid red;}")
+            self.configuration_inputs['uname'].setFocus()
+            return
+
         self.close()
 
         autostart = True
@@ -89,7 +94,7 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
             label.setText('uname')
             label.setObjectName('uname'  + "_label")
 
-            line_edit = QLineEdit(self.formLayoutWidget)
+            line_edit = QLineEdit(str(value), self.formLayoutWidget)
             line_edit.setText(str(value))
             line_edit.setObjectName('uname' + "_line_edit")
 
@@ -97,6 +102,9 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
             self.formLayout.setWidget(position, QtGui.QFormLayout.FieldRole, line_edit)
 
             self.configuration_inputs['uname'] = line_edit
+
+            line_edit.selectAll()
+            line_edit.setFocus()
 
             position+=1
 
@@ -131,6 +139,13 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
                 self.configuration_inputs[attr] = line_edit
 
                 position+=1
+
+        self.configuration_inputs['uname'].setFocus()
+
+    def keyPressEvent(self, event):
+        print(event)
+        if event == Qt.Key_Enter:
+            print('pressed enter')
 
     def clear_layout(self, layout):
         while layout.count():

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 Copyright (C) 2014 Technische Universität Berlin,
@@ -32,14 +32,13 @@ from papi.plugin.base_classes.base_plugin import base_plugin
 import re
 from PySide.QtGui import QMdiSubWindow
 
-class base_visual(base_plugin):
 
-    def init_plugin(self,CoreQueue,pluginQueue,id):
+class base_visual(base_plugin):
+    def init_plugin(self, CoreQueue, pluginQueue, id):
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
         super(base_visual, self).papi_init()
-
 
 
     def start_init(self, config=None):
@@ -50,7 +49,6 @@ class base_visual(base_plugin):
         size_re = re.compile(r'([0-9]+)')
         self.window_size = size_re.findall(self.config['size']['value'])
         self.window_pos = size_re.findall(self.config['position']['value'])
-
 
         self.window_name = self.config['name']['value']
 
@@ -66,15 +64,22 @@ class base_visual(base_plugin):
 
     def get_configuration_base(self):
         config = {
-        'size': {
+            'size': {
                 'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        }, 'position': {
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': True,
+                'tooltip': 'Determine size: (height,width)'
+            },
+            'position': {
                 'value': "(0,0)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
-        },'name': {
-                'value' : 'Plot_Plugin',
-        }}
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': True,
+                'tooltip': 'Determine position: (x,y)'
+            },
+            'name': {
+                'value': 'Plot_Plugin',
+                'tooltip': 'Used display name'
+            }}
         return config
 
 
@@ -97,7 +102,7 @@ class base_visual(base_plugin):
 
         x = pos.x()
         y = pos.y()
-        self.config['position']['value'] = '('+str(x)+','+str(y)+')'
+        self.config['position']['value'] = '(' + str(x) + ',' + str(y) + ')'
         self.original_move_function(event)
 
 
@@ -105,7 +110,7 @@ class base_visual(base_plugin):
         size = event.size()
         w = size.width()
         h = size.height()
-        self.config['size']['value'] = '('+str(w)+','+str(h)+')'
+        self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
     def get_sub_window(self):
