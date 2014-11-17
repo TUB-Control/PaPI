@@ -66,7 +66,7 @@ class ORTD_UDP(iop_base):
                 'value': '20001'
         },
         'Cfg_Path' : {
-                'value': 'plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json'
+                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json'
         }
 
         }

@@ -55,7 +55,7 @@
         <value>20001</value>
       </Parameter>
       <Parameter Name="Cfg_Path">
-        <value>plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
+        <value>papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
       </Parameter>
       <Parameter Name="source_port">
         <value>20000</value>
