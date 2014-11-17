@@ -228,7 +228,10 @@ class PlotPerformance(vip_base):
         print('Add buffer for ' + signal_name)
         if signal_name not in self.signals:
             self.signals[signal_name] = {}
-            buffer = collections.deque([0.0]*0, self._bufsize)
+
+            start_size = len(self._tbuffer)
+
+            buffer = collections.deque([0.0]*start_size, self._bufsize)
 
             pen = self.get_pen(id)
 
