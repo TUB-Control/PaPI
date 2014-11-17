@@ -160,7 +160,8 @@ class GuiEventProcessing(QtCore.QObject):
 
         dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
         if dplugin is not None:
-            dplugin.plugin.quit()
+            if dplugin.own_process is False:
+                dplugin.plugin.quit()
 
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')

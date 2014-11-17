@@ -1,0 +1,74 @@
+<PaPiConfig Date="2014-11-10 15:15:30" PaPI_version="v_0.1">
+  <Size h="458" w="524" />
+  <Plugin uname="PlotP1">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="show_grid">
+        <value>0</value>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PlotP1</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="X-Grid">0</Parameter>
+      <Parameter Name="y-Grid">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTD1</data_source>
+        <block Name="SourceGroup0">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="ORTD1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <value>20001</value>
+      </Parameter>
+      <Parameter Name="Cfg_Path">
+        <value>plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
+      </Parameter>
+      <Parameter Name="source_port">
+        <value>20000</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ORTD1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Test">0</Parameter>
+      <Parameter Name="A vectorial parameter">0</Parameter>
+      <Parameter Name="Oscillator input">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>

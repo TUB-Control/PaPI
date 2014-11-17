@@ -93,7 +93,7 @@ class Gui_api(QtCore.QObject):
         :type id: int
         :return:
         """
-        event = Event.instruction.StopPlugin(self.gui_id, id, None)
+        event = Event.instruction.StopPlugin(self.gui_id, id, None )
 
         self.core_queue.put(event)
 
