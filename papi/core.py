@@ -558,7 +558,8 @@ class Core:
 
             plugin_config = optData.plugin_config
 
-
+            if plugin_config is None or plugin_config =={}:
+                plugin_config = plugin.plugin_object.get_startup_configuration()
 
             # create Process object for new plugin
             # set parameter for work function of plugin, such as queues, id and eventTriggered

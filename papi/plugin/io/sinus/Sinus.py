@@ -38,7 +38,6 @@ import numpy
 class Sinus(iop_base):
 
     def start_init(self, config=None):
-
         self.t = 0
         self.amax = int(config['amax']['value'])
         self.f = float(config['f']['value'])

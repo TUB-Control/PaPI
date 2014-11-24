@@ -1,0 +1,26 @@
+A sample communication interface to ORTD to nodejs using UDP datagrams.  
+ 
+UDPio.sce is a sample ORTD-simulation and webappUDP.js the nodejs program
+that connects to this simulation. Further it provides a web-interface 
+at http://localhost:8090.
+
+The template for the web-interface is stored in html/main.html.
+
+A recent node.js version is required, I used v0.10.22. Additionally some more packages
+are required that can be installed with "npm":
+
+$ npm install socket.io
+$ npm install jParser
+$ npm install concentrate
+
+
+
+To start the set-up start the ORTD-simulation
+
+ $ run_UDPio.sh
+
+in one terminal and
+ 
+ $ node webappUDP.js
+
+in another one. The go to http://localhost:8090
