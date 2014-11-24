@@ -56,19 +56,19 @@ class ORTD_UDP(iop_base):
 
     def get_plugin_configuration(self):
         config = {
-        'address': {
-                'value': '127.0.0.1'
+            'address': {
+                    'value': '127.0.0.1'
+                },
+            'source_port': {
+                    'value': '20000'
             },
-        'source_port': {
-                'value': '20000'
-        },
-        'out_port': {
-                'value': '20001'
-        },
-        'Cfg_Path' : {
-                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json'
-        }
-
+            'out_port': {
+                    'value': '20001'
+            },
+            'Cfg_Path' : {
+                    'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
+                    'type' : 'File'
+            }
         }
 
         return config
@@ -178,8 +178,11 @@ class ORTD_UDP(iop_base):
 
                     # Read NVales from the received packet
                     val = []
-                    for i in range(NValues):
-                        val.append(struct.unpack_from('<d', rev, 3*4)[0])
+                    for i in range(NValues-1):
+                        try:
+                            val.append(struct.unpack_from('<d', rev, 3*4 + i*8)[0])
+                        except:
+                            val.append(0)
 
                     signal_values[SourceId] = val
 
