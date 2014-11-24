@@ -33,13 +33,15 @@ import pyqtgraph as pq
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 import numpy as np
-
+from papi.constants import GUI_WOKRING_INTERVAL
 import collections
 import re
+from scipy import signal
 import time
+current_milli_time = lambda: int(round(time.time() * 1000))
+import copy
 
 from pyqtgraph.Qt import QtCore
-import cProfile, pstats, io
 
 class PlotPerformance(vip_base):
     """
@@ -62,12 +64,14 @@ class PlotPerformance(vip_base):
 
         self.signal_count = 0
         self.signals = {}
-        self._bufsize = 1000
-        self.timewindow = 1000
 
-        self._tbuffer = collections.deque([0.0]*0, self._bufsize)
-        self.x = np.linspace(-self.timewindow, 0.0, self._bufsize)
-        self.y = np.zeros(self._bufsize, dtype=np.float)
+
+        self.downsampling_counter = 0
+
+        self._bufsize = None
+        self.downsampling_rate = None
+        self._tbuffer = None
+        self._tdata_old = [0]
 
         self.styles = {
             0 : QtCore.Qt.SolidLine,
@@ -85,9 +89,6 @@ class PlotPerformance(vip_base):
             4 : (100, 100, 100)
         }
 
-        self.profile = cProfile.Profile()
-        self.profile.enable()
-
     def initiate_layer_0(self, config=None):
 
 #        self.config = config
@@ -103,6 +104,16 @@ class PlotPerformance(vip_base):
 
         self.colors_selected = int_re.findall(self.config['color']['value']);
         self.types_selected = int_re.findall(self.config['style']['value']);
+
+        self._bufsize = int(int_re.findall(self.config['buffersize']['value'])[0])
+
+        self.downsampling_rate = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
+
+        # ----------------------------
+        # Create internal variables
+        # ----------------------------
+
+        self._tbuffer = collections.deque([0.0]*0, self._bufsize)
 
         # --------------------------------
         # Create PlotWidget
@@ -134,6 +145,16 @@ class PlotPerformance(vip_base):
         self.legend = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.legend.setParentItem(self.plotWidget.graphicsItem())
 
+        # self.timer = QtCore.QTimer()
+        # self.timer.setSingleShot(False)
+        # self.timer.timeout.connect(self.update_plot)
+        # self.timer.setInterval(17)
+        # self.timer.start()
+
+        self.last_time = current_milli_time()
+
+        self.update_intervall = 25 #in milliseconds
+
         return True
 
     def pause(self):
@@ -143,29 +164,27 @@ class PlotPerformance(vip_base):
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name = None):
-        startTime = time.time()
         t = Data['t']
-        #for elem in t:
 
-        self._tbuffer.extend( t )
+        self.downsampling_counter += len(t)
+
+        self._tbuffer.extend(t)
 
         for key in Data:
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
+                    self.signals[key]['buffer'].extend(y) #COLLECTIONS
 
-                    self.signals[key]['buffer'].extend(y)
+        # if self.downsampling_counter > self.downsampling_rate:
+        #     self.downsampling_counter -= self.downsampling_rate
 
-        # --------------------------
-        # iterate over all buffers
-        # --------------------------
-        #print(self._tbuffer)
-        for signal_name in self.signals:
-            self.signals[signal_name]['curve'].setData(self._tbuffer, self.signals[signal_name]['buffer'],  _callSync='off')
+            #self.update_plot()
 
-        endTime = time.time()
-        diffTime = endTime - startTime
-        print(diffTime)
+        if current_milli_time() - self.last_time > self.update_intervall:
+            self.last_time = current_milli_time()
+            self.update_plot()
+            self.last_time = current_milli_time()
 
     def set_parameter(self, name, value):
         print('set_parameter')
@@ -180,15 +199,31 @@ class PlotPerformance(vip_base):
             self.config['y-grid']['value'] = value
             self.plotWidget.showGrid(y=value == '1')
 
+    def update_plot(self):
+
+        shift_data = 0
+
+        for last_tvalue in self._tdata_old:
+            if last_tvalue in self._tbuffer:
+                shift_data = list(self._tbuffer).index(last_tvalue)
+                break
+
+        tdata = list(self._tbuffer)[shift_data::self.downsampling_rate]
+
+        # --------------------------
+        # iterate over all buffers
+        # --------------------------
+        for signal_name in self.signals:
+
+            data = list(self.signals[signal_name]['buffer'])[shift_data::self.downsampling_rate]
+            curve = self.signals[signal_name]['curve']
+            curve.setData(tdata, data,  _callSync='off')
+
+        self._tdata_old = tdata
+
     def quit(self):
-        print('---- PlotPerformance: will quit')
-        self.profile.disable()
-        # s = io.StringIO()
-        # sortby = 'cumulative'
-        # ps = pstats.Stats(self.profile, stream=s).sort_stats(sortby)
-        # ps.print_stats()
-        # print(s.getvalue())
-        print('---- PlotPerformance: will quit')
+        print('PlotPerformance: will quit')
+
 
     def get_plugin_configuration(self):
         config = {
@@ -210,7 +245,14 @@ class PlotPerformance(vip_base):
         }, 'style': {
                 'value': "[0 0 0 0 0]",
                 'regex': '^\[(\s*\d\s*)+\]'
-        }}
+        }, 'buffersize' : {
+                'value' : "3000",
+                'regex' : '(\d+)'
+        }, 'downsampling_rate': {
+                'value' : "10",
+                'regex' : '(\d+)'
+        }
+        }
         # http://www.regexr.com/
         return config
 
@@ -256,14 +298,15 @@ class PlotPerformance(vip_base):
 
             start_size = len(self._tbuffer)
 
-            buffer = collections.deque([0.0]*start_size, self._bufsize)
+            buffer = collections.deque([0.0]*start_size, self._bufsize) #COLLECTION
 
             pen = self.get_pen(id)
 
-            curve = self.plotWidget.plot(self.x, self.y, pen=pen, name=signal_name)
+            curve = self.plotWidget.plot([0,1], [0,1], pen=pen, name=signal_name, clipToView=True)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
+
             self.legend.addItem(curve, signal_name)
 
     def remove_databuffer(self, signal_name):

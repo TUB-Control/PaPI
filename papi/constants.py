@@ -53,11 +53,11 @@ CORE_ALIVE_MAX_COUNT            = 2
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VESION                      = 'v_0.1_dev'
-GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VESION + ' started'
+GUI_VERSION                      = 'v_0.1_dev'
+GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
-GUI_WOKRING_INTERVAL            = 5 # in ms
+GUI_WOKRING_INTERVAL            = 16 # in ms
 GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 
 GUI_DEFAULT_WIDTH               = 800

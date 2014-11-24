@@ -40,7 +40,7 @@ import pickle
 
 
 class Fourier_Rect(iop_base):
-    max_approx = 300
+    max_approx = 20
     amax = 20
 
 

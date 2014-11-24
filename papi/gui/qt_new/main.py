@@ -34,7 +34,7 @@ import os
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt
+from PySide.QtCore              import QSize, Qt, QThread
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -114,7 +114,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create callback functions for buttons
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
-        self.saveButton.clicked.connect(self.save_triggered)
+        self.saveButton.clicked.connect(self.save_triggered_thread)
 
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
@@ -127,7 +127,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
 
         self.actionLoad.triggered.connect(self.load_triggered)
-        self.actionSave.triggered.connect(self.save_triggered)
+        self.actionSave.triggered.connect(self.save_triggered_thread)
 
         self.actionOverview.triggered.connect(self.show_overview_menu)
         self.actionCreate.triggered.connect(self.show_create_plugin_menu)
@@ -239,6 +239,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         if fileName[0] != '':
             self.gui_api.do_save_xml_config(fileName[0])
+
+    def save_triggered_thread(self):
+        QtCore.QTimer.singleShot(0, self.save_triggered)
 
     def closeEvent(self, *args, **kwargs):
         self.gui_api.do_close_program()

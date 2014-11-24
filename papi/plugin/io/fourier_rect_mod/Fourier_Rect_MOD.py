@@ -43,7 +43,7 @@ import pickle
 
 
 class Fourier_Rect_MOD(iop_base):
-    max_approx = 300
+    max_approx = 20
     amax = 20
     def start_init(self, config=None):
         self.t = 0

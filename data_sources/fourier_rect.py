@@ -45,7 +45,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     when sending data back via sendto().
     """
 
-    max_approx = 300
+    max_approx = 20
     amax = 20
 
     t = 0
