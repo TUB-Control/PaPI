@@ -1,5 +1,0 @@
- {"SourcesConfig" : {
- "0" : { "SourceName" : "lambda" , "NValues_send" : "1", "datatype" : "257"  } , "1" : { "SourceName" : "stim_index_clean" , "NValues_send" : "1", "datatype" : "257"  } , "2" : { "SourceName" : "rawEMG" , "NValues_send" : "200", "datatype" : "257"  } , "3" : { "SourceName" : "MwaveAndStim" , "NValues_send" : "100", "datatype" : "257"  } } , 
- "ParametersConfig" : {
- "0" : { "ParameterName" : "WindowShift" , "NValues" : "1", "datatype" : "257"  } }
-}
