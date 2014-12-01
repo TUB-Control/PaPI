@@ -217,6 +217,7 @@ class PlotPerformance(vip_base):
 
             data = list(self.signals[signal_name]['buffer'])[shift_data::self.downsampling_rate]
             curve = self.signals[signal_name]['curve']
+            #TODO: exception for tdata length != data length
             curve.setData(tdata, data,  _callSync='off')
 
         self._tdata_old = tdata

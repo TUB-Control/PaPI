@@ -35,6 +35,8 @@ from papi.plugin.base_classes.iop_base import iop_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 
+import numpy as np
+
 import threading
 
 
@@ -95,14 +97,18 @@ class ORTD_UDP(iop_base):
 
         # For each group:: loop through all sources (=signals) in the group and register the signals
         # Register signals
-        names = ['t']
 
-        for Sid in self.Sources:
-            Source = self.Sources[Sid]
-            names.append( Source['SourceName'] )
+        self.blocks = {}
 
-        self.block1 = DBlock(None,1,2,'SourceGroup0',names)
-        self.send_new_block_list([self.block1])
+        # sort hash keys for usage in right order!
+        keys = list(self.Sources.keys())
+        keys.sort()
+        for key in keys:
+            Source = self.Sources[key]
+            self.blocks[int(key)] = DBlock(None,1,2,'SourceGroup'+str(key),['t',Source['SourceName']])
+
+        self.send_new_block_list(list(self.blocks.values()))
+
 
 
         
@@ -160,15 +166,21 @@ class ORTD_UDP(iop_base):
                 if SourceId == -1:
                     # unpack group ID
                     GroupId = struct.unpack_from('<i', rev, 3*4)[0]
-                    self.t += 1
+                    self.t += 1.0
 
                     keys = list(signal_values.keys())
                     keys.sort()
-                    signals_to_send = []
+
                     for key in keys:
-                        signals_to_send.append(signal_values[key])
-                    # flush data to papi
-                    self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
+                        #signals_to_send.append(signal_values[key])
+                        Source = self.Sources[str(key)]
+                        NValues = int(Source['NValues_send'])
+                        n = len(signal_values[key])
+                        t = np.linspace(self.t,self.t+1-1/NValues,NValues)
+                        # flush data to papi
+                        self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
+
+
                     signal_values = {}
                 else:
                     # Received a data packet
@@ -178,7 +190,8 @@ class ORTD_UDP(iop_base):
 
                     # Read NVales from the received packet
                     val = []
-                    for i in range(NValues-1):
+                    for i in range(NValues):
+                        # TODO: why try except?
                         try:
                             val.append(struct.unpack_from('<d', rev, 3*4 + i*8)[0])
                         except:
