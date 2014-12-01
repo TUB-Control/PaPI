@@ -70,7 +70,12 @@ class ORTD_UDP(iop_base):
             'Cfg_Path' : {
                     'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
                     'type' : 'File'
+            },
+            'SeparateSignals': {
+                    'value' : '1'
+
             }
+
         }
 
         return config
@@ -82,6 +87,7 @@ class ORTD_UDP(iop_base):
         self.HOST = config['address']['value']
         self.SOURCE_PORT = int(config['source_port']['value'])
         self.OUT_PORT =  int(config['out_port']['value'])
+        self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -95,23 +101,40 @@ class ORTD_UDP(iop_base):
         self.Sources = self.ProtocolConfig['SourcesConfig']
         self.Parameters = self.ProtocolConfig['ParametersConfig']
 
+
+
         # For each group:: loop through all sources (=signals) in the group and register the signals
         # Register signals
 
-        self.blocks = {}
 
-        # sort hash keys for usage in right order!
-        keys = list(self.Sources.keys())
-        keys.sort()
-        for key in keys:
-            Source = self.Sources[key]
-            self.blocks[int(key)] = DBlock(None,1,2,'SourceGroup'+str(key),['t',Source['SourceName']])
+        if self.separate ==1:
 
-        self.send_new_block_list(list(self.blocks.values()))
+            self.blocks = {}
+
+            # sort hash keys for usage in right order!
+            keys = list(self.Sources.keys())
+            keys.sort()
+            for key in keys:
+                Source = self.Sources[key]
+                self.blocks[int(key)] = DBlock(None,1,2,'SourceGroup'+str(key),['t',Source['SourceName']])
+
+            self.send_new_block_list(list(self.blocks.values()))
+
+        else:
+            names = ['t']
+
+            keys = list(self.Sources.keys())
+            keys.sort()
+
+            for key in keys:
+                Source = self.Sources[key]
+                names.append( Source['SourceName'] )
+
+            self.block1 = DBlock(None,1,2,'SourceGroup0',names)
+            self.send_new_block_list([self.block1])
 
 
 
-        
         # Register parameters
         self.Parameter_List = []
 
@@ -171,15 +194,21 @@ class ORTD_UDP(iop_base):
                     keys = list(signal_values.keys())
                     keys.sort()
 
-                    for key in keys:
-                        #signals_to_send.append(signal_values[key])
-                        Source = self.Sources[str(key)]
-                        NValues = int(Source['NValues_send'])
-                        n = len(signal_values[key])
-                        t = np.linspace(self.t,self.t+1-1/NValues,NValues)
-                        # flush data to papi
-                        self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
+                    if self.separate == 1:
+                        for key in keys:
+                            #signals_to_send.append(signal_values[key])
+                            Source = self.Sources[str(key)]
+                            NValues = int(Source['NValues_send'])
+                            n = len(signal_values[key])
+                            t = np.linspace(self.t,self.t+1-1/NValues,NValues)
+                            # flush data to papi
+                            self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
+                    else:
+                        signals_to_send = []
+                        for  key in keys:
+                            signals_to_send.append(signal_values[key])
 
+                        self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
 
                     signal_values = {}
                 else:

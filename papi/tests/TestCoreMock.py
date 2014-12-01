@@ -6,13 +6,15 @@ import time
 
 from papi.data.DGui import DGui
 from papi.core import Core
-from papi.gui.qt_dev.gui_main import startGUI_TESTMOCK
+from papi.gui.qt_new.main import startGUI_TESTMOCK
+from papi.constants import GUI_WOKRING_INTERVAL
 from papi.gui.gui_api import Gui_api
+from papi.gui.gui_event_processing import GuiEventProcessing
 from papi.PapiEvent import PapiEvent
 from threading import Thread
 from multiprocessing import Queue
 import papi.constants as const
-
+from pyqtgraph import QtCore
 import time
 
 
@@ -25,7 +27,7 @@ class dummyProcess(object):
 
 class TestCoreMock(unittest.TestCase):
 
-    DELAY_TIME = 0.3
+    DELAY_TIME = 0.5
 
     def test_create_plugin_sub(self):
         # create a Plot and Sinus plugin
@@ -358,8 +360,23 @@ class TestCoreMock(unittest.TestCase):
                          self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
 
 
+    def test_pause_IOP(self):
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
+
+        for pl in Plugins:
+            self.gui_api.do_create_plugin(pl[1], pl[0])
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        for pl in Plugins:
+            self.assertIsNotNone(self.core_data.get_dplugin_by_uname(pl[0]), 'No Plugin in CoreData with uname '+pl[0])
+            self.assertIsNotNone(self.gui_data.get_dplugin_by_uname(pl[0]), 'No Plugin in GuiData with uname '+pl[0])
 
 
+        self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
+        self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
+
+        #self.gui_api.
 
 
 
@@ -375,9 +392,14 @@ class TestCoreMock(unittest.TestCase):
 
         self.gui_data = DGui()
 
-        self.gui_thread = Thread(target=startGUI_TESTMOCK, args=[core.core_event_queue, core.gui_event_queue, core.gui_id, self.gui_data])
-        self.gui_thread.start()
+        #
+        self.gui_api = Gui_api(self.gui_data,  core.core_event_queue, core.gui_id)
 
+
+
+        self.gui_thread = Thread(target=startGUI_TESTMOCK, args=[core.core_event_queue, core.gui_event_queue, core.gui_id, self.gui_data])
+
+        self.gui_thread.start()
 
         # get data and queues
         self.core_queue = core.core_event_queue
@@ -398,6 +420,9 @@ class TestCoreMock(unittest.TestCase):
         # join threads
         self.gui_thread.join()
         self.core_thread.join()
+
+
+
 
 
 if __name__ == "__main__":

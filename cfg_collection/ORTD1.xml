@@ -1,26 +1,27 @@
-<PaPiConfig Date="2014-12-01 12:45:05" PaPI_version="v_0.1">
+<PaPiConfig Date="2014-12-01 14:38:43" PaPI_version="v_0.1">
   <Size h="676" w="801" />
   <Plugin uname="Plo1">
     <Identifier>PlotPerformance</Identifier>
     <StartConfig>
-      <Parameter Name="buffersize">
-        <regex>(\d+)</regex>
-        <value>514</value>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
-      </Parameter>
       <Parameter Name="downsampling_rate">
         <regex>(\d+)</regex>
         <value>1</value>
       </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-        <tooltip>Used display name</tooltip>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <value>(782,260)</value>
+        <advanced>True</advanced>
       </Parameter>
-      <Parameter Name="uname">
-        <value>Plo1</value>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <value>(0,0)</value>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
       </Parameter>
       <Parameter Name="y-grid">
         <regex>^(1|0)$</regex>
@@ -30,37 +31,36 @@
         <regex>\w+,\s*\w+</regex>
         <value>time, s</value>
       </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(782,260)</value>
-        <advanced>True</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used display name</tooltip>
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plo1</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>(\d+)</regex>
+        <value>514</value>
       </Parameter>
       <Parameter Name="label_y">
         <regex>\w+,\s+\w+</regex>
         <value>amplitude, V</value>
       </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(0,0)</value>
-        <advanced>True</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
       <Parameter Name="downsampling_rate">1</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -75,24 +75,25 @@
   <Plugin uname="Plo2">
     <Identifier>PlotPerformance</Identifier>
     <StartConfig>
-      <Parameter Name="buffersize">
-        <regex>(\d+)</regex>
-        <value>50</value>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
-      </Parameter>
       <Parameter Name="downsampling_rate">
         <regex>(\d+)</regex>
         <value>1</value>
       </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-        <tooltip>Used display name</tooltip>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <value>(784,304)</value>
+        <advanced>True</advanced>
       </Parameter>
-      <Parameter Name="uname">
-        <value>Plo2</value>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <value>(2,260)</value>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
       </Parameter>
       <Parameter Name="y-grid">
         <regex>^(1|0)$</regex>
@@ -102,37 +103,36 @@
         <regex>\w+,\s*\w+</regex>
         <value>time, s</value>
       </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(784,304)</value>
-        <advanced>True</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used display name</tooltip>
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plo2</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>(\d+)</regex>
+        <value>50</value>
       </Parameter>
       <Parameter Name="label_y">
         <regex>\w+,\s+\w+</regex>
         <value>amplitude, V</value>
       </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(2,260)</value>
-        <advanced>True</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
       <Parameter Name="downsampling_rate">1</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
@@ -150,18 +150,18 @@
       <Parameter Name="source_port">
         <value>20000</value>
       </Parameter>
-      <Parameter Name="address">
-        <value>127.0.0.1</value>
-      </Parameter>
       <Parameter Name="out_port">
         <value>20001</value>
       </Parameter>
-      <Parameter Name="Cfg_Path">
-        <value>/home/control/software/PaPI_EMGTest/ProtocollConfig.json</value>
-        <type>File</type>
-      </Parameter>
       <Parameter Name="uname">
         <value>ORDT1</value>
+      </Parameter>
+      <Parameter Name="Cfg_Path">
+        <type>File</type>
+        <value>/home/control/software/PaPI_EMGTest/ProtocollConfig.json</value>
+      </Parameter>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
