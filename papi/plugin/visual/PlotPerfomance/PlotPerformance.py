@@ -75,7 +75,12 @@ class PlotPerformance(vip_base):
         self._tbuffer = None
         self._tdata_old = [0]
 
+        self._xaxis = None
+
         self.__roll_shift__ = None
+        self.__append_at__ = 1
+        self.__input_size__ = 0
+        self.__rolling_plot__ = False
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -101,8 +106,9 @@ class PlotPerformance(vip_base):
         # Read configuration
         # ---------------------------
 
-        self.show_grid_x = int(self.config['x-grid']['value']) == '1'
-        self.show_grid_y = int(self.config['y-grid']['value']) == '1'
+        self.show_grid_x = self.config['x-grid']['value'] == '1'
+        self.show_grid_y = self.config['y-grid']['value'] == '1'
+        self.__rolling_plot__ = self.config['rolling_plot']['value'] == '1'
 
         int_re = re.compile(r'(\d+)')
 
@@ -117,10 +123,11 @@ class PlotPerformance(vip_base):
         # Create internal variables
         # ----------------------------
 
+#        self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
         self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
 
-        self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
-        print(self.__roll_shift__)
+
+        self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
 
         # --------------------------------
         # Create PlotWidget
@@ -144,10 +151,14 @@ class PlotPerformance(vip_base):
         self.parameters['y-grid'] = DParameter(None, 'y-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
 
         self.parameters['color'] = DParameter(None, 'color', '[0 1 2 3 4]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
-        self.parameters['style'] = DParameter(None, 'style', '[0 0 0 0 0]', [0, 1], 1, Regex='^^\[(\s*\d\s*)+\]')
+        self.parameters['style'] = DParameter(None, 'style', '[0 0 0 0 0]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
+        self.parameters['rolling'] = DParameter(None, 'rolling', '0', [0, 1], 1, Regex='^(1|0){1}')
 
         self.parameters['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.downsampling_rate, [1, 100],
                                                           1, Regex='^([1-9][0-9]?|100)$')
+
+        self.parameters['buffersize'] = DParameter(None, 'buffersize', self._bufsize, [1, 100],
+                                                          1, Regex='^([1-9][0-9]{0,3}|10000)$')
 
         self.send_new_parameter_list(list(self.parameters.values()))
 
@@ -157,12 +168,6 @@ class PlotPerformance(vip_base):
 
         self.legend = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.legend.setParentItem(self.plotWidget.graphicsItem())
-
-        # self.timer = QtCore.QTimer()
-        # self.timer.setSingleShot(False)
-        # self.timer.timeout.connect(self.update_plot)
-        # self.timer.setInterval(17)
-        # self.timer.start()
 
         self.last_time = current_milli_time()
 
@@ -179,23 +184,22 @@ class PlotPerformance(vip_base):
     def execute(self, Data=None, block_name=None):
         t = Data['t']
 
-        self.downsampling_counter += len(t)
-
         self._tbuffer.extend(t)
 
-#        if len(self._tbuffer) == len(t):
-#            print(t)
+        self.__input_size__ += len(t)
 
         for key in Data:
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    self.signals[key]['buffer'].extend(y)  # COLLECTIONS
+                    buffer = self.signals[key]['buffer']  # COLLECTIONS
+                    buffer.extend(y)
 
         if current_milli_time() - self.last_time > self.update_intervall:
             self.last_time = current_milli_time()
             self.update_plot()
             self.last_time = current_milli_time()
+            self.__input_size__ = 0
 
     def set_parameter(self, name, value):
 
@@ -210,7 +214,12 @@ class PlotPerformance(vip_base):
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.downsampling_rate = int(value)
-            self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
+            self.__input_size__ = 0
+#            self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
+
+        if name == 'rolling':
+            self.__rolling_plot__ = value == '1'
+            self.config['rolling_plot']['value'] = value
 
         if name == 'color':
             self.config['color']['value'] = value
@@ -219,6 +228,12 @@ class PlotPerformance(vip_base):
         if name == 'style':
             self.config['style']['value'] = value
             #TODO: Live update pen
+
+        if name == 'buffersize':
+            self.config['buffersize']['value'] = value
+            self.set_buffer_size(value)
+            self.__input_size__ = 0
+            #TODO: Live update buffersize
 
     def update_plot(self):
 
@@ -229,13 +244,35 @@ class PlotPerformance(vip_base):
                 shift_data = list(self._tbuffer).index(last_tvalue)
                 break
 
+
         tdata = list(self._tbuffer)[shift_data::self.downsampling_rate]
+
+   #     if len(tdata) < len(self._xaxis):
+#            print(True)
+  #          tdata = np.linspace(0,len(tdata)-1, len(tdata))
+ #       else:
+
+        #tdata = self._xaxis
+
+#        self.__append_at__ += int(self._bufsize / self.downsampling_rate)
+        #print(self.__input_size__)
+       # print(self.__input_size__ / self.downsampling_rate)
+        # self.__append_at__ += 0
+
+        if self.__rolling_plot__:
+            self.__append_at__ += self.__input_size__ / self.downsampling_rate
+            if len(tdata) > 2:
+                self.__append_at__ = self.__append_at__ % ( len(tdata) )
 
         # --------------------------
         # iterate over all buffers
         # --------------------------
         for signal_name in self.signals:
             data = list(self.signals[signal_name]['buffer'])[shift_data::self.downsampling_rate]
+
+            if self.__rolling_plot__:
+                data = np.roll(data, int(self.__append_at__))
+
             curve = self.signals[signal_name]['curve']
             curve.setData(tdata, data, _callSync='off')
 
@@ -244,37 +281,71 @@ class PlotPerformance(vip_base):
     def quit(self):
         print('PlotPerformance: will quit')
 
-
     def get_plugin_configuration(self):
         config = {
             'label_y': {
-                'value': "amplitude, V",
-                'regex': '\w+,\s+\w+'
+               'value': "amplitude, V",
+               'regex': '\w+,\s+\w+'
             }, 'label_x': {
-            'value': "time, s",
-            'regex': '\w+,\s*\w+'
-        }, 'x-grid': {
-            'value': "0",
-            'regex': '^(1|0)$'
-        }, 'y-grid': {
-            'value': "0",
-            'regex': '^(1|0)$'
-        }, 'color': {
-            'value': "[0 1 2 3 4]",
-            'regex': '^\[(\s*\d\s*)+\]'
-        }, 'style': {
-            'value': "[0 0 0 0 0]",
-            'regex': '^\[(\s*\d\s*)+\]'
-        }, 'buffersize': {
-            'value': "3000",
-            'regex': '(\d+)'
-        }, 'downsampling_rate': {
-            'value': "10",
-            'regex': '(\d+)'
-        }
+                'value': "time, s",
+                'regex': '\w+,\s*\w+'
+            }, 'x-grid': {
+                'value': "0",
+                'regex': '^(1|0)$',
+                'type' : 'bool'
+            }, 'y-grid': {
+                'value': "0",
+                'regex': '^(1|0)$',
+                'type' : 'bool'
+            }, 'color': {
+                'value': "[0 1 2 3 4]",
+                'regex': '^\[(\s*\d\s*)+\]',
+                'advanced' : '1'
+            }, 'style': {
+                'value': "[0 0 0 0 0]",
+                'regex': '^\[(\s*\d\s*)+\]',
+                'advanced' : '1'
+            }, 'buffersize': {
+                'value': "3000",
+                'regex': '^\b([1-9][0-9]{0,3}|10000)\b$',
+                'advanced' : '1'
+            }, 'downsampling_rate': {
+                'value': "10",
+                'regex': '(\d+)'
+            }, 'rolling_plot' : {
+                'value' : '0',
+                'regex': '^(1|0)$',
+                'type' : 'bool'
+            }
         }
         # http://www.regexr.com/
         return config
+
+    def set_buffer_size(self, new_size):
+        print('new buffer size ' + new_size)
+        self._bufsize = int(new_size)
+
+        # -------------------------------
+        # Change Time Buffer
+        # -------------------------------
+
+        #self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
+        self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
+
+        # -------------------------------
+        # Change Buffer of current
+        # plotted signals
+        # -------------------------------
+
+        start_size = len(self._tbuffer)
+
+        for signal_name in self.signals:
+            buffer_old = self.signals[signal_name]['buffer']
+
+            buffer_new = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
+           # buffer_new.extend(buffer_old)
+            self.signals[signal_name]['buffer'] = buffer_new
+
 
     def plugin_meta_updated(self):
         """

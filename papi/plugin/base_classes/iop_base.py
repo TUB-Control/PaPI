@@ -38,7 +38,12 @@ class iop_base(ownProcess_base):
         raise NotImplementedError("Please Implement this method")
 
     def get_configuration_base(self):
-        return {}
+        config = {
+            'name': {
+                'value': 'IOPlugin',
+                'tooltip': 'Used display name'
+            }}
+        return config
 
 
     def get_type(self):

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Mon Nov  3 12:30:46 2014
+# Created: Mon Dec  1 17:42:16 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,6 +29,8 @@ class Ui_QtNewMain(object):
         self.horizontalLayout.addWidget(self.saveButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.widgetArea = QtGui.QMdiArea(self.centralwidget)
+        self.widgetArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.widgetArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.widgetArea.setObjectName("widgetArea")
         self.verticalLayout.addWidget(self.widgetArea)
         self.verticalLayout_2.addLayout(self.verticalLayout)
