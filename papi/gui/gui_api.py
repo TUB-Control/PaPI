@@ -469,7 +469,8 @@ class Gui_api(QtCore.QObject):
                     para_name = prev_parameter_xml.attrib['Name']
                     para_value = prev_parameter_xml.text
                     pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                    parameters_to_change.append([pl_uname_new, para_name, float(para_value)])
+                    # TODO validate NO FLOAT in parameter
+                    parameters_to_change.append([pl_uname_new, para_name, para_value])
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
