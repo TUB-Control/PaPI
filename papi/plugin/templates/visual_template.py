@@ -167,6 +167,7 @@ class PlotPerformance(vip_base):
         # config_parameter_name : {}
         # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
         # configs can be marked as advanced for create dialog
+        # http://utilitymill.com/utility/Regex_For_Range
 
         # config = {
         #     "amax": {

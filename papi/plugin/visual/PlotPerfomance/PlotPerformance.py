@@ -38,10 +38,12 @@ import collections
 import re
 from scipy import signal
 import time
+
 current_milli_time = lambda: int(round(time.time() * 1000))
 import copy
 
 from pyqtgraph.Qt import QtCore
+
 
 class PlotPerformance(vip_base):
     """
@@ -59,12 +61,12 @@ class PlotPerformance(vip_base):
             3 : (0  , 0  , 255),
             4 : (100, 100, 100)
     """
+
     def __init__(self):
         super(PlotPerformance, self).__init__()
 
         self.signal_count = 0
         self.signals = {}
-
 
         self.downsampling_counter = 0
 
@@ -73,25 +75,27 @@ class PlotPerformance(vip_base):
         self._tbuffer = None
         self._tdata_old = [0]
 
+        self.__roll_shift__ = None
+
         self.styles = {
-            0 : QtCore.Qt.SolidLine,
-            1 : QtCore.Qt.DashDotDotLine,
-            2 : QtCore.Qt.DashDotLine,
-            3 : QtCore.Qt.DashLine,
-            4 : QtCore.Qt.DotLine
+            0: QtCore.Qt.SolidLine,
+            1: QtCore.Qt.DashDotDotLine,
+            2: QtCore.Qt.DashDotLine,
+            3: QtCore.Qt.DashLine,
+            4: QtCore.Qt.DotLine
         }
 
         self.colors = {
-            0 : (255, 255, 255),
-            1 : (255, 0  , 0  ),
-            2 : (0  , 255, 0  ),
-            3 : (0  , 0  , 255),
-            4 : (100, 100, 100)
+            0: (255, 255, 255),
+            1: (255, 0, 0  ),
+            2: (0, 255, 0  ),
+            3: (0, 0, 255),
+            4: (100, 100, 100)
         }
 
     def initiate_layer_0(self, config=None):
 
-#        self.config = config
+        # self.config = config
 
         # ---------------------------
         # Read configuration
@@ -102,8 +106,8 @@ class PlotPerformance(vip_base):
 
         int_re = re.compile(r'(\d+)')
 
-        self.colors_selected = int_re.findall(self.config['color']['value']);
-        self.types_selected = int_re.findall(self.config['style']['value']);
+        self.colors_selected = int_re.findall(self.config['color']['value'])
+        self.types_selected = int_re.findall(self.config['style']['value'])
 
         self._bufsize = int(int_re.findall(self.config['buffersize']['value'])[0])
 
@@ -113,7 +117,10 @@ class PlotPerformance(vip_base):
         # Create internal variables
         # ----------------------------
 
-        self._tbuffer = collections.deque([0.0]*0, self._bufsize)
+        self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
+
+        self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
+        print(self.__roll_shift__)
 
         # --------------------------------
         # Create PlotWidget
@@ -126,15 +133,21 @@ class PlotPerformance(vip_base):
 
         self.curve = self.plotWidget.plot()
 
-        self.set_widget_for_internal_usage( self.plotWidget )
+        self.set_widget_for_internal_usage(self.plotWidget)
 
         # ---------------------------
         # Create Parameters
         # ---------------------------
 
         self.parameters = {}
-        self.parameters['x-grid'] = DParameter(None, 'x-grid', 0, [0,1],1, Regex='^(1|0){1}$')
-        self.parameters['y-grid'] = DParameter(None, 'y-grid', 0, [0,1],1, Regex='^(1|0){1}$')
+        self.parameters['x-grid'] = DParameter(None, 'x-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
+        self.parameters['y-grid'] = DParameter(None, 'y-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
+
+        self.parameters['color'] = DParameter(None, 'color', '[0 1 2 3 4]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
+        self.parameters['style'] = DParameter(None, 'style', '[0 0 0 0 0]', [0, 1], 1, Regex='^^\[(\s*\d\s*)+\]')
+
+        self.parameters['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.downsampling_rate, [1, 100],
+                                                          1, Regex='^([1-9][0-9]?|100)$')
 
         self.send_new_parameter_list(list(self.parameters.values()))
 
@@ -153,7 +166,7 @@ class PlotPerformance(vip_base):
 
         self.last_time = current_milli_time()
 
-        self.update_intervall = 25 #in milliseconds
+        self.update_intervall = 25  #in milliseconds
 
         return True
 
@@ -163,23 +176,21 @@ class PlotPerformance(vip_base):
     def resume(self):
         print('PlotPerformance resumed')
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name=None):
         t = Data['t']
 
         self.downsampling_counter += len(t)
 
         self._tbuffer.extend(t)
 
+#        if len(self._tbuffer) == len(t):
+#            print(t)
+
         for key in Data:
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    self.signals[key]['buffer'].extend(y) #COLLECTIONS
-
-        # if self.downsampling_counter > self.downsampling_rate:
-        #     self.downsampling_counter -= self.downsampling_rate
-
-            #self.update_plot()
+                    self.signals[key]['buffer'].extend(y)  # COLLECTIONS
 
         if current_milli_time() - self.last_time > self.update_intervall:
             self.last_time = current_milli_time()
@@ -187,9 +198,6 @@ class PlotPerformance(vip_base):
             self.last_time = current_milli_time()
 
     def set_parameter(self, name, value):
-        print('set_parameter')
-        print(name)
-        print(value)
 
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
@@ -198,6 +206,19 @@ class PlotPerformance(vip_base):
         if name == 'y-grid':
             self.config['y-grid']['value'] = value
             self.plotWidget.showGrid(y=value == '1')
+
+        if name == 'downsampling_rate':
+            self.config['downsampling_rate']['value'] = value
+            self.downsampling_rate = int(value)
+            self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
+
+        if name == 'color':
+            self.config['color']['value'] = value
+            #TODO: Live update pen
+
+        if name == 'style':
+            self.config['style']['value'] = value
+            #TODO: Live update pen
 
     def update_plot(self):
 
@@ -214,10 +235,9 @@ class PlotPerformance(vip_base):
         # iterate over all buffers
         # --------------------------
         for signal_name in self.signals:
-
             data = list(self.signals[signal_name]['buffer'])[shift_data::self.downsampling_rate]
             curve = self.signals[signal_name]['curve']
-            curve.setData(tdata, data,  _callSync='off')
+            curve.setData(tdata, data, _callSync='off')
 
         self._tdata_old = tdata
 
@@ -230,27 +250,27 @@ class PlotPerformance(vip_base):
             'label_y': {
                 'value': "amplitude, V",
                 'regex': '\w+,\s+\w+'
-        }, 'label_x': {
-                'value': "time, s",
-                'regex': '\w+,\s*\w+'
+            }, 'label_x': {
+            'value': "time, s",
+            'regex': '\w+,\s*\w+'
         }, 'x-grid': {
-                'value': "0",
-                'regex': '^(1|0)$'
+            'value': "0",
+            'regex': '^(1|0)$'
         }, 'y-grid': {
-                'value': "0",
-                'regex': '^(1|0)$'
+            'value': "0",
+            'regex': '^(1|0)$'
         }, 'color': {
-                'value': "[0 1 2 3 4]",
-                'regex': '^\[(\s*\d\s*)+\]'
+            'value': "[0 1 2 3 4]",
+            'regex': '^\[(\s*\d\s*)+\]'
         }, 'style': {
-                'value': "[0 0 0 0 0]",
-                'regex': '^\[(\s*\d\s*)+\]'
-        }, 'buffersize' : {
-                'value' : "3000",
-                'regex' : '(\d+)'
+            'value': "[0 0 0 0 0]",
+            'regex': '^\[(\s*\d\s*)+\]'
+        }, 'buffersize': {
+            'value': "3000",
+            'regex': '(\d+)'
         }, 'downsampling_rate': {
-                'value' : "10",
-                'regex' : '(\d+)'
+            'value': "10",
+            'regex': '(\d+)'
         }
         }
         # http://www.regexr.com/
@@ -298,11 +318,11 @@ class PlotPerformance(vip_base):
 
             start_size = len(self._tbuffer)
 
-            buffer = collections.deque([0.0]*start_size, self._bufsize) #COLLECTION
+            buffer = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
 
             pen = self.get_pen(id)
 
-            curve = self.plotWidget.plot([0,1], [0,1], pen=pen, name=signal_name, clipToView=True)
+            curve = self.plotWidget.plot([0, 1], [0, 1], pen=pen, name=signal_name, clipToView=True)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
