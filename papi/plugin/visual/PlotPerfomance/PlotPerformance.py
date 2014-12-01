@@ -123,9 +123,9 @@ class PlotPerformance(vip_base):
         # Create internal variables
         # ----------------------------
 
-        self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
+#        self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
+        self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
 
-        self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
 
         self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
 
@@ -157,6 +157,9 @@ class PlotPerformance(vip_base):
         self.parameters['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.downsampling_rate, [1, 100],
                                                           1, Regex='^([1-9][0-9]?|100)$')
 
+        self.parameters['buffersize'] = DParameter(None, 'buffersize', self._bufsize, [1, 100],
+                                                          1, Regex='^([1-9][0-9]{0,3}|10000)$')
+
         self.send_new_parameter_list(list(self.parameters.values()))
 
         # ---------------------------
@@ -181,8 +184,6 @@ class PlotPerformance(vip_base):
     def execute(self, Data=None, block_name=None):
         t = Data['t']
 
-        self.downsampling_counter += len(t)
-
         self._tbuffer.extend(t)
 
         self.__input_size__ += len(t)
@@ -193,8 +194,6 @@ class PlotPerformance(vip_base):
                 if key in self.signals:
                     buffer = self.signals[key]['buffer']  # COLLECTIONS
                     buffer.extend(y)
-
-                    #buffer.rotate(-len(y))
 
         if current_milli_time() - self.last_time > self.update_intervall:
             self.last_time = current_milli_time()
@@ -215,8 +214,8 @@ class PlotPerformance(vip_base):
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.downsampling_rate = int(value)
-            self.__roll_shift__ = int(self._bufsize / self.downsampling_rate)
-            self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
+            self.__input_size__ = 0
+#            self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
 
         if name == 'rolling':
             self.__rolling_plot__ = value == '1'
@@ -229,6 +228,12 @@ class PlotPerformance(vip_base):
         if name == 'style':
             self.config['style']['value'] = value
             #TODO: Live update pen
+
+        if name == 'buffersize':
+            self.config['buffersize']['value'] = value
+            self.set_buffer_size(value)
+            self.__input_size__ = 0
+            #TODO: Live update buffersize
 
     def update_plot(self):
 
@@ -302,7 +307,7 @@ class PlotPerformance(vip_base):
                 'advanced' : '1'
             }, 'buffersize': {
                 'value': "3000",
-                'regex': '(\d+)',
+                'regex': '^\b([1-9][0-9]{0,3}|10000)\b$',
                 'advanced' : '1'
             }, 'downsampling_rate': {
                 'value': "10",
@@ -315,6 +320,32 @@ class PlotPerformance(vip_base):
         }
         # http://www.regexr.com/
         return config
+
+    def set_buffer_size(self, new_size):
+        print('new buffer size ' + new_size)
+        self._bufsize = int(new_size)
+
+        # -------------------------------
+        # Change Time Buffer
+        # -------------------------------
+
+        #self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
+        self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
+
+        # -------------------------------
+        # Change Buffer of current
+        # plotted signals
+        # -------------------------------
+
+        start_size = len(self._tbuffer)
+
+        for signal_name in self.signals:
+            buffer_old = self.signals[signal_name]['buffer']
+
+            buffer_new = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
+           # buffer_new.extend(buffer_old)
+            self.signals[signal_name]['buffer'] = buffer_new
+
 
     def plugin_meta_updated(self):
         """

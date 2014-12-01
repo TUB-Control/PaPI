@@ -121,15 +121,10 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
             startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
-
         for attr in startup_config_sorted:
             attr = attr[0]
             if attr != 'uname':
                 value = startup_config[attr]['value']
-
-                #label = QLabel(self.formSimple)
-                #label.setText(attr)
-                #label.setObjectName(attr  + "_label")
 
                 # -------------------------------
                 # Check for datatype
