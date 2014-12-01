@@ -59,17 +59,20 @@ class ORTD_UDP(iop_base):
     def get_plugin_configuration(self):
         config = {
             'address': {
-                    'value': '127.0.0.1'
+                    'value': '127.0.0.1',
+                    'advanced' : '1'
                 },
             'source_port': {
-                    'value': '20000'
+                    'value': '20000',
+                    'advanced' : '1'
             },
             'out_port': {
-                    'value': '20001'
+                    'value': '20001',
+                    'advanced' : '1'
             },
             'Cfg_Path' : {
                     'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
-                    'type' : 'File'
+                    'type' : 'file'
             }
         }
 

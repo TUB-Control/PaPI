@@ -32,196 +32,160 @@
          <attribute name="title">
           <string>Plugin</string>
          </attribute>
-         <widget class="QWidget" name="horizontalLayoutWidget_2">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>470</y>
-            <width>371</width>
-            <height>61</height>
-           </rect>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="pauseButton">
-             <property name="text">
-              <string>PAUSE</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="stopButton">
-             <property name="text">
-              <string>STOP</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="playButton">
-             <property name="text">
-              <string>PLAY</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="formLayoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>9</x>
-            <y>10</y>
-            <width>371</width>
-            <height>171</height>
-           </rect>
-          </property>
-          <layout class="QFormLayout" name="formLayout">
-           <property name="fieldGrowthPolicy">
-            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="unameLabel">
-             <property name="text">
-              <string>Unique name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="unameEdit"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="usedpluginLabel">
-             <property name="text">
-              <string>Used plugin</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="usedpluginEdit"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="stateLabel">
-             <property name="text">
-              <string>State</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="stateEdit"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="typeLabel">
-             <property name="text">
-              <string>Type</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="typeEdit"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="alivestateLabel">
-             <property name="text">
-              <string>Alive state</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="alivestateEdit"/>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QTabWidget" name="tabWidget_2">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>190</y>
-            <width>371</width>
-            <height>271</height>
-           </rect>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="parameterTab">
-           <attribute name="title">
-            <string>Parameters</string>
-           </attribute>
-           <widget class="QTreeView" name="parameterTree">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>351</width>
-              <height>221</height>
-             </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="blockTab">
-           <attribute name="title">
-            <string>Blocks</string>
-           </attribute>
-           <widget class="QTreeView" name="blockTree">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>351</width>
-              <height>221</height>
-             </rect>
+            <item row="0" column="0">
+             <widget class="QLabel" name="unameLabel">
+              <property name="text">
+               <string>Unique name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="unameEdit"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="usedpluginLabel">
+              <property name="text">
+               <string>Used plugin</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="usedpluginEdit"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="stateLabel">
+              <property name="text">
+               <string>State</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="stateEdit"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="typeLabel">
+              <property name="text">
+               <string>Type</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="typeEdit"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="alivestateLabel">
+              <property name="text">
+               <string>Alive state</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="alivestateEdit"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTabWidget" name="tabWidget_2">
+            <property name="currentIndex">
+             <number>1</number>
             </property>
+            <widget class="QWidget" name="parameterTab">
+             <attribute name="title">
+              <string>Parameters</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QTreeView" name="parameterTree"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="blockTab">
+             <attribute name="title">
+              <string>Blocks</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QTreeView" name="blockTree"/>
+              </item>
+             </layout>
+            </widget>
            </widget>
-          </widget>
-         </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="pauseButton">
+              <property name="text">
+               <string>PAUSE</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="stopButton">
+              <property name="text">
+               <string>STOP</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="playButton">
+              <property name="text">
+               <string>PLAY</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="connectionTab">
          <attribute name="title">
           <string>Connections</string>
          </attribute>
-         <widget class="QWidget" name="verticalLayoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>381</width>
-            <height>511</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QTreeView" name="subscribersTree"/>
-           </item>
-           <item>
-            <widget class="QTreeView" name="subscriptionsTree"/>
-           </item>
-          </layout>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QTreeView" name="subscribersTree"/>
+            </item>
+            <item>
+             <widget class="QTreeView" name="subscriptionsTree"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>

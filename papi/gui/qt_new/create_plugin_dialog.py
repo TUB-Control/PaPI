@@ -30,7 +30,8 @@ from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
-from PySide.QtGui import QMainWindow, QLabel, QFormLayout, QLineEdit, QRegExpValidator
+from PySide.QtGui import QDialog, QLabel, QFormLayout, QLineEdit, QRegExpValidator, QCheckBox, QFileDialog
+from papi.gui.qt_new.custom import FileLineEdit
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
@@ -39,7 +40,7 @@ import PySide
 from yapsy.PluginManager import PluginManager
 import operator
 
-class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
+class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
     def __init__(self, gui_api, parent=None):
         super(CreatePluginDialog, self).__init__(parent)
@@ -61,14 +62,23 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
         config = self.cfg
 
         for attr in self.configuration_inputs:
-            config[attr]['value'] = self.configuration_inputs[attr].text()
+
+           if isinstance(self.configuration_inputs[attr], QCheckBox):
+
+                if self.configuration_inputs[attr].isChecked():
+                    config[attr]['value'] = '1'
+                else:
+                    config[attr]['value'] = '0'
+
+           if isinstance(self.configuration_inputs[attr], QLineEdit):
+                config[attr]['value'] = self.configuration_inputs[attr].text()
 
         if not self.gui_api.do_test_name_to_be_unique(config['uname']['value']) :
             self.configuration_inputs['uname'].setStyleSheet("QLineEdit  { border : 2px solid red;}")
             self.configuration_inputs['uname'].setFocus()
             return
 
-        self.close()
+        self.done(0)
 
         autostart = True
         if self.plugin_type == 'IOP' or self.plugin_type == 'DPP':
@@ -76,37 +86,38 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
 
         self.gui_api.do_create_plugin(self.plugin_name, config['uname']['value'], config=config, autostart=autostart)
 
-
     def reject(self):
-        self.close()
+        self.done(-1)
 
     def showEvent(self, *args, **kwargs):
         startup_config = self.cfg
 
-        self.clear_layout(self.formLayout)
+        self.clear_layout(self.formSimple)
+        self.clear_layout(self.formAdvance)
         self.configuration_inputs.clear()
+
+        self.setWindowTitle("Create Plugin " + self.plugin_name)
 
         position = 0
 
         if 'uname' in startup_config.keys():
             value = startup_config['uname']['value']
-            label = QLabel(self.formLayoutWidget)
-            label.setText('uname')
-            label.setObjectName('uname'  + "_label")
 
-            line_edit = QLineEdit(str(value), self.formLayoutWidget)
-            line_edit.setText(str(value))
+            uname = self.gui_api.change_uname_to_uniqe(self.plugin_name)
+
+            line_edit = QLineEdit(str(value))
+            line_edit.setText(uname)
             line_edit.setObjectName('uname' + "_line_edit")
 
-            self.formLayout.setWidget(position, QtGui.QFormLayout.LabelRole, label)
-            self.formLayout.setWidget(position, QtGui.QFormLayout.FieldRole, line_edit)
+
+            self.formAdvance.addRow("uname" , line_edit)
 
             self.configuration_inputs['uname'] = line_edit
 
-            line_edit.selectAll()
-            line_edit.setFocus()
+            #line_edit.selectAll()
+            #line_edit.setFocus()
 
-            position+=1
+            position += 1
 
             startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
@@ -115,32 +126,71 @@ class CreatePluginDialog(QMainWindow, Ui_CreatePluginDialog):
             attr = attr[0]
             if attr != 'uname':
                 value = startup_config[attr]['value']
-                label = QLabel(self.formLayoutWidget)
-                label.setText(attr)
-                label.setObjectName(attr  + "_label")
 
-                line_edit = QLineEdit(self.formLayoutWidget)
-                line_edit.setText(str(value))
-                line_edit.setObjectName(attr + "_line_edit")
-
-                self.formLayout.setWidget(position, QtGui.QFormLayout.LabelRole, label)
-                self.formLayout.setWidget(position, QtGui.QFormLayout.FieldRole, line_edit)
+                #label = QLabel(self.formSimple)
+                #label.setText(attr)
+                #label.setObjectName(attr  + "_label")
 
                 # -------------------------------
-                # Check for regex description
+                # Check for datatype
                 # -------------------------------
 
-                if 'regex' in startup_config[attr]:
-                    regex = startup_config[attr]['regex']
-                    rx = QRegExp(regex)
-                    validator = QRegExpValidator(rx, self)
-                    line_edit.setValidator(validator)
+                line_edit = None
+
+                if 'type' in startup_config[attr]:
+                    type = startup_config[attr]['type']
+
+                    if type == 'bool':
+                        line_edit = QCheckBox()
+
+                        if value == '1':
+                            line_edit.setChecked(True)
+                        else:
+                            line_edit.setChecked(False)
+
+                    if type == 'file':
+                        line_edit = FileLineEdit()
+                        line_edit.setReadOnly(True)
+                        line_edit.setText(value)
+
+                else:
+                    line_edit = QLineEdit()
+
+                    line_edit.setText(str(value))
+                    line_edit.setObjectName(attr + "_line_edit")
+
+                    # -------------------------------
+                    # Check for regex description
+                    # -------------------------------
+
+                    if 'regex' in startup_config[attr]:
+                        regex = startup_config[attr]['regex']
+                        rx = QRegExp(regex)
+                        validator = QRegExpValidator(rx, self)
+                        line_edit.setValidator(validator)
+
+                # -------------------------------
+                # Divide in advanced or simple option
+                # -------------------------------
+
+                if 'advanced' in startup_config[attr]:
+                    if startup_config[attr]['advanced'] == '1':
+                        self.formAdvance.addRow(attr, line_edit)
+                    else:
+                        self.formSimple.addRow(attr, line_edit)
+                else:
+                    self.formSimple.addRow(attr, line_edit)
+
+                if 'tooltip' in startup_config[attr]:
+                    line_edit.setToolTip(startup_config[attr]['tooltip'])
+
+
 
                 self.configuration_inputs[attr] = line_edit
 
                 position+=1
 
-        self.configuration_inputs['uname'].setFocus()
+        # self.configuration_inputs['uname'].setFocus()
 
     def keyPressEvent(self, event):
         print(event)

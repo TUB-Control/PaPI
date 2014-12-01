@@ -1,50 +1,48 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
+# -*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische Universit√§t Berlin,
-Fakult√§t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit‰t Berlin,
+Fakult‰t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
- 
+
 This file is part of PaPI.
- 
+
 PaPI is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
- 
+
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
- 
-Contributors:
-<Stefan Ruppin
+
+Contributors
+Sven Knuth
 """
 
-__author__ = 'control'
+__author__ = 'knuths'
 
-from papi.plugin.base_classes.ownProcess_base import ownProcess_base
-
-from papi.constants import PLUGIN_DPP_IDENTIFIER
-
-class dpp_base(ownProcess_base):
-
-    def initiate_layer_0(self, config):
-        raise NotImplementedError("Please Implement this method")
-
-    def get_configuration_base(self):
-        config = {
-            'name': {
-                'value': 'IOPlugin',
-                'tooltip': 'Used display name'
-            }}
-        return config
+from PySide.QtGui import QLineEdit, QFileDialog
 
 
-    def get_type(self):
-        return PLUGIN_DPP_IDENTIFIER
+class FileLineEdit(QLineEdit):
+    def __init__(self):
+        super(FileLineEdit, self).__init__()
+
+        self.file_type = "File (*)"
+
+    def set_file_type(self, type):
+        self.file_type = type
+
+    def mousePressEvent(self, event):
+        filename = QFileDialog.getOpenFileName(self,
+            self.tr("File"), "./", self.tr(self.file_type))
+
+        if len(filename[0]) > 0:
+            self.setText(filename[0])
