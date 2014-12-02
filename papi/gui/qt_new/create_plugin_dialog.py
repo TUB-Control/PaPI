@@ -110,7 +110,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             line_edit.setObjectName('uname' + "_line_edit")
 
 
-            self.formAdvance.addRow("uname" , line_edit)
+            self.formSimple.addRow("uname" , line_edit)
 
             self.configuration_inputs['uname'] = line_edit
 
@@ -120,6 +120,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             position += 1
 
             startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
+
 
         for attr in startup_config_sorted:
             attr = attr[0]
