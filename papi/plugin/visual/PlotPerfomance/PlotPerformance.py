@@ -307,7 +307,7 @@ class PlotPerformance(vip_base):
                 'advanced' : '1'
             }, 'buffersize': {
                 'value': "3000",
-                'regex': '^\b([1-9][0-9]{0,3}|10000)\b$',
+                'regex': '^([1-9][0-9]{0,3}|10000)$',
                 'advanced' : '1'
             }, 'downsampling_rate': {
                 'value': "10",
