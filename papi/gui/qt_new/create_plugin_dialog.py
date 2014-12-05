@@ -103,16 +103,20 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         if 'uname' in startup_config.keys():
             value = startup_config['uname']['value']
 
+            display_text = 'uname'
+
+            if 'display_text' in startup_config['uname'].keys():
+                display_text = startup_config['uname']['display_text']
+
             uname = self.gui_api.change_uname_to_uniqe(self.plugin_name)
 
-            line_edit = QLineEdit(str(value))
-            line_edit.setText(uname)
-            line_edit.setObjectName('uname' + "_line_edit")
+            editable_field = QLineEdit(str(value))
+            editable_field.setText(uname)
+            editable_field.setObjectName('uname' + "_line_edit")
 
+            self.formAdvance.addRow(str(display_text) , editable_field)
 
-            self.formAdvance.addRow("uname" , line_edit)
-
-            self.configuration_inputs['uname'] = line_edit
+            self.configuration_inputs['uname'] = editable_field
 
             #line_edit.selectAll()
             #line_edit.setFocus()
@@ -126,33 +130,39 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             if attr != 'uname':
                 value = startup_config[attr]['value']
 
+                display_text = attr
+
+                if 'display_text' in startup_config[attr].keys():
+                    display_text = startup_config[attr]['display_text']
+
+
                 # -------------------------------
                 # Check for datatype
                 # -------------------------------
 
-                line_edit = None
+                editable_field = None
 
                 if 'type' in startup_config[attr]:
-                    type = startup_config[attr]['type']
+                    parameter_type = startup_config[attr]['type']
 
-                    if type == 'bool':
-                        line_edit = QCheckBox()
+                    if parameter_type == 'bool':
+                        editable_field = QCheckBox()
 
                         if value == '1':
-                            line_edit.setChecked(True)
+                            editable_field.setChecked(True)
                         else:
-                            line_edit.setChecked(False)
+                            editable_field.setChecked(False)
 
-                    if type == 'file':
-                        line_edit = FileLineEdit()
-                        line_edit.setReadOnly(True)
-                        line_edit.setText(value)
+                    if parameter_type == 'file':
+                        editable_field = FileLineEdit()
+                        editable_field.setReadOnly(True)
+                        editable_field.setText(value)
 
                 else:
-                    line_edit = QLineEdit()
+                    editable_field = QLineEdit()
 
-                    line_edit.setText(str(value))
-                    line_edit.setObjectName(attr + "_line_edit")
+                    editable_field.setText(str(value))
+                    editable_field.setObjectName(attr + "_line_edit")
 
                     # -------------------------------
                     # Check for regex description
@@ -162,26 +172,26 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
                         regex = startup_config[attr]['regex']
                         rx = QRegExp(regex)
                         validator = QRegExpValidator(rx, self)
-                        line_edit.setValidator(validator)
+                        editable_field.setValidator(validator)
 
                 # -------------------------------
-                # Divide in advanced or simple option
+                # Divided in advanced or simple option
                 # -------------------------------
 
                 if 'advanced' in startup_config[attr]:
                     if startup_config[attr]['advanced'] == '1':
-                        self.formAdvance.addRow(attr, line_edit)
+                        self.formAdvance.addRow(str(display_text), editable_field)
                     else:
-                        self.formSimple.addRow(attr, line_edit)
+                        self.formSimple.addRow(str(display_text), editable_field)
                 else:
-                    self.formSimple.addRow(attr, line_edit)
+                    self.formSimple.addRow(str(display_text), editable_field)
 
                 if 'tooltip' in startup_config[attr]:
-                    line_edit.setToolTip(startup_config[attr]['tooltip'])
+                    editable_field.setToolTip(startup_config[attr]['tooltip'])
 
 
 
-                self.configuration_inputs[attr] = line_edit
+                self.configuration_inputs[attr] = editable_field
 
                 position+=1
 
