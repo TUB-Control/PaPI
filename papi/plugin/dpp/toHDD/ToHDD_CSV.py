@@ -94,11 +94,14 @@ class ToHDD_CSV(dpp_base):
         config = {
             "log-type": {
                 'value': 1,
-                'regex': '[0-9]+'
+                'regex': '[0-9]+',
+                 'advanced' : '1'
         }, "file": {
                 'value': 'log',
+                 'advanced' : '0'
         }, "delimiter": {
                 'value': ' ',
+                 'advanced' : '1'
         }}
         return config
 
