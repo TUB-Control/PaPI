@@ -38,7 +38,7 @@ from papi.data.DParameter import DParameter
 import numpy as np
 
 import threading
-
+import pickle
 
 import os
 
@@ -72,7 +72,8 @@ class ORTD_UDP(iop_base):
             },
             'Cfg_Path' : {
                     'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
-                    'type' : 'file'
+                    'type' : 'file',
+                    'advanced' : '0'
             },
             'SeparateSignals': {
                     'value' : '1',
@@ -156,9 +157,15 @@ class ORTD_UDP(iop_base):
 
         self.set_event_trigger_mode(True)
 
+
+        self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_recv.bind( (self.HOST, self.SOURCE_PORT) )
+        self.sock_recv.settimeout(1)
+
         self.thread_goOn = True
         self.lock = threading.Lock()
-        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
+        #self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
+        self.thread = threading.Thread(target=self.thread_execute )
         self.thread.start()
 
         return True
@@ -174,17 +181,16 @@ class ORTD_UDP(iop_base):
         self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.SOURCE_PORT) )
         self.thread.start()
 
-    def thread_execute(self,host, port):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind( (host, port) )
-        
-        self.sock.setblocking(1)
+    def thread_execute(self):
         goOn = True
 
         signal_values = {}
         while goOn:
             try:
-                rev = self.sock.recv(1600)
+                rev = self.sock_recv.recv(1600)
+            except socket.timeout:
+                #print('timeout')
+                pass
             except socket.error:
                 print('ORTD got socket error')
             else:
@@ -237,7 +243,7 @@ class ORTD_UDP(iop_base):
             goOn = self.thread_goOn
             self.lock.release()
         # Thread ended
-        self.sock.close()
+        self.sock_recv.close()
 
     def execute(self, Data=None, block_name = None):
         raise Exception('Should not be called!')
