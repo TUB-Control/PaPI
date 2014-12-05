@@ -75,7 +75,8 @@ class ORTD_UDP(iop_base):
                     'type' : 'file'
             },
             'SeparateSignals': {
-                    'value' : '1'
+                    'value' : '1',
+                    'advanced' : '1'
 
             }
 

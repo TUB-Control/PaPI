@@ -7,7 +7,7 @@ import time
 from papi.data.DGui import DGui
 from papi.core import Core
 from papi.gui.qt_new.main import startGUI_TESTMOCK
-from papi.constants import GUI_WOKRING_INTERVAL
+
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
 from papi.PapiEvent import PapiEvent
@@ -376,9 +376,20 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(self.core_data.get_dplugins_count(), len(Plugins), 'Core PL Count not correct')
         self.assertEqual(self.gui_data.get_dplugins_count(), len(Plugins), 'Gui PL Count not correct')
 
-        #self.gui_api.
+        self.gui_api.do_pause_plugin_by_uname('Sinus1')
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_PAUSE, 'Core state not paused')
+        self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_PAUSE, 'GUI state not paused')
 
 
+        self.gui_api.do_resume_plugin_by_uname('Sinus1')
+
+        time.sleep(TestCoreMock.DELAY_TIME)
+
+        self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_RESUMED, 'Core state not resumed')
+        self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_RESUMED, 'GUI state not resumed')
 
 
     def setUp(self):
