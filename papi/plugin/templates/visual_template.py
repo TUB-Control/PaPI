@@ -172,7 +172,9 @@ class PlotPerformance(vip_base):
         # config = {
         #     "amax": {
         #         'value': 3,
-        #         'regex': '[0-9]+'
+        #         'regex': '[0-9]+',
+        #         'display_text' : 'This AMax',
+        #         'advanced' : '1'
         # }, 'f': {
         #         'value': "1",
         #         'regex': '\d+.{0,1}\d*'

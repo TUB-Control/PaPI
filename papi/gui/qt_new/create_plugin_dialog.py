@@ -114,7 +114,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             editable_field.setText(uname)
             editable_field.setObjectName('uname' + "_line_edit")
 
-            self.formAdvance.addRow(str(display_text) , editable_field)
+            self.formSimple.addRow(str(display_text) , editable_field)
 
             self.configuration_inputs['uname'] = editable_field
 

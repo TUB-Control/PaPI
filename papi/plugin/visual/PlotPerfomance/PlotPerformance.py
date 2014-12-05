@@ -81,6 +81,13 @@ class PlotPerformance(vip_base):
         self.__append_at__ = 1
         self.__input_size__ = 0
         self.__rolling_plot__ = False
+        self.colors_selected = None
+        self.types_selected = None
+        self.show_grid_x = None
+        self.show_grid_y = None
+        self.parameters = {}
+        self.update_intervall = None
+        self.last_time = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -138,7 +145,7 @@ class PlotPerformance(vip_base):
 
         self.plotWidget.showGrid(x=self.show_grid_x, y=self.show_grid_y)
 
-        self.curve = self.plotWidget.plot()
+       # self.curve = self.plotWidget.plot()
 
         self.set_widget_for_internal_usage(self.plotWidget)
 
@@ -146,7 +153,6 @@ class PlotPerformance(vip_base):
         # Create Parameters
         # ---------------------------
 
-        self.parameters = {}
         self.parameters['x-grid'] = DParameter(None, 'x-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
         self.parameters['y-grid'] = DParameter(None, 'y-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
 
@@ -156,10 +162,8 @@ class PlotPerformance(vip_base):
 
         self.parameters['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.downsampling_rate, [1, 100],
                                                           1, Regex='^([1-9][0-9]?|100)$')
-
         self.parameters['buffersize'] = DParameter(None, 'buffersize', self._bufsize, [1, 100],
                                                           1, Regex='^([1-9][0-9]{0,3}|10000)$')
-
         self.send_new_parameter_list(list(self.parameters.values()))
 
         # ---------------------------
@@ -215,7 +219,6 @@ class PlotPerformance(vip_base):
             self.config['downsampling_rate']['value'] = value
             self.downsampling_rate = int(value)
             self.__input_size__ = 0
-#            self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
 
         if name == 'rolling':
             self.__rolling_plot__ = value == '1'
@@ -223,17 +226,28 @@ class PlotPerformance(vip_base):
 
         if name == 'color':
             self.config['color']['value'] = value
-            #TODO: Live update pen
+            int_re = re.compile(r'(\d+)')
+            self.colors_selected = int_re.findall(self.config['color']['value'])
+            self.update_pens()
 
         if name == 'style':
             self.config['style']['value'] = value
-            #TODO: Live update pen
+            int_re = re.compile(r'(\d+)')
+            self.types_selected = int_re.findall(self.config['style']['value'])
+            self.update_pens()
 
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.set_buffer_size(value)
             self.__input_size__ = 0
-            #TODO: Live update buffersize
+
+    def update_pens(self):
+        for signal_name in self.signals.keys():
+            signal_id = self.signals[signal_name]['id']
+
+            new_pen = self.get_pen(signal_id)
+
+            self.signals[signal_name]['curve'].setPen(new_pen)
 
     def update_plot(self):
 
@@ -313,7 +327,7 @@ class PlotPerformance(vip_base):
                 'display_text' : 'Style'
             }, 'buffersize': {
                 'value': "3000",
-                'regex': '^\b([1-9][0-9]{0,3}|10000)\b$',
+                'regex': '^([1-9][0-9]{0,3}|10000)$',
                 'advanced' : '1',
                'display_text' : 'Buffersize'
             }, 'downsampling_rate': {
@@ -400,13 +414,14 @@ class PlotPerformance(vip_base):
             buffer = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
 
             pen = self.get_pen(id)
-
-            curve = self.plotWidget.plot([0, 1], [0, 1], pen=pen, name=signal_name, clipToView=True)
+            legend_name = str(id) + "# " + signal_name
+            curve = self.plotWidget.plot([0, 1], [0, 1], pen=pen, name=legend_name, clipToView=True)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
+            self.signals[signal_name]['id'] = id
 
-            self.legend.addItem(curve, signal_name)
+            self.legend.addItem(curve, legend_name)
 
     def remove_databuffer(self, signal_name):
         """
