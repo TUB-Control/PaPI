@@ -72,13 +72,13 @@ class Button(pcp_base):
         config = {
             "low": {
                 'value':0.1,
+                'advanced' : '0'
         }, "up": {
                 'value': 1,
+                'advanced' : '0'
         },"name": {
-            'value' : "PCP_Plugin"
-        },'size': {
-                'value': "(150,100)",
-                'regex': '\(([0-9]+),([0-9]+)\)'
+            'value' : "PCP_Plugin",
+             'advanced' : '0'
         }}
         return config
 

@@ -120,10 +120,13 @@ class Fourier_Rect(iop_base):
                     },
             'host': {
                      'value': "130.149.155.73",
-                     'regex': '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'},
+                     'regex': '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}',
+                     'advanced' : '1'
+            },
             'port': {
                     'value': 9999,
-                    'regex': '\d{1,5}'
+                    'regex': '\d{1,5}',
+                     'advanced' : '1'
             }}
         return config
 
