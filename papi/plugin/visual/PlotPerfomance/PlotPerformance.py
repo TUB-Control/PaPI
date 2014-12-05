@@ -285,37 +285,45 @@ class PlotPerformance(vip_base):
         config = {
             'label_y': {
                'value': "amplitude, V",
-               'regex': '\w+,\s+\w+'
+               'regex': '\w+,\s+\w+',
+               'display_text' : 'Label-Y'
             }, 'label_x': {
                 'value': "time, s",
-                'regex': '\w+,\s*\w+'
+                'regex': '\w+,\s*\w+',
+               'display_text' : 'Label-X'
             }, 'x-grid': {
                 'value': "0",
                 'regex': '^(1|0)$',
-                'type' : 'bool'
+                'type' : 'bool',
+               'display_text' : 'Grid-X'
             }, 'y-grid': {
                 'value': "0",
                 'regex': '^(1|0)$',
-                'type' : 'bool'
+                'type' : 'bool',
+                'display_text' : 'Grid-Y'
             }, 'color': {
                 'value': "[0 1 2 3 4]",
                 'regex': '^\[(\s*\d\s*)+\]',
-                'advanced' : '1'
+                'advanced' : '1',
+                'display_text' : 'Color'
             }, 'style': {
                 'value': "[0 0 0 0 0]",
                 'regex': '^\[(\s*\d\s*)+\]',
-                'advanced' : '1'
+                'advanced' : '1',
+                'display_text' : 'Style'
             }, 'buffersize': {
                 'value': "3000",
-                'regex': '^([1-9][0-9]{0,3}|10000)$',
-                'advanced' : '1'
+                'regex': '^\b([1-9][0-9]{0,3}|10000)\b$',
+                'advanced' : '1',
+               'display_text' : 'Buffersize'
             }, 'downsampling_rate': {
                 'value': "10",
                 'regex': '(\d+)'
             }, 'rolling_plot' : {
                 'value' : '0',
                 'regex': '^(1|0)$',
-                'type' : 'bool'
+                'type' : 'bool',
+               'display_text' : 'Rolling Plot'
             }
         }
         # http://www.regexr.com/
