@@ -113,6 +113,7 @@ class DPlugin(DObject):
         self.paused = False
         self.own_process = None
         self.uname = None
+        #self.display_name = None
         self.__parameters = {}
         self.__blocks = {}
         self.type = None

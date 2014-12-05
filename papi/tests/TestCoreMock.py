@@ -359,7 +359,6 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(0.9, \
                          self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
 
-
     def test_pause_IOP(self):
         Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
 
@@ -390,6 +389,9 @@ class TestCoreMock(unittest.TestCase):
 
         self.assertEqual(self.core_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_RESUMED, 'Core state not resumed')
         self.assertEqual(self.gui_data.get_dplugin_by_uname('Sinus1').state, const.PLUGIN_STATE_RESUMED, 'GUI state not resumed')
+
+
+
 
 
     def setUp(self):
