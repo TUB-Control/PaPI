@@ -86,6 +86,11 @@ PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
 
+
+#
+PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '
+PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
+
 # CONFIG/PROFILE SYSTEM CONSTANTS
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
