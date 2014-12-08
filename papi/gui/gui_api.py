@@ -616,7 +616,6 @@ class Gui_api(QtCore.QObject):
     def do_test_name_to_be_unique(self, name):
         """
         Will check if a given name would be a valid, unique name for a plugin.
-
         :param name: name to check
         :type name: basestring
         :return: True or False
