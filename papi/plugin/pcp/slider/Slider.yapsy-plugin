@@ -1,9 +1,0 @@
-[Core]
-Name = Slider
-Module = Slider
-
-[Documentation]
-Author = S.K.
-Version = 0.1
-Website = www
-Description = simple slider for parameters

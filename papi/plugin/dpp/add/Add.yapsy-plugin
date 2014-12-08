@@ -1,9 +1,0 @@
-[Core]
-Name = Add
-Module = Add
-
-[Documentation]
-Author = S.K.
-Version = 0.1
-Website = www
-Description = simple sinus io plugin
