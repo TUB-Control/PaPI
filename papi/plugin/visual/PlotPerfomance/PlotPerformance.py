@@ -33,14 +33,12 @@ import pyqtgraph as pq
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 import numpy as np
-from papi.constants import GUI_WOKRING_INTERVAL
 import collections
 import re
-from scipy import signal
 import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
-import copy
+
 
 from pyqtgraph.Qt import QtCore
 
@@ -64,6 +62,12 @@ class PlotPerformance(vip_base):
 
     def __init__(self):
         super(PlotPerformance, self).__init__()
+        """
+        Function init
+
+        :param config:
+        :return:
+        """
 
         self.signal_count = 0
         self.signals = {}
@@ -79,6 +83,7 @@ class PlotPerformance(vip_base):
 
         self.__roll_shift__ = None
         self.__append_at__ = 1
+        self.__new_added_data__ = 0
         self.__input_size__ = 0
         self.__rolling_plot__ = False
         self.colors_selected = None
@@ -88,6 +93,8 @@ class PlotPerformance(vip_base):
         self.parameters = {}
         self.update_intervall = None
         self.last_time = None
+        self.plotWidget = None
+        self.legend = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -106,7 +113,12 @@ class PlotPerformance(vip_base):
         }
 
     def initiate_layer_0(self, config=None):
+        """
+        Function initiate layer 0
 
+        :param config:
+        :return:
+        """
         # self.config = config
 
         # ---------------------------
@@ -133,9 +145,6 @@ class PlotPerformance(vip_base):
 #        self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
         self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
 
-
-        self._xaxis = list(np.linspace(0, int(self._bufsize/self.downsampling_rate) - 1, int( self._bufsize/self.downsampling_rate)))
-
         # --------------------------------
         # Create PlotWidget
         # --------------------------------
@@ -144,8 +153,6 @@ class PlotPerformance(vip_base):
         self.plotWidget.setWindowTitle('PlotPerformanceTitle')
 
         self.plotWidget.showGrid(x=self.show_grid_x, y=self.show_grid_y)
-
-       # self.curve = self.plotWidget.plot()
 
         self.set_widget_for_internal_usage(self.plotWidget)
 
@@ -180,17 +187,36 @@ class PlotPerformance(vip_base):
         return True
 
     def pause(self):
+        """
+        Function pause
+
+        :return:
+        """
         print('PlotPerformance paused')
 
     def resume(self):
+        """
+        Function resume
+
+        :return:
+        """
         print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name=None):
+        """
+        Function execute
+
+        :param Data:
+        :param block_name:
+        :return:
+        """
         t = Data['t']
+
+        self.__input_size__ = len(t)
 
         self._tbuffer.extend(t)
 
-        self.__input_size__ += len(t)
+        self.__new_added_data__ += len(t)
 
         for key in Data:
             if key != 't':
@@ -199,14 +225,23 @@ class PlotPerformance(vip_base):
                     buffer = self.signals[key]['buffer']  # COLLECTIONS
                     buffer.extend(y)
 
-        if current_milli_time() - self.last_time > self.update_intervall:
-            self.last_time = current_milli_time()
-            self.update_plot()
-            self.last_time = current_milli_time()
-            self.__input_size__ = 0
+        if self.__input_size__ > 1:
+            if current_milli_time() - self.last_time > self.update_intervall:
+                self.last_time = current_milli_time()
+                self.update_plot()
+                self.last_time = current_milli_time()
+                self.__new_added_data__ = 0
+        else:
+            self.update_plot_single_timestamp(Data)
 
     def set_parameter(self, name, value):
+        """
+        Function set parameters
 
+        :param name:
+        :param value:
+        :return:
+        """
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.plotWidget.showGrid(x=value == '1')
@@ -218,7 +253,7 @@ class PlotPerformance(vip_base):
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.downsampling_rate = int(value)
-            self.__input_size__ = 0
+            self.__new_added_data__ = 0
 
         if name == 'rolling':
             self.__rolling_plot__ = value == '1'
@@ -239,9 +274,15 @@ class PlotPerformance(vip_base):
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.set_buffer_size(value)
-            self.__input_size__ = 0
+            self.__new_added_data__ = 0
 
     def update_pens(self):
+        """
+        Function update pens
+
+        :return:
+        """
+
         for signal_name in self.signals.keys():
             signal_id = self.signals[signal_name]['id']
 
@@ -250,7 +291,11 @@ class PlotPerformance(vip_base):
             self.signals[signal_name]['curve'].setPen(new_pen)
 
     def update_plot(self):
+        """
+        Function update_plot
 
+        :return:
+        """
         shift_data = 0
 
         for last_tvalue in self._tdata_old:
@@ -258,23 +303,10 @@ class PlotPerformance(vip_base):
                 shift_data = list(self._tbuffer).index(last_tvalue)
                 break
 
-
         tdata = list(self._tbuffer)[shift_data::self.downsampling_rate]
 
-   #     if len(tdata) < len(self._xaxis):
-#            print(True)
-  #          tdata = np.linspace(0,len(tdata)-1, len(tdata))
- #       else:
-
-        #tdata = self._xaxis
-
-#        self.__append_at__ += int(self._bufsize / self.downsampling_rate)
-        #print(self.__input_size__)
-       # print(self.__input_size__ / self.downsampling_rate)
-        # self.__append_at__ += 0
-
         if self.__rolling_plot__:
-            self.__append_at__ += self.__input_size__ / self.downsampling_rate
+            self.__append_at__ += self.__new_added_data__ / self.downsampling_rate
             if len(tdata) > 2:
                 self.__append_at__ = self.__append_at__ % ( len(tdata) )
 
@@ -292,10 +324,39 @@ class PlotPerformance(vip_base):
 
         self._tdata_old = tdata
 
+    def update_plot_single_timestamp(self, Data):
+        """
+        Function update_plot_single_timestamp
+
+        :return:
+        """
+
+        for signal_name in Data:
+            if signal_name != 't':
+                signal_data = Data[signal_name]
+                if signal_name in self.signals:
+                    tdata = np.linspace(1,len(signal_data),len(signal_data))
+
+                    curve = self.signals[signal_name]['curve']
+                    curve.setData(tdata, signal_data, _callSync='off')
+
+
+        pass
+
     def quit(self):
+        """
+        Function quit plugin
+
+        :return:
+        """
         print('PlotPerformance: will quit')
 
     def get_plugin_configuration(self):
+        """
+        Function get plugin configuration
+
+        :return {}:
+        """
         config = {
             'label_y': {
                'value': "amplitude, V",
@@ -344,6 +405,12 @@ class PlotPerformance(vip_base):
         return config
 
     def set_buffer_size(self, new_size):
+        """
+        Function set buffer size
+
+        :param new_size:
+        :return:
+        """
         print('new buffer size ' + new_size)
         self._bufsize = int(new_size)
 
@@ -351,7 +418,6 @@ class PlotPerformance(vip_base):
         # Change Time Buffer
         # -------------------------------
 
-        #self._tbuffer = collections.deque([0.0] * self._bufsize, self._bufsize)
         self._tbuffer = collections.deque([0.0] * 0, self._bufsize)
 
         # -------------------------------
@@ -362,12 +428,10 @@ class PlotPerformance(vip_base):
         start_size = len(self._tbuffer)
 
         for signal_name in self.signals:
-            buffer_old = self.signals[signal_name]['buffer']
 
             buffer_new = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
-           # buffer_new.extend(buffer_old)
-            self.signals[signal_name]['buffer'] = buffer_new
 
+            self.signals[signal_name]['buffer'] = buffer_new
 
     def plugin_meta_updated(self):
         """
@@ -405,7 +469,7 @@ class PlotPerformance(vip_base):
         :param id:
         :return:
         """
-        print('Add buffer for ' + signal_name)
+
         if signal_name not in self.signals:
             self.signals[signal_name] = {}
 
@@ -413,9 +477,8 @@ class PlotPerformance(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self._bufsize)  # COLLECTION
 
-            pen = self.get_pen(id)
             legend_name = str(id) + "# " + signal_name
-            curve = self.plotWidget.plot([0, 1], [0, 1], pen=pen, name=legend_name, clipToView=True)
+            curve = self.plotWidget.plot([0, 1], [0, 1], name=legend_name, clipToView=True)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
@@ -423,13 +486,15 @@ class PlotPerformance(vip_base):
 
             self.legend.addItem(curve, legend_name)
 
+        self.update_pens()
+
     def remove_databuffer(self, signal_name):
         """
         Remove the databuffer for signal_name.
         :param signal_name:
         :return:
         """
-        print('Delete buffer for ' + signal_name)
+
         if signal_name in self.signals:
             curve = self.signals[signal_name]['curve']
             curve.clear()
