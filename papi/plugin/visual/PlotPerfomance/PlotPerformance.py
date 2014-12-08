@@ -264,9 +264,14 @@ class PlotPerformance(vip_base):
 
             if self.__rolling_plot__:
                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
-                    self.__plotWidget__.addItem(self.__vertical_line__)
+
+                self.__plotWidget__.addItem(self.__vertical_line__)
             else:
-                self.__plotWidget__.removeItem(self.__vertical_line__)
+
+                print(self.__plotWidget__.addItem(self.__vertical_line__))
+                print(self.__plotWidget__.listDataItems())
+                print(self.__vertical_line__)
+                #self.__plotWidget__.removeItem(self.__vertical_line__)
 
 
         if name == 'color':
@@ -321,8 +326,6 @@ class PlotPerformance(vip_base):
             if len(tdata) > 2:
                 self.__append_at__ %= len(tdata)
 
-
-
         # --------------------------
         # iterate over all buffers
         # --------------------------
@@ -332,6 +335,8 @@ class PlotPerformance(vip_base):
             if self.__rolling_plot__:
                 data = np.roll(data, int(self.__append_at__))
                 self.__vertical_line__.setValue(tdata[int(self.__append_at__)-2]+1)
+            else:
+                self.__vertical_line__.setValue(tdata[0])
 
             curve = self.signals[signal_name]['curve']
             curve.setData(tdata, data, _callSync='off')
