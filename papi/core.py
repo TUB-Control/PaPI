@@ -783,8 +783,8 @@ class Core:
         source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
         if source_pl is not None:
             blocks = source_pl.get_dblocks()
-            b = blocks[opt.block_name]
-            if b is not None:
+            if opt.block_name in blocks:
+                b = blocks[opt.block_name]
                 subs = b.get_subscribers()
                 if oID in subs:
                     already_sub = True
@@ -859,8 +859,9 @@ class Core:
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
 
-            para = parameters[opt.parameter_alias]
-            if para is not None:
+
+            if opt.parameter_alias in parameters:
+                para = parameters[opt.parameter_alias]
                 para.value = opt.data
                 # route the event to the destination plugin queue
                 dplugin.queue.put(event)

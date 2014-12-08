@@ -259,7 +259,7 @@ class PlotPerformance(vip_base):
             self.__new_added_data__ = 0
 
         if name == 'rolling':
-            self.__rolling_plot__ = value == '1'
+            self.__rolling_plot__ = int(float(value)) == int('1')
             self.config['rolling_plot']['value'] = value
 
             if self.__rolling_plot__:
