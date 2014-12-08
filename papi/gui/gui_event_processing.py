@@ -87,6 +87,7 @@ class GuiEventProcessing(QtCore.QObject):
          Event processing loop of gui. Build to get called every 40ms after a run through.
          Will process all events of the queue at the time of call.
          Procedure was built this way, so that the processing of an event is not covered by the try/except structure.
+
          :type event: PapiEvent
          :type dplugin: DPlugin
         """
@@ -125,6 +126,7 @@ class GuiEventProcessing(QtCore.QObject):
         """
         Core sent a new data event to gui. Gui now needs to find the destination plugin and call its execute function
         with the new data.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -156,6 +158,7 @@ class GuiEventProcessing(QtCore.QObject):
         """
         Processes plugin_closed event.
         Gui now knows, that a plugin was closed by core and needs to update its DGui data base
+
         :param event:
         :type event: PapiEvent
         :return:
@@ -201,6 +204,7 @@ class GuiEventProcessing(QtCore.QObject):
         """
         Processes the create Plugin event. This event got sent by core to GUI.
         Gui now needs to add a new plugin to DGUI and decide whether it is a plugin running in the GUI process or not.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -282,6 +286,7 @@ class GuiEventProcessing(QtCore.QObject):
 
     def process_close_program_event(self, event):
         """
+
          :param event: event to process
          :type event: PapiEvent
          :type dplugin: DPlugin
@@ -292,6 +297,7 @@ class GuiEventProcessing(QtCore.QObject):
     def process_check_alive_status(self, event):
         """
         Gui received check_alive request form core, so gui will respond to it
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -303,6 +309,7 @@ class GuiEventProcessing(QtCore.QObject):
     def process_update_meta(self, event):
         """
         Core sent new meta information of an existing plugin. This function will update DGui with these information
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -354,6 +361,7 @@ class GuiEventProcessing(QtCore.QObject):
     def process_pause_plugin(self, event):
         """
         Core sent event to pause a plugin in GUI, so call the pause function of this plugin
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -367,6 +375,7 @@ class GuiEventProcessing(QtCore.QObject):
     def process_resume_plugin(self, event):
         """
         Core sent event to resume a plugin in GUI, so call the resume function of this plugin
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin

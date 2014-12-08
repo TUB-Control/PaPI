@@ -63,6 +63,7 @@ class Gui_api(QtCore.QObject):
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart = True):
         """
         Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.
+
         :param plugin_identifier: plugin to create
         :type plugin_identifier: basestring
         :param uname: uniqe name to set for new plugin
@@ -89,6 +90,7 @@ class Gui_api(QtCore.QObject):
     def do_delete_plugin(self, id):
         """
         Delete plugin with given id.
+
         :param id: Plugin id to delete
         :type id: int
         :return:
@@ -100,6 +102,7 @@ class Gui_api(QtCore.QObject):
     def do_delete_plugin_uname(self, uname):
         """
         Delete plugin with given uname.
+
         :param uname: Plugin uname to delete
         :type uname: basestring
         :return:
@@ -114,6 +117,7 @@ class Gui_api(QtCore.QObject):
     def do_stopReset_pluign(self, id):
         """
         Stop and reset plugin with given id without deleting it.
+
         :param id: Plugin id to stopReset
         :type id: int
         :return:
@@ -125,6 +129,7 @@ class Gui_api(QtCore.QObject):
     def do_stopReset_plugin_uname(self, uname):
         """
         Stop and reset plugin with given uname without deleting it.
+
         :param uname: Plugin uname to stop
         :type uname: basestring
         :return:
@@ -140,6 +145,7 @@ class Gui_api(QtCore.QObject):
     def do_start_plugin(self, id):
         """
         Start plugin with given id.
+
         :param id: Plugin id to start
         :type id: int
         :return:
@@ -150,6 +156,7 @@ class Gui_api(QtCore.QObject):
     def do_start_plugin_uname(self, uname):
         """
         Start plugin with given uname.
+
         :param uname: Plugin uname to start
         :type uname: basestring
         :return:
@@ -166,6 +173,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
+
         :param subscriber_id: Plugin id of plugin which should get the data
         :type subscriber_id: int
         :param source_id: plugin uname of plugin that should send the data
@@ -188,6 +196,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
+
         :param subscriber_uname:  Plugin uname of plugin which should get the data
         :type subscriber_uname: basestring
         :param source_uname: plugin uname of plugin that should send the data
@@ -215,6 +224,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants one plugin to do not get any more data from another plugin
+
         :param subscriber_id: plugin id which wants to lose a data source
         :type subscriber_id: int
         :param source_id: plugin id of data source
@@ -236,6 +246,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants one plugin to do not get any more data from another plugin
+
         :param subscriber_uname: plugin uname which wants to lose a data source
         :type subscriber_uname: basestring
         :param source_uname: plugin uname of data source
@@ -264,6 +275,7 @@ class Gui_api(QtCore.QObject):
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
         :param plugin_id: id of plugin which owns the parameter
+
         :type plugin_id: int
         :param parameter_name: name of parameter to change
         :type parameter_name: basestring
@@ -301,6 +313,7 @@ class Gui_api(QtCore.QObject):
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
         :param plugin_uname: name of plugin which owns the parameter
+
         :type plugin_uname: basestring
         :param parameter_name: name of parameter to change
         :type parameter_name: basestring
@@ -315,6 +328,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants to pause a plugin, so this method will send an event to core.
+
         :param plugin_id: id of plugin to pause
         :type plugin_id: int
         """
@@ -331,6 +345,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants to pause a plugin, so this method will send an event to core.
+
         :param plugin_uname: uname of plugin to pause
         :type plugin_uname: basestring
         """
@@ -358,6 +373,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants to pause a plugin, so this method will send an event to core.
+
         :param plugin_id: id of plugin to pause
         :type plugin_id: int
         """
@@ -373,6 +389,7 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants to resume a plugin, so this method will send an event to core.
+
         :param plugin_uname: uname of plugin to resume
         :type plugin_uname: basestring
         """
@@ -399,6 +416,7 @@ class Gui_api(QtCore.QObject):
     def do_get_plugin_id_from_uname(self, uname):
         """
         Returns the plugin id of the plugin with unique name uname
+
         :param uname: uname of plugin
         :type uname: basestring
         :return: None: plugin with uname does not exist, id: id of plugin
@@ -482,6 +500,7 @@ class Gui_api(QtCore.QObject):
     def change_uname_to_uniqe(self, uname):
         """
         Function will search for unames and add an indentifier to it to make it unique in case of existence
+
         :param uname: uname to make unique
         :type uname: basestring
         :return: uname
@@ -584,6 +603,7 @@ class Gui_api(QtCore.QObject):
         Reset in this case means to delete all plugins cleanly and keep PaPI running.
         Will free all unames.
         Is using the do_delete_plugin api call and the delete plugin mechanism
+
         :return: ERROR CODE
         """
 
@@ -596,6 +616,7 @@ class Gui_api(QtCore.QObject):
     def do_test_name_to_be_unique(self, name):
         """
         Will check if a given name would be a valid, unique name for a plugin.
+
         :param name: name to check
         :type name: basestring
         :return: True or False
