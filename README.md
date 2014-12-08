@@ -16,3 +16,4 @@ Documentation
 ------
 
 Sphinx doc on GitHub: https://tub-control.github.io/PaPI/
+PaPI wiki on GitHub: https://github.com/TUB-Control/PaPI/wiki
