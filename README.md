@@ -10,7 +10,7 @@ like oscilloscopes.
 
 PaPI is based on a strong plugin architecture. Therefore it is easy to expand to new environments.
 
-PaPi will make heavily use of multicore systems.
+PaPi will make heavily use of multi-core systems.
 
 Documentation
 ------
