@@ -166,8 +166,7 @@ class Core:
         self.log.printText(1, CORE_STOP_CONSOLE_MESSAGE)
 
     def send_alive_check_events(self):
-        """
-        Function for check_alive_status timer to send check_alive events to all running processes
+        """Function for check_alive_status timer to send check_alive events to all running processes
         This will trigger all correctly running processes to send an answer to core
         """
         # get list of all plugins [hash: id->dplug], type DPlugin
@@ -189,6 +188,7 @@ class Core:
         """
         Function which handles the check for the alive situation of all plugins in data base
         Will distribute to error_handling methods to handle dead processes
+
         :return:
         """
         #get all plugins from core data [hash: id->DPlugin]
@@ -225,6 +225,7 @@ class Core:
     def plugin_process_is_dead_error_handler(self, dplug):
         """
         Error handler for a dead plugin process
+
         :param dplug: Plugin which is dead
         :type dplug: DPlugin
         :return:
@@ -238,6 +239,7 @@ class Core:
         """
         callback function for check_alive status timer
         handles sending events to processes and checking their answer
+
         :return:
         """
         self.log.printText(2,'check alive')
@@ -260,6 +262,7 @@ class Core:
     def update_meta_data_to_gui(self,pl_id):
         """
         On call this function will send the meta information of pl_id to GUI
+
         :param pl_id: id of plugin with new meta information
         :return:
         """
@@ -292,6 +295,7 @@ class Core:
         """
         This function should be called, when there is a new_data event for changing a parameter value
         This function will change the value in DCore and update this information to GUI via meta update
+
         :param plugin: Plugin which owns the parameter
         :type plugin: DPlugin
         :param parameter_name: Name of the parameter which value should be changed
@@ -314,6 +318,7 @@ class Core:
     def __process_event__(self,event):
         """
         Initial stage of event processing, dividing to event type
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -324,6 +329,7 @@ class Core:
     def __process_status_event__(self,event):
         """
         First stage of event processing, deciding which status_event this is
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -333,6 +339,7 @@ class Core:
     def __process_data_event__(self,event):
         """
         First stage of event processing, deciding which data_event this is
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -342,6 +349,7 @@ class Core:
     def __process_instr_event__(self,event):
         """
         First stage of event processing, deciding which instr_event this is
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -352,6 +360,7 @@ class Core:
     def __process_start_successfull__(self,event):
         """
         Process start_successfull event
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -370,6 +379,7 @@ class Core:
     def __process_start_failed__(self,event):
         """
         Process start failed event and do error handling
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -387,6 +397,7 @@ class Core:
     def __process_alive__(self,event):
         """
         Processes alive response from processes/plugins and GUI, organising the counter
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -409,6 +420,7 @@ class Core:
     def __process_join_request__(self,event):
         """
         Process join requests of processes
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -447,6 +459,7 @@ class Core:
         """
         Process new_data event from plugins.
         Will do the routing: Subscriber/Subscription
+
         :param event: event to process
         :type event: PapiEvent
         :type tar_plug: DPlugin
@@ -515,6 +528,7 @@ class Core:
         """
         Processes create_plugin event.
         So it will create a plugin, start a process if needed, send events to GUI to create a plugin and do the pre configuration
+
         :param event:
         :param optData: optional Data Object of event
         :type event: PapiEvent
@@ -610,6 +624,7 @@ class Core:
         """
         Process stop_plugin event.
         Will send an event to destination plugin to close itself. Will lead to a join request of this plugin.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -680,6 +695,7 @@ class Core:
         Process plugin_stopped event.
         Will change plugins state and delete its parameters and blocks.
         Will update meta to gui
+
         :param event:
         :return:
         """
@@ -717,6 +733,7 @@ class Core:
         """
         This functions processes a close_programm event from GUI and
         sends events to all processes to close themselves
+
         :param event: event to process
         :type event: PapiEvent
         """
@@ -750,6 +767,7 @@ class Core:
         """
         Process subscribe_event.
         Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
@@ -796,6 +814,7 @@ class Core:
     def __process_unsubsribe__(self,event):
         """
         Process unsubscribe_event. Will try to remove a subscription from DCore
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
@@ -823,6 +842,7 @@ class Core:
     def __process_set_parameter__(self,event):
         """
         Process set_parameter event. Core will just route this event from GUI to destination plugin and update DCore
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
@@ -857,6 +877,7 @@ class Core:
         """
         Processes new_block event.
         Will try to add a new data block to a DPlugin object
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
@@ -883,6 +904,7 @@ class Core:
     def __process_new_parameter__(self,event):
         """
         Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI information
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin_sub: DPlugin
@@ -910,6 +932,7 @@ class Core:
     def __process_pause_plugin__(self, event):
         """
         Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
@@ -932,6 +955,7 @@ class Core:
     def __process_resume_plugin__(self, event):
         """
         Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.
+
         :param event: event to process
         :type event: PapiEvent
         :type dplugin: DPlugin
