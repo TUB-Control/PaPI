@@ -29,7 +29,6 @@ Stefan Ruppin
 
 __author__ = 'CK'
 
-
 from papi.plugin.base_classes.iop_base import iop_base
 
 from papi.data.DPlugin import DBlock
@@ -44,9 +43,9 @@ import os
 
 import socket
 
-
 import struct
 import json
+
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
@@ -55,54 +54,51 @@ class OptionalObject(object):
 
 
 class ORTD_UDP(iop_base):
-
     def get_plugin_configuration(self):
         config = {
             'address': {
-                    'value': '127.0.0.1',
-                    'advanced' : '1'
-                },
+                'value': '127.0.0.1',
+                'advanced': '1'
+            },
             'source_port': {
-                    'value': '20000',
-                    'advanced' : '1'
+                'value': '20000',
+                'advanced': '1'
             },
             'out_port': {
-                    'value': '20001',
-                    'advanced' : '1'
+                'value': '20001',
+                'advanced': '1'
             },
-            'Cfg_Path' : {
-                    'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
-                    'type' : 'file',
-                    'advanced' : '0'
+            'Cfg_Path': {
+                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
+                'type': 'file',
+                'advanced': '0'
             },
             'SeparateSignals': {
-                    'value' : '1',
-                    'advanced' : '1'
-
+                'value': '1',
+                'advanced': '1'
             }
-
         }
 
         return config
 
     def start_init(self, config=None):
-        print('ORTD', self.__id__, ':process id',os.getpid() )
+        print('ORTD', self.__id__, ':process id', os.getpid())
 
         # open UDP
         self.HOST = config['address']['value']
         self.SOURCE_PORT = int(config['source_port']['value'])
-        self.OUT_PORT =  int(config['out_port']['value'])
+        self.OUT_PORT = int(config['out_port']['value'])
         self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_parameter.setblocking(1)
-        
+
         # Load protocol config.
         path = config['Cfg_Path']['value']
         f = open(path, 'r')
         self.ProtocolConfig = json.load(f)
-        
+
         self.Sources = self.ProtocolConfig['SourcesConfig']
         self.Parameters = self.ProtocolConfig['ParametersConfig']
 
@@ -112,7 +108,7 @@ class ORTD_UDP(iop_base):
         # Register signals
 
 
-        if self.separate ==1:
+        if self.separate == 1:
 
             self.blocks = {}
 
@@ -121,7 +117,7 @@ class ORTD_UDP(iop_base):
             keys.sort()
             for key in keys:
                 Source = self.Sources[key]
-                self.blocks[int(key)] = DBlock(None,1,2,'SourceGroup'+str(key),['t',Source['SourceName']])
+                self.blocks[int(key)] = DBlock(None, 1, 2, 'SourceGroup' + str(key), ['t', Source['SourceName']])
 
             self.send_new_block_list(list(self.blocks.values()))
 
@@ -133,9 +129,9 @@ class ORTD_UDP(iop_base):
 
             for key in keys:
                 Source = self.Sources[key]
-                names.append( Source['SourceName'] )
+                names.append(Source['SourceName'])
 
-            self.block1 = DBlock(None,1,2,'SourceGroup0',names)
+            self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
             self.send_new_block_list([self.block1])
 
 
@@ -148,7 +144,7 @@ class ORTD_UDP(iop_base):
             para_name = Para['ParameterName']
             val_count = Para['NValues']
             opt_object = OptionalObject(Pid, val_count)
-            Parameter = DParameter('',para_name,0,0, OptionalObject=opt_object)
+            Parameter = DParameter('', para_name, 0, 0, OptionalObject=opt_object)
             self.Parameter_List.append(Parameter)
 
         self.send_new_parameter_list(self.Parameter_List)
@@ -157,15 +153,14 @@ class ORTD_UDP(iop_base):
 
         self.set_event_trigger_mode(True)
 
-
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_recv.bind( (self.HOST, self.SOURCE_PORT) )
+        self.sock_recv.bind((self.HOST, self.SOURCE_PORT))
         self.sock_recv.settimeout(1)
 
         self.thread_goOn = True
         self.lock = threading.Lock()
-        #self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
-        self.thread = threading.Thread(target=self.thread_execute )
+        # self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
+        self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
         return True
@@ -178,7 +173,7 @@ class ORTD_UDP(iop_base):
 
     def resume(self):
         self.thread_goOn = True
-        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.SOURCE_PORT) )
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT))
         self.thread.start()
 
     def thread_execute(self):
@@ -189,7 +184,7 @@ class ORTD_UDP(iop_base):
             try:
                 rev = self.sock_recv.recv(1600)
             except socket.timeout:
-                #print('timeout')
+                # print('timeout')
                 pass
             except socket.error:
                 print('ORTD got socket error')
@@ -198,7 +193,7 @@ class ORTD_UDP(iop_base):
                 SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
                 if SourceId == -1:
                     # unpack group ID
-                    GroupId = struct.unpack_from('<i', rev, 3*4)[0]
+                    GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
                     self.t += 1.0
 
                     keys = list(signal_values.keys())
@@ -206,16 +201,16 @@ class ORTD_UDP(iop_base):
 
                     if self.separate == 1:
                         for key in keys:
-                            #signals_to_send.append(signal_values[key])
+                            # signals_to_send.append(signal_values[key])
                             Source = self.Sources[str(key)]
                             NValues = int(Source['NValues_send'])
                             n = len(signal_values[key])
-                            t = np.linspace(self.t,self.t+1-1/NValues,NValues)
+                            t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
                             # flush data to papi
                             self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
                     else:
                         signals_to_send = []
-                        for  key in keys:
+                        for key in keys:
                             signals_to_send.append(signal_values[key])
 
                         self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
@@ -232,7 +227,7 @@ class ORTD_UDP(iop_base):
                     for i in range(NValues):
                         # TODO: why try except?
                         try:
-                            val.append(struct.unpack_from('<d', rev, 3*4 + i*8)[0])
+                            val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
                         except:
                             val.append(0)
 
@@ -245,7 +240,7 @@ class ORTD_UDP(iop_base):
         # Thread ended
         self.sock_recv.close()
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name=None):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
@@ -254,7 +249,7 @@ class ORTD_UDP(iop_base):
                 Pid = para.OptionalObject.ORTD_par_id
                 Counter = 111
                 data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT) )
+                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
