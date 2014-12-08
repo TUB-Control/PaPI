@@ -12,6 +12,11 @@ PaPI is based on a strong plugin architecture. Therefore it is easy to expand to
 
 PaPi will make heavily use of multi-core systems.
 
+Installation
+------
+coming soon!
+
+
 Documentation
 ------
 
