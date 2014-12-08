@@ -859,8 +859,9 @@ class Core:
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
 
-            para = parameters[opt.parameter_alias]
-            if para is not None:
+
+            if opt.parameter_alias in parameters:
+                para = parameters[opt.parameter_alias]
                 para.value = opt.data
                 # route the event to the destination plugin queue
                 dplugin.queue.put(event)
