@@ -266,12 +266,7 @@ class PlotPerformance(vip_base):
                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
                 self.__plotWidget__.addItem(self.__vertical_line__)
-            else:
 
-                print(self.__plotWidget__.addItem(self.__vertical_line__))
-                print(self.__plotWidget__.listDataItems())
-                print(self.__vertical_line__)
-                #self.__plotWidget__.removeItem(self.__vertical_line__)
 
 
         if name == 'color':
