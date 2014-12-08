@@ -33,6 +33,8 @@ from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP
 
 import copy
 
+from papi.gui.plugin_api import Plugin_api
+
 import papi.error_codes as ERROR
 
 import papi.event as Event
@@ -256,7 +258,8 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.plugin_identifier = plugin_identifier
             dplugin.startup_config = config
             # call the init function of plugin and set queues and id
-            dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, None)
+            api = Plugin_api(self.gui_data,self.core_queue,self.gui_id, uname + ' API:')
+            dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api)
 
             # call the plugin developers init function with config
             if dplugin.plugin.start_init(copy.deepcopy(config)) is True:

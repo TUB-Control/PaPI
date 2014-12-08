@@ -49,12 +49,12 @@ class Gui_api(QtCore.QObject):
 
     resize_gui = QtCore.Signal(int, int)
 
-    def __init__(self, gui_data, core_queue, gui_id):
+    def __init__(self, gui_data, core_queue, gui_id, LOG_IDENT = GUI_PROCESS_CONSOLE_IDENTIFIER):
         super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
         self.core_queue = core_queue
-        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
+        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, LOG_IDENT)
         self.gui_size_width = None
         self.gui_size_height = None
 
