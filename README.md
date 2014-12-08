@@ -1,4 +1,4 @@
-PaPI
+PaPI v. 0.6
 ==================
 
 Plugin based Process Interaction
