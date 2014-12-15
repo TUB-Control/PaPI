@@ -33,7 +33,6 @@ import pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-import numpy as np
 
 import collections
 import re
