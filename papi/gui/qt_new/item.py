@@ -104,12 +104,12 @@ class PaPIRootItem(QStandardItem):
         return None
 
     def clean(self):
-        '''
+        """
         This function is called to remove all rows which contain an item marked as 'deleted'.
         This only works with items having an state-attribute e.g. DPlugin.
-        :return:
-        '''
 
+        :return:
+        """
         for row in range(self.rowCount()):
             treeItem = self.child(row)
             if treeItem is not None:
@@ -117,6 +117,20 @@ class PaPIRootItem(QStandardItem):
                 if hasattr(item, 'state'):
                     if item.state == 'deleted':
                         self.removeRow(row)
+
+    def hasItem(self, sItem):
+        """
+        Used to check if an item is already part of this Tree
+
+        :param sItem: Searched for this item
+        :return:
+        """
+        for row in range(self.rowCount()):
+            treeItem = self.child(row)
+            if treeItem is not None:
+                item = treeItem.data(Qt.UserRole)
+                if item == sItem:
+                    return True
 
 # ------------------------------------
 # Model Objects
