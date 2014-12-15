@@ -84,6 +84,11 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api)
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
+
 
     def pluginItemChanged(self, index):
         item = self.pluginTree.model().data(index, Qt.UserRole)

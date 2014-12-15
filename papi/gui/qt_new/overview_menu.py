@@ -692,3 +692,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.gui_api.do_set_parameter(dplugin.id, dparameter.name, dparameter.value)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()

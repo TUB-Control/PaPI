@@ -49,6 +49,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.configuration_inputs = {}
         self.gui_api = gui_api
 
+
     def set_plugin(self, plugin):
         startup_config = plugin.plugin_object.get_startup_configuration()
         self.cfg = startup_config
@@ -198,9 +199,10 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         # self.configuration_inputs['uname'].setFocus()
 
     def keyPressEvent(self, event):
-        print(event)
-        if event == Qt.Key_Enter:
-            print('pressed enter')
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+           self.accept()
+        if event.key() == Qt.Key_Escape:
+            self.close()
 
     def clear_layout(self, layout):
         while layout.count():
