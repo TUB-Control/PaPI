@@ -88,6 +88,8 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         if event.key() == Qt.Key_Escape:
             self.close()
 
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+           self.show_create_plugin_dialog()
 
 
     def pluginItemChanged(self, index):
@@ -144,3 +146,4 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()
+
