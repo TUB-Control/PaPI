@@ -43,7 +43,7 @@ from papi.ConsoleLog            import ConsoleLog
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH
 
-from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER
+from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
@@ -225,20 +225,36 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
     def load_triggered(self):
 
-        fileName = QFileDialog.getOpenFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.last_config = fileName[0]
-            self.gui_api.do_load_xml(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.last_config = fileNames[0]
+                self.gui_api.do_load_xml(fileNames[0])
 
     def save_triggered(self):
 
-        fileName = QFileDialog.getSaveFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.gui_api.do_save_xml_config(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.gui_api.do_save_xml_config(fileNames[0])
 
     def save_triggered_thread(self):
         QtCore.QTimer.singleShot(0, self.save_triggered)

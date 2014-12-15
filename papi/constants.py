@@ -92,6 +92,8 @@ PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '
 PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
 
 # CONFIG/PROFILE SYSTEM CONSTANTS
+
+CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
 CONFIG_LOADER_SUBCRIBE_DELAY    = 1000 # ms

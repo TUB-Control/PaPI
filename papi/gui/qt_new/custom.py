@@ -29,7 +29,7 @@ Sven Knuth
 __author__ = 'knuths'
 
 from PySide.QtGui import QLineEdit, QFileDialog
-
+import os
 
 class FileLineEdit(QLineEdit):
     def __init__(self):
@@ -41,8 +41,19 @@ class FileLineEdit(QLineEdit):
         self.file_type = type
 
     def mousePressEvent(self, event):
-        filename = QFileDialog.getOpenFileName(self,
-            self.tr("File"), "./", self.tr(self.file_type))
 
-        if len(filename[0]) > 0:
-            self.setText(filename[0])
+        fileNames = ''
+
+        path, file = os.path.split(self.text())
+
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr(self.file_type))
+        dialog.setDirectory(path)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.setText(fileNames[0])
