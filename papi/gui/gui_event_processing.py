@@ -197,6 +197,7 @@ class GuiEventProcessing(QtCore.QObject):
             try:
                 dplugin.plugin.quit()
                 dplugin.state = PLUGIN_STATE_STOPPED
+                self.removed_dplugin.emit(dplugin)
                 self.dgui_changed.emit()
             except Exception as E:
                 tb = traceback.format_exc()
@@ -209,6 +210,7 @@ class GuiEventProcessing(QtCore.QObject):
             try:
                 if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
                     dplugin.state = PLUGIN_STATE_START_SUCCESFUL
+                    self.added_dplugin.emit(dplugin)
                 else:
                     dplugin.state = PLUGIN_STATE_START_FAILED
             except Exception as E:
@@ -278,17 +280,25 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.startup_config = config
             # call the init function of plugin and set queues and id
             api = Plugin_api(self.gui_data,self.core_queue,self.gui_id, uname + ' API:')
-            dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api)
+
 
             # call the plugin developers init function with config
-            if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
-                #start succcessfull
-                self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
-            else:
-                self.core_queue.put( Event.status.StartFailed(dplugin.id, 0, None))
+            try:
+                dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api)
+                if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
+                    #start succcessfull
+                    self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
+                else:
+                    self.core_queue.put( Event.status.StartFailed(dplugin.id, 0, None))
 
-            # first set meta to plugin (meta infos in plugin)
-            dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+                # first set meta to plugin (meta infos in plugin)
+                dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+
+            except Exception as E:
+                tb = traceback.format_exc()
+                self.plugin_died.emit(dplugin, E, tb)
+
+
 
             # debug print
             self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')

@@ -196,6 +196,7 @@ class sinPage(QtGui.QWizardPage):
         #QtGui.QWizardPage.registerField("uname",uname_edit)
 
 
+
         layout = QtGui.QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(uname_label)

@@ -302,7 +302,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         dplugin.state = PLUGIN_STATE_PAUSE
 
-        self.gui_api.do_stopReset_plugin_uname(dplugin.id)
+        self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
         errMsg = QtGui.QErrorMessage(self)
         errMsg.setFixedWidth(650)
