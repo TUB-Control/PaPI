@@ -1,4 +1,4 @@
-<PaPiConfig Date="2014-12-15 17:40:52" PaPI_version="v_0.6">
+<PaPiConfig Date="2014-12-15 17:53:33" PaPI_version="v_0.6">
   <Size h="800" w="800" />
-  <Background image="bg.png" />
+  <Background image="/home/control/PycharmProjects/PaPI/bg.png" />
 </PaPiConfig>

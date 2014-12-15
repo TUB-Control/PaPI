@@ -143,6 +143,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionRunMode.triggered.connect(self.toggle_run_mode)
 
+        self.actionSetBackground.triggered.connect(self.set_background_for_gui)
+
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -200,6 +202,24 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.buttonCreateSubscription.setText('')
         # self.buttonShowLicence.setText('')
         # self.buttonShowOverview.setText('')
+
+    def set_background_for_gui(self):
+        fileNames = ''
+
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        #dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                path = fileNames[0]
+                pixmap  = QtGui.QPixmap(path)
+                self.gui_api.gui_bg_path = path
+                self.widgetArea.setBackground(pixmap)
 
     def update_background(self, path):
         pixmap  = QtGui.QPixmap(path)
