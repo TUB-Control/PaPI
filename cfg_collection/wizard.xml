@@ -1,0 +1,29 @@
+<PaPiConfig Date="2014-12-15 14:47:35" PaPI_version="v_0.6">
+  <Size h="800" w="800" />
+  <Plugin uname="WizardExample">
+    <Identifier>WizardExample</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>WizardExample</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>

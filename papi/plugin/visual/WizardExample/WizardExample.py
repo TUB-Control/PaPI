@@ -6,46 +6,59 @@ Copyright (C) 2014 Technische Universität Berlin,
 Fakultät IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
-
+ 
 This file is part of PaPI.
-
+ 
 PaPI is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
+ 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
-
+ 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
-
+ 
 Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
-
-from PySide.QtGui import QMdiSubWindow
-import pyqtgraph as pq
+__author__ = 'control'
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
-
-import collections
-import re
-
-from pyqtgraph.Qt import QtGui, QtCore
+from PySide.QtGui import QMdiSubWindow
+from pyqtgraph.Qt import QtCore, QtGui
 
 
-class PlotPerformance(vip_base):
+class WizardExample(vip_base):
+
+    def createIntroPage(self):
+        page = QtGui.QWizardPage()
+        page.setTitle("Introduction")
+
+        label = QtGui.QLabel("This wizard will show you a simple wizard.")
+        label.setWordWrap(True)
+
+        label2 = QtGui.QLabel("Therefore it will create a sinus plugin, a plot and connect these two.")
+        label2.setWordWrap(True)
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+        layout.addWidget(label2)
+
+
+        page.setLayout(layout)
+        return page
+
+
 
 
     def initiate_layer_0(self, config=None):
 
-#        self.config = config
+        #self.config = config
 
         # ---------------------------
         # Read configuration
@@ -65,11 +78,17 @@ class PlotPerformance(vip_base):
         # --------------------------------
         # Create Widget needed for this plugin
 
-        #self.plotWidget = pq.PlotWidget()
+        self.wizardwidget = QtGui.QWizard()
+        self.wizardwidget.addPage(self.createIntroPage())
+        self.wizardwidget.addPage(sinPage(self.control_api))
+        self.wizardwidget.addPage(plotPage(self.control_api))
+        self.wizardwidget.addPage(connectPage(self.control_api,'WizardExample'))
+
+
 
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
-        #self.set_widget_for_internal_usage( self.plotWidget )
+        self.set_widget_for_internal_usage( self.wizardwidget )
 
         # ---------------------------
         # Create Parameters
@@ -156,3 +175,91 @@ class PlotPerformance(vip_base):
 
         #dplugin_info = self.dplugin_info
         pass
+
+
+
+
+
+# CLASS FOR SINUS CREATION PAGE
+class sinPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Create the SINUS")
+        self.control_api = controlAPI
+        label = QtGui.QLabel("Now you should enter a uname for the Sinus.")
+        label.setWordWrap(True)
+
+        uname_label = QtGui.QLabel("Uname of Sinus (wird aber nicht benutzt)")
+        self.uname_edit = QtGui.QLineEdit()
+        uname_label.setBuddy(self.uname_edit)
+
+        #QtGui.QWizardPage.registerField("uname",uname_edit)
+
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+        layout.addWidget(uname_label)
+        layout.addWidget(self.uname_edit)
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        print('uname from wizzard',self.uname_edit.text())
+        self.control_api.do_create_plugin('Sinus','Sin1' , {}, True)
+        return True
+
+
+# CLASS FOR PLOT CREATION PAGE
+class plotPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Create the Plot")
+        self.control_api = controlAPI
+        label = QtGui.QLabel("This page will create a plot.")
+        label.setWordWrap(True)
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        cfg = {
+            'size': {
+                'value': "(300,300)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+            },
+            'position': {
+                'value': "(400,100)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine position: (x,y)'
+            }}
+
+        self.control_api.do_create_plugin('Plot','Plot1' , cfg, True)
+        return True
+
+
+# CLASS FOR SUB OF BOTH PLUGINS
+class connectPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,name,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Connect the Plot")
+        self.control_api = controlAPI
+        self.uname = name
+        label = QtGui.QLabel("This page connect plot and sinus.")
+        label.setWordWrap(True)
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',signal_index=[2])
+        self.control_api.do_delete_plugin_uname(self.uname)
+        return True

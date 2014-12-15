@@ -251,6 +251,7 @@ class Plot(vip_base):
             self.__plotWidget__.showGrid(x=value == '1')
 
         if name == 'y-grid':
+
             self.config['y-grid']['value'] = value
             self.__plotWidget__.showGrid(y=value == '1')
 
@@ -267,8 +268,6 @@ class Plot(vip_base):
                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
                 self.__plotWidget__.addItem(self.__vertical_line__)
-
-
 
         if name == 'color':
             self.config['color']['value'] = value

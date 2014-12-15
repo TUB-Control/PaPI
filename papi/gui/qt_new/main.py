@@ -41,14 +41,15 @@ from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
+    PLUGIN_STATE_PAUSE
 
-from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER
+from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
 import pyqtgraph as pg
-from pyqtgraph import QtCore
+from pyqtgraph import QtCore, QtGui
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
@@ -77,10 +78,14 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
         self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
         self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
+        self.gui_event_processing.plugin_died.connect(self.plugin_died)
 
         self.gui_api.resize_gui.connect(self.resize_gui_window)
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
+
+
+        self.gui_api.set_bg_gui.connect(self.update_background)
 
         # set GUI size
         size = self.size()
@@ -104,6 +109,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.last_config = None
+        self.in_run_mode = False
 
         # -------------------------------------
         # Create placeholder
@@ -134,6 +140,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionResetPaPI.triggered.connect(self.reset_papi)
         self.actionReloadConfig.triggered.connect(self.reload_config)
+
+        self.actionRunMode.triggered.connect(self.toggle_run_mode)
+
+        self.actionSetBackground.triggered.connect(self.set_background_for_gui)
+
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -192,6 +203,28 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.buttonShowLicence.setText('')
         # self.buttonShowOverview.setText('')
 
+    def set_background_for_gui(self):
+        fileNames = ''
+
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        #dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                path = fileNames[0]
+                pixmap  = QtGui.QPixmap(path)
+                self.gui_api.gui_bg_path = path
+                self.widgetArea.setBackground(pixmap)
+
+    def update_background(self, path):
+        pixmap  = QtGui.QPixmap(path)
+        self.widgetArea.setBackground(pixmap)
+
 
     def run(self):
         # create a timer and set interval for processing events with working loop
@@ -225,20 +258,36 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
     def load_triggered(self):
 
-        fileName = QFileDialog.getOpenFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.last_config = fileName[0]
-            self.gui_api.do_load_xml(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.last_config = fileNames[0]
+                self.gui_api.do_load_xml(fileNames[0])
 
     def save_triggered(self):
 
-        fileName = QFileDialog.getSaveFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.gui_api.do_save_xml_config(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.gui_api.do_save_xml_config(fileNames[0])
 
     def save_triggered_thread(self):
         QtCore.QTimer.singleShot(0, self.save_triggered)
@@ -279,6 +328,36 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def changed_dgui(self):
         if self.overview_menu is not None:
             self.overview_menu.refresh_action()
+
+    def plugin_died(self, dplugin, e, msg):
+
+        dplugin.state = PLUGIN_STATE_PAUSE
+
+        self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
+
+        errMsg = QtGui.QErrorMessage(self)
+        errMsg.setFixedWidth(650)
+        errMsg.setWindowTitle("Error in" + dplugin.uname + " // " + str(e))
+        errMsg.showMessage(str(msg))
+
+    def toggle_run_mode(self):
+        if self.in_run_mode:
+            self.in_run_mode = False
+            self.loadButton.show()
+            self.saveButton.show()
+            self.menubar.setHidden(False)
+
+        elif not self.in_run_mode:
+            self.in_run_mode = True
+
+            self.loadButton.hide()
+            self.saveButton.hide()
+            self.menubar.hide()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            if self.in_run_mode:
+                self.toggle_run_mode()
 
     def resize_gui_window(self, w, h):
 
