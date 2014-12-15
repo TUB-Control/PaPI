@@ -1,0 +1,177 @@
+<PaPiConfig Date="2014-11-17 10:59:28" PaPI_version="v_0.1">
+  <Size h="800" w="800" />
+  <Plugin uname="PlotPerf">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(0,0)</value>
+      </Parameter>
+      <Parameter Name="show_grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PlotPerf</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,300)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Sinus</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>x-grid</data_source>
+        <block Name="Click_Event">
+          <alias>X-Grid</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>y-grid</data_source>
+        <block Name="Click_Event">
+          <alias>y-Grid</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Sinus">
+    <Identifier>Sinus</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>Sinus</value>
+      </Parameter>
+      <Parameter Name="f">
+        <regex>\d+.{0,1}\d*</regex>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="amax">
+        <regex>[0-9]+</regex>
+        <value>3</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="x-grid">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="low">
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>x-grid</value>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(307,80)</value>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>x-grid</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(123,56)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="y-grid">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="low">
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>y-grid</value>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(306,6)</value>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>y-grid</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(124,57)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Sin">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="low">
+        <value>0.1</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(460,279)</value>
+      </Parameter>
+      <Parameter Name="up">
+        <value>0.9</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Sin</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(246,67)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>

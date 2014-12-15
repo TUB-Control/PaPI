@@ -25,6 +25,14 @@ papi.ConsoleLog module
     :undoc-members:
     :show-inheritance:
 
+papi.DebugOut module
+--------------------
+
+.. automodule:: papi.DebugOut
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.PapiEvent module
 ---------------------
 

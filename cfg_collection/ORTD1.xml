@@ -1,0 +1,229 @@
+<PaPiConfig Date="2014-12-08 16:29:11" PaPI_version="v_0.6">
+  <Size h="668" w="804" />
+  <Plugin uname="Plo1">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(781,263)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <type>bool</type>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>(\d+)</regex>
+        <value>514</value>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plo1</value>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <regex>(\d+)</regex>
+        <value>1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="rolling">1</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="buffersize">514</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTD1</data_source>
+        <block Name="SourceGroup0">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Button123</data_source>
+        <block Name="Click_Event">
+          <alias>rolling</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plot2">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(783,294)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(1,262)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>True</advanced>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <type>bool</type>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>(\d+)</regex>
+        <value>50</value>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot2</value>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <regex>(\d+)</regex>
+        <value>1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="buffersize">50</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTD1</data_source>
+        <block Name="SourceGroup0">
+          <alias />
+          <Signal>3</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="ORTD1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="Cfg_Path">
+        <type>File</type>
+        <value>/home/control/software/PaPI_EMGTest/ProtocollConfig.json</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ORTD1</value>
+      </Parameter>
+      <Parameter Name="source_port">
+        <value>20000</value>
+      </Parameter>
+      <Parameter Name="SeparateSignals">
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <value>20001</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="WindowShift">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Button123">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(142,65)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(321,238)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+        <advanced>0</advanced>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Button123</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+        <advanced>0</advanced>
+      </Parameter>
+      <Parameter Name="low">
+        <value>0</value>
+        <advanced>0</advanced>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>

@@ -1,0 +1,118 @@
+<PaPiConfig Date="2014-11-10 15:11:39" PaPI_version="v_0.1">
+  <Size h="808" w="848" />
+  <Plugin uname="Four1">
+    <Identifier>Fourier_Rect</Identifier>
+    <StartConfig>
+      <Parameter Name="port">
+        <value>9999</value>
+        <regex>\d{1,5}</regex>
+      </Parameter>
+      <Parameter Name="host">
+        <value>130.149.155.73</value>
+        <regex>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Fourier</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Four1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="PlotOLD">
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="timewindow">
+        <value>1000</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PlotOLD</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="sampleinterval">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Add1</data_source>
+        <block Name="AddOut1">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Add1">
+    <Identifier>Add</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>Add1</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Four1</data_source>
+        <block Name="Rect1">
+          <alias />
+          <Signal>1</Signal>
+          <Signal>2</Signal>
+          <Signal>3</Signal>
+          <Signal>4</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="HDD">
+    <Identifier>ToHDD_CSV</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>HDD</value>
+      </Parameter>
+      <Parameter Name="file">
+        <value>log1</value>
+      </Parameter>
+      <Parameter Name="log-type">
+        <value>1</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="delimiter">
+        <value> </value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Add1</data_source>
+        <block Name="AddOut1">
+          <alias />
+          <Signal>1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+</PaPiConfig>

@@ -28,14 +28,6 @@ papi.gui.gui_event_processing module
     :undoc-members:
     :show-inheritance:
 
-papi.gui.plugin_api module
---------------------------
-
-.. automodule:: papi.gui.plugin_api
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------
