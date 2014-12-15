@@ -106,6 +106,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.last_config = None
+        self.in_run_mode = False
 
         # -------------------------------------
         # Create placeholder
@@ -136,6 +137,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionResetPaPI.triggered.connect(self.reset_papi)
         self.actionReloadConfig.triggered.connect(self.reload_config)
+
+        self.actionRunMode.triggered.connect(self.toggle_run_mode)
+
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -309,6 +313,24 @@ class GUI(QMainWindow, Ui_QtNewMain):
         errMsg.setWindowTitle("Error in" + dplugin.uname + " // " + str(e))
         errMsg.showMessage(str(msg))
 
+    def toggle_run_mode(self):
+        if self.in_run_mode:
+            self.in_run_mode = False
+            self.loadButton.show()
+            self.saveButton.show()
+            self.menubar.setHidden(False)
+
+        elif not self.in_run_mode:
+            self.in_run_mode = True
+
+            self.loadButton.hide()
+            self.saveButton.hide()
+            self.menubar.hide()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            if self.in_run_mode:
+                self.toggle_run_mode()
 
     def resize_gui_window(self, w, h):
 

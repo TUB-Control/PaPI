@@ -598,14 +598,18 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if new_dplugin is not None:
             plugin_item = DPluginTreeItem(new_dplugin)
             if new_dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                self.visual_root.appendRow(plugin_item)
+                if not self.visual_root.hasItem(new_dplugin):
+                    self.visual_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_IOP_IDENTIFIER:
-                plugin_item = DPluginTreeItem(new_dplugin)
-                self.io_root.appendRow(plugin_item)
+                if not self.io_root.hasItem(new_dplugin):
+#                plugin_item = DPluginTreeItem(new_dplugin)
+                    self.io_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
-                self.dpp_root.appendRow(plugin_item)
+                if not self.dpp_root.hasItem(new_dplugin):
+                    self.dpp_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
-                self.pcp_root.appendRow(plugin_item)
+                if not self.pcp_root.hasItem(new_dplugin):
+                    self.pcp_root.appendRow(plugin_item)
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
         """
