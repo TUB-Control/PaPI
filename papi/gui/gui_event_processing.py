@@ -32,6 +32,7 @@ from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP
     PLUGIN_STATE_START_FAILED
 
 import copy
+import traceback
 
 from papi.gui.plugin_api import Plugin_api
 
@@ -59,6 +60,7 @@ class GuiEventProcessing(QtCore.QObject):
     added_dplugin = QtCore.Signal(DPlugin)
     removed_dplugin = QtCore.Signal(DPlugin)
     dgui_changed = QtCore.Signal()
+    plugin_died = QtCore.Signal(DPlugin, Exception, str)
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue):
         super(GuiEventProcessing, self).__init__()
@@ -119,7 +121,6 @@ class GuiEventProcessing(QtCore.QObject):
                 else:
                     self.process_event[op](event)
 
-
         # after the loop ended, which means that there are no more new events, a new timer will be created to start
         # this method again in a specific time
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_working(close_mock))
@@ -148,10 +149,16 @@ class GuiEventProcessing(QtCore.QObject):
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
                 if dplugin.state != PLUGIN_STATE_PAUSE and dplugin.state != PLUGIN_STATE_STOPPED:
                     # check if new_data is a parameter or new raw data
-                    if opt.is_parameter is False:
-                        dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
-                    else:
-                        dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+                    try:
+                        if opt.is_parameter is False:
+                            dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                        else:
+                            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+                    except Exception as E:
+                        tb = traceback.format_exc()
+
+                        self.plugin_died.emit(dplugin, E, tb)
+
             else:
                 # plugin does not exist in DGUI
                 self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
@@ -170,7 +177,11 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
         if dplugin is not None:
             if dplugin.own_process is False:
-                dplugin.plugin.quit()
+                try:
+                    dplugin.plugin.quit()
+                except Exception as E:
+                    tb = traceback.format_exc()
+                    self.plugin_died.emit(dplugin, E, tb)
 
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
             self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
@@ -183,18 +194,26 @@ class GuiEventProcessing(QtCore.QObject):
         id = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
-            dplugin.plugin.quit()
-            dplugin.state = PLUGIN_STATE_STOPPED
-            self.dgui_changed.emit()
+            try:
+                dplugin.plugin.quit()
+                dplugin.state = PLUGIN_STATE_STOPPED
+                self.dgui_changed.emit()
+            except Exception as E:
+                tb = traceback.format_exc()
+                self.plugin_died.emit(dplugin, E, tb)
 
     def process_start_plugin(self, event):
         id = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
-            if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
-                dplugin.state = PLUGIN_STATE_START_SUCCESFUL
-            else:
-                dplugin.state = PLUGIN_STATE_START_FAILED
+            try:
+                if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
+                    dplugin.state = PLUGIN_STATE_START_SUCCESFUL
+                else:
+                    dplugin.state = PLUGIN_STATE_START_FAILED
+            except Exception as E:
+                tb = traceback.format_exc()
+                self.plugin_died.emit(dplugin, E, tb)
 
             self.dgui_changed.emit()
 
