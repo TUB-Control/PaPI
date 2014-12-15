@@ -174,7 +174,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def plugin_item_changed(self, index):
         """
         Used to display all known information for a DPlugin which is
-        accessible in the pluginTree by index.
+        accessible in the pluginTree by its index.
         :param index: Current selected index
         :return:
         """
@@ -232,7 +232,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             self.bModel.appendRow(block_item)
 
             # -------------------------
-            # Add Signals
+            # Add Signals of this DBlock
             # -------------------------
 
             signal_names = dblock.get_signals()
@@ -243,9 +243,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                     signal_item = PaPITreeItem(signal_index, signal_name)
                     block_item.appendRow(signal_item)
 
-            # -------------------------
-            # Add Subscribers
-            # -------------------------
+            # ----------------------------------
+            # Add Subscribers of this DBlock
+            # ----------------------------------
 
             subscriber_ids = dblock.get_subscribers()
 
@@ -260,12 +260,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.subscriberModel.appendRow(subscriber_item)
 
         # -------------------------
-        # Add Subscriptions
+        # Add all Subscriptions
+        # for this plugin
         # -------------------------
 
         dplugin_sub_ids = dplugin.get_subscribtions()
 
         for dplugin_sub_id in dplugin_sub_ids:
+
 
             dblock_names = dplugin_sub_ids[dplugin_sub_id]
             dplugin_sub = self.gui_api.gui_data.get_dplugin_by_id(dplugin_sub_id)
@@ -653,6 +655,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             self.stopButton.setDisabled(False)
 
     def pause_button_callback(self):
+        """
+        Function pause_button_callback
+
+        :return:
+        """
         index = self.pluginTree.currentIndex()
         item = self.pluginTree.model().data(index, Qt.UserRole)
         if item is not None:
@@ -661,6 +668,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             self.gui_api.do_pause_plugin_by_id(item.id)
 
     def stop_start_button_callback(self):
+        """
+        Function stop_start_button_callback
+
+        :return:
+        """
         index = self.pluginTree.currentIndex()
         item = self.pluginTree.model().data(index, Qt.UserRole)
         if item is not None:

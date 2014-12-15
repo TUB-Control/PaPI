@@ -1,0 +1,9 @@
+[Core]
+Name = Plot
+Module = Plot
+
+[Documentation]
+Author = S.R., S.K.
+Version = 0.7
+Website =
+Description = Basic plotting plugin. Supports more than one signals which must have the same time vector.

@@ -42,7 +42,7 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 from pyqtgraph.Qt import QtCore
 
 
-class PlotPerformance(vip_base):
+class Plot(vip_base):
     """
     style_codes:
             0 : QtCore.Qt.SolidLine,
@@ -60,7 +60,7 @@ class PlotPerformance(vip_base):
     """
 
     def __init__(self):
-        super(PlotPerformance, self).__init__()
+        super(Plot, self).__init__()
         """
         Function init
 
@@ -91,6 +91,7 @@ class PlotPerformance(vip_base):
         self.__legend__ = None
         self.__text_item__ = None
         self.__vertical_line__ = None
+        self.__offset_line__ = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -317,9 +318,7 @@ class PlotPerformance(vip_base):
 
         if self.__rolling_plot__:
             self.__append_at__ += self.__new_added_data__ / self.__downsampling_rate__
-
-            if len(tdata) > 2:
-                self.__append_at__ %= len(tdata)
+            self.__append_at__ %= len(tdata)
 
         # --------------------------
         # iterate over all buffers
@@ -329,7 +328,7 @@ class PlotPerformance(vip_base):
 
             if self.__rolling_plot__:
                 data = np.roll(data, int(self.__append_at__))
-                self.__vertical_line__.setValue(tdata[int(self.__append_at__)-2]+1)
+                self.__vertical_line__.setValue(tdata[int(self.__append_at__)-1])
             else:
                 self.__vertical_line__.setValue(tdata[0])
 
