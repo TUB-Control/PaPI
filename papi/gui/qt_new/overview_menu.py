@@ -284,7 +284,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 signals = subscription.get_signals()
 
                 for signal in signals:
-                    signal_item = QStandardItem(str(signal))
+                    signal_name = dblock_sub.get_signal_name(signal)
+
+                    signal_item = QStandardItem(str(signal_name))
+
                     dblock_sub_item.appendRow(signal_item)
 
         # --------------------------
