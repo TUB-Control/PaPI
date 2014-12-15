@@ -1,0 +1,5 @@
+ {"SourcesConfig" : {
+ "0" : { "SourceName" : "X" , "NValues_send" : "1", "datatype" : "257"  } , "1" : { "SourceName" : "V" , "NValues_send" : "1", "datatype" : "257"  } } , 
+ "ParametersConfig" : {
+ "0" : { "ParameterName" : "Oscillator input" , "NValues" : "1", "datatype" : "257"  } , "1" : { "ParameterName" : "A vectorial parameter" , "NValues" : "10", "datatype" : "257"  } , "2" : { "ParameterName" : "Test" , "NValues" : "2", "datatype" : "257"  } }
+}

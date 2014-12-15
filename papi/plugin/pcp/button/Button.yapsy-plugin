@@ -1,0 +1,9 @@
+[Core]
+Name = Button
+Module = Button
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website = www
+Description = simple button for parameters
