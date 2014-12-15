@@ -32,88 +32,6 @@ from papi.plugin.base_classes.vip_base import vip_base
 from PySide.QtGui import QMdiSubWindow
 from pyqtgraph.Qt import QtCore, QtGui
 
-class sinPage(QtGui.QWizardPage):
-    def __init__(self, controlAPI,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
-        self.setTitle("Create the SINUS")
-        self.control_api = controlAPI
-        label = QtGui.QLabel("Now you should enter a uname for the Sinus.")
-        label.setWordWrap(True)
-
-        uname_label = QtGui.QLabel("Uname of Sinus (wird aber nicht benutzt)")
-        self.uname_edit = QtGui.QLineEdit()
-        uname_label.setBuddy(self.uname_edit)
-
-        #QtGui.QWizardPage.registerField("uname",uname_edit)
-
-
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(label)
-        layout.addWidget(uname_label)
-        layout.addWidget(self.uname_edit)
-
-        self.setLayout(layout)
-
-    def validatePage(self):
-        print('uname from wizzard',self.uname_edit.text())
-        self.control_api.do_create_plugin('Sinus','Sin1' , {}, True)
-        return True
-
-class plotPage(QtGui.QWizardPage):
-    def __init__(self, controlAPI,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
-        self.setTitle("Create the Plot")
-        self.control_api = controlAPI
-        label = QtGui.QLabel("This page will create a plot.")
-        label.setWordWrap(True)
-
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(label)
-
-
-        self.setLayout(layout)
-
-    def validatePage(self):
-        cfg = {
-            'size': {
-                'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine size: (height,width)'
-            },
-            'position': {
-                'value': "(400,100)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine position: (x,y)'
-            }}
-
-        self.control_api.do_create_plugin('Plot','Plot1' , cfg, True)
-        return True
-
-class connectPage(QtGui.QWizardPage):
-    def __init__(self, controlAPI,name,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
-        self.setTitle("Connect the Plot")
-        self.control_api = controlAPI
-        self.uname = name
-        label = QtGui.QLabel("This page connect plot and sinus.")
-        label.setWordWrap(True)
-
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(label)
-
-
-        self.setLayout(layout)
-
-    def validatePage(self):
-        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',signal_index=[2])
-        self.control_api.do_delete_plugin_uname(self.uname)
-        return True
-
-
-
-
 
 class WizardExample(vip_base):
 
@@ -257,3 +175,91 @@ class WizardExample(vip_base):
 
         #dplugin_info = self.dplugin_info
         pass
+
+
+
+
+
+# CLASS FOR SINUS CREATION PAGE
+class sinPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Create the SINUS")
+        self.control_api = controlAPI
+        label = QtGui.QLabel("Now you should enter a uname for the Sinus.")
+        label.setWordWrap(True)
+
+        uname_label = QtGui.QLabel("Uname of Sinus (wird aber nicht benutzt)")
+        self.uname_edit = QtGui.QLineEdit()
+        uname_label.setBuddy(self.uname_edit)
+
+        #QtGui.QWizardPage.registerField("uname",uname_edit)
+
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+        layout.addWidget(uname_label)
+        layout.addWidget(self.uname_edit)
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        print('uname from wizzard',self.uname_edit.text())
+        self.control_api.do_create_plugin('Sinus','Sin1' , {}, True)
+        return True
+
+
+# CLASS FOR PLOT CREATION PAGE
+class plotPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Create the Plot")
+        self.control_api = controlAPI
+        label = QtGui.QLabel("This page will create a plot.")
+        label.setWordWrap(True)
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        cfg = {
+            'size': {
+                'value': "(300,300)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+            },
+            'position': {
+                'value': "(400,100)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine position: (x,y)'
+            }}
+
+        self.control_api.do_create_plugin('Plot','Plot1' , cfg, True)
+        return True
+
+
+# CLASS FOR SUB OF BOTH PLUGINS
+class connectPage(QtGui.QWizardPage):
+    def __init__(self, controlAPI,name,parent = None):
+        QtGui.QWizardPage.__init__(self, parent)
+        self.setTitle("Connect the Plot")
+        self.control_api = controlAPI
+        self.uname = name
+        label = QtGui.QLabel("This page connect plot and sinus.")
+        label.setWordWrap(True)
+
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(label)
+
+
+        self.setLayout(layout)
+
+    def validatePage(self):
+        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',signal_index=[2])
+        self.control_api.do_delete_plugin_uname(self.uname)
+        return True
