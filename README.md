@@ -14,7 +14,10 @@ PaPi will make heavily use of multi-core systems.
 
 Installation
 ------
-coming soon!
+Basic installation on Ubuntu 14.04 64Bit
+
+sudo apt-get install git
+
 
 
 Documentation
