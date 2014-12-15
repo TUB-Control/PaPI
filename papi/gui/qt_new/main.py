@@ -84,6 +84,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
+
+        self.gui_api.set_bg_gui.connect(self.update_background)
+
         # set GUI size
         size = self.size()
         self.gui_api.gui_size_height    = size.height()
@@ -193,6 +196,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.buttonCreateSubscription.setText('')
         # self.buttonShowLicence.setText('')
         # self.buttonShowOverview.setText('')
+
+    def update_background(self, path):
+        pixmap  = QtGui.QPixmap(path)
+        self.widgetArea.setBackground(pixmap)
 
 
     def run(self):
