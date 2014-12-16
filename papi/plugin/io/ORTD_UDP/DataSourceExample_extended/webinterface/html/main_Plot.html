@@ -1,0 +1,365 @@
+<html>
+<head>
+
+
+
+    <div id="Plot"></div>
+
+    <script src = "/socket.io/socket.io.js" > </script>
+    <script type=text/javascript src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v5.0.1.min.js"></script>
+
+    <script defer="defer">
+/*
+   Create plot
+*/
+
+
+
+  function VectorPlotClass(container, Heigh, Width, Ny) {
+      this.container = container;
+      this.Ny = Ny; this.Width = Width; this.Heigh = Heigh;
+
+      this.stage = new Kinetic.Stage({
+        container: this.container,
+        width: this.Width,
+        height: this.Heigh
+      });
+
+      this.layer = new Kinetic.Layer();
+
+
+      // complex dashed and dotted line
+
+      var lp=[], i;
+      for (i = 0; i < this.Ny; i++) {
+        Y = this.Heigh/2 + 0*i*2; X=(this.Width/(1.0*this.Ny)) * i;
+        lp[2*i] = X;
+        lp[2*i + 1] = Y;
+      }
+//       console.log(lp);
+      this.blueLine = new Kinetic.Line({
+//        points: [73, 70, 340, 23, 450, 60, 500, 20],
+        points: lp,
+        stroke: 'green',
+        strokeWidth: 3,
+        lineCap: 'round',
+        lineJoin: 'round'
+
+      });
+
+   
+      this.layer.add(this.blueLine);
+      this.stage.add(this.layer);
+      
+       this.PlotDraw = PlotDraw;
+       function PlotDraw(Values, ofs, scale) {
+              var i;
+              for (i = 0; i < this.Ny; ++i) {
+                Y_norm = -scale*(Values[i]+ofs); Y = Y_norm * ( this.Heigh / 2 ) + this.Heigh / 2;
+		this.blueLine.points()[  i*2+1 ] = Y;
+              }
+              this.layer.draw();
+       }
+
+  }
+
+  function VectorPlotClass2(container, Heigh, Width, Ny, Depth) {
+      this.container = container;
+      this.Ny = Ny; this.Width = Width; this.Heigh = Heigh; this.Depth = Depth;
+
+      this.stage = new Kinetic.Stage({
+        container: this.container,
+        width: this.Width,
+        height: this.Heigh
+      });
+
+      this.layer = new Kinetic.Layer();
+
+
+      // complex dashed and dotted line
+
+      var i;
+//       console.log(lp);
+
+      // create a number of lines
+      this.lines = [];
+      for (i=0; i<this.Depth; ++i) {
+
+	var lp=[], j;
+	for (j = 0; j < this.Ny; j++) {
+	  Y = this.Heigh/2 + 0*j*2; X=(this.Width/(1.0*this.Ny)) * j;
+	  lp[2*j] = X;
+	  lp[2*j + 1] = Y;
+	}
+
+
+	this.lines[i] = new Kinetic.Line({
+  //        points: [73, 70, 340, 23, 450, 60, 500, 20],
+	  points: lp,
+	  stroke: 'green',
+	  strokeWidth: 3,
+	  lineCap: 'round',
+	  lineJoin: 'round'
+
+	});
+
+        this.layer.add(this.lines[i]);
+      }
+
+      this.stage.add(this.layer);
+      this.LineRoundCounter = 0;
+
+   
+      
+       this.PlotDraw = PlotDraw;
+       function PlotDraw(Values, ofs, scale) {
+// console.log('-------------');
+
+              if (this.LineRoundCounter == this.Depth) {
+                 this.LineRoundCounter = 0;
+              }
+
+//    console.log(this.LineRoundCounter);
+
+              var i, tmp1;
+              for (i = 0; i < this.Ny; ++i) {
+                Y_norm = -scale*(Values[i]+ofs); Y = Y_norm * ( this.Heigh / 2 ) + this.Heigh / 2;
+ 		this.lines[this.LineRoundCounter].points()[  i*2+1 ] = Y;
+// 		this.lines[0].points()[  i*2+1 ] = Y;
+              }
+
+
+
+
+              var j = this.LineRoundCounter;
+              for (i=0; i<this.Depth; ++i) {
+		if (j == -1) {
+		  j = this.Depth-1;
+		}
+// console.log(j);                 
+//                   console.log(this.lines[0]);   
+                    //this.lines[j].colorKey =  'FF3377'; // (i+1) / 2;
+                tmp1 = (1.0*i/this.Depth) * 180 ;
+// tmp1 = 200;
+
+//  console.log('aktuell ' + this.LineRoundCounter + 'j=' + j + ' bekommt ' + tmp1);
+
+                this.lines[j].stroke('rgb('+ tmp1 + ',' +  tmp1  + ',' + tmp1 + ')');
+// this.lines[j].strokeWidth = (6-i);
+     
+                j--;
+              }
+
+              this.layer.draw();
+              this.LineRoundCounter++;
+       }
+
+  }
+
+
+	function GetParameterID(ParametersConfig, ParameterName)
+	{
+	  var P = ParametersConfig;
+	  for (key in P) {
+	    if (P[key].ParameterName == ParameterName) {
+	      return key;
+	    }    
+	  }
+	  return -1;
+	}
+
+	function GetSourceID(SourcesConfig, SourceName)
+	{
+	  var P = SourcesConfig;
+	  for (key in P) {
+	    if (P[key].SourceName == SourceName) {
+	      return key;
+	    }    
+	  }
+	  return -1;
+	}
+
+
+/*
+   User defined code
+*/
+
+
+  var Plot, PlotSid;
+
+  function initSelfDefined(ProtocollConfig) {
+    PlotSid = GetSourceID(ProtocollConfig.SourcesConfig, 'X');
+    Plot_Nx = ProtocollConfig.SourcesConfig[PlotSid].NValues_send;
+    
+    console.log(PlotSid); console.log('Plot_Nx' + Plot_Nx);
+
+    //Plot = new VectorPlotClass('Plot', 300, 700,  Plot_Nx);
+    Plot = new VectorPlotClass2('Plot', 300, 700,  Plot_Nx+1, 6);
+  }
+
+  function DataAvailableSelfDefined(SourceID, Values) {
+            // 
+            if (SourceID == PlotSid) {
+              scale = 0.3; ofs =  0;
+              Plot.PlotDraw([Values[0], Values[0]], ofs, scale);
+            }
+   }
+
+
+  // if ==1 then the automatically created displays are updated
+  var UpdateAutoDisplays = 0;
+
+
+/*
+   End of user defined code
+*/
+
+        var ProtocollConfig;
+        var socket = io.connect();
+       
+
+
+	// console.log(  GetParameterID(ProtocollConfig.ParametersConfig, "Parameter2") );
+
+
+        socket.on('ProtocollConfig', function (ProtocollConfig__) { 
+          // received the protocoll definition
+          ProtocollConfig = ProtocollConfig__;
+          
+          // Set-up the Displays for all Sources
+          var htmlcode;
+
+          // Creates a Display for each source
+          SourcesConfig = ProtocollConfig.SourcesConfig;
+          for (key in SourcesConfig) {
+            try {
+              htmlcode = htmlcode  + '<br><br><strong>Source Name</strong> ' + SourcesConfig[key].SourceName + '<br>';
+              htmlcode = htmlcode  + '<strong>Data:</strong> <div id="Display' + key  + '">--</div>'
+            } catch (err) { ; }
+            
+            htmlcode = htmlcode + ' <br><br> ';
+          }
+          
+          document.getElementById('Displays').innerHTML = htmlcode;
+
+          
+          // Creates a ... for each parameter
+          ParametersConfig = ProtocollConfig.ParametersConfig;
+          htmlcode = '';
+          for (key in ParametersConfig) {
+            try {
+              ParameterName = ParametersConfig[key].ParameterName;
+              
+              htmlcode = htmlcode  + '<br><br><strong>Parameter Name</strong> ' + ParameterName + '<br>';
+              htmlcode = htmlcode  + '<strong>Elements:</strong><br> '
+              
+              var i;
+              for (i=0; i< ParametersConfig[key].NValues; ++i) {
+               // htmlcode = htmlcode  + 'e' + i + '<br>';
+                htmlcode = htmlcode + '<input id="' + ParameterName + '_' + i + '" type="text" size="20" maxlength="20" value="0.00"><br>';
+
+              }
+              
+            } catch (err) { ; }
+            
+            htmlcode = htmlcode + '<input type="button" id="UploadParameters" value="Upload Parameters" onClick="UploadParameters('+key+');">';
+            
+            htmlcode = htmlcode + ' <br><br> ';
+
+            console.log(htmlcode);
+          }
+          
+//           htmlcode = JSON.stringify(ParametersConfig  );
+          
+          document.getElementById('Parameters').innerHTML = htmlcode;          
+          
+          // display the protocoll definition
+          htmlcode = JSON.stringify( ProtocollConfig );
+          document.getElementById('ProtocollConfiguration').innerHTML = htmlcode;
+
+          // Call user definable function
+          initSelfDefined(ProtocollConfig);
+        });
+        
+	// wait for new signal-samples
+	socket.on('Update', function (data) {
+	    //console.log(data);
+	    
+	    // get configuration
+	    NValues = ProtocollConfig.SourcesConfig[data.SourceID].NValues_send;	     
+	    Values = data.Data;
+	    
+            DataAvailableSelfDefined(data.SourceID, Values);
+
+            if (UpdateAutoDisplays == 1) {
+	      // Update the display for this source. Compose html code for the Display to print the data
+	      var htmlcode, i;
+	      htmlcode = '#'+NValues+'<br>';
+	      for (i=0; i<NValues; ++i) {
+		htmlcode = htmlcode + i + ' = '+Values[i]+'<br>';	      
+	      }
+	      
+	      document.getElementById('Display'+data.SourceID).innerHTML = htmlcode;
+            }
+	});
+
+
+    function UploadParameters(ParameterID){
+      // update parameters button was clicked; send parameters
+      
+      console.log(ParameterID);
+      
+      ParametersConfig = ProtocollConfig.ParametersConfig;
+      ParameterName = ParametersConfig[ParameterID].ParameterName;
+      
+      ParSet = new Array();
+      
+              var i;
+              for (i=0; i< ParametersConfig[ParameterID].NValues; ++i) {
+               // htmlcode = htmlcode  + 'e' + i + '<br>';
+                htmlid = ParameterName + '_' + i;
+                var p1 = document.getElementById(htmlid).value;
+                var p1_float = parseFloat(p1.replace(",", ".")); ParSet[i] = p1_float;
+
+              }
+      
+//       var p1 = document.getElementById('Parameter1').value;
+//       var p1_float = parseFloat(p1.replace(",", ".")); ParSet[0] = p1_float;
+
+
+      socket.emit('ChangeParam_Set', [ParameterID, ParSet] );
+    }
+
+
+
+
+
+
+    </script>
+</head> 
+ 
+<body>
+    <strong>GUI-interface to ORTD-simulation</strong>
+
+  <br><br>
+
+  
+  <strong>Parameters:</strong> <div id="Parameters">0</div>
+  
+  <strong>Displays:</strong> <div id="Displays">0</div>
+
+
+
+
+  <strong>ProtocollConfiguration:</strong> <div id="ProtocollConfiguration">0</div>
+  <br><br>
+
+
+
+
+
+
+</body>
+</html>
