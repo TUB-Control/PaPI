@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
 <PaPiConfig Date="2014-11-10 15:11:39" PaPI_version="v_0.1">
   <Size h="808" w="848" />
   <Plugin uname="Four1">
@@ -22,27 +23,93 @@
     <Subscriptions />
   </Plugin>
   <Plugin uname="PlotOLD">
-    <Identifier>PlotPerformance</Identifier>
+=======
+<PaPiConfig Date="2014-11-22 16:19:00" PaPI_version="v_0.1">
+  <Size h="748" w="800" />
+  <Plugin uname="o">
+    <Identifier>ORTD_UDP</Identifier>
     <StartConfig>
-      <Parameter Name="timewindow">
-        <value>1000</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="source_port">
+        <value>20000</value>
       </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <value>20001</value>
+      </Parameter>
+      <Parameter Name="Cfg_Path">
+        <value>plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
       </Parameter>
       <Parameter Name="uname">
+        <value>o</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Test">0</Parameter>
+      <Parameter Name="Oscillator input">1.0</Parameter>
+      <Parameter Name="A vectorial parameter">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>button</data_source>
+        <block Name="Click_Event">
+          <alias>Oscillator input</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="plot">
+>>>>>>> Stashed changes:papi/testcfg.xml
+    <Identifier>PlotPerformance</Identifier>
+    <StartConfig>
+      <Parameter Name="position">
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
+        <value>(0,0)</value>
+=======
+>>>>>>> Stashed changes:papi/testcfg.xml
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(25,16)</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Plot_Plugin</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="uname">
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
         <value>PlotOLD</value>
+=======
+        <value>plot</value>
+>>>>>>> Stashed changes:papi/testcfg.xml
       </Parameter>
       <Parameter Name="label_x">
-        <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
       </Parameter>
       <Parameter Name="size">
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
         <value>(300,300)</value>
+=======
+>>>>>>> Stashed changes:papi/testcfg.xml
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(685,357)</value>
       </Parameter>
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
       <Parameter Name="label_y">
         <value>amplitude, V</value>
         <regex>\w+,\s+\w+</regex>
@@ -53,19 +120,33 @@
       <Parameter Name="sampleinterval">
         <value>1</value>
         <regex>[0-9]+</regex>
+=======
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+>>>>>>> Stashed changes:papi/testcfg.xml
       </Parameter>
     </StartConfig>
-    <PreviousParameters />
+    <PreviousParameters>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+    </PreviousParameters>
     <Subscriptions>
       <Subscription>
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
         <data_source>Add1</data_source>
         <block Name="AddOut1">
+=======
+        <data_source>o</data_source>
+        <block Name="SourceGroup0">
+>>>>>>> Stashed changes:papi/testcfg.xml
           <alias />
-          <Signal>1</Signal>
+          <Signal>2</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
+<<<<<<< Updated upstream:cfg_collection/FourCfg.xml
   <Plugin uname="Add1">
     <Identifier>Add</Identifier>
     <StartConfig>
@@ -114,5 +195,33 @@
         </block>
       </Subscription>
     </Subscriptions>
+=======
+  <Plugin uname="button">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <value>PCP_Plugin</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>button</value>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(48,400)</value>
+      </Parameter>
+      <Parameter Name="up">
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="low">
+        <value>0.1</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,136)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+>>>>>>> Stashed changes:papi/testcfg.xml
   </Plugin>
 </PaPiConfig>
