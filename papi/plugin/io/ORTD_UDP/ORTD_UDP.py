@@ -74,7 +74,7 @@ class ORTD_UDP(iop_base):
                 'advanced': '0'
             },
             'SeparateSignals': {
-                'value': '1',
+                'value': '0',
                 'advanced': '1'
             }
         }

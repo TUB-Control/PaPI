@@ -517,7 +517,7 @@ class Gui_api(QtCore.QObject):
         while self.gui_data.get_dplugin_by_uname(uname) is not None:
                 i = i+1
                 if i == 2:
-                    uname = uname + '_' +str(i)
+                    uname = uname + 'X' +str(i)
                 else:
                     uname = uname[:-1] + str(i)
         return uname
@@ -628,6 +628,7 @@ class Gui_api(QtCore.QObject):
         """
         Will check if a given name would be a valid, unique name for a plugin.
         :param name: name to check
+
         :type name: basestring
         :return: True or False
         """
@@ -639,3 +640,21 @@ class Gui_api(QtCore.QObject):
                return False
         else:
             return False
+
+
+    def do_change_string_to_be_uname(self, name):
+        """
+        This method will take a string and convert him according to some rules to be an uname
+
+        :param name: name to convert to unmae
+        :type name: basestring
+        :return: name converted to uname
+        """
+        uname = name
+
+        #TODO: get more inteligence here!
+
+        forbidden = ['_',',','.','`',' ']
+        for c in forbidden:
+            uname = uname.replace(c,'X')
+        return uname

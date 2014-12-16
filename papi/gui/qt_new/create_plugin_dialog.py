@@ -109,7 +109,9 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             if 'display_text' in startup_config['uname'].keys():
                 display_text = startup_config['uname']['display_text']
 
-            uname = self.gui_api.change_uname_to_uniqe(self.plugin_name)
+            uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
+            uname = self.gui_api.change_uname_to_uniqe(uname)
+
 
             editable_field = QLineEdit(str(value))
             editable_field.setText(uname)
