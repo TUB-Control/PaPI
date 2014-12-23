@@ -455,7 +455,7 @@ class Core:
             return -1
 
     # ------- Event processing second stage: data events ---------
-    def __process_new_data__OLD(self,event):
+    def __process_new_data__(self,event):
         """
         Process new_data event from plugins.
         Will do the routing: Subscriber/Subscription
@@ -523,7 +523,7 @@ class Core:
                 self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
 
-    def __process_new_data__(self,event):
+    def BACKUP__process_new_data__(self,event):
         """
         Process new_data event from plugins.
         Will do the routing: Subscriber/Subscription
@@ -537,6 +537,7 @@ class Core:
             # get event origin and optional parameter
             oID = event.get_originID()
             opt = event.get_optional_parameter()
+            Data = opt.data
 
             # get origin plugin from DCore
             dplug = self.core_data.get_dplugin_by_id(oID)
@@ -553,6 +554,15 @@ class Core:
                         # get plugin with sub_id and check for existence
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
+                            # demux signals
+
+
+                            subcribtions = pl.get_subscribtions()
+                            sub_object = subcribtions[oID][opt.block_name]
+                            sub_signals = sub_object.signals
+                            sub_signals.append('t')
+                            opt.data = dict([(i, Data[i]) for i in sub_signals if i in Data])
+
                             # plugin exists, check whether it is a ViP or not
                             if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
                                 # Plugin runs in GUI
