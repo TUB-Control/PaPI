@@ -14,15 +14,15 @@ PaPi will make heavily use of multi-core systems.
 
 Installation
 ------
-Basic installation on Ubuntu 14.04 64Bit, python3.4
+Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
-`sudo apt-get install git python3-pyside python3-numpy python3-scipy`
+`sudo apt-get install python3.4 git python3-pyside python3-numpy python3-scipy`
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
 
 `cd PaPI`
 
-`python3 main.py`
+`python3.4 main.py`
 
 
 Documentation
