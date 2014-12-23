@@ -28,10 +28,6 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PySide.QtGui import QStandardItem, QStandardItemModel
-# from PySide.QtCore import QStandardItemModel
-
-
 
 from PySide.QtCore import *
 from PySide.QtGui import *
@@ -47,8 +43,6 @@ class PaPITreeItem(QStandardItem):
     def __init__(self, object,  name):
         super(PaPITreeItem, self).__init__(name)
         self.object = object
-        # self.setEditable(False)
-        # self.setSelectable(False)
         self.name = name
         self.tool_tip = "Plugin: " + self.name
 
@@ -189,6 +183,7 @@ class DParameterTreeItem(PaPITreeItem):
         super(DParameterTreeItem, self).__init__(dparameter, str(dparameter.value))
         self.dparameter = dparameter
         self.setEditable(False)
+        self.tool_tip = dparameter.name
 
     def get_decoration(self):
         return None
@@ -204,7 +199,6 @@ class DBlockTreeItem(PaPITreeItem):
     def get_decoration(self):
         return None
 
-
 class DSignalTreeItem(PaPITreeItem):
     def __init__(self,  dsignal: DSignal):
         super(DSignalTreeItem, self).__init__(dsignal, dsignal.dname)
@@ -215,7 +209,6 @@ class DSignalTreeItem(PaPITreeItem):
     def get_decoration(self):
         return None
 
-
 # ------------------------------------
 # Model Custom
 # ------------------------------------
@@ -223,10 +216,11 @@ class DSignalTreeItem(PaPITreeItem):
 
 class PluginTreeModel(PaPITreeModel):
     """
-    This model is used to handle Plugin objects in TreeView create by the yapsy plugin manager.
+    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
     """
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
+
 
 class DPluginTreeModel(PaPITreeModel):
     """
