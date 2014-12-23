@@ -455,7 +455,7 @@ class Core:
             return -1
 
     # ------- Event processing second stage: data events ---------
-    def __process_new_data__(self,event):
+    def __process_new_data__OLD(self,event):
         """
         Process new_data event from plugins.
         Will do the routing: Subscriber/Subscription
@@ -512,6 +512,68 @@ class Core:
                         opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                         new_event = Event.data.NewData(oID, id_list, opt)
                         self.gui_event_queue.put(new_event)
+                    # process new_data seemed correct
+                    return 1
+                else:
+                    # block is None
+                    self.log.printText(1, 'new_data, block with name '+opt.block_name+' does not exists')
+                    return -1
+            else:
+                # Plugin of event origin does not exist in DCore of core
+                self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
+                return -1
+
+    def __process_new_data__(self,event):
+        """
+        Process new_data event from plugins.
+        Will do the routing: Subscriber/Subscription
+
+        :param event: event to process
+        :type event: PapiEvent
+        :type tar_plug: DPlugin
+        """
+        # just proceed with new_data events if GUI is still alive (indicates that program will close)
+        if self.gui_alive:
+            # get event origin and optional parameter
+            oID = event.get_originID()
+            opt = event.get_optional_parameter()
+
+            # get origin plugin from DCore
+            dplug = self.core_data.get_dplugin_by_id(oID)
+            # check for existence
+            if dplug is not None:
+                # get data block of DPlugin with block_name from event
+                block= dplug.get_dblock_by_name(opt.block_name)
+                # check for existence of block with block_name
+                if block is not None:
+                    # get subscriber list of block
+                    subscriber = block.get_subscribers()
+                    # for all subscriber in subscriber list
+                    for sub_id in subscriber:
+                        # get plugin with sub_id and check for existence
+                        pl = self.core_data.get_dplugin_by_id(sub_id)
+                        if pl is not None:
+                            # plugin exists, check whether it is a ViP or not
+                            if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                                # Plugin runs in GUI
+                                opt =  event.get_optional_parameter()
+                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                                new_event = Event.data.NewData(oID, [pl.id], opt)
+                                self.gui_event_queue.put(new_event)
+                            else:
+                                # Plugin is not running in GUI
+                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                                new_event = Event.data.NewData(oID, [pl.id], opt)
+                                pl.queue.put(new_event)
+
+                                # this event will be a new parameter value for a plugin
+                                if opt.is_parameter is True:
+                                    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                        else:
+                            # pluign with sub_id does not exist in DCore of core
+                            self.log.printText(1, 'new_data, subscriber plugin with id '+str(sub_id)+' does not exists')
+                            return -1
+
                     # process new_data seemed correct
                     return 1
                 else:
