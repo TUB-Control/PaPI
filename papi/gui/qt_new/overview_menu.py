@@ -239,6 +239,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 signal_item = DSignalTreeItem(signal)
                 block_item.appendRow(signal_item)
 
+            block_item.sortChildren(0)
+
             # ----------------------------------
             # Add Subscribers of this DBlock
             # ----------------------------------
@@ -254,6 +256,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 subscriber_item.appendRow(block_item)
 
                 self.subscriberModel.appendRow(subscriber_item)
+
 
         # -------------------------
         # Add all Subscriptions

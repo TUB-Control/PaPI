@@ -199,7 +199,6 @@ class DBlockTreeItem(PaPITreeItem):
     def get_decoration(self):
         return None
 
-
 class DSignalTreeItem(PaPITreeItem):
     def __init__(self,  dsignal: DSignal):
         super(DSignalTreeItem, self).__init__(dsignal, dsignal.dname)
@@ -209,7 +208,6 @@ class DSignalTreeItem(PaPITreeItem):
 
     def get_decoration(self):
         return None
-
 
 # ------------------------------------
 # Model Custom

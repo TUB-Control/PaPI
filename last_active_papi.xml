@@ -1,122 +1,40 @@
-<PaPiConfig Date="2014-12-23 16:38:19" PaPI_version="v_0.8">
+<PaPiConfig Date="2014-12-23 17:09:18" PaPI_version="v_0.8">
   <Size h="800" w="800" />
   <Background image="None" />
-  <Plugin uname="ORTDXUDP">
-    <Identifier>ORTD_UDP</Identifier>
-    <StartConfig>
-      <Parameter Name="SeparateSignals">
-        <advanced>1</advanced>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="out_port">
-        <advanced>1</advanced>
-        <value>20001</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ORTDXUDP</value>
-      </Parameter>
-      <Parameter Name="address">
-        <advanced>1</advanced>
-        <value>127.0.0.1</value>
-      </Parameter>
-      <Parameter Name="source_port">
-        <advanced>1</advanced>
-        <value>20000</value>
-      </Parameter>
-      <Parameter Name="Cfg_Path">
-        <type>file</type>
-        <advanced>0</advanced>
-        <value>/home/control/PycharmProjects/PaPI/papi/plugin/io/ORTD_UDP/DataSourceExample_extended/ProtocollConfig.json</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="P3">0</Parameter>
-      <Parameter Name="P2">0</Parameter>
-      <Parameter Name="A vectorial parameter">0</Parameter>
-      <Parameter Name="Test">0</Parameter>
-      <Parameter Name="P8">0</Parameter>
-      <Parameter Name="P6">0</Parameter>
-      <Parameter Name="P4">0</Parameter>
-      <Parameter Name="P9">0</Parameter>
-      <Parameter Name="Test5">0</Parameter>
-      <Parameter Name="P1">0</Parameter>
-      <Parameter Name="P7">0</Parameter>
-      <Parameter Name="Oscillator input">0.0</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Button</data_source>
-        <block Name="Click_Event">
-          <alias>Oscillator input</alias>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
   <Plugin uname="Plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="y-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
-        <display_text>Grid-Y</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <regex>^(1|0)$</regex>
-        <value>1</value>
-        <display_text>Rolling Plot</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-        <display_text>Label-X</display_text>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <value>50</value>
-        <display_text>Buffersize</display_text>
-        <advanced>1</advanced>
-      </Parameter>
       <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
         <display_text>Grid-X</display_text>
+        <value>0</value>
         <type>bool</type>
-      </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-        <display_text>Style</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-        <display_text>Color</display_text>
-        <advanced>1</advanced>
+        <regex>^(1|0)$</regex>
       </Parameter>
       <Parameter Name="downsampling_rate">
+        <value>10</value>
         <regex>(\d+)</regex>
-        <value>1</value>
       </Parameter>
-      <Parameter Name="uname">
-        <value>Plot</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(311,696)</value>
+      <Parameter Name="color">
+        <display_text>Color</display_text>
+        <value>[0 1 2 3 4]</value>
         <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-        <display_text>Label-Y</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
       </Parameter>
       <Parameter Name="name">
-        <tooltip>Used display name</tooltip>
         <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <display_text>Grid-Y</display_text>
+        <value>0</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="style">
+        <display_text>Style</display_text>
+        <value>[0 0 0 0 0]</value>
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
       </Parameter>
       <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
@@ -124,97 +42,24 @@
         <advanced>1</advanced>
         <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="rolling">1</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="buffersize">50</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>ORTDXUDP</data_source>
-        <block Name="SourceGroup0">
-          <alias />
-          <Signal>15</Signal>
-          <Signal>16</Signal>
-          <Signal>18</Signal>
-          <Signal>HalloWelt14</Signal>
-          <Signal>Sig2nal</Signal>
-          <Signal>Sign12al</Signal>
-          <Signal>Sign3al</Signal>
-          <Signal>Signal1</Signal>
-          <Signal>Signal10</Signal>
-          <Signal>Signal11</Signal>
-          <Signal>Signal19</Signal>
-          <Signal>Signal20</Signal>
-          <Signal>Signal21</Signal>
-          <Signal>Signal22</Signal>
-          <Signal>Signal5</Signal>
-          <Signal>Signal6</Signal>
-          <Signal>Signal7</Signal>
-          <Signal>Signal8</Signal>
-          <Signal>Signal9</Signal>
-          <Signal>Signal_13</Signal>
-          <Signal>Test17</Signal>
-          <Signal>_Sig4nal</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="PlotX2">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="y-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
-        <display_text>Grid-Y</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <regex>^(1|0)$</regex>
-        <value>1</value>
-        <display_text>Rolling Plot</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-        <display_text>Label-X</display_text>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <value>200</value>
-        <display_text>Buffersize</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <value>0</value>
-        <display_text>Grid-X</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-        <display_text>Style</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-        <display_text>Color</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="downsampling_rate">
-        <regex>(\d+)</regex>
-        <value>1</value>
+      <Parameter Name="label_y">
+        <display_text>Label-Y</display_text>
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
       </Parameter>
       <Parameter Name="uname">
-        <value>PlotX2</value>
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <display_text>Rolling Plot</display_text>
+        <value>0</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="label_x">
+        <display_text>Label-X</display_text>
+        <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
       </Parameter>
       <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
@@ -222,74 +67,51 @@
         <advanced>1</advanced>
         <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-        <display_text>Label-Y</display_text>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used display name</tooltip>
-        <value>VisualPlugin</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(320,0)</value>
+      <Parameter Name="buffersize">
+        <display_text>Buffersize</display_text>
+        <value>3000</value>
         <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="x-grid">0</Parameter>
       <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="rolling">1</Parameter>
+      <Parameter Name="downsampling_rate">10</Parameter>
       <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
+      <Parameter Name="rolling">0</Parameter>
       <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="buffersize">200</Parameter>
+      <Parameter Name="buffersize">3000</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>ORTDXUDP</data_source>
-        <block Name="SourceGroup0">
+        <data_source>Sinus</data_source>
+        <block Name="SinMit_f3">
           <alias />
-          <Signal>V</Signal>
-          <Signal>X</Signal>
+          <Signal>f3_1</Signal>
+          <Signal>f3_2</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Button">
-    <Identifier>Button</Identifier>
+  <Plugin uname="Sinus">
+    <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="low">
-        <value>0</value>
-        <advanced>0</advanced>
-      </Parameter>
       <Parameter Name="uname">
-        <value>Button</value>
+        <value>Sinus</value>
       </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(127,58)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
       </Parameter>
-      <Parameter Name="name">
-        <value>Button</value>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="up">
-        <value>0.5</value>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(311,305)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
+      <Parameter Name="amax">
+        <value>3</value>
+        <regex>[0-9]+</regex>
       </Parameter>
     </StartConfig>
-    <PreviousParameters />
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
+    </PreviousParameters>
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
