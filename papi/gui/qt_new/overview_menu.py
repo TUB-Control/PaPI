@@ -415,6 +415,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         :return:
         """
         index = self.subscriptionsTree.indexAt(position)
+        isSignal = False
+        menu = None
+        action = None
 
         # ----------------------------------
         # Open no context menu if invalid
@@ -442,22 +445,27 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # ----------------------------------
 
         if not index.child(0, 0).isValid():
-            return None
+            isSignal = True
 
         # ----------------------------------
         # Get necessary objects for this subscription
         # ----------------------------------
 
-        dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
-        dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
+        if not isSignal:
+            dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
+            dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
+            action = QAction('Remove Subscriber', self)
+        else:
+            action = QAction('Remove Signal', self)
+            dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
+            dplugin = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
+
 
         # ----------------------------------
         # Create context menu
         # ----------------------------------
 
         menu = QMenu()
-
-        action = QAction('Remove Subscriber', self)
         menu.addAction(action)
 
         action.triggered.connect(lambda p=dblock, m=dplugin: self.cancel_subscription_action(m, p))
