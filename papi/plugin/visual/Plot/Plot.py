@@ -468,7 +468,6 @@ class Plot(vip_base):
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
                 for signal in subscription.get_signals():
-#                    signal_name = dblocksub.dblock.get_signal_name(signal)
                     current_signals.append(signal)
 
         # Add missing buffers

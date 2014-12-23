@@ -235,14 +235,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # Add Signals of this DBlock
             # -------------------------
 
-            # signal_names = dblock.get_signals()
-            #
-            # for signal_index in range(len(signal_names)):
-            #     if signal_index != 0:
-            #         signal_name = signal_names[signal_index]
-            #         signal_item = PaPITreeItem(signal_index, signal_name)
-            #         block_item.appendRow(signal_item)
-
             for signal in dblock.get_signals():
                 signal_item = DSignalTreeItem(signal)
                 block_item.appendRow(signal_item)
@@ -274,6 +266,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
 
             dblock_names = dplugin_sub_ids[dplugin_sub_id]
+
             dplugin_sub = self.gui_api.gui_data.get_dplugin_by_id(dplugin_sub_id)
             dplugin_sub_item = DPluginTreeItem(dplugin_sub)
             self.subscriptionModel.appendRow(dplugin_sub_item)
@@ -286,14 +279,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
                 subscription = dblock_names[dblock_name]
 
-                # signals = subscription.get_signals()
-                #
-                # for signal in signals:
-                #     signal_name = dblock_sub.get_signal_name(signal)
-                #
-                #     signal_item = QStandardItem(str(signal_name))
-                #
-                #     dblock_sub_item.appendRow(signal_item)
+                for signal_uname in subscription.get_signals():
+
+                    signal_item = QStandardItem(signal_uname)
+
+                    dblock_sub_item.appendRow(signal_item)
 
         # --------------------------
         # Add DParameters
@@ -313,6 +303,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # http://srinikom.github.io/pyside-docs/PySide/QtGui/QAbstractItemView.html \
         # #PySide.QtGui.PySide.QtGui.QAbstractItemView.SelectionMode
         self.blockTree.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+        # Sort Models
+        self.bModel.sort(0)
+        self.dparameterModel.sort(0)
 
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
