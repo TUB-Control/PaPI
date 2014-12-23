@@ -96,32 +96,29 @@ class DBlock(DObject):
             return True
         return False
 
+    def get_subscribers(self):
+        """
+        :return:
+        :rtype []:
+        """
+        return copy.deepcopy(self.subscribers)
+
+    def get_signals(self):
+        """
+        DEPRECATED
+
+        Returns a copy of the internal signal names
+        :return:
+        """
+        return copy.deepcopy(self.signals)
+
+
     #NOT NEEDED ANYMORE !!!
     def get_signal_name(self, signal: int):
         """
         DEPRECATED
 
         :param signal:
-        :return:
-        """
-        raise NotImplementedError("Stop Using this function.")
-
-    #NOT NEEDED ANYMORE !!!
-    def get_subscribers(self):
-        """
-        DEPRECATED
-
-        :return:
-        :rtype []:
-        """
-        raise NotImplementedError("Stop Using this function.")
-
-    #NOT NEEDED ANYMORE !!!
-    def get_signals(self):
-        """
-        DEPRECATED
-
-        Returns a copy of the internal signal names
         :return:
         """
         raise NotImplementedError("Stop Using this function.")
