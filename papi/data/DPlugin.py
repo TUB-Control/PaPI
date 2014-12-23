@@ -36,19 +36,12 @@ import copy
 
 class DBlock(DObject):
 
-    def __init__(self, dplugin_id, count, freq,name, signal_names_internal=None, signal_types=None):
+    def __init__(self, name):
         super(DObject, self).__init__()
-        self.signals_count = count
-        self.freq = freq
-        self.subscribers = {}
-        self.dplugin_id = dplugin_id
-        self.name = name
-        self.singal_types = signal_types
 
-        if signal_names_internal is not None:
-            self.signal_names_internal = signal_names_internal
-        else:
-            self.signal_names_internal = []
+        self.subscribers = {}
+        self.dplugin_id = None
+        self.name = name
 
     def add_subscribers(self, dplugin):
         """
@@ -76,21 +69,33 @@ class DBlock(DObject):
         else:
             return False
 
+    #NOT NEEDED ANYMORE !!!
     def get_signal_name(self, signal: int):
+        """
+        DEPRECATED
+
+        :param signal:
+        :return:
+        """
         if signal > len(self.signal_names_internal):
             return None
         return self.signal_names_internal[signal]
 
+    #NOT NEEDED ANYMORE !!!
     def get_subscribers(self):
         """
+        DEPRECATED
 
         :return:
         :rtype []:
         """
         return self.subscribers.copy().values()
 
+    #NOT NEEDED ANYMORE !!!
     def get_signals(self):
         """
+        DEPRECATED
+
         Returns a copy of the internal signal names
         :return:
         """
