@@ -115,10 +115,13 @@ class ORTD_UDP(iop_base):
 
             # sort hash keys for usage in right order!
             keys = list(self.Sources.keys())
-            keys.sort()
+            #keys.sort()
             for key in keys:
                 Source = self.Sources[key]
-                self.blocks[int(key)] = DBlock(None, 1, 2, 'SourceGroup' + str(key), ['t', Source['SourceName']])
+                block = DBlock('SourceGroup' + str(key))
+                block.add_signal(DSignal(Source['SourceName']))
+                self.blocks[int(key)] = block
+
 
             self.send_new_block_list(list(self.blocks.values()))
 
@@ -210,7 +213,8 @@ class ORTD_UDP(iop_base):
                             n = len(signal_values[key])
                             t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
                             # flush data to papi
-                            self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
+                            sig_name = self.Sources[str(key)]['SourceName']
+                            self.send_new_data(self.blocks[key].name, t, {sig_name:signal_values[key]})
                     else:
                         signals_to_send = {}
                         for key in keys:
