@@ -36,6 +36,8 @@ from PySide.QtGui import QStandardItem, QStandardItemModel
 from PySide.QtCore import *
 from PySide.QtGui import *
 from papi.data.DPlugin import *
+from papi.data.DSignal import DSignal
+
 # ------------------------------------
 # Item Object
 # ------------------------------------
@@ -201,6 +203,18 @@ class DBlockTreeItem(PaPITreeItem):
 
     def get_decoration(self):
         return None
+
+
+class DSignalTreeItem(PaPITreeItem):
+    def __init__(self,  dsignal: DSignal):
+        super(DSignalTreeItem, self).__init__(dsignal, dsignal.dname)
+        self.dsignal = dsignal
+        self.setSelectable(False)
+        self.setEditable(False)
+
+    def get_decoration(self):
+        return None
+
 
 # ------------------------------------
 # Model Custom

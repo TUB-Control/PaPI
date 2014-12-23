@@ -74,8 +74,8 @@ class TestDCore(unittest.TestCase):
         d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+        d_bl_1 = DBlock('Block_1')
+        d_bl_2 = DBlock('Block_2')
 
         #assign dblocks to DPlugin d_pl_1
         d_pl_1.add_dblock(d_bl_1)
@@ -138,8 +138,8 @@ class TestDCore(unittest.TestCase):
         d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+        d_bl_1 = DBlock('Block_1')
+        d_bl_2 = DBlock('Block_2')
 
 
         #assign dblocks to DPlugin d_pl_1
@@ -160,8 +160,8 @@ class TestDCore(unittest.TestCase):
         d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+        d_bl_1 = DBlock('Block_1')
+        d_bl_2 = DBlock('Block_2')
 
 
         #assign dblocks to DPlugin d_pl_1
@@ -185,8 +185,8 @@ class TestDCore(unittest.TestCase):
         d_pl_2 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
         d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+        d_bl_1 = DBlock('Block_1')
+        d_bl_2 = DBlock('Block_2')
 
         #assign dblocks to DPlugin d_pl_1
         d_pl_1.add_dblock(d_bl_1)
@@ -217,8 +217,8 @@ class TestDCore(unittest.TestCase):
         d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block_1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block_2')
+        d_bl_1 = DBlock('Block_1')
+        d_bl_2 = DBlock('Block_2')
 
         #assign dblocks to DPlugin d_pl_1
         d_pl_1.add_dblock(d_bl_1)
@@ -246,8 +246,8 @@ class TestDCore(unittest.TestCase):
         d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block2')
+        d_bl_1 = DBlock('Block1')
+        d_bl_2 = DBlock('Block2')
 
         #assign dblocks to DPlugin d_pl_1
         d_pl_1.add_dblock(d_bl_1)
@@ -292,8 +292,8 @@ class TestDCore(unittest.TestCase):
         d_pl_3 = self.dcore.add_plugin(None, 1, None, None, None, self.dcore.create_id())
 
         #Create dblocks
-        d_bl_1 = DBlock(None, 0, 0, 'Block1')
-        d_bl_2 = DBlock(None, 0, 0, 'Block2')
+        d_bl_1 = DBlock('Block1')
+        d_bl_2 = DBlock('Block2')
 
         #assign dblocks to DPlugin d_pl_1
         d_pl_1.add_dblock(d_bl_1)

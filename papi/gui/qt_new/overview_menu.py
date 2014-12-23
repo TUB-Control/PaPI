@@ -30,7 +30,7 @@ __author__ = 'knuths'
 
 from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
-from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
+from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
@@ -235,13 +235,17 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # Add Signals of this DBlock
             # -------------------------
 
-            signal_names = dblock.get_signals()
+            # signal_names = dblock.get_signals()
+            #
+            # for signal_index in range(len(signal_names)):
+            #     if signal_index != 0:
+            #         signal_name = signal_names[signal_index]
+            #         signal_item = PaPITreeItem(signal_index, signal_name)
+            #         block_item.appendRow(signal_item)
 
-            for signal_index in range(len(signal_names)):
-                if signal_index != 0:
-                    signal_name = signal_names[signal_index]
-                    signal_item = PaPITreeItem(signal_index, signal_name)
-                    block_item.appendRow(signal_item)
+            for signal in dblock.get_signals():
+                signal_item = DSignalTreeItem(signal)
+                block_item.appendRow(signal_item)
 
             # ----------------------------------
             # Add Subscribers of this DBlock
@@ -281,14 +285,15 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 dplugin_sub_item.appendRow(dblock_sub_item)
 
                 subscription = dblock_names[dblock_name]
-                signals = subscription.get_signals()
 
-                for signal in signals:
-                    signal_name = dblock_sub.get_signal_name(signal)
-
-                    signal_item = QStandardItem(str(signal_name))
-
-                    dblock_sub_item.appendRow(signal_item)
+                # signals = subscription.get_signals()
+                #
+                # for signal in signals:
+                #     signal_name = dblock_sub.get_signal_name(signal)
+                #
+                #     signal_item = QStandardItem(str(signal_name))
+                #
+                #     dblock_sub_item.appendRow(signal_item)
 
         # --------------------------
         # Add DParameters
@@ -541,8 +546,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         for index in indexes:
             if index.isValid():
-                signal_index = self.blockTree.model().data(index, Qt.UserRole)
-                signals.append(signal_index)
+                signal = self.blockTree.model().data(index, Qt.UserRole)
+                signals.append(signal.uname)
 
         index_dblock = index.parent()
 
@@ -551,6 +556,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         index = self.pluginTree.currentIndex()
 
         dplugin_source = self.pluginTree.model().data(index, Qt.UserRole)
+
 
         self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
 
