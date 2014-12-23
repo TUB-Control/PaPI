@@ -456,17 +456,20 @@ class Plot(vip_base):
 
         :return:
         """
+
         subscriptions = self.dplugin_info.get_subscribtions()
 
         current_signals = []
 
         for dpluginsub_id in subscriptions:
             for dblock_name in subscriptions[dpluginsub_id]:
-                dblocksub = subscriptions[dpluginsub_id][dblock_name]
 
-                for signal in dblocksub.get_signals():
-                    signal_name = dblocksub.dblock.get_signal_name(signal)
-                    current_signals.append(signal_name)
+                # get subscription for dblock
+                subscription = subscriptions[dpluginsub_id][dblock_name]
+
+                for signal in subscription.get_signals():
+#                    signal_name = dblocksub.dblock.get_signal_name(signal)
+                    current_signals.append(signal)
 
         # Add missing buffers
         for signal_name in current_signals:
