@@ -45,6 +45,7 @@ class DBlock(DObject):
 
     def add_subscribers(self, dplugin):
         """
+        Add dplugin as subscriber for this dblock.
 
         :param dplugin:
         :return:
@@ -58,6 +59,7 @@ class DBlock(DObject):
 
     def rm_subscriber(self, dplugin):
         """
+        Remove dplugin as subscriber of this dblock.
 
         :param dplugin:
         :return:
@@ -68,6 +70,12 @@ class DBlock(DObject):
             return True
         else:
             return False
+
+    def add_signal(self, signal):
+        pass
+
+    def rm_signal(self, signal):
+        pass
 
     #NOT NEEDED ANYMORE !!!
     def get_signal_name(self, signal: int):
@@ -363,6 +371,7 @@ class DSubscription(DObject):
         if signal in self.signals:
             self.signals.remove(signal)
             return True
+
 
         return False
 
