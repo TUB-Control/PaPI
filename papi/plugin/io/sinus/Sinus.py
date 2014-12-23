@@ -27,6 +27,8 @@ Stefan Ruppin
 """
 
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
+
 from papi.data.DParameter import DParameter
 from papi.plugin.base_classes.iop_base import iop_base
 
@@ -43,14 +45,15 @@ class Sinus(iop_base):
         self.f = float(config['f']['value'])
 
 
-        block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
-        #block1 = self.create_new_block('SinMit_f1', ['t', 'f1_1'], ['numpy_array', 'numpy_array'], 100)
-        block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
-        block3 = DBlock(None,1,10,'SinMit_f3',['t','f3_1','f3_2', 'Scalar'], ['numpy_vec', 'numpy_vec', 'int'] )
+        self.block1 = DBlock('SinMit_f1',['t','f1_1'])
+        #signal =
 
-        block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
 
-        self.send_new_block_list([block1, block2, block3])
+        self.block2 = DBlock('SinMit_f2',['t','f2_1'])
+        self.block3 = DBlock('SinMit_f3',['t','f3_1','f3_2', 'Scalar'], ['numpy_vec', 'numpy_vec', 'int'] )
+        #self.block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
+
+        self.send_new_block_list([self.block1, self.block2, self.block3])
 
         self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1, Regex='[0-9]+.[0-9]+')
         self.para3.id = 1
