@@ -42,6 +42,7 @@ class DBlock(DObject):
         self.subscribers = {}
         self.dplugin_id = None
         self.name = name
+        self.signals = []
 
     def add_subscribers(self, dplugin):
         """
@@ -72,10 +73,28 @@ class DBlock(DObject):
             return False
 
     def add_signal(self, signal):
-        pass
+        """
+        Add Signal for this DBlock
+
+        :param signal:
+        :return:
+        """
+        if signal not in self.signals:
+            self.signals.append(signal)
+            return True
+        return False
 
     def rm_signal(self, signal):
-        pass
+        """
+        Remove Signal for this DBlock
+
+        :param signal:
+        :return:
+        """
+        if signal in self.signals:
+            self.signals.remove(signal)
+            return True
+        return False
 
     #NOT NEEDED ANYMORE !!!
     def get_signal_name(self, signal: int):
@@ -85,9 +104,7 @@ class DBlock(DObject):
         :param signal:
         :return:
         """
-        if signal > len(self.signal_names_internal):
-            return None
-        return self.signal_names_internal[signal]
+        raise NotImplementedError("Stop Using this function.")
 
     #NOT NEEDED ANYMORE !!!
     def get_subscribers(self):
@@ -97,7 +114,7 @@ class DBlock(DObject):
         :return:
         :rtype []:
         """
-        return self.subscribers.copy().values()
+        raise NotImplementedError("Stop Using this function.")
 
     #NOT NEEDED ANYMORE !!!
     def get_signals(self):
@@ -107,7 +124,7 @@ class DBlock(DObject):
         Returns a copy of the internal signal names
         :return:
         """
-        return self.signal_names_internal.copy()
+        raise NotImplementedError("Stop Using this function.")
 
 
 class DPlugin(DObject):
@@ -145,7 +162,7 @@ class DPlugin(DObject):
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
-                    subscription.attach_signal(signal)
+                    subscription.add_signal(signal)
                 return subscription
             else:
                 return None
@@ -165,7 +182,7 @@ class DPlugin(DObject):
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
-                    subscription.remove_signal(signal)
+                    subscription.rm_signal(signal)
 
                 return subscription
             else:
@@ -182,8 +199,6 @@ class DPlugin(DObject):
         """
 
         if dblock.dplugin_id not in self.__subscriptions:
-            #dblock.add_subscribers(self)
-            #self.__subscriptions.append(dblock.id)
             self.__subscriptions[dblock.dplugin_id] = {}
             self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
             return self.__subscriptions[dblock.dplugin_id][dblock.name]
@@ -352,28 +367,42 @@ class DPlugin(DObject):
 
 class DSubscription(DObject):
 
-    def __init__(self, dblock, signals=None):
+    def __init__(self, dblock):
         self.dblock = dblock
         self.alias = None
-        if signals is None:
-            self.signals = []
-        else:
-            self.signals = signals
+        self.signals = []
 
-    def attach_signal(self, signal):
+    def add_signal(self, signal):
+        """
+        Add Signal for this Subscription
+
+        :param signal:
+        :return:
+        """
         if signal not in self.signals:
             self.signals.append(signal)
             return True
-
         return False
 
-    def remove_signal(self, signal):
+    def rm_signal(self, signal):
+        """
+        Remove Signal for this Subscription
+
+        :param signal:
+        :return:
+        """
         if signal in self.signals:
             self.signals.remove(signal)
             return True
-
 
         return False
 
     def get_signals(self):
         return copy.copy(self.signals)
+
+    def attach_signal(self, signal):
+        raise NotImplementedError("Stop Using this function.")
+
+    def remove_signal(self, signal):
+        raise NotImplementedError("Stop Using this function.")
+
