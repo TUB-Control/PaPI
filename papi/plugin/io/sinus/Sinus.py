@@ -45,15 +45,28 @@ class Sinus(iop_base):
         self.f = float(config['f']['value'])
 
 
-        self.block1 = DBlock('SinMit_f1',['t','f1_1'])
-        #signal =
+        self.block1 = DBlock('SinMit_f1')
+        signal = DSignal('f1_1')
+        signal.dname = 'f1_f1DNAME'
+        self.block1.add_signal(signal)
+
+        self.block2 = DBlock('SinMit_f2')
+        signal = DSignal('f2_1')
+        self.block2.add_signal(signal)
+
+        self.block3 = DBlock('SinMit_f3')
+        signal = DSignal('f3_1')
+        self.block3.add_signal(signal)
+        signal = DSignal('f3_2')
+        self.block3.add_signal(signal)
+        signal = DSignal('f3_scalar')
+        self.block3.add_signal(signal)
 
 
-        self.block2 = DBlock('SinMit_f2',['t','f2_1'])
-        self.block3 = DBlock('SinMit_f3',['t','f3_1','f3_2', 'Scalar'], ['numpy_vec', 'numpy_vec', 'int'] )
         #self.block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
 
-        self.send_new_block_list([self.block1, self.block2, self.block3])
+        blockList = [self.block1, self.block2, self.block3]
+        self.send_new_block_list(blockList)
 
         self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1, Regex='[0-9]+.[0-9]+')
         self.para3.id = 1
