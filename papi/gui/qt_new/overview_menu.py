@@ -294,8 +294,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
             self.dparameterModel.appendRow(dparameter_item)
+
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
+
 
         self.blockTree.expandAll()
         self.parameterTree.expandAll()
@@ -306,7 +308,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         # Sort Models
         self.bModel.sort(0)
-        self.dparameterModel.sort(0)
+#        self.dparameterModel.sort(0)
+
+        self.parameterTree.sortByColumn(0, Qt.AscendingOrder)
 
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
@@ -418,6 +422,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         isSignal = False
         menu = None
         action = None
+        signals = []
 
         # ----------------------------------
         # Open no context menu if invalid
@@ -456,10 +461,12 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
             action = QAction('Remove Subscriber', self)
         else:
-            action = QAction('Remove Signal', self)
+            signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
             dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
             dplugin = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
 
+            action = QAction('Remove Signal -> ' + signal_uname, self)
+            signals.append(signal_uname)
 
         # ----------------------------------
         # Create context menu
@@ -468,7 +475,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         menu = QMenu()
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin: self.cancel_subscription_action(m, p))
+        action.triggered.connect(lambda p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
 
         menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
@@ -619,7 +626,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 if not self.pcp_root.hasItem(new_dplugin):
                     self.pcp_root.appendRow(plugin_item)
 
-    def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
+    def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
         """
         Action called to cancel a subscription of the current selected dplugin.
         :param source:
@@ -629,7 +636,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
 
-        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
+        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, signals)
 
     def showEvent(self, *args, **kwargs):
         """
