@@ -67,7 +67,7 @@ class Plugin_api(QtCore.QObject):
         """
         self.__default_api.do_create_plugin(plugin_identifier,uname,config,autostart)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None, sub_alias = None):
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signals=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -80,7 +80,7 @@ class Plugin_api(QtCore.QObject):
         :type block_name: basestring
         :return:
         """
-        self.__default_api.do_subscribe_uname(subscriber_uname, source_uname, block_name, signal_index, sub_alias)
+        self.__default_api.do_subscribe_uname(subscriber_uname, source_uname, block_name, signals, sub_alias)
 
 
     def do_set_parameter_uname(self, plugin_uname, parameter_name, value):

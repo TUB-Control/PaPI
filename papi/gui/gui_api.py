@@ -172,7 +172,7 @@ class Gui_api(QtCore.QObject):
             self.log.printText(1, " Do start_plugin with uname " + uname + ' failed')
             return ERROR.NOT_EXISTING
 
-    def do_subscribe(self, subscriber_id, source_id, block_name, signal_index=None, sub_alias = None):
+    def do_subscribe(self, subscriber_id, source_id, block_name, signals=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -189,13 +189,13 @@ class Gui_api(QtCore.QObject):
         opt             = DOptionalData()
         opt.source_ID   = source_id
         opt.block_name  = block_name
-        opt.signals     = signal_index
+        opt.signals     = signals
         opt.subscription_alias =  sub_alias
         # send event with subscriber id as the origin to CORE
         event = Event.instruction.Subscribe(subscriber_id, 0, opt)
         self.core_queue.put(event)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None, sub_alias = None):
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signals=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -221,7 +221,7 @@ class Gui_api(QtCore.QObject):
             return -1
 
         # call do_subscribe with ids to subscribe
-        self.do_subscribe(subscriber_id, source_id, block_name, signal_index, sub_alias)
+        self.do_subscribe(subscriber_id, source_id, block_name, signals, sub_alias)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """

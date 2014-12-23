@@ -121,7 +121,9 @@ class base_plugin(IPlugin):
 
     def send_new_data(self, block_name, time_line, data):
 
-        opt = DOptionalData(DATA = data)
+        dataHash = data
+        dataHash['t'] = time_line
+        opt = DOptionalData(DATA = dataHash)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
 
@@ -174,18 +176,30 @@ class base_plugin(IPlugin):
 
     def demux(self, source_id, block_name, data):
 
-        returnData = {}
-
         subcribtions = self.dplugin_info.get_subscribtions()
-        dblocksub = subcribtions[source_id][block_name]
-        if dblocksub.signals == []:
-            sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
-        else:
-            sig_range = dblocksub.signals
+        sub_object = subcribtions[source_id][block_name]
 
-        for ind in sig_range:
-            returnData[dblocksub.dblock.signal_names_internal[ind]] = data[ind]
+        sub_signals = sub_object.signals
 
-        returnData['t'] = data[0]
+        returnData = {}
+        returnData['t'] = data['t']
+        for key in sub_signals:
+            returnData[key] = data[key]
 
         return returnData
+
+        # returnData = {}
+        #
+        # subcribtions = self.dplugin_info.get_subscribtions()
+        # dblocksub = subcribtions[source_id][block_name]
+        # if dblocksub.signals == []:
+        #     sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
+        # else:
+        #     sig_range = dblocksub.signals
+        #
+        # for ind in sig_range:
+        #     returnData[dblocksub.dblock.signal_names_internal[ind]] = data[ind]
+        #
+        # returnData['t'] = data[0]
+
+        #return returnData

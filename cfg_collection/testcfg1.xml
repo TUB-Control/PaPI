@@ -1,158 +1,108 @@
-<PaPiConfig Date="2014-11-04 17:33:40" PaPI_version="v_0.1">
-  <Size h="1042" w="566" />
-  <Plugin uname="Plot1">
+<PaPiConfig Date="2014-12-23 12:40:06" PaPI_version="v_0.8">
+  <Size h="800" w="800" />
+  <Background image="None" />
+  <Plugin uname="Plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(300,300)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
       <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
         <value>time, s</value>
+        <regex>\w+,\s*\w+</regex>
+        <display_text>Label-X</display_text>
       </Parameter>
-      <Parameter Name="name">
-        <value>REF</value>
+      <Parameter Name="y-grid">
+        <type>bool</type>
+        <value>0</value>
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-Y</display_text>
       </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
+      <Parameter Name="style">
+        <advanced>1</advanced>
+        <value>[0 0 0 0 0]</value>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Style</display_text>
       </Parameter>
       <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
         <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="uname">
-        <value>Plot1</value>
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="color">
+        <advanced>1</advanced>
+        <value>[0 1 2 3 4]</value>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Color</display_text>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <type>bool</type>
+        <value>0</value>
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-X</display_text>
+      </Parameter>
+      <Parameter Name="size">
+        <advanced>1</advanced>
+        <value>(300,300)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <value>10</value>
+        <regex>(\d+)</regex>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <advanced>1</advanced>
+        <value>3000</value>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <display_text>Buffersize</display_text>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+        <display_text>Label-Y</display_text>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <type>bool</type>
+        <value>0</value>
+        <regex>^(1|0)$</regex>
+        <display_text>Rolling Plot</display_text>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
       </Parameter>
     </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>Sin2</data_source>
-        <block Name="SinMit_f3">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
+    <PreviousParameters>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="buffersize">3000</Parameter>
+      <Parameter Name="downsampling_rate">10</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="rolling">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
   </Plugin>
-  <Plugin uname="Sin2">
+  <Plugin uname="Sinus">
     <Identifier>Sinus</Identifier>
     <StartConfig>
       <Parameter Name="f">
-        <regex>\d+.{0,1}\d*</regex>
         <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
       </Parameter>
       <Parameter Name="amax">
-        <regex>[0-9]+</regex>
         <value>3</value>
+        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="uname">
-        <value>Sin2</value>
+        <value>Sinus</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
     </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="PLOT2">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(300,300)</value>
-      </Parameter>
-      <Parameter Name="sampleinterval">
-        <regex>[0-9]+</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="timewindow">
-        <regex>[0-9]+</regex>
-        <value>1000</value>
-      </Parameter>
-      <Parameter Name="label_x">
-        <regex>\w+,\s*\w+</regex>
-        <value>time, s</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Plot_Plugin</value>
-      </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(328,2)</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>PLOT2</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>ORTD</data_source>
-        <block Name="SourceFrq1">
-          <alias />
-          <Signal>1</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="ORTD">
-    <Identifier>ORTD_UDP</Identifier>
-    <StartConfig>
-      <Parameter Name="address">
-        <value>127.0.0.1</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ORTD</value>
-      </Parameter>
-      <Parameter Name="port">
-        <value>20001</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Par1">0.01</Parameter>
-    </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Buttt1">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(287,72)</value>
-      </Parameter>
-      <Parameter Name="low">
-        <value>0.1</value>
-      </Parameter>
-      <Parameter Name="up">
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PCP_Plugin</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(160,403)</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Buttt1</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
