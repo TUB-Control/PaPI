@@ -32,6 +32,7 @@ __author__ = 'CK'
 from papi.plugin.base_classes.iop_base import iop_base
 
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter
 
 import numpy as np
@@ -122,16 +123,18 @@ class ORTD_UDP(iop_base):
             self.send_new_block_list(list(self.blocks.values()))
 
         else:
-            names = ['t']
+            self.block1 = DBlock('SourceGroup0')
 
             keys = list(self.Sources.keys())
-            keys.sort()
-
+            #keys.sort()
             for key in keys:
                 Source = self.Sources[key]
-                names.append(Source['SourceName'])
+                sig_name = Source['SourceName']
+                self.block1.add_signal(DSignal(sig_name))
 
-            self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
+
+
+            #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
             self.send_new_block_list([self.block1])
 
 
@@ -209,11 +212,12 @@ class ORTD_UDP(iop_base):
                             # flush data to papi
                             self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
                     else:
-                        signals_to_send = []
+                        signals_to_send = {}
                         for key in keys:
-                            signals_to_send.append(signal_values[key])
+                            sig_name = self.Sources[str(key)]['SourceName']
+                            signals_to_send[sig_name] = signal_values[key]
 
-                        self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
+                        self.send_new_data('SourceGroup0', [self.t], signals_to_send )
 
                     signal_values = {}
                 else:

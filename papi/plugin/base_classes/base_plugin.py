@@ -180,26 +180,7 @@ class base_plugin(IPlugin):
         sub_object = subcribtions[source_id][block_name]
 
         sub_signals = sub_object.signals
+        sub_signals.append('t')
 
-        returnData = {}
-        returnData['t'] = data['t']
-        for key in sub_signals:
-            returnData[key] = data[key]
-
-        return returnData
-
-        # returnData = {}
-        #
-        # subcribtions = self.dplugin_info.get_subscribtions()
-        # dblocksub = subcribtions[source_id][block_name]
-        # if dblocksub.signals == []:
-        #     sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
-        # else:
-        #     sig_range = dblocksub.signals
-        #
-        # for ind in sig_range:
-        #     returnData[dblocksub.dblock.signal_names_internal[ind]] = data[ind]
-        #
-        # returnData['t'] = data[0]
-
-        #return returnData
+        return dict([(i, data[i]) for i in sub_signals if i in data])
+        #return data
