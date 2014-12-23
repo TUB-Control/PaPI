@@ -400,12 +400,12 @@ class Plot(vip_base):
             'advanced': '1',
             'display_text': 'Style'
         }, 'buffersize': {
-            'value': "3000",
+            'value': "1000",
             'regex': '^([1-9][0-9]{0,3}|10000)$',
             'advanced': '1',
             'display_text': 'Buffersize'
         }, 'downsampling_rate': {
-            'value': "10",
+            'value': "1",
             'regex': '(\d+)'
         }, 'rolling_plot': {
             'value': '0',

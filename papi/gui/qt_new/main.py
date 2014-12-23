@@ -31,6 +31,7 @@ __author__ = 'knuths'
 import sys
 import time
 import os
+import traceback
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
 from PySide.QtGui               import QIcon
@@ -108,7 +109,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
-        self.last_config = None
+        self.last_config = 'last_active_papi.xml'
         self.in_run_mode = False
 
         # -------------------------------------
@@ -293,6 +294,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QtCore.QTimer.singleShot(0, self.save_triggered)
 
     def closeEvent(self, *args, **kwargs):
+        try:
+            self.gui_api.do_save_xml_config('last_active_papi.xml')
+        except Exception as E:
+                        tb = traceback.format_exc()
+
         self.gui_api.do_close_program()
         if self.create_plugin_menu is not None:
             self.create_plugin_menu.close()

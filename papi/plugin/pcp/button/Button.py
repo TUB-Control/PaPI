@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QPushButton
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 
 class Button(pcp_base):
 
@@ -38,7 +39,9 @@ class Button(pcp_base):
 
         #super(Button, self).start_init(config)
 
-        block = DBlock(self.__id__, 1, 1, 'Click_Event', ['Parameter'])
+        block = DBlock('Click_Event')
+        signal = DSignal('Parameter')
+        block.add_signal(signal)
         self.send_new_block_list([block])
 
         self.cur_value = 0
@@ -77,7 +80,7 @@ class Button(pcp_base):
                 'value': 1,
                 'advanced' : '0'
         },"name": {
-            'value' : "PCP_Plugin",
+            'value' : "Button",
              'advanced' : '0'
         }}
         return config

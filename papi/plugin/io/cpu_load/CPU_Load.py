@@ -9,6 +9,7 @@ from papi.plugin.base_classes.iop_base import iop_base
 
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
+from papi.data.DSignal import DSignal
 
 import numpy
 import time
@@ -24,7 +25,12 @@ class CPU_Load(iop_base):
 
         self.send_new_parameter_list([self.para_delta_t])
 
-        block1 = DBlock(None,1,1,'load',['t','load_percent'])
+        block1 = DBlock('CPUload')
+
+        signal = DSignal('load_in_percent')
+        block1.add_signal(signal)
+
+
         self.send_new_block_list([block1])
         return True
 
@@ -44,7 +50,7 @@ class CPU_Load(iop_base):
         self.t += self.delta_t
 
 
-        self.send_new_data(vec[0], [vec[1]], 'load')
+        self.send_new_data('CPUload', vec[0], {'load_in_percent':vec[1]} )
 
         time.sleep(self.delta_t)
 

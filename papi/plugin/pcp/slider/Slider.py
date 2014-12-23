@@ -32,12 +32,16 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
 from PySide import QtCore
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 
 class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        block = DBlock('Parameter_1')
+        signal = DSignal('Parameter')
+        block.add_signal(signal)
+
         self.send_new_block_list([block])
         self.set_widget_for_internal_usage(self.create_widget())
 
