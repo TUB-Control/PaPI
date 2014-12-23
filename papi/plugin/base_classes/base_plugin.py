@@ -95,13 +95,6 @@ class base_plugin(IPlugin):
         if mode is True or mode is False or mode == 'default':
             self.user_event_triggered = mode
 
-    def send_new_data_old(self, data, block_name):
-        opt = DOptionalData(DATA=data)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
-        self._Core_event_queue__.put(event)
 
     def send_parameter_change(self, data, block_name, alias):
         opt = DOptionalData(DATA=data)
@@ -126,7 +119,17 @@ class base_plugin(IPlugin):
 
         return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
 
-    def send_new_data(self, time_line, data, block_name):
+    def send_new_data(self, block_name, time_line, data):
+
+        opt = DOptionalData(DATA = data)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
+
+
+    def send_new_data_old2(self, time_line, data, block_name):
         # TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name
         vec_data = []
         vec_data.append(time_line)
@@ -134,6 +137,14 @@ class base_plugin(IPlugin):
             vec_data.append(item)
 
         opt = DOptionalData(DATA=vec_data)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
+
+    def send_new_data_old1(self, data, block_name):
+        opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
 
