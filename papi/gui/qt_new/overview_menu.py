@@ -290,14 +290,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # --------------------------
 
         dparameter_names = dplugin.get_parameters()
-        for dparameter_name in dparameter_names:
+        for dparameter_name in sorted(dparameter_names):
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
             self.dparameterModel.appendRow(dparameter_item)
 
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
-
 
         self.blockTree.expandAll()
         self.parameterTree.expandAll()
@@ -308,9 +307,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         # Sort Models
         self.bModel.sort(0)
-#        self.dparameterModel.sort(0)
-
-        self.parameterTree.sortByColumn(0, Qt.AscendingOrder)
 
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
