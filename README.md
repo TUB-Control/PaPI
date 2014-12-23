@@ -14,15 +14,15 @@ PaPi will make heavily use of multi-core systems.
 
 Installation
 ------
-Basic installation on Ubuntu 14.04 64Bit
+Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
-`sudo apt-get install git python3-pyside python3-numpy python3-scipy`
+`sudo apt-get install python3.4 git python3-pyside python3-numpy python3-scipy`
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
 
 `cd PaPI`
 
-`python3 main.py`
+`python3.4 main.py`
 
 
 Documentation
@@ -46,3 +46,11 @@ v.0.8
 * Run/Edit mode
 * Set/load backgorund and save it to config
 * [fix] When plugin in gui crashs, gui stays alive and plugin will be stopped
+
+
+v.0.8.2
+---
+ * New minor feature: PaPI will save a cfg on close. One is able to load this cfg after startup using 'ReloadConfig'
+ * Big bugfix: signal and signal name relation had an order bug. There is now a new back end structure handling signals
+ * Signal unsubscribe is now possible using the gui
+ * Signals, parameter and plugins in overview are sorted now
