@@ -48,6 +48,8 @@ import xml.etree.cElementTree as ET
 class Gui_api(QtCore.QObject):
 
     resize_gui = QtCore.Signal(int, int)
+    set_bg_gui = QtCore.Signal(str)
+
 
     def __init__(self, gui_data, core_queue, gui_id, LOG_IDENT = GUI_PROCESS_CONSOLE_IDENTIFIER):
         super(Gui_api, self).__init__()
@@ -57,6 +59,7 @@ class Gui_api(QtCore.QObject):
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, LOG_IDENT)
         self.gui_size_width = None
         self.gui_size_height = None
+        self.gui_bg_path = None
 
 
 
@@ -452,43 +455,48 @@ class Gui_api(QtCore.QObject):
                 h = int(plugin_xml.attrib['h'])
                 self.resize_gui.emit(w,h)
            else:
-                pl_uname = plugin_xml.attrib['uname']
-                identifier = plugin_xml.find('Identifier').text
-                config_xml = plugin_xml.find('StartConfig')
-                config_hash = {}
-                for parameter_xml in config_xml.findall('Parameter'):
-                    para_name = parameter_xml.attrib['Name']
-                    config_hash[para_name] = {}
-                    for detail_xml in parameter_xml:
-                        detail_name = detail_xml.tag
-                        config_hash[para_name][detail_name]= detail_xml.text
+                if plugin_xml.tag == 'Background':
+                    path = str(plugin_xml.attrib['image'])
+                    if path != '' and path is not None and path !='default':
+                        self.set_bg_gui.emit(path)
+                else:
+                    pl_uname = plugin_xml.attrib['uname']
+                    identifier = plugin_xml.find('Identifier').text
+                    config_xml = plugin_xml.find('StartConfig')
+                    config_hash = {}
+                    for parameter_xml in config_xml.findall('Parameter'):
+                        para_name = parameter_xml.attrib['Name']
+                        config_hash[para_name] = {}
+                        for detail_xml in parameter_xml:
+                            detail_name = detail_xml.tag
+                            config_hash[para_name][detail_name]= detail_xml.text
 
-                pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-
-                plugins_to_start.append([identifier, pl_uname_new, config_hash])
-
-                subs_xml = plugin_xml.find('Subscriptions')
-                for sub_xml in subs_xml.findall('Subscription'):
-                    data_source = sub_xml.find('data_source').text
-                    for block_xml in sub_xml.findall('block'):
-                        block_name = block_xml.attrib['Name']
-                        signals = []
-                        for sig_xml in block_xml.findall('Signal'):
-                            signals.append(int(sig_xml.text))
-                        alias_xml = block_xml.find('alias')
-                        alias = alias_xml.text
-                        pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                        data_source_new = self.change_uname_to_uniqe(data_source)
-                        subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
-
-
-                prev_parameters_xml = plugin_xml.find('PreviousParameters')
-                for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
-                    para_name = prev_parameter_xml.attrib['Name']
-                    para_value = prev_parameter_xml.text
                     pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                    # TODO validate NO FLOAT in parameter
-                    parameters_to_change.append([pl_uname_new, para_name, para_value])
+
+                    plugins_to_start.append([identifier, pl_uname_new, config_hash])
+
+                    subs_xml = plugin_xml.find('Subscriptions')
+                    for sub_xml in subs_xml.findall('Subscription'):
+                        data_source = sub_xml.find('data_source').text
+                        for block_xml in sub_xml.findall('block'):
+                            block_name = block_xml.attrib['Name']
+                            signals = []
+                            for sig_xml in block_xml.findall('Signal'):
+                                signals.append(int(sig_xml.text))
+                            alias_xml = block_xml.find('alias')
+                            alias = alias_xml.text
+                            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                            data_source_new = self.change_uname_to_uniqe(data_source)
+                            subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
+
+
+                    prev_parameters_xml = plugin_xml.find('PreviousParameters')
+                    for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                        para_name = prev_parameter_xml.attrib['Name']
+                        para_value = prev_parameter_xml.text
+                        pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                        # TODO validate NO FLOAT in parameter
+                        parameters_to_change.append([pl_uname_new, para_name, para_value])
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
@@ -509,7 +517,7 @@ class Gui_api(QtCore.QObject):
         while self.gui_data.get_dplugin_by_uname(uname) is not None:
                 i = i+1
                 if i == 2:
-                    uname = uname + '_' +str(i)
+                    uname = uname + 'X' +str(i)
                 else:
                     uname = uname[:-1] + str(i)
         return uname
@@ -529,6 +537,9 @@ class Gui_api(QtCore.QObject):
         size_xml = ET.SubElement(root, 'Size')
         size_xml.set('w',str(self.gui_size_width))
         size_xml.set('h',str(self.gui_size_height))
+
+        bg_xml = ET.SubElement(root, 'Background')
+        bg_xml.set('image',str(self.gui_bg_path))
 
         # get plugins #
         plugins = self.gui_data.get_all_plugins()
@@ -617,6 +628,7 @@ class Gui_api(QtCore.QObject):
         """
         Will check if a given name would be a valid, unique name for a plugin.
         :param name: name to check
+
         :type name: basestring
         :return: True or False
         """
@@ -628,3 +640,21 @@ class Gui_api(QtCore.QObject):
                return False
         else:
             return False
+
+
+    def do_change_string_to_be_uname(self, name):
+        """
+        This method will take a string and convert him according to some rules to be an uname
+
+        :param name: name to convert to unmae
+        :type name: basestring
+        :return: name converted to uname
+        """
+        uname = name
+
+        #TODO: get more inteligence here!
+
+        forbidden = ['_',',','.','`',' ']
+        for c in forbidden:
+            uname = uname.replace(c,'X')
+        return uname
