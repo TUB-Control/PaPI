@@ -482,7 +482,7 @@ class Gui_api(QtCore.QObject):
                             block_name = block_xml.attrib['Name']
                             signals = []
                             for sig_xml in block_xml.findall('Signal'):
-                                signals.append(int(sig_xml.text))
+                                signals.append(str(sig_xml.text))
                             alias_xml = block_xml.find('alias')
                             alias = alias_xml.text
                             pl_uname_new = self.change_uname_to_uniqe(pl_uname)
