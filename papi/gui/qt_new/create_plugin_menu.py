@@ -66,6 +66,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
+        self.pluginTree.setSortingEnabled(True)
 
         self.visual_root = PaPIRootItem('ViP')
         self.io_root = PaPIRootItem('IOP')
@@ -137,6 +138,11 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
                 self.dpp_root.appendRow(plugin_item)
             if '/pcp/' in pluginfo.path:
                 self.pcp_root.appendRow(plugin_item)
+
+        self.visual_root.sortChildren(0)
+        self.io_root.sortChildren(0)
+        self.dpp_root.sortChildren(0)
+        self.pcp_root.sortChildren(0)
 
     def clear(self):
         self.nameEdit.setText('')
