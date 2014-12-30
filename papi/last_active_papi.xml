@@ -1,4 +1,103 @@
-<PaPiConfig Date="2014-12-30 16:00:47" PaPI_version="v_0.8">
+<PaPiConfig Date="2014-12-30 16:42:42" PaPI_version="v_0.8">
   <Size h="800" w="800" />
   <Background image="None" />
+  <Plugin uname="Sin1">
+    <Identifier>Sinus</Identifier>
+    <StartConfig />
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Plot1">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="style">
+        <advanced>1</advanced>
+        <display_text>Style</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used display name</tooltip>
+        <value>VisualPlugin</value>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <regex>(\d+)</regex>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <type>bool</type>
+        <display_text>Grid-Y</display_text>
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <advanced>1</advanced>
+        <display_text>Buffersize</display_text>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <value>1000</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <type>bool</type>
+        <display_text>Grid-X</display_text>
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="color">
+        <advanced>1</advanced>
+        <display_text>Color</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <type>bool</type>
+        <display_text>Rolling Plot</display_text>
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <display_text>Label-Y</display_text>
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="size">
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,300)</value>
+      </Parameter>
+      <Parameter Name="position">
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(400,100)</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <display_text>Label-X</display_text>
+        <regex>\w+,\s*\w+</regex>
+        <value>time, s</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="buffersize">1000</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Sin1</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>f3_1</Signal>
+          <Signal>f3_2</Signal>
+          <Signal>f3_scalar</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
 </PaPiConfig>
