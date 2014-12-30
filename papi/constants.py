@@ -34,7 +34,7 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = 'v_0.8' # no spaces allowed
+CORE_PAPI_VERSION               = 'v_0.9' # no spaces allowed
 CORE_CORE_VERSION               = 'v_0.9' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
@@ -53,7 +53,7 @@ CORE_ALIVE_MAX_COUNT            = 2
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_0.8'
+GUI_VERSION                      = 'v_0.9'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
@@ -64,7 +64,7 @@ GUI_DEFAULT_WIDTH               = 800
 GUI_DEFAULT_HEIGHT              = 800
 
 # PLUGIN LOCATION CONSTANTS
-PLUGIN_ROOT_FOLDER_LIST         = ['plugin','papi/plugin', '../plugin']
+PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''
 PLUGIN_VIP_FOLDER               = ''
 PLUGIN_DPP_FOLDER               = ''
@@ -96,4 +96,4 @@ PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
 CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
-CONFIG_LOADER_SUBCRIBE_DELAY    = 1000 # ms
+CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms

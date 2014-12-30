@@ -32,7 +32,7 @@ import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
-from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
+from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
 from papi.pyqtgraph import QtCore
@@ -502,7 +502,7 @@ class Gui_api(QtCore.QObject):
             # 0: ident, 1: uname, 2: config
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBCRIBE_DELAY,\
+        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY,\
                                  lambda: self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change) )
 
     def change_uname_to_uniqe(self, uname):
