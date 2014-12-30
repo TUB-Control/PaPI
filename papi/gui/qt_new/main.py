@@ -262,9 +262,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         fileNames = ''
 
         dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
         dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+        dialog.setWindowTitle("Load Configuration")
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()
@@ -282,6 +283,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         dialog.setFileMode(QFileDialog.AnyFile)
         dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
         dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+        dialog.setWindowTitle("Save Configuration")
+        dialog.setAcceptMode(QFileDialog.AcceptSave)
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()
@@ -289,6 +292,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if len(fileNames):
             if fileNames[0] != '':
                 self.gui_api.do_save_xml_config(fileNames[0])
+
 
     def save_triggered_thread(self):
         QtCore.QTimer.singleShot(0, self.save_triggered)

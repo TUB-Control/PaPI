@@ -32,7 +32,7 @@ import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
-from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
+from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
 from papi.pyqtgraph import QtCore

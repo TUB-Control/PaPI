@@ -1,0 +1,245 @@
+<PaPiConfig Date="2014-12-30 16:38:29" PaPI_version="v_0.8">
+  <Size h="800" w="800" />
+  <Background image="None" />
+  <Plugin uname="Add">
+    <Identifier>Add</Identifier>
+    <StartConfig>
+      <Parameter Name="uname">
+        <value>Add</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Fourier</data_source>
+        <block Name="Rectangle">
+          <alias />
+          <Signal>rect1</Signal>
+          <Signal>rect2</Signal>
+          <Signal>rect3</Signal>
+          <Signal>rect4</Signal>
+          <Signal>rect5</Signal>
+          <Signal>rect6</Signal>
+          <Signal>rect7</Signal>
+          <Signal>rect8</Signal>
+          <Signal>rect9</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="PlotFourier">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <tooltip>Used display name</tooltip>
+        <value>VisualPlugin</value>
+      </Parameter>
+      <Parameter Name="size">
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <value>(438,411)</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-Y</display_text>
+        <type>bool</type>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <advanced>1</advanced>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <display_text>Buffersize</display_text>
+        <value>1000</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <display_text>Rolling Plot</display_text>
+        <type>bool</type>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="style">
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Style</display_text>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <display_text>Label-Y</display_text>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <regex>(\d+)</regex>
+        <value>10</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-X</display_text>
+        <type>bool</type>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>PlotFourier</value>
+      </Parameter>
+      <Parameter Name="color">
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Color</display_text>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <display_text>Label-X</display_text>
+        <value>time, s</value>
+      </Parameter>
+      <Parameter Name="position">
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <value>(320,2)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="downsampling_rate">10</Parameter>
+      <Parameter Name="buffersize">1000</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Fourier</data_source>
+        <block Name="Rectangle">
+          <alias />
+          <Signal>rect1</Signal>
+          <Signal>rect2</Signal>
+          <Signal>rect3</Signal>
+          <Signal>rect4</Signal>
+          <Signal>rect5</Signal>
+          <Signal>rect6</Signal>
+          <Signal>rect7</Signal>
+          <Signal>rect8</Signal>
+          <Signal>rect9</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plot">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="name">
+        <tooltip>Used display name</tooltip>
+        <value>VisualPlugin</value>
+      </Parameter>
+      <Parameter Name="size">
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <value>(300,300)</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-Y</display_text>
+        <type>bool</type>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <advanced>1</advanced>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <display_text>Buffersize</display_text>
+        <value>1000</value>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <display_text>Rolling Plot</display_text>
+        <type>bool</type>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="style">
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Style</display_text>
+        <value>[0 0 0 0 0]</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <display_text>Label-Y</display_text>
+        <value>amplitude, V</value>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <regex>(\d+)</regex>
+        <value>10</value>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-X</display_text>
+        <type>bool</type>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="color">
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <display_text>Color</display_text>
+        <value>[0 1 2 3 4]</value>
+      </Parameter>
+      <Parameter Name="label_x">
+        <regex>\w+,\s*\w+</regex>
+        <display_text>Label-X</display_text>
+        <value>time, s</value>
+      </Parameter>
+      <Parameter Name="position">
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <value>(0,0)</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="downsampling_rate">10</Parameter>
+      <Parameter Name="buffersize">1000</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+    </PreviousParameters>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Add</data_source>
+        <block Name="AddOut1">
+          <alias />
+          <Signal>Sum</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Fourier">
+    <Identifier>Fourier_Rect</Identifier>
+    <StartConfig>
+      <Parameter Name="port">
+        <advanced>1</advanced>
+        <regex>\d{1,5}</regex>
+        <value>9999</value>
+      </Parameter>
+      <Parameter Name="host">
+        <advanced>1</advanced>
+        <regex>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}</regex>
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Fourier</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Fourier</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>
