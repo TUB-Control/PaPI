@@ -25,6 +25,21 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Christian Klauer
 Stefan Ruppin
+
+
+
+
+IDEAS
+-----
+
+- The ProtocolConfig.json may contain information about how to place indivual elements in the GUI
+- How to handle multiple instances and dynamically created datasources?
+- Show a separated screen/page in the gui for each datasource; something like tabs?
+- initial Configuration and later updates via UDP
+
+
+
+
 """
 
 __author__ = 'CK'
@@ -203,7 +218,7 @@ class ORTD_UDP(iop_base):
                     self.t += 1.0
 
                     keys = list(signal_values.keys())
-                    keys.sort()
+                    keys.sort()                           # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
 
                     if self.separate == 1:
                         for key in keys:

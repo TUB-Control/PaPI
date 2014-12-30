@@ -49,8 +49,8 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
-import pyqtgraph as pg
-from pyqtgraph import QtCore, QtGui
+import papi.pyqtgraph as pg
+from papi.pyqtgraph import QtCore, QtGui
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
