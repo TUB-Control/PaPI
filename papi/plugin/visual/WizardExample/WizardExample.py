@@ -260,6 +260,6 @@ class connectPage(QtGui.QWizardPage):
         self.setLayout(layout)
 
     def validatePage(self):
-        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',signal_index=[2])
+        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3', signals=['f3_1', 'f3_2'])
         self.control_api.do_delete_plugin_uname(self.uname)
         return True
