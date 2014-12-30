@@ -110,3 +110,17 @@ class Plugin_api(QtCore.QObject):
         :return:
         """
         self.__default_api.do_delete_plugin_uname(uname)
+
+    def do_set_parameter(self, plugin_id, parameter_name, value):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to change a parameter of a plugin
+        :param plugin_id: id of plugin which owns the parameter
+
+        :type plugin_id: int
+        :param parameter_name: name of parameter to change
+        :type parameter_name: basestring
+        :param value: new parameter value to set
+        :type value:
+        """
+        self.__default_api.do_set_parameter(plugin_id,parameter_name,value)
