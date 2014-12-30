@@ -49,7 +49,7 @@ from yapsy.PluginManager import PluginManager
 import importlib.machinery
 
 from papi.data.DPlugin import DPlugin
-from pyqtgraph import QtCore
+from papi.pyqtgraph import QtCore
 
 
 __author__ = 'Stefan'

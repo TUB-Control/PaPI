@@ -48,13 +48,13 @@ from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROC
 from papi.constants import CONFIG_DEFAULT_FILE
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
-import pyqtgraph as pg
-from pyqtgraph import QtCore
+import papi.pyqtgraph as pq
+from papi.pyqtgraph import QtCore
 
 
 
 # Enable antialiasing for prettier plots
-pg.setConfigOptions(antialias=False)
+pq.setConfigOptions(antialias=False)
 
 class GUI(QMainWindow, Ui_MainGUI):
 

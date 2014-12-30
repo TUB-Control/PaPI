@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'Stefan'
 
-import pyqtgraph as pq
+import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -39,7 +39,7 @@ import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-from pyqtgraph.Qt import QtCore
+from papi.pyqtgraph.Qt import QtCore
 
 
 class Plot(vip_base):
