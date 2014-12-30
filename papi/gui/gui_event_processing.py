@@ -26,28 +26,20 @@ Contributors:
 <Stefan Ruppin
 """
 
-from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
-    PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_RESUMED, PLUGIN_STATE_STOPPED, \
-    PLUGIN_STATE_START_FAILED
-
 import copy
 import traceback
-
-from papi.gui.plugin_api import Plugin_api
-
-import papi.error_codes as ERROR
-
-import papi.event as Event
-
-from papi.PapiEvent import PapiEvent
-
-from papi.ConsoleLog import ConsoleLog
-
-from yapsy.PluginManager import PluginManager
-
 import importlib.machinery
 
+from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
+    PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_STOPPED, \
+    PLUGIN_STATE_START_FAILED
+from papi.gui.plugin_api import Plugin_api
+import papi.error_codes as ERROR
+import papi.event as Event
+from papi.PapiEvent import PapiEvent
+from papi.ConsoleLog import ConsoleLog
+from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
 from papi.pyqtgraph import QtCore
 

@@ -28,18 +28,11 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-
-import sys
-import time
-
 from PySide.QtGui import QMainWindow, QTreeWidgetItem, QTableWidgetItem
 from PySide.QtCore import Qt
 
 from papi.ui.gui.qt_dev.manager import Ui_Manager
-
-
-from yapsy.PluginManager import PluginManager
-
+from papi.yapsy.PluginManager import PluginManager
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER
 
 
