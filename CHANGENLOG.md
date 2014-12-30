@@ -11,7 +11,7 @@ v.0.9
  * Use of pyqtgraph 0.9.10
  * Sorting in the overview menu is enabled
  * First pictures for plugins
- * Error Dialogs pops up if an plugin error occures -> Whole GUI wont die anymore
+ * Error Dialogs pops up if a plugin error occurs -> Whole GUI wont die anymore
  * [fix] in configloader due to invalid xml messages
  * [fix] minor bug fixes in general
 
