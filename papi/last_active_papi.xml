@@ -1,185 +1,97 @@
-<PaPiConfig Date="2014-12-30 12:02:10" PaPI_version="v_0.8">
+<PaPiConfig Date="2014-12-30 12:08:00" PaPI_version="v_0.8">
   <Size h="800" w="800" />
   <Background image="None" />
   <Plugin uname="Plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="color">
-        <value>[0 1 2 3 4]</value>
-        <display_text>Color</display_text>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <advanced>1</advanced>
+      <Parameter Name="uname">
+        <value>Plot</value>
       </Parameter>
-      <Parameter Name="rolling_plot">
-        <value>0</value>
-        <type>bool</type>
-        <display_text>Rolling Plot</display_text>
-        <regex>^(1|0)$</regex>
+      <Parameter Name="color">
+        <display_text>Color</display_text>
+        <advanced>1</advanced>
+        <value>[0 1 2 3 4]</value>
+        <regex>^\[(\s*\d\s*)+\]</regex>
       </Parameter>
       <Parameter Name="label_x">
-        <value>time, s</value>
         <display_text>Label-X</display_text>
+        <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
+      <Parameter Name="label_y">
+        <display_text>Label-Y</display_text>
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
       </Parameter>
-      <Parameter Name="y-grid">
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-X</display_text>
         <value>0</value>
         <type>bool</type>
-        <display_text>Grid-Y</display_text>
-        <regex>^(1|0)$</regex>
       </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used display name</tooltip>
-        <value>VisualPlugin</value>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(565,368)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-Y</display_text>
+        <value>0</value>
+        <type>bool</type>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <display_text>Rolling Plot</display_text>
+        <value>0</value>
+        <type>bool</type>
+      </Parameter>
+      <Parameter Name="style">
+        <display_text>Style</display_text>
+        <advanced>1</advanced>
+        <value>[0 0 0 0 0]</value>
+        <regex>^\[(\s*\d\s*)+\]</regex>
       </Parameter>
       <Parameter Name="downsampling_rate">
         <value>1</value>
         <regex>(\d+)</regex>
       </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <display_text>Label-Y</display_text>
-        <regex>\w+,\s+\w+</regex>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <value>1000</value>
-        <display_text>Buffersize</display_text>
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="style">
-        <value>[0 0 0 0 0]</value>
-        <display_text>Style</display_text>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <value>0</value>
-        <type>bool</type>
-        <display_text>Grid-X</display_text>
-        <regex>^(1|0)$</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(300,300)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <advanced>1</advanced>
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="uname">
-        <value>Plot</value>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <display_text>Buffersize</display_text>
+        <advanced>1</advanced>
+        <value>1000</value>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="buffersize">1000</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
       <Parameter Name="downsampling_rate">1</Parameter>
       <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
       <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="buffersize">1000</Parameter>
     </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Button">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="low">
-        <value>0.1</value>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Button</value>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(300,300)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="up">
-        <value>1</value>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Button</value>
-        <advanced>0</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Slider">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(300,300)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(316,111)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Slider</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used display name</tooltip>
-        <value>VisualPlugin</value>
-      </Parameter>
-      <Parameter Name="default">
-        <value>1</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ToHDDXCSV">
-    <Identifier>ToHDD_CSV</Identifier>
-    <StartConfig>
-      <Parameter Name="file">
-        <value>log</value>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="delimiter">
-        <value> </value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ToHDDXCSV</value>
-      </Parameter>
-      <Parameter Name="log-type">
-        <value>1</value>
-        <regex>[0-9]+</regex>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Add">
-    <Identifier>Add</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>Add</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
+    <Subscriptions>
+      <Subscription>
+        <data_source>CPUXLoad</data_source>
+        <block Name="CPUload">
+          <alias />
+          <Signal>load_in_percent</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
   <Plugin uname="CPUXLoad">
     <Identifier>CPU_Load</Identifier>
@@ -191,94 +103,6 @@
     <PreviousParameters>
       <Parameter Name="Delta_t">0.01</Parameter>
     </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="FourierXRect">
-    <Identifier>Fourier_Rect</Identifier>
-    <StartConfig>
-      <Parameter Name="port">
-        <value>9999</value>
-        <regex>\d{1,5}</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>FourierXRect</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Fourier</value>
-      </Parameter>
-      <Parameter Name="host">
-        <value>130.149.155.73</value>
-        <regex>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}</regex>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Sinus">
-    <Identifier>Sinus</Identifier>
-    <StartConfig>
-      <Parameter Name="amax">
-        <value>3</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Sinus</value>
-      </Parameter>
-      <Parameter Name="f">
-        <value>1</value>
-        <regex>\d+.{0,1}\d*</regex>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
-    </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ORTDXUDP">
-    <Identifier>ORTD_UDP</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>ORTDXUDP</value>
-      </Parameter>
-      <Parameter Name="out_port">
-        <value>20001</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="Cfg_Path">
-        <value>papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json</value>
-        <type>file</type>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="SeparateSignals">
-        <value>0</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="source_port">
-        <value>20000</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="address">
-        <value>127.0.0.1</value>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Oscillator input">0</Parameter>
-      <Parameter Name="Test">0</Parameter>
-      <Parameter Name="A vectorial parameter">0</Parameter>
-    </PreviousParameters>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="FourierXRectXMOD">
-    <Identifier>Fourier_Rect_MOD</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>FourierXRectXMOD</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
