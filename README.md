@@ -31,3 +31,10 @@ Documentation
 Sphinx doc on GitHub: https://tub-control.github.io/PaPI/
 
 PaPI wiki on GitHub: https://github.com/TUB-Control/PaPI/wiki
+
+Embedded Packages
+------
+
+Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
+
+pyqtgraph-0.9.8 published under MIT-License
