@@ -221,6 +221,7 @@ class Plot(vip_base):
         :return:
         """
         t = Data['t']
+
         self.__input_size__ = len(t)
         self.__tbuffer__.extend(t)
         self.__new_added_data__ += len(t)
@@ -361,67 +362,6 @@ class Plot(vip_base):
 
         pass
 
-    def quit(self):
-        """
-        Function quit plugin
-
-        :return:
-        """
-        print('PlotPerformance: will quit')
-
-    def get_plugin_configuration(self):
-        """
-        Function get plugin configuration
-
-        :return {}:
-        """
-        config = {
-            'label_y': {
-                'value': "amplitude, V",
-                'regex': '\w+,\s+\w+',
-                'display_text': 'Label-Y'
-            }, 'label_x': {
-            'value': "time, s",
-            'regex': '\w+,\s*\w+',
-            'display_text': 'Label-X'
-        }, 'x-grid': {
-            'value': "0",
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Grid-X'
-        }, 'y-grid': {
-            'value': "0",
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Grid-Y'
-        }, 'color': {
-            'value': "[0 1 2 3 4]",
-            'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
-            'display_text': 'Color'
-        }, 'style': {
-            'value': "[0 0 0 0 0]",
-            'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
-            'display_text': 'Style'
-        }, 'buffersize': {
-            'value': "1000",
-            'regex': '^([1-9][0-9]{0,3}|10000)$',
-            'advanced': '1',
-            'display_text': 'Buffersize'
-        }, 'downsampling_rate': {
-            'value': "1",
-            'regex': '(\d+)'
-        }, 'rolling_plot': {
-            'value': '0',
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Rolling Plot'
-        }
-        }
-        # http://www.regexr.com/
-        return config
-
     def set_buffer_size(self, new_size):
         """
         Function set buffer size
@@ -474,6 +414,7 @@ class Plot(vip_base):
 
                 for signal in subscription.get_signals():
                     current_signals.append(signal)
+        current_signals = sorted(current_signals)
 
         # Add missing buffers
         for signal_name in current_signals:
@@ -484,6 +425,9 @@ class Plot(vip_base):
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
                 self.remove_databuffer(signal_name)
+
+        self.update_pens()
+        self.update_legend()
 
     def add_databuffer(self, signal_name, signal_id):
         """
@@ -501,16 +445,15 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            legend_name = str(signal_id) + "# " + signal_name
+            #legend_name = str(signal_id) + "# " + signal_name
+            legend_name = signal_name
+
             curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
             self.signals[signal_name]['id'] = signal_id
-
-            self.__legend__.addItem(curve, legend_name)
-
-        self.update_pens()
+            self.signals[signal_name]['legend_name'] = legend_name
 
     def remove_databuffer(self, signal_name):
         """
@@ -522,8 +465,9 @@ class Plot(vip_base):
 
         if signal_name in self.signals:
             curve = self.signals[signal_name]['curve']
+            legend_name = self.signals[signal_name]['legend_name']
             curve.clear()
-            self.__legend__.removeItem(signal_name)
+            #self.__legend__.removeItem(legend_name)
             del self.signals[signal_name]
 
     def get_pen(self, index):
@@ -638,3 +582,78 @@ class Plot(vip_base):
     def use_autorange_x(self):
         # TODO: save para
         self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
+        
+        
+    def update_legend(self):
+#        self.__plotWidget__.removeItem(self.__legend__)
+        self.__legend__.scene().removeItem(self.__legend__)
+        del self.__legend__
+
+        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+
+        for signal_name in sorted(self.signals.keys()):
+            curve = self.signals[signal_name]['curve']
+            legend_name = self.signals[signal_name]['legend_name']
+            self.__legend__.addItem(curve, legend_name)
+
+    def quit(self):
+        """
+        Function quit plugin
+
+        :return:
+        """
+        print('PlotPerformance: will quit')
+
+    def get_plugin_configuration(self):
+        """
+        Function get plugin configuration
+
+        :return {}:
+        """
+        config = {
+            'label_y': {
+                'value': "amplitude, V",
+                'regex': '\w+,\s+\w+',
+                'display_text': 'Label-Y'
+            }, 'label_x': {
+            'value': "time, s",
+            'regex': '\w+,\s*\w+',
+            'display_text': 'Label-X'
+        }, 'x-grid': {
+            'value': "0",
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Grid-X'
+        }, 'y-grid': {
+            'value': "0",
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Grid-Y'
+        }, 'color': {
+            'value': "[0 1 2 3 4]",
+            'regex': '^\[(\s*\d\s*)+\]',
+            'advanced': '1',
+            'display_text': 'Color'
+        }, 'style': {
+            'value': "[0 0 0 0 0]",
+            'regex': '^\[(\s*\d\s*)+\]',
+            'advanced': '1',
+            'display_text': 'Style'
+        }, 'buffersize': {
+            'value': "1000",
+            'regex': '^([1-9][0-9]{0,3}|10000)$',
+            'advanced': '1',
+            'display_text': 'Buffersize'
+        }, 'downsampling_rate': {
+            'value': "1",
+            'regex': '(\d+)'
+        }, 'rolling_plot': {
+            'value': '0',
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Rolling Plot'
+        }
+        }
+        # http://www.regexr.com/
+        return config
