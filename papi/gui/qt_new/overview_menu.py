@@ -282,7 +282,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
                 subscription = dblock_names[dblock_name]
 
-                for signal_uname in subscription.get_signals():
+                for signal_uname in sorted(subscription.get_signals()):
 
                     signal_item = QStandardItem(signal_uname)
 

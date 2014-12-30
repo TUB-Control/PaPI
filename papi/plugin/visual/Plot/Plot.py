@@ -356,6 +356,154 @@ class Plot(vip_base):
 
         pass
 
+    def set_buffer_size(self, new_size):
+        """
+        Function set buffer size
+
+        :param new_size:
+        :return:
+        """
+
+        self.__buffer_size__ = int(new_size)
+
+        # -------------------------------
+        # Change Time Buffer
+        # -------------------------------
+
+        self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
+
+        # -------------------------------
+        # Change Buffer of current
+        # plotted signals
+        # -------------------------------
+
+        start_size = len(self.__tbuffer__)
+
+        for signal_name in self.signals:
+            buffer_new = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
+
+            buffer_old = self.signals[signal_name]['buffer']
+            #buffer_new.extend(buffer_old)
+
+            self.signals[signal_name]['buffer'] = buffer_new
+
+        self.__new_added_data__ = 0
+
+    def plugin_meta_updated(self):
+        """
+        By this function the plot is able to handle more than one input for plotting.
+
+        :return:
+        """
+
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        current_signals = []
+
+        for dpluginsub_id in subscriptions:
+            for dblock_name in subscriptions[dpluginsub_id]:
+
+                # get subscription for dblock
+                subscription = subscriptions[dpluginsub_id][dblock_name]
+
+                for signal in subscription.get_signals():
+                    current_signals.append(signal)
+        current_signals = sorted(current_signals)
+
+        # Add missing buffers
+        for signal_name in current_signals:
+            if signal_name not in self.signals:
+                self.add_databuffer(signal_name, current_signals.index(signal_name))
+
+        # Delete old buffers
+        for signal_name in self.signals.copy():
+            if signal_name not in current_signals:
+                self.remove_databuffer(signal_name)
+
+        self.update_pens()
+        self.update_legend()
+
+    def add_databuffer(self, signal_name, signal_id):
+        """
+        Create new buffer for signal_name.
+
+        :param signal_name:
+        :param signal_id:
+        :return:
+        """
+
+        if signal_name not in self.signals:
+            self.signals[signal_name] = {}
+
+            start_size = len(self.__tbuffer__)
+
+            buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
+
+            #legend_name = str(signal_id) + "# " + signal_name
+            legend_name = signal_name
+
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name)
+
+            self.signals[signal_name]['buffer'] = buffer
+            self.signals[signal_name]['curve'] = curve
+            self.signals[signal_name]['id'] = signal_id
+            self.signals[signal_name]['legend_name'] = legend_name
+
+    def remove_databuffer(self, signal_name):
+        """
+        Remove the databuffer for signal_name.
+
+        :param signal_name:
+        :return:
+        """
+
+        if signal_name in self.signals:
+            curve = self.signals[signal_name]['curve']
+            legend_name = self.signals[signal_name]['legend_name']
+            curve.clear()
+            #self.__legend__.removeItem(legend_name)
+            del self.signals[signal_name]
+
+    def get_pen(self, index):
+        """
+        Function get pen
+
+        :param index:
+        :return:
+        """
+        index = int(index)
+
+        style_index = index % len(self.__styles_selected__)
+        style_code = int(self.__styles_selected__[style_index])
+
+        color_index = index % len(self.__colors_selected__)
+        color_code = int(self.__colors_selected__[color_index])
+
+        if style_code in self.styles:
+            style = self.styles[style_code]
+        else:
+            style = self.styles[1]
+
+        if color_code in self.colors:
+            color = self.colors[color_code]
+        else:
+            color = self.colors[1]
+
+        return pq.mkPen(color=color, style=style)
+
+    def update_legend(self):
+#        self.__plotWidget__.removeItem(self.__legend__)
+        self.__legend__.scene().removeItem(self.__legend__)
+        del self.__legend__
+
+        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+
+        for signal_name in sorted(self.signals.keys()):
+            curve = self.signals[signal_name]['curve']
+            legend_name = self.signals[signal_name]['legend_name']
+            self.__legend__.addItem(curve, legend_name)
+
     def quit(self):
         """
         Function quit plugin
@@ -416,134 +564,3 @@ class Plot(vip_base):
         }
         # http://www.regexr.com/
         return config
-
-    def set_buffer_size(self, new_size):
-        """
-        Function set buffer size
-
-        :param new_size:
-        :return:
-        """
-
-        self.__buffer_size__ = int(new_size)
-
-        # -------------------------------
-        # Change Time Buffer
-        # -------------------------------
-
-        self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
-
-        # -------------------------------
-        # Change Buffer of current
-        # plotted signals
-        # -------------------------------
-
-        start_size = len(self.__tbuffer__)
-
-        for signal_name in self.signals:
-            buffer_new = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
-
-            buffer_old = self.signals[signal_name]['buffer']
-            #buffer_new.extend(buffer_old)
-
-            self.signals[signal_name]['buffer'] = buffer_new
-
-        self.__new_added_data__ = 0
-
-    def plugin_meta_updated(self):
-        """
-        By this function the plot is able to handle more than one input for plotting.
-
-        :return:
-        """
-
-        subscriptions = self.dplugin_info.get_subscribtions()
-
-        current_signals = []
-
-        for dpluginsub_id in subscriptions:
-            for dblock_name in subscriptions[dpluginsub_id]:
-
-                # get subscription for dblock
-                subscription = subscriptions[dpluginsub_id][dblock_name]
-
-                for signal in subscription.get_signals():
-                    current_signals.append(signal)
-
-        # Add missing buffers
-        for signal_name in current_signals:
-            if signal_name not in self.signals:
-                self.add_databuffer(signal_name, current_signals.index(signal_name))
-
-        # Delete old buffers
-        for signal_name in self.signals.copy():
-            if signal_name not in current_signals:
-                self.remove_databuffer(signal_name)
-
-    def add_databuffer(self, signal_name, signal_id):
-        """
-        Create new buffer for signal_name.
-
-        :param signal_name:
-        :param signal_id:
-        :return:
-        """
-
-        if signal_name not in self.signals:
-            self.signals[signal_name] = {}
-
-            start_size = len(self.__tbuffer__)
-
-            buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
-
-            legend_name = str(signal_id) + "# " + signal_name
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name)
-
-            self.signals[signal_name]['buffer'] = buffer
-            self.signals[signal_name]['curve'] = curve
-            self.signals[signal_name]['id'] = signal_id
-
-            self.__legend__.addItem(curve, legend_name)
-
-        self.update_pens()
-
-    def remove_databuffer(self, signal_name):
-        """
-        Remove the databuffer for signal_name.
-
-        :param signal_name:
-        :return:
-        """
-
-        if signal_name in self.signals:
-            curve = self.signals[signal_name]['curve']
-            curve.clear()
-            self.__legend__.removeItem(signal_name)
-            del self.signals[signal_name]
-
-    def get_pen(self, index):
-        """
-        Function get pen
-
-        :param index:
-        :return:
-        """
-        index = int(index)
-
-        style_index = index % len(self.__styles_selected__)
-        style_code = int(self.__styles_selected__[style_index])
-
-        color_index = index % len(self.__colors_selected__)
-        color_code = int(self.__colors_selected__[color_index])
-
-        if style_code in self.styles:
-            style = self.styles[style_code]
-        else:
-            style = self.styles[1]
-
-        if color_code in self.colors:
-            color = self.colors[color_code]
-        else:
-            color = self.colors[1]
-
-        return pq.mkPen(color=color, style=style)
