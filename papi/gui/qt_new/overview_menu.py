@@ -38,6 +38,7 @@ from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, Q
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
+import copy
 from PySide.QtCore import *
 from PySide.QtGui import QLineEdit
 
@@ -552,6 +553,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         indexes = self.blockTree.selectedIndexes()
 
+
         for index in indexes:
             if index.isValid():
                 signal = self.blockTree.model().data(index, Qt.UserRole)
@@ -567,6 +569,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
 
         self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
+
+        #self.blockTree.scrollTo(indexes[-1])
 
     def remove_subscriber_action(self, subscriber: DPlugin, dblock: DBlock):
         """
