@@ -25,11 +25,9 @@ To use it properly you must reimplement or monkey patch the
 API
 ===
 """
- 
 
-from yapsy.IPlugin import IPlugin
-from yapsy.PluginManagerDecorator import  PluginManagerDecorator
-
+from papi.yapsy.IPlugin import IPlugin
+from papi.yapsy.PluginManagerDecorator import PluginManagerDecorator
 
 class FilteredPluginManager(PluginManagerDecorator):
 	"""

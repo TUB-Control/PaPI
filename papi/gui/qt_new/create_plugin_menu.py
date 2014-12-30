@@ -25,18 +25,18 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
+from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import PluginTreeItem
+from papi.yapsy.PluginManager import PluginManager
+
 __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow, QStandardItem, QStandardItemModel
+from PySide.QtGui import QMainWindow
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
-
-from yapsy.PluginManager import PluginManager
 
 
 class CreatePluginMenu(QMainWindow, Ui_Create):

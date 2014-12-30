@@ -131,20 +131,20 @@ import sys
 import os
 import imp
 
-from yapsy import log
-from yapsy import NormalizePluginNameForModuleName
+from papi.yapsy import log
+from papi.yapsy import NormalizePluginNameForModuleName
+from papi.yapsy.IPluginLocator import IPluginLocator
 
-from yapsy.IPlugin import IPlugin
-from yapsy.IPluginLocator import IPluginLocator
+
+
 # The follozing two imports are used to implement the default behaviour
-from yapsy.PluginFileLocator import PluginFileAnalyzerWithInfoFile
-from yapsy.PluginFileLocator import PluginFileLocator
+from papi.yapsy.PluginFileLocator import PluginFileAnalyzerWithInfoFile
 # imported for backward compatibility (this variable was defined here
 # before 1.10)
-from yapsy import PLUGIN_NAME_FORBIDEN_STRING
 # imported for backward compatibility (this PluginInfo was imported
 # here before 1.10)
-from yapsy.PluginInfo import PluginInfo
+from papi.yapsy.IPlugin import IPlugin
+from papi.yapsy.PluginFileLocator import PluginFileLocator
 
 
 class PluginManager(object):
@@ -659,5 +659,4 @@ class PluginManagerSingleton(object):
 
 # For backward compatility import the most basic decorator (it changed
 # place as of v1.8)
-from yapsy.PluginManagerDecorator import PluginManagerDecorator
 

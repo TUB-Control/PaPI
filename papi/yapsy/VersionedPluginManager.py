@@ -12,12 +12,11 @@ API
 ===
 """
 
-
 from distutils.version import StrictVersion
 
-from yapsy.PluginInfo import PluginInfo
-from yapsy.IPlugin import IPlugin
-from yapsy.PluginManagerDecorator import PluginManagerDecorator
+from papi.yapsy.PluginInfo import PluginInfo
+from papi.yapsy.PluginManagerDecorator import PluginManagerDecorator
+from papi.yapsy.IPlugin import IPlugin
 
 
 class VersionedPluginInfo(PluginInfo):
