@@ -30,7 +30,7 @@ __author__ = 'control'
 
 from papi.plugin.base_classes.vip_base import vip_base
 from PySide.QtGui import QMdiSubWindow
-from pyqtgraph.Qt import QtCore, QtGui
+from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class WizardExample(vip_base):

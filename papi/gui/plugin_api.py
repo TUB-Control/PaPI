@@ -35,7 +35,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from pyqtgraph import QtCore
+from papi.pyqtgraph import QtCore
 from papi.gui.gui_api import Gui_api
 
 import papi.error_codes as ERROR
