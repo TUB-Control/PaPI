@@ -729,3 +729,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
+
+        if self.pluginTree.hasFocus() and \
+                event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
+            self.plugin_item_changed(self.pluginTree.currentIndex())
