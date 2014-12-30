@@ -497,7 +497,7 @@ class Plot(vip_base):
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
             legend_name = str(signal_id) + "# " + signal_name
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name, clipToView=True)
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
