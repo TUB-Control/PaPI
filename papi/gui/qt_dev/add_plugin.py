@@ -28,15 +28,15 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.ui.gui.qt_dev.add_plugin import Ui_AddPlugin
-from PySide.QtGui import QDialog, QAbstractButton, QDialogButtonBox
+from PySide.QtGui import QDialog, QDialogButtonBox
 from PySide.QtGui import QTreeWidgetItem, QRegExpValidator
 from PySide import QtGui
 from PySide.QtCore import QRegExp
 
+from papi.ui.gui.qt_dev.add_plugin import Ui_AddPlugin
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
+from papi.yapsy.PluginManager import PluginManager
 
-from yapsy.PluginManager import PluginManager
 
 class AddPlugin(QDialog, Ui_AddPlugin):
 

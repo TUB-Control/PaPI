@@ -17,7 +17,7 @@ API
 """
 
 
-from yapsy import log
+from papi.yapsy import log
 
 class IPluginLocator(object):
 	"""

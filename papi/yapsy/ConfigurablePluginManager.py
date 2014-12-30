@@ -12,12 +12,9 @@ API
 ===
 """
 
-from yapsy.IPlugin import IPlugin
-
-
-from yapsy.PluginManagerDecorator import PluginManagerDecorator
-from yapsy.PluginManager import PLUGIN_NAME_FORBIDEN_STRING
-	
+from papi.yapsy import PLUGIN_NAME_FORBIDEN_STRING
+from papi.yapsy.IPlugin import IPlugin
+from papi.yapsy.PluginManagerDecorator import PluginManagerDecorator
 
 class ConfigurablePluginManager(PluginManagerDecorator):
 	"""

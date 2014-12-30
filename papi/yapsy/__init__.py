@@ -60,7 +60,7 @@ __docformat__ = "restructuredtext en"
 
 # provide a default named log for package-wide use
 import logging
-log = logging.getLogger('yapsy')
+log = logging.getLogger('papi.yapsy')
 
 # Some constants concerning the plugins
 PLUGIN_NAME_FORBIDEN_STRING=";;"

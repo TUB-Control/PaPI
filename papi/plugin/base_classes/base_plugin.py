@@ -26,12 +26,11 @@ Contributors:
 Stefan Ruppin
 """
 
-from yapsy.IPlugin import IPlugin
 from papi.data.DPlugin import DBlock
 import papi.event as Event
 from papi.exceptions.block_exceptions import Wrong_type, Wrong_length
 from papi.data.DOptionalData import DOptionalData
-
+from papi.yapsy.IPlugin import IPlugin
 
 
 class base_plugin(IPlugin):

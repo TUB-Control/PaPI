@@ -13,15 +13,14 @@ API
 ===
 """
 
-import sys
 import os
 import shutil
 import zipfile
 import io
 
-from yapsy.IPlugin import IPlugin
-from yapsy.PluginManagerDecorator import PluginManagerDecorator
-from yapsy import log
+from papi.yapsy.IPlugin import IPlugin
+from papi.yapsy.PluginManagerDecorator import PluginManagerDecorator
+from papi.yapsy import log
 
 
 class AutoInstallPluginManager(PluginManagerDecorator):
