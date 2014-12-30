@@ -1,0 +1,9 @@
+[Core]
+Name = ToHDD_CSV
+Module = ToHDD_CSV
+
+[Documentation]
+Author = S.R.
+Version = 0.1
+Website = www
+Description = simple write to HDD plugin

@@ -1,0 +1,9 @@
+[Core]
+Name = Fourier_Rect_MOD
+Module = Fourier_Rect_MOD
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website = www
+Description = simple fourier series of a rectangle signal

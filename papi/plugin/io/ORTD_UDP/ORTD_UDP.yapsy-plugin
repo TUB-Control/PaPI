@@ -1,0 +1,9 @@
+[Core]
+Name = ORTD_UDP
+Module = ORTD_UDP
+
+[Documentation]
+Author = Christian Klauer, Stefan Ruppin
+Version = 0.1
+Website = openrtdynamics.sf.net
+Description = openrtdynamics interface
