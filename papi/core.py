@@ -35,7 +35,8 @@ from threading import Timer
 from papi.yapsy.PluginManager import PluginManager
 from papi.PapiEvent import PapiEvent
 from papi.data.DCore import DCore
-from papi.data.DPlugin import DPlugin
+from papi.data.DPlugin import DPlugin, DBlock
+from papi.data.DSignal import DSignal
 from papi.ConsoleLog import ConsoleLog
 from papi.data.DOptionalData import DOptionalData
 
@@ -81,7 +82,8 @@ class Core:
 
         self.__process_data_event_l__ = {   'new_data':         self.__process_new_data__,
                                             'new_block':        self.__process_new_block__,
-                                            'new_parameter':    self.__process_new_parameter__
+                                            'new_parameter':    self.__process_new_parameter__,
+                                            'edit_dplugin' :    self.__process_edit_dplugin,
         }
 
         self.__process_instr_event_l__ = { 'create_plugin':     self.__process_create_plugin__,
@@ -592,6 +594,40 @@ class Core:
                 # Plugin of event origin does not exist in DCore of core
                 self.log.printText(1,'new_data, Plugin with id  '+str(oID)+'  does not exist in DCore')
                 return -1
+
+    def __process_edit_dplugin(self, event):
+        """
+        Process edit_dplugin event from gui.
+
+        :param event: event to process
+        :type event: PapiEvent
+        :type tar_plug: DPlugin
+        """
+        eObject = event.editedObject
+        cRequest = event.changeRequest
+
+        dID = event.get_destinatioID()
+
+        pl = self.core_data.get_dplugin_by_id(dID)
+
+        # DBlock of DPlugin should be edited
+        if isinstance(eObject, DBlock):
+
+            dblock = pl.get_dblock_by_name(eObject.name)
+
+            if "edit" in cRequest:
+                cObject = cRequest["edit"]
+
+                # Signal should be modified in DBlock
+                if isinstance(cObject, DSignal):
+                    dsignal = dblock.get_signal_by_uname(cObject.uname)
+
+                    dsignal.dname = cObject.dname
+
+                    self.log.printText(1,'edit_dplugin, Edited Dblock '+dblock.name+' of DPlugin '+pl.uname+ " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname  )
+
+
+        self.update_meta_data_to_gui(pl.id)
 
     # ------- Event processing second stage: instr events ---------
     def __process_create_plugin__(self,event):
