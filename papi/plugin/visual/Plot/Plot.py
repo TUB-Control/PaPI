@@ -39,7 +39,7 @@ import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-from papi.pyqtgraph.Qt import QtCore
+from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class Plot(vip_base):
@@ -188,7 +188,13 @@ class Plot(vip_base):
 
         self.__update_intervall__ = 25  # in milliseconds
 
+        self.setup_context_menu()
+
+
+
+
         return True
+
 
     def pause(self):
         """
@@ -491,6 +497,93 @@ class Plot(vip_base):
 
         return pq.mkPen(color=color, style=style)
 
+
+
+    def setup_context_menu(self):
+        custMenu = QtGui.QMenu("Options")
+        axesMenu = QtGui.QMenu('Axes')
+
+
+        xAutoAction = QtGui.QAction('Use auto range for X',self.__plotWidget__)
+        xAutoAction.triggered.connect(lambda : self.use_autorange_x())
+
+        axesMenu.addAction(xAutoAction)
+
+
+        # ---------------------------------------------------------
+        # Y-Range Actions
+        axesMenu.addSeparator().setText("Y range")
+        yAutoAction = QtGui.QAction('&Use auto range for Y',
+                                    self.__plotWidget__,
+                                    checkable=True,
+                                    triggered=self.use_autorange_y )
+        self.use_autorange_y()
+        yAutoAction.setChecked(True)
+
+        yManAction = QtGui.QAction('&Use manual range for Y',
+                                   self.__plotWidget__,
+                                   checkable=True,
+                                   triggered= self.use_man_range_y)
+
+        self.minEdit = QtGui.QLineEdit()
+        self.minEdit.setFixedWidth(100)
+
+        minEditA = QtGui.QWidgetAction(self.__plotWidget__)
+        minEditA.setDefaultWidget(self.minEdit)
+
+
+        self.maxEdit = QtGui.QLineEdit()
+        self.maxEdit.setFixedWidth(100)
+
+        maxEditA = QtGui.QWidgetAction(self.__plotWidget__)
+        maxEditA.setDefaultWidget(self.maxEdit)
+
+        # ---------------------------------------------------------
+        # Set group for automatic uncheck
+        rangeMode = QtGui.QActionGroup(self.__plotWidget__)
+        rangeMode.addAction(yAutoAction)
+        rangeMode.addAction(yManAction)
+
+        # ---------------------------------------------------------
+        # add actions to menu
+        axesMenu.addAction(yManAction)
+        axesMenu.addAction(minEditA)
+        axesMenu.addAction(maxEditA)
+        axesMenu.addAction(yAutoAction)
+
+
+        custMenu.addMenu(axesMenu)
+        self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
+        self.__plotWidget__.getPlotItem().ctrlMenu = custMenu
+
+
+
+
+
+    def use_man_range_y(self):
+        # TODO: save para
+
+        mi = float(self.minEdit.text())
+        ma = float(self.maxEdit.text())
+
+        self.control_api.do_set_parameter(self.__id__, 'x-grid', '1')
+
+        self.__plotWidget__.getPlotItem().getViewBox().setYRange(mi,ma)
+
+    def use_man_range_x(self):
+        # TODO: save para
+        self.__plotWidget__.getPlotItem().getViewBox().setXRange(0,1)
+
+
+    def use_autorange_y(self):
+        # TODO: save para
+        self.__plotWidget__.getPlotItem().getViewBox().menu.yAutoClicked()
+
+    def use_autorange_x(self):
+        # TODO: save para
+        self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
+        
+        
     def update_legend(self):
 #        self.__plotWidget__.removeItem(self.__legend__)
         self.__legend__.scene().removeItem(self.__legend__)
