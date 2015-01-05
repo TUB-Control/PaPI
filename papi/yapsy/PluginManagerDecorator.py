@@ -48,36 +48,35 @@ class PluginManagerDecorator(object):
 	"""
         
 	def __init__(self, decorated_object=None,
-				 # The following args will only be used if we need to
-				 # create a default PluginManager
-				 categories_filter={"Default":IPlugin}, 
-				 directories_list=[os.path.dirname(__file__)], 
-				 plugin_info_ext="yapsy-plugin"):
-		"""
-		Mimics the PluginManager's __init__ method and wraps an
-		instance of this class into this decorator class.
-		
-		  - *If the decorated_object is not specified*, then we use the
-		    PluginManager class to create the 'base' manager, and to do
-		    so we will use the arguments: ``categories_filter``,
-		    ``directories_list``, and ``plugin_info_ext`` or their
-		    default value if they are not given.
+         		 # The following args will only be used if we need to
+         		 # create a default PluginManager
+                  categories_filter={"Default":IPlugin},
+                  directories_list=[os.path.dirname(__file__)],
+                  plugin_info_ext="yapsy-plugin"):
+         """
+         Mimics the PluginManager's __init__ method and wraps an
+         instance of this class into this decorator class.
 
-		  - *If the decorated object is given*, these last arguments are
-		    simply **ignored** !
+           - *If the decorated_object is not specified*, then we use the
+             PluginManager class to create the 'base' manager, and to do
+             so we will use the arguments: ``categories_filter``,
+             ``directories_list``, and ``plugin_info_ext`` or their
+             default value if they are not given.
 
-		All classes (and especially subclasses of this one) that want
-		to be a decorator must accept the decorated manager as an
-		object passed to the init function under the exact keyword
-		``decorated_object``.
-		"""
-		
-		if decorated_object is None:
-			log.debug("Creating a default PluginManager instance to be decorated.")
-            decorated_object = PluginManager(categories_filter,
-											 directories_list,
-											 plugin_info_ext)
-		self._component = decorated_object
+           - *If the decorated object is given*, these last arguments are
+             simply **ignored** !
+
+         All classes (and especially subclasses of this one) that want
+         to be a decorator must accept the decorated manager as an
+         object passed to the init function under the exact keyword
+         ``decorated_object``.
+         """
+         if decorated_object is None:
+             log.debug("Creating a default PluginManager instance to be decorated.")
+             decorated_object = PluginManager(categories_filter,
+         									 directories_list,
+         									 plugin_info_ext)
+         self._component = decorated_object
 
 	def __getattr__(self,name):
 		"""
