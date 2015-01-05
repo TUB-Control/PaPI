@@ -269,14 +269,17 @@ class Plot(vip_base):
         :param value:
         :return:
         """
+        print(name, value)
+
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
+            self.xGrid_Checkbox.setChecked(value=='1')
 
         if name == 'y-grid':
-
             self.config['y-grid']['value'] = value
             self.__plotWidget__.showGrid(y=value == '1')
+            self.yGrid_Checkbox.setChecked(value=='1')
 
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
@@ -286,7 +289,7 @@ class Plot(vip_base):
         if name == 'rolling':
             self.__rolling_plot__ = int(float(value)) == int('1')
             self.config['rolling_plot']['value'] = value
-
+            self.rolling_Checkbox.setChecked(value=='1')
             if self.__rolling_plot__:
                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
@@ -310,6 +313,7 @@ class Plot(vip_base):
 
         if name == 'xRange-auto':
             self.config['xRange-auto']['value'] = value
+            self.xRange_AutoCheckbox.setChecked(value=='1')
             if int(value) == 1:
                 self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
             else:
@@ -317,6 +321,7 @@ class Plot(vip_base):
 
         if name == 'yRange-auto':
             self.config['yRange-auto']['value'] = value
+            self.yRange_AutoCheckbox.setChecked(value=='1')
             if int(value) == 1:
                 self.__plotWidget__.getPlotItem().getViewBox().menu.yAutoClicked()
             else:
@@ -331,6 +336,8 @@ class Plot(vip_base):
             self.config['yRange']['value'] = value
             if self.config['yRange-auto']['value']=='0':
                 self.use_range_for_y(value)
+
+
 
     def update_pens(self):
         """
@@ -549,10 +556,6 @@ class Plot(vip_base):
         range =reg.findall(value)
         if len(range) == 2:
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]),float(range[1]))
-
-
-
-
 
     def setup_context_menu(self):
         self.custMenu = QtGui.QMenu("Options")
