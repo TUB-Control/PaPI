@@ -335,8 +335,6 @@ class Plot(vip_base):
             if self.config['yRange-auto']['value']=='0':
                 self.use_range_for_y(value)
 
-
-
     def update_pens(self):
         """
         Function update pens
@@ -752,7 +750,6 @@ class Plot(vip_base):
             self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
             self.control_api.do_set_parameter(self.__id__, 'yRange', '['+mi  +' '+ma+']' )
 
-        
     def update_legend(self):
 #        self.__plotWidget__.removeItem(self.__legend__)
         self.__legend__.scene().removeItem(self.__legend__)
