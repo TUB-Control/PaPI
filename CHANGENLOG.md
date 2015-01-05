@@ -8,7 +8,7 @@ v.0.9
  * Signals are now stored and managed as object 
  * Support of configuration types [file, ]
  * Unsubscription of single signals became possible
- * Use of pyqtgraph 0.9.10
+ * Use of pyqtgraph 0.9.10 -> removed dependency for scipy
  * Sorting in the overview menu is enabled
  * First pictures for plugins
  * Error Dialogs pops up if a plugin error occurs -> Whole GUI wont die anymore
