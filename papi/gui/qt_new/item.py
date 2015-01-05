@@ -195,18 +195,47 @@ class DBlockTreeItem(PaPITreeItem):
         self.dblock = dblock
         self.setSelectable(False)
         self.setEditable(False)
+        self.tool_tip = "DBlock: " + dblock.name
 
     def get_decoration(self):
         return None
 
+
 class DSignalTreeItem(PaPITreeItem):
-    def __init__(self,  dsignal: DSignal):
+    def __init__(self,  dsignal: DSignal, check_box):
         super(DSignalTreeItem, self).__init__(dsignal, dsignal.dname)
         self.dsignal = dsignal
         self.setSelectable(False)
         self.setEditable(False)
+        self.tool_tip = "InternalName: " + dsignal.uname
+        self.check_box = check_box
 
     def get_decoration(self):
+        return None
+
+    def data(self, role):
+        """
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        """
+
+        if role == Qt.ToolTipRole:
+            return self.tool_tip
+
+        if role == Qt.DisplayRole:
+            if self.check_box.isChecked():
+                return self.dsignal.uname
+            else:
+                return self.dsignal.dname
+
+        if role == Qt.DecorationRole:
+            return self.get_decoration()
+
+        if role == Qt.UserRole:
+            return self.object
+
+
         return None
 
 # ------------------------------------
@@ -333,6 +362,58 @@ class DParameterTreeModel(PaPITreeModel):
 
 
 class DBlockTreeModel(PaPITreeModel):
-    def __init__(self, parent=None):
+    def __init__(self, check_box, parent=None):
         super(DBlockTreeModel, self).__init__(parent)
+        self.check_box = check_box
 
+    def flags(self, index):
+        """
+        This function returns the flags for a specific index.
+
+        For Qt.ItemFlags see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum'
+        :param index:
+        :return:
+        """
+        row = index.row()
+        col = index.column()
+
+        parent = index.parent()
+
+        if not parent.isValid():
+            return ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable
+
+        if parent.isValid():
+
+            if self.check_box.isChecked():
+                return ~Qt.ItemIsEditable
+            else:
+                return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+
+
+    def setData(self, index, value, role):
+        """
+        This function is called when a content in a row is edited by the user.
+
+        :param index: Current selected index.
+        :param value: New value from user
+        :param role:
+        :return:
+        """
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.EditRole:
+
+                dsignal = super(DBlockTreeModel, self).data(index, Qt.UserRole)
+
+                if value != dsignal.dname:
+                    dsignal.dname = value
+                    self.dataChanged.emit(index, None)
+
+                return True
+
+        return False
