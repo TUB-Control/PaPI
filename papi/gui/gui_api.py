@@ -27,7 +27,6 @@ Stefan Ruppin
 """
 __author__ = 'stefan'
 
-
 import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
@@ -37,6 +36,8 @@ from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_L
 
 from papi.pyqtgraph import QtCore
 
+from papi.data.DSignal import DSignal
+from papi.data.DPlugin import DBlock
 
 import papi.error_codes as ERROR
 
@@ -45,13 +46,13 @@ import time
 
 import xml.etree.cElementTree as ET
 
-class Gui_api(QtCore.QObject):
 
+class Gui_api(QtCore.QObject):
     resize_gui = QtCore.Signal(int, int)
     set_bg_gui = QtCore.Signal(str)
 
 
-    def __init__(self, gui_data, core_queue, gui_id, LOG_IDENT = GUI_PROCESS_CONSOLE_IDENTIFIER):
+    def __init__(self, gui_data, core_queue, gui_id, LOG_IDENT=GUI_PROCESS_CONSOLE_IDENTIFIER):
         super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
@@ -62,8 +63,7 @@ class Gui_api(QtCore.QObject):
         self.gui_bg_path = None
 
 
-
-    def do_create_plugin(self, plugin_identifier, uname, config={}, autostart = True):
+    def do_create_plugin(self, plugin_identifier, uname, config={}, autostart=True):
         """
         Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.
 
@@ -98,7 +98,7 @@ class Gui_api(QtCore.QObject):
         :type id: int
         :return:
         """
-        event = Event.instruction.StopPlugin(self.gui_id, id, None )
+        event = Event.instruction.StopPlugin(self.gui_id, id, None)
 
         self.core_queue.put(event)
 
@@ -116,6 +116,41 @@ class Gui_api(QtCore.QObject):
             self.do_delete_plugin(pl_id)
         else:
             self.log.printText(1, " Do delete plugin with uname " + uname + ' failed')
+
+    def do_edit_plugin(self, pl_id, eObject, changeRequest):
+        """
+        Edit plugin with given plugin id. Specify attribute of plugin by eObject which should
+        be edited e.g. DBlock.
+        Specify action by changeRequest e.g. {'edit' : DSignal}.
+        Currently only possible to change a DSignal for a given dplugin and dblock.
+
+        :param pl_id: Plugin id to delete
+        :type pl_id: int
+        :return:
+        """
+        event = Event.data.EditDPlugin(self.gui_id, pl_id, eObject, changeRequest)
+
+        self.core_queue.put(event)
+
+    def do_edit_plugin_uname(self, uname, eObject, changeRequest):
+        """
+        Edit plugin with given plugin uname. Specify attribute of plugin by eObject which should
+        be edited e.g. DBlock.
+        Specify action by changeRequest e.g. {'edit' : DSignal}.
+        Currently only possible to change a DSignal for a given dplugin and dblock.
+
+        :param uname:
+        :param eObject:
+        :param changeRequest:
+        :return:
+        """
+
+        pl_id = self.do_get_plugin_id_from_uname(uname)
+
+        if pl_id is not None:
+            self.do_edit_plugin(pl_id, eObject, changeRequest)
+        else:
+            self.log.printText(1, " Do edit plugin with uname " + uname + ' failed')
 
     def do_stopReset_pluign(self, id):
         """
@@ -172,7 +207,7 @@ class Gui_api(QtCore.QObject):
             self.log.printText(1, " Do start_plugin with uname " + uname + ' failed')
             return ERROR.NOT_EXISTING
 
-    def do_subscribe(self, subscriber_id, source_id, block_name, signals=None, sub_alias = None):
+    def do_subscribe(self, subscriber_id, source_id, block_name, signals=None, sub_alias=None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -186,16 +221,16 @@ class Gui_api(QtCore.QObject):
         :return:
         """
         # build optional data object and add id and block name to it
-        opt             = DOptionalData()
-        opt.source_ID   = source_id
-        opt.block_name  = block_name
-        opt.signals     = signals
-        opt.subscription_alias =  sub_alias
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        opt.signals = signals
+        opt.subscription_alias = sub_alias
         # send event with subscriber id as the origin to CORE
         event = Event.instruction.Subscribe(subscriber_id, 0, opt)
         self.core_queue.put(event)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signals=None, sub_alias = None):
+    def do_subscribe_uname(self, subscriber_uname, source_uname, block_name, signals=None, sub_alias=None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -237,10 +272,10 @@ class Gui_api(QtCore.QObject):
         :return:
         """
         # create optional data with source id and block_name
-        opt             = DOptionalData()
-        opt.source_ID   = source_id
-        opt.block_name  = block_name
-        opt.signals     = signal_index
+        opt = DOptionalData()
+        opt.source_ID = source_id
+        opt.block_name = block_name
+        opt.signals = signal_index
         # sent event to Core with origin subscriber_id
         event = Event.instruction.Unsubscribe(subscriber_id, 0, opt)
         self.core_queue.put(event)
@@ -355,7 +390,7 @@ class Gui_api(QtCore.QObject):
         # # get plugin from DGui with given uname
         # # purpose: get its id
         # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-        #  # check for existance
+        # # check for existance
         # if dplug is not None:
         #     # it does exist, so get its id
         #     self.do_pause_plugin_by_id(dplug.id)
@@ -399,7 +434,7 @@ class Gui_api(QtCore.QObject):
         # # get plugin from DGui with given uname
         # # purpose: get its id
         # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-        #  # check for existance
+        # # check for existance
         # if dplug is not None:
         #     # it does exist, so get its id
         #     self.do_resume_plugin_by_id(dplug.id)
@@ -425,7 +460,7 @@ class Gui_api(QtCore.QObject):
         :return: None: plugin with uname does not exist, id: id of plugin
         """
         dplugin = self.gui_data.get_dplugin_by_uname(uname)
-         # check for existance
+        # check for existance
         if dplugin is not None:
             # it does exist, so get its id
             return dplugin.id
@@ -443,21 +478,20 @@ class Gui_api(QtCore.QObject):
 
         root = tree.getroot()
 
-
-
         plugins_to_start = []
         subs_to_make = []
         parameters_to_change = []
+        signals_to_change = []
 
         for plugin_xml in root:
-           if plugin_xml.tag == 'Size':
+            if plugin_xml.tag == 'Size':
                 w = int(plugin_xml.attrib['w'])
                 h = int(plugin_xml.attrib['h'])
-                self.resize_gui.emit(w,h)
-           else:
+                self.resize_gui.emit(w, h)
+            else:
                 if plugin_xml.tag == 'Background':
                     path = str(plugin_xml.attrib['image'])
-                    if path != '' and path is not None and path !='default':
+                    if path != '' and path is not None and path != 'default':
                         self.set_bg_gui.emit(path)
                 else:
                     pl_uname = plugin_xml.attrib['uname']
@@ -469,11 +503,15 @@ class Gui_api(QtCore.QObject):
                         config_hash[para_name] = {}
                         for detail_xml in parameter_xml:
                             detail_name = detail_xml.tag
-                            config_hash[para_name][detail_name]= detail_xml.text
+                            config_hash[para_name][detail_name] = detail_xml.text
 
                     pl_uname_new = self.change_uname_to_uniqe(pl_uname)
 
                     plugins_to_start.append([identifier, pl_uname_new, config_hash])
+
+                    # --------------------------------
+                    # Load Subscriptions
+                    # --------------------------------
 
                     subs_xml = plugin_xml.find('Subscriptions')
                     for sub_xml in subs_xml.findall('Subscription'):
@@ -487,8 +525,11 @@ class Gui_api(QtCore.QObject):
                             alias = alias_xml.text
                             pl_uname_new = self.change_uname_to_uniqe(pl_uname)
                             data_source_new = self.change_uname_to_uniqe(data_source)
-                            subs_to_make.append([pl_uname_new,data_source_new,block_name,signals, alias])
+                            subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
 
+                    # --------------------------------
+                    # Load PreviousParameters
+                    # --------------------------------
 
                     prev_parameters_xml = plugin_xml.find('PreviousParameters')
                     for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
@@ -498,12 +539,28 @@ class Gui_api(QtCore.QObject):
                         # TODO validate NO FLOAT in parameter
                         parameters_to_change.append([pl_uname_new, para_name, para_value])
 
+                    # --------------------------------
+                    # Load DBlocks due to signals name
+                    # --------------------------------
+
+                    dblocks_xml = plugin_xml.find('DBlocks')
+                    for dblock_xml in dblocks_xml:
+                        dblock_name = dblock_xml.attrib['Name']
+                        print('DBlock ' + dblock_name)
+                        dsignals_xml = dblock_xml.findall('DSignal')
+                        for dsignal_xml in dsignals_xml:
+                            dsignal_uname = dsignal_xml.attrib['uname']
+                            dsignal_dname = dsignal_xml.find('dname').text
+                            print('Signal' + dsignal_uname + ' with ' + dsignal_dname)
+                            signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
+
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY,\
-                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change) )
+        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \
+                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \
+                                                                 parameters_to_change, signals_to_change))
 
     def change_uname_to_uniqe(self, uname):
         """
@@ -513,33 +570,42 @@ class Gui_api(QtCore.QObject):
         :type uname: basestring
         :return: uname
         """
-        i=1
+        i = 1
         while self.gui_data.get_dplugin_by_uname(uname) is not None:
-                i = i+1
-                if i == 2:
-                    uname = uname + 'X' +str(i)
-                else:
-                    uname = uname[:-1] + str(i)
+            i = i + 1
+            if i == 2:
+                uname = uname + 'X' + str(i)
+            else:
+                uname = uname[:-1] + str(i)
         return uname
 
-    def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change ):
+    def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
         for para in parameters_to_change:
             self.do_set_parameter(para[0], para[1], para[2])
 
+        for sig in signals_to_change:
+            plugin_uname = sig[0]
+            dblock_name = sig[1]
+            dsignal_uname = sig[2]
+            dsignal_dname = sig[3]
+
+            self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),
+                                      {'edit': DSignal(dsignal_uname, dsignal_dname)})
+
     def do_save_xml_config(self, path):
         root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        root.set('PaPI_version',CORE_PAPI_VERSION)
+        root.set('PaPI_version', CORE_PAPI_VERSION)
 
         size_xml = ET.SubElement(root, 'Size')
-        size_xml.set('w',str(self.gui_size_width))
-        size_xml.set('h',str(self.gui_size_height))
+        size_xml.set('w', str(self.gui_size_width))
+        size_xml.set('h', str(self.gui_size_height))
 
         bg_xml = ET.SubElement(root, 'Background')
-        bg_xml.set('image',str(self.gui_bg_path))
+        bg_xml.set('image', str(self.gui_bg_path))
 
         # get plugins #
         plugins = self.gui_data.get_all_plugins()
@@ -549,27 +615,64 @@ class Gui_api(QtCore.QObject):
             if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 dplugin.startup_config = dplugin.plugin.get_current_config()
 
-            pl_xml = ET.SubElement(root,'Plugin')
-            pl_xml.set('uname',dplugin.uname)
+            pl_xml = ET.SubElement(root, 'Plugin')
+            pl_xml.set('uname', dplugin.uname)
 
-            identifier_xml =ET.SubElement(pl_xml,'Identifier')
+            identifier_xml = ET.SubElement(pl_xml, 'Identifier')
             identifier_xml.text = dplugin.plugin_identifier
 
-            cfg_xml = ET.SubElement(pl_xml,'StartConfig')
+            # ---------------------------------------
+            # Save all current config as startup config
+            # for the next start
+            # ---------------------------------------
+
+            cfg_xml = ET.SubElement(pl_xml, 'StartConfig')
             for parameter in dplugin.startup_config:
                 para_xml = ET.SubElement(cfg_xml, 'Parameter')
-                para_xml.set('Name',parameter)
+                para_xml.set('Name', parameter)
                 for detail in dplugin.startup_config[parameter]:
                     detail_xml = ET.SubElement(para_xml, detail)
                     detail_xml.text = dplugin.startup_config[parameter][detail]
+
+            # ---------------------------------------
+            # Save all current values for all
+            # parameter
+            # ---------------------------------------
 
             last_paras_xml = ET.SubElement(pl_xml, 'PreviousParameters')
             allparas = dplugin.get_parameters()
             for para_key in allparas:
                 para = allparas[para_key]
-                last_para_xml = ET.SubElement(last_paras_xml,'Parameter')
-                last_para_xml.set('Name',para_key)
+                last_para_xml = ET.SubElement(last_paras_xml, 'Parameter')
+                last_para_xml.set('Name', para_key)
                 last_para_xml.text = str(para.value)
+
+            # ---------------------------------------
+            # Save all current values for all
+            # signals of all dblocks
+            # ---------------------------------------
+
+            dblocks_xml = ET.SubElement(pl_xml, 'DBlocks')
+
+            alldblock_names = dplugin.get_dblocks()
+
+            for dblock_name in alldblock_names:
+                dblock = alldblock_names[dblock_name]
+                dblock_xml = ET.SubElement(dblocks_xml, 'DBlock')
+                dblock_xml.set('Name', dblock.name)
+
+                alldsignals = dblock.get_signals()
+
+                for dsignal in alldsignals:
+                    dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
+                    dsignal_xml.set('uname', dsignal.uname)
+
+                    dname_xml = ET.SubElement(dsignal_xml, 'dname')
+                    dname_xml.text = dsignal.dname
+
+            # ---------------------------------------
+            # Save all subscriptions for this plugin
+            # ---------------------------------------
 
             subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
             subs = dplugin.get_subscribtions()
@@ -579,34 +682,36 @@ class Gui_api(QtCore.QObject):
                 source_xml.text = self.gui_data.get_dplugin_by_id(sub).uname
                 for block in subs[sub]:
                     block_xml = ET.SubElement(sub_xml, 'block')
-                    block_xml.set('Name',block)
+                    block_xml.set('Name', block)
 
-                    alias_xml = ET.SubElement(block_xml,'alias')
-                    alias_xml.text = subs[sub][block].alias
+                    dsubscription = subs[sub][block]
 
-                    for s in subs[sub][block].get_signals():
-                        signal_xml = ET.SubElement(block_xml,'Signal')
+                    alias_xml = ET.SubElement(block_xml, 'alias')
+                    alias_xml.text = dsubscription.alias
+
+                    for s in dsubscription.get_signals():
+                        signal_xml = ET.SubElement(block_xml, 'Signal')
                         signal_xml.text = str(s)
 
         self.indent(root)
         tree = ET.ElementTree(root)
         tree.write(path)
 
-    def indent(self,elem, level=0):
-    # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
-      i = "\n" + level*"  "
-      if len(elem):
-        if not elem.text or not elem.text.strip():
-          elem.text = i + "  "
-        if not elem.tail or not elem.tail.strip():
-          elem.tail = i
-        for elem in elem:
-          self.indent(elem, level+1)
-        if not elem.tail or not elem.tail.strip():
-          elem.tail = i
-      else:
-        if level and (not elem.tail or not elem.tail.strip()):
-          elem.tail = i
+    def indent(self, elem, level=0):
+        # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
+        i = "\n" + level * "  "
+        if len(elem):
+            if not elem.text or not elem.text.strip():
+                elem.text = i + "  "
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+            for elem in elem:
+                self.indent(elem, level + 1)
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+        else:
+            if level and (not elem.tail or not elem.tail.strip()):
+                elem.tail = i
 
     def do_reset_papi(self):
         """
@@ -632,12 +737,12 @@ class Gui_api(QtCore.QObject):
         :type name: basestring
         :return: True or False
         """
-        reg =QtCore.QRegExp('\S[^_][^\W_]+')
+        reg = QtCore.QRegExp('\S[^_][^\W_]+')
         if reg.exactMatch(name):
-           if self.gui_data.get_dplugin_by_uname(name) is None:
-               return True
-           else:
-               return False
+            if self.gui_data.get_dplugin_by_uname(name) is None:
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -652,9 +757,9 @@ class Gui_api(QtCore.QObject):
         """
         uname = name
 
-        #TODO: get more inteligence here!
+        # TODO: get more inteligence here!
 
-        forbidden = ['_',',','.','`',' ']
+        forbidden = ['_', ',', '.', '`', ' ']
         for c in forbidden:
-            uname = uname.replace(c,'X')
+            uname = uname.replace(c, 'X')
         return uname
