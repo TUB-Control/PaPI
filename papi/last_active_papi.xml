@@ -1,131 +1,134 @@
-<PaPiConfig Date="2014-12-30 17:04:29" PaPI_version="v_0.9">
+<PaPiConfig Date="2015-01-05 15:37:49" PaPI_version="v_0.9">
   <Size h="800" w="800" />
   <Background image="None" />
-  <Plugin uname="FourierXRectXMOD">
-    <Identifier>Fourier_Rect_MOD</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>FourierXRectXMOD</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <Subscriptions />
-  </Plugin>
   <Plugin uname="Plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
+      <Parameter Name="label_y">
+        <regex>\w+,\s+\w+</regex>
+        <value>amplitude, V</value>
+        <display_text>Label-Y</display_text>
+      </Parameter>
       <Parameter Name="label_x">
         <regex>\w+,\s*\w+</regex>
-        <display_text>Label-X</display_text>
         <value>time, s</value>
+        <display_text>Label-X</display_text>
+      </Parameter>
+      <Parameter Name="xRange-auto">
+        <regex>^(1|0)$</regex>
+        <value>1</value>
+        <type>bool</type>
+        <display_text>xRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="yRange-auto">
+        <regex>^(1|0)$</regex>
+        <value>1</value>
+        <type>bool</type>
+        <display_text>yRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+        <type>bool</type>
+        <display_text>Grid-X</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <advanced>1</advanced>
+        <value>[0 1 2 3 4]</value>
+        <display_text>Color</display_text>
+      </Parameter>
+      <Parameter Name="xRange">
+        <regex>(\d+\.\d+)</regex>
+        <value>[0.0 1.5]</value>
+        <display_text>xRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <advanced>1</advanced>
+        <value>[0 0 0 0 0]</value>
+        <display_text>Style</display_text>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+        <type>bool</type>
+        <display_text>Grid-Y</display_text>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <advanced>1</advanced>
+        <value>300</value>
+        <display_text>Buffersize</display_text>
+      </Parameter>
+      <Parameter Name="yRange">
+        <regex>(\d+\.\d+)</regex>
+        <value>[0.0 15.0]</value>
+        <display_text>yRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <regex>^(1|0)$</regex>
+        <value>0</value>
+        <type>bool</type>
+        <display_text>Rolling Plot</display_text>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(300,300)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="downsampling_rate">
         <regex>(\d+)</regex>
         <value>1</value>
       </Parameter>
-      <Parameter Name="label_y">
-        <regex>\w+,\s+\w+</regex>
-        <display_text>Label-Y</display_text>
-        <value>amplitude, V</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used display name</tooltip>
-        <value>VisualPlugin</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(426,319)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Color</display_text>
-        <value>[0 1 2 3 4]</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <display_text>Buffersize</display_text>
-        <value>1000</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Style</display_text>
-        <value>[0 0 0 0 0]</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Plot</value>
-      </Parameter>
-      <Parameter Name="y-grid">
-        <regex>^(1|0)$</regex>
-        <display_text>Grid-Y</display_text>
-        <value>0</value>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <display_text>Grid-X</display_text>
-        <value>1</value>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <regex>^(1|0)$</regex>
-        <display_text>Rolling Plot</display_text>
-        <value>0</value>
-        <type>bool</type>
-      </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="buffersize">1000</Parameter>
-      <Parameter Name="x-grid">1</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="yRange-auto">1</Parameter>
       <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="buffersize">300</Parameter>
+      <Parameter Name="xRange">[0,1]</Parameter>
+      <Parameter Name="yRange">[0,1]</Parameter>
+      <Parameter Name="xRange-auto">1</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
     </PreviousParameters>
     <Subscriptions>
       <Subscription>
-        <data_source>FourierXRectXMOD</data_source>
-        <block Name="Rectangle">
+        <data_source>CPUXLoad</data_source>
+        <block Name="CPUload">
           <alias />
-          <Signal>rect11</Signal>
-          <Signal>rect12</Signal>
+          <Signal>load_in_percent</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Add">
-    <Identifier>Add</Identifier>
+  <Plugin uname="CPUXLoad">
+    <Identifier>CPU_Load</Identifier>
     <StartConfig>
       <Parameter Name="uname">
-        <value>Add</value>
+        <value>CPUXLoad</value>
       </Parameter>
     </StartConfig>
-    <PreviousParameters />
-    <Subscriptions>
-      <Subscription>
-        <data_source>FourierXRectXMOD</data_source>
-        <block Name="Rectangle">
-          <alias />
-          <Signal>rect3</Signal>
-          <Signal>rect4</Signal>
-          <Signal>rect5</Signal>
-          <Signal>rect6</Signal>
-          <Signal>rect7</Signal>
-          <Signal>rect8</Signal>
-          <Signal>rect9</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
+    <PreviousParameters>
+      <Parameter Name="Delta_t">0.01</Parameter>
+    </PreviousParameters>
+    <Subscriptions />
   </Plugin>
 </PaPiConfig>
