@@ -103,6 +103,19 @@ class DBlock(DObject):
         """
         return copy.deepcopy(self.subscribers)
 
+    def get_signal_by_uname(self, uname):
+        """
+
+        :param uname:
+        :return DSignal:
+        """
+
+        for signal in self.signals:
+            if signal.uname == uname:
+                return signal
+
+        return None
+
     def get_signals(self):
         """
         DEPRECATED

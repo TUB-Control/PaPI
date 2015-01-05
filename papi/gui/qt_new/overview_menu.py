@@ -95,11 +95,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of block tree
         # -----------------------------------
 
-        self.bModel = DBlockTreeModel()
+        self.bModel = DBlockTreeModel(self.showInternalNameCheckBox)
         self.bModel.setHorizontalHeaderLabels(['Name'])
+        self.bModel.setColumnCount(2)
         self.blockTree.setModel(self.bModel)
         self.blockTree.setUniformRowHeights(True)
+        self.bModel.dataChanged.connect(self.data_changed_block_model)
 
+        self.showInternalNameCheckBox.clicked.connect(self.show_internal_name_callback)
 
         # -----------------------------------
         # Build structure of subscriber tree
@@ -237,7 +240,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # -------------------------
 
             for signal in dblock.get_signals():
-                signal_item = DSignalTreeItem(signal)
+                signal_item = DSignalTreeItem(signal, self.showInternalNameCheckBox)
+
                 block_item.appendRow(signal_item)
 
             block_item.sortChildren(0)
@@ -715,6 +719,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.playButton.setDisabled(False)
                 self.stopButton.setDisabled(False)
 
+    def show_internal_name_callback(self):
+        """
+        Callback function for 'showInternalNameCheckBox'
+        :return:
+        """
+        self.plugin_item_changed(self.pluginTree.currentIndex())
+
     def data_changed_parameter_model(self, index, n):
         """
         This function is called when a dparameter value is changed by editing the 'value'-column.
@@ -729,6 +740,22 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.gui_api.do_set_parameter(dplugin.id, dparameter.name, dparameter.value)
+
+    def data_changed_block_model(self, index, n):
+        """
+        This function is called when a dblock child, a disgnal, is changed.
+        :param index: Index of current changed dsignal object
+        :param n: None
+        :return:
+        """
+
+        dsignal = self.blockTree.model().data(index, Qt.UserRole)
+        dblock  = self.blockTree.model().data(index.parent(), Qt.UserRole)
+
+        dplugin = self.pluginTree.model().data(self.pluginTree.currentIndex(), Qt.UserRole)
+
+        self.gui_api.do_edit_plugin_uname(dplugin.uname, dblock, {"edit" : dsignal})
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:

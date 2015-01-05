@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Mon Dec 15 17:36:08 2014
+# Created: Mon Jan  5 14:03:51 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,6 +31,7 @@ class Ui_Overview(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setHorizontalSpacing(6)
         self.formLayout.setObjectName("formLayout")
         self.unameLabel = QtGui.QLabel(self.pluginTab)
         self.unameLabel.setObjectName("unameLabel")
@@ -77,6 +78,9 @@ class Ui_Overview(object):
         self.blockTab.setObjectName("blockTab")
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.blockTab)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.showInternalNameCheckBox = QtGui.QCheckBox(self.blockTab)
+        self.showInternalNameCheckBox.setObjectName("showInternalNameCheckBox")
+        self.verticalLayout_5.addWidget(self.showInternalNameCheckBox)
         self.blockTree = QtGui.QTreeView(self.blockTab)
         self.blockTree.setObjectName("blockTree")
         self.verticalLayout_5.addWidget(self.blockTree)
@@ -132,7 +136,7 @@ class Ui_Overview(object):
 
         self.retranslateUi(Overview)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Overview)
 
     def retranslateUi(self, Overview):
@@ -143,6 +147,7 @@ class Ui_Overview(object):
         self.typeLabel.setText(QtGui.QApplication.translate("Overview", "Type", None, QtGui.QApplication.UnicodeUTF8))
         self.alivestateLabel.setText(QtGui.QApplication.translate("Overview", "Alive state", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.parameterTab), QtGui.QApplication.translate("Overview", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.showInternalNameCheckBox.setText(QtGui.QApplication.translate("Overview", "Show internal signal names", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), QtGui.QApplication.translate("Overview", "Blocks", None, QtGui.QApplication.UnicodeUTF8))
         self.pauseButton.setText(QtGui.QApplication.translate("Overview", "PAUSE", None, QtGui.QApplication.UnicodeUTF8))
         self.stopButton.setText(QtGui.QApplication.translate("Overview", "STOP", None, QtGui.QApplication.UnicodeUTF8))
