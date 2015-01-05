@@ -269,8 +269,6 @@ class Plot(vip_base):
         :param value:
         :return:
         """
-        print(name, value)
-
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
