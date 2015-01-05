@@ -16,7 +16,7 @@ Installation
 ------
 Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
-`sudo apt-get install python3.4 git python3-pyside python3-numpy python3-scipy`
+`sudo apt-get install python3.4 git python3-pyside python3-numpy`
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
 

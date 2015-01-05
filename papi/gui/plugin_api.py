@@ -124,3 +124,25 @@ class Plugin_api(QtCore.QObject):
         :type value:
         """
         self.__default_api.do_set_parameter(plugin_id,parameter_name,value)
+
+
+    def do_resume_plugin_by_uname(self, plugin_uname):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to resume a plugin, so this method will send an event to core.
+
+        :param plugin_uname: uname of plugin to resume
+        :type plugin_uname: basestring
+        """
+        self.__default_api.do_resume_plugin_by_uname(plugin_uname)
+
+
+    def do_pause_plugin_by_uname(self, plugin_uname):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to pause a plugin, so this method will send an event to core.
+
+        :param plugin_uname: uname of plugin to pause
+        :type plugin_uname: basestring
+        """
+        self.__default_api.do_pause_plugin_by_uname(plugin_uname)
