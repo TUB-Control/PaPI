@@ -41,4 +41,4 @@ Embedded Packages
 
 Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
 
-pyqtgraph-0.9.8 published under MIT-License
+pyqtgraph-0.9.10 published under MIT-License
