@@ -24,6 +24,10 @@ Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
 `python3.4 main.py`
 
+Contribution
+------
+
+To get started, <a href="https://www.clahub.com/agreements/TUB-Control/PaPI">sign the Contributor License Agreement</a>.
 
 Documentation
 ------
