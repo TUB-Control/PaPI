@@ -43,7 +43,7 @@ from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
-    PLUGIN_STATE_PAUSE
+    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED
 
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
@@ -80,6 +80,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
         self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
         self.gui_event_processing.plugin_died.connect(self.plugin_died)
+
+        self.gui_api.error_occured.connect(self.error_occured)
 
         self.gui_api.resize_gui.connect(self.resize_gui_window)
 
@@ -340,15 +342,25 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.refresh_action()
 
     def plugin_died(self, dplugin, e, msg):
-
-        dplugin.state = PLUGIN_STATE_PAUSE
+        dplugin.state = PLUGIN_STATE_STOPPED
 
         self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
-        errMsg = QtGui.QErrorMessage(self)
+        errMsg = QtGui.QMessageBox()
         errMsg.setFixedWidth(650)
-        errMsg.setWindowTitle("Error in" + dplugin.uname + " // " + str(e))
-        errMsg.showMessage(str(msg))
+        errMsg.setWindowTitle("Plugin: " + dplugin.uname + " // " + str(e))
+        errMsg.setText("Error in plugin" + dplugin.uname + " // " + str(e))
+        errMsg.setDetailedText(str(msg))
+        errMsg.exec_()
+
+    def error_occured(self, title, msg, detailed_msg):
+
+        errMsg = QtGui.QMessageBox()
+        errMsg.setFixedWidth(650)
+        errMsg.setWindowTitle(title)
+        errMsg.setText(str(msg))
+        errMsg.setDetailedText(str(detailed_msg))
+        errMsg.exec_()
 
     def toggle_run_mode(self):
         if self.in_run_mode:

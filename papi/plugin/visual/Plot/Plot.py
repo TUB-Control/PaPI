@@ -160,6 +160,16 @@ class Plot(vip_base):
 
         self.set_widget_for_internal_usage(self.__plotWidget__)
 
+        #
+        if self.config['xRange-auto']['value']=='1':
+            pass
+        else:
+            self.use_range_for_x(self.config['xRange']['value'])
+
+        if self.config['yRange-auto']['value']== '1':
+            pass
+        else:
+            self.use_range_for_y(self.config['yRange']['value'])
 
         # ---------------------------
         # Create Parameters
@@ -178,10 +188,10 @@ class Plot(vip_base):
         self.__parameters__['buffersize'] = DParameter(None, 'buffersize', self.__buffer_size__, [1, 100],
                                                        1, Regex='^([1-9][0-9]{0,3}|10000)$')
 
-        self.__parameters__['xRange-auto'] = DParameter(None,'xRange-auto','1',None,1, Regex='^(1|0){1}$')
-        self.__parameters__['xRange'] = DParameter(None,'xRange','[0,1]',None,1, Regex='(\d+\.\d+)')
-        self.__parameters__['yRange-auto'] = DParameter(None,'yRange-auto','1',None,1, Regex='^(1|0){1}$')
-        self.__parameters__['yRange'] = DParameter(None,'yRange','[0,1]',None,1, Regex='(\d+\.\d+)')
+        self.__parameters__['xRange-auto'] = DParameter(None, 'xRange-auto', '1', None, 1, Regex='^(1|0){1}$')
+        self.__parameters__['xRange'] = DParameter(None, 'xRange', '[0,1]', None, 1, Regex='(\d+\.\d+)')
+        self.__parameters__['yRange-auto'] = DParameter(None, 'yRange-auto', '1', None, 1, Regex='^(1|0){1}$')
+        self.__parameters__['yRange'] = DParameter(None, 'yRange', '[0,1]', None, 1, Regex='(\d+\.\d+)')
 
         self.send_new_parameter_list(list(self.__parameters__.values()))
 
@@ -289,7 +299,7 @@ class Plot(vip_base):
             self.config['rolling_plot']['value'] = value
             self.rolling_Checkbox.setChecked(value=='1')
             if self.__rolling_plot__:
-               # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
+                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
                 self.__plotWidget__.addItem(self.__vertical_line__)
 
@@ -335,12 +345,12 @@ class Plot(vip_base):
 
         if name == 'xRange':
             self.config['xRange']['value'] = value
-            if self.config['xRange-auto']['value']=='0':
+            if self.config['xRange-auto']['value'] == '0':
                 self.use_range_for_x(value)
 
         if name == 'yRange':
             self.config['yRange']['value'] = value
-            if self.config['yRange-auto']['value']=='0':
+            if self.config['yRange-auto']['value'] == '0':
                 self.use_range_for_y(value)
 
     def update_pens(self):
@@ -365,7 +375,6 @@ class Plot(vip_base):
         """
         shift_data = 0
 
-
         for last_tvalue in self.__tdata_old__:
             if last_tvalue in self.__tbuffer__:
                 shift_data = list(self.__tbuffer__).index(last_tvalue)
@@ -385,7 +394,7 @@ class Plot(vip_base):
 
             if self.__rolling_plot__:
                 data = np.roll(data, int(self.__append_at__))
-                self.__vertical_line__.setValue(tdata[int(self.__append_at__)-1])
+                self.__vertical_line__.setValue(tdata[int(self.__append_at__) - 1])
             else:
                 self.__vertical_line__.setValue(tdata[0])
 
@@ -441,7 +450,7 @@ class Plot(vip_base):
             buffer_new = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
             buffer_old = self.signals[signal_name]['buffer']
-            #buffer_new.extend(buffer_old)
+            # buffer_new.extend(buffer_old)
 
             self.signals[signal_name]['buffer'] = buffer_new
 
@@ -453,10 +462,10 @@ class Plot(vip_base):
 
         :return:
         """
-
         subscriptions = self.dplugin_info.get_subscribtions()
 
-        current_signals = []
+        current_signals = {}
+        index = 0
 
         for dpluginsub_id in subscriptions:
             for dblock_name in subscriptions[dpluginsub_id]:
@@ -464,24 +473,31 @@ class Plot(vip_base):
                 # get subscription for dblock
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
-                for signal in subscription.get_signals():
-                    current_signals.append(signal)
-        current_signals = sorted(current_signals)
+                for signal_name in subscription.get_signals():
+                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+                    index += 1
+                    current_signals[signal_name] = {}
+                    current_signals[signal_name]['signal'] = signal
+                    current_signals[signal_name]['index'] = index
+
+                # current_signals = sorted(current_signals)
 
         # Add missing buffers
-        for signal_name in current_signals:
+        for signal_name in sorted(current_signals.keys()):
             if signal_name not in self.signals:
-                self.add_databuffer(signal_name, current_signals.index(signal_name))
+                signal = current_signals[signal_name]['signal']
+                self.add_databuffer(signal, current_signals[signal_name]['index'])
 
         # Delete old buffers
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
-                self.remove_databuffer(signal_name)
+                signal = self.signals[signal_name]['signal']
+                self.remove_databuffer(signal)
 
         self.update_pens()
         self.update_legend()
 
-    def add_databuffer(self, signal_name, signal_id):
+    def add_databuffer(self, signal, signal_id):
         """
         Create new buffer for signal_name.
 
@@ -490,6 +506,8 @@ class Plot(vip_base):
         :return:
         """
 
+        signal_name = signal.uname
+
         if signal_name not in self.signals:
             self.signals[signal_name] = {}
 
@@ -497,17 +515,15 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            #legend_name = str(signal_id) + "# " + signal_name
-            legend_name = signal_name
-
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name)
+            curve = self.__plotWidget__.plot([0, 1], [0, 1])
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
             self.signals[signal_name]['id'] = signal_id
-            self.signals[signal_name]['legend_name'] = legend_name
+            self.signals[signal_name]['signal'] = signal
 
-    def remove_databuffer(self, signal_name):
+
+    def remove_databuffer(self, signal):
         """
         Remove the databuffer for signal_name.
 
@@ -515,11 +531,12 @@ class Plot(vip_base):
         :return:
         """
 
+        signal_name = signal.uname
+
         if signal_name in self.signals:
             curve = self.signals[signal_name]['curve']
-            legend_name = self.signals[signal_name]['legend_name']
             curve.clear()
-            #self.__legend__.removeItem(legend_name)
+            # self.__legend__.removeItem(legend_name)
             del self.signals[signal_name]
 
     def get_pen(self, index):
@@ -549,19 +566,19 @@ class Plot(vip_base):
 
         return pq.mkPen(color=color, style=style)
 
-    def use_range_for_x(self,value):
+    def use_range_for_x(self, value):
         reg = re.compile(r'(\d+\.\d+)')
-        range =reg.findall(value)
+        range = reg.findall(value)
         if len(range) == 2:
             self.xRange_minEdit.setText(range[0])
             self.xRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
 
-    def use_range_for_y(self,value):
+    def use_range_for_y(self, value):
         reg = re.compile(r'(\d+\.\d+)')
-        range =reg.findall(value)
+        range = reg.findall(value)
         if len(range) == 2:
-            self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]),float(range[1]))
+            self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
 
     def setup_context_menu(self):
         self.custMenu = QtGui.QMenu("Options")
@@ -570,10 +587,10 @@ class Plot(vip_base):
 
 
         # ---------------------------------------------------------
-        ##### X-Range Actions
+        # #### X-Range Actions
         self.xRange_Widget = QtGui.QWidget()
         self.xRange_Layout = QtGui.QVBoxLayout(self.xRange_Widget)
-        self.xRange_Layout.setContentsMargins(2,2,2,2)
+        self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.xRange_Layout.setSpacing(1)
 
         self.xRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
@@ -585,12 +602,12 @@ class Plot(vip_base):
         # Layout
         self.xRange_EditWidget = QtGui.QWidget()
         self.xRange_EditLayout = QtGui.QHBoxLayout(self.xRange_EditWidget)
-        self.xRange_EditLayout.setContentsMargins(2,2,2,2)
+        self.xRange_EditLayout.setContentsMargins(2, 2, 2, 2)
         self.xRange_EditLayout.setSpacing(1)
 
         # get old values;
         reg = re.compile(r'(\d+\.\d+)')
-        range =reg.findall(self.config['xRange']['value'])
+        range = reg.findall(self.config['xRange']['value'])
         if len(range) == 2:
             x_min = range[0]
             x_max = range[1]
@@ -624,7 +641,7 @@ class Plot(vip_base):
         ##### Y-Range Actions
         self.yRange_Widget = QtGui.QWidget()
         self.yRange_Layout = QtGui.QVBoxLayout(self.yRange_Widget)
-        self.yRange_Layout.setContentsMargins(2,2,2,2)
+        self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.yRange_Layout.setSpacing(1)
 
         self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
@@ -636,12 +653,12 @@ class Plot(vip_base):
         # Layout
         self.yRange_EditWidget = QtGui.QWidget()
         self.yRange_EditLayout = QtGui.QHBoxLayout(self.yRange_EditWidget)
-        self.yRange_EditLayout.setContentsMargins(2,2,2,2)
+        self.yRange_EditLayout.setContentsMargins(2, 2, 2, 2)
         self.yRange_EditLayout.setSpacing(1)
 
         # get old values;
         reg = re.compile(r'(\d+\.\d+)')
-        range =reg.findall(self.config['yRange']['value'])
+        range = reg.findall(self.config['yRange']['value'])
         if len(range) == 2:
             y_min = range[0]
             y_max = range[1]
@@ -673,7 +690,7 @@ class Plot(vip_base):
         ##### Rolling Plot
         self.rolling_Checkbox = QtGui.QCheckBox()
         self.rolling_Checkbox.setText('Rolling plot')
-        self.rolling_Checkbox.setChecked(self.config['rolling_plot']['value']=='1')
+        self.rolling_Checkbox.setChecked(self.config['rolling_plot']['value'] == '1')
         self.rolling_Checkbox.stateChanged.connect(self.contextMenu_rolling_toogled)
         self.rolling_Checkbox_Action = QtGui.QWidgetAction(self.__plotWidget__)
         self.rolling_Checkbox_Action.setDefaultWidget(self.rolling_Checkbox)
@@ -715,7 +732,7 @@ class Plot(vip_base):
         self.custMenu.addSeparator().setText("Rolling Plot")
         self.custMenu.addAction(self.rolling_Checkbox_Action)
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
-        self.__plotWidget__.getPlotItem().ctrlMenu = [ self.create_control_context_menu(), self.custMenu]
+        self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
 
         #self.__plotWidget__.getPlotItem().getViewBox()
@@ -725,9 +742,9 @@ class Plot(vip_base):
 
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
-            self.control_api.do_set_parameter(self.__id__,'rolling','1')
+            self.control_api.do_set_parameter(self.__id__, 'rolling', '1')
         else:
-            self.control_api.do_set_parameter(self.__id__,'rolling','0')
+            self.control_api.do_set_parameter(self.__id__, 'rolling', '0')
 
     def contextMenu_xGrid_toogle(self):
         if self.xGrid_Checkbox.isChecked():
@@ -753,7 +770,7 @@ class Plot(vip_base):
             mi = self.xRange_minEdit.text()
             ma = self.xRange_maxEdit.text()
             self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
-            self.control_api.do_set_parameter(self.__id__, 'xRange', '['+mi  +' '+ma+']' )
+            self.control_api.do_set_parameter(self.__id__, 'xRange', '[' + mi + ' ' + ma + ']')
 
     def contextMenu_yRange_toogle(self):
         if self.yRange_AutoCheckbox.isChecked():
@@ -768,19 +785,37 @@ class Plot(vip_base):
             mi = self.yRange_minEdit.text()
             ma = self.yRange_maxEdit.text()
             self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
-            self.control_api.do_set_parameter(self.__id__, 'yRange', '['+mi  +' '+ma+']' )
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+
+    def update_signals(self):
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        for dpluginsub_id in subscriptions:
+            for dblock_name in subscriptions[dpluginsub_id]:
+
+                # get subscription for dblock
+                subscription = subscriptions[dpluginsub_id][dblock_name]
+
+                for signal_name in subscription.get_signals():
+                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+
+                    self.signals[signal_name]['signal'] = signal
 
     def update_legend(self):
-#        self.__plotWidget__.removeItem(self.__legend__)
+        # self.__plotWidget__.removeItem(self.__legend__)
         self.__legend__.scene().removeItem(self.__legend__)
         del self.__legend__
 
         self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
 
+        self.update_signals()
+
         for signal_name in sorted(self.signals.keys()):
             curve = self.signals[signal_name]['curve']
-            legend_name = self.signals[signal_name]['legend_name']
+            signal = self.signals[signal_name]['signal']
+            legend_name = signal.dname
+
             self.__legend__.addItem(curve, legend_name)
 
     def quit(self):

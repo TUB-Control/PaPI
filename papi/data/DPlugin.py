@@ -92,7 +92,10 @@ class DBlock(DObject):
         :return:
         """
         if signal in self.signals:
+            signal.uname = signal.uname + "_deleted"
+            signal.dname = signal.dname + "_deleted"
             self.signals.remove(signal)
+
             return True
         return False
 
@@ -124,7 +127,6 @@ class DBlock(DObject):
         :return:
         """
         return copy.deepcopy(self.signals)
-
 
     #NOT NEEDED ANYMORE !!!
     def get_signal_name(self, signal: int):
@@ -308,6 +310,7 @@ class DPlugin(DObject):
         :rtype boolean:
         """
         if dblock.name in self.__blocks:
+            self.__blocks[dblock.name].name = dblock.name + "_deleted"
             del self.__blocks[dblock.name]
             return True
         else:
@@ -362,6 +365,10 @@ class DPlugin(DObject):
         :return:
         """
 
+        # --------------------------
+        # Update DPlugin Attributes
+        # --------------------------
+
         self.id = meta.id
         self.pid = meta.pid
         self.state = meta.state
@@ -370,8 +377,21 @@ class DPlugin(DObject):
         self.uname = meta.uname
         self.type = meta.type
 
+        # -----------------------------
+        # Update DParameters of DPlugin
+        # -----------------------------
+
         self.__parameters = meta.__parameters
+
+        # -----------------------------
+        # Update DSubscriptions of DPlugin
+        # -----------------------------
+
         self.__subscriptions = meta.__subscriptions
+
+        # -----------------------------
+        # Update DBlocks of DPlugin
+        # -----------------------------
         self.__blocks = meta.__blocks
 
 
@@ -379,6 +399,7 @@ class DSubscription(DObject):
 
     def __init__(self, dblock):
         self.dblock = dblock
+        self.dblock_name = dblock.name
         self.alias = None
         self.signals = []
 
@@ -406,6 +427,9 @@ class DSubscription(DObject):
             return True
 
         return False
+
+    def get_dblock(self):
+        return self.dblock
 
     def get_signals(self):
         return copy.copy(self.signals)

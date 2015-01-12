@@ -143,7 +143,8 @@ class IOP_DPP_template(iop_base):
 
     def plugin_meta_updated(self):
         """
-        Whenever the meta information is updated this function is called (if implemented).
+        Whenever the meta information is updated this function is called.
+        If this function is called there is no guarantee anymore that previous used reference are still used.
 
         :return:
         """

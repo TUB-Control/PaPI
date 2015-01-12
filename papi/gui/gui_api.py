@@ -27,6 +27,10 @@ Stefan Ruppin
 """
 __author__ = 'stefan'
 
+import datetime
+import time
+import traceback
+
 import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
@@ -41,16 +45,13 @@ from papi.data.DPlugin import DBlock
 
 import papi.error_codes as ERROR
 
-import datetime
-import time
-
 import xml.etree.cElementTree as ET
 
 
 class Gui_api(QtCore.QObject):
     resize_gui = QtCore.Signal(int, int)
     set_bg_gui = QtCore.Signal(str)
-
+    error_occured = QtCore.Signal(str, str, str)
 
     def __init__(self, gui_data, core_queue, gui_id, LOG_IDENT=GUI_PROCESS_CONSOLE_IDENTIFIER):
         super(Gui_api, self).__init__()
@@ -483,76 +484,81 @@ class Gui_api(QtCore.QObject):
         parameters_to_change = []
         signals_to_change = []
 
-        for plugin_xml in root:
-            if plugin_xml.tag == 'Size':
-                w = int(plugin_xml.attrib['w'])
-                h = int(plugin_xml.attrib['h'])
-                self.resize_gui.emit(w, h)
-            else:
-                if plugin_xml.tag == 'Background':
-                    path = str(plugin_xml.attrib['image'])
-                    if path != '' and path is not None and path != 'default':
-                        self.set_bg_gui.emit(path)
+        try:
+            for plugin_xml in root:
+                if plugin_xml.tag == 'Size':
+                    w = int(plugin_xml.attrib['w'])
+                    h = int(plugin_xml.attrib['h'])
+                    self.resize_gui.emit(w, h)
                 else:
-                    pl_uname = plugin_xml.attrib['uname']
-                    identifier = plugin_xml.find('Identifier').text
-                    config_xml = plugin_xml.find('StartConfig')
-                    config_hash = {}
-                    for parameter_xml in config_xml.findall('Parameter'):
-                        para_name = parameter_xml.attrib['Name']
-                        config_hash[para_name] = {}
-                        for detail_xml in parameter_xml:
-                            detail_name = detail_xml.tag
-                            config_hash[para_name][detail_name] = detail_xml.text
+                    if plugin_xml.tag == 'Background':
+                        path = str(plugin_xml.attrib['image'])
+                        if path != '' and path is not None and path != 'default':
+                            self.set_bg_gui.emit(path)
+                    else:
+                        pl_uname = plugin_xml.attrib['uname']
+                        identifier = plugin_xml.find('Identifier').text
+                        config_xml = plugin_xml.find('StartConfig')
+                        config_hash = {}
+                        for parameter_xml in config_xml.findall('Parameter'):
+                            para_name = parameter_xml.attrib['Name']
+                            config_hash[para_name] = {}
+                            for detail_xml in parameter_xml:
+                                detail_name = detail_xml.tag
+                                config_hash[para_name][detail_name] = detail_xml.text
 
-                    pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-
-                    plugins_to_start.append([identifier, pl_uname_new, config_hash])
-
-                    # --------------------------------
-                    # Load Subscriptions
-                    # --------------------------------
-
-                    subs_xml = plugin_xml.find('Subscriptions')
-                    for sub_xml in subs_xml.findall('Subscription'):
-                        data_source = sub_xml.find('data_source').text
-                        for block_xml in sub_xml.findall('block'):
-                            block_name = block_xml.attrib['Name']
-                            signals = []
-                            for sig_xml in block_xml.findall('Signal'):
-                                signals.append(str(sig_xml.text))
-                            alias_xml = block_xml.find('alias')
-                            alias = alias_xml.text
-                            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                            data_source_new = self.change_uname_to_uniqe(data_source)
-                            subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
-
-                    # --------------------------------
-                    # Load PreviousParameters
-                    # --------------------------------
-
-                    prev_parameters_xml = plugin_xml.find('PreviousParameters')
-                    for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
-                        para_name = prev_parameter_xml.attrib['Name']
-                        para_value = prev_parameter_xml.text
                         pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                        # TODO validate NO FLOAT in parameter
-                        parameters_to_change.append([pl_uname_new, para_name, para_value])
 
-                    # --------------------------------
-                    # Load DBlocks due to signals name
-                    # --------------------------------
+                        plugins_to_start.append([identifier, pl_uname_new, config_hash])
 
-                    dblocks_xml = plugin_xml.find('DBlocks')
-                    for dblock_xml in dblocks_xml:
-                        dblock_name = dblock_xml.attrib['Name']
-                        print('DBlock ' + dblock_name)
-                        dsignals_xml = dblock_xml.findall('DSignal')
-                        for dsignal_xml in dsignals_xml:
-                            dsignal_uname = dsignal_xml.attrib['uname']
-                            dsignal_dname = dsignal_xml.find('dname').text
-                            print('Signal' + dsignal_uname + ' with ' + dsignal_dname)
-                            signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
+                        # --------------------------------
+                        # Load Subscriptions
+                        # --------------------------------
+
+                        subs_xml = plugin_xml.find('Subscriptions')
+                        if subs_xml is not None:
+                            for sub_xml in subs_xml.findall('Subscription'):
+                                data_source = sub_xml.find('data_source').text
+                                for block_xml in sub_xml.findall('block'):
+                                    block_name = block_xml.attrib['Name']
+                                    signals = []
+                                    for sig_xml in block_xml.findall('Signal'):
+                                        signals.append(str(sig_xml.text))
+                                    alias_xml = block_xml.find('alias')
+                                    alias = alias_xml.text
+                                    pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                                    data_source_new = self.change_uname_to_uniqe(data_source)
+                                    subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
+
+                        # --------------------------------
+                        # Load PreviousParameters
+                        # --------------------------------
+
+                        prev_parameters_xml = plugin_xml.find('PreviousParameters')
+                        if prev_parameters_xml is not None:
+                            for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                                para_name = prev_parameter_xml.attrib['Name']
+                                para_value = prev_parameter_xml.text
+                                pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                                # TODO validate NO FLOAT in parameter
+                                parameters_to_change.append([pl_uname_new, para_name, para_value])
+
+                        # --------------------------------
+                        # Load DBlocks due to signals name
+                        # --------------------------------
+
+                        dblocks_xml = plugin_xml.find('DBlocks')
+                        if dblocks_xml is not None:
+                            for dblock_xml in dblocks_xml:
+                                dblock_name = dblock_xml.attrib['Name']
+                                dsignals_xml = dblock_xml.findall('DSignal')
+                                for dsignal_xml in dsignals_xml:
+                                    dsignal_uname = dsignal_xml.attrib['uname']
+                                    dsignal_dname = dsignal_xml.find('dname').text
+                                    signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path,  tb)
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
@@ -596,6 +602,10 @@ class Gui_api(QtCore.QObject):
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
     def do_save_xml_config(self, path):
+
+        if path[-4:] != '.xml':
+            path += '.xml'
+
         root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         root.set('PaPI_version', CORE_PAPI_VERSION)
