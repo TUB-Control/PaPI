@@ -235,6 +235,8 @@ class DSignalTreeItem(PaPITreeItem):
         if role == Qt.UserRole:
             return self.object
 
+        if role == Qt.EditRole:
+            return self.dsignal.dname
 
         return None
 
@@ -323,6 +325,12 @@ class DParameterTreeModel(PaPITreeModel):
 
         if role == Qt.UserRole:
             return super(DParameterTreeModel, self).data(index, Qt.UserRole)
+
+        if role == Qt.EditRole:
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
+                return str(dparameter.value)
 
         return None
 

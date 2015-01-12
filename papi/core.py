@@ -259,11 +259,12 @@ class Core:
             self.alive_timer = Timer(self.alive_intervall,self.check_alive_callback)
             self.alive_timer.start()
 
-    def update_meta_data_to_gui(self,pl_id):
+    def update_meta_data_to_gui(self,pl_id, inform_subscriber=False):
         """
         On call this function will send the meta information of pl_id to GUI
 
         :param pl_id: id of plugin with new meta information
+        :param inform_subscriber: flag used to determine if a meta_update for all subscriber should be initiated
         :return:
         """
         # get DPlugin object with id and check if it exists
@@ -280,6 +281,19 @@ class Core:
             # check if plugin got some subscribers which run in own process
             if dplugin.own_process is True:
                 dplugin.queue.put(eventMeta)
+
+            # ---------------------------------------------
+            # Inform all subscriber if needed and wished
+            # ---------------------------------------------
+            if inform_subscriber:
+                dblocks = dplugin.get_dblocks()
+                for dblock_name in dblocks:
+                    dblock = dblocks[dblock_name]
+                    for subscriber_id in dblock.get_subscribers():
+                        dplugin_sub = self.core_data.get_dplugin_by_id(subscriber_id)
+                        if dplugin_sub.own_process is False:
+                            self.update_meta_data_to_gui(dplugin_sub.id, False)
+
             return 1
         else:
             # Dplugin object with pl_id does not exist in DCore of core
@@ -626,8 +640,7 @@ class Core:
 
                     self.log.printText(1,'edit_dplugin, Edited Dblock '+dblock.name+' of DPlugin '+pl.uname+ " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname  )
 
-
-        self.update_meta_data_to_gui(pl.id)
+        self.update_meta_data_to_gui(pl.id, True)
 
     # ------- Event processing second stage: instr events ---------
     def __process_create_plugin__(self,event):
