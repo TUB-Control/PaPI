@@ -353,7 +353,6 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.update_meta(opt.plugin_object)
             # check if plugin runs in gui to update its copy of meta informations
             if dplugin.own_process is False:
-                print('STATE ' + str(dplugin.state))
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
                     try:
                         dplugin.plugin.update_plugin_meta(dplugin.get_meta())
