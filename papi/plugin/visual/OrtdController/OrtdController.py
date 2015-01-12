@@ -28,17 +28,152 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
-
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-#from papi.pyqtgraph.Qt import QtGui, QtCore
 from PySide import QtGui, QtCore
-from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox
+from PySide.QtGui import QRegExpValidator
 
 import threading, time
+
+
+class OrtdController(vip_base):
+
+    def initiate_layer_0(self, config=None):
+
+        # ---------------------------
+        # Read configuration
+        # ---------------------------
+        self.ortd_uname = config['ORTD_Plugin_uname']['value']
+        self.alreadyConfigured = False
+        # --------------------------------
+        # Create Widget
+        # --------------------------------
+        # Create Widget needed for this plugin
+        self.ControllerWidget = QtGui.QWizard()
+        self.ControllerWidget.setOption(QtGui.QWizard.NoCancelButton)
+        self.ControllerWidget.setOption(QtGui.QWizard.NoBackButtonOnLastPage)
+        self.ControllerWidget.setOption(QtGui.QWizard.NoBackButtonOnStartPage)
+        self.ControllerWidget.setOption(QtGui.QWizard.DisabledBackButtonOnLastPage)
+        self.set_widget_for_internal_usage( self.ControllerWidget )
+        self.ControllerWidget.addPage(ControllerIntroPage())
+        self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname))
+        self.ControllerWidget.addPage(ControllerWorking(api=self.control_api, uname=self.dplugin_info.uname))
+
+        return True
+
+    def pause(self):
+        # will be called, when plugin gets paused
+        # can be used to get plugin in a defined state before pause
+        # e.a. close communication ports, files etc.
+        pass
+
+    def resume(self):
+        # will be called when plugin gets resumed
+        # can be used to wake up the plugin from defined pause state
+        # e.a. reopen communication ports, files etc.
+        pass
+
+    def execute(self, Data=None, block_name = None):
+        # Do main work here!
+        # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
+        # If this plugin is a DPP, then it will get Data with data
+
+        # param: Data is a Data hash and block_name is the block_name of Data origin
+        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # hash signal_name: value
+
+        # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
+        if self.alreadyConfigured is False:
+            self.thread1 = threading.Thread(target=self.execute_cfg, args=[Data])
+            self.alreadyConfigured = True
+            self.thread1.start()
+
+    def execute_cfg(self,Data):
+        ############################
+        #       Create Plugins     #
+        ############################
+        if 'ControlSignalCreate' in Data:
+            cfg = Data['ControlSignalCreate']
+            for pl_uname in cfg:
+                pl_cfg = cfg[pl_uname]
+                self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
+        time.sleep(0.5)
+
+        ############################
+        #       Create Subs        #
+        ############################
+        if 'ControlSignalSub' in Data:
+            cfg = Data['ControlSignalSub']
+            for pl_uname in cfg:
+                pl_cfg = cfg[pl_uname]
+                sig = []
+                if 'signals' in pl_cfg:
+                    sig = pl_cfg['signals']
+                self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
+
+        ############################
+        #    Set parameter links   #
+        ############################
+        if 'ControllerSignalParameter' in Data:
+            cfg = Data['ControllerSignalParameter']
+            for pl_uname in cfg:
+                pl_cfg = cfg[pl_uname]
+                para = None
+                if 'parameter' in pl_cfg:
+                    para = pl_cfg['parameter']
+                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+
+        ############################
+        #    Close plugin          #
+        ############################
+        if 'ControllerSignalClose' in Data:
+            cfg = Data['ControllerSignalClose']
+            for pl_uname in cfg:
+                self.control_api.do_delete_plugin_uname(pl_uname)
+
+
+    def set_parameter(self, name, value):
+        # attetion: value is a string and need to be processed !
+        # if name == 'irgendeinParameter':
+        #   do that .... with value
+        pass
+
+    def quit(self):
+        # do something before plugin will close, e.a. close connections ...
+        pass
+
+    def get_plugin_configuration(self):
+        #
+        # Implement a own part of the config
+        # config is a hash of hass object
+        # config_parameter_name : {}
+        # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
+        # configs can be marked as advanced for create dialog
+        # http://utilitymill.com/utility/Regex_For_Range
+        config = {
+            "ORTD_Plugin_uname": {
+                'value': 'ORTDPlugin1',
+                'display_text': 'Uname to use for ortd plugin instance',
+                'advanced': "0"
+            },
+            'name': {
+                'value': 'ORTDController'
+            }
+        }
+        return config
+
+    def plugin_meta_updated(self):
+        """
+        Whenever the meta information is updated this function is called (if implemented).
+
+        :return:
+        """
+
+        #dplugin_info = self.dplugin_info
+        pass
+
+
 
 class ControllerIntroPage(QtGui.QWizardPage):
     def __init__(self,parent = None):
@@ -157,151 +292,3 @@ class ControllerWorking(QtGui.QWizardPage):
 
     def validatePage(self):
         return False
-
-
-class OrtdController(vip_base):
-
-    def initiate_layer_0(self, config=None):
-
-        # ---------------------------
-        # Read configuration
-        # ---------------------------
-        self.ortd_uname = config['ORTD_Plugin_uname']['value']
-        self.alreadyConfigured = False
-        # --------------------------------
-        # Create Widget
-        # --------------------------------
-        # Create Widget needed for this plugin
-        self.ControllerWidget = QtGui.QWizard()
-        self.ControllerWidget.setOption(QtGui.QWizard.NoCancelButton)
-        self.ControllerWidget.setOption(QtGui.QWizard.NoBackButtonOnLastPage)
-        self.ControllerWidget.setOption(QtGui.QWizard.NoBackButtonOnStartPage)
-        self.ControllerWidget.setOption(QtGui.QWizard.DisabledBackButtonOnLastPage)
-        self.set_widget_for_internal_usage( self.ControllerWidget )
-        self.ControllerWidget.addPage(ControllerIntroPage())
-        self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname))
-        self.ControllerWidget.addPage(ControllerWorking(api=self.control_api, uname=self.dplugin_info.uname))
-
-        return True
-
-    def pause(self):
-        # will be called, when plugin gets paused
-        # can be used to get plugin in a defined state before pause
-        # e.a. close communication ports, files etc.
-        pass
-
-    def resume(self):
-        # will be called when plugin gets resumed
-        # can be used to wake up the plugin from defined pause state
-        # e.a. reopen communication ports, files etc.
-        pass
-
-    def execute(self, Data=None, block_name = None):
-        # Do main work here!
-        # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
-        # If this plugin is a DPP, then it will get Data with data
-
-        # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
-        # hash signal_name: value
-
-        # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
-        if self.alreadyConfigured is False:
-            self.thread1 = threading.Thread(target=self.execute_cfg, args=[Data])
-            self.alreadyConfigured = True
-            self.thread1.start()
-
-    def execute_cfg(self,Data):
-        ############################
-        #       Create Plugins     #
-        ############################
-        if 'ControlSignalCreate' in Data:
-            cfg = Data['ControlSignalCreate']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
-        time.sleep(0.5)
-
-        ############################
-        #       Create Subs        #
-        ############################
-        if 'ControlSignalSub' in Data:
-            cfg = Data['ControlSignalSub']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                sig = []
-                if 'signals' in pl_cfg:
-                    sig = pl_cfg['signals']
-                self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
-
-        ############################
-        #    Set parameter links   #
-        ############################
-        if 'ControllerSignalParameter' in Data:
-            cfg = Data['ControllerSignalParameter']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                para = None
-                if 'parameter' in pl_cfg:
-                    para = pl_cfg['parameter']
-                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
-
-        ############################
-        #    Close plugin          #
-        ############################
-        if 'ControllerSignalClose' in Data:
-            cfg = Data['ControllerSignalClose']
-            for pl_uname in cfg:
-                self.control_api.do_delete_plugin_uname(pl_uname)
-
-
-    def set_parameter(self, name, value):
-        # attetion: value is a string and need to be processed !
-        # if name == 'irgendeinParameter':
-        #   do that .... with value
-        pass
-
-    def quit(self):
-        # do something before plugin will close, e.a. close connections ...
-        pass
-
-    def get_plugin_configuration(self):
-        #
-        # Implement a own part of the config
-        # config is a hash of hass object
-        # config_parameter_name : {}
-        # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
-        # configs can be marked as advanced for create dialog
-        # http://utilitymill.com/utility/Regex_For_Range
-
-        # config = {
-        #     "amax": {
-        #         'value': 3,
-        #         'regex': '[0-9]+',
-        #         'display_text' : 'This AMax',
-        #         'advanced' : '1'
-        # }, 'f': {
-        #         'value': "1",
-        #         'regex': '\d+.{0,1}\d*'
-        # }}
-        config = {
-            "ORTD_Plugin_uname": {
-                'value': 'ORTDPlugin1',
-                'display_text': 'Uname to use for ortd plugin instance',
-                'advanced': "0"
-            },
-            'name': {
-                'value': 'ORTDController'
-            }
-        }
-        return config
-
-    def plugin_meta_updated(self):
-        """
-        Whenever the meta information is updated this function is called (if implemented).
-
-        :return:
-        """
-
-        #dplugin_info = self.dplugin_info
-        pass

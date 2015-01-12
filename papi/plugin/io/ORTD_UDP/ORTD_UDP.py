@@ -53,7 +53,6 @@ from papi.data.DParameter import DParameter
 import numpy as np
 
 import threading
-import pickle
 
 import os
 
@@ -300,8 +299,6 @@ class ORTD_UDP(iop_base):
 
     def plugin_meta_updated(self):
         pass
-
-
 
     def plconf(self):
         cfg   = {}
