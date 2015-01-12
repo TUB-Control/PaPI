@@ -86,7 +86,6 @@ PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
 
-
 #
 PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '
 PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
