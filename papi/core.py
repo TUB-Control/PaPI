@@ -680,6 +680,8 @@ class Core:
 
             if plugin_config is None or plugin_config =={}:
                 plugin_config = plugin.plugin_object.get_startup_configuration()
+            else:
+               plugin_config = dict(list(plugin_config.items()) + list(plugin.plugin_object.get_startup_configuration().items()))
 
             # create Process object for new plugin
             # set parameter for work function of plugin, such as queues, id and eventTriggered
