@@ -33,9 +33,9 @@ import time
 import os
 import traceback
 
-from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
+from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QThread
+from PySide.QtCore              import QSize, Qt, QThread, QUrl
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -43,7 +43,7 @@ from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
-    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED
+    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE
 
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
@@ -148,6 +148,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionSetBackground.triggered.connect(self.set_background_for_gui)
 
+        self.actionPaPI_Wiki.triggered.connect(self.papi_wiki_triggerd)
+
+        self.actionPaPI_Doc.triggered.connect(self.papi_doc_triggerd)
+        self.actionAbout.triggered.connect(self.papi_about_triggerd)
+        self.actionAbout_Qt.triggered.connect(self.papi_about_qt_triggerd)
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
@@ -363,8 +368,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
         errMsg.setDetailedText(str(detailed_msg))
         errMsg.setWindowModality(Qt.NonModal)
         errMsg.show()
-#        errMsg.setSizePolicy(Qt.Polic)
-
 
     def toggle_run_mode(self):
         if self.in_run_mode:
@@ -417,6 +420,18 @@ class GUI(QMainWindow, Ui_QtNewMain):
         w = GUI_DEFAULT_WIDTH
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
         self.gui_api.do_reset_papi()
+
+    def papi_wiki_triggerd(self):
+        QDesktopServices.openUrl(QUrl("https://github.com/TUB-Control/PaPI/wiki", QUrl.TolerantMode))
+
+    def papi_doc_triggerd(self):
+        QDesktopServices.openUrl(QUrl("http://tub-control.github.io/PaPI/", QUrl.TolerantMode))
+
+    def papi_about_triggerd(self):
+        QtGui.QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
+
+    def papi_about_qt_triggerd(self):
+        QtGui.QMessageBox.aboutQt(self)
 
 def startGUI(CoreQueue, GUIQueue,gui_id):
     """

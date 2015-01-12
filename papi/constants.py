@@ -34,8 +34,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = 'v_0.9' # no spaces allowed
-CORE_CORE_VERSION               = 'v_0.9' # no spaces allowed
+CORE_PAPI_VERSION               = '0.9' # no spaces allowed
+CORE_CORE_VERSION               = '0.9' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -44,6 +44,27 @@ CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
 CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 2
+
+PAPI_COPYRIGHT                  = '&copy; 2014'
+PAPI_ABOUT_TITLE                = 'About PaPI'
+PAPI_ABOUT_TEXT                 = """
+<html><body>
+<h2>PaPI</h2>
+Version """ + CORE_PAPI_VERSION + """
+<br/>
+<br/>
+Copyright """ + PAPI_COPYRIGHT + """ <a href="http://www.control.tu-berlin.de/">Control Systems Group</a>, TU-Berlin.<br/>
+Published under <a href="https://www.gnu.org/licenses/lgpl.html">LGPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
+<br/><br/>
+PaPI uses:
+<ul>
+<li>Yapsy 1.10.423 published under BSD-License, <a href="http://yapsy.sourceforge.net/#license">License</a></li>
+<li>pyqtgraph-0.9.10 published under MIT-License, <a href="http://www.opensource.org/licenses/mit-license.php">License</a></li>
+</ul>
+</body
+</html>
+"""
+
 
 # EVENT CONSTANTS
 # TODO
