@@ -158,6 +158,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def clear(self):
         """
         This function will clear this window.
+
         :return:
         """
         self.bModel.clear()
@@ -179,6 +180,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         Used to display all known information for a DPlugin which is
         accessible in the pluginTree by its index.
+
         :param index: Current selected index
         :return:
         """
@@ -321,6 +323,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the dplugin tree
+
         :param position:
         :return:
         """
@@ -347,6 +350,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the block tree
+
         :param position:
         :return:
         """
@@ -389,6 +393,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the subscriper tree
+
         :param position:
         :return:
         """
@@ -419,6 +424,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the subscription tree
+
         :param position:
         :return:
         """
@@ -487,6 +493,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the parameter tree
+
         :param position:
         :return:
         """
@@ -546,8 +553,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
     def add_subscription_action(self, dplugin_uname):
         """
+        Used to add subscription for a specific dplugin
 
-        :param dplugin_uname:
+        :param dplugin_uname: Add Subscription for this DPlugin
         :return:
         """
 
@@ -578,9 +586,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
     def remove_subscriber_action(self, subscriber: DPlugin, dblock: DBlock):
         """
+        Used to remove a subscriber of the dplugin selected in the DPlugin tree.
 
-        :param subscriber:
-        :param dblock:
+        :param subscriber: Subscriber which is effected
+        :param dblock: DBlock which should be unsubscribed by Subscriber
         :return:
         """
         index = self.pluginTree.currentIndex()
@@ -592,6 +601,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def refresh_action(self, new_dplugin: DPlugin=None):
         """
         Used to refresh the overview menu view.
+
         :param new_dplugin: New dplugin which should be added in self.dpluginTreev.
         :return:
         """
@@ -636,6 +646,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
         """
         Action called to cancel a subscription of the current selected dplugin.
+
         :param source:
         :param dblock:
         :return:
@@ -648,6 +659,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def showEvent(self, *args, **kwargs):
         """
         ShowEvent of this class.
+
         :param args:
         :param kwargs:
         :return:
@@ -673,6 +685,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def play_button_callback(self):
         """
         Callback function for the play button.
+
         :return:
         """
         index = self.pluginTree.currentIndex()
@@ -722,6 +735,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def show_internal_name_callback(self):
         """
         Callback function for 'showInternalNameCheckBox'
+
         :return:
         """
         self.plugin_item_changed(self.pluginTree.currentIndex())
@@ -729,6 +743,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def data_changed_parameter_model(self, index, n):
         """
         This function is called when a dparameter value is changed by editing the 'value'-column.
+
         :param index: Index of current changed dparameter
         :param n: None
         :return:
@@ -744,6 +759,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def data_changed_block_model(self, index, n):
         """
         This function is called when a dblock child, a disgnal, is changed.
+
         :param index: Index of current changed dsignal object
         :param n: None
         :return:
@@ -756,8 +772,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.gui_api.do_edit_plugin_uname(dplugin.uname, dblock, {"edit" : dsignal})
 
-
     def keyPressEvent(self, event):
+        """
+        Used to handle key events for this gui element.
+
+        :param event: KeyEvent
+        :return:
+        """
         if event.key() == Qt.Key_Escape:
             self.close()
 
