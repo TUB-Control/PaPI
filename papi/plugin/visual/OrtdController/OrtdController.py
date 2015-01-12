@@ -133,7 +133,8 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         time.sleep(0.5)
         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalCreate',
                                                                                               'ControlSignalSub',
-                                                                                              'ControllerSignalParameter'])
+                                                                                              'ControllerSignalParameter',
+                                                                                              'ControllerSignalClose'])
         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', 0)
 
 
@@ -244,6 +245,14 @@ class OrtdController(vip_base):
                 if 'parameter' in pl_cfg:
                     para = pl_cfg['parameter']
                 self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+
+        ############################
+        #    Close plugin          #
+        ############################
+        if 'ControllerSignalClose' in Data:
+            cfg = Data['ControllerSignalClose']
+            for pl_uname in cfg:
+                self.control_api.do_delete_plugin_uname(pl_uname)
 
 
     def set_parameter(self, name, value):
