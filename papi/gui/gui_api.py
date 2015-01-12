@@ -585,7 +585,7 @@ class Gui_api(QtCore.QObject):
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
         for para in parameters_to_change:
-            self.do_set_parameter(para[0], para[1], para[2])
+            self.do_set_parameter_uname(para[0], para[1], para[2])
 
         for sig in signals_to_change:
             plugin_uname = sig[0]

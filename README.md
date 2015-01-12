@@ -24,6 +24,10 @@ Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
 `python3.4 main.py`
 
+Contribution
+------
+
+To get started, <a href="https://www.clahub.com/agreements/TUB-Control/PaPI">sign the Contributor License Agreement</a>.
 
 Documentation
 ------
@@ -37,4 +41,4 @@ Embedded Packages
 
 Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
 
-pyqtgraph-0.9.8 published under MIT-License
+pyqtgraph-0.9.10 published under MIT-License

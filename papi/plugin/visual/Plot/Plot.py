@@ -161,12 +161,12 @@ class Plot(vip_base):
         self.set_widget_for_internal_usage(self.__plotWidget__)
 
         #
-        if self.config['xRange-auto']['value'] == '1':
+        if self.config['xRange-auto']['value']=='1':
             pass
         else:
             self.use_range_for_x(self.config['xRange']['value'])
 
-        if self.config['yRange-auto']['value'] == '1':
+        if self.config['yRange-auto']['value']== '1':
             pass
         else:
             self.use_range_for_y(self.config['yRange']['value'])
@@ -207,6 +207,17 @@ class Plot(vip_base):
         self.__update_intervall__ = 25  # in milliseconds
 
         self.setup_context_menu()
+
+                #
+        if self.config['xRange-auto']['value']=='1':
+            pass
+        else:
+            self.use_range_for_x(self.config['xRange']['value'])
+
+        if self.config['yRange-auto']['value']== '1':
+            pass
+        else:
+            self.use_range_for_y(self.config['yRange']['value'])
 
         return True
 
@@ -269,20 +280,24 @@ class Plot(vip_base):
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
+            self.xGrid_Checkbox.setChecked(value=='1')
 
         if name == 'y-grid':
             self.config['y-grid']['value'] = value
             self.__plotWidget__.showGrid(y=value == '1')
+            self.yGrid_Checkbox.setChecked(value=='1')
 
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.__downsampling_rate__ = int(value)
+            #self.__plotWidget__.getPlotItem().setDownsampling(ds=int(value),auto=False,mode='mean')
             self.__new_added_data__ = 0
+
 
         if name == 'rolling':
             self.__rolling_plot__ = int(float(value)) == int('1')
             self.config['rolling_plot']['value'] = value
-
+            self.rolling_Checkbox.setChecked(value=='1')
             if self.__rolling_plot__:
                 # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
@@ -306,16 +321,26 @@ class Plot(vip_base):
 
         if name == 'xRange-auto':
             self.config['xRange-auto']['value'] = value
+            self.xRange_AutoCheckbox.setChecked(value=='1')
             if int(value) == 1:
+                self.xRange_minEdit.setDisabled(True)
+                self.xRange_maxEdit.setDisabled(True)
                 self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
             else:
                 self.use_range_for_x(self.config['xRange']['value'])
+                self.xRange_minEdit.setDisabled(False)
+                self.xRange_maxEdit.setDisabled(False)
 
         if name == 'yRange-auto':
             self.config['yRange-auto']['value'] = value
+            self.yRange_AutoCheckbox.setChecked(value=='1')
             if int(value) == 1:
+                self.yRange_minEdit.setDisabled(True)
+                self.yRange_maxEdit.setDisabled(True)
                 self.__plotWidget__.getPlotItem().getViewBox().menu.yAutoClicked()
             else:
+                self.yRange_minEdit.setDisabled(False)
+                self.yRange_maxEdit.setDisabled(False)
                 self.use_range_for_y(self.config['yRange']['value'])
 
         if name == 'xRange':
@@ -546,14 +571,15 @@ class Plot(vip_base):
         reg = re.compile(r'(\d+\.\d+)')
         range = reg.findall(value)
         if len(range) == 2:
-            self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]), float(range[1]))
+            self.xRange_minEdit.setText(range[0])
+            self.xRange_maxEdit.setText(range[1])
+            self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
 
     def use_range_for_y(self, value):
         reg = re.compile(r'(\d+\.\d+)')
         range = reg.findall(value)
         if len(range) == 2:
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
-
 
     def setup_context_menu(self):
         self.custMenu = QtGui.QMenu("Options")
@@ -568,11 +594,9 @@ class Plot(vip_base):
         self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.xRange_Layout.setSpacing(1)
 
-        self.xRange_AutoCheckbox = QtGui.QCheckBox()
+        self.xRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
         self.xRange_AutoCheckbox.stateChanged.connect(self.contextMenu_xRange_toogle)
         self.xRange_AutoCheckbox.setText('X-Autorange')
-        if self.config['xRange-auto']['value'] == '1':
-            self.xRange_AutoCheckbox.setChecked(True)
         self.xRange_Layout.addWidget(self.xRange_AutoCheckbox)
 
         ##### X Line Edits
@@ -621,12 +645,11 @@ class Plot(vip_base):
         self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.yRange_Layout.setSpacing(1)
 
-        self.yRange_AutoCheckbox = QtGui.QCheckBox()
+        self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
         self.yRange_AutoCheckbox.stateChanged.connect(self.contextMenu_yRange_toogle)
         self.yRange_AutoCheckbox.setText('Y-Autorange')
         self.yRange_Layout.addWidget(self.yRange_AutoCheckbox)
-        if self.config['yRange-auto']['value'] == '1':
-            self.yRange_AutoCheckbox.setChecked(True)
+
         ##### Y Line Edits
         # Layout
         self.yRange_EditWidget = QtGui.QWidget()
@@ -712,6 +735,12 @@ class Plot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
         self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
+
+        #self.__plotWidget__.getPlotItem().getViewBox()
+
+    def range_changed(self):
+        print('r')
+
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
             self.control_api.do_set_parameter(self.__id__, 'rolling', '1')
@@ -734,7 +763,11 @@ class Plot(vip_base):
         if self.xRange_AutoCheckbox.isChecked():
             # do autorange
             self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '1')
+            self.xRange_minEdit.setDisabled(True)
+            self.xRange_maxEdit.setDisabled(True)
         else:
+            self.xRange_minEdit.setDisabled(False)
+            self.xRange_maxEdit.setDisabled(False)
             mi = self.xRange_minEdit.text()
             ma = self.xRange_maxEdit.text()
             self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
@@ -744,8 +777,11 @@ class Plot(vip_base):
         if self.yRange_AutoCheckbox.isChecked():
             # do autorange
             self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '1')
-
+            self.yRange_minEdit.setDisabled(True)
+            self.yRange_maxEdit.setDisabled(True)
         else:
+            self.yRange_minEdit.setDisabled(False)
+            self.yRange_maxEdit.setDisabled(False)
             # do man range
             mi = self.yRange_minEdit.text()
             ma = self.yRange_maxEdit.text()

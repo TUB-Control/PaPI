@@ -1,120 +1,76 @@
-<PaPiConfig Date="2015-01-05 11:59:49" PaPI_version="v_0.9">
-  <Size h="800" w="800" />
+<PaPiConfig Date="2015-01-05 17:53:26" PaPI_version="v_0.9">
+  <Size h="1176" w="1535" />
   <Background image="None" />
-  <Plugin uname="FourierXRect">
-    <Identifier>Fourier_Rect</Identifier>
+  <Plugin uname="FourierXRectXMOD">
+    <Identifier>Fourier_Rect_MOD</Identifier>
     <StartConfig>
-      <Parameter Name="name">
-        <value>Fourier</value>
-      </Parameter>
       <Parameter Name="uname">
-        <value>FourierXRect</value>
-      </Parameter>
-      <Parameter Name="host">
-        <value>130.149.155.73</value>
-        <advanced>1</advanced>
-        <regex>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}</regex>
-      </Parameter>
-      <Parameter Name="port">
-        <value>9999</value>
-        <advanced>1</advanced>
-        <regex>\d{1,5}</regex>
+        <value>FourierXRectXMOD</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Rectangle">
+        <DSignal uname="rect1">
+          <dname>rect1</dname>
+        </DSignal>
+        <DSignal uname="rect2">
+          <dname>rect2</dname>
+        </DSignal>
+        <DSignal uname="rect3">
+          <dname>rect3</dname>
+        </DSignal>
+        <DSignal uname="rect4">
+          <dname>rect4</dname>
+        </DSignal>
+        <DSignal uname="rect5">
+          <dname>rect5</dname>
+        </DSignal>
+        <DSignal uname="rect6">
+          <dname>rect6</dname>
+        </DSignal>
+        <DSignal uname="rect7">
+          <dname>rect7</dname>
+        </DSignal>
+        <DSignal uname="rect8">
+          <dname>rect8</dname>
+        </DSignal>
+        <DSignal uname="rect9">
+          <dname>rect9</dname>
+        </DSignal>
+        <DSignal uname="rect10">
+          <dname>rect10</dname>
+        </DSignal>
+        <DSignal uname="rect11">
+          <dname>rect11</dname>
+        </DSignal>
+        <DSignal uname="rect12">
+          <dname>rect12</dname>
+        </DSignal>
+        <DSignal uname="rect13">
+          <dname>rect13</dname>
+        </DSignal>
+        <DSignal uname="rect14">
+          <dname>rect14</dname>
+        </DSignal>
+        <DSignal uname="rect15">
+          <dname>rect15</dname>
+        </DSignal>
+        <DSignal uname="rect16">
+          <dname>rect16</dname>
+        </DSignal>
+        <DSignal uname="rect17">
+          <dname>rect17</dname>
+        </DSignal>
+        <DSignal uname="rect18">
+          <dname>rect18</dname>
+        </DSignal>
+        <DSignal uname="rect19">
+          <dname>rect19</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
     <Subscriptions />
-  </Plugin>
-  <Plugin uname="Plot">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="name">
-        <value>VisualPlugin</value>
-        <tooltip>Used display name</tooltip>
-      </Parameter>
-      <Parameter Name="y-grid">
-        <value>1</value>
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-Y</display_text>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-        <display_text>Label-Y</display_text>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <value>0</value>
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Rolling Plot</display_text>
-      </Parameter>
-      <Parameter Name="downsampling_rate">
-        <value>1</value>
-        <regex>(\d+)</regex>
-      </Parameter>
-      <Parameter Name="style">
-        <value>[0 0 0 0 0]</value>
-        <advanced>1</advanced>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Style</display_text>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <value>0</value>
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-X</display_text>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <value>1000</value>
-        <advanced>1</advanced>
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <display_text>Buffersize</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Plot</value>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(300,300)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="label_x">
-        <value>time, s</value>
-        <regex>\w+,\s*\w+</regex>
-        <display_text>Label-X</display_text>
-      </Parameter>
-      <Parameter Name="color">
-        <value>[0 1 2 3 4]</value>
-        <advanced>1</advanced>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Color</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="y-grid">0</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="buffersize">1000</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="rolling">0</Parameter>
-    </PreviousParameters>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Add</data_source>
-        <block Name="AddOut1">
-          <alias />
-          <Signal>Sum</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
   </Plugin>
   <Plugin uname="Add">
     <Identifier>Add</Identifier>
@@ -124,9 +80,16 @@
       </Parameter>
     </StartConfig>
     <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="AddOut1">
+        <DSignal uname="Sum">
+          <dname>Sum</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
     <Subscriptions>
       <Subscription>
-        <data_source>FourierXRect</data_source>
+        <data_source>FourierXRectXMOD</data_source>
         <block Name="Rectangle">
           <alias />
           <Signal>rect1</Signal>
@@ -147,7 +110,125 @@
           <Signal>rect6</Signal>
           <Signal>rect7</Signal>
           <Signal>rect8</Signal>
-          <Signal>rect9</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plot">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="xRange">
+        <value>[0,1]</value>
+        <display_text>xRange-auto</display_text>
+        <regex>(\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="style">
+        <value>[0 0 0 0 0]</value>
+        <advanced>1</advanced>
+        <display_text>Style</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <value>3000</value>
+        <advanced>1</advanced>
+        <display_text>Buffersize</display_text>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <display_text>Label-Y</display_text>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <type>bool</type>
+        <value>0</value>
+        <display_text>Grid-X</display_text>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <value>1</value>
+        <regex>(\d+)</regex>
+      </Parameter>
+      <Parameter Name="xRange-auto">
+        <type>bool</type>
+        <value>1</value>
+        <display_text>xRange-auto</display_text>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="yRange">
+        <value>[0,1]</value>
+        <display_text>yRange-auto</display_text>
+        <regex>(\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <type>bool</type>
+        <value>0</value>
+        <display_text>Grid-Y</display_text>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="color">
+        <value>[0 1 2 3 4]</value>
+        <advanced>1</advanced>
+        <display_text>Color</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(1517,1065)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <display_text>Label-X</display_text>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <type>bool</type>
+        <value>1</value>
+        <display_text>Rolling Plot</display_text>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="yRange-auto">
+        <type>bool</type>
+        <value>1</value>
+        <display_text>yRange-auto</display_text>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="xRange">[0,1]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="rolling">1</Parameter>
+      <Parameter Name="yRange-auto">1</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="buffersize">3000</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="downsampling_rate">5</Parameter>
+      <Parameter Name="xRange-auto">1</Parameter>
+      <Parameter Name="yRange">[0,1]</Parameter>
+    </PreviousParameters>
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>Add</data_source>
+        <block Name="AddOut1">
+          <alias />
+          <Signal>Sum</Signal>
         </block>
       </Subscription>
     </Subscriptions>
