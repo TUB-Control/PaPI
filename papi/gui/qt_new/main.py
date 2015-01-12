@@ -62,8 +62,20 @@ pg.setConfigOptions(antialias=False)
 
 
 class GUI(QMainWindow, Ui_QtNewMain):
-
+    """
+    Used to create the qt based PaPI gui.
+    """
     def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
+        """
+        Init function
+
+        :param core_queue: Queue used to send papi events to Core
+        :param gui_queue: GUI queue which contains papi events for the gui
+        :param gui_id: Unique ID for this gui
+        :param gui_data: Contains all data for the current session
+        :param parent: parent element
+        :return:
+        """
         super(GUI, self).__init__(parent)
         self.setupUi(self)
 
@@ -123,7 +135,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create callback functions for buttons
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
-        self.saveButton.clicked.connect(self.save_triggered_thread)
+        self.saveButton.clicked.connect(self.save_triggered)
 
         # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
         # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
@@ -136,7 +148,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
 
         self.actionLoad.triggered.connect(self.load_triggered)
-        self.actionSave.triggered.connect(self.save_triggered_thread)
+        self.actionSave.triggered.connect(self.save_triggered)
 
         self.actionOverview.triggered.connect(self.show_overview_menu)
         self.actionCreate.triggered.connect(self.show_create_plugin_menu)
@@ -212,6 +224,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.buttonShowOverview.setText('')
 
     def set_background_for_gui(self):
+        """
+        Used to handle request for setting background image.
+
+        :return:
+        """
         fileNames = ''
 
         dialog = QFileDialog(self)
@@ -230,26 +247,31 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 self.widgetArea.setBackground(pixmap)
 
     def update_background(self, path):
+        """
+        Used to change the background by giving a path to a picture.
+
+        :param path: Path of a picture.
+        :return:
+        """
         pixmap  = QtGui.QPixmap(path)
         self.widgetArea.setBackground(pixmap)
 
-
     def run(self):
+        """
+
+
+        :return:
+        """
         # create a timer and set interval for processing events with working loop
-        
+
         QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
 
-
-    def dbg(self):
-        print("Action")
-
-    def menu_license(self):
-        pass
-
-    def menu_quit(self):
-        pass
-
     def show_create_plugin_menu(self):
+        """
+
+
+        :return:
+        """
         self.create_plugin_menu = CreatePluginMenu(self.gui_api)
 
         self.create_plugin_menu.show()
@@ -261,11 +283,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # self.create_plugin_menu = None
 
     def show_overview_menu(self):
+        """
+        Used to show the overview menu.
+
+        :return:
+        """
         self.overview_menu = OverviewPluginMenu(self.gui_api)
         self.overview_menu.show()
 
     def load_triggered(self):
+        """
+        Used to start the 'load config' dialog.
 
+        :return:
+        """
         fileNames = ''
 
         dialog = QFileDialog(self)
@@ -283,7 +314,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 self.gui_api.do_load_xml(fileNames[0])
 
     def save_triggered(self):
+        """
+        Used to start the 'save config' dialog.
 
+        :return:
+        """
         fileNames = ''
 
         dialog = QFileDialog(self)
@@ -300,15 +335,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
             if fileNames[0] != '':
                 self.gui_api.do_save_xml_config(fileNames[0])
 
-
-    def save_triggered_thread(self):
-        QtCore.QTimer.singleShot(0, self.save_triggered)
-
     def closeEvent(self, *args, **kwargs):
+        """
+        Handle close event.
+        Saves current session as 'papi/last_active_papi.xml'
+        Closes all opened windows.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         try:
             self.gui_api.do_save_xml_config('papi/last_active_papi.xml')
         except Exception as E:
-                        tb = traceback.format_exc()
+            tb = traceback.format_exc()
 
         self.gui_api.do_close_program()
         if self.create_plugin_menu is not None:
@@ -320,7 +360,13 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.close()
 
     def add_dplugin(self, dplugin):
+        """
+        Callback function called by 'DPlugin added signal'
+        Used to add a DPlugin SubWindow on the GUI if possible.
 
+        :param dplugin:
+        :return:
+        """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
             sub_window = dplugin.plugin.get_sub_window()
             self.widgetArea.addSubWindow(sub_window)
@@ -339,6 +385,13 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.refresh_action(dplugin)
 
     def remove_dplugin(self, dplugin):
+        """
+        Callback function called by 'DPlugin removed signal'
+        Used to removed a DPlugin SubWindow from the GUI if possible.
+
+        :param dplugin:
+        :return:
+        """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
             self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
 
