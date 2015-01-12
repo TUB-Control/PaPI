@@ -1,113 +1,113 @@
-<PaPiConfig Date="2015-01-12 14:36:56" PaPI_version="v_0.9">
+<PaPiConfig Date="2015-01-12 15:13:34" PaPI_version="v_0.9">
   <Size h="800" w="800" />
   <Background image="None" />
   <Plugin uname="Plot">
     <Identifier>Plot</Identifier>
     <StartConfig>
-      <Parameter Name="color">
-        <value>[0 1 2 3 4]</value>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(0,0)</value>
         <advanced>1</advanced>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Color</display_text>
-      </Parameter>
-      <Parameter Name="y-grid">
-        <value>0</value>
-        <regex>^(1|0)$</regex>
-        <display_text>Grid-Y</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="label_y">
-        <value>amplitude, V</value>
-        <regex>\w+,\s+\w+</regex>
-        <display_text>Label-Y</display_text>
-      </Parameter>
-      <Parameter Name="style">
-        <value>[0 0 0 0 0]</value>
-        <advanced>1</advanced>
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <display_text>Style</display_text>
-      </Parameter>
-      <Parameter Name="name">
-        <value>VisualPlugin</value>
-        <tooltip>Used display name</tooltip>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="size">
-        <value>(300,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,300)</value>
         <advanced>1</advanced>
         <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <value>1000</value>
-        <advanced>1</advanced>
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <display_text>Buffersize</display_text>
       </Parameter>
       <Parameter Name="label_x">
         <value>time, s</value>
         <regex>\w+,\s*\w+</regex>
         <display_text>Label-X</display_text>
       </Parameter>
-      <Parameter Name="downsampling_rate">
-        <value>1</value>
-        <regex>(\d+)</regex>
+      <Parameter Name="y-grid">
+        <value>0</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+        <display_text>Grid-Y</display_text>
       </Parameter>
       <Parameter Name="yRange-auto">
         <value>1</value>
-        <regex>^(1|0)$</regex>
-        <display_text>yRange-auto</display_text>
         <type>bool</type>
-      </Parameter>
-      <Parameter Name="xRange">
-        <value>[0,1]</value>
-        <regex>(\d+\.\d+)</regex>
-        <display_text>xRange-auto</display_text>
-      </Parameter>
-      <Parameter Name="yRange">
-        <value>[0,1]</value>
-        <regex>(\d+\.\d+)</regex>
+        <regex>^(1|0)$</regex>
         <display_text>yRange-auto</display_text>
       </Parameter>
       <Parameter Name="x-grid">
         <value>0</value>
+        <type>bool</type>
         <regex>^(1|0)$</regex>
         <display_text>Grid-X</display_text>
-        <type>bool</type>
       </Parameter>
-      <Parameter Name="rolling_plot">
-        <value>0</value>
-        <regex>^(1|0)$</regex>
-        <display_text>Rolling Plot</display_text>
+      <Parameter Name="xRange-auto">
+        <value>1</value>
         <type>bool</type>
+        <regex>^(1|0)$</regex>
+        <display_text>xRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="xRange">
+        <value>[0.0 1.0]</value>
+        <regex>(\d+\.\d+)</regex>
+        <display_text>xRange-auto</display_text>
+      </Parameter>
+      <Parameter Name="style">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 0 0 0 0]</value>
+        <advanced>1</advanced>
+        <display_text>Style</display_text>
       </Parameter>
       <Parameter Name="uname">
         <value>Plot</value>
       </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="xRange-auto">
-        <value>1</value>
-        <regex>^(1|0)$</regex>
-        <display_text>xRange-auto</display_text>
+      <Parameter Name="rolling_plot">
+        <value>0</value>
         <type>bool</type>
+        <regex>^(1|0)$</regex>
+        <display_text>Rolling Plot</display_text>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <value>1</value>
+        <regex>(\d+)</regex>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <regex>\w+,\s+\w+</regex>
+        <display_text>Label-Y</display_text>
+      </Parameter>
+      <Parameter Name="color">
+        <regex>^\[(\s*\d\s*)+\]</regex>
+        <value>[0 1 2 3 4]</value>
+        <advanced>1</advanced>
+        <display_text>Color</display_text>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+        <value>1000</value>
+        <advanced>1</advanced>
+        <display_text>Buffersize</display_text>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used display name</tooltip>
+      </Parameter>
+      <Parameter Name="yRange">
+        <value>[0.0 1.0]</value>
+        <regex>(\d+\.\d+)</regex>
+        <display_text>yRange-auto</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="yRange-auto">1</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
       <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
       <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="yRange">[0,1]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
       <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="xRange">[0,1]</Parameter>
       <Parameter Name="buffersize">1000</Parameter>
       <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="yRange-auto">1</Parameter>
       <Parameter Name="xRange-auto">1</Parameter>
+      <Parameter Name="yRange">[0,1]</Parameter>
+      <Parameter Name="xRange">[0,1]</Parameter>
     </PreviousParameters>
     <DBlocks />
     <Subscriptions />
@@ -115,25 +115,31 @@
   <Plugin uname="Sinus">
     <Identifier>Sinus</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>Sinus</value>
+      <Parameter Name="amax">
+        <value>3</value>
+        <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="f">
         <value>1</value>
         <regex>\d+.{0,1}\d*</regex>
       </Parameter>
-      <Parameter Name="amax">
-        <value>3</value>
-        <regex>[0-9]+</regex>
+      <Parameter Name="uname">
+        <value>Sinus</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
       <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
     </PreviousParameters>
     <DBlocks>
-      <DBlock Name="SinMit_f2">
-        <DSignal uname="f2_1">
-          <dname>f2_1</dname>
+      <DBlock Name="SinMit_f3">
+        <DSignal uname="f3_1">
+          <dname>f3_1</dname>
+        </DSignal>
+        <DSignal uname="f3_2">
+          <dname>f3_2</dname>
+        </DSignal>
+        <DSignal uname="f3_scalar">
+          <dname>f3_scalar</dname>
         </DSignal>
       </DBlock>
       <DBlock Name="SinMit_f1">
@@ -141,15 +147,9 @@
           <dname>f1_f1DNAME</dname>
         </DSignal>
       </DBlock>
-      <DBlock Name="SinMit_f3">
-        <DSignal uname="f3_1">
-          <dname>f3_harhar</dname>
-        </DSignal>
-        <DSignal uname="f3_2">
-          <dname>f3_dudu</dname>
-        </DSignal>
-        <DSignal uname="f3_scalar">
-          <dname>f3_quark</dname>
+      <DBlock Name="SinMit_f2">
+        <DSignal uname="f2_1">
+          <dname>f2_1</dname>
         </DSignal>
       </DBlock>
     </DBlocks>

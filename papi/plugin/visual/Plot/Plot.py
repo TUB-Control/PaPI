@@ -462,7 +462,6 @@ class Plot(vip_base):
 
         :return:
         """
-
         subscriptions = self.dplugin_info.get_subscribtions()
 
         current_signals = {}
