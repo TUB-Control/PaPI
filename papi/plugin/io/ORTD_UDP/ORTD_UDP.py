@@ -358,10 +358,17 @@ class ORTD_UDP(iop_base):
         #         'parameter' : 'Oscillator input'
         #     }
         # }
-
-
-        cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
-        subs = self.ProtocolConfig['PaPIConfig']['ToSub']
-        paras = self.ProtocolConfig['PaPIConfig']['ToControl']
-        close = self.ProtocolConfig['PaPIConfig']['ToClose']
+        cfg   = {}
+        subs  = {}
+        paras = {}
+        close = {}
+        if 'PaPIConfig' in self.ProtocolConfig:
+            if 'ToCreate' in self.ProtocolConfig['PaPIConfig']:
+                cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
+            if 'ToSub' in self.ProtocolConfig['PaPIConfig']:
+                subs = self.ProtocolConfig['PaPIConfig']['ToSub']
+            if 'ToControl' in self.ProtocolConfig['PaPIConfig']:
+                paras = self.ProtocolConfig['PaPIConfig']['ToControl']
+            if 'ToClose' in self.ProtocolConfig['PaPIConfig']:
+                close = self.ProtocolConfig['PaPIConfig']['ToClose']
         return cfg, subs, paras, close
