@@ -145,7 +145,6 @@ class Gui_api(QtCore.QObject):
         :param changeRequest:
         :return:
         """
-
         pl_id = self.do_get_plugin_id_from_uname(uname)
 
         if pl_id is not None:
@@ -161,7 +160,6 @@ class Gui_api(QtCore.QObject):
         :type id: int
         :return:
         """
-
         event = Event.instruction.StopPlugin(self.gui_id, id, None, delete=False)
         self.core_queue.put(event)
 
@@ -371,7 +369,6 @@ class Gui_api(QtCore.QObject):
         :param plugin_id: id of plugin to pause
         :type plugin_id: int
         """
-
         if self.gui_data.get_dplugin_by_id(plugin_id) is not None:
             opt = DOptionalData()
             event = Event.instruction.PausePlugin(self.gui_id, plugin_id, opt)
@@ -388,18 +385,6 @@ class Gui_api(QtCore.QObject):
         :param plugin_uname: uname of plugin to pause
         :type plugin_uname: basestring
         """
-        # # get plugin from DGui with given uname
-        # # purpose: get its id
-        # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-        # # check for existance
-        # if dplug is not None:
-        #     # it does exist, so get its id
-        #     self.do_pause_plugin_by_id(dplug.id)
-        # else:
-        #     # plugin with uname does not exist
-        #     self.log.printText(1, 'do_pause, plugin uname worng')
-        #     return -1
-
         plugin_id = self.do_get_plugin_id_from_uname(plugin_uname)
         if plugin_id is not None:
             return self.do_pause_plugin_by_id(plugin_id)
@@ -432,18 +417,6 @@ class Gui_api(QtCore.QObject):
         :param plugin_uname: uname of plugin to resume
         :type plugin_uname: basestring
         """
-        # # get plugin from DGui with given uname
-        # # purpose: get its id
-        # dplug = self.gui_data.get_dplugin_by_uname(plugin_uname)
-        # # check for existance
-        # if dplug is not None:
-        #     # it does exist, so get its id
-        #     self.do_resume_plugin_by_id(dplug.id)
-        # else:
-        #     # plugin with uname does not exist
-        #     self.log.printText(1, 'do_resume, plugin uname worng')
-        #     return -1
-
         plugin_id = self.do_get_plugin_id_from_uname(plugin_uname)
         if plugin_id is not None:
             return self.do_resume_plugin_by_id(plugin_id)
@@ -469,12 +442,23 @@ class Gui_api(QtCore.QObject):
             return None
 
     def do_close_program(self):
+        """
+        Tell core to close papi. Core will respond and will close all open plugins.
+
+        """
         opt = DOptionalData()
         opt.reason = 'User clicked close Button'
         event = Event.instruction.CloseProgram(self.gui_id, 0, opt)
         self.core_queue.put(event)
 
     def do_load_xml(self, path):
+        """
+        Function to load a xml config to papi and apply the configuration.
+
+        :param path: path to xml file to load.
+        :type path: basestring
+        :return:
+        """
         if path is None or not os.path.isfile(path):
             return False
         tree = ET.parse(path)
@@ -495,7 +479,7 @@ class Gui_api(QtCore.QObject):
                 else:
                     if plugin_xml.tag == 'Background':
                         bg_path = str(plugin_xml.attrib['image'])
-                        if bg_path != '' and bg_path is not None and bg_path != 'default' and bg_path !='None':
+                        if bg_path != '' and bg_path is not None and bg_path != 'default' and bg_path != 'None':
                             self.set_bg_gui.emit(bg_path)
                     else:
                         pl_uname = plugin_xml.attrib['uname']
@@ -560,7 +544,7 @@ class Gui_api(QtCore.QObject):
                                     signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path,  tb)
+            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
@@ -588,6 +572,19 @@ class Gui_api(QtCore.QObject):
         return uname
 
     def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
+        """
+        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+
+        :param pl_to_start: list of plugins to start
+        :type pl_to_start: list
+        :param subs_to_make:  list of subscriptions to make
+        :type subs_to_make: list
+        :param parameters_to_change: parameter changes to apply
+        :type parameters_to_change: list
+        :param signals_to_change: signal name changes to apply
+        :type signals_to_change list
+        :return:
+        """
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
@@ -604,7 +601,13 @@ class Gui_api(QtCore.QObject):
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
     def do_save_xml_config(self, path):
+        """
+        This function will save papis current state to a xml file provided by path.
 
+        :param path: path to save xml to.
+        :type path: basestring
+        :return:
+        """
         if path[-4:] != '.xml':
             path += '.xml'
 
@@ -712,10 +715,17 @@ class Gui_api(QtCore.QObject):
 
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path,  tb)
+            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path, tb)
 
     def indent(self, elem, level=0):
-        # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
+        """
+        Function which will apply a nice looking indentiation to xml structure before save. Better readability.
+        copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
+
+        :param elem:
+        :param level:
+        :return:
+        """
         i = "\n" + level * "  "
         if len(elem):
             if not elem.text or not elem.text.strip():
