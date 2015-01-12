@@ -514,45 +514,46 @@ class Gui_api(QtCore.QObject):
                     # --------------------------------
 
                     subs_xml = plugin_xml.find('Subscriptions')
-                    for sub_xml in subs_xml.findall('Subscription'):
-                        data_source = sub_xml.find('data_source').text
-                        for block_xml in sub_xml.findall('block'):
-                            block_name = block_xml.attrib['Name']
-                            signals = []
-                            for sig_xml in block_xml.findall('Signal'):
-                                signals.append(str(sig_xml.text))
-                            alias_xml = block_xml.find('alias')
-                            alias = alias_xml.text
-                            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                            data_source_new = self.change_uname_to_uniqe(data_source)
-                            subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
+                    if subs_xml is not None:
+                        for sub_xml in subs_xml.findall('Subscription'):
+                            data_source = sub_xml.find('data_source').text
+                            for block_xml in sub_xml.findall('block'):
+                                block_name = block_xml.attrib['Name']
+                                signals = []
+                                for sig_xml in block_xml.findall('Signal'):
+                                    signals.append(str(sig_xml.text))
+                                alias_xml = block_xml.find('alias')
+                                alias = alias_xml.text
+                                pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                                data_source_new = self.change_uname_to_uniqe(data_source)
+                                subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
 
                     # --------------------------------
                     # Load PreviousParameters
                     # --------------------------------
 
                     prev_parameters_xml = plugin_xml.find('PreviousParameters')
-                    for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
-                        para_name = prev_parameter_xml.attrib['Name']
-                        para_value = prev_parameter_xml.text
-                        pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                        # TODO validate NO FLOAT in parameter
-                        parameters_to_change.append([pl_uname_new, para_name, para_value])
+                    if prev_parameters_xml is not None:
+                        for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                            para_name = prev_parameter_xml.attrib['Name']
+                            para_value = prev_parameter_xml.text
+                            pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                            # TODO validate NO FLOAT in parameter
+                            parameters_to_change.append([pl_uname_new, para_name, para_value])
 
                     # --------------------------------
                     # Load DBlocks due to signals name
                     # --------------------------------
 
                     dblocks_xml = plugin_xml.find('DBlocks')
-                    for dblock_xml in dblocks_xml:
-                        dblock_name = dblock_xml.attrib['Name']
-                        print('DBlock ' + dblock_name)
-                        dsignals_xml = dblock_xml.findall('DSignal')
-                        for dsignal_xml in dsignals_xml:
-                            dsignal_uname = dsignal_xml.attrib['uname']
-                            dsignal_dname = dsignal_xml.find('dname').text
-                            print('Signal' + dsignal_uname + ' with ' + dsignal_dname)
-                            signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
+                    if dblocks_xml is not None:
+                        for dblock_xml in dblocks_xml:
+                            dblock_name = dblock_xml.attrib['Name']
+                            dsignals_xml = dblock_xml.findall('DSignal')
+                            for dsignal_xml in dsignals_xml:
+                                dsignal_uname = dsignal_xml.attrib['uname']
+                                dsignal_dname = dsignal_xml.find('dname').text
+                                signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
