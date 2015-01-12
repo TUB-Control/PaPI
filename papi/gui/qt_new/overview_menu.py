@@ -534,15 +534,15 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                                     dblock_pcp: DBlock):
         """
         This function is used to create a subscription for a process control plugin.
+
         :param dplugin: Subscriber of a pcp plugin
         :param dparameter: Parameter of the subscriber which should be controlled by the pcp plugin.
         :param dplugin_pcp: The pcp plugin
         :param dblock_pcp: Block of the pcp plugin which is used to control the subscriber's parameter.
         :return:
         """
-
         self.gui_api.do_subscribe(dplugin.id, dplugin_pcp.id, dblock_pcp.name, [], dparameter.name)
-        pass
+
 
     def add_subscription_action(self, dplugin_uname):
         """
