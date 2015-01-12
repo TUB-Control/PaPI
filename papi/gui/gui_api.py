@@ -30,6 +30,7 @@ __author__ = 'stefan'
 import datetime
 import time
 import traceback
+import os
 
 import papi.event as Event
 
@@ -475,6 +476,8 @@ class Gui_api(QtCore.QObject):
         self.core_queue.put(event)
 
     def do_load_xml(self, path):
+        if path is None or not os.path.isfile(path):
+            return False
         tree = ET.parse(path)
 
         root = tree.getroot()

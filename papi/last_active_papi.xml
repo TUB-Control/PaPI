@@ -1,4 +1,35 @@
-<PaPiConfig Date="2015-01-12 16:42:05" PaPI_version="v_0.9">
+<PaPiConfig Date="2015-01-12 16:50:12" PaPI_version="v_0.9">
   <Size h="800" w="800" />
   <Background image="None" />
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="ORTD_Plugin_uname">
+        <display_text>Uname to use for ortd plugin instance</display_text>
+        <advanced>0</advanced>
+        <value>ORTDPlugin1</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="name">
+        <value>ORTDController</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>OrtdController</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks />
+    <Subscriptions />
+  </Plugin>
 </PaPiConfig>
