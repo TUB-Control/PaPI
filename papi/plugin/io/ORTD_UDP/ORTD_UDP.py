@@ -152,10 +152,15 @@ class ORTD_UDP(iop_base):
 
 
 
+
+
+            self.ControlBlock = DBlock('ControllerSignals')
+            self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
+            self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
+            self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+
             #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
-            self.send_new_block_list([self.block1])
-
-
+            self.send_new_block_list([self.block1, self.ControlBlock])
 
         # Register parameters
         self.Parameter_List = []
@@ -167,6 +172,9 @@ class ORTD_UDP(iop_base):
             opt_object = OptionalObject(Pid, val_count)
             Parameter = DParameter('', para_name, 0, 0, OptionalObject=opt_object)
             self.Parameter_List.append(Parameter)
+
+        self.ControlParameter = DParameter('','triggerConfiguration',0,0)
+        self.Parameter_List.append(self.ControlParameter)
 
         self.send_new_parameter_list(self.Parameter_List)
 
@@ -267,12 +275,16 @@ class ORTD_UDP(iop_base):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
-        for para in self.Parameter_List:
-            if para.name == name:
-                Pid = para.OptionalObject.ORTD_par_id
-                Counter = 111
-                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if name == 'triggerConfiguration':
+            cfg, subs, para = self.plconf()
+            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg, 'ControlSignalSub':subs, 'ControllerSignalParameter':para})
+        else:
+            for para in self.Parameter_List:
+                if para.name == name:
+                    Pid = para.OptionalObject.ORTD_par_id
+                    Counter = 111
+                    data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
@@ -284,3 +296,68 @@ class ORTD_UDP(iop_base):
 
     def plugin_meta_updated(self):
         pass
+
+
+
+    def plconf(self):
+        # cfg = {
+        #     'Plot1':{
+        #             'identifier': {
+        #                 'value': 'Plot',
+        #             },
+        #             'config': {
+        #                 'x-grid': {
+        #                     'value': "0",
+        #                 },
+        #                 'size': {
+        #                     'value': "(300,300)",
+        #
+        #                 },
+        #                 'position': {
+        #                     'value': "(300,0)",
+        #                 },
+        #                 'name': {
+        #                     'value': 'TestPlot'
+        #                 }
+        #             }
+        #     },
+        #     'Butt1':{
+        #             'identifier': {
+        #                 'value': 'Button',
+        #             },
+        #             'config': {
+        #                 'size': {
+        #                     'value': "(150,50)",
+        #                 },
+        #                 'position': {
+        #                     'value': "(600,0)",
+        #                 },
+        #                 'name': {
+        #                     'value': 'Disturbance'
+        #                 }
+        #
+        #             }
+        #     }
+        #
+        # }
+        #
+        # subs = {
+        #     'Plot1': {
+        #         'block': 'SourceGroup0',
+        #         'signals': ['V']
+        #     }
+        # }
+        #
+        # paras = {
+        #     'Butt1': {
+        #         'block': 'Click_Event',
+        #         'parameter' : 'Oscillator input'
+        #     }
+        # }
+
+
+        cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
+        subs = self.ProtocolConfig['PaPIConfig']['ToSub']
+        paras = self.ProtocolConfig['PaPIConfig']['ToControl']
+
+        return cfg, subs, paras

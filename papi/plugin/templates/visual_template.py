@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'Stefan'
 
 from PySide.QtGui import QMdiSubWindow
-import pyqtgraph as pq
+import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -37,10 +37,10 @@ from papi.data.DParameter import DParameter
 import collections
 import re
 
-from pyqtgraph.Qt import QtGui, QtCore
+from papi.pyqtgraph.Qt import QtGui, QtCore
 
-
-class PlotPerformance(vip_base):
+#RENAME TO PLUGIN NAME
+class TemplateName(vip_base):
 
 
     def initiate_layer_0(self, config=None):

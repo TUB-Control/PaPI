@@ -36,7 +36,7 @@ from papi.yapsy.IPlugin import IPlugin
 class base_plugin(IPlugin):
 
 
-    def papi_init(self):
+    def papi_init(self, ):
         #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
 

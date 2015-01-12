@@ -143,7 +143,8 @@ class GuiEventProcessing(QtCore.QObject):
                     # check if new_data is a parameter or new raw data
                     try:
                         if opt.is_parameter is False:
-                            dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                            dplugin.plugin.execute(Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
+                                                   block_name=opt.block_name)
                         else:
                             dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
                     except Exception as E:
@@ -276,7 +277,7 @@ class GuiEventProcessing(QtCore.QObject):
 
             # call the plugin developers init function with config
             try:
-                dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api)
+                dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api, dpluginInfo=dplugin.get_meta())
                 if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
                     #start succcessfull
                     self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
