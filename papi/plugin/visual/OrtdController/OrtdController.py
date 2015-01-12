@@ -165,7 +165,7 @@ class OrtdController(vip_base):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.ortd_uname = 'ORTDPlugin1'
+        self.ortd_uname = config['ORTD_Plugin_uname']['value']
         self.alreadyConfigured = False
         # --------------------------------
         # Create Widget
@@ -275,7 +275,16 @@ class OrtdController(vip_base):
         #         'value': "1",
         #         'regex': '\d+.{0,1}\d*'
         # }}
-        config = {}
+        config = {
+            "ORTD_Plugin_uname": {
+                'value': 'ORTDPlugin1',
+                'display_text': 'Uname to use for ortd plugin instance',
+                'advanced': "0"
+            },
+            'name': {
+                'value': 'ORTDController'
+            }
+        }
         return config
 
     def plugin_meta_updated(self):
