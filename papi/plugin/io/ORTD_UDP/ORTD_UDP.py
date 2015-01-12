@@ -113,10 +113,8 @@ class ORTD_UDP(iop_base):
         path = config['Cfg_Path']['value']
         f = open(path, 'r')
         self.ProtocolConfig = json.load(f)
-
         self.Sources = self.ProtocolConfig['SourcesConfig']
         self.Parameters = self.ProtocolConfig['ParametersConfig']
-
 
 
         # For each group:: loop through all sources (=signals) in the group and register the signals
