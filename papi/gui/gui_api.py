@@ -479,7 +479,7 @@ class Gui_api(QtCore.QObject):
                 else:
                     if plugin_xml.tag == 'Background':
                         bg_path = str(plugin_xml.attrib['image'])
-                        if bg_path != '' and bg_path is not None and bg_path != 'default' and bg_path !='None':
+                        if bg_path != '' and bg_path is not None and bg_path != 'default' and bg_path != 'None':
                             self.set_bg_gui.emit(bg_path)
                     else:
                         pl_uname = plugin_xml.attrib['uname']
@@ -544,7 +544,7 @@ class Gui_api(QtCore.QObject):
                                     signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path,  tb)
+            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
 
         for pl in plugins_to_start:
             # 0: ident, 1: uname, 2: config
@@ -715,7 +715,7 @@ class Gui_api(QtCore.QObject):
 
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path,  tb)
+            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path, tb)
 
     def indent(self, elem, level=0):
         """
