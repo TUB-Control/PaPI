@@ -64,7 +64,6 @@ class Gui_api(QtCore.QObject):
         self.gui_size_height = None
         self.gui_bg_path = None
 
-
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart=True):
         """
         Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.
@@ -715,7 +714,6 @@ class Gui_api(QtCore.QObject):
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not saveable: " + path,  tb)
 
-
     def indent(self, elem, level=0):
         # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
         i = "\n" + level * "  "
@@ -764,7 +762,6 @@ class Gui_api(QtCore.QObject):
                 return False
         else:
             return False
-
 
     def do_change_string_to_be_uname(self, name):
         """
