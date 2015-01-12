@@ -58,7 +58,6 @@ class Button(pcp_base):
         """
         button = QPushButton('Click')
         button.clicked.connect(self.clicked)
-
         return button
 
     def clicked(self):
