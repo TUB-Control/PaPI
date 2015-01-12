@@ -609,106 +609,112 @@ class Gui_api(QtCore.QObject):
         if path[-4:] != '.xml':
             path += '.xml'
 
-        root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
-        root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-        root.set('PaPI_version', CORE_PAPI_VERSION)
+        try:
+            root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
+            root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            root.set('PaPI_version', CORE_PAPI_VERSION)
 
-        size_xml = ET.SubElement(root, 'Size')
-        size_xml.set('w', str(self.gui_size_width))
-        size_xml.set('h', str(self.gui_size_height))
+            size_xml = ET.SubElement(root, 'Size')
+            size_xml.set('w', str(self.gui_size_width))
+            size_xml.set('h', str(self.gui_size_height))
 
-        bg_xml = ET.SubElement(root, 'Background')
-        bg_xml.set('image', str(self.gui_bg_path))
+            bg_xml = ET.SubElement(root, 'Background')
+            bg_xml.set('image', str(self.gui_bg_path))
 
-        # get plugins #
-        plugins = self.gui_data.get_all_plugins()
-        for dplugin_id in plugins:
-            dplugin = plugins[dplugin_id]
+            # get plugins #
+            plugins = self.gui_data.get_all_plugins()
+            for dplugin_id in plugins:
+                dplugin = plugins[dplugin_id]
 
-            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                dplugin.startup_config = dplugin.plugin.get_current_config()
+                if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                    dplugin.startup_config = dplugin.plugin.get_current_config()
 
-            pl_xml = ET.SubElement(root, 'Plugin')
-            pl_xml.set('uname', dplugin.uname)
+                pl_xml = ET.SubElement(root, 'Plugin')
+                pl_xml.set('uname', dplugin.uname)
 
-            identifier_xml = ET.SubElement(pl_xml, 'Identifier')
-            identifier_xml.text = dplugin.plugin_identifier
+                identifier_xml = ET.SubElement(pl_xml, 'Identifier')
+                identifier_xml.text = dplugin.plugin_identifier
 
-            # ---------------------------------------
-            # Save all current config as startup config
-            # for the next start
-            # ---------------------------------------
+                # ---------------------------------------
+                # Save all current config as startup config
+                # for the next start
+                # ---------------------------------------
 
-            cfg_xml = ET.SubElement(pl_xml, 'StartConfig')
-            for parameter in dplugin.startup_config:
-                para_xml = ET.SubElement(cfg_xml, 'Parameter')
-                para_xml.set('Name', parameter)
-                for detail in dplugin.startup_config[parameter]:
-                    detail_xml = ET.SubElement(para_xml, detail)
-                    detail_xml.text = dplugin.startup_config[parameter][detail]
+                cfg_xml = ET.SubElement(pl_xml, 'StartConfig')
+                for parameter in dplugin.startup_config:
+                    para_xml = ET.SubElement(cfg_xml, 'Parameter')
+                    para_xml.set('Name', parameter)
+                    for detail in dplugin.startup_config[parameter]:
+                        detail_xml = ET.SubElement(para_xml, detail)
+                        detail_xml.text = dplugin.startup_config[parameter][detail]
 
-            # ---------------------------------------
-            # Save all current values for all
-            # parameter
-            # ---------------------------------------
+                # ---------------------------------------
+                # Save all current values for all
+                # parameter
+                # ---------------------------------------
 
-            last_paras_xml = ET.SubElement(pl_xml, 'PreviousParameters')
-            allparas = dplugin.get_parameters()
-            for para_key in allparas:
-                para = allparas[para_key]
-                last_para_xml = ET.SubElement(last_paras_xml, 'Parameter')
-                last_para_xml.set('Name', para_key)
-                last_para_xml.text = str(para.value)
+                last_paras_xml = ET.SubElement(pl_xml, 'PreviousParameters')
+                allparas = dplugin.get_parameters()
+                for para_key in allparas:
+                    para = allparas[para_key]
+                    last_para_xml = ET.SubElement(last_paras_xml, 'Parameter')
+                    last_para_xml.set('Name', para_key)
+                    last_para_xml.text = str(para.value)
 
-            # ---------------------------------------
-            # Save all current values for all
-            # signals of all dblocks
-            # ---------------------------------------
+                # ---------------------------------------
+                # Save all current values for all
+                # signals of all dblocks
+                # ---------------------------------------
 
-            dblocks_xml = ET.SubElement(pl_xml, 'DBlocks')
+                dblocks_xml = ET.SubElement(pl_xml, 'DBlocks')
 
-            alldblock_names = dplugin.get_dblocks()
+                alldblock_names = dplugin.get_dblocks()
 
-            for dblock_name in alldblock_names:
-                dblock = alldblock_names[dblock_name]
-                dblock_xml = ET.SubElement(dblocks_xml, 'DBlock')
-                dblock_xml.set('Name', dblock.name)
+                for dblock_name in alldblock_names:
+                    dblock = alldblock_names[dblock_name]
+                    dblock_xml = ET.SubElement(dblocks_xml, 'DBlock')
+                    dblock_xml.set('Name', dblock.name)
 
-                alldsignals = dblock.get_signals()
+                    alldsignals = dblock.get_signals()
 
-                for dsignal in alldsignals:
-                    dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
-                    dsignal_xml.set('uname', dsignal.uname)
+                    for dsignal in alldsignals:
+                        dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
+                        dsignal_xml.set('uname', dsignal.uname)
 
-                    dname_xml = ET.SubElement(dsignal_xml, 'dname')
-                    dname_xml.text = dsignal.dname
+                        dname_xml = ET.SubElement(dsignal_xml, 'dname')
+                        dname_xml.text = dsignal.dname
 
-            # ---------------------------------------
-            # Save all subscriptions for this plugin
-            # ---------------------------------------
+                # ---------------------------------------
+                # Save all subscriptions for this plugin
+                # ---------------------------------------
 
-            subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
-            subs = dplugin.get_subscribtions()
-            for sub in subs:
-                sub_xml = ET.SubElement(subs_xml, 'Subscription')
-                source_xml = ET.SubElement(sub_xml, 'data_source')
-                source_xml.text = self.gui_data.get_dplugin_by_id(sub).uname
-                for block in subs[sub]:
-                    block_xml = ET.SubElement(sub_xml, 'block')
-                    block_xml.set('Name', block)
+                subs_xml = ET.SubElement(pl_xml, 'Subscriptions')
+                subs = dplugin.get_subscribtions()
+                for sub in subs:
+                    sub_xml = ET.SubElement(subs_xml, 'Subscription')
+                    source_xml = ET.SubElement(sub_xml, 'data_source')
+                    source_xml.text = self.gui_data.get_dplugin_by_id(sub).uname
+                    for block in subs[sub]:
+                        block_xml = ET.SubElement(sub_xml, 'block')
+                        block_xml.set('Name', block)
 
-                    dsubscription = subs[sub][block]
+                        dsubscription = subs[sub][block]
 
-                    alias_xml = ET.SubElement(block_xml, 'alias')
-                    alias_xml.text = dsubscription.alias
+                        alias_xml = ET.SubElement(block_xml, 'alias')
+                        alias_xml.text = dsubscription.alias
 
-                    for s in dsubscription.get_signals():
-                        signal_xml = ET.SubElement(block_xml, 'Signal')
-                        signal_xml.text = str(s)
+                        for s in dsubscription.get_signals():
+                            signal_xml = ET.SubElement(block_xml, 'Signal')
+                            signal_xml.text = str(s)
 
-        self.indent(root)
-        tree = ET.ElementTree(root)
-        tree.write(path)
+            self.indent(root)
+            tree = ET.ElementTree(root)
+            tree.write(path)
+
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path,  tb)
+
 
     def indent(self, elem, level=0):
         # copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
