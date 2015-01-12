@@ -597,6 +597,10 @@ class Gui_api(QtCore.QObject):
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
     def do_save_xml_config(self, path):
+
+        if path[-4:] != '.xml':
+            path += '.xml'
+
         root = ET.Element(CONFIG_ROOT_ELEMENT_NAME)
         root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         root.set('PaPI_version', CORE_PAPI_VERSION)
