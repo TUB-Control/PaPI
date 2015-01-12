@@ -495,9 +495,9 @@ class Gui_api(QtCore.QObject):
                     self.resize_gui.emit(w, h)
                 else:
                     if plugin_xml.tag == 'Background':
-                        path = str(plugin_xml.attrib['image'])
-                        if path != '' and path is not None and path != 'default':
-                            self.set_bg_gui.emit(path)
+                        bg_path = str(plugin_xml.attrib['image'])
+                        if bg_path != '' and bg_path is not None and bg_path != 'default' and bg_path !='None':
+                            self.set_bg_gui.emit(bg_path)
                     else:
                         pl_uname = plugin_xml.attrib['uname']
                         identifier = plugin_xml.find('Identifier').text
