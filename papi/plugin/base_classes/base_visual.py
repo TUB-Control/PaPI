@@ -80,7 +80,7 @@ class base_visual(base_plugin):
             },
             'name': {
                 'value': 'VisualPlugin',
-                'tooltip': 'Used display name'
+                'tooltip': 'Used for window title'
             }}
         return config
 
