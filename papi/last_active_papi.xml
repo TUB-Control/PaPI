@@ -1,17 +1,17 @@
-<PaPiConfig Date="2015-01-12 15:54:02" PaPI_version="v_0.9">
+<PaPiConfig Date="2015-01-12 16:02:47" PaPI_version="v_0.9">
   <Size h="800" w="800" />
   <Background image="None" />
   <Plugin uname="OrtdController">
     <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="size">
-        <advanced>1</advanced>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(300,300)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
       <Parameter Name="uname">
         <value>OrtdController</value>
+      </Parameter>
+      <Parameter Name="position">
+        <advanced>1</advanced>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <value>(0,0)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
       </Parameter>
       <Parameter Name="name">
         <value>ORTDController</value>
@@ -21,15 +21,192 @@
         <value>ORTDPlugin1</value>
         <display_text>Uname to use for ortd plugin instance</display_text>
       </Parameter>
-      <Parameter Name="position">
+      <Parameter Name="size">
         <advanced>1</advanced>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <value>(300,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(0,0)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <DBlocks />
-    <Subscriptions />
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="ControllerSignals">
+          <alias />
+          <Signal>ControlSignalCreate</Signal>
+          <Signal>ControlSignalSub</Signal>
+          <Signal>ControllerSignalParameter</Signal>
+          <Signal>ControllerSignalClose</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
-</PaPiConfig>
+  <Plugin uname="ORTDPlugin1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="source_port">
+        <advanced>1</advanced>
+        <value>20000</value>
+      </Parameter>
+      <Parameter Name="address">
+        <advanced>1</advanced>
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <advanced>1</advanced>
+        <value>20001</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="A vectorial parameter">0</Parameter>
+      <Parameter Name="Oscillator input">0</Parameter>
+      <Parameter Name="triggerConfiguration">0</Parameter>
+      <Parameter Name="Test">0</Parameter>
+    </PreviousParameters>
+    <DBlocks>
+      <DBlock Name="SourceGroup0">
+        <DSignal uname="V">
+          <dname>V</dname>
+        </DSignal>
+        <DSignal uname="X">
+          <dname>X</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="ControllerSignals">
+        <DSignal uname="ControlSignalCreate">
+          <dname>ControlSignalCreate</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalSub">
+          <dname>ControlSignalSub</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalParameter">
+          <dname>ControllerSignalParameter</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalClose">
+          <dname>ControllerSignalClose</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Butt1</data_source>
+        <block Name="Click_Event">
+          <alias>Oscillator input</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plot1">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="label_x">
+        <value>time, s</value>
+        <display_text>Label-X</display_text>
+        <regex>\w+,\s*\w+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(300,0)</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>TestPlot</value>
+      </Parameter>
+      <Parameter Name="xRange">
+        <value>[0.0 1.0]</value>
+        <display_text>xRange-auto</display_text>
+        <regex>(\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+      </Parameter>
+      <Parameter Name="label_y">
+        <value>amplitude, V</value>
+        <display_text>Label-Y</display_text>
+        <regex>\w+,\s+\w+</regex>
+      </Parameter>
+      <Parameter Name="xRange-auto">
+        <value>1</value>
+        <display_text>xRange-auto</display_text>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="color">
+        <advanced>1</advanced>
+        <value>[0 1 2 3 4]</value>
+        <display_text>Color</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+      <Parameter Name="yRange-auto">
+        <value>1</value>
+        <display_text>yRange-auto</display_text>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="yRange">
+        <value>[0.0 1.0]</value>
+        <display_text>yRange-auto</display_text>
+        <regex>(\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <advanced>1</advanced>
+        <value>1000</value>
+        <display_text>Buffersize</display_text>
+        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <value>0</value>
+        <display_text>Rolling Plot</display_text>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <value>0</value>
+        <display_text>Grid-Y</display_text>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="style">
+        <advanced>1</advanced>
+        <value>[0 0 0 0 0]</value>
+        <display_text>Style</display_text>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <value>1</value>
+        <regex>(\d+)</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="yRange">[0,1]</Parameter>
+      <Parameter Name="rolling">0</Parameter>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="xRange">[0,1]</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="downsampling_rate">1</Parameter>
+      <Parameter Name="xRange-auto">1</Parameter>
+      <Parameter Name="yRange-auto">1</Parameter>
+      <Parameter Name="buffersize">1000</Parameter>
+    </PreviousParameters>
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="SourceGroup0">
+          <alias />
+          <Signal>V</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Butt1">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="low">
+        <advanced>0</advanced>
+        <value>

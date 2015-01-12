@@ -158,6 +158,7 @@ class ORTD_UDP(iop_base):
             self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
             self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
             self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+            self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
 
             #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
             self.send_new_block_list([self.block1, self.ControlBlock])
@@ -276,8 +277,11 @@ class ORTD_UDP(iop_base):
 
     def set_parameter(self, name, value):
         if name == 'triggerConfiguration':
-            cfg, subs, para = self.plconf()
-            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg, 'ControlSignalSub':subs, 'ControllerSignalParameter':para})
+            cfg, subs, para, close = self.plconf()
+            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg,
+                                                          'ControlSignalSub':subs,
+                                                          'ControllerSignalParameter':para,
+                                                          'ControllerSignalClose':close})
         else:
             for para in self.Parameter_List:
                 if para.name == name:
@@ -359,5 +363,5 @@ class ORTD_UDP(iop_base):
         cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
         subs = self.ProtocolConfig['PaPIConfig']['ToSub']
         paras = self.ProtocolConfig['PaPIConfig']['ToControl']
-
-        return cfg, subs, paras
+        close = self.ProtocolConfig['PaPIConfig']['ToClose']
+        return cfg, subs, paras, close
