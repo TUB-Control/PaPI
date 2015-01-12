@@ -53,7 +53,6 @@ from papi.data.DParameter import DParameter
 import numpy as np
 
 import threading
-import pickle
 
 import os
 
@@ -158,6 +157,7 @@ class ORTD_UDP(iop_base):
             self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
             self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
             self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+            self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
 
             #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
             self.send_new_block_list([self.block1, self.ControlBlock])
@@ -276,8 +276,11 @@ class ORTD_UDP(iop_base):
 
     def set_parameter(self, name, value):
         if name == 'triggerConfiguration':
-            cfg, subs, para = self.plconf()
-            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg, 'ControlSignalSub':subs, 'ControllerSignalParameter':para})
+            cfg, subs, para, close = self.plconf()
+            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg,
+                                                          'ControlSignalSub':subs,
+                                                          'ControllerSignalParameter':para,
+                                                          'ControllerSignalClose':close})
         else:
             for para in self.Parameter_List:
                 if para.name == name:
@@ -297,67 +300,18 @@ class ORTD_UDP(iop_base):
     def plugin_meta_updated(self):
         pass
 
-
-
     def plconf(self):
-        # cfg = {
-        #     'Plot1':{
-        #             'identifier': {
-        #                 'value': 'Plot',
-        #             },
-        #             'config': {
-        #                 'x-grid': {
-        #                     'value': "0",
-        #                 },
-        #                 'size': {
-        #                     'value': "(300,300)",
-        #
-        #                 },
-        #                 'position': {
-        #                     'value': "(300,0)",
-        #                 },
-        #                 'name': {
-        #                     'value': 'TestPlot'
-        #                 }
-        #             }
-        #     },
-        #     'Butt1':{
-        #             'identifier': {
-        #                 'value': 'Button',
-        #             },
-        #             'config': {
-        #                 'size': {
-        #                     'value': "(150,50)",
-        #                 },
-        #                 'position': {
-        #                     'value': "(600,0)",
-        #                 },
-        #                 'name': {
-        #                     'value': 'Disturbance'
-        #                 }
-        #
-        #             }
-        #     }
-        #
-        # }
-        #
-        # subs = {
-        #     'Plot1': {
-        #         'block': 'SourceGroup0',
-        #         'signals': ['V']
-        #     }
-        # }
-        #
-        # paras = {
-        #     'Butt1': {
-        #         'block': 'Click_Event',
-        #         'parameter' : 'Oscillator input'
-        #     }
-        # }
-
-
-        cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
-        subs = self.ProtocolConfig['PaPIConfig']['ToSub']
-        paras = self.ProtocolConfig['PaPIConfig']['ToControl']
-
-        return cfg, subs, paras
+        cfg   = {}
+        subs  = {}
+        paras = {}
+        close = {}
+        if 'PaPIConfig' in self.ProtocolConfig:
+            if 'ToCreate' in self.ProtocolConfig['PaPIConfig']:
+                cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
+            if 'ToSub' in self.ProtocolConfig['PaPIConfig']:
+                subs = self.ProtocolConfig['PaPIConfig']['ToSub']
+            if 'ToControl' in self.ProtocolConfig['PaPIConfig']:
+                paras = self.ProtocolConfig['PaPIConfig']['ToControl']
+            if 'ToClose' in self.ProtocolConfig['PaPIConfig']:
+                close = self.ProtocolConfig['PaPIConfig']['ToClose']
+        return cfg, subs, paras, close

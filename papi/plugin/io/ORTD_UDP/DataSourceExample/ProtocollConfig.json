@@ -43,6 +43,23 @@
                     }
 
                 }
+        },
+        "Butt2":{
+                "identifier": {
+                    "value": "Button"
+                },
+                "config": {
+                    "size": {
+                        "value": "(150,50)"
+                    },
+                    "position": {
+                        "value": "(600,50)"
+                    },
+                    "name": {
+                        "value": "ToDelete"
+                    }
+
+                }
         }
      },
 
@@ -57,6 +74,9 @@
                 "block": "Click_Event",
                 "parameter" : "Oscillator input"
             }
+    },
+    "ToClose": {
+        "Butt2": {}
     } }
 
 }
