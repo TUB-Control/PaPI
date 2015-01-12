@@ -346,21 +346,25 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
-        errMsg = QtGui.QMessageBox()
+        errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
         errMsg.setWindowTitle("Plugin: " + dplugin.uname + " // " + str(e))
         errMsg.setText("Error in plugin" + dplugin.uname + " // " + str(e))
         errMsg.setDetailedText(str(msg))
-        errMsg.exec_()
+        errMsg.setWindowModality(Qt.NonModal)
+        errMsg.show()
 
     def error_occured(self, title, msg, detailed_msg):
 
-        errMsg = QtGui.QMessageBox()
+        errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
         errMsg.setWindowTitle(title)
         errMsg.setText(str(msg))
         errMsg.setDetailedText(str(detailed_msg))
-        errMsg.exec_()
+        errMsg.setWindowModality(Qt.NonModal)
+        errMsg.show()
+#        errMsg.setSizePolicy(Qt.Polic)
+
 
     def toggle_run_mode(self):
         if self.in_run_mode:
