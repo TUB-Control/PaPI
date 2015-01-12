@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_dev/add_plugin.ui'
 #
-# Created: Mon Jan  5 14:03:51 2015
+# Created: Mon Jan 12 16:53:32 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
