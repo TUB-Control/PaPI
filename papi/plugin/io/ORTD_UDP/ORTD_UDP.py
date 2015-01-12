@@ -304,60 +304,6 @@ class ORTD_UDP(iop_base):
 
 
     def plconf(self):
-        # cfg = {
-        #     'Plot1':{
-        #             'identifier': {
-        #                 'value': 'Plot',
-        #             },
-        #             'config': {
-        #                 'x-grid': {
-        #                     'value': "0",
-        #                 },
-        #                 'size': {
-        #                     'value': "(300,300)",
-        #
-        #                 },
-        #                 'position': {
-        #                     'value': "(300,0)",
-        #                 },
-        #                 'name': {
-        #                     'value': 'TestPlot'
-        #                 }
-        #             }
-        #     },
-        #     'Butt1':{
-        #             'identifier': {
-        #                 'value': 'Button',
-        #             },
-        #             'config': {
-        #                 'size': {
-        #                     'value': "(150,50)",
-        #                 },
-        #                 'position': {
-        #                     'value': "(600,0)",
-        #                 },
-        #                 'name': {
-        #                     'value': 'Disturbance'
-        #                 }
-        #
-        #             }
-        #     }
-        #
-        # }
-        #
-        # subs = {
-        #     'Plot1': {
-        #         'block': 'SourceGroup0',
-        #         'signals': ['V']
-        #     }
-        # }
-        #
-        # paras = {
-        #     'Butt1': {
-        #         'block': 'Click_Event',
-        #         'parameter' : 'Oscillator input'
-        #     }
-        # }
         cfg   = {}
         subs  = {}
         paras = {}
