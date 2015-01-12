@@ -43,7 +43,7 @@ from papi.ConsoleLog            import ConsoleLog
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
-    PLUGIN_STATE_PAUSE
+    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED
 
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
@@ -342,7 +342,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.refresh_action()
 
     def plugin_died(self, dplugin, e, msg):
-        dplugin.state = PLUGIN_STATE_PAUSE
+        dplugin.state = PLUGIN_STATE_STOPPED
 
         self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
