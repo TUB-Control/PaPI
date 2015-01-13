@@ -32,8 +32,18 @@ from papi.data.DObject import DObject
 
 
 class DSignal(DObject):
-
+    """
+    This object is used to describe a single signal.
+    """
     def __init__(self, uname, dname = None):
+        """
+        A signal is described by uname, a unique identifier in the context of DBlock.
+        The display name dname is used as visual representation. If now dname is given, the uname is used.
+
+        :param uname: Unique name in the context of this signals block
+        :param dname: Display name
+        :return:
+        """
         super(DObject, self).__init__()
         self.uname = uname
         if dname is None:
