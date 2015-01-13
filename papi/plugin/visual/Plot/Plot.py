@@ -175,23 +175,20 @@ class Plot(vip_base):
         # Create Parameters
         # ---------------------------
 
-        self.__parameters__['x-grid'] = DParameter(None, 'x-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
-        self.__parameters__['y-grid'] = DParameter(None, 'y-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
+        self.__parameters__['x-grid'] = DParameter('x-grid', 0, Regex='^(1|0){1}$')
+        self.__parameters__['y-grid'] = DParameter('y-grid', 0, Regex='^(1|0){1}$')
 
-        self.__parameters__['color'] = DParameter(None, 'color', '[0 1 2 3 4]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['style'] = DParameter(None, 'style', '[0 0 0 0 0]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['rolling'] = DParameter(None, 'rolling', '0', [0, 1], 1, Regex='^(1|0){1}')
+        self.__parameters__['color'] = DParameter('color', '[0 1 2 3 4]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['style'] = DParameter('style', '[0 0 0 0 0]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['rolling'] = DParameter('rolling', '0', Regex='^(1|0){1}')
 
-        self.__parameters__['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.__downsampling_rate__,
-                                                              [1, 100],
-                                                              1, Regex='^([1-9][0-9]?|100)$')
-        self.__parameters__['buffersize'] = DParameter(None, 'buffersize', self.__buffer_size__, [1, 100],
-                                                       1, Regex='^([1-9][0-9]{0,3}|10000)$')
+        self.__parameters__['downsampling_rate'] = DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^([1-9][0-9]?|100)$')
+        self.__parameters__['buffersize'] = DParameter('buffersize', self.__buffer_size__, Regex='^([1-9][0-9]{0,3}|10000)$')
 
-        self.__parameters__['xRange-auto'] = DParameter(None, 'xRange-auto', '1', None, 1, Regex='^(1|0){1}$')
-        self.__parameters__['xRange'] = DParameter(None, 'xRange', '[0,1]', None, 1, Regex='(\d+\.\d+)')
-        self.__parameters__['yRange-auto'] = DParameter(None, 'yRange-auto', '1', None, 1, Regex='^(1|0){1}$')
-        self.__parameters__['yRange'] = DParameter(None, 'yRange', '[0,1]', None, 1, Regex='(\d+\.\d+)')
+        self.__parameters__['xRange-auto'] = DParameter('xRange-auto', '1',  Regex='^(1|0){1}$')
+        self.__parameters__['xRange'] = DParameter('xRange', '[0,1]', Regex='(\d+\.\d+)')
+        self.__parameters__['yRange-auto'] = DParameter('yRange-auto', '1',  Regex='^(1|0){1}$')
+        self.__parameters__['yRange'] = DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
 
         self.send_new_parameter_list(list(self.__parameters__.values()))
 
