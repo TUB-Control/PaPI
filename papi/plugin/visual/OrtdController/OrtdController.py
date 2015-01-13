@@ -29,7 +29,6 @@ Contributors:
 __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
 
 from PySide import QtGui, QtCore
 from PySide.QtGui import QRegExpValidator

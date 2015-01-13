@@ -94,8 +94,8 @@ class WizardExample(vip_base):
         # Create Parameters
         # ---------------------------
         # create a parameter object
-        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
-        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para1 = DParameter('ParameterName',InitWert,1)
+        #   self.para2 = DParameter('ParameterName',InitWert,1)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
