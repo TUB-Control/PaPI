@@ -84,7 +84,7 @@ class ORTD_UDP(iop_base):
                 'advanced': '1'
             },
             'Cfg_Path': {
-                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
+                'value': '/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfig.json',
                 'type': 'file',
                 'advanced': '0'
             },
@@ -248,19 +248,22 @@ class ORTD_UDP(iop_base):
                 else:
                     # Received a data packet
                     # Lookup the Source behind the given SourceId
-                    Source = self.Sources[str(SourceId)]
-                    NValues = int(Source['NValues_send'])
+                    if str(SourceId) in self.Sources:
+                        Source = self.Sources[str(SourceId)]
+                        NValues = int(Source['NValues_send'])
 
-                    # Read NVales from the received packet
-                    val = []
-                    for i in range(NValues):
-                        # TODO: why try except?
-                        try:
-                            val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
-                        except:
-                            val.append(0)
+                        # Read NVales from the received packet
+                        val = []
+                        for i in range(NValues):
+                            # TODO: why try except?
+                            try:
+                                val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
+                            except:
+                                val.append(0)
 
-                    signal_values[SourceId] = val
+                        signal_values[SourceId] = val
+                    else:
+                        print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
 
             # check if thread should go on
             self.lock.acquire()
