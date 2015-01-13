@@ -35,8 +35,16 @@ import copy
 
 
 class DBlock(DObject):
-
+    """
+    Contains a bunch of signals of a the same data source.
+    """
     def __init__(self, name):
+        """
+        A block is described by name, which has to be unique within the context of the plugin owning this block.
+
+        :param name: name of the block
+        :return:
+        """
         super(DObject, self).__init__()
 
         self.subscribers = {}
@@ -101,6 +109,9 @@ class DBlock(DObject):
 
     def get_subscribers(self):
         """
+        Returns all subscribers of this plugin. Returns a copy that means
+        changes have no effect on the PaPI data structure.
+
         :return:
         :rtype []:
         """
@@ -108,6 +119,7 @@ class DBlock(DObject):
 
     def get_signal_by_uname(self, uname):
         """
+        Returns a signal object by a signal's uname.
 
         :param uname:
         :return DSignal:
@@ -121,27 +133,24 @@ class DBlock(DObject):
 
     def get_signals(self):
         """
-        DEPRECATED
-
         Returns a copy of the internal signal names
+
         :return:
         """
         return copy.deepcopy(self.signals)
 
-    #NOT NEEDED ANYMORE !!!
-    def get_signal_name(self, signal: int):
-        """
-        DEPRECATED
-
-        :param signal:
-        :return:
-        """
-        raise NotImplementedError("Stop Using this function.")
-
 
 class DPlugin(DObject):
+    """
+    Used to describe a single plugin.
 
+    """
     def __init__(self):
+        """
+        Used to create the plugin data object.
+
+        :return:
+        """
         super(DPlugin, self).__init__()
         self.process = None
         self.pid = None
@@ -163,7 +172,8 @@ class DPlugin(DObject):
 
     def subscribe_signals(self, dblock, signals):
         """
-        This function is used to subscribe a bunch of signals
+        This function is used to subscribe a bunch of signals.
+
         :param dblock:
         :param signals:
         :return:
@@ -183,7 +193,8 @@ class DPlugin(DObject):
 
     def unsubscribe_signals(self, dblock, signals):
         """
-        This function is used to unsubscribe a bunch of signals
+        This function is used to unsubscribe a bunch of signals.
+
         :param dblock:
         :param signals:
         :return:
@@ -204,7 +215,8 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock):
         """
-        This plugins subscribes 'dblock' by remembering the dblog id
+        This plugins subscribes 'dblock' by remembering the dblog id.
+
         :param dblock: DBlock which should be subscribed
         :return:
         :rtype boolean:
@@ -224,7 +236,8 @@ class DPlugin(DObject):
 
     def unsubscribe(self, dblock):
         """
-        This plugins unsubscribes 'dblock' by forgetting the dblog id
+        This plugins unsubscribes 'dblock' by forgetting the dblog id.
+
         :param dblock: DBlock which should be unsubscribed
         :return:
         :rtype boolean:
@@ -246,7 +259,8 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a dictionary of all susbcribtions
+        Returns a dictionary of all susbcribtions.
+
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
         """
