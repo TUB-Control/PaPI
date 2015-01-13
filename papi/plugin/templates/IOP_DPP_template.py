@@ -59,8 +59,8 @@ class IOP_DPP_template(iop_base):
         #   self.send_new_block_list([block1, block2, block3])
 
         # create a parameter object
-        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
-        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para1 = DParameter('ParameterName',default=0)
+        #   self.para2 = DParameter('ParameterName',default=0)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
