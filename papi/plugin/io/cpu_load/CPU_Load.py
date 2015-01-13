@@ -21,7 +21,7 @@ class CPU_Load(iop_base):
     def start_init(self, config=None):
         self.t = 0
         self.delta_t = 0.01
-        self.para_delta_t = DParameter('', 'Delta_t', 0.01, [0,2],1)
+        self.para_delta_t = DParameter('Delta_t', default=0.01)
 
         self.send_new_parameter_list([self.para_delta_t])
 
