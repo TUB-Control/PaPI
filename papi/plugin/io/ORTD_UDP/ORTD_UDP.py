@@ -168,10 +168,10 @@ class ORTD_UDP(iop_base):
             para_name = Para['ParameterName']
             val_count = Para['NValues']
             opt_object = OptionalObject(Pid, val_count)
-            Parameter = DParameter('', para_name, 0, 0, OptionalObject=opt_object)
+            Parameter = DParameter(para_name, default=0, OptionalObject=opt_object)
             self.Parameter_List.append(Parameter)
 
-        self.ControlParameter = DParameter('','triggerConfiguration',0,0)
+        self.ControlParameter = DParameter('triggerConfiguration',default=0)
         self.Parameter_List.append(self.ControlParameter)
 
         self.send_new_parameter_list(self.Parameter_List)
