@@ -58,11 +58,7 @@ class Add(dpp_base):
         self.block1.add_signal(signal)
 
 
-
-        #self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
-
         self.send_new_block_list([self.block1])
-        #self.send_new_parameter_list([self.para1])
 
 
         return True
