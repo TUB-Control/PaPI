@@ -310,8 +310,8 @@ class DPlugin(DObject):
         :rtype boolean:
         """
         if dblock.name in self.__blocks:
-            self.__blocks[dblock.name].name = dblock.name + "_deleted"
             del self.__blocks[dblock.name]
+            dblock.name += "_deleted"
             return True
         else:
             return False

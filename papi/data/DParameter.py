@@ -33,14 +33,11 @@ from papi.data.DObject import DObject
 
 class DParameter(DObject):
 
-    def __init__(self, ptype, name, default=0, prange=0, live=1, Regex = None, OptionalObject=None):
+    def __init__(self, name, default=0, Regex = None, OptionalObject=None):
         super(DParameter, self).__init__()
 
-        self.type = ptype
         self.default = default
         self.value = default
-        self.range = prange
-        self.live = live
         self.name = name
         self.plugin_id = None
         self.plugin_identifier = None
