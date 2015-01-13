@@ -656,8 +656,9 @@ class Core:
 
                     dsignal.dname = cObject.dname
 
-                    self.log.printText(1,
-                                       'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname + " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
+                    self.log.printText(3,
+                                       'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname +
+                                       " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
 
         self.update_meta_data_to_gui(pl.id, True)
 
@@ -676,7 +677,8 @@ class Core:
         # get optData to get information about which plugin to start
         optData = event.get_optional_parameter()
         self.log.printText(2,
-                           'create_plugin, Try to create plugin with Name  ' + optData.plugin_identifier + " and UName " + optData.plugin_uname)
+                           'create_plugin, Try to create plugin with Name  ' + optData.plugin_identifier
+                           + " and UName " + optData.plugin_uname)
 
         # search yapsy plugin object with plugin_idientifier and check if it exists
         plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
@@ -687,7 +689,8 @@ class Core:
             plugin = self.plugin_manager.getPluginByName(optData.plugin_identifier)
             if plugin is None:
                 self.log.printText(1,
-                                   'create_plugin, Plugin with Name  ' + optData.plugin_identifier + ' does not exist in file system')
+                                   'create_plugin, Plugin with Name  ' + optData.plugin_identifier
+                                   + ' does not exist in file system')
                 return -1
 
         # creates a new plugin id because plugin exsits
