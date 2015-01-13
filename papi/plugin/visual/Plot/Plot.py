@@ -875,20 +875,24 @@ class Plot(vip_base):
             'value': '1',
             'regex': '^(1|0)$',
             'type': 'bool',
-            'display_text': 'xRange-auto'
+            'advanced': '1',
+            'display_text': 'x: auto range'
         }, 'yRange-auto': {
             'value': '1',
             'regex': '^(1|0)$',
             'type': 'bool',
-            'display_text': 'yRange-auto'
+            'advanced': '1',
+            'display_text': 'y: auto range'
         }, 'xRange': {
             'value': '[0.0 1.0]',
             'regex': '(\d+\.\d+)',
-            'display_text': 'xRange-auto'
+            'advanced': '1',
+            'display_text': 'x: range'
         }, 'yRange': {
             'value': '[0.0 1.0]',
             'regex': '(\d+\.\d+)',
-            'display_text': 'yRange-auto'
+            'advanced': '1',
+            'display_text': 'y: range'
         }
         }
         # http://www.regexr.com/
