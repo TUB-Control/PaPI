@@ -1,20 +1,14 @@
 __author__ = 'stefan'
 
 import unittest
-from threading import Thread
-import time
-
 from papi.data.DGui import DGui
 from papi.core import Core
 from papi.gui.qt_new.main import startGUI_TESTMOCK
 
 from papi.gui.gui_api import Gui_api
-from papi.gui.gui_event_processing import GuiEventProcessing
-from papi.PapiEvent import PapiEvent
 from threading import Thread
 from multiprocessing import Queue
 import papi.constants as const
-from papi.pyqtgraph import QtCore
 import time
 
 
@@ -425,7 +419,7 @@ class TestCoreMock(unittest.TestCase):
 
     def tearDown(self):
         # close Gui
-        self.gui_queue.put(  PapiEvent(1,1,'instr_event','test_close', None)  )
+
 
         # wait for close
         # time.sleep(1)
