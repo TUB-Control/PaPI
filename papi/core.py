@@ -33,7 +33,6 @@ from multiprocessing import Process, Queue
 from threading import Timer
 
 from papi.yapsy.PluginManager import PluginManager
-from papi.PapiEvent import PapiEvent
 from papi.data.DCore import DCore
 from papi.data.DPlugin import DPlugin, DBlock
 from papi.data.DSignal import DSignal
@@ -54,6 +53,7 @@ from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGI
 
 import papi.error_codes as ERROR
 
+from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
 
@@ -285,7 +285,8 @@ class Core:
             # get meta information of DPlugin
             o.plugin_object = dplugin.get_meta()
             # build event and send it to GUI with meta information
-            eventMeta = PapiEvent(pl_id, self.gui_id, 'instr_event', 'update_meta', o)
+            #eventMeta = PapiEvent(pl_id, self.gui_id, 'instr_event', 'update_meta', o)
+            eventMeta = Event.instruction.UpdateMeta(pl_id,self.gui_id,o)
             self.gui_event_queue.put(eventMeta)
 
             # check if plugin got some subscribers which run in own process
@@ -346,7 +347,7 @@ class Core:
         Initial stage of event processing, dividing to event type
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         t = event.get_eventtype()
         self.__process_event_by_type__[t](event)
@@ -357,7 +358,7 @@ class Core:
         First stage of event processing, deciding which status_event this is
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         op = event.get_event_operation()
         return self.__process_status_event_l__[op](event)
@@ -367,7 +368,7 @@ class Core:
         First stage of event processing, deciding which data_event this is
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         op = event.get_event_operation()
         return self.__process_data_event_l__[op](event)
@@ -377,7 +378,7 @@ class Core:
         First stage of event processing, deciding which instr_event this is
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         op = event.get_event_operation()
         return self.__process_instr_event_l__[op](event)
@@ -388,7 +389,7 @@ class Core:
         Process start_successfull event
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         # get plugin from DCore with id of event origin and check if it exists
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
@@ -408,7 +409,7 @@ class Core:
         Process start failed event and do error handling
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         # get plugin from DCore with id of event origin and check if it exists
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
@@ -427,7 +428,7 @@ class Core:
         Processes alive response from processes/plugins and GUI, organising the counter
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
         # get event origin
         oID = event.get_originID()
@@ -450,7 +451,7 @@ class Core:
         Process join requests of processes
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # get event origin id and its corresponding plugin object
@@ -471,7 +472,6 @@ class Core:
                     # GUI is still alive, so tell GUI, that this plugin was closed
                     opt = DOptionalData()
                     opt.plugin_id = dplugin.id
-                    # event = PapiEvent(self.core_id,self.gui_id,'status_event','plugin_closed',opt)
                     event = Event.status.PluginClosed(self.core_id, self.gui_id, opt)
                     self.gui_event_queue.put(event)
 
@@ -491,7 +491,7 @@ class Core:
         Will do the routing: Subscriber/Subscription
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type tar_plug: DPlugin
         """
         # just proceed with new_data events if GUI is still alive (indicates that program will close)
@@ -560,7 +560,7 @@ class Core:
         Will do the routing: Subscriber/Subscription
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type tar_plug: DPlugin
         """
         # just proceed with new_data events if GUI is still alive (indicates that program will close)
@@ -632,7 +632,7 @@ class Core:
         Process edit_dplugin event from gui.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBaseBase
         :type tar_plug: DPlugin
         """
         eObject = event.editedObject
@@ -670,7 +670,7 @@ class Core:
 
         :param event:
         :param optData: optional Data Object of event
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type optData: DOptionalData
         :return: -1: Error
         """
@@ -773,7 +773,7 @@ class Core:
         Will send an event to destination plugin to close itself. Will lead to a join request of this plugin.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # get destination id
@@ -881,7 +881,7 @@ class Core:
         sends events to all processes to close themselves
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         """
 
         # GUI wants to close, so join process
@@ -915,7 +915,7 @@ class Core:
         Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
@@ -964,7 +964,7 @@ class Core:
         Process unsubscribe_event. Will try to remove a subscription from DCore
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
@@ -997,7 +997,7 @@ class Core:
         Process set_parameter event. Core will just route this event from GUI to destination plugin and update DCore
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
@@ -1032,7 +1032,7 @@ class Core:
         Will try to add a new data block to a DPlugin object
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
@@ -1059,7 +1059,7 @@ class Core:
         Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI information
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
@@ -1087,7 +1087,7 @@ class Core:
         Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()
@@ -1098,7 +1098,6 @@ class Core:
                 # set pause info
                 dplugin.state = PLUGIN_STATE_PAUSE
                 # send event to plugin
-                # event = PapiEvent(self.core_id, pl_id, 'instr_event', 'pause_plugin', None)
                 event = Event.instruction.PausePlugin(self.core_id, pl_id, None)
                 dplugin.queue.put(event)
 
@@ -1110,7 +1109,7 @@ class Core:
         Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()
@@ -1121,28 +1120,8 @@ class Core:
                 # set resume info
                 dplugin.state = PLUGIN_STATE_RESUMED
                 # send event to plugin
-                # event = PapiEvent(self.core_id, pl_id, 'instr_event', 'resume_plugin', None)
                 event = Event.instruction.ResumePlugin(self.core_id, pl_id, None)
                 dplugin.queue.put(event)
 
                 # update meta for Gui
                 self.update_meta_data_to_gui(pl_id)
-
-                # def __process_plugin_paused__(self, event):
-                # """
-                #     Processes plugin_paused event from GUI. Will add information that a plugin was paused in gui and
-                #     send update meta.
-                #     :param event: event to process
-                #     :type event: PapiEvent
-                #     :type dplugin: DPlugin
-                #     """
-                #     id = event.get_originID()
-                #
-                #     dplugin = self.core_data.get_dplugin_by_id(id)
-                #     if dplugin is not None:
-                #         dplugin.state = PLUGIN_STATE_PAUSE
-                #
-                #         self.update_meta_data_to_gui(id)
-                #
-                # def __process_plugin_resumed__(self, event):
-                #     pass

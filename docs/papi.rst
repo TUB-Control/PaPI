@@ -11,8 +11,10 @@ Subpackages
     papi.exceptions
     papi.gui
     papi.plugin
+    papi.pyqtgraph
     papi.tests
     papi.ui
+    papi.yapsy
 
 Submodules
 ----------
@@ -21,14 +23,6 @@ papi.ConsoleLog module
 ----------------------
 
 .. automodule:: papi.ConsoleLog
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.DebugOut module
---------------------
-
-.. automodule:: papi.DebugOut
     :members:
     :undoc-members:
     :show-inheritance:
@@ -61,22 +55,6 @@ papi.error_codes module
 -----------------------
 
 .. automodule:: papi.error_codes
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.main module
-----------------
-
-.. automodule:: papi.main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.main_2 module
-------------------
-
-.. automodule:: papi.main_2
     :members:
     :undoc-members:
     :show-inheritance:
