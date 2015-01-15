@@ -30,6 +30,13 @@ __author__ = 'knuths'
 
 
 class DObject():
-
+    """
+    Base class for all PaPI-objects
+    """
     def __init__(self):
+        """
+        Every object is initialized with id = 0
+
+        :return:
+        """
         self.id = 0

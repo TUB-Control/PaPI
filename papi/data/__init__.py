@@ -26,4 +26,4 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'control'
+__author__ = 'knuths'
