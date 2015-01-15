@@ -37,7 +37,7 @@ from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP
 from papi.gui.plugin_api import Plugin_api
 import papi.error_codes as ERROR
 import papi.event as Event
-from papi.PapiEvent import PapiEvent
+from papi.event.event_base import PapiEventBase
 from papi.ConsoleLog import ConsoleLog
 from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
@@ -83,7 +83,7 @@ class GuiEventProcessing(QtCore.QObject):
          Will process all events of the queue at the time of call.
          Procedure was built this way, so that the processing of an event is not covered by the try/except structure.
 
-         :type event: PapiEvent
+         :type event: PapiEventBase
          :type dplugin: DPlugin
         """
         # event flag, true for first loop iteration to enter loop
@@ -122,7 +122,7 @@ class GuiEventProcessing(QtCore.QObject):
         with the new data.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # debug print
@@ -162,7 +162,7 @@ class GuiEventProcessing(QtCore.QObject):
         Gui now knows, that a plugin was closed by core and needs to update its DGui data base
 
         :param event:
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :return:
         """
         opt = event.get_optional_parameter()
@@ -233,7 +233,7 @@ class GuiEventProcessing(QtCore.QObject):
         Gui now needs to add a new plugin to DGUI and decide whether it is a plugin running in the GUI process or not.
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # get optional data: the plugin id, identifier and uname
@@ -331,7 +331,7 @@ class GuiEventProcessing(QtCore.QObject):
         Nothing important happens.
 
          :param event: event to process
-         :type event: PapiEvent
+         :type event: PapiEventBase
          :type dplugin: DPlugin
         """
         self.log.printText(1, 'event: close_progam was received but there is no action for it')
@@ -342,11 +342,11 @@ class GuiEventProcessing(QtCore.QObject):
         Gui received check_alive request form core, so gui will respond to it
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # send event from GUI to Core
-        event = PapiEvent(1, 0, 'status_event', 'alive', None)
+        event = Event.status.Alive(1,0,None)
         self.core_queue.put(event)
 
     def process_update_meta(self, event):
@@ -354,7 +354,7 @@ class GuiEventProcessing(QtCore.QObject):
         Core sent new meta information of an existing plugin. This function will update DGui with these information
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         # get information of event
@@ -414,7 +414,7 @@ class GuiEventProcessing(QtCore.QObject):
         Core sent event to pause a plugin in GUI, so call the pause function of this plugin
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()
@@ -428,7 +428,7 @@ class GuiEventProcessing(QtCore.QObject):
         Core sent event to resume a plugin in GUI, so call the resume function of this plugin
 
         :param event: event to process
-        :type event: PapiEvent
+        :type event: PapiEventBase
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()
