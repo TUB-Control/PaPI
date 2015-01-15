@@ -33,8 +33,8 @@ from papi.data.DObject import DObject
 
 class DParameter(DObject):
     """
-    This object is used to describe parameters provided by plugins.
-    Parameters are used to interact with
+    DParameter is used for the internal description of a parameter which are provided by a plugin.
+    Parameters are used to interact with plugin.
     """
     def __init__(self, name, default=0, Regex = None, OptionalObject=None):
         """
