@@ -52,6 +52,14 @@ papi.data.DPlugin module
     :undoc-members:
     :show-inheritance:
 
+papi.data.DSignal module
+------------------------
+
+.. automodule:: papi.data.DSignal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
