@@ -36,6 +36,7 @@ import copy
 
 class DBlock(DObject):
     """
+    DBlock is used for the internal description of a block.
     Contains a bunch of signals of a the same data source.
     """
     def __init__(self, name):
@@ -142,7 +143,7 @@ class DBlock(DObject):
 
 class DPlugin(DObject):
     """
-    Used to describe a single plugin.
+    DPlugin is used for the internal description of a plugin.
 
     """
     def __init__(self):
@@ -215,7 +216,7 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock):
         """
-        This plugins subscribes 'dblock' by remembering the dblog id.
+        This plugin subscribes a 'dblock' by remembering the dblog id.
 
         :param dblock: DBlock which should be subscribed
         :return:
@@ -236,7 +237,7 @@ class DPlugin(DObject):
 
     def unsubscribe(self, dblock):
         """
-        This plugins unsubscribes 'dblock' by forgetting the dblog id.
+        This plugin unsubscribes a 'dblock' by forgetting the dblog id.
 
         :param dblock: DBlock which should be unsubscribed
         :return:
@@ -259,7 +260,7 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a dictionary of all susbcribtions.
+        Returns a copy of a dictionary of all subcribtions.
 
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
@@ -269,6 +270,9 @@ class DPlugin(DObject):
 
     def add_parameter(self, parameter):
         """
+        Used to add a parameter for this plugin.
+        Returns true if parameter doesn't existed and was added,
+        returns false if parameter already exists.
 
         :param parameter:
         :return:
@@ -282,8 +286,11 @@ class DPlugin(DObject):
 
     def rm_parameter(self, parameter):
         """
+        Used to remove a parameter for this plugin.
+        Returns true if parameter existed and was deleted,
+        returns false if parameter doesn't exist.
 
-        :param parameter_id:
+        :param parameter: Parameter which should be removed.
         :return:
         :rtype boolean:
         """
@@ -296,6 +303,7 @@ class DPlugin(DObject):
 
     def get_parameters(self):
         """
+        Returns a list of all parameters.
 
         :return:
         :rtype {}:
@@ -304,8 +312,11 @@ class DPlugin(DObject):
 
     def add_dblock(self, dblock):
         """
+        Used to add a block for this plugin.
+        Returns true if parameter doesn't existed and was deleted,
+        returns false if parameter already exists.
 
-        :param dblock:
+        :param dblock: Block which should be added.
         :return:
         :rtype boolean:
         """
@@ -318,6 +329,9 @@ class DPlugin(DObject):
 
     def rm_dblock(self, dblock):
         """
+        Used to remove a block for this plugin.
+        Returns true if block existed and was deleted,
+        returns false if block doesn't exist.
 
         :param dblock:
         :return:
@@ -332,6 +346,7 @@ class DPlugin(DObject):
 
     def get_dblocks(self):
         """
+        Returns a list of all blocks.
 
         :return:
         :rtype {}:
@@ -340,9 +355,10 @@ class DPlugin(DObject):
 
     def get_dblock_by_name(self, dblock_name):
         """
+        Returns a single block by its unique name of all parameters.
 
+        :param dblock_name: Uniqueder identifier for this block.
         :return:
-        :rtype DBlock:
         """
 
         if dblock_name in self.__blocks:
@@ -410,7 +426,10 @@ class DPlugin(DObject):
 
 
 class DSubscription(DObject):
+    """
+    DSubscription is used for the internal description of a subscription.
 
+    """
     def __init__(self, dblock):
         self.dblock = dblock
         self.dblock_name = dblock.name
@@ -443,9 +462,21 @@ class DSubscription(DObject):
         return False
 
     def get_dblock(self):
+        """
+        Returns the block whose signals are subscribed.
+
+        :return:
+        :rtype: DBlock
+        """
         return self.dblock
 
     def get_signals(self):
+        """
+        Returns a copy of all signals which are subscribed.
+
+        :return:
+        :rtype: []
+        """
         return copy.copy(self.signals)
 
     def attach_signal(self, signal):

@@ -33,7 +33,8 @@ from papi.data.DObject import DObject
 
 class DSignal(DObject):
     """
-    This object is used to describe a single signal.
+    DSignal is used for the internal description of a signal.
+
     """
     def __init__(self, uname, dname = None):
         """
