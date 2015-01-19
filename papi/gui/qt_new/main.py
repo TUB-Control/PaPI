@@ -29,13 +29,17 @@ Sven Knuth, Stefan Ruppin
 __author__ = 'knuths'
 
 import sys
-import time
 import os
 import traceback
+import cProfile
+import re
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
 from PySide.QtCore              import QSize, Qt, QThread, QUrl
+
+import papi.pyqtgraph as pg
+from papi.pyqtgraph import QtCore, QtGui
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -49,21 +53,19 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 from papi.gui.gui_api import Gui_api
 from papi.gui.gui_event_processing import GuiEventProcessing
-import papi.pyqtgraph as pg
-from papi.pyqtgraph import QtCore, QtGui
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-import cProfile
-import re
 
-# Enable antialiasing for prettier plots
+
+# Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
 
 
 class GUI(QMainWindow, Ui_QtNewMain):
     """
     Used to create the qt based PaPI gui.
+
     """
     def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
         """
@@ -137,16 +139,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.loadButton.clicked.connect(self.load_triggered)
         self.saveButton.clicked.connect(self.save_triggered)
 
-        # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
-        # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
-        # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
-        # self.buttonShowOverview.clicked.connect(self.ap_overview)
-        # self.buttonExit.clicked.connect(self.close)
-
         # -------------------------------------
         # Create actions
         # -------------------------------------
-
         self.actionLoad.triggered.connect(self.load_triggered)
         self.actionSave.triggered.connect(self.save_triggered)
 
@@ -168,60 +163,18 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
-
         load_icon = QIcon.fromTheme("document-open")
         save_icon = QIcon.fromTheme("document-save")
-
-        # addplugin_icon = QIcon.fromTheme("list-add")
-        # close_icon = QIcon.fromTheme("application-exit")
-        # overview_icon = QIcon.fromTheme("view-fullscreen")
-        # addsubscription_icon = QIcon.fromTheme("list-add")
 
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
-
         self.loadButton.setIconSize(QSize(30, 30))
         self.loadButton.setIcon(load_icon)
 
         self.saveButton.setIconSize(QSize(30, 30))
         self.saveButton.setIcon(save_icon)
 
-        # self.buttonCreatePlugin.setIconSize(QSize(30, 30))
-        # self.buttonCreatePlugin.setIcon(addplugin_icon)
-        #
-        # self.buttonExit.setIcon(close_icon)
-        # self.buttonExit.setIconSize(QSize(30, 30))
-        #
-        # self.buttonShowOverview.setIcon(overview_icon)
-        # self.buttonShowOverview.setIconSize(QSize(30, 30))
-        #
-        # self.buttonCreateSubscription.setIcon(addsubscription_icon)
-        # self.buttonCreateSubscription.setIconSize(QSize(30, 30))
-        #
-        # self.buttonCreatePCPSubscription.setIcon(addsubscription_icon)
-        # self.buttonCreatePCPSubscription.setIconSize(QSize(30, 30))
-
-        # -------------------------------------
-        # Set Tooltipps for buttons
-        # -------------------------------------
-
-        # self.buttonExit.setToolTip("Exit PaPI")
-        # self.buttonCreatePlugin.setToolTip("Add New Plugin")
-        # self.buttonCreateSubscription.setToolTip("Create New Subscription")
-        # self.buttonCreatePCPSubscription.setToolTip("Create New PCP Subscription")
-        #
-        # self.buttonShowOverview.setToolTip("Show Overview")
-
-        # -------------------------------------
-        # Set TextName to ''
-        # -------------------------------------
-
-        # self.buttonExit.setText('')
-        # self.buttonCreatePlugin.setText('')
-        # self.buttonCreateSubscription.setText('')
-        # self.buttonShowLicence.setText('')
-        # self.buttonShowOverview.setText('')
 
     def set_background_for_gui(self):
         """
