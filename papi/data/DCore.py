@@ -234,7 +234,7 @@ class DCore():
 
         #Destroy relation between DPlugin and DBlock
         if subscriber.unsubscribe(dblock) is False:
-            self.log.printText(1, "Subscriber " + subscriber_id + " has already unsubscribed " + dblock_name)
+            self.log.printText(1, "Subscriber " + str(subscriber_id) + " has already unsubscribed " + dblock_name)
             return False
 
         if dblock.rm_subscriber(subscriber) is False:
