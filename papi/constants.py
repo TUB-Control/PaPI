@@ -45,6 +45,9 @@ CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 2
 
+PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
+PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
+
 PAPI_COPYRIGHT                  = '&copy; 2014'
 PAPI_ABOUT_TITLE                = 'About PaPI'
 PAPI_ABOUT_TEXT                 = """
