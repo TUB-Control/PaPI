@@ -34,8 +34,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = '0.9' # no spaces allowed
-CORE_CORE_VERSION               = '0.9' # no spaces allowed
+CORE_PAPI_VERSION               = '1.0.0' # no spaces allowed
+CORE_CORE_VERSION               = '1.0.0' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -77,7 +77,7 @@ PaPI uses:
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_0.9'
+GUI_VERSION                      = 'v_1.0.0'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
