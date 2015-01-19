@@ -36,7 +36,7 @@ import re
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QThread, QUrl
+from PySide.QtCore              import QSize, Qt, QUrl
 
 import papi.pyqtgraph as pg
 from papi.pyqtgraph import QtCore, QtGui

@@ -36,7 +36,7 @@ sys.path.append( os.path.abspath('../'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
+    'sphinx.ext.viewcode'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'papi'
-copyright = u'2014, Author'
+copyright = u'2014, Control Systems, TU-Berlin'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -76,7 +76,7 @@ release = ''
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'papi.yapsy*', 'papi.pyqtgraph*', 'papi.ui.gui.qt_dev*']
+exclude_patterns = ['_build', 'papi.yapsy*', 'papi.pyqtgraph*', 'papi.ui.*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -107,7 +107,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinxdoc'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -206,7 +206,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'papi.tex', u'papi Documentation',
-   u'Author', 'manual'),
+   u'Control Systems, TU-Berlin', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -236,7 +236,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'papi', u'papi Documentation',
-     [u'Author'], 1)
+     [u'Control Systems, TU-Berlin'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -271,9 +271,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'papi'
-epub_author = u'Author'
-epub_publisher = u'Author'
-epub_copyright = u'2014, Author'
+epub_author = u'Control Systems, TU-Berlin'
+epub_publisher = u'Control Systems, TU-Berlin'
+epub_copyright = u'2014, Control Systems, TU-Berlin'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'papi'
@@ -335,3 +335,42 @@ epub_exclude_files = ['search.html']
 
 # If false, no index is generated.
 #epub_use_index = True
+
+# We want to remove all private (i.e. _. or __.__) members
+# that are not in the list of accepted functions
+
+def member_function_test(app, what, name, obj, skip, options):
+    # test if we have a private function
+
+    if len(name) > 1 and name[0] == '_':
+    # test if this private function should be allowed
+        if name.startswith('__process'):
+
+            # omit privat functions that are not in the list of accepted private functions
+            return False
+        else:
+            # test if the method is documented
+            if not hasattr(obj, '__doc__') or not obj.__doc__:
+                return True
+    elif name.startswith('BACKUP'):
+            return True
+
+def autodoc_process_docstring(app, what, name, obj, options, lines):
+    # Remove Copyright Header
+    authors = []
+    if what == "module":
+        for i in range(len(lines)):
+           if lines[i].startswith('Contributors'):
+               authors = lines[i:-1]
+
+        del lines[:]
+
+        for i in range(len(authors)):
+            lines.append(authors[i])
+#            lines.append( "**Contributers:** " + authors[i] + "\n")
+
+
+
+def setup(app):
+    app.connect('autodoc-skip-member', member_function_test)
+    app.connect('autodoc-process-docstring', autodoc_process_docstring)
