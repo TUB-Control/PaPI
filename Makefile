@@ -41,3 +41,6 @@ create_rst:
 
 docs: create_rst
 	make -C docs html
+
+html:
+	make -C docs html
