@@ -8,7 +8,7 @@
     
     <title>papi.plugin.base_classes.base_visual &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -83,11 +83,13 @@
 
 
 <div class="viewcode-block" id="base_visual"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual">[docs]</a><span class="k">class</span> <span class="nc">base_visual</span><span class="p">(</span><span class="n">base_plugin</span><span class="p">):</span>
-<div class="viewcode-block" id="base_visual.init_plugin"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.init_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CoreQueue</span><span class="p">,</span> <span class="n">pluginQueue</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="base_visual.init_plugin"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.init_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CoreQueue</span><span class="p">,</span> <span class="n">pluginQueue</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">control_api</span><span class="p">,</span> <span class="n">dpluginInfo</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">base_visual</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">papi_init</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span> <span class="o">=</span> <span class="n">CoreQueue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_queue__</span> <span class="o">=</span> <span class="n">pluginQueue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span> <span class="o">=</span> <span class="nb">id</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">base_visual</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">papi_init</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span> <span class="o">=</span> <span class="n">control_api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span> <span class="o">=</span> <span class="n">dpluginInfo</span>
 
 </div>
 <div class="viewcode-block" id="base_visual.start_init"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.start_init">[docs]</a>    <span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -127,7 +129,7 @@
             <span class="p">},</span>
             <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&#39;VisualPlugin&#39;</span><span class="p">,</span>
-                <span class="s">&#39;tooltip&#39;</span><span class="p">:</span> <span class="s">&#39;Used display name&#39;</span>
+                <span class="s">&#39;tooltip&#39;</span><span class="p">:</span> <span class="s">&#39;Used for window title&#39;</span>
             <span class="p">}}</span>
         <span class="k">return</span> <span class="n">config</span>
 
@@ -202,7 +204,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

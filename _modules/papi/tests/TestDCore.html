@@ -8,7 +8,7 @@
     
     <title>papi.tests.TestDCore &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -80,7 +80,8 @@
 <span class="kn">import</span> <span class="nn">unittest</span>
 
 <span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DCore</span>
-<span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span>
+<span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DPlugin</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
 
 
 <div class="viewcode-block" id="TestDCore"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore">[docs]</a><span class="k">class</span> <span class="nc">TestDCore</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
@@ -123,8 +124,8 @@
         <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
         <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
@@ -187,8 +188,8 @@
         <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
 
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
@@ -209,8 +210,8 @@
         <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
 
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
@@ -234,8 +235,8 @@
         <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
         <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
         <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
@@ -266,8 +267,8 @@
         <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
         <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
@@ -295,8 +296,8 @@
         <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block2&#39;</span><span class="p">)</span>
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
         <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
@@ -341,8 +342,8 @@
         <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
 
         <span class="c">#Create dblocks</span>
-        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block1&#39;</span><span class="p">)</span>
-        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block2&#39;</span><span class="p">)</span>
 
         <span class="c">#assign dblocks to DPlugin d_pl_1</span>
         <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
@@ -413,7 +414,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

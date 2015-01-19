@@ -25,22 +25,6 @@ papi.ConsoleLog module
     :undoc-members:
     :show-inheritance:
 
-papi.DebugOut module
---------------------
-
-.. automodule:: papi.DebugOut
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.PapiEvent module
----------------------
-
-.. automodule:: papi.PapiEvent
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 papi.constants module
 ---------------------
 
@@ -61,22 +45,6 @@ papi.error_codes module
 -----------------------
 
 .. automodule:: papi.error_codes
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.main module
-----------------
-
-.. automodule:: papi.main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-papi.main_2 module
-------------------
-
-.. automodule:: papi.main_2
     :members:
     :undoc-members:
     :show-inheritance:

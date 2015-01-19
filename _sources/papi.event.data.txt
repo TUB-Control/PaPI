@@ -12,6 +12,14 @@ papi.event.data.DataBase module
     :undoc-members:
     :show-inheritance:
 
+papi.event.data.EditDPlugin module
+----------------------------------
+
+.. automodule:: papi.event.data.EditDPlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.event.data.NewBlock module
 -------------------------------
 

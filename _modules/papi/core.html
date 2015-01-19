@@ -8,7 +8,7 @@
     
     <title>papi.core &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -48,7 +48,7 @@
             
   <h1>Source code for papi.core</h1><div class="highlight"><pre>
 <span class="c">#!/usr/bin/python3</span>
-<span class="c"># -*- coding: latin-1 -*-</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
@@ -79,115 +79,115 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
-
-<span class="kn">from</span> <span class="nn">yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Timer</span>
 
-<span class="kn">from</span> <span class="nn">yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
-<span class="kn">from</span> <span class="nn">papi.PapiEvent</span> <span class="kn">import</span> <span class="n">PapiEvent</span>
+<span class="kn">from</span> <span class="nn">papi.yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 <span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DCore</span>
-<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span>
+<span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
-<span class="kn">from</span> <span class="nn">papi.gui.qt_dev.gui_main</span> <span class="kn">import</span> <span class="n">startGUI</span>
 <span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
 
-
-<span class="c"># import contants</span>
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PAPI_CONSOLE_START_MESSAGE</span><span class="p">,</span>  \
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PAPI_CONSOLE_START_MESSAGE</span><span class="p">,</span> \
     <span class="n">CORE_CORE_CONSOLE_START_MESSAGE</span><span class="p">,</span> <span class="n">CORE_ALIVE_CHECK_ENABLED</span><span class="p">,</span> \
     <span class="n">CORE_STOP_CONSOLE_MESSAGE</span><span class="p">,</span> <span class="n">CORE_ALIVE_CHECK_INTERVAL</span><span class="p">,</span> <span class="n">CORE_ALIVE_MAX_COUNT</span>
 
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_ROOT_FOLDER_LIST</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> \
-    <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_STATE_RESUMED</span><span class="p">,</span> \
+    <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_STATE_RESUMED</span><span class="p">,</span> \
     <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">,</span> <span class="n">PLUGIN_STATE_START_FAILED</span><span class="p">,</span> <span class="n">PLUGIN_STATE_ALIVE</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> \
     <span class="n">PLUGIN_STATE_DEAD</span>
 
 <span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
 
+<span class="kn">from</span> <span class="nn">papi.event.event_base</span> <span class="kn">import</span> <span class="n">PapiEventBase</span>
 <span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 
+
 <div class="viewcode-block" id="Core"><a class="viewcode-back" href="../../papi.html#papi.core.Core">[docs]</a><span class="k">class</span> <span class="nc">Core</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_start_function</span><span class="p">,</span> <span class="n">use_gui</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_start_function</span><span class="p">,</span> <span class="n">use_gui</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init funciton of core.</span>
 <span class="sd">        Will create all data needed to use core and core.run() function</span>
 
 <span class="sd">        .. document private functions</span>
-<span class="sd">        .. automethod:: _*</span>
+<span class="sd">        .. automethod:: __*</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_start_function</span> <span class="o">=</span> <span class="n">gui_start_function</span>
 
         <span class="c"># switch case structure for processing incoming events</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__process_event_by_type__</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;status_event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_status_event__</span><span class="p">,</span>
-                                            <span class="s">&#39;data_event&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">__process_data_event__</span><span class="p">,</span>
-                                            <span class="s">&#39;instr_event&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">__process_instr_event__</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__process_event_by_type__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;status_event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_status_event__</span><span class="p">,</span>
+                                          <span class="s">&#39;data_event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_data_event__</span><span class="p">,</span>
+                                          <span class="s">&#39;instr_event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_instr_event__</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__process_status_event_l__</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;start_successfull&#39;</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_successfull__</span><span class="p">,</span>
-                                            <span class="s">&#39;start_failed&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_failed__</span><span class="p">,</span>
-                                            <span class="s">&#39;alive&#39;</span><span class="p">:</span>                <span class="bp">self</span><span class="o">.</span><span class="n">__process_alive__</span><span class="p">,</span>
-                                            <span class="s">&#39;join_request&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">__process_join_request__</span><span class="p">,</span>
-                                            <span class="s">&#39;plugin_stopped&#39;</span><span class="p">:</span>       <span class="bp">self</span><span class="o">.</span><span class="n">__process_plugin_stopped__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__process_status_event_l__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;start_successfull&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_successfull__</span><span class="p">,</span>
+                                           <span class="s">&#39;start_failed&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_failed__</span><span class="p">,</span>
+                                           <span class="s">&#39;alive&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_alive__</span><span class="p">,</span>
+                                           <span class="s">&#39;join_request&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_join_request__</span><span class="p">,</span>
+                                           <span class="s">&#39;plugin_stopped&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_plugin_stopped__</span>
         <span class="p">}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__process_data_event_l__</span> <span class="o">=</span> <span class="p">{</span>   <span class="s">&#39;new_data&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_data__</span><span class="p">,</span>
-                                            <span class="s">&#39;new_block&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_block__</span><span class="p">,</span>
-                                            <span class="s">&#39;new_parameter&#39;</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_parameter__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__process_data_event_l__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;new_data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_data__</span><span class="p">,</span>
+                                         <span class="s">&#39;new_block&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_block__</span><span class="p">,</span>
+                                         <span class="s">&#39;new_parameter&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_new_parameter__</span><span class="p">,</span>
+                                         <span class="s">&#39;edit_dplugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_edit_dplugin</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__process_instr_event_l__</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;create_plugin&#39;</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__process_create_plugin__</span><span class="p">,</span>
-                                           <span class="s">&#39;stop_plugin&#39;</span><span class="p">:</span>       <span class="bp">self</span><span class="o">.</span><span class="n">__process_stop_plugin__</span><span class="p">,</span>
-                                            <span class="s">&#39;close_program&#39;</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">__process_close_programm__</span><span class="p">,</span>
-                                            <span class="s">&#39;subscribe&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">__process_subscribe__</span><span class="p">,</span>
-                                            <span class="s">&#39;unsubscribe&#39;</span><span class="p">:</span>      <span class="bp">self</span><span class="o">.</span><span class="n">__process_unsubsribe__</span><span class="p">,</span>
-                                            <span class="s">&#39;set_parameter&#39;</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">__process_set_parameter__</span><span class="p">,</span>
-                                            <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__process_pause_plugin__</span><span class="p">,</span>
-                                            <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span>    <span class="bp">self</span><span class="o">.</span><span class="n">__process_resume_plugin__</span><span class="p">,</span>
-                                            <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_plugin__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__process_instr_event_l__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;create_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_create_plugin__</span><span class="p">,</span>
+                                          <span class="s">&#39;stop_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_stop_plugin__</span><span class="p">,</span>
+                                          <span class="s">&#39;close_program&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_close_programm__</span><span class="p">,</span>
+                                          <span class="s">&#39;subscribe&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_subscribe__</span><span class="p">,</span>
+                                          <span class="s">&#39;unsubscribe&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_unsubsribe__</span><span class="p">,</span>
+                                          <span class="s">&#39;set_parameter&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_set_parameter__</span><span class="p">,</span>
+                                          <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_pause_plugin__</span><span class="p">,</span>
+                                          <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_resume_plugin__</span><span class="p">,</span>
+                                          <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_plugin__</span>
         <span class="p">}</span>
 
         <span class="c"># creating the main core data object DCore and core queue</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span>          <span class="o">=</span> <span class="n">DCore</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span>   <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">core_goOn</span>          <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">core_id</span>            <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span> <span class="o">=</span> <span class="n">DCore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_goOn</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_id</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c"># setting up the yapsy plguin manager for directory structure</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span>     <span class="o">=</span> <span class="n">PluginManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span> <span class="o">=</span> <span class="n">PluginManager</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">setPluginPlaces</span><span class="p">(</span><span class="n">PLUGIN_ROOT_FOLDER_LIST</span><span class="p">)</span>
 
         <span class="c"># define gui information. ID and alive status as well as gui queue for events</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span>    <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span>             <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive</span>          <span class="o">=</span> <span class="bp">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_gui</span>            <span class="o">=</span> <span class="n">use_gui</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_gui</span> <span class="o">=</span> <span class="n">use_gui</span>
 
         <span class="c"># set information for console logging part (debug information)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span>                <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
 
         <span class="c"># define variables for check alive system, e.a. timer and counts</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span>            <span class="o">=</span> <span class="n">CORE_ALIVE_CHECK_INTERVAL</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alive_count_max</span>            <span class="o">=</span> <span class="n">CORE_ALIVE_MAX_COUNT</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alive_timer</span>                <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">check_alive_callback</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span>                <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive_count</span>            <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span> <span class="o">=</span> <span class="n">CORE_ALIVE_CHECK_INTERVAL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_count_max</span> <span class="o">=</span> <span class="n">CORE_ALIVE_MAX_COUNT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_timer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_alive_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive_count</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="Core.run"><a class="viewcode-back" href="../../papi.html#papi.core.Core.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main operation function of core.</span>
 <span class="sd">        Event loop is in here.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># some start up information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">CORE_PAPI_CONSOLE_START_MESSAGE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">CORE_CORE_CONSOLE_START_MESSAGE</span> <span class="o">+</span> <span class="s">&#39; .. Process id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">CORE_PAPI_CONSOLE_START_MESSAGE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">CORE_CORE_CONSOLE_START_MESSAGE</span> <span class="o">+</span> <span class="s">&#39; .. Process id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
 
         <span class="c"># start the GUI process to show GUI, set GUI alive status to TRUE</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_gui</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_start_function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_start_function</span><span class="p">,</span>
+                                       <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive</span> <span class="o">=</span> <span class="bp">True</span>
-        
+
 
         <span class="c"># start the check alive timer</span>
         <span class="k">if</span> <span class="n">CORE_ALIVE_CHECK_ENABLED</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
@@ -200,7 +200,7 @@
             <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
             <span class="c"># debung out</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Event-&gt;&#39;</span><span class="o">+</span><span class="n">event</span><span class="o">.</span><span class="n">get_eventtype</span><span class="p">()</span><span class="o">+</span><span class="s">&#39;   &#39;</span><span class="o">+</span><span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Event-&gt;&#39;</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">get_eventtype</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;   &#39;</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">())</span>
 
             <span class="c"># process the next event of queue</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__process_event__</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
@@ -215,9 +215,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">CORE_STOP_CONSOLE_MESSAGE</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Core.send_alive_check_events"><a class="viewcode-back" href="../../papi.html#papi.core.Core.send_alive_check_events">[docs]</a>    <span class="k">def</span> <span class="nf">send_alive_check_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Function for check_alive_status timer to send check_alive events to all running processes</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function for check_alive_status timer to send check_alive events to all running processes</span>
 <span class="sd">        This will trigger all correctly running processes to send an answer to core</span>
+
+<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c"># get list of all plugins [hash: id-&gt;dplug], type DPlugin</span>
         <span class="n">dplugs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">dplugs</span><span class="p">:</span>
@@ -240,7 +244,7 @@
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#get all plugins from core data [hash: id-&gt;DPlugin]</span>
+        <span class="c"># get all plugins from core data [hash: id-&gt;DPlugin]</span>
         <span class="n">dplugs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">dplugs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">dplugs</span><span class="p">:</span>
@@ -250,7 +254,7 @@
                 <span class="k">if</span> <span class="n">plug</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
                     <span class="c"># check if counts are equal: equal indicates that plugin is alive</span>
                     <span class="k">if</span> <span class="n">plug</span><span class="o">.</span><span class="n">alive_count</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Plugin &#39;</span><span class="o">+</span><span class="n">plug</span><span class="o">.</span><span class="n">uname</span><span class="o">+</span><span class="s">&#39; is still alive&#39;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Plugin &#39;</span> <span class="o">+</span> <span class="n">plug</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; is still alive&#39;</span><span class="p">)</span>
                         <span class="c"># change plugin state in DCore</span>
                         <span class="n">plug</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_ALIVE</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -259,17 +263,19 @@
 
             <span class="c"># check for gui status and do error handling</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive_count</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;GUI  is still ALIVE&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;GUI  is still ALIVE&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">gui_is_dead_error_handler</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Core.gui_is_dead_error_handler"><a class="viewcode-back" href="../../papi.html#papi.core.Core.gui_is_dead_error_handler">[docs]</a>    <span class="k">def</span> <span class="nf">gui_is_dead_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        error handler when gui is dead</span>
+
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;GUI  is  DEAD&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;core count: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; vs. &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_alive_count</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; :gui count&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;GUI  is  DEAD&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                           <span class="s">&#39;core count: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; vs. &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_alive_count</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; :gui count&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Core.plugin_process_is_dead_error_handler"><a class="viewcode-back" href="../../papi.html#papi.core.Core.plugin_process_is_dead_error_handler">[docs]</a>    <span class="k">def</span> <span class="nf">plugin_process_is_dead_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplug</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -279,9 +285,10 @@
 <span class="sd">        :type dplug: DPlugin</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;Plugin &#39;</span><span class="o">+</span><span class="n">dplug</span><span class="o">.</span><span class="n">uname</span><span class="o">+</span><span class="s">&#39; is DEAD&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;core count: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; vs. &#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; :plugin count&#39;</span><span class="p">)</span>
-        <span class="n">dplug</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span>  <span class="n">PLUGIN_STATE_DEAD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;Plugin &#39;</span> <span class="o">+</span> <span class="n">dplug</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; is DEAD&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                           <span class="s">&#39;core count: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; vs. &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; :plugin count&#39;</span><span class="p">)</span>
+        <span class="n">dplug</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_DEAD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Core.check_alive_callback"><a class="viewcode-back" href="../../papi.html#papi.core.Core.check_alive_callback">[docs]</a>    <span class="k">def</span> <span class="nf">check_alive_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -291,7 +298,7 @@
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;check alive&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;check alive&#39;</span><span class="p">)</span>
 
         <span class="c"># check for answer status of all plugins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle_alive_situation</span><span class="p">()</span>
@@ -305,14 +312,15 @@
 
         <span class="c"># start a new one shot timer with this callback function</span>
         <span class="k">if</span> <span class="n">CORE_ALIVE_CHECK_ENABLED</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">alive_timer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">check_alive_callback</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alive_timer</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_alive_callback</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alive_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Core.update_meta_data_to_gui"><a class="viewcode-back" href="../../papi.html#papi.core.Core.update_meta_data_to_gui">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta_data_to_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pl_id</span><span class="p">):</span>
+<div class="viewcode-block" id="Core.update_meta_data_to_gui"><a class="viewcode-back" href="../../papi.html#papi.core.Core.update_meta_data_to_gui">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta_data_to_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">,</span> <span class="n">inform_subscriber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        On call this function will send the meta information of pl_id to GUI</span>
 
 <span class="sd">        :param pl_id: id of plugin with new meta information</span>
+<span class="sd">        :param inform_subscriber: flag used to determine if a meta_update for all subscriber should be initiated</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get DPlugin object with id and check if it exists</span>
@@ -323,16 +331,32 @@
             <span class="c"># get meta information of DPlugin</span>
             <span class="n">o</span><span class="o">.</span><span class="n">plugin_object</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span>
             <span class="c"># build event and send it to GUI with meta information</span>
-            <span class="n">eventMeta</span> <span class="o">=</span> <span class="n">PapiEvent</span><span class="p">(</span><span class="n">pl_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="s">&#39;instr_event&#39;</span><span class="p">,</span> <span class="s">&#39;update_meta&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+            <span class="c">#eventMeta = PapiEvent(pl_id, self.gui_id, &#39;instr_event&#39;, &#39;update_meta&#39;, o)</span>
+            <span class="n">eventMeta</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">UpdateMeta</span><span class="p">(</span><span class="n">pl_id</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span><span class="n">o</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">eventMeta</span><span class="p">)</span>
 
             <span class="c"># check if plugin got some subscribers which run in own process</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">eventMeta</span><span class="p">)</span>
+
+            <span class="c"># ---------------------------------------------</span>
+            <span class="c"># Inform all subscriber if needed and wished</span>
+            <span class="c"># ---------------------------------------------</span>
+            <span class="k">if</span> <span class="n">inform_subscriber</span><span class="p">:</span>
+                <span class="n">dblocks</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblocks</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">dblocks</span><span class="p">:</span>
+                    <span class="n">dblock</span> <span class="o">=</span> <span class="n">dblocks</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">subscriber_id</span> <span class="ow">in</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">():</span>
+                        <span class="n">dplugin_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">dplugin_sub</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">dplugin_sub</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># Dplugin object with pl_id does not exist in DCore of core</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;update_meta, cannot update meta information because there is no plugin with id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="s">&#39;update_meta, cannot update meta information because there is no plugin with id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                   <span class="n">pl_id</span><span class="p">))</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 </div>
 <div class="viewcode-block" id="Core.update_meta_data_to_gui_for_all"><a class="viewcode-back" href="../../papi.html#papi.core.Core.update_meta_data_to_gui_for_all">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta_data_to_gui_for_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -364,54 +388,54 @@
 
 
     <span class="c"># ------- Event processing initial stage ---------</span></div>
-    <span class="k">def</span> <span class="nf">__process_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="Core.__process_event__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_event__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initial stage of event processing, dividing to event type</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_eventtype</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__process_event_by_type__</span><span class="p">[</span><span class="n">t</span><span class="p">](</span><span class="n">event</span><span class="p">)</span>
 
-    <span class="c"># ------- Event processing first stage ---------</span>
-    <span class="k">def</span> <span class="nf">__process_status_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+    <span class="c"># ------- Event processing first stage ---------</span></div>
+<div class="viewcode-block" id="Core.__process_status_event__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_status_event__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_status_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        First stage of event processing, deciding which status_event this is</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_status_event_l__</span><span class="p">[</span><span class="n">op</span><span class="p">](</span><span class="n">event</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_data_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_data_event__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_data_event__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_data_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        First stage of event processing, deciding which data_event this is</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_data_event_l__</span><span class="p">[</span><span class="n">op</span><span class="p">](</span><span class="n">event</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_instr_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_instr_event__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_instr_event__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_instr_event__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        First stage of event processing, deciding which instr_event this is</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_instr_event_l__</span><span class="p">[</span><span class="n">op</span><span class="p">](</span><span class="n">event</span><span class="p">)</span>
 
-    <span class="c"># ------- Event processing second stage: status events ---------</span>
-    <span class="k">def</span> <span class="nf">__process_start_successfull__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+    <span class="c"># ------- Event processing second stage: status events ---------</span></div>
+<div class="viewcode-block" id="Core.__process_start_successfull__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_start_successfull__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_start_successfull__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process start_successfull event</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get plugin from DCore with id of event origin and check if it exists</span>
         <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span>
@@ -422,15 +446,16 @@
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;start_successfull_event, Event with id &#39;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span><span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;start_successfull_event, Event with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_start_failed__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_start_failed__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_start_failed__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_start_failed__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process start failed event and do error handling</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get plugin from DCore with id of event origin and check if it exists</span>
         <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span>
@@ -440,15 +465,16 @@
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist in DCore</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;start_failed_event, Event with id &#39;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span><span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;start_failed_event, Event with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_alive__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_alive__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_alive__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_alive__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes alive response from processes/plugins and GUI, organising the counter</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get event origin</span>
         <span class="n">oID</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">()</span>
@@ -465,13 +491,13 @@
                 <span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive_count_max</span>
         <span class="k">return</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="nf">__process_join_request__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_join_request__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_join_request__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_join_request__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process join requests of processes</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get event origin id and its corresponding plugin object</span>
@@ -484,7 +510,7 @@
             <span class="c"># remove plugin from DCore, because process was joined</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="c"># remove failed</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;join request, remove plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;failed&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;join request, remove plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;failed&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># remove from DCore in core successfull</span>
@@ -492,25 +518,26 @@
                     <span class="c"># GUI is still alive, so tell GUI, that this plugin was closed</span>
                     <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
                     <span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span>
-                   <span class="c"># event = PapiEvent(self.core_id,self.gui_id,&#39;status_event&#39;,&#39;plugin_closed&#39;,opt)</span>
                     <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">PluginClosed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;join_request, plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; was joined (uname: &#39;</span> <span class="o">+</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="o">+</span><span class="s">&#39; )&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;join_request, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; was joined (uname: &#39;</span> <span class="o">+</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; )&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NO_ERROR</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># Plug does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;join_request, Event with id &#39;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span><span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;join_request, Event with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">())</span> <span class="o">+</span> <span class="s">&#39; but plugin does not exist&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="c"># ------- Event processing second stage: data events ---------</span>
-    <span class="k">def</span> <span class="nf">__process_new_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+    <span class="c"># ------- Event processing second stage: data events ---------</span></div>
+<div class="viewcode-block" id="Core.__process_new_data__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_new_data__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_new_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process new_data event from plugins.</span>
 <span class="sd">        Will do the routing: Subscriber/Subscription</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type tar_plug: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># just proceed with new_data events if GUI is still alive (indicates that program will close)</span>
@@ -524,7 +551,7 @@
             <span class="c"># check for existence</span>
             <span class="k">if</span> <span class="n">dplug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="c"># get data block of DPlugin with block_name from event</span>
-                <span class="n">block</span><span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span>
                 <span class="c"># check for existence of block with block_name</span>
                 <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="c"># get subscriber list of block</span>
@@ -551,13 +578,14 @@
                                     <span class="bp">self</span><span class="o">.</span><span class="n">handle_parameter_change</span><span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="c"># pluign with sub_id does not exist in DCore of core</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, subscriber plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">sub_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, subscriber plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                <span class="n">sub_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
                             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="c"># check if our list with id is greater than 1, which will indicate that there is at least one ViP</span>
                     <span class="c"># which will need to get this new data event</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span><span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="c"># send new_data event to GUI with id_list of destinations</span>
-                        <span class="n">opt</span> <span class="o">=</span>  <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+                        <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
                         <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">oID</span><span class="p">][</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
                         <span class="n">new_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="n">id_list</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">new_event</span><span class="p">)</span>
@@ -565,28 +593,138 @@
                     <span class="k">return</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c"># block is None</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, block with name &#39;</span><span class="o">+</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="o">+</span><span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, block with name &#39;</span> <span class="o">+</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">+</span> <span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># Plugin of event origin does not exist in DCore of core</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;new_data, Plugin with id  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  does not exist in DCore&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist in DCore&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</div>
+    <span class="k">def</span> <span class="nf">BACKUP__process_new_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process new_data event from plugins.</span>
+<span class="sd">        Will do the routing: Subscriber/Subscription</span>
+
+<span class="sd">        :param event: event to process</span>
+<span class="sd">        :type event: PapiEventBase</span>
+<span class="sd">        :type tar_plug: DPlugin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># just proceed with new_data events if GUI is still alive (indicates that program will close)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive</span><span class="p">:</span>
+            <span class="c"># get event origin and optional parameter</span>
+            <span class="n">oID</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">()</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+            <span class="n">Data</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span>
+
+            <span class="c"># get origin plugin from DCore</span>
+            <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span>
+            <span class="c"># check for existence</span>
+            <span class="k">if</span> <span class="n">dplug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c"># get data block of DPlugin with block_name from event</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span>
+                <span class="c"># check for existence of block with block_name</span>
+                <span class="k">if</span> <span class="n">block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="c"># get subscriber list of block</span>
+                    <span class="n">subscriber</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()</span>
+                    <span class="c"># for all subscriber in subscriber list</span>
+                    <span class="k">for</span> <span class="n">sub_id</span> <span class="ow">in</span> <span class="n">subscriber</span><span class="p">:</span>
+                        <span class="c"># get plugin with sub_id and check for existence</span>
+                        <span class="n">pl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">sub_id</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">pl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="c"># demux signals</span>
+
+
+                            <span class="n">subcribtions</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+                            <span class="n">sub_object</span> <span class="o">=</span> <span class="n">subcribtions</span><span class="p">[</span><span class="n">oID</span><span class="p">][</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span>
+                            <span class="n">sub_signals</span> <span class="o">=</span> <span class="n">sub_object</span><span class="o">.</span><span class="n">signals</span>
+                            <span class="n">sub_signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+                            <span class="n">opt</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">Data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_signals</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Data</span><span class="p">])</span>
+
+                            <span class="c"># plugin exists, check whether it is a ViP or not</span>
+                            <span class="k">if</span> <span class="n">pl</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">pl</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+                                <span class="c"># Plugin runs in GUI</span>
+                                <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+                                <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">oID</span><span class="p">][</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
+                                <span class="n">new_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">id</span><span class="p">],</span> <span class="n">opt</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">new_event</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c"># Plugin is not running in GUI</span>
+                                <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">oID</span><span class="p">][</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
+                                <span class="n">new_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">id</span><span class="p">],</span> <span class="n">opt</span><span class="p">)</span>
+                                <span class="n">pl</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">new_event</span><span class="p">)</span>
+
+                                <span class="c"># this event will be a new parameter value for a plugin</span>
+                                <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">handle_parameter_change</span><span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c"># pluign with sub_id does not exist in DCore of core</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, subscriber plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                <span class="n">sub_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
+                            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+                    <span class="c"># process new_data seemed correct</span>
+                    <span class="k">return</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># block is None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, block with name &#39;</span> <span class="o">+</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">+</span> <span class="s">&#39; does not exists&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Plugin of event origin does not exist in DCore of core</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist in DCore&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
+    <span class="k">def</span> <span class="nf">__process_edit_dplugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process edit_dplugin event from gui.</span>
+
+<span class="sd">        :param event: event to process</span>
+<span class="sd">        :type event: PapiEventBaseBase</span>
+<span class="sd">        :type tar_plug: DPlugin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eObject</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">editedObject</span>
+        <span class="n">cRequest</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">changeRequest</span>
+
+        <span class="n">dID</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
+
+        <span class="n">pl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span>
+
+        <span class="c"># DBlock of DPlugin should be edited</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eObject</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
+
+            <span class="n">dblock</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">eObject</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s">&quot;edit&quot;</span> <span class="ow">in</span> <span class="n">cRequest</span><span class="p">:</span>
+                <span class="n">cObject</span> <span class="o">=</span> <span class="n">cRequest</span><span class="p">[</span><span class="s">&quot;edit&quot;</span><span class="p">]</span>
+
+                <span class="c"># Signal should be modified in DBlock</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cObject</span><span class="p">,</span> <span class="n">DSignal</span><span class="p">):</span>
+                    <span class="n">dsignal</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_signal_by_uname</span><span class="p">(</span><span class="n">cObject</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+                    <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">cObject</span><span class="o">.</span><span class="n">dname</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span>
+                                       <span class="s">&#39;edit_dplugin, Edited Dblock &#39;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">&#39; of DPlugin &#39;</span> <span class="o">+</span> <span class="n">pl</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span>
+                                       <span class="s">&quot; : DSignal &quot;</span> <span class="o">+</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; to dname -&gt; &quot;</span> <span class="o">+</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+
     <span class="c"># ------- Event processing second stage: instr events ---------</span>
-    <span class="k">def</span> <span class="nf">__process_create_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="Core.__process_create_plugin__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_create_plugin__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_create_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes create_plugin event.</span>
 <span class="sd">        So it will create a plugin, start a process if needed, send events to GUI to create a plugin and do the pre configuration</span>
 
 <span class="sd">        :param event:</span>
 <span class="sd">        :param optData: optional Data Object of event</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type optData: DOptionalData</span>
 <span class="sd">        :return: -1: Error</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get optData to get information about which plugin to start</span>
         <span class="n">optData</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;create_plugin, Try to create plugin with Name  &#39;</span><span class="o">+</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span><span class="o">+</span> <span class="s">&quot; and UName &quot;</span> <span class="o">+</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span>
+                           <span class="s">&#39;create_plugin, Try to create plugin with Name  &#39;</span> <span class="o">+</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span>
+                           <span class="o">+</span> <span class="s">&quot; and UName &quot;</span> <span class="o">+</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span><span class="p">)</span>
 
         <span class="c"># search yapsy plugin object with plugin_idientifier and check if it exists</span>
         <span class="n">plugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginByName</span><span class="p">(</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span><span class="p">)</span>
@@ -596,10 +734,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">collectPlugins</span><span class="p">()</span>
             <span class="n">plugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginByName</span><span class="p">(</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">plugin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;create_plugin, Plugin with Name  &#39;</span><span class="o">+</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span><span class="o">+</span><span class="s">&#39;  does not exist in file system&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="s">&#39;create_plugin, Plugin with Name  &#39;</span> <span class="o">+</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_identifier</span>
+                                   <span class="o">+</span> <span class="s">&#39; does not exist in file system&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
-        <span class="c">#creates a new plugin id because plugin exsits</span>
+        <span class="c"># creates a new plugin id because plugin exsits</span>
         <span class="n">plugin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
 
         <span class="c"># checks if plugin is of not of type ViP or PCP, because these two will run in GUI process</span>
@@ -612,7 +752,7 @@
             <span class="n">plugin_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
 
             <span class="c"># decide if plugin will need to get Data from another plugin</span>
-            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span><span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
                 <span class="c"># plugin will get data from another, so make its execution triggered by events</span>
                 <span class="n">eventTriggered</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -621,12 +761,15 @@
 
             <span class="n">plugin_config</span> <span class="o">=</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_config</span>
 
-            <span class="k">if</span> <span class="n">plugin_config</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">plugin_config</span> <span class="o">==</span><span class="p">{}:</span>
+            <span class="k">if</span> <span class="n">plugin_config</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">plugin_config</span> <span class="o">==</span> <span class="p">{}:</span>
                 <span class="n">plugin_config</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plugin_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">plugin_config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
 
             <span class="c"># create Process object for new plugin</span>
             <span class="c"># set parameter for work function of plugin, such as queues, id and eventTriggered</span>
-            <span class="n">PluginProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">work_process</span><span class="p">,</span>\
+            <span class="n">PluginProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">work_process</span><span class="p">,</span> \
                                     <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span> <span class="n">plugin_queue</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">eventTriggered</span><span class="p">,</span> \
                                           <span class="n">plugin_config</span><span class="p">,</span> <span class="n">optData</span><span class="o">.</span><span class="n">autostart</span><span class="p">))</span>
             <span class="n">PluginProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -652,7 +795,8 @@
             <span class="c"># Plugin will run in GUI, thats why core does not need to create a new process</span>
 
             <span class="c"># Adding plugin information to DCore of core for organisation</span>
-            <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">)</span>
+            <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span>
+                                              <span class="n">plugin</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">)</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span>
@@ -666,16 +810,16 @@
             <span class="c"># send create_plugin event to GUI for local creation, now with new information like id and type</span>
             <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">CreatePlugin</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">optData</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;core sent create event to gui for plugin: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;core sent create event to gui for plugin: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span><span class="p">))</span>
             <span class="k">return</span> <span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_stop_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_stop_plugin__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_stop_plugin__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_stop_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process stop_plugin event.</span>
 <span class="sd">        Will send an event to destination plugin to close itself. Will lead to a join request of this plugin.</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get destination id</span>
@@ -700,7 +844,7 @@
                     <span class="c"># tell gui to close plugin</span>
                     <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
                     <span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span> <span class="o">=</span> <span class="nb">id</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">PluginClosed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">opt</span><span class="p">))</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">PluginClosed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">opt</span><span class="p">))</span>
 
                     <span class="c"># remove plugin from DCore</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NO_ERROR</span><span class="p">:</span>
@@ -708,7 +852,7 @@
                         <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">UNKNOWN_ERROR</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StopPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StopPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
                     <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">unsubscribe_all</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">rm_all_subscribers</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
@@ -717,11 +861,11 @@
             <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NO_ERROR</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># DPlugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;stop_plugin, plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; not found&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;stop_plugin, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">UNKNOWN_ERROR</span>
-
-    <span class="k">def</span> <span class="nf">__process_start_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-         <span class="c"># get destination id</span>
+</div>
+<div class="viewcode-block" id="Core.__process_start_plugin__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_start_plugin__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_start_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="c"># get destination id</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
 
         <span class="c"># get DPlugin object and check if plugin exists</span>
@@ -737,9 +881,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
-
-
-    <span class="k">def</span> <span class="nf">__process_plugin_stopped__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_plugin_stopped__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_plugin_stopped__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_plugin_stopped__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process plugin_stopped event.</span>
 <span class="sd">        Will change plugins state and delete its parameters and blocks.</span>
@@ -777,14 +920,14 @@
 
             <span class="c"># update to gui</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_close_programm__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_close_programm__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_close_programm__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_close_programm__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This functions processes a close_programm event from GUI and</span>
 <span class="sd">        sends events to all processes to close themselves</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># GUI wants to close, so join process</span>
@@ -799,7 +942,7 @@
 
         <span class="c"># iterate through all plugins to send an event to tell them to quit and</span>
         <span class="c"># response with a join_request</span>
-        <span class="n">toDelete</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="n">toDelete</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">dplugin_key</span> <span class="ow">in</span> <span class="n">all_plugins</span><span class="p">:</span>
             <span class="n">dplugin</span> <span class="o">=</span> <span class="n">all_plugins</span><span class="p">[</span><span class="n">dplugin_key</span><span class="p">]</span>
             <span class="c"># just send event to plugins running in own process</span>
@@ -811,14 +954,14 @@
 
         <span class="k">for</span> <span class="n">dplugin_ID</span> <span class="ow">in</span> <span class="n">toDelete</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="n">dplugin_ID</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_subscribe__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_subscribe__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_subscribe__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_subscribe__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process subscribe_event.</span>
 <span class="sd">        Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -826,14 +969,13 @@
         <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
         <span class="n">oID</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">()</span>
 
-
         <span class="n">already_sub</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="c"># test if already subscribed</span>
         <span class="n">source_pl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">source_pl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">blocks</span> <span class="o">=</span> <span class="n">source_pl</span><span class="o">.</span><span class="n">get_dblocks</span><span class="p">()</span>
-            <span class="n">b</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span>
                 <span class="n">subs</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">oID</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
                     <span class="n">already_sub</span> <span class="o">=</span> <span class="bp">True</span>
@@ -842,7 +984,8 @@
             <span class="n">dsubscription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dsubscription</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="c"># subscribtion failed</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;subscribe, something failed in subsription process with subscriber id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..target id:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..and block &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;subscribe, something failed in subsription process with subscriber id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                    <span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..target id:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..and block &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># subscribtion correct</span>
@@ -850,22 +993,24 @@
 
         <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">signals</span> <span class="o">!=</span> <span class="p">[]:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                 <span class="c"># subscribtion failed</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;subscribe, something failed in subsription process with subscriber id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..target id:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..and block &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
+                <span class="c"># subscribtion failed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;subscribe, something failed in subsription process with subscriber id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                    <span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..target id:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..and block &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;subscribe, subscribtion correct: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;-&gt;(&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;subscribe, subscribtion correct: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;-&gt;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_unsubsribe__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_unsubsribe__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_unsubsribe__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_unsubsribe__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process unsubscribe_event. Will try to remove a subscription from DCore</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -877,23 +1022,28 @@
             <span class="c"># try to unsubscribe</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="c"># unsubscribe failed</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;unsubscribe, something failed in unsubsription process with subscriber id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..target id:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;..and block &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="s">&#39;unsubscribe, something failed in unsubsription process with subscriber id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                       <span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..target id:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;..and block &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                                       <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">))</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">unsubscribe_signals</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c"># unsubscribe correct</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;unsubscribe, unsubscribtion correct: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;-&gt;(&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                           <span class="s">&#39;unsubscribe, unsubscribtion correct: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;-&gt;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+                               <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">oID</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_set_parameter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_set_parameter__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_set_parameter__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_set_parameter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process set_parameter event. Core will just route this event from GUI to destination plugin and update DCore</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -908,27 +1058,27 @@
             <span class="c"># get parameter list of plugin [hash]</span>
             <span class="n">parameters</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
 
-            <span class="n">para</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">para</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+                <span class="n">para</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">]</span>
                 <span class="n">para</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span>
                 <span class="c"># route the event to the destination plugin queue</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-                <span class="c">#change event type for plugin</span>
+                <span class="c"># change event type for plugin</span>
                 <span class="c">#update GUI</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
                 <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># destination plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;set_paramenter, plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; not found&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;set_paramenter, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_new_block__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_new_block__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_new_block__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_new_block__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes new_block event.</span>
 <span class="sd">        Will try to add a new data block to a DPlugin object</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -936,7 +1086,7 @@
         <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
         <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">()</span>
         <span class="c"># get DPlugin object with origin id of event to add new parameter to THIS DPlugin</span>
-        <span class="n">dplugin</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+        <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
         <span class="c"># check for existence</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c"># dplugin exists, so add blocks to DPlugin</span>
@@ -947,15 +1097,15 @@
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;new_block, plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; not found&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_block, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_new_parameter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_new_parameter__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_new_parameter__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_new_parameter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes new parameter event. Adding a new parameter to DPluign in DCore and updating GUI information</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -975,15 +1125,15 @@
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;new_parameter, plugin with id &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; not found&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_parameter, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">__process_pause_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_pause_plugin__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_pause_plugin__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_pause_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
@@ -994,19 +1144,18 @@
                 <span class="c"># set pause info</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_PAUSE</span>
                 <span class="c"># send event to plugin</span>
-                <span class="c"># event = PapiEvent(self.core_id, pl_id, &#39;instr_event&#39;, &#39;pause_plugin&#39;, None)</span>
                 <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">PausePlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
                 <span class="c"># update meta for Gui</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__process_resume_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Core.__process_resume_plugin__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_resume_plugin__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_resume_plugin__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
@@ -1017,31 +1166,11 @@
                 <span class="c"># set resume info</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_RESUMED</span>
                 <span class="c"># send event to plugin</span>
-                <span class="c"># event = PapiEvent(self.core_id, pl_id, &#39;instr_event&#39;, &#39;resume_plugin&#39;, None)</span>
                 <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">ResumePlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_id</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
                 <span class="c"># update meta for Gui</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
-
-    <span class="c"># def __process_plugin_paused__(self, event):</span>
-    <span class="c">#     &quot;&quot;&quot;</span>
-    <span class="c">#     Processes plugin_paused event from GUI. Will add information that a plugin was paused in gui and</span>
-    <span class="c">#     send update meta.</span>
-    <span class="c">#     :param event: event to process</span>
-    <span class="c">#     :type event: PapiEvent</span>
-    <span class="c">#     :type dplugin: DPlugin</span>
-    <span class="c">#     &quot;&quot;&quot;</span>
-    <span class="c">#     id = event.get_originID()</span>
-    <span class="c">#</span>
-    <span class="c">#     dplugin = self.core_data.get_dplugin_by_id(id)</span>
-    <span class="c">#     if dplugin is not None:</span>
-    <span class="c">#         dplugin.state = PLUGIN_STATE_PAUSE</span>
-    <span class="c">#</span>
-    <span class="c">#         self.update_meta_data_to_gui(id)</span>
-    <span class="c">#</span>
-    <span class="c"># def __process_plugin_resumed__(self, event):</span>
-    <span class="c">#     pass</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -1080,7 +1209,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

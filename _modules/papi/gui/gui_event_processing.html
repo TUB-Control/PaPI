@@ -8,7 +8,7 @@
     
     <title>papi.gui.gui_event_processing &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -75,39 +75,52 @@
 <span class="sd">&lt;Stefan Ruppin</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> \
-    <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_WOKRING_INTERVAL</span><span class="p">,</span> \
-    <span class="n">PLUGIN_ROOT_FOLDER_LIST</span><span class="p">,</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">,</span> <span class="n">PLUGIN_STATE_RESUMED</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> \
-    <span class="n">PLUGIN_STATE_START_FAILED</span>
-
 <span class="kn">import</span> <span class="nn">copy</span>
-
-<span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
-
-<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
-
-<span class="kn">from</span> <span class="nn">papi.PapiEvent</span> <span class="kn">import</span> <span class="n">PapiEvent</span>
-
-<span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
-
-<span class="kn">from</span> <span class="nn">yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
-
+<span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">importlib.machinery</span>
 
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> \
+    <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_WOKRING_INTERVAL</span><span class="p">,</span> \
+    <span class="n">PLUGIN_ROOT_FOLDER_LIST</span><span class="p">,</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> \
+    <span class="n">PLUGIN_STATE_START_FAILED</span>
+<span class="kn">from</span> <span class="nn">papi.gui.plugin_api</span> <span class="kn">import</span> <span class="n">Plugin_api</span>
+<span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
+<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
+<span class="kn">from</span> <span class="nn">papi.event.event_base</span> <span class="kn">import</span> <span class="n">PapiEventBase</span>
+<span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
+<span class="kn">from</span> <span class="nn">papi.yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
-<span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">QtCore</span>
-
+<span class="kn">from</span> <span class="nn">papi.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Stefan&#39;</span>
 
 
 <div class="viewcode-block" id="GuiEventProcessing"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing">[docs]</a><span class="k">class</span> <span class="nc">GuiEventProcessing</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class will do all the event handling for a GUI process. It should be created and initialized with database and</span>
+<span class="sd">    queues.</span>
+<span class="sd">    To get all the functionality, one should link the callback functions (slots) for the needed signals.</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">added_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
     <span class="n">removed_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
     <span class="n">dgui_changed</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+    <span class="n">plugin_died</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_data</span><span class="p">,</span> <span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">gui_queue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Init for eventProcessing</span>
+
+<span class="sd">        :param gui_data:    Data object for all the plugin data</span>
+<span class="sd">        :type gui_data: DGui</span>
+<span class="sd">        :param core_queue:  multiprocessing queue for process interaction with core process</span>
+<span class="sd">        :type core_queue: multiprocessing.Queue</span>
+<span class="sd">        :param gui_id: id of gui process</span>
+<span class="sd">        :type gui_id: int</span>
+<span class="sd">        :param gui_queue:  multiprocessing queue for process interaction with gui process</span>
+<span class="sd">        :type gui_queue: multiprocessing.Queue</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GuiEventProcessing</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span> <span class="o">=</span> <span class="n">gui_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span> <span class="o">=</span> <span class="n">core_queue</span>
@@ -118,17 +131,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span> <span class="o">=</span> <span class="n">gui_queue</span>
 
         <span class="c"># switch case for event processing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process_event</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;new_data&#39;</span><span class="p">:</span>             <span class="bp">self</span><span class="o">.</span><span class="n">process_new_data_event</span><span class="p">,</span>
-                                <span class="s">&#39;close_programm&#39;</span><span class="p">:</span>       <span class="bp">self</span><span class="o">.</span><span class="n">process_close_program_event</span><span class="p">,</span>
-                                <span class="s">&#39;check_alive_status&#39;</span><span class="p">:</span>   <span class="bp">self</span><span class="o">.</span><span class="n">process_check_alive_status</span><span class="p">,</span>
-                                <span class="s">&#39;create_plugin&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">process_create_plugin</span><span class="p">,</span>
-                                <span class="s">&#39;update_meta&#39;</span><span class="p">:</span>          <span class="bp">self</span><span class="o">.</span><span class="n">process_update_meta</span><span class="p">,</span>
-                                <span class="s">&#39;plugin_closed&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">process_plugin_closed</span><span class="p">,</span>
-                                <span class="s">&#39;set_parameter&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">process_set_parameter</span><span class="p">,</span>
-                                <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">process_pause_plugin</span><span class="p">,</span>
-                                <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span>        <span class="bp">self</span><span class="o">.</span><span class="n">process_resume_plugin</span><span class="p">,</span>
-                                <span class="s">&#39;stop_plugin&#39;</span><span class="p">:</span>          <span class="bp">self</span><span class="o">.</span><span class="n">process_stop_plugin</span><span class="p">,</span>
-                                <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span>         <span class="bp">self</span><span class="o">.</span><span class="n">process_start_plugin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_event</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;new_data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_new_data_event</span><span class="p">,</span>
+                              <span class="s">&#39;close_programm&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_close_program_event</span><span class="p">,</span>
+                              <span class="s">&#39;check_alive_status&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_check_alive_status</span><span class="p">,</span>
+                              <span class="s">&#39;create_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_create_plugin</span><span class="p">,</span>
+                              <span class="s">&#39;update_meta&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_update_meta</span><span class="p">,</span>
+                              <span class="s">&#39;plugin_closed&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_plugin_closed</span><span class="p">,</span>
+                              <span class="s">&#39;set_parameter&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_set_parameter</span><span class="p">,</span>
+                              <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_pause_plugin</span><span class="p">,</span>
+                              <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_resume_plugin</span><span class="p">,</span>
+                              <span class="s">&#39;stop_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_stop_plugin</span><span class="p">,</span>
+                              <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_start_plugin</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="GuiEventProcessing.gui_working"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.gui_working">[docs]</a>    <span class="k">def</span> <span class="nf">gui_working</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">close_mock</span><span class="p">):</span>
@@ -137,14 +150,14 @@
 <span class="sd">         Will process all events of the queue at the time of call.</span>
 <span class="sd">         Procedure was built this way, so that the processing of an event is not covered by the try/except structure.</span>
 
-<span class="sd">         :type event: PapiEvent</span>
+<span class="sd">         :type event: PapiEventBase</span>
 <span class="sd">         :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># event flag, true for first loop iteration to enter loop</span>
         <span class="n">isEvent</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="c"># event object, if there is an event</span>
         <span class="n">event</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">while</span><span class="p">(</span><span class="n">isEvent</span><span class="p">):</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">isEvent</span><span class="p">):</span>
             <span class="c"># look at queue and try to get a new element</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
@@ -155,17 +168,16 @@
                 <span class="n">isEvent</span> <span class="o">=</span> <span class="bp">False</span>
 
             <span class="c"># check if there was a new element to process it</span>
-            <span class="k">if</span><span class="p">(</span><span class="n">isEvent</span><span class="p">):</span>
-                                <span class="c"># get the event operation</span>
+            <span class="k">if</span> <span class="n">isEvent</span><span class="p">:</span>
+                <span class="c"># get the event operation</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">()</span>
                 <span class="c"># debug out</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Event: &#39;</span> <span class="o">+</span> <span class="n">op</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Event: &#39;</span> <span class="o">+</span> <span class="n">op</span><span class="p">)</span>
                 <span class="c"># process this event</span>
                 <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;test_close&#39;</span><span class="p">:</span>
                     <span class="n">close_mock</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">process_event</span><span class="p">[</span><span class="n">op</span><span class="p">](</span><span class="n">event</span><span class="p">)</span>
-
 
         <span class="c"># after the loop ended, which means that there are no more new events, a new timer will be created to start</span>
         <span class="c"># this method again in a specific time</span>
@@ -177,11 +189,11 @@
 <span class="sd">        with the new data.</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># debug print</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;new data event&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;new data event&#39;</span><span class="p">)</span>
         <span class="c"># get list of destination IDs</span>
         <span class="n">dID_list</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
         <span class="c"># get optional data of event</span>
@@ -195,13 +207,21 @@
                 <span class="c"># it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">PLUGIN_STATE_PAUSE</span> <span class="ow">and</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">:</span>
                     <span class="c"># check if new_data is a parameter or new raw data</span>
-                    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">demux</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                                <span class="n">Data</span><span class="o">=</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">demux</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
+                                <span class="n">block_name</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                        <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># plugin does not exist in DGUI</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;new_data, Plugin with id  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  does not exist in DGui&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;new_data, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist in DGui&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_plugin_closed"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_plugin_closed">[docs]</a>    <span class="k">def</span> <span class="nf">process_plugin_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -209,7 +229,7 @@
 <span class="sd">        Gui now knows, that a plugin was closed by core and needs to update its DGui data base</span>
 
 <span class="sd">        :param event:</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
@@ -217,36 +237,61 @@
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                    <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span> <span class="o">==</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NO_ERROR</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;plugin_closed, Plugin with id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; was removed in GUI&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;plugin_closed, Plugin with id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; was removed in GUI&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">removed_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;plugin_closed, Plugin with id: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; was NOT removed in GUI&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;plugin_closed, Plugin with id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; was NOT removed in GUI&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_stop_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_stop_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_stop_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes plugin_stop events.</span>
+<span class="sd">        Quit plugin, emit DPlugin was removed -&gt; necessary signal for the GUI.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">removed_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_start_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_start_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_start_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes plugin_start event.</span>
+<span class="sd">        Used to start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_START_FAILED</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">added_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_START_FAILED</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
-
-
-
 
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_create_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_create_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_create_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -255,7 +300,7 @@
 <span class="sd">        Gui now needs to add a new plugin to DGUI and decide whether it is a plugin running in the GUI process or not.</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get optional data: the plugin id, identifier and uname</span>
@@ -267,7 +312,8 @@
         <span class="n">config</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_config</span>
 
         <span class="c"># debug print</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;create_plugin, Try to create plugin with Name  &#39;</span><span class="o">+</span><span class="n">plugin_identifier</span><span class="o">+</span> <span class="s">&quot; and UName &quot;</span> <span class="o">+</span> <span class="n">uname</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span>
+                           <span class="s">&#39;create_plugin, Try to create plugin with Name  &#39;</span> <span class="o">+</span> <span class="n">plugin_identifier</span> <span class="o">+</span> <span class="s">&quot; and UName &quot;</span> <span class="o">+</span> <span class="n">uname</span><span class="p">)</span>
 
         <span class="c"># collect plugin in folder for yapsy manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">collectPlugins</span><span class="p">()</span>
@@ -277,7 +323,8 @@
         <span class="c"># check for existance</span>
         <span class="k">if</span> <span class="n">plugin_orginal</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c"># plugin with given identifier does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;create_plugin, Plugin with Name  &#39;</span> <span class="o">+</span> <span class="n">plugin_identifier</span> <span class="o">+</span> <span class="s">&#39;  does not exist in file system&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="s">&#39;create_plugin, Plugin with Name  &#39;</span> <span class="o">+</span> <span class="n">plugin_identifier</span> <span class="o">+</span> <span class="s">&#39;  does not exist in file system&#39;</span><span class="p">)</span>
             <span class="c"># end function</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
@@ -293,54 +340,68 @@
         <span class="n">plugin</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">current_modul</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
         <span class="c"># get default startup configuration for merge with user defined startup_configuration</span>
         <span class="n">start_config</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">start_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">start_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
         <span class="c"># check if plugin in ViP (includes pcp) or something which is not running in the gui process</span>
         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
             <span class="c"># plugin in running in gui process</span>
             <span class="c"># add a new dplugin object to DGui and set its type and uname</span>
-            <span class="n">dplugin</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span><span class="n">plugin</span><span class="p">,</span><span class="nb">id</span><span class="p">)</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_type</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin_identifier</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">config</span>
             <span class="c"># call the init function of plugin and set queues and id</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">api</span> <span class="o">=</span> <span class="n">Plugin_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; API:&#39;</span><span class="p">)</span>
+
 
             <span class="c"># call the plugin developers init function with config</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="c">#start succcessfull</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartSuccessfull</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartFailed</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span>
+                                           <span class="n">dpluginInfo</span><span class="o">=</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="c"># start succcessfull</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartSuccessfull</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartFailed</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
-            <span class="c"># first set meta to plugin (meta infos in plugin)</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                <span class="c"># first set meta to plugin (meta infos in plugin)</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">PLUGIN_STATE_STOPPED</span><span class="p">]:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
+                <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+
+
 
             <span class="c"># debug print</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;create_plugin, Plugin with name  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  was started as ViP&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;create_plugin, Plugin with name  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  was started as ViP&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin will not be running in gui process, so we just need to add information to DGui</span>
             <span class="c"># so add a new dplugin to DGUI and set name und type</span>
-            <span class="n">dplugin</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="n">plugin</span><span class="p">,</span><span class="nb">id</span><span class="p">)</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin_identifier</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_config</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_type</span>
             <span class="c"># debug print</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;create_plugin, Plugin with name  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  was added as non ViP&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;create_plugin, Plugin with name  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  was added as non ViP&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">added_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_close_program_event"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_close_program_event">[docs]</a>    <span class="k">def</span> <span class="nf">process_close_program_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes close programm event.</span>
+<span class="sd">        Nothing important happens.</span>
 
 <span class="sd">         :param event: event to process</span>
-<span class="sd">         :type event: PapiEvent</span>
+<span class="sd">         :type event: PapiEventBase</span>
 <span class="sd">         :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;event: close_progam was received but there is no action for it&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;event: close_progam was received but there is no action for it&#39;</span><span class="p">)</span>
         <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_check_alive_status"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_check_alive_status">[docs]</a>    <span class="k">def</span> <span class="nf">process_check_alive_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -348,11 +409,11 @@
 <span class="sd">        Gui received check_alive request form core, so gui will respond to it</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># send event from GUI to Core</span>
-        <span class="n">event</span> <span class="o">=</span> <span class="n">PapiEvent</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;status_event&#39;</span><span class="p">,</span><span class="s">&#39;alive&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">Alive</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_update_meta"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_update_meta">[docs]</a>    <span class="k">def</span> <span class="nf">process_update_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -360,7 +421,7 @@
 <span class="sd">        Core sent new meta information of an existing plugin. This function will update DGui with these information</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get information of event</span>
@@ -376,21 +437,29 @@
             <span class="n">dplugin</span><span class="o">.</span><span class="n">update_meta</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_object</span><span class="p">)</span>
             <span class="c"># check if plugin runs in gui to update its copy of meta informations</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">PLUGIN_STATE_STOPPED</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
+                        <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                        <span class="c"># self.plugin_died.emit(dplugin, E, tb)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;update_meta, Plugin with id  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  does not exist&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;update_meta, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="GuiEventProcessing.process_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">process_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="GuiEventProcessing.process_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">process_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes set_parameter event.</span>
+<span class="sd">        Used to handle parameter sets by the gui or other plugins.</span>
 
 <span class="sd">        :param event:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># debug print</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;set parameter event&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;set parameter event&#39;</span><span class="p">)</span>
 
         <span class="n">dID</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
         <span class="c"># get optional data of event</span>
@@ -405,14 +474,14 @@
             <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist in DGUI</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;set_parameter, Plugin with id  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;  does not exist in DGui&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;set_parameter, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist in DGui&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_pause_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_pause_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_pause_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Core sent event to pause a plugin in GUI, so call the pause function of this plugin</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
@@ -426,7 +495,7 @@
 <span class="sd">        Core sent event to resume a plugin in GUI, so call the resume function of this plugin</span>
 
 <span class="sd">        :param event: event to process</span>
-<span class="sd">        :type event: PapiEvent</span>
+<span class="sd">        :type event: PapiEventBase</span>
 <span class="sd">        :type dplugin: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
@@ -472,7 +541,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

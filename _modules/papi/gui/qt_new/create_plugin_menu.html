@@ -8,7 +8,7 @@
     
     <title>papi.gui.qt_new.create_plugin_menu &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -74,18 +74,18 @@
 <span class="sd">Contributors</span>
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">papi.gui.qt_new.item</span> <span class="kn">import</span> <span class="n">PaPITreeItem</span><span class="p">,</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span>
+<span class="kn">from</span> <span class="nn">papi.gui.qt_new.item</span> <span class="kn">import</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span>
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.item</span> <span class="kn">import</span> <span class="n">PluginTreeItem</span>
+<span class="kn">from</span> <span class="nn">papi.yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
 <span class="kn">from</span> <span class="nn">papi.ui.gui.qt_new.create</span> <span class="kn">import</span> <span class="n">Ui_Create</span>
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.create_plugin_dialog</span> <span class="kn">import</span> <span class="n">CreatePluginDialog</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QStandardItemModel</span>
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span>
 
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_ROOT_FOLDER_LIST</span>
 <span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="kn">from</span> <span class="nn">yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 
 
 <div class="viewcode-block" id="CreatePluginMenu"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu">[docs]</a><span class="k">class</span> <span class="nc">CreatePluginMenu</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_Create</span><span class="p">):</span>
@@ -115,6 +115,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setSortingEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;ViP&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;IOP&#39;</span><span class="p">)</span>
@@ -133,7 +134,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span> <span class="o">=</span> <span class="n">CreatePluginDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">)</span>
 
+<div class="viewcode-block" id="CreatePluginMenu.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Enter</span><span class="p">:</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">()</span>
+
+</div>
 <div class="viewcode-block" id="CreatePluginMenu.pluginItemChanged"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.pluginItemChanged">[docs]</a>    <span class="k">def</span> <span class="nf">pluginItemChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
 
@@ -179,6 +187,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
             <span class="k">if</span> <span class="s">&#39;/pcp/&#39;</span> <span class="ow">in</span> <span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.clear"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nameEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
@@ -187,8 +200,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pathEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.closeEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
-</pre></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div></div></div>
 
           </div>
         </div>
@@ -226,7 +239,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

@@ -8,7 +8,7 @@
     
     <title>papi.gui.qt_new.create_plugin_dialog &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -74,20 +74,17 @@
 <span class="sd">Contributors</span>
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">papi.gui.qt_new.item</span> <span class="kn">import</span> <span class="n">PaPITreeItem</span><span class="p">,</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QRegExpValidator</span><span class="p">,</span> <span class="n">QCheckBox</span>
+<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
+
 <span class="kn">from</span> <span class="nn">papi.ui.gui.qt_new.create_dialog</span> <span class="kn">import</span> <span class="n">Ui_CreatePluginDialog</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QFormLayout</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QRegExpValidator</span><span class="p">,</span> <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QFileDialog</span>
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.custom</span> <span class="kn">import</span> <span class="n">FileLineEdit</span>
 
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_ROOT_FOLDER_LIST</span>
-<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">import</span> <span class="nn">PySide</span>
-<span class="kn">from</span> <span class="nn">yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
-<span class="kn">import</span> <span class="nn">operator</span>
 
 <div class="viewcode-block" id="CreatePluginDialog"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_dialog.CreatePluginDialog">[docs]</a><span class="k">class</span> <span class="nc">CreatePluginDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_CreatePluginDialog</span><span class="p">):</span>
 
@@ -97,6 +94,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configuration_inputs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span> <span class="o">=</span> <span class="n">gui_api</span>
+
 
 <div class="viewcode-block" id="CreatePluginDialog.set_plugin"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_dialog.CreatePluginDialog.set_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">set_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin</span><span class="p">):</span>
         <span class="n">startup_config</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span>
@@ -157,7 +155,9 @@
             <span class="k">if</span> <span class="s">&#39;display_text&#39;</span> <span class="ow">in</span> <span class="n">startup_config</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">display_text</span> <span class="o">=</span> <span class="n">startup_config</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">][</span><span class="s">&#39;display_text&#39;</span><span class="p">]</span>
 
-            <span class="n">uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_name</span><span class="p">)</span>
+            <span class="n">uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_change_string_to_be_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_name</span><span class="p">)</span>
+            <span class="n">uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span>
+
 
             <span class="n">editable_field</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
             <span class="n">editable_field</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span>
@@ -247,9 +247,10 @@
         <span class="c"># self.configuration_inputs[&#39;uname&#39;].setFocus()</span>
 </div>
 <div class="viewcode-block" id="CreatePluginDialog.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_dialog.CreatePluginDialog.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Enter</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;pressed enter&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Enter</span><span class="p">:</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="CreatePluginDialog.clear_layout"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_dialog.CreatePluginDialog.clear_layout">[docs]</a>    <span class="k">def</span> <span class="nf">clear_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
         <span class="k">while</span> <span class="n">layout</span><span class="o">.</span><span class="n">count</span><span class="p">():</span>
@@ -296,7 +297,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

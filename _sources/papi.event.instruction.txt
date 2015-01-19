@@ -76,6 +76,14 @@ papi.event.instruction.Unsubscribe module
     :undoc-members:
     :show-inheritance:
 
+papi.event.instruction.UpdateMeta module
+----------------------------------------
+
+.. automodule:: papi.event.instruction.UpdateMeta
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.event.instruction.startPlugin module
 -----------------------------------------
 

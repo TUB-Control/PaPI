@@ -8,7 +8,7 @@
     
     <title>papi.tests.TestCoreMock &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -50,20 +50,14 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;stefan&#39;</span>
 
 <span class="kn">import</span> <span class="nn">unittest</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
-<span class="kn">import</span> <span class="nn">time</span>
-
 <span class="kn">from</span> <span class="nn">papi.data.DGui</span> <span class="kn">import</span> <span class="n">DGui</span>
 <span class="kn">from</span> <span class="nn">papi.core</span> <span class="kn">import</span> <span class="n">Core</span>
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.main</span> <span class="kn">import</span> <span class="n">startGUI_TESTMOCK</span>
 
 <span class="kn">from</span> <span class="nn">papi.gui.gui_api</span> <span class="kn">import</span> <span class="n">Gui_api</span>
-<span class="kn">from</span> <span class="nn">papi.gui.gui_event_processing</span> <span class="kn">import</span> <span class="n">GuiEventProcessing</span>
-<span class="kn">from</span> <span class="nn">papi.PapiEvent</span> <span class="kn">import</span> <span class="n">PapiEvent</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Queue</span>
 <span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">const</span>
-<span class="kn">from</span> <span class="nn">pyqtgraph</span> <span class="kn">import</span> <span class="n">QtCore</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 
@@ -80,7 +74,7 @@
 
 <div class="viewcode-block" id="TestCoreMock.test_create_plugin_sub"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_create_plugin_sub">[docs]</a>    <span class="k">def</span> <span class="nf">test_create_plugin_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># create a Plot and Sinus plugin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;PlotPerformance&#39;</span><span class="p">,</span><span class="s">&#39;Plot1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;Plot&#39;</span><span class="p">,</span><span class="s">&#39;Plot1&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;Sinus&#39;</span><span class="p">,</span><span class="s">&#39;Sin1&#39;</span><span class="p">)</span>
 
 
@@ -103,7 +97,7 @@
 <div class="viewcode-block" id="TestCoreMock.test_do_create_api"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_do_create_api">[docs]</a>    <span class="k">def</span> <span class="nf">test_do_create_api</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;PlotPerformance&#39;</span><span class="p">,</span><span class="s">&#39;Plot1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;Plot&#39;</span><span class="p">,</span><span class="s">&#39;Plot1&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="s">&#39;Sinus&#39;</span><span class="p">,</span><span class="s">&#39;Sin1&#39;</span><span class="p">)</span>
 
 
@@ -143,7 +137,7 @@
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_delete_plugin_is_VIP_PCP"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_delete_plugin_is_VIP_PCP">[docs]</a>    <span class="k">def</span> <span class="nf">test_delete_plugin_is_VIP_PCP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">PL_1_NAME</span> <span class="o">=</span> <span class="s">&#39;Plot1&#39;</span>
-        <span class="n">PL_1_IDENT</span> <span class="o">=</span> <span class="s">&#39;PlotPerformance&#39;</span>
+        <span class="n">PL_1_IDENT</span> <span class="o">=</span> <span class="s">&#39;Plot&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">PL_1_IDENT</span><span class="p">,</span><span class="n">PL_1_NAME</span><span class="p">)</span>
 
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">TestCoreMock</span><span class="o">.</span><span class="n">DELAY_TIME</span><span class="p">)</span>
@@ -164,7 +158,7 @@
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_reset_papi_1"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_reset_papi_1">[docs]</a>    <span class="k">def</span> <span class="nf">test_reset_papi_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">PL_1_NAME</span> <span class="o">=</span> <span class="s">&#39;Plot1&#39;</span>
-        <span class="n">PL_1_IDENT</span> <span class="o">=</span> <span class="s">&#39;PlotPerformance&#39;</span>
+        <span class="n">PL_1_IDENT</span> <span class="o">=</span> <span class="s">&#39;Plot&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">PL_1_IDENT</span><span class="p">,</span><span class="n">PL_1_NAME</span><span class="p">)</span>
 
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">TestCoreMock</span><span class="o">.</span><span class="n">DELAY_TIME</span><span class="p">)</span>
@@ -185,7 +179,7 @@
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_reset_papi_2"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_reset_papi_2">[docs]</a>    <span class="k">def</span> <span class="nf">test_reset_papi_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Add1&#39;</span><span class="p">,</span> <span class="s">&#39;Add&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Butt&#39;</span><span class="p">,</span> <span class="s">&#39;Button&#39;</span><span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Add1&#39;</span><span class="p">,</span> <span class="s">&#39;Add&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Butt&#39;</span><span class="p">,</span> <span class="s">&#39;Button&#39;</span><span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -216,7 +210,7 @@
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_stopReset_iop"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_stopReset_iop">[docs]</a>    <span class="k">def</span> <span class="nf">test_stopReset_iop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Add1&#39;</span><span class="p">,</span> <span class="s">&#39;Add&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Butt&#39;</span><span class="p">,</span> <span class="s">&#39;Button&#39;</span><span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Add1&#39;</span><span class="p">,</span> <span class="s">&#39;Add&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Butt&#39;</span><span class="p">,</span> <span class="s">&#39;Button&#39;</span><span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -319,7 +313,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_test_name_to_be_unique</span><span class="p">(</span><span class="s">&#39;tt tt&#39;</span><span class="p">)</span> <span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_do_subscribe"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_do_subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">test_do_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span> <span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span> <span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -344,7 +338,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span><span class="n">dsub</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_do_unsubscribe"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_do_unsubscribe">[docs]</a>    <span class="k">def</span> <span class="nf">test_do_unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span> <span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span> <span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -377,7 +371,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subs</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_do_set_parameter"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">test_do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span> <span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span> <span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -409,7 +403,7 @@
                          <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="s">&#39;Sinus1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()[</span><span class="s">&#39;Frequenz Block SinMit_f3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TestCoreMock.test_pause_IOP"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.test_pause_IOP">[docs]</a>    <span class="k">def</span> <span class="nf">test_pause_IOP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;PlotPerformance&#39;</span> <span class="p">]</span> <span class="p">]</span>
+        <span class="n">Plugins</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[</span><span class="s">&#39;Sinus1&#39;</span><span class="p">,</span> <span class="s">&#39;Sinus&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Plot1&#39;</span><span class="p">,</span> <span class="s">&#39;Plot&#39;</span> <span class="p">]</span> <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -474,7 +468,7 @@
 </div>
 <div class="viewcode-block" id="TestCoreMock.tearDown"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestCoreMock.TestCoreMock.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># close Gui</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>  <span class="n">PapiEvent</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;instr_event&#39;</span><span class="p">,</span><span class="s">&#39;test_close&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>  <span class="p">)</span>
+
 
         <span class="c"># wait for close</span>
         <span class="c"># time.sleep(1)</span>
@@ -527,7 +521,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

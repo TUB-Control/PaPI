@@ -8,7 +8,7 @@
     
     <title>papi.plugin.base_classes.vip_base &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -79,6 +79,8 @@
 
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span>
 
+<span class="kn">from</span> <span class="nn">papi.pyqtgraph.Qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
 <div class="viewcode-block" id="vip_base"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base">[docs]</a><span class="k">class</span> <span class="nc">vip_base</span><span class="p">(</span><span class="n">base_visual</span><span class="p">):</span>
 
 <div class="viewcode-block" id="vip_base.initiate_layer_1"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.initiate_layer_1">[docs]</a>    <span class="k">def</span> <span class="nf">initiate_layer_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
@@ -88,7 +90,37 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="vip_base.get_type"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.get_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span></div></div>
+        <span class="k">return</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span>
+</div>
+<div class="viewcode-block" id="vip_base.create_control_context_menu"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.create_control_context_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_control_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctrlMenu</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="s">&quot;Control&quot;</span><span class="p">)</span>
+
+        <span class="n">del_action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Exit plugin&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">del_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctlrMenu_exit</span><span class="p">)</span>
+
+        <span class="n">pause_action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Pause plugin&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">pause_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctlrMenu_pause</span><span class="p">)</span>
+
+        <span class="n">resume_action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Resume plugin&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="n">resume_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctlrMenu_resume</span><span class="p">)</span>
+
+        <span class="n">subMenu_action</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Open Signal Manager&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="c">#subMenu_action.triggered.connect(self.ctlrMenu_resume)</span>
+
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">subMenu_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">resume_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">pause_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">del_action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctrlMenu</span>
+</div>
+<div class="viewcode-block" id="vip_base.ctlrMenu_exit"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_exit">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_delete_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="vip_base.ctlrMenu_pause"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_pause">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_pause_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="vip_base.ctlrMenu_resume"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_resume">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_resume_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -127,7 +159,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

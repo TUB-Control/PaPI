@@ -8,7 +8,7 @@
     
     <title>papi.plugin.base_classes package &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -62,27 +62,12 @@
 </div>
 <div class="section" id="module-papi.plugin.base_classes.base_plugin">
 <span id="papi-plugin-base-classes-base-plugin-module"></span><h2>papi.plugin.base_classes.base_plugin module<a class="headerlink" href="#module-papi.plugin.base_classes.base_plugin" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 Stefan Ruppin</p>
 <dl class="class">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin">
 <em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.base_plugin.</tt><tt class="descname">base_plugin</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">yapsy.IPlugin.IPlugin</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">papi.yapsy.IPlugin.IPlugin</span></tt></p>
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.create_new_block">
 <tt class="descname">create_new_block</tt><big>(</big><em>name</em>, <em>signalNames</em>, <em>types</em>, <em>frequency</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.create_new_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.create_new_block" title="Permalink to this definition">¶</a></dt>
@@ -160,12 +145,17 @@ Stefan Ruppin</p>
 
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_data">
-<tt class="descname">send_new_data</tt><big>(</big><em>time_line</em>, <em>data</em>, <em>block_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">send_new_data</tt><big>(</big><em>block_name</em>, <em>time_line</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old">
-<tt class="descname">send_new_data_old</tt><big>(</big><em>data</em>, <em>block_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data_old"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old1">
+<tt class="descname">send_new_data_old1</tt><big>(</big><em>data</em>, <em>block_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data_old1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old2">
+<tt class="descname">send_new_data_old2</tt><big>(</big><em>time_line</em>, <em>data</em>, <em>block_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data_old2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -198,21 +188,6 @@ Stefan Ruppin</p>
 </div>
 <div class="section" id="module-papi.plugin.base_classes.base_visual">
 <span id="papi-plugin-base-classes-base-visual-module"></span><h2>papi.plugin.base_classes.base_visual module<a class="headerlink" href="#module-papi.plugin.base_classes.base_visual" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 Stefan Ruppin</p>
 <dl class="class">
@@ -236,7 +211,7 @@ Stefan Ruppin</p>
 
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_visual.base_visual.init_plugin">
-<tt class="descname">init_plugin</tt><big>(</big><em>CoreQueue</em>, <em>pluginQueue</em>, <em>id</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.init_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.init_plugin" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">init_plugin</tt><big>(</big><em>CoreQueue</em>, <em>pluginQueue</em>, <em>id</em>, <em>control_api</em>, <em>dpluginInfo=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.init_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.init_plugin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -274,21 +249,6 @@ Stefan Ruppin</p>
 </div>
 <div class="section" id="module-papi.plugin.base_classes.dpp_base">
 <span id="papi-plugin-base-classes-dpp-base-module"></span><h2>papi.plugin.base_classes.dpp_base module<a class="headerlink" href="#module-papi.plugin.base_classes.dpp_base" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 &lt;Stefan Ruppin</p>
 <dl class="class">
@@ -315,21 +275,6 @@ along with PaPI.  If not, see &lt;<a class="reference external" href="http://www
 </div>
 <div class="section" id="module-papi.plugin.base_classes.iop_base">
 <span id="papi-plugin-base-classes-iop-base-module"></span><h2>papi.plugin.base_classes.iop_base module<a class="headerlink" href="#module-papi.plugin.base_classes.iop_base" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 &lt;Stefan Ruppin</p>
 <dl class="class">
@@ -356,21 +301,6 @@ along with PaPI.  If not, see &lt;<a class="reference external" href="http://www
 </div>
 <div class="section" id="module-papi.plugin.base_classes.ownProcess_base">
 <span id="papi-plugin-base-classes-ownprocess-base-module"></span><h2>papi.plugin.base_classes.ownProcess_base module<a class="headerlink" href="#module-papi.plugin.base_classes.ownProcess_base" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 &lt;Stefan Ruppin</p>
 <dl class="class">
@@ -397,21 +327,6 @@ along with PaPI.  If not, see &lt;<a class="reference external" href="http://www
 </div>
 <div class="section" id="module-papi.plugin.base_classes.pcp_base">
 <span id="papi-plugin-base-classes-pcp-base-module"></span><h2>papi.plugin.base_classes.pcp_base module<a class="headerlink" href="#module-papi.plugin.base_classes.pcp_base" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 Stefan Ruppin
 Sven Knuth</p>
@@ -439,27 +354,32 @@ Sven Knuth</p>
 </div>
 <div class="section" id="module-papi.plugin.base_classes.vip_base">
 <span id="papi-plugin-base-classes-vip-base-module"></span><h2>papi.plugin.base_classes.vip_base module<a class="headerlink" href="#module-papi.plugin.base_classes.vip_base" title="Permalink to this headline">¶</a></h2>
-<p>Copyright (C) 2014 Technische Universität Berlin,
-Fakultät IV - Elektrotechnik und Informatik,
-Fachgebiet Regelungssysteme,
-Einsteinufer 17, D-10587 Berlin, Germany</p>
-<p>This file is part of PaPI.</p>
-<p>PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>PaPI is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with PaPI.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
 <p>Contributors:
 Stefan Ruppin</p>
 <dl class="class">
 <dt id="papi.plugin.base_classes.vip_base.vip_base">
 <em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.vip_base.</tt><tt class="descname">vip_base</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_visual.base_visual" title="papi.plugin.base_classes.base_visual.base_visual"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_visual.base_visual</span></tt></a></p>
+<dl class="method">
+<dt id="papi.plugin.base_classes.vip_base.vip_base.create_control_context_menu">
+<tt class="descname">create_control_context_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.create_control_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.create_control_context_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_exit">
+<tt class="descname">ctlrMenu_exit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.ctlrMenu_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_exit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_pause">
+<tt class="descname">ctlrMenu_pause</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.ctlrMenu_pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_pause" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_resume">
+<tt class="descname">ctlrMenu_resume</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.ctlrMenu_resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.ctlrMenu_resume" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="papi.plugin.base_classes.vip_base.vip_base.get_type">
 <tt class="descname">get_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.get_type" title="Permalink to this definition">¶</a></dt>
@@ -554,7 +474,7 @@ Stefan Ruppin</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

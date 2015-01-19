@@ -8,7 +8,7 @@
     
     <title>papi.data.DCore &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -74,18 +74,24 @@
 <span class="sd">Contributors</span>
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
 
 <span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;control&#39;</span>
-
-<span class="kn">import</span> <span class="nn">copy</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuth&#39;</span>
 
 
 <div class="viewcode-block" id="DCore"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore">[docs]</a><span class="k">class</span> <span class="nc">DCore</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DCore contains and manages the internal data structure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to initialize this object. An empty dictionary of DPlugin is created</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__DPlugins</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">=</span> <span class="mi">0</span>
@@ -93,9 +99,9 @@
 
 <div class="viewcode-block" id="DCore.create_id"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore.create_id">[docs]</a>    <span class="k">def</span> <span class="nf">create_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates and returns random unique 64 bit integer</span>
+<span class="sd">        Creates and returns unique IDs</span>
 
-<span class="sd">        :returns: 64bit random integer</span>
+<span class="sd">        :returns: unique ID</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -191,22 +197,24 @@
                 <span class="k">return</span> <span class="n">d_pl</span>
 
         <span class="k">return</span> <span class="bp">None</span>
-
 </div>
 <div class="viewcode-block" id="DCore.get_all_plugins"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore.get_all_plugins">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary of all known dplugins</span>
 
 <span class="sd">        :return:</span>
+<span class="sd">        :rtype: {}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__DPlugins</span>
 </div>
 <div class="viewcode-block" id="DCore.subscribe"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to create a subscription.</span>
 
 <span class="sd">        :param subscriber_id: DPlugin which likes to subscribes dblock</span>
 <span class="sd">        :param target_id: DPlugin which contains the dblock for subscribtion</span>
-<span class="sd">        :param dblock_name: DBlock for subscribtion</span>
+<span class="sd">        :param dblock_name: DBlock identified by its unique name for subscribtion</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -247,10 +255,11 @@
 </div>
 <div class="viewcode-block" id="DCore.unsubscribe"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore.unsubscribe">[docs]</a>    <span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to remove a subscription.</span>
 
 <span class="sd">        :param subscriber_id: DPlugin which likes to unsubscribes dblock</span>
 <span class="sd">        :param target_id: DPlugin which contains the dblock for subscribtion</span>
-<span class="sd">        :param dblock_name: DBlock for unsubscribtion</span>
+<span class="sd">        :param dblock_name: DBlock identified by its unique name for unsubscribtion</span>
 <span class="sd">        :return:</span>
 <span class="sd">        :rtype boolean:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -274,7 +283,7 @@
 
         <span class="c">#Destroy relation between DPlugin and DBlock</span>
         <span class="k">if</span> <span class="n">subscriber</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Subscriber &quot;</span> <span class="o">+</span> <span class="n">subscriber_id</span> <span class="o">+</span> <span class="s">&quot; has already unsubscribed &quot;</span> <span class="o">+</span> <span class="n">dblock_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Subscriber &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; has already unsubscribed &quot;</span> <span class="o">+</span> <span class="n">dblock_name</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">False</span>
 
         <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">rm_subscriber</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
@@ -287,15 +296,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is used to cancel all subscription of the DPlugin with the dplugin_id.</span>
 
-<span class="sd">        :param dplugin_id:</span>
+<span class="sd">        :param dplugin_id: dplugin identifed by dplugin_id whose subscription should be canceled.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dplugin_id</span><span class="p">)</span>
 
-
         <span class="n">subscribtion_ids</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
 
         <span class="c">#Iterate over all DPlugins, which own a subscribed DBlock</span>
         <span class="k">for</span> <span class="n">sub_id</span> <span class="ow">in</span> <span class="n">subscribtion_ids</span><span class="p">:</span>
@@ -320,7 +327,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is used to remove all subscribers of all DBlocks, which are hold by the DPlugin with the dplugin_id.</span>
 
-<span class="sd">        :param dplugin_id:</span>
+<span class="sd">        :param dplugin_id: dplugin identifed by dplugin_id whose subscribers should be removed.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -351,7 +358,7 @@
 
 <span class="sd">        :param subscriber_id: DPlugin which likes to subscribes signals of the chosen  dblock</span>
 <span class="sd">        :param target_id: DPlugin which contains the dblock for subscribtion</span>
-<span class="sd">        :param dblock_name: DBlock for subscribtion</span>
+<span class="sd">        :param dblock_name: DBlock identified by its unique name for subscribtion</span>
 <span class="sd">        :param signals: List of signals which are needed to be added</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -386,7 +393,7 @@
 
 <span class="sd">        :param subscriber_id: DPlugin which likes to unsubscribes signals of the chosen dblock</span>
 <span class="sd">        :param target_id: DPlugin which contains the dblock for subscribtion</span>
-<span class="sd">        :param dblock_name: DBlock for subscribtion</span>
+<span class="sd">        :param dblock_name: DBlock identified by its unique name for subscribtion</span>
 <span class="sd">        :param signals: List of signals which are needed to be added</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -465,7 +472,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

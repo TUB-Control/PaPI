@@ -8,7 +8,7 @@
     
     <title>papi.gui.qt_new.item &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -77,14 +77,12 @@
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QStandardItemModel</span>
-<span class="c"># from PySide.QtCore import QStandardItemModel</span>
-
-
 
 <span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
+
 <span class="c"># ------------------------------------</span>
 <span class="c"># Item Object</span>
 <span class="c"># ------------------------------------</span>
@@ -94,8 +92,6 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span>  <span class="n">name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PaPITreeItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="nb">object</span>
-        <span class="c"># self.setEditable(False)</span>
-        <span class="c"># self.setSelectable(False)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;Plugin: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
@@ -153,12 +149,12 @@
         <span class="k">return</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="PaPIRootItem.clean"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.PaPIRootItem.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called to remove all rows which contain an item marked as &#39;deleted&#39;.</span>
 <span class="sd">        This only works with items having an state-attribute e.g. DPlugin.</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &#39;&#39;&#39;</span>
 
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
             <span class="n">treeItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">treeItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -166,6 +162,20 @@
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;deleted&#39;</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PaPIRootItem.hasItem"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.PaPIRootItem.hasItem">[docs]</a>    <span class="k">def</span> <span class="nf">hasItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sItem</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to check if an item is already part of this Tree</span>
+
+<span class="sd">        :param sItem: Searched for this item</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="n">treeItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">treeItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">sItem</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">True</span>
 
 <span class="c"># ------------------------------------</span>
 <span class="c"># Model Objects</span>
@@ -222,6 +232,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">DParameterTreeItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dparameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dparameter</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dparameter</span> <span class="o">=</span> <span class="n">dparameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="n">dparameter</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="DParameterTreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DParameterTreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">None</span>
@@ -233,8 +244,49 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span> <span class="o">=</span> <span class="n">dblock</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;DBlock: &quot;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="DBlockTreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+</div></div>
+<div class="viewcode-block" id="DSignalTreeItem"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DSignalTreeItem">[docs]</a><span class="k">class</span> <span class="nc">DSignalTreeItem</span><span class="p">(</span><span class="n">PaPITreeItem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">dsignal</span><span class="p">:</span> <span class="n">DSignal</span><span class="p">,</span> <span class="n">check_box</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DSignalTreeItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dsignal</span><span class="p">,</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dsignal</span> <span class="o">=</span> <span class="n">dsignal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;InternalName: &quot;</span> <span class="o">+</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_box</span> <span class="o">=</span> <span class="n">check_box</span>
+
+<div class="viewcode-block" id="DSignalTreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DSignalTreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DSignalTreeItem.data"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DSignalTreeItem.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For Qt.Role see &#39;http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum&#39;</span>
+<span class="sd">        :param role:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DecorationRole</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_decoration</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
+
         <span class="k">return</span> <span class="bp">None</span>
 
 <span class="c"># ------------------------------------</span>
@@ -244,10 +296,11 @@
 </div></div>
 <div class="viewcode-block" id="PluginTreeModel"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.PluginTreeModel">[docs]</a><span class="k">class</span> <span class="nc">PluginTreeModel</span><span class="p">(</span><span class="n">PaPITreeModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This model is used to handle Plugin objects in TreeView create by the yapsy plugin manager.</span>
+<span class="sd">    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PluginTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="DPluginTreeModel"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DPluginTreeModel">[docs]</a><span class="k">class</span> <span class="nc">DPluginTreeModel</span><span class="p">(</span><span class="n">PaPITreeModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -322,6 +375,12 @@
         <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DParameterTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">index_sibling</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">sibling</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">dparameter</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DParameterTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index_sibling</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">dparameter</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="DParameterTreeModel.setData"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DParameterTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
@@ -360,9 +419,62 @@
 
 </div></div>
 <div class="viewcode-block" id="DBlockTreeModel"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeModel">[docs]</a><span class="k">class</span> <span class="nc">DBlockTreeModel</span><span class="p">(</span><span class="n">PaPITreeModel</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_box</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DBlockTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-</pre></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_box</span> <span class="o">=</span> <span class="n">check_box</span>
+
+<div class="viewcode-block" id="DBlockTreeModel.flags"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns the flags for a specific index.</span>
+
+<span class="sd">        For Qt.ItemFlags see &#39;http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum&#39;</span>
+<span class="sd">        :param index:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+
+        <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="k">return</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+
+</div>
+<div class="viewcode-block" id="DBlockTreeModel.setData"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is called when a content in a row is edited by the user.</span>
+
+<span class="sd">        :param index: Current selected index.</span>
+<span class="sd">        :param value: New value from user</span>
+<span class="sd">        :param role:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span>
+
+                <span class="n">dsignal</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DBlockTreeModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span><span class="p">:</span>
+                    <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">value</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">return</span> <span class="bp">False</span></div></div>
+</pre></div>
 
           </div>
         </div>
@@ -400,7 +512,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

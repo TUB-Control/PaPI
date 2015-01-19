@@ -8,7 +8,7 @@
     
     <title>papi.tests.TestDSubscription &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -80,6 +80,7 @@
 <span class="kn">import</span> <span class="nn">unittest</span>
 
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DSubscription</span>
+<span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
 <span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
 
 
@@ -89,26 +90,32 @@
         <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="TestDSusbcription.test_attach_signal"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDSubscription.TestDSusbcription.test_attach_signal">[docs]</a>    <span class="k">def</span> <span class="nf">test_attach_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">,[</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;f1_1&#39;</span><span class="p">])</span>
+        <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">)</span>
+        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">ds_2</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;f1_1&#39;</span><span class="p">)</span>
+        <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">)</span>
+        <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_2</span><span class="p">)</span>
 
-        <span class="n">subscription</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">attach_signal</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">ds_1</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">attach_signal</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="TestDSusbcription.test_remove_signal"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDSubscription.TestDSusbcription.test_remove_signal">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">,[</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;f1_1&#39;</span><span class="p">])</span>
+        <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">)</span>
+        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">)</span>
 
-        <span class="n">subscription</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
+        <span class="n">subscription</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">rm_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">remove_signal</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="n">ds_1</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">attach_signal</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">))</span></div></div>
 </pre></div>
 
           </div>
@@ -147,7 +154,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

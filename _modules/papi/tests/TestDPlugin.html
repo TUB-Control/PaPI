@@ -8,7 +8,7 @@
     
     <title>papi.tests.TestDPlugin &mdash; papi  documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -94,10 +94,13 @@
         <span class="n">dpl_2</span> <span class="o">=</span> <span class="n">DPlugin</span><span class="p">()</span>
         <span class="n">dpl_2</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">2</span>
 
-        <span class="n">dbl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dpl_2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;DBlock1&#39;</span><span class="p">)</span>
+        <span class="n">dbl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;DBlock1&#39;</span><span class="p">)</span>
         <span class="n">dbl_1</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="n">dbl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dpl_2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;DBlock2&#39;</span><span class="p">)</span>
+        <span class="n">dbl_1</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="n">dpl_2</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="n">dbl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;DBlock2&#39;</span><span class="p">)</span>
         <span class="n">dbl_2</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">dbl_2</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="n">dpl_2</span><span class="o">.</span><span class="n">id</span>
 
         <span class="n">dpl_2</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">dbl_1</span><span class="p">)</span>
         <span class="n">dpl_2</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">dbl_2</span><span class="p">)</span>
@@ -151,9 +154,11 @@
         <span class="n">dpl_1</span> <span class="o">=</span> <span class="n">DPlugin</span><span class="p">()</span>
         <span class="n">dpl_1</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="n">dbl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dpl_1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">dbl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">dbl_1</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="n">dpl_1</span><span class="o">.</span><span class="n">id</span>
 
-        <span class="n">dbl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dpl_1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+        <span class="n">dbl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+        <span class="n">dbl_2</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="n">dpl_1</span><span class="o">.</span><span class="n">id</span>
 
         <span class="c">#check: add Parameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">dpl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">dbl_1</span><span class="p">))</span>
@@ -213,7 +218,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Author.
+        &copy; Copyright 2014, Control Systems, TU-Berlin.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
