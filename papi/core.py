@@ -61,7 +61,7 @@ class Core:
         Will create all data needed to use core and core.run() function
 
         .. document private functions
-        .. automethod:: _*
+        .. automethod:: __*
         """
         self.gui_start_function = gui_start_function
 
