@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2014 Technische Universit‰t Berlin,
-Fakult‰t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit√§t Berlin,
+Fakult√§t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
 
