@@ -29,13 +29,12 @@ Sven Knuth, Stefan Ruppin
 __author__ = 'knuths'
 
 import sys
-import time
 import os
 import traceback
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QThread, QUrl
+from PySide.QtCore              import QSize, Qt, QUrl
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -54,7 +53,7 @@ from papi.pyqtgraph import QtCore, QtGui
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-import cProfile
+
 import re
 
 # Enable antialiasing for prettier plots
