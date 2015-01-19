@@ -93,7 +93,7 @@
         <advanced>1</advanced>
       </Parameter>
       <Parameter Name="name">
-        <value>VisualPlugin</value>
+        <value>Sinus</value>
         <tooltip>Used for window title</tooltip>
       </Parameter>
       <Parameter Name="xRange">
@@ -207,7 +207,7 @@
         <advanced>1</advanced>
       </Parameter>
       <Parameter Name="name">
-        <value>VisualPlugin</value>
+        <value>Add</value>
         <tooltip>Used for window title</tooltip>
       </Parameter>
       <Parameter Name="xRange">
