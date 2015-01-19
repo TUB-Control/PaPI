@@ -84,8 +84,8 @@ GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
 GUI_WOKRING_INTERVAL            = 16 # in ms
 GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 
-GUI_DEFAULT_WIDTH               = 800
-GUI_DEFAULT_HEIGHT              = 800
+GUI_DEFAULT_WIDTH               = 771
+GUI_DEFAULT_HEIGHT              = 853
 
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
