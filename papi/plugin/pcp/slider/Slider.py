@@ -55,7 +55,7 @@ class Slider(pcp_base):
         self.slider.setMinimum(float(self.config['lower_bound']['value']))
         self.slider.setMaximum(float(self.config['upper_bound']['value']))
         self.slider.setSingleStep(float(self.config['step_size']['value']))
-        
+
         self.slider.setOrientation(QtCore.Qt.Horizontal)
 
         self.text_field = QLineEdit()
