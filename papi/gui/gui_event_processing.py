@@ -48,12 +48,31 @@ __author__ = 'Stefan'
 
 
 class GuiEventProcessing(QtCore.QObject):
+    """
+    This class will do all the event handling for a GUI process. It should be created and initialized with database and
+    queues.
+    To get all the functionality, one should link the callback functions (slots) for the needed signals.
+
+    """
     added_dplugin = QtCore.Signal(DPlugin)
     removed_dplugin = QtCore.Signal(DPlugin)
     dgui_changed = QtCore.Signal()
     plugin_died = QtCore.Signal(DPlugin, Exception, str)
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue):
+        """
+        Init for eventProcessing
+
+        :param gui_data:    Data object for all the plugin data
+        :type gui_data: DGui
+        :param core_queue:  multiprocessing queue for process interaction with core process
+        :type core_queue: multiprocessing.Queue
+        :param gui_id: id of gui process
+        :type gui_id: int
+        :param gui_queue:  multiprocessing queue for process interaction with gui process
+        :type gui_queue: multiprocessing.Queue
+        :return:
+        """
         super(GuiEventProcessing, self).__init__()
         self.gui_data = gui_data
         self.core_queue = core_queue
