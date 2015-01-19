@@ -830,15 +830,16 @@ class Plot(vip_base):
         :return {}:
         """
         config = {
-            'label_y': {
-                'value': "amplitude, V",
-                'regex': '\w+,\s+\w+',
-                'display_text': 'Label-Y'
-            }, 'label_x': {
-            'value': "time, s",
-            'regex': '\w+,\s*\w+',
-            'display_text': 'Label-X'
-        }, 'x-grid': {
+        #     'label_y': {
+        #         'value': "amplitude, V",
+        #         'regex': '\w+,\s+\w+',
+        #         'display_text': 'Label-Y'
+        #     }, 'label_x': {
+        #     'value': "time, s",
+        #     'regex': '\w+,\s*\w+',
+        #     'display_text': 'Label-X'
+        # },
+        'x-grid': {
             'value': "0",
             'regex': '^(1|0)$',
             'type': 'bool',
