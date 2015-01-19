@@ -39,9 +39,6 @@ from papi.data.DSignal import DSignal
 from papi.ConsoleLog import ConsoleLog
 from papi.data.DOptionalData import DOptionalData
 
-
-
-# import contants
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE, \
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
