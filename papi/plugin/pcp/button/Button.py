@@ -81,7 +81,12 @@ class Button(pcp_base):
         },"name": {
             'value' : "Button",
              'advanced' : '0'
-        }}
+        },'size': {
+                'value': "(150,50)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+        } }
         return config
 
     def plugin_meta_updated(self):
