@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2014 Technische Universit‰t Berlin,
-Fakult‰t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit√§t Berlin,
+Fakult√§t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
 
@@ -61,7 +61,7 @@ class Core:
         Will create all data needed to use core and core.run() function
 
         .. document private functions
-        .. automethod:: _*
+        .. automethod:: __*
         """
         self.gui_start_function = gui_start_function
 
