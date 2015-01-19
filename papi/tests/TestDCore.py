@@ -31,7 +31,8 @@ __author__ = 'knuths'
 import unittest
 
 from papi.data.DCore import DCore
-from papi.data.DCore import DPlugin, DBlock
+from papi.data.DCore import DPlugin
+from papi.data.DPlugin import DBlock
 
 
 class TestDCore(unittest.TestCase):
