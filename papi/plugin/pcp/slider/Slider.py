@@ -38,8 +38,8 @@ class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock('Parameter_1')
-        signal = DSignal('Parameter')
+        block = DBlock('SliderBlock')
+        signal = DSignal('SliderParameter1')
         block.add_signal(signal)
 
         self.send_new_block_list([block])
@@ -52,15 +52,16 @@ class Slider(pcp_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(100)
-        self.slider.setSingleStep(1)
-
+        self.slider.setMinimum(float(self.config['lower_bound']['value']))
+        self.slider.setMaximum(float(self.config['upper_bound']['value']))
+        self.slider.setSingleStep(float(self.config['step_size']['value']))
+        
         self.slider.setOrientation(QtCore.Qt.Horizontal)
 
         self.text_field = QLineEdit()
         self.text_field.setReadOnly(True)
-        self.text_field.text = self.config['default']['value']
+        self.text_field.setFixedWidth(50)
+
         self.layout = QHBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
@@ -69,9 +70,8 @@ class Slider(pcp_base):
         return self.central_widget
 
     def value_changed(self, change):
-        cur_value = change/100
-        self.text_field.setText(str(cur_value))
-        self.send_parameter_change(cur_value, 'Parameter_1', 'TESTALIAS')
+        self.text_field.setText(str(change))
+        self.send_parameter_change(change, 'SliderBlock', 'TESTALIAS')
 
     def clicked(self):
         pass
@@ -81,10 +81,25 @@ class Slider(pcp_base):
 
     def get_plugin_configuration(self):
         config = {
-            'default': {
-                'value': '1'
-            }
-        }
+            'lower_bound': {
+                'value': '0.0'
+                },
+            'upper_bound': {
+                'value': '1.0'
+                },
+            'step_size': {
+                'value': '0.1'
+                },
+            'size': {
+                'value': "(150,75)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+                },
+            'name': {
+                'value': 'PaPI Slider',
+                'tooltip': 'Used for window title'
+            } }
         return config
 
     def quit(self):
