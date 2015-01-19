@@ -25,20 +25,17 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 
 __author__ = 'knuths'
 
+import operator
+
+from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox
+from PySide.QtCore import *
+
 from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
-from PySide.QtGui import QDialog, QLabel, QFormLayout, QLineEdit, QRegExpValidator, QCheckBox, QFileDialog
 from papi.gui.qt_new.custom import FileLineEdit
 
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST
-from PySide.QtCore import *
-from PySide import QtGui
-import PySide
-from yapsy.PluginManager import PluginManager
-import operator
 
 class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
@@ -109,7 +106,9 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             if 'display_text' in startup_config['uname'].keys():
                 display_text = startup_config['uname']['display_text']
 
-            uname = self.gui_api.change_uname_to_uniqe(self.plugin_name)
+            uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
+            uname = self.gui_api.change_uname_to_uniqe(uname)
+
 
             editable_field = QLineEdit(str(value))
             editable_field.setText(uname)

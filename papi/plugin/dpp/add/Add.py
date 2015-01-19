@@ -32,6 +32,7 @@ __author__ = 'ruppins'
 from papi.plugin.base_classes.dpp_base import dpp_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
+from papi.data.DSignal import DSignal
 
 import time
 import math
@@ -52,12 +53,12 @@ class Add(dpp_base):
         self.vec = numpy.zeros((2, self.amax))
 
 
-        self.block1 = DBlock(None,1,10,'AddOut1',['t','Sum'])
+        self.block1 = DBlock('AddOut1')
+        signal = DSignal('Sum')
+        self.block1.add_signal(signal)
 
-        #self.para1 = DParameter(None,'Count',1, [0, 1] ,1)
 
         self.send_new_block_list([self.block1])
-        #self.send_new_parameter_list([self.para1])
 
 
         return True
@@ -107,7 +108,7 @@ class Add(dpp_base):
         vec[0,:] = Data['t']
         vec[1,:] = result
 
-        self.send_new_data(Data['t'], [result], 'AddOut1')
+        self.send_new_data('AddOut1', Data['t'], {'Sum':result})
 
 
 

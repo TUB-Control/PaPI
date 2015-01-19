@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'Stefan'
 
 from PySide.QtGui import QMdiSubWindow
-import pyqtgraph as pq
+import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -37,10 +37,10 @@ from papi.data.DParameter import DParameter
 import collections
 import re
 
-from pyqtgraph.Qt import QtGui, QtCore
+from papi.pyqtgraph.Qt import QtGui, QtCore
 
-
-class PlotPerformance(vip_base):
+#RENAME TO PLUGIN NAME
+class TemplateName(vip_base):
 
 
     def initiate_layer_0(self, config=None):
@@ -75,8 +75,8 @@ class PlotPerformance(vip_base):
         # Create Parameters
         # ---------------------------
         # create a parameter object
-        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
-        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para1 = DParameter('ParameterName',default=0)
+        #   self.para2 = DParameter('ParameterName',default=0)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]

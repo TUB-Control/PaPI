@@ -1,0 +1,155 @@
+<html>
+<head>
+    <script src = "/socket.io/socket.io.js" > </script>
+    <script type=text/javascript src="/lib/jquery-1.7.1.min.js"></script>
+    <script>
+        var ProtocollConfig;
+        var socket = io.connect();
+       
+	function GetParameterID(ParametersConfig, ParameterName)
+	{
+	  var P = ParametersConfig;
+	  for (key in P) {
+	    if (P[key].ParameterName == ParameterName) {
+	      return key;
+	    }    
+	  }
+	  return -1;
+	}
+
+	function GetParameterID(SourcesConfig, SourceName)
+	{
+	  var P = SourcesConfig;
+	  for (key in P) {
+	    if (P[key].SourceName == SourceName) {
+	      return key;
+	    }    
+	  }
+	  return -1;
+	}
+
+
+	// console.log(  GetParameterID(ProtocollConfig.ParametersConfig, "Parameter2") );
+
+
+        socket.on('ProtocollConfig', function (ProtocollConfig__) { 
+          // received the protocoll definition
+          ProtocollConfig = ProtocollConfig__;
+          
+          // Set-up the Displays for all Sources
+          var htmlcode;
+
+          // Creates a Display for each source
+          SourcesConfig = ProtocollConfig.SourcesConfig;
+          for (key in SourcesConfig) {
+            try {
+              htmlcode = htmlcode  + '<br><br><strong>Source Name</strong> ' + SourcesConfig[key].SourceName + '<br>';
+              htmlcode = htmlcode  + '<strong>Data:</strong> <div id="Display' + key  + '">--</div>'
+            } catch (err) { ; }
+            
+            htmlcode = htmlcode + ' <br><br> ';
+          }
+          
+          document.getElementById('Displays').innerHTML = htmlcode;
+
+          
+          // Creates a ... for each parameter
+          ParametersConfig = ProtocollConfig.ParametersConfig;
+          htmlcode = '';
+          for (key in ParametersConfig) {
+            try {
+              ParameterName = ParametersConfig[key].ParameterName;
+              
+              htmlcode = htmlcode  + '<br><br><strong>Parameter Name</strong> ' + ParameterName + '<br>';
+              htmlcode = htmlcode  + '<strong>Elements:</strong><br> '
+              
+              var i;
+              for (i=0; i< ParametersConfig[key].NValues; ++i) {
+               // htmlcode = htmlcode  + 'e' + i + '<br>';
+                htmlcode = htmlcode + '<input id="' + ParameterName + '_' + i + '" type="text" size="20" maxlength="20" value="0.00"><br>';
+
+              }
+              
+            } catch (err) { ; }
+            
+            htmlcode = htmlcode + '<input type="button" id="UploadParameters" value="Upload Parameters" onClick="UploadParameters('+key+');">';
+            
+            htmlcode = htmlcode + ' <br><br> ';
+
+            console.log(htmlcode);
+          }
+          
+//           htmlcode = JSON.stringify(ParametersConfig  );
+          
+          document.getElementById('Parameters').innerHTML = htmlcode;          
+          
+          // display the protocoll definition
+          htmlcode = JSON.stringify( ProtocollConfig );
+          document.getElementById('ProtocollConfiguration').innerHTML = htmlcode;
+        });
+        
+	// wait for new signal-samples
+	socket.on('Update', function (data) {
+	    //console.log(data);
+	    
+	    // get configuration
+	    NValues = ProtocollConfig.SourcesConfig[data.SourceID].NValues_send;	     
+	    Values = data.Data;
+	    
+	    // Update the display for this source. Compose html code for the Display to print the data
+	    var htmlcode, i;
+	    htmlcode = '#'+NValues+'<br>';
+	    for (i=0; i<NValues; ++i) {
+	      htmlcode = htmlcode + i + ' = '+Values[i]+'<br>';	      
+	    }
+	    
+	    document.getElementById('Display'+data.SourceID).innerHTML = htmlcode;
+	});
+
+
+    function UploadParameters(ParameterID){
+      // update parameters button was clicked; send parameters
+      
+      console.log(ParameterID);
+      
+      ParametersConfig = ProtocollConfig.ParametersConfig;
+      ParameterName = ParametersConfig[ParameterID].ParameterName;
+      
+      ParSet = new Array();
+      
+              var i;
+              for (i=0; i< ParametersConfig[ParameterID].NValues; ++i) {
+               // htmlcode = htmlcode  + 'e' + i + '<br>';
+                htmlid = ParameterName + '_' + i;
+                var p1 = document.getElementById(htmlid).value;
+                var p1_float = parseFloat(p1.replace(",", ".")); ParSet[i] = p1_float;
+
+              }
+      
+//       var p1 = document.getElementById('Parameter1').value;
+//       var p1_float = parseFloat(p1.replace(",", ".")); ParSet[0] = p1_float;
+
+
+      socket.emit('ChangeParam_Set', [ParameterID, ParSet] );
+    }
+
+    </script>
+</head> 
+ 
+<body>
+  <strong>Generic GUI-interface to an ORTD-simulation</strong>
+
+  <br>
+  This is a generic interface to ORTD. All parameters and datasources are automatically shown. Feel free to copy and adapt it to your needs to build you own specialised web-interface.
+
+  <br><br>
+  
+  <strong>Parameters:</strong> <div id="Parameters">0</div>
+  
+  <strong>Displays:</strong> <div id="Displays">0</div>
+
+  <br><br>
+  <strong>ProtocollConfiguration:</strong> <div id="ProtocollConfiguration">0</div>
+
+</body>
+</html>

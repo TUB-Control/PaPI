@@ -30,7 +30,7 @@ __author__ = 'control'
 
 from papi.plugin.base_classes.vip_base import vip_base
 from PySide.QtGui import QMdiSubWindow
-from pyqtgraph.Qt import QtCore, QtGui
+from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class WizardExample(vip_base):
@@ -94,8 +94,8 @@ class WizardExample(vip_base):
         # Create Parameters
         # ---------------------------
         # create a parameter object
-        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
-        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para1 = DParameter('ParameterName',InitWert,1)
+        #   self.para2 = DParameter('ParameterName',InitWert,1)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
@@ -260,6 +260,6 @@ class connectPage(QtGui.QWizardPage):
         self.setLayout(layout)
 
     def validatePage(self):
-        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3',signal_index=[2])
+        self.control_api.do_subscribe_uname('Plot1','Sin1','SinMit_f3', signals=['f3_1', 'f3_2'])
         self.control_api.do_delete_plugin_uname(self.uname)
         return True

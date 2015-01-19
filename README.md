@@ -1,4 +1,4 @@
-PaPI v. 0.8
+PaPI v. 1.0.0
 ==================
 
 Plugin based Process Interaction
@@ -14,16 +14,24 @@ PaPi will make heavily use of multi-core systems.
 
 Installation
 ------
-Basic installation on Ubuntu 14.04 64Bit
+Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
-`sudo apt-get install git python3-pyside python3-numpy python3-scipy`
+`sudo apt-get install python3.4 git python3-pyside python3-numpy`
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
 
 `cd PaPI`
 
-`python3 main.py`
+`python3.4 main.py`
 
+Tip:
+If python3.4 interpreter cannot find or locate the installed packages (pyside or numpy), please make sure that the right
+python interpreter is called (in case there are multiple installed).
+
+Contribution
+------
+
+To get started, <a href="https://www.clahub.com/agreements/TUB-Control/PaPI">sign the Contributor License Agreement</a>.
 
 Documentation
 ------
@@ -36,4 +44,9 @@ Embedded Packages
 ------
 
 Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
+<<<<<<< HEAD
+
+pyqtgraph-0.9.10 published under MIT-License
+=======
 pyqtgraph-0.9.8 published under MIT-License
+>>>>>>> master

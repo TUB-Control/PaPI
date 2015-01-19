@@ -25,6 +25,21 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Christian Klauer
 Stefan Ruppin
+
+
+
+
+IDEAS
+-----
+
+- The ProtocolConfig.json may contain information about how to place indivual elements in the GUI
+- How to handle multiple instances and dynamically created datasources?
+- Show a separated screen/page in the gui for each datasource; something like tabs?
+- initial Configuration and later updates via UDP
+
+
+
+
 """
 
 __author__ = 'CK'
@@ -32,12 +47,12 @@ __author__ = 'CK'
 from papi.plugin.base_classes.iop_base import iop_base
 
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter
 
 import numpy as np
 
 import threading
-import pickle
 
 import os
 
@@ -69,12 +84,12 @@ class ORTD_UDP(iop_base):
                 'advanced': '1'
             },
             'Cfg_Path': {
-                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
+                'value': '/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfig.json',
                 'type': 'file',
                 'advanced': '0'
             },
             'SeparateSignals': {
-                'value': '1',
+                'value': '0',
                 'advanced': '1'
             }
         }
@@ -98,10 +113,8 @@ class ORTD_UDP(iop_base):
         path = config['Cfg_Path']['value']
         f = open(path, 'r')
         self.ProtocolConfig = json.load(f)
-
         self.Sources = self.ProtocolConfig['SourcesConfig']
         self.Parameters = self.ProtocolConfig['ParametersConfig']
-
 
 
         # For each group:: loop through all sources (=signals) in the group and register the signals
@@ -114,27 +127,38 @@ class ORTD_UDP(iop_base):
 
             # sort hash keys for usage in right order!
             keys = list(self.Sources.keys())
-            keys.sort()
+            #keys.sort()
             for key in keys:
                 Source = self.Sources[key]
-                self.blocks[int(key)] = DBlock(None, 1, 2, 'SourceGroup' + str(key), ['t', Source['SourceName']])
+                block = DBlock('SourceGroup' + str(key))
+                block.add_signal(DSignal(Source['SourceName']))
+                self.blocks[int(key)] = block
+
 
             self.send_new_block_list(list(self.blocks.values()))
 
         else:
-            names = ['t']
+            self.block1 = DBlock('SourceGroup0')
 
             keys = list(self.Sources.keys())
-            keys.sort()
-
+            #keys.sort()
             for key in keys:
                 Source = self.Sources[key]
-                names.append(Source['SourceName'])
-
-            self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
-            self.send_new_block_list([self.block1])
+                sig_name = Source['SourceName']
+                self.block1.add_signal(DSignal(sig_name))
 
 
+
+
+
+            self.ControlBlock = DBlock('ControllerSignals')
+            self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
+            self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
+            self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+            self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
+
+            #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
+            self.send_new_block_list([self.block1, self.ControlBlock])
 
         # Register parameters
         self.Parameter_List = []
@@ -144,8 +168,11 @@ class ORTD_UDP(iop_base):
             para_name = Para['ParameterName']
             val_count = Para['NValues']
             opt_object = OptionalObject(Pid, val_count)
-            Parameter = DParameter('', para_name, 0, 0, OptionalObject=opt_object)
+            Parameter = DParameter(para_name, default=0, OptionalObject=opt_object)
             self.Parameter_List.append(Parameter)
+
+        self.ControlParameter = DParameter('triggerConfiguration',default=0)
+        self.Parameter_List.append(self.ControlParameter)
 
         self.send_new_parameter_list(self.Parameter_List)
 
@@ -197,7 +224,7 @@ class ORTD_UDP(iop_base):
                     self.t += 1.0
 
                     keys = list(signal_values.keys())
-                    keys.sort()
+                    keys.sort()                           # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
 
                     if self.separate == 1:
                         for key in keys:
@@ -207,31 +234,36 @@ class ORTD_UDP(iop_base):
                             n = len(signal_values[key])
                             t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
                             # flush data to papi
-                            self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
+                            sig_name = self.Sources[str(key)]['SourceName']
+                            self.send_new_data(self.blocks[key].name, t, {sig_name:signal_values[key]})
                     else:
-                        signals_to_send = []
+                        signals_to_send = {}
                         for key in keys:
-                            signals_to_send.append(signal_values[key])
+                            sig_name = self.Sources[str(key)]['SourceName']
+                            signals_to_send[sig_name] = signal_values[key]
 
-                        self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
+                        self.send_new_data('SourceGroup0', [self.t], signals_to_send )
 
                     signal_values = {}
                 else:
                     # Received a data packet
                     # Lookup the Source behind the given SourceId
-                    Source = self.Sources[str(SourceId)]
-                    NValues = int(Source['NValues_send'])
+                    if str(SourceId) in self.Sources:
+                        Source = self.Sources[str(SourceId)]
+                        NValues = int(Source['NValues_send'])
 
-                    # Read NVales from the received packet
-                    val = []
-                    for i in range(NValues):
-                        # TODO: why try except?
-                        try:
-                            val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
-                        except:
-                            val.append(0)
+                        # Read NVales from the received packet
+                        val = []
+                        for i in range(NValues):
+                            # TODO: why try except?
+                            try:
+                                val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
+                            except:
+                                val.append(0)
 
-                    signal_values[SourceId] = val
+                        signal_values[SourceId] = val
+                    else:
+                        print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
 
             # check if thread should go on
             self.lock.acquire()
@@ -244,12 +276,19 @@ class ORTD_UDP(iop_base):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
-        for para in self.Parameter_List:
-            if para.name == name:
-                Pid = para.OptionalObject.ORTD_par_id
-                Counter = 111
-                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if name == 'triggerConfiguration':
+            cfg, subs, para, close = self.plconf()
+            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg,
+                                                          'ControlSignalSub':subs,
+                                                          'ControllerSignalParameter':para,
+                                                          'ControllerSignalClose':close})
+        else:
+            for para in self.Parameter_List:
+                if para.name == name:
+                    Pid = para.OptionalObject.ORTD_par_id
+                    Counter = 111
+                    data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
@@ -261,3 +300,19 @@ class ORTD_UDP(iop_base):
 
     def plugin_meta_updated(self):
         pass
+
+    def plconf(self):
+        cfg   = {}
+        subs  = {}
+        paras = {}
+        close = {}
+        if 'PaPIConfig' in self.ProtocolConfig:
+            if 'ToCreate' in self.ProtocolConfig['PaPIConfig']:
+                cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
+            if 'ToSub' in self.ProtocolConfig['PaPIConfig']:
+                subs = self.ProtocolConfig['PaPIConfig']['ToSub']
+            if 'ToControl' in self.ProtocolConfig['PaPIConfig']:
+                paras = self.ProtocolConfig['PaPIConfig']['ToControl']
+            if 'ToClose' in self.ProtocolConfig['PaPIConfig']:
+                close = self.ProtocolConfig['PaPIConfig']['ToClose']
+        return cfg, subs, paras, close

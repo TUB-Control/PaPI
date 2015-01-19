@@ -25,18 +25,24 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.data.DPlugin import DPlugin, DBlock
+from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
 
 import papi.error_codes as ERROR
 
-__author__ = 'control'
-
-import copy
+__author__ = 'knuth'
 
 
 class DCore():
+    """
+    DCore contains and manages the internal data structure
+    """
     def __init__(self):
+        """
+        Used to initialize this object. An empty dictionary of DPlugin is created
+
+        :return:
+        """
         self.__DPlugins = {}
 
         self.__newid = 0
@@ -44,9 +50,9 @@ class DCore():
 
     def create_id(self):
         """
-        Creates and returns random unique 64 bit integer
+        Creates and returns unique IDs
 
-        :returns: 64bit random integer
+        :returns: unique ID
         :rtype: int
         """
         self.__newid += 1
@@ -143,21 +149,23 @@ class DCore():
 
         return None
 
-
     def get_all_plugins(self):
         """
+        Returns a dictionary of all known dplugins
 
         :return:
+        :rtype: {}
         """
 
         return self.__DPlugins
 
     def subscribe(self, subscriber_id, target_id, dblock_name):
         """
+        Used to create a subscription.
 
         :param subscriber_id: DPlugin which likes to subscribes dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
-        :param dblock_name: DBlock for subscribtion
+        :param dblock_name: DBlock identified by its unique name for subscribtion
         :return:
         """
 
@@ -198,10 +206,11 @@ class DCore():
 
     def unsubscribe(self, subscriber_id, target_id, dblock_name):
         """
+        Used to remove a subscription.
 
         :param subscriber_id: DPlugin which likes to unsubscribes dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
-        :param dblock_name: DBlock for unsubscribtion
+        :param dblock_name: DBlock identified by its unique name for unsubscribtion
         :return:
         :rtype boolean:
         """
@@ -225,7 +234,7 @@ class DCore():
 
         #Destroy relation between DPlugin and DBlock
         if subscriber.unsubscribe(dblock) is False:
-            self.log.printText(1, "Subscriber " + subscriber_id + " has already unsubscribed " + dblock_name)
+            self.log.printText(1, "Subscriber " + str(subscriber_id) + " has already unsubscribed " + dblock_name)
             return False
 
         if dblock.rm_subscriber(subscriber) is False:
@@ -238,15 +247,13 @@ class DCore():
         """
         This function is used to cancel all subscription of the DPlugin with the dplugin_id.
 
-        :param dplugin_id:
+        :param dplugin_id: dplugin identifed by dplugin_id whose subscription should be canceled.
         :return:
         """
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
-
         subscribtion_ids = dplugin.get_subscribtions().copy()
-
 
         #Iterate over all DPlugins, which own a subscribed DBlock
         for sub_id in subscribtion_ids:
@@ -271,7 +278,7 @@ class DCore():
         """
         This function is used to remove all subscribers of all DBlocks, which are hold by the DPlugin with the dplugin_id.
 
-        :param dplugin_id:
+        :param dplugin_id: dplugin identifed by dplugin_id whose subscribers should be removed.
         :return:
         """
 
@@ -302,7 +309,7 @@ class DCore():
 
         :param subscriber_id: DPlugin which likes to subscribes signals of the chosen  dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
-        :param dblock_name: DBlock for subscribtion
+        :param dblock_name: DBlock identified by its unique name for subscribtion
         :param signals: List of signals which are needed to be added
         :return:
         """
@@ -337,7 +344,7 @@ class DCore():
 
         :param subscriber_id: DPlugin which likes to unsubscribes signals of the chosen dblock
         :param target_id: DPlugin which contains the dblock for subscribtion
-        :param dblock_name: DBlock for subscribtion
+        :param dblock_name: DBlock identified by its unique name for subscribtion
         :param signals: List of signals which are needed to be added
         :return:
         """

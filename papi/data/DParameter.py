@@ -32,15 +32,24 @@ from papi.data.DObject import DObject
 
 
 class DParameter(DObject):
+    """
+    DParameter is used for the internal description of a parameter which are provided by a plugin.
+    Parameters are used to interact with plugin.
+    """
+    def __init__(self, name, default=0, Regex = None, OptionalObject=None):
+        """
+        A Parameter must be described by a name. It optionally possible to set a default value, a Regex object and an OptionalObject.
 
-    def __init__(self, ptype, name, default=0, prange=0, live=1, Regex = None, OptionalObject=None):
+        :param name: Parameter name
+        :param default: Default value
+        :param Regex: Used to limit user input
+        :param OptionalObject: Can be used by plugin developer to store other internal information
+        :return:
+        """
         super(DParameter, self).__init__()
 
-        self.type = ptype
         self.default = default
         self.value = default
-        self.range = prange
-        self.live = live
         self.name = name
         self.plugin_id = None
         self.plugin_identifier = None

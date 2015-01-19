@@ -82,9 +82,20 @@
     <addaction name="actionRunMode"/>
     <addaction name="actionSetBackground"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionPaPI_Wiki"/>
+    <addaction name="actionPaPI_Doc"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
    <addaction name="menuPaPI"/>
    <addaction name="menuPlugin"/>
    <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
@@ -130,6 +141,31 @@
   <action name="actionSetBackground">
    <property name="text">
     <string>SetBackground</string>
+   </property>
+  </action>
+  <action name="actionPaPI_Wiki">
+   <property name="text">
+    <string>PaPI Wiki</string>
+   </property>
+  </action>
+  <action name="actionPaPI_Doc">
+   <property name="text">
+    <string>PaPI Doc</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionAbout_PySide">
+   <property name="text">
+    <string>About PySide</string>
    </property>
   </action>
  </widget>

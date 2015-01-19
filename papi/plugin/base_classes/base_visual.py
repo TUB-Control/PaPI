@@ -34,12 +34,13 @@ from PySide.QtGui import QMdiSubWindow
 
 
 class base_visual(base_plugin):
-    def init_plugin(self, CoreQueue, pluginQueue, id, control_api):
+    def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None):
+        super(base_visual, self).papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
         self.control_api = control_api
-        super(base_visual, self).papi_init()
+        self.dplugin_info = dpluginInfo
 
 
     def start_init(self, config=None):
@@ -79,7 +80,7 @@ class base_visual(base_plugin):
             },
             'name': {
                 'value': 'VisualPlugin',
-                'tooltip': 'Used display name'
+                'tooltip': 'Used for window title'
             }}
         return config
 

@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'Stefan'
 
-import pyqtgraph as pq
+import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -39,7 +39,7 @@ import time
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-from pyqtgraph.Qt import QtCore
+from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class Plot(vip_base):
@@ -133,6 +133,7 @@ class Plot(vip_base):
 
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
 
+
         # ----------------------------
         # Create internal variables
         # ----------------------------
@@ -159,22 +160,36 @@ class Plot(vip_base):
 
         self.set_widget_for_internal_usage(self.__plotWidget__)
 
+        #
+        if self.config['xRange-auto']['value']=='1':
+            pass
+        else:
+            self.use_range_for_x(self.config['xRange']['value'])
+
+        if self.config['yRange-auto']['value']== '1':
+            pass
+        else:
+            self.use_range_for_y(self.config['yRange']['value'])
+
         # ---------------------------
         # Create Parameters
         # ---------------------------
 
-        self.__parameters__['x-grid'] = DParameter(None, 'x-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
-        self.__parameters__['y-grid'] = DParameter(None, 'y-grid', 0, [0, 1], 1, Regex='^(1|0){1}$')
+        self.__parameters__['x-grid'] = DParameter('x-grid', 0, Regex='^(1|0){1}$')
+        self.__parameters__['y-grid'] = DParameter('y-grid', 0, Regex='^(1|0){1}$')
 
-        self.__parameters__['color'] = DParameter(None, 'color', '[0 1 2 3 4]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['style'] = DParameter(None, 'style', '[0 0 0 0 0]', [0, 1], 1, Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['rolling'] = DParameter(None, 'rolling', '0', [0, 1], 1, Regex='^(1|0){1}')
+        self.__parameters__['color'] = DParameter('color', '[0 1 2 3 4]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['style'] = DParameter('style', '[0 0 0 0 0]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['rolling'] = DParameter('rolling', '0', Regex='^(1|0){1}')
 
-        self.__parameters__['downsampling_rate'] = DParameter(None, 'downsampling_rate', self.__downsampling_rate__,
-                                                              [1, 100],
-                                                              1, Regex='^([1-9][0-9]?|100)$')
-        self.__parameters__['buffersize'] = DParameter(None, 'buffersize', self.__buffer_size__, [1, 100],
-                                                       1, Regex='^([1-9][0-9]{0,3}|10000)$')
+        self.__parameters__['downsampling_rate'] = DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^([1-9][0-9]?|100)$')
+        self.__parameters__['buffersize'] = DParameter('buffersize', self.__buffer_size__, Regex='^([1-9][0-9]{0,3}|10000)$')
+
+        self.__parameters__['xRange-auto'] = DParameter('xRange-auto', '1',  Regex='^(1|0){1}$')
+        self.__parameters__['xRange'] = DParameter('xRange', '[0,1]', Regex='(\d+\.\d+)')
+        self.__parameters__['yRange-auto'] = DParameter('yRange-auto', '1',  Regex='^(1|0){1}$')
+        self.__parameters__['yRange'] = DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
+
         self.send_new_parameter_list(list(self.__parameters__.values()))
 
         # ---------------------------
@@ -187,6 +202,19 @@ class Plot(vip_base):
         self.__last_time__ = current_milli_time()
 
         self.__update_intervall__ = 25  # in milliseconds
+
+        self.setup_context_menu()
+
+                #
+        if self.config['xRange-auto']['value']=='1':
+            pass
+        else:
+            self.use_range_for_x(self.config['xRange']['value'])
+
+        if self.config['yRange-auto']['value']== '1':
+            pass
+        else:
+            self.use_range_for_y(self.config['yRange']['value'])
 
         return True
 
@@ -249,23 +277,26 @@ class Plot(vip_base):
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
+            self.xGrid_Checkbox.setChecked(value=='1')
 
         if name == 'y-grid':
-
             self.config['y-grid']['value'] = value
             self.__plotWidget__.showGrid(y=value == '1')
+            self.yGrid_Checkbox.setChecked(value=='1')
 
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.__downsampling_rate__ = int(value)
+            #self.__plotWidget__.getPlotItem().setDownsampling(ds=int(value),auto=False,mode='mean')
             self.__new_added_data__ = 0
+
 
         if name == 'rolling':
             self.__rolling_plot__ = int(float(value)) == int('1')
             self.config['rolling_plot']['value'] = value
-
+            self.rolling_Checkbox.setChecked(value=='1')
             if self.__rolling_plot__:
-               # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
+                # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
                 self.__plotWidget__.addItem(self.__vertical_line__)
 
@@ -284,6 +315,40 @@ class Plot(vip_base):
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.set_buffer_size(value)
+
+        if name == 'xRange-auto':
+            self.config['xRange-auto']['value'] = value
+            self.xRange_AutoCheckbox.setChecked(value=='1')
+            if int(value) == 1:
+                self.xRange_minEdit.setDisabled(True)
+                self.xRange_maxEdit.setDisabled(True)
+                self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
+            else:
+                self.use_range_for_x(self.config['xRange']['value'])
+                self.xRange_minEdit.setDisabled(False)
+                self.xRange_maxEdit.setDisabled(False)
+
+        if name == 'yRange-auto':
+            self.config['yRange-auto']['value'] = value
+            self.yRange_AutoCheckbox.setChecked(value=='1')
+            if int(value) == 1:
+                self.yRange_minEdit.setDisabled(True)
+                self.yRange_maxEdit.setDisabled(True)
+                self.__plotWidget__.getPlotItem().getViewBox().menu.yAutoClicked()
+            else:
+                self.yRange_minEdit.setDisabled(False)
+                self.yRange_maxEdit.setDisabled(False)
+                self.use_range_for_y(self.config['yRange']['value'])
+
+        if name == 'xRange':
+            self.config['xRange']['value'] = value
+            if self.config['xRange-auto']['value'] == '0':
+                self.use_range_for_x(value)
+
+        if name == 'yRange':
+            self.config['yRange']['value'] = value
+            if self.config['yRange-auto']['value'] == '0':
+                self.use_range_for_y(value)
 
     def update_pens(self):
         """
@@ -307,7 +372,6 @@ class Plot(vip_base):
         """
         shift_data = 0
 
-
         for last_tvalue in self.__tdata_old__:
             if last_tvalue in self.__tbuffer__:
                 shift_data = list(self.__tbuffer__).index(last_tvalue)
@@ -327,7 +391,7 @@ class Plot(vip_base):
 
             if self.__rolling_plot__:
                 data = np.roll(data, int(self.__append_at__))
-                self.__vertical_line__.setValue(tdata[int(self.__append_at__)-1])
+                self.__vertical_line__.setValue(tdata[int(self.__append_at__) - 1])
             else:
                 self.__vertical_line__.setValue(tdata[0])
 
@@ -356,67 +420,6 @@ class Plot(vip_base):
 
         pass
 
-    def quit(self):
-        """
-        Function quit plugin
-
-        :return:
-        """
-        print('PlotPerformance: will quit')
-
-    def get_plugin_configuration(self):
-        """
-        Function get plugin configuration
-
-        :return {}:
-        """
-        config = {
-            'label_y': {
-                'value': "amplitude, V",
-                'regex': '\w+,\s+\w+',
-                'display_text': 'Label-Y'
-            }, 'label_x': {
-            'value': "time, s",
-            'regex': '\w+,\s*\w+',
-            'display_text': 'Label-X'
-        }, 'x-grid': {
-            'value': "0",
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Grid-X'
-        }, 'y-grid': {
-            'value': "0",
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Grid-Y'
-        }, 'color': {
-            'value': "[0 1 2 3 4]",
-            'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
-            'display_text': 'Color'
-        }, 'style': {
-            'value': "[0 0 0 0 0]",
-            'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
-            'display_text': 'Style'
-        }, 'buffersize': {
-            'value': "3000",
-            'regex': '^([1-9][0-9]{0,3}|10000)$',
-            'advanced': '1',
-            'display_text': 'Buffersize'
-        }, 'downsampling_rate': {
-            'value': "10",
-            'regex': '(\d+)'
-        }, 'rolling_plot': {
-            'value': '0',
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'display_text': 'Rolling Plot'
-        }
-        }
-        # http://www.regexr.com/
-        return config
-
     def set_buffer_size(self, new_size):
         """
         Function set buffer size
@@ -444,7 +447,7 @@ class Plot(vip_base):
             buffer_new = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
             buffer_old = self.signals[signal_name]['buffer']
-            #buffer_new.extend(buffer_old)
+            # buffer_new.extend(buffer_old)
 
             self.signals[signal_name]['buffer'] = buffer_new
 
@@ -458,27 +461,40 @@ class Plot(vip_base):
         """
         subscriptions = self.dplugin_info.get_subscribtions()
 
-        current_signals = []
+        current_signals = {}
+        index = 0
 
         for dpluginsub_id in subscriptions:
             for dblock_name in subscriptions[dpluginsub_id]:
-                dblocksub = subscriptions[dpluginsub_id][dblock_name]
 
-                for signal in dblocksub.get_signals():
-                    signal_name = dblocksub.dblock.get_signal_name(signal)
-                    current_signals.append(signal_name)
+                # get subscription for dblock
+                subscription = subscriptions[dpluginsub_id][dblock_name]
+
+                for signal_name in subscription.get_signals():
+                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+                    index += 1
+                    current_signals[signal_name] = {}
+                    current_signals[signal_name]['signal'] = signal
+                    current_signals[signal_name]['index'] = index
+
+                # current_signals = sorted(current_signals)
 
         # Add missing buffers
-        for signal_name in current_signals:
+        for signal_name in sorted(current_signals.keys()):
             if signal_name not in self.signals:
-                self.add_databuffer(signal_name, current_signals.index(signal_name))
+                signal = current_signals[signal_name]['signal']
+                self.add_databuffer(signal, current_signals[signal_name]['index'])
 
         # Delete old buffers
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
-                self.remove_databuffer(signal_name)
+                signal = self.signals[signal_name]['signal']
+                self.remove_databuffer(signal)
 
-    def add_databuffer(self, signal_name, signal_id):
+        self.update_pens()
+        self.update_legend()
+
+    def add_databuffer(self, signal, signal_id):
         """
         Create new buffer for signal_name.
 
@@ -487,6 +503,8 @@ class Plot(vip_base):
         :return:
         """
 
+        signal_name = signal.uname
+
         if signal_name not in self.signals:
             self.signals[signal_name] = {}
 
@@ -494,18 +512,15 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            legend_name = str(signal_id) + "# " + signal_name
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], name=legend_name, clipToView=True)
+            curve = self.__plotWidget__.plot([0, 1], [0, 1])
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
             self.signals[signal_name]['id'] = signal_id
+            self.signals[signal_name]['signal'] = signal
 
-            self.__legend__.addItem(curve, legend_name)
 
-        self.update_pens()
-
-    def remove_databuffer(self, signal_name):
+    def remove_databuffer(self, signal):
         """
         Remove the databuffer for signal_name.
 
@@ -513,10 +528,12 @@ class Plot(vip_base):
         :return:
         """
 
+        signal_name = signal.uname
+
         if signal_name in self.signals:
             curve = self.signals[signal_name]['curve']
             curve.clear()
-            self.__legend__.removeItem(signal_name)
+            # self.__legend__.removeItem(legend_name)
             del self.signals[signal_name]
 
     def get_pen(self, index):
@@ -545,3 +562,339 @@ class Plot(vip_base):
             color = self.colors[1]
 
         return pq.mkPen(color=color, style=style)
+
+    def use_range_for_x(self, value):
+        reg = re.compile(r'(\d+\.\d+)')
+        range = reg.findall(value)
+        if len(range) == 2:
+            self.xRange_minEdit.setText(range[0])
+            self.xRange_maxEdit.setText(range[1])
+            self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
+
+    def use_range_for_y(self, value):
+        reg = re.compile(r'(\d+\.\d+)')
+        range = reg.findall(value)
+        if len(range) == 2:
+            self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
+
+    def setup_context_menu(self):
+        self.custMenu = QtGui.QMenu("Options")
+        self.axesMenu = QtGui.QMenu('Axes')
+        self.gridMenu = QtGui.QMenu('Grid')
+
+
+        # ---------------------------------------------------------
+        # #### X-Range Actions
+        self.xRange_Widget = QtGui.QWidget()
+        self.xRange_Layout = QtGui.QVBoxLayout(self.xRange_Widget)
+        self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
+        self.xRange_Layout.setSpacing(1)
+
+        self.xRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
+        self.xRange_AutoCheckbox.stateChanged.connect(self.contextMenu_xRange_toogle)
+        self.xRange_AutoCheckbox.setText('X-Autorange')
+        self.xRange_Layout.addWidget(self.xRange_AutoCheckbox)
+
+        ##### X Line Edits
+        # Layout
+        self.xRange_EditWidget = QtGui.QWidget()
+        self.xRange_EditLayout = QtGui.QHBoxLayout(self.xRange_EditWidget)
+        self.xRange_EditLayout.setContentsMargins(2, 2, 2, 2)
+        self.xRange_EditLayout.setSpacing(1)
+
+        # get old values;
+        reg = re.compile(r'(\d+\.\d+)')
+        range = reg.findall(self.config['xRange']['value'])
+        if len(range) == 2:
+            x_min = range[0]
+            x_max = range[1]
+        else:
+            x_min = '0.0'
+            x_max = '1.0'
+
+
+        # Min
+        self.xRange_minEdit = QtGui.QLineEdit()
+        self.xRange_minEdit.setFixedWidth(80)
+        self.xRange_minEdit.setText(x_min)
+        self.xRange_minEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
+        # Max
+        self.xRange_maxEdit = QtGui.QLineEdit()
+        self.xRange_maxEdit.setFixedWidth(80)
+        self.xRange_maxEdit.setText(x_max)
+        self.xRange_maxEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
+        # addTo Layout
+        self.xRange_EditLayout.addWidget(self.xRange_minEdit)
+        self.xRange_EditLayout.addWidget(QtGui.QLabel('<'))
+        self.xRange_EditLayout.addWidget(self.xRange_maxEdit)
+        self.xRange_Layout.addWidget(self.xRange_EditWidget)
+
+        # build Action
+        self.xRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.xRange_Action.setDefaultWidget(self.xRange_Widget)
+
+
+        # ---------------------------------------------------------------
+        ##### Y-Range Actions
+        self.yRange_Widget = QtGui.QWidget()
+        self.yRange_Layout = QtGui.QVBoxLayout(self.yRange_Widget)
+        self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
+        self.yRange_Layout.setSpacing(1)
+
+        self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
+        self.yRange_AutoCheckbox.stateChanged.connect(self.contextMenu_yRange_toogle)
+        self.yRange_AutoCheckbox.setText('Y-Autorange')
+        self.yRange_Layout.addWidget(self.yRange_AutoCheckbox)
+
+        ##### Y Line Edits
+        # Layout
+        self.yRange_EditWidget = QtGui.QWidget()
+        self.yRange_EditLayout = QtGui.QHBoxLayout(self.yRange_EditWidget)
+        self.yRange_EditLayout.setContentsMargins(2, 2, 2, 2)
+        self.yRange_EditLayout.setSpacing(1)
+
+        # get old values;
+        reg = re.compile(r'(\d+\.\d+)')
+        range = reg.findall(self.config['yRange']['value'])
+        if len(range) == 2:
+            y_min = range[0]
+            y_max = range[1]
+        else:
+            y_min = '0.0'
+            y_max = '1.0'
+
+        # Min
+        self.yRange_minEdit = QtGui.QLineEdit()
+        self.yRange_minEdit.setFixedWidth(80)
+        self.yRange_minEdit.setText(y_min)
+        self.yRange_minEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
+
+        # Max
+        self.yRange_maxEdit = QtGui.QLineEdit()
+        self.yRange_maxEdit.setFixedWidth(80)
+        self.yRange_maxEdit.setText(y_max)
+        self.yRange_maxEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
+        # addTo Layout
+        self.yRange_EditLayout.addWidget(self.yRange_minEdit)
+        self.yRange_EditLayout.addWidget(QtGui.QLabel('<'))
+        self.yRange_EditLayout.addWidget(self.yRange_maxEdit)
+        self.yRange_Layout.addWidget(self.yRange_EditWidget)
+
+        # build Action
+        self.yRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.yRange_Action.setDefaultWidget(self.yRange_Widget)
+
+        ##### Rolling Plot
+        self.rolling_Checkbox = QtGui.QCheckBox()
+        self.rolling_Checkbox.setText('Rolling plot')
+        self.rolling_Checkbox.setChecked(self.config['rolling_plot']['value'] == '1')
+        self.rolling_Checkbox.stateChanged.connect(self.contextMenu_rolling_toogled)
+        self.rolling_Checkbox_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.rolling_Checkbox_Action.setDefaultWidget(self.rolling_Checkbox)
+
+
+
+        ##### Build axes menu
+        self.axesMenu.addAction(self.xRange_Action)
+        self.axesMenu.addSeparator().setText("Y-Range")
+        self.axesMenu.addAction(self.yRange_Action)
+
+        # Grid Menu:
+        # -----------------------------------------------------------
+        # Y-Grid checkbox
+        self.xGrid_Checkbox = QtGui.QCheckBox()
+        self.xGrid_Checkbox.stateChanged.connect(self.contextMenu_xGrid_toogle)
+        self.xGrid_Checkbox.setText('X-Grid')
+        self.xGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.xGrid_Action.setDefaultWidget(self.xGrid_Checkbox)
+        self.gridMenu.addAction(self.xGrid_Action)
+        # Check config for startup  state
+        if self.__show_grid_x__:
+            self.xGrid_Checkbox.setChecked(True)
+
+        # X-Grid checkbox
+        self.yGrid_Checkbox = QtGui.QCheckBox()
+        self.yGrid_Checkbox.stateChanged.connect(self.contextMenu_yGrid_toogle)
+        self.yGrid_Checkbox.setText('Y-Grid')
+        self.yGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.yGrid_Action.setDefaultWidget(self.yGrid_Checkbox)
+        self.gridMenu.addAction(self.yGrid_Action)
+        # Check config for startup  state
+        if self.__show_grid_y__:
+            self.yGrid_Checkbox.setChecked(True)
+
+        # add Menus
+        self.custMenu.addMenu(self.axesMenu)
+        self.custMenu.addMenu(self.gridMenu)
+        self.custMenu.addSeparator().setText("Rolling Plot")
+        self.custMenu.addAction(self.rolling_Checkbox_Action)
+        self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
+        self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+
+
+        #self.__plotWidget__.getPlotItem().getViewBox()
+
+    def range_changed(self):
+        print('r')
+
+    def contextMenu_rolling_toogled(self):
+        if self.rolling_Checkbox.isChecked():
+            self.control_api.do_set_parameter(self.__id__, 'rolling', '1')
+        else:
+            self.control_api.do_set_parameter(self.__id__, 'rolling', '0')
+
+    def contextMenu_xGrid_toogle(self):
+        if self.xGrid_Checkbox.isChecked():
+            self.control_api.do_set_parameter(self.__id__, 'x-grid', '1')
+        else:
+            self.control_api.do_set_parameter(self.__id__, 'x-grid', '0')
+
+    def contextMenu_yGrid_toogle(self):
+        if self.yGrid_Checkbox.isChecked():
+            self.control_api.do_set_parameter(self.__id__, 'y-grid', '1')
+        else:
+            self.control_api.do_set_parameter(self.__id__, 'y-grid', '0')
+
+    def contextMenu_xRange_toogle(self):
+        if self.xRange_AutoCheckbox.isChecked():
+            # do autorange
+            self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '1')
+            self.xRange_minEdit.setDisabled(True)
+            self.xRange_maxEdit.setDisabled(True)
+        else:
+            self.xRange_minEdit.setDisabled(False)
+            self.xRange_maxEdit.setDisabled(False)
+            mi = self.xRange_minEdit.text()
+            ma = self.xRange_maxEdit.text()
+            self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
+            self.control_api.do_set_parameter(self.__id__, 'xRange', '[' + mi + ' ' + ma + ']')
+
+    def contextMenu_yRange_toogle(self):
+        if self.yRange_AutoCheckbox.isChecked():
+            # do autorange
+            self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '1')
+            self.yRange_minEdit.setDisabled(True)
+            self.yRange_maxEdit.setDisabled(True)
+        else:
+            self.yRange_minEdit.setDisabled(False)
+            self.yRange_maxEdit.setDisabled(False)
+            # do man range
+            mi = self.yRange_minEdit.text()
+            ma = self.yRange_maxEdit.text()
+            self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+
+    def update_signals(self):
+        subscriptions = self.dplugin_info.get_subscribtions()
+
+        for dpluginsub_id in subscriptions:
+            for dblock_name in subscriptions[dpluginsub_id]:
+
+                # get subscription for dblock
+                subscription = subscriptions[dpluginsub_id][dblock_name]
+
+                for signal_name in subscription.get_signals():
+                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+
+                    self.signals[signal_name]['signal'] = signal
+
+    def update_legend(self):
+        # self.__plotWidget__.removeItem(self.__legend__)
+        self.__legend__.scene().removeItem(self.__legend__)
+        del self.__legend__
+
+        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+
+        self.update_signals()
+
+        for signal_name in sorted(self.signals.keys()):
+            curve = self.signals[signal_name]['curve']
+            signal = self.signals[signal_name]['signal']
+            legend_name = signal.dname
+
+            self.__legend__.addItem(curve, legend_name)
+
+    def quit(self):
+        """
+        Function quit plugin
+
+        :return:
+        """
+        print('PlotPerformance: will quit')
+
+    def get_plugin_configuration(self):
+        """
+        Function get plugin configuration
+
+        :return {}:
+        """
+        config = {
+        #     'label_y': {
+        #         'value': "amplitude, V",
+        #         'regex': '\w+,\s+\w+',
+        #         'display_text': 'Label-Y'
+        #     }, 'label_x': {
+        #     'value': "time, s",
+        #     'regex': '\w+,\s*\w+',
+        #     'display_text': 'Label-X'
+        # },
+        'x-grid': {
+            'value': "0",
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Grid-X'
+        }, 'y-grid': {
+            'value': "0",
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Grid-Y'
+        }, 'color': {
+            'value': "[0 1 2 3 4]",
+            'regex': '^\[(\s*\d\s*)+\]',
+            'advanced': '1',
+            'display_text': 'Color'
+        }, 'style': {
+            'value': "[0 0 0 0 0]",
+            'regex': '^\[(\s*\d\s*)+\]',
+            'advanced': '1',
+            'display_text': 'Style'
+        }, 'buffersize': {
+            'value': "1000",
+            'regex': '^([1-9][0-9]{0,3}|10000)$',
+            'advanced': '1',
+            'display_text': 'Buffersize'
+        }, 'downsampling_rate': {
+            'value': "1",
+            'regex': '(\d+)'
+        }, 'rolling_plot': {
+            'value': '0',
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'display_text': 'Rolling Plot'
+        }, 'xRange-auto': {
+            'value': '1',
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'advanced': '1',
+            'display_text': 'x: auto range'
+        }, 'yRange-auto': {
+            'value': '1',
+            'regex': '^(1|0)$',
+            'type': 'bool',
+            'advanced': '1',
+            'display_text': 'y: auto range'
+        }, 'xRange': {
+            'value': '[0.0 1.0]',
+            'regex': '(\d+\.\d+)',
+            'advanced': '1',
+            'display_text': 'x: range'
+        }, 'yRange': {
+            'value': '[0.0 1.0]',
+            'regex': '(\d+\.\d+)',
+            'advanced': '1',
+            'display_text': 'y: range'
+        }
+        }
+        # http://www.regexr.com/
+        return config

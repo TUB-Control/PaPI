@@ -29,23 +29,34 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QPushButton
+from PySide.QtGui import QPushButton, QIcon
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 
 class Button(pcp_base):
+
+    def __init__(self):
+        super(Button, self).__init__()
+
+        self.name = None
+        self.cur_value = None
 
     def initiate_layer_0(self, config):
 
         #super(Button, self).start_init(config)
 
-        block = DBlock(self.__id__, 1, 1, 'Click_Event', ['Parameter'])
-        self.send_new_block_list([block])
-
-        self.cur_value = 0
-
-        self.set_widget_for_internal_usage(self.create_widget())
+        block = DBlock('Click_Event')
+        signal = DSignal('Parameter')
+        block.add_signal(signal)
 
         self.name = config['name']['value']
+        self.cur_value = 0
+
+        self.send_new_block_list([block])
+
+        self.button = self.create_widget()
+        self.set_widget_for_internal_usage(self.button)
+
 
     def create_widget(self):
         """
@@ -53,12 +64,13 @@ class Button(pcp_base):
         :return:
         :rtype QWidget:
         """
-        button = QPushButton('Click')
+        button = QPushButton(self.name)
         button.clicked.connect(self.clicked)
 
         return button
 
     def clicked(self):
+
 
         if self.cur_value == float(self.config['up']['value']):
             self.cur_value = float(self.config['low']['value'])
@@ -71,15 +83,20 @@ class Button(pcp_base):
     def get_plugin_configuration(self):
         config = {
             "low": {
-                'value':0.1,
+                'value': 0,
                 'advanced' : '0'
-        }, "up": {
+            }, "up": {
                 'value': 1,
                 'advanced' : '0'
-        },"name": {
-            'value' : "PCP_Plugin",
-             'advanced' : '0'
-        }}
+            },"name": {
+                'value': "PaPI Button",
+                'advanced': '0'
+            },'size': {
+                'value': "(150,50)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+            } }
         return config
 
     def plugin_meta_updated(self):

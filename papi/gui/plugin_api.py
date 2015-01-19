@@ -32,10 +32,10 @@ import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
-from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBCRIBE_DELAY, \
+from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from pyqtgraph import QtCore
+from papi.pyqtgraph import QtCore
 from papi.gui.gui_api import Gui_api
 
 import papi.error_codes as ERROR
@@ -67,7 +67,7 @@ class Plugin_api(QtCore.QObject):
         """
         self.__default_api.do_create_plugin(plugin_identifier,uname,config,autostart)
 
-    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signal_index=None, sub_alias = None):
+    def do_subscribe_uname(self,subscriber_uname,source_uname,block_name, signals=None, sub_alias = None):
         """
         Something like a callback function for gui triggered events.
         In this case, user wants one plugin to subscribe another
@@ -80,15 +80,15 @@ class Plugin_api(QtCore.QObject):
         :type block_name: basestring
         :return:
         """
-        self.__default_api.do_subscribe_uname(subscriber_uname, source_uname, block_name, signal_index, sub_alias)
+        self.__default_api.do_subscribe_uname(subscriber_uname, source_uname, block_name, signals, sub_alias)
 
 
     def do_set_parameter_uname(self, plugin_uname, parameter_name, value):
         """
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
-        :param plugin_uname: name of plugin which owns the parameter
 
+        :param plugin_uname: name of plugin which owns the parameter
         :type plugin_uname: basestring
         :param parameter_name: name of parameter to change
         :type parameter_name: basestring
@@ -110,3 +110,39 @@ class Plugin_api(QtCore.QObject):
         :return:
         """
         self.__default_api.do_delete_plugin_uname(uname)
+
+    def do_set_parameter(self, plugin_id, parameter_name, value):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to change a parameter of a plugin
+
+        :param plugin_id: id of plugin which owns the parameter
+        :type plugin_id: int
+        :param parameter_name: name of parameter to change
+        :type parameter_name: basestring
+        :param value: new parameter value to set
+        :type value:
+        """
+        self.__default_api.do_set_parameter(plugin_id,parameter_name,value)
+
+
+    def do_resume_plugin_by_uname(self, plugin_uname):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to resume a plugin, so this method will send an event to core.
+
+        :param plugin_uname: uname of plugin to resume
+        :type plugin_uname: basestring
+        """
+        self.__default_api.do_resume_plugin_by_uname(plugin_uname)
+
+
+    def do_pause_plugin_by_uname(self, plugin_uname):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to pause a plugin, so this method will send an event to core.
+
+        :param plugin_uname: uname of plugin to pause
+        :type plugin_uname: basestring
+        """
+        self.__default_api.do_pause_plugin_by_uname(plugin_uname)
