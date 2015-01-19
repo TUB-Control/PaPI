@@ -337,10 +337,12 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
-        menu = QMenu('Remove')
+        menu = QMenu('Menu')
 
+        submenu = QMenu('Action')
+        menu.addMenu(submenu)
         action = QAction('Remove DPlugin', self)
-        menu.addAction(action)
+        submenu.addAction(action)
 
         action.triggered.connect(lambda p=dplugin.id: self.gui_api.do_delete_plugin(p))
 
