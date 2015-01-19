@@ -24,6 +24,10 @@ Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
 `python3.4 main.py`
 
+Tip:
+If python3.4 interpreter cannot find or locate the installed packages (pyside or numpy), please make sure that the right
+python interpreter is called (in case there are multiple installed).
+
 Contribution
 ------
 
