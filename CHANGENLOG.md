@@ -1,6 +1,7 @@
 Changelog
 ------
 
+<<<<<<< HEAD
 v.0.9
 ---
  * Plot Plugin: Speedup by use of downsampling, more useable parameter, more dynamic legend, new ContextMenu
@@ -21,6 +22,8 @@ v.0.8.1
  * Signal unsubscribe is now possible using the gui
  * Signals, parameter and plugins in overview are sorted now
 
+=======
+>>>>>>> master
 v.0.8
 ---
 
@@ -29,7 +32,12 @@ v.0.8
 * New file dialog to avoid performance issues
 * [fix] signal names instead of id in overview
 * Run/Edit mode
+<<<<<<< HEAD
 * Set/load background and save it to config
 * [fix] When plugin in gui crashs, gui stays alive and plugin will be stopped
 
 
+=======
+* Set/load backgorund and save it to config
+* [fix] When plugin in gui crashs, gui stays alive and plugin will be stopped
+>>>>>>> master
