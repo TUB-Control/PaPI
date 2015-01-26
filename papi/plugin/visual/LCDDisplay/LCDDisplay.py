@@ -61,10 +61,13 @@ class LCDDisplay(vip_base):
         self.LcdWidget = QtGui.QLCDNumber()
         self.LcdWidget.setSmallDecimalPoint(True)
         self.LcdWidget.display(0)
+
+        self.LcdWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.LcdWidget.customContextMenuRequested.connect(self.show_context_menu)
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.LcdWidget )
-
+        self.cmenu = self.create_control_context_menu()
 
         # ---------------------------
         # Create Parameters
@@ -85,17 +88,21 @@ class LCDDisplay(vip_base):
         self.last_time = int(round(time.time() * 1000))
         return True
 
+    def show_context_menu(self, pos):
+        gloPos = self.LcdWidget.mapToGlobal(pos)
+        self.cmenu.exec_(gloPos)
+
     def pause(self):
         # will be called, when plugin gets paused
         # can be used to get plugin in a defined state before pause
         # e.a. close communication ports, files etc.
-        pass
+        self.LcdWidget.display('PAUSE')
 
     def resume(self):
         # will be called when plugin gets resumed
         # can be used to wake up the plugin from defined pause state
         # e.a. reopen communication ports, files etc.
-        pass
+        self.LcdWidget.display('...')
 
     def execute(self, Data=None, block_name = None):
         # Do main work here!
