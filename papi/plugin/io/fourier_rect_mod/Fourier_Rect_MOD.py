@@ -115,7 +115,7 @@ class Fourier_Rect_MOD(iop_base):
                 self.send_new_data('Rectangle', t, vech)
 
             time.sleep(0.001*self.amax )
-        print('Thread ende')
+
 
     def execute(self, Data=None, block_name = None):
         print("EXECUTE FUNC")

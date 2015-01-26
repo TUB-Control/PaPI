@@ -6,6 +6,8 @@ v.1.XX
  * [fix]: core will check plugin state before routing, so data to paused plugins will not be routed (#19)
  * [fix]: oboslete parameter in send_parameter_change was removed (#21)
  * [fix]: clean up of DParameter (#18)
+ * [fix]: renamed some variables of ownProcess_base to be private
+ * [improvement]: changed the demux function to in imporve performance
 
 
 v.1.0
