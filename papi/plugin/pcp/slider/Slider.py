@@ -71,7 +71,7 @@ class Slider(pcp_base):
 
     def value_changed(self, change):
         self.text_field.setText(str(change))
-        self.send_parameter_change(change, 'SliderBlock', 'TESTALIAS')
+        self.send_parameter_change(change, 'SliderBlock')
 
     def clicked(self):
         pass

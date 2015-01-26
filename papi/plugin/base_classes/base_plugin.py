@@ -95,12 +95,11 @@ class base_plugin(IPlugin):
             self.user_event_triggered = mode
 
 
-    def send_parameter_change(self, data, block_name, alias):
+    def send_parameter_change(self, data, block_name):
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.is_parameter = True
         opt.block_name = block_name
-        opt.parameter_alias = alias
         event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 

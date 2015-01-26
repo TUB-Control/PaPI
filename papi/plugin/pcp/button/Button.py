@@ -77,7 +77,7 @@ class Button(pcp_base):
         else:
             self.cur_value = float(self.config['up']['value'])
 
-        self.send_parameter_change(str(self.cur_value), 'Click_Event', 'TESTALIAS')
+        self.send_parameter_change(str(self.cur_value), 'Click_Event')
 
 
     def get_plugin_configuration(self):
