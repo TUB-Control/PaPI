@@ -72,23 +72,31 @@ class Fourier_Rect_MOD(iop_base):
 
         self.set_event_trigger_mode(True)
 
-        thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
-        thread.start()
+        self.goOn = True
+
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
+        self.thread.start()
+
+
 
         return True
 
     def pause(self):
-        pass
+        self.goOn = False
+        self.thread.join()
+
 
     def resume(self):
-        pass
+        self.goOn = True
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
+        self.thread.start()
 
     def thread_execute(self,host,port):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock.setblocking(0)
         vec = numpy.zeros( (self.max_approx,  (self.amax) ))
 
-        while True:
+        while self.goOn:
             self.sock.sendto(b'GET', (self.HOST, self.PORT) )
 
             try:
@@ -107,7 +115,7 @@ class Fourier_Rect_MOD(iop_base):
                 self.send_new_data('Rectangle', t, vech)
 
             time.sleep(0.001*self.amax )
-
+        print('Thread ende')
 
     def execute(self, Data=None, block_name = None):
         print("EXECUTE FUNC")
@@ -117,7 +125,8 @@ class Fourier_Rect_MOD(iop_base):
         pass
 
     def quit(self):
-        print('Fourier_Rect: will quit')
+        self.goOn = False
+        self.thread.join()
 
     def plugin_meta_updated(self):
         pass
