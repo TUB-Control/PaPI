@@ -82,18 +82,6 @@ class base_plugin(IPlugin):
     def merge_configs(self, cfg1, cfg2):
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
-    def evaluate_event_trigger(self,default):
-        if self.user_event_triggered == 'default':
-            self.EventTriggered = default
-        if self.user_event_triggered is True:
-            self.EventTriggered = True
-        if self.user_event_triggered is False:
-            self.EventTriggered = False
-
-    def set_event_trigger_mode(self, mode):
-        if mode is True or mode is False or mode == 'default':
-            self.user_event_triggered = mode
-
 
     def send_parameter_change(self, data, block_name):
         opt = DOptionalData(DATA=data)
