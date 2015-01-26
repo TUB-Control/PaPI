@@ -514,19 +514,23 @@ class Core:
                         # get plugin with sub_id and check for existence
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
-                            # plugin exists, check whether it is a ViP or not
-                            if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
-                                # Because its a ViP, we need a list of destination ID for new_data
-                                id_list.append(pl.id)
-                            else:
-                                # Plugin is not running in GUI, so just 1:1 relation for event and destinations
-                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                new_event = Event.data.NewData(oID, [pl.id], opt)
-                                pl.queue.put(new_event)
+                            if pl.state != PLUGIN_STATE_PAUSE or pl.state != PLUGIN_STATE_STOPPED:
+                                # plugin exists, check whether it is a ViP or not
+                                if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                                    # Because its a ViP, we need a list of destination ID for new_data
+                                    id_list.append(pl.id)
+                                else:
+                                    # Plugin is not running in GUI, so just 1:1 relation for event and destinations
+                                    opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
+                                    new_event = Event.data.NewData(oID, [pl.id], opt)
+                                    pl.queue.put(new_event)
 
-                                # this event will be a new parameter value for a plugin
-                                if opt.is_parameter is True:
-                                    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                                    # this event will be a new parameter value for a plugin
+                                    if opt.is_parameter is True:
+                                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                            else:
+                                # plugin is paused
+                                pass
                         else:
                             # pluign with sub_id does not exist in DCore of core
                             self.log.printText(1, 'new_data, subscriber plugin with id ' + str(
