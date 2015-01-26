@@ -39,7 +39,7 @@ class base_plugin(IPlugin):
     def papi_init(self, ):
         #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
-
+        self.__subscription_for_demux = None
 
 
 
@@ -154,19 +154,19 @@ class base_plugin(IPlugin):
 
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
-
+        self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
         self.plugin_meta_updated()
 
     def plugin_meta_updated(self):
         raise NotImplementedError("Please Implement this method")
 
     def demux(self, source_id, block_name, data):
+        if self.__subscription_for_demux is None:
+           self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
 
-        subcribtions = self.dplugin_info.get_subscribtions()
-        sub_object = subcribtions[source_id][block_name]
-
+        sub_object = self.__subscription_for_demux[source_id][block_name]
         sub_signals = sub_object.signals
-        sub_signals.append('t')
+        if 't' not in sub_signals:
+            sub_signals.append('t')
 
         return dict([(i, data[i]) for i in sub_signals if i in data])
-        #return data
