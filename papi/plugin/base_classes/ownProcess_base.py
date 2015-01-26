@@ -46,7 +46,7 @@ class ownProcess_base(base_plugin):
         self.papi_init()
 
         # working should go at least one time
-        self.goOn = 1
+        self.__goOn = 1
 
         self.plugin_stopped = False
 
@@ -57,7 +57,7 @@ class ownProcess_base(base_plugin):
             self.plugin_stopped = True
 
         # main working loop
-        while self.goOn:
+        while self.__goOn:
             self.evaluate_event_trigger(defaultEventTriggered)
             event = None
             try:
@@ -73,7 +73,7 @@ class ownProcess_base(base_plugin):
                     self.quit()
                     if event.delete is True:
                         # delete plugin, so work_progress will stop completely
-                        self.goOn = 0
+                        self.__goOn = 0
                         event = Event.status.JoinRequest(self.__id__, 0, None)
                         self._Core_event_queue__.put(event)
                     else:
@@ -129,7 +129,7 @@ class ownProcess_base(base_plugin):
             event = Event.status.StartFailed(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
             # end plugin
-            self.goOn = 0
+            self.__goOn = 0
             # sent join request to core
             event = Event.status.JoinRequest(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
