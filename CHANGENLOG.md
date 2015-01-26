@@ -1,6 +1,16 @@
 Changelog
 ------
 
+v.1.XX
+---
+ * [fix]: core will check plugin state before routing, so data to paused plugins will not be routed (#19)
+ * [fix]: oboslete parameter in send_parameter_change was removed (#21)
+ * [fix]: clean up of DParameter (#18)
+
+
+v.1.0
+---
+
 v.0.9
 ---
  * Plot Plugin: Speedup by use of downsampling, more useable parameter, more dynamic legend, new ContextMenu
