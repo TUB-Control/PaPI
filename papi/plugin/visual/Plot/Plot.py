@@ -392,57 +392,75 @@ class Plot(vip_base):
         """
         shift_data = 0
 
-        for last_tvalue in self.__tdata_old__:
-            if last_tvalue in self.__tbuffer__:
-                shift_data = list(self.__tbuffer__).index(last_tvalue)
-                break
-
+        # for last_tvalue in self.__tdata_old__:
+        #     if last_tvalue in self.__tbuffer__:
+        #         shift_data = list(self.__tbuffer__).index(last_tvalue)
+        #         break
+        #
         tdata = list(self.__tbuffer__)[shift_data::self.__downsampling_rate__]
-
-        if self.__rolling_plot__:
-            self.__append_at__ += self.__new_added_data__ / self.__downsampling_rate__
-            self.__append_at__ %= len(tdata)
-
-        # --------------------------
-        # iterate over all buffers
-        # --------------------------
-
+        #
+        # if self.__rolling_plot__:
+        #     self.__append_at__ += self.__new_added_data__ / self.__downsampling_rate__
+        #     self.__append_at__ %= len(tdata)
+        #
+        # # --------------------------
+        # # iterate over all buffers
+        # # --------------------------
+        #
+        #
+        # for signal_name in self.signals:
+        #     data = list(self.signals[signal_name]['buffer'])[shift_data::self.__downsampling_rate__]
+        #
+        #     if self.__rolling_plot__:
+        #         data = np.roll(data, int(self.__append_at__))
+        #         self.__vertical_line__.setValue(tdata[int(self.__append_at__) - 1])
+        #     else:
+        #         self.__vertical_line__.setValue(tdata[0])
+        #
+        #
+        #     curve = self.signals[signal_name]['curve']
+        #     # if len(tdata) > 0 :
+        #     #     print(np.array(tdata))
+        #     #     MultiLine(np.array(tdata), data)
+        #
+        #     new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
+        #     #print(new_tdata)
+        #
+        #     # if signal_name != "signal_1":
+        #     #     print(signal_name)
+        #     #     print(data)
+        #     #curve.setData(new_tdata, data, _callSync='off')
+        #
+        #     #curve.setData(tdata, data, _callSync='off')
+        #
+        # # if self.__papi_debug__:
+        # #
         now = pg.ptime.time()
+
+        count = 0
+
         for signal_name in self.signals:
-            data = list(self.signals[signal_name]['buffer'])[shift_data::self.__downsampling_rate__]
 
-            if self.__rolling_plot__:
-                data = np.roll(data, int(self.__append_at__))
-                self.__vertical_line__.setValue(tdata[int(self.__append_at__) - 1])
-            else:
-                self.__vertical_line__.setValue(tdata[0])
+            data = list(self.signals[signal_name]['buffer'])
+
+            y = np.random.normal(size=(len(self.signals),len(tdata)), scale=0.001) + np.arange(len(self.signals))[:,np.newaxis]
+            x = np.empty((len(self.signals),len(tdata)))
+            x[:] = np.arange(len(tdata))[np.newaxis,:]
 
 
-            curve = self.signals[signal_name]['curve']
-            # if len(tdata) > 0 :
-            #     print(np.array(tdata))
-            #     MultiLine(np.array(tdata), data)
+            y[count,:] = data
+            x[count,:] = tdata
 
-            new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
-            #print(new_tdata)
+            count += 1
 
-            # if signal_name != "signal_1":
-            #     print(signal_name)
-            #     print(data)
-            #curve.setData(new_tdata, data, _callSync='off')
-
-            #curve.setData(tdata, data, _callSync='off')
-
-        # if self.__papi_debug__:
-        #     print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
-
-        y = np.random.normal(size=(120,20000), scale=0.2) + np.arange(120)[:,np.newaxis]
-        x = np.empty((120,20000))
-        x[:] = np.arange(20000)[np.newaxis,:]
+            if count > 0:
+                break
 
         lines = MultiLine(x, y)
 
         self.__plotWidget__.addItem(lines)
+
+        print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
 
         self.__tdata_old__ = tdata
 
@@ -778,8 +796,6 @@ class Plot(vip_base):
 
         if not self.__papi_debug__:
             self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
-        if self.__papi_debug__:
-            self.__plotWidget__.getPlotItem().ctrlMenu = [self.custMenu]
         #self.__plotWidget__.getPlotItem().getViewBox()
 
     def range_changed(self):
@@ -888,8 +904,6 @@ class Plot(vip_base):
         self.add_databuffer(signal_3, 3)
         self.add_databuffer(signal_4, 4)
         self.add_databuffer(signal_5, 5)
-
-        print(self.signals)
 
         pass
 
