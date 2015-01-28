@@ -36,6 +36,7 @@ import numpy as np
 import collections
 import re
 import time
+import papi.pyqtgraph as pg
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
@@ -59,7 +60,7 @@ class Plot(vip_base):
             4 : (100, 100, 100)
     """
 
-    def __init__(self):
+    def __init__(self, debug=False):
         super(Plot, self).__init__()
         """
         Function init
@@ -143,8 +144,8 @@ class Plot(vip_base):
         # --------------------------------
         # Create PlotWidget
         # --------------------------------
-
         self.__text_item__ = pq.TextItem(text='', color=(200, 200, 200), anchor=(0, 0))
+
         self.__vertical_line__ = pq.InfiniteLine()
 
         self.__plotWidget__ = pq.PlotWidget()
@@ -152,13 +153,14 @@ class Plot(vip_base):
 
         if self.__rolling_plot__:
             self.__plotWidget__.addItem(self.__vertical_line__)
-
         self.__text_item__.setPos(0, 0)
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
 
+
         self.set_widget_for_internal_usage(self.__plotWidget__)
+
 
         #
         if self.config['xRange-auto']['value']=='1':
@@ -386,6 +388,7 @@ class Plot(vip_base):
         # --------------------------
         # iterate over all buffers
         # --------------------------
+        now = pg.ptime.time()
         for signal_name in self.signals:
             data = list(self.signals[signal_name]['buffer'])[shift_data::self.__downsampling_rate__]
 
@@ -396,7 +399,14 @@ class Plot(vip_base):
                 self.__vertical_line__.setValue(tdata[0])
 
             curve = self.signals[signal_name]['curve']
-            curve.setData(tdata, data, _callSync='off')
+            # if len(tdata) > 0 :
+            #     print(np.array(tdata))
+            #     MultiLine(np.array(tdata), data)
+
+            new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
+
+            curve.setData(new_tdata, data, _callSync='off')
+        print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
 
         self.__tdata_old__ = tdata
 
@@ -512,7 +522,7 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            curve = self.__plotWidget__.plot([0, 1], [0, 1])
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=True)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
