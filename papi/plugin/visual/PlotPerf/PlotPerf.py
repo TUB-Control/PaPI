@@ -150,6 +150,9 @@ class PlotPerf(vip_base):
         self.__vertical_line__ = pq.InfiniteLine()
 
         self.__plotWidget__ = pq.PlotWidget()
+        self.__plotWidget__.setAntialiasing(False)
+        self.__plotWidget__.useOpenGL(True)
+        #self.__plotWidget__.op
         self.__plotWidget__.addItem(self.__text_item__)
 
         if self.__rolling_plot__:
@@ -157,17 +160,27 @@ class PlotPerf(vip_base):
 
         self.__text_item__.setPos(0, 0)
 
-        self.__rgv__ = RemoteGraphicsView(debug=False)
 
-        self.set_widget_for_internal_usage(self.__rgv__)
+        ########################
+        #### Enable Remote Plotting
+        ########################
 
-        self.__plotWidget__ = self.__rgv__.pg.PlotItem()
+
+        # self.__rgv__ = RemoteGraphicsView(debug=True)
+        # self.__rgv__.show()
+        #
+        # self.set_widget_for_internal_usage(self.__rgv__)
+        # self.__plotWidget__ = self.__rgv__.pg.PlotItem()
+        # self.__rgv__.setCentralItem(self.__plotWidget__)
+
+        ###
+
         # self.__plot_item__  = self.__plotWidget__.pg.PlotItem()
 
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
 
-#        self.set_widget_for_internal_usage(self.__plotWidget__)
+        self.set_widget_for_internal_usage(self.__plotWidget__)
 
         #
         if self.config['xRange-auto']['value']=='1':
@@ -251,8 +264,8 @@ class PlotPerf(vip_base):
         :param block_name:
         :return:
         """
-        print('execute')
-        return
+#        print('execute')
+
         t = Data['t']
 
         self.__input_size__ = len(t)
@@ -311,7 +324,9 @@ class PlotPerf(vip_base):
 
             curve = self.signals[signal_name]['curve']
 
-            curve.setData( np.array(tdata), data)
+#            self.__plotWidget__.plot(x=tdata, y=data, clear=True)
+
+            curve.setData( np.array(tdata)[:-20], data[:-20])
 
         self.__tdata_old__ = tdata
 
@@ -504,7 +519,7 @@ class PlotPerf(vip_base):
                 signal = self.signals[signal_name]['signal']
                 self.remove_databuffer(signal)
 
-        self.update_pens()
+        #self.update_pens()
         #self.update_legend()
 
     def add_databuffer(self, signal, signal_id):
@@ -526,8 +541,11 @@ class PlotPerf(vip_base):
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
 
-            curve = self.__plotWidget__.plot([0, 1], [0, 1])
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=True)
 
+#            plot_item = self.__rgv__.pg.PlotItem()
+
+#            curve = plot_item.plot([0, 1], [0, 1])
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve

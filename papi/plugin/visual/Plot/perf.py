@@ -28,6 +28,8 @@ Sven Knuth
 
 import sys
 import os
+import time
+import random
 
 sys.path.insert(0,os.path.abspath('../../../../'))
 
@@ -35,8 +37,28 @@ print(sys.path)
 import papi.pyqtgraph as pq
 
 from PySide.QtGui import QApplication, QLabel
+from PySide import QtCore
 
 import importlib.machinery
+
+
+def do_fctn(plugin):
+    t = plugin.__t__
+    data = {}
+    for i in range(10):
+        data['t'] = [t]
+        t += 0.01
+        data['signal_1'] = [random.randint(0, 5)]
+        data['signal_2'] = [random.randint(10, 15)]
+        data['signal_3'] = [random.randint(20, 25)]
+        data['signal_4'] = [random.randint(30, 35)]
+        data['signal_5'] = [random.randint(40, 45)]
+
+
+        plugin.execute(data)
+        plugin.__t__ = t
+
+    QtCore.QTimer.singleShot(20, lambda : do_fctn(plugin))
 
 imp_path = "Plot.py"
 class_name = "Plot"
@@ -46,21 +68,23 @@ app = QApplication([])
 loader = importlib.machinery.SourceFileLoader(class_name, imp_path)
 current_modul = loader.load_module()
 
-plugin = getattr(current_modul, class_name)()
-
-config = plugin.get_plugin_configuration()
-plugin.config = config
+plugin = getattr(current_modul, class_name)(debug=True)
 
 # print('1')
 # __text_item__ = pq.TextItem(text='', color=(200, 200, 200), anchor=(0, 0))
 # print('2')
 
 
-plugin.initiate_layer_0(config)
+plugin.debug_papi()
 
+plot_widget = plugin.__plotWidget__
 
+plot_widget.show()
 
-window = QLabel('Window from label')
-window.show()
+plugin.__t__ = 0
+
+QtCore.QTimer.singleShot(50, lambda : do_fctn(plugin))
 
 app.exec_()
+
+

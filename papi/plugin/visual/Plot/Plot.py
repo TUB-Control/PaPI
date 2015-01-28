@@ -32,6 +32,7 @@ import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
+from papi.data.DSignal import DSignal
 import numpy as np
 import collections
 import re
@@ -42,6 +43,19 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 from papi.pyqtgraph.Qt import QtCore, QtGui
 
+
+class MultiLine(pg.QtGui.QGraphicsPathItem):
+    def __init__(self, x, y):
+        """x and y are 2D arrays of shape (Nplots, Nsamples)"""
+        connect = np.ones(x.shape, dtype=bool)
+        connect[:,-1] = 0 # don't draw the segment between each trace
+        self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
+        pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
+        self.setPen(pg.mkPen('w'))
+    def shape(self): # override because QGraphicsPathItem.shape is too expensive.
+        return pg.QtGui.QGraphicsItem.shape(self)
+    def boundingRect(self):
+        return self.path.boundingRect()
 
 class Plot(vip_base):
     """
@@ -71,6 +85,7 @@ class Plot(vip_base):
 
         self.signals = {}
 
+        self.__papi_debug__ = debug
         self.__buffer_size__ = None
         self.__downsampling_rate__ = 1
         self.__tbuffer__ = []
@@ -158,8 +173,8 @@ class Plot(vip_base):
 
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
 
-
-        self.set_widget_for_internal_usage(self.__plotWidget__)
+        if not self.__papi_debug__:
+            self.set_widget_for_internal_usage(self.__plotWidget__)
 
 
         #
@@ -192,7 +207,8 @@ class Plot(vip_base):
         self.__parameters__['yRange-auto'] = DParameter('yRange-auto', '1',  Regex='^(1|0){1}$')
         self.__parameters__['yRange'] = DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
 
-        self.send_new_parameter_list(list(self.__parameters__.values()))
+        if not self.__papi_debug__:
+            self.send_new_parameter_list(list(self.__parameters__.values()))
 
         # ---------------------------
         # Create Legend
@@ -250,6 +266,8 @@ class Plot(vip_base):
         self.__tbuffer__.extend(t)
         self.__new_added_data__ += len(t)
         self.__signals_have_same_length = True
+
+
 
         for key in Data:
             if key != 't':
@@ -388,6 +406,7 @@ class Plot(vip_base):
         # --------------------------
         # iterate over all buffers
         # --------------------------
+
         now = pg.ptime.time()
         for signal_name in self.signals:
             data = list(self.signals[signal_name]['buffer'])[shift_data::self.__downsampling_rate__]
@@ -398,15 +417,32 @@ class Plot(vip_base):
             else:
                 self.__vertical_line__.setValue(tdata[0])
 
+
             curve = self.signals[signal_name]['curve']
             # if len(tdata) > 0 :
             #     print(np.array(tdata))
             #     MultiLine(np.array(tdata), data)
 
             new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
+            #print(new_tdata)
 
-            curve.setData(new_tdata, data, _callSync='off')
-        print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
+            # if signal_name != "signal_1":
+            #     print(signal_name)
+            #     print(data)
+            #curve.setData(new_tdata, data, _callSync='off')
+
+            #curve.setData(tdata, data, _callSync='off')
+
+        # if self.__papi_debug__:
+        #     print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
+
+        y = np.random.normal(size=(120,20000), scale=0.2) + np.arange(120)[:,np.newaxis]
+        x = np.empty((120,20000))
+        x[:] = np.arange(20000)[np.newaxis,:]
+
+        lines = MultiLine(x, y)
+
+        self.__plotWidget__.addItem(lines)
 
         self.__tdata_old__ = tdata
 
@@ -522,7 +558,7 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=True)
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=False)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
@@ -739,9 +775,11 @@ class Plot(vip_base):
         self.custMenu.addSeparator().setText("Rolling Plot")
         self.custMenu.addAction(self.rolling_Checkbox_Action)
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
-        self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
-
+        if not self.__papi_debug__:
+            self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+        if self.__papi_debug__:
+            self.__plotWidget__.getPlotItem().ctrlMenu = [self.custMenu]
         #self.__plotWidget__.getPlotItem().getViewBox()
 
     def range_changed(self):
@@ -832,6 +870,28 @@ class Plot(vip_base):
         :return:
         """
         print('PlotPerformance: will quit')
+
+    def debug_papi(self):
+        config = self.get_plugin_configuration()
+        self.config = config
+        self.__id__ = 0
+        self.initiate_layer_0(config)
+
+        signal_1 = DSignal('signal_1')
+        signal_2 = DSignal('signal_2')
+        signal_3 = DSignal('signal_3')
+        signal_4 = DSignal('signal_4')
+        signal_5 = DSignal('signal_5')
+
+        self.add_databuffer(signal_1, 1)
+        self.add_databuffer(signal_2, 2)
+        self.add_databuffer(signal_3, 3)
+        self.add_databuffer(signal_4, 4)
+        self.add_databuffer(signal_5, 5)
+
+        print(self.signals)
+
+        pass
 
     def get_plugin_configuration(self):
         """
