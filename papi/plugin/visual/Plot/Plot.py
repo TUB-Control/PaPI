@@ -399,14 +399,8 @@ class Plot(vip_base):
                 self.__vertical_line__.setValue(tdata[0])
 
             curve = self.signals[signal_name]['curve']
-            # if len(tdata) > 0 :
-            #     print(np.array(tdata))
-            #     MultiLine(np.array(tdata), data)
 
-            new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
-
-            curve.setData(new_tdata, data, _callSync='off')
-        print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
+            curve.setData(tdata, data, _callSync='off')
 
         self.__tdata_old__ = tdata
 
@@ -522,7 +516,7 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=True)
+            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=False)
 
             self.signals[signal_name]['buffer'] = buffer
             self.signals[signal_name]['curve'] = curve
