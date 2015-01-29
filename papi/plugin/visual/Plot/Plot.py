@@ -41,6 +41,8 @@ import papi.pyqtgraph as pg
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 from papi.pyqtgraph.Qt import QtCore, QtGui
+from PySide.QtGui import QRegExpValidator
+from PySide.QtCore import *
 
 
 class Plot(vip_base):
@@ -576,10 +578,11 @@ class Plot(vip_base):
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
 
     def use_range_for_y(self, value):
-        reg = re.compile(r'(\d+\.\d+)')
+        reg = re.compile(r'([-]{0,1}\d+\.\d+)')
         range = reg.findall(value)
         if len(range) == 2:
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
+
 
     def setup_context_menu(self):
         self.custMenu = QtGui.QMenu("Options")
@@ -650,6 +653,11 @@ class Plot(vip_base):
         self.yRange_AutoCheckbox.setText('Y-Autorange')
         self.yRange_Layout.addWidget(self.yRange_AutoCheckbox)
 
+        self.yAutoRangeButton = QtGui.QPushButton()
+        self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
+        self.yAutoRangeButton.setText('Set range')
+        self.yRange_Layout.addWidget(self.yAutoRangeButton)
+
         ##### Y Line Edits
         # Layout
         self.yRange_EditWidget = QtGui.QWidget()
@@ -667,17 +675,21 @@ class Plot(vip_base):
             y_min = '0.0'
             y_max = '1.0'
 
+        rx = QRegExp(r'([-]{0,1}\d+\.\d+)')
+        validator = QRegExpValidator(rx, self.__plotWidget__)
+
         # Min
         self.yRange_minEdit = QtGui.QLineEdit()
         self.yRange_minEdit.setFixedWidth(80)
         self.yRange_minEdit.setText(y_min)
         self.yRange_minEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
-
+        self.yRange_minEdit.setValidator(validator)
         # Max
         self.yRange_maxEdit = QtGui.QLineEdit()
         self.yRange_maxEdit.setFixedWidth(80)
         self.yRange_maxEdit.setText(y_max)
         self.yRange_maxEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
+        self.yRange_maxEdit.setValidator(validator)
         # addTo Layout
         self.yRange_EditLayout.addWidget(self.yRange_minEdit)
         self.yRange_EditLayout.addWidget(QtGui.QLabel('<'))
@@ -735,8 +747,34 @@ class Plot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
         self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
+    def contextMenu_yAutoRangeButton_clicked(self):
+        mi = None;
+        ma = None;
+        for sig in self.signals:
+            buf = self.signals[sig]['buffer']
+            ma_buf = max(buf)
+            mi_buf = min(buf)
+            if ma is not None:
+                if ma_buf > ma:
+                    ma = ma_buf
+            else:
+                ma = ma_buf
 
-        #self.__plotWidget__.getPlotItem().getViewBox()
+            if mi is not None:
+                if mi_buf < mi:
+                    mi = mi_buf
+            else:
+                mi = mi_buf
+
+
+        ma = str(ma);
+        mi = str(mi)
+        print(ma)
+        print(mi)
+        self.yRange_maxEdit.setText(ma)
+        self.yRange_minEdit.setText(mi)
+        self.yRange_AutoCheckbox.setChecked(False)
+        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def range_changed(self):
         print('r')
@@ -766,12 +804,13 @@ class Plot(vip_base):
             self.xRange_minEdit.setDisabled(True)
             self.xRange_maxEdit.setDisabled(True)
         else:
-            self.xRange_minEdit.setDisabled(False)
-            self.xRange_maxEdit.setDisabled(False)
             mi = self.xRange_minEdit.text()
             ma = self.xRange_maxEdit.text()
-            self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
-            self.control_api.do_set_parameter(self.__id__, 'xRange', '[' + mi + ' ' + ma + ']')
+            if float(mi) < float(ma):
+                self.xRange_minEdit.setDisabled(False)
+                self.xRange_maxEdit.setDisabled(False)
+                self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
+                self.control_api.do_set_parameter(self.__id__, 'xRange', '[' + mi + ' ' + ma + ']')
 
     def contextMenu_yRange_toogle(self):
         if self.yRange_AutoCheckbox.isChecked():
@@ -780,13 +819,15 @@ class Plot(vip_base):
             self.yRange_minEdit.setDisabled(True)
             self.yRange_maxEdit.setDisabled(True)
         else:
-            self.yRange_minEdit.setDisabled(False)
-            self.yRange_maxEdit.setDisabled(False)
-            # do man range
             mi = self.yRange_minEdit.text()
             ma = self.yRange_maxEdit.text()
-            self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
-            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+            if float(mi) < float(ma):
+                self.yRange_minEdit.setDisabled(False)
+                self.yRange_maxEdit.setDisabled(False)
+                # do man range
+
+                self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
+                self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def update_signals(self):
         subscriptions = self.dplugin_info.get_subscribtions()
