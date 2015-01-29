@@ -45,13 +45,14 @@ from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class MultiLine(pg.QtGui.QGraphicsPathItem):
-    def __init__(self, x, y):
+    def __init__(self, x, y, pen):
         """x and y are 2D arrays of shape (Nplots, Nsamples)"""
         connect = np.ones(x.shape, dtype=bool)
         connect[:,-1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
         pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
-        self.setPen(pg.mkPen('w'))
+        self.setPen(pg.mkPen('r'))
+        #self.setPen(pen)
     def shape(self): # override because QGraphicsPathItem.shape is too expensive.
         return pg.QtGui.QGraphicsItem.shape(self)
     def boundingRect(self):
@@ -103,11 +104,14 @@ class Plot(vip_base):
         self.__parameters__ = {}
         self.__update_intervall__ = None
         self.__last_time__ = None
+        self.__last_plot_time__ = None
         self.__plotWidget__ = None
         self.__legend__ = None
         self.__text_item__ = None
         self.__vertical_line__ = None
         self.__offset_line__ = None
+        self.__y_axis__ = None
+        self.__x_axis__ = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -268,8 +272,6 @@ class Plot(vip_base):
         self.__new_added_data__ += len(t)
         self.__signals_have_same_length = True
 
-
-
         for key in Data:
             if key != 't':
                 y = Data[key]
@@ -325,13 +327,13 @@ class Plot(vip_base):
             self.config['color']['value'] = value
             int_re = re.compile(r'(\d+)')
             self.__colors_selected__ = int_re.findall(self.config['color']['value'])
-            self.update_pens()
+#            self.update_pens()
 
         if name == 'style':
             self.config['style']['value'] = value
             int_re = re.compile(r'(\d+)')
             self.__styles_selected__ = int_re.findall(self.config['style']['value'])
-            self.update_pens()
+#            self.update_pens()
 
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
@@ -383,7 +385,7 @@ class Plot(vip_base):
 
             new_pen = self.get_pen(signal_id)
 
-            self.signals[signal_name]['curve'].setPen(new_pen)
+            self.signals[signal_name]['pen']  = new_pen
 
     def update_plot(self):
         """
@@ -393,85 +395,38 @@ class Plot(vip_base):
         """
         shift_data = 0
 
-        # for last_tvalue in self.__tdata_old__:
-        #     if last_tvalue in self.__tbuffer__:
-        #         shift_data = list(self.__tbuffer__).index(last_tvalue)
-        #         break
-        #
-        tdata = list(self.__tbuffer__)[shift_data::self.__downsampling_rate__]
-        #
-        # if self.__rolling_plot__:
-        #     self.__append_at__ += self.__new_added_data__ / self.__downsampling_rate__
-        #     self.__append_at__ %= len(tdata)
-        #
-        # # --------------------------
-        # # iterate over all buffers
-        # # --------------------------
-        #
-        #
-        # for signal_name in self.signals:
-        #     data = list(self.signals[signal_name]['buffer'])[shift_data::self.__downsampling_rate__]
-        #
-        #     if self.__rolling_plot__:
-        #         data = np.roll(data, int(self.__append_at__))
-        #         self.__vertical_line__.setValue(tdata[int(self.__append_at__) - 1])
-        #     else:
-        #         self.__vertical_line__.setValue(tdata[0])
-        #
-        #
-        #     curve = self.signals[signal_name]['curve']
-        #     # if len(tdata) > 0 :
-        #     #     print(np.array(tdata))
-        #     #     MultiLine(np.array(tdata), data)
-        #
-        #     new_tdata = np.linspace(0, len(tdata)-1, len(tdata))
-        #     #print(new_tdata)
-        #
-        #     # if signal_name != "signal_1":
-        #     #     print(signal_name)
-        #     #     print(data)
-        #     #curve.setData(new_tdata, data, _callSync='off')
-        #
-        #     #curve.setData(tdata, data, _callSync='off')
-        #
-        # # if self.__papi_debug__:
-        # #
+        tdata = list(self.__tbuffer__)
         now = pg.ptime.time()
 
-        count = 0
-
-        # for signal_name in self.signals:
-        #
-        #     data = list(self.signals[signal_name]['buffer'])
-        #
-        #     y = np.random.normal(size=(len(self.signals),len(tdata)), scale=0.001) + np.arange(len(self.signals))[:,np.newaxis]
-        #     x = np.empty((len(self.signals),len(tdata)))
-        #     x[:] = np.arange(len(tdata))[np.newaxis,:]
-        #
-        #
-        #     y[count,:] = data
-        #     x[count,:] = tdata
-        #
-        #     count += 1
-        #
-        #     if count > 0:
-        #         break
-
         self.__plotWidget__.clear()
-        amount_signal = 3
+
+        # Set Y-Axis
+
+        amount_signal = len(self.signals)
+
         len_data = len(tdata)
+        self.__y_axis__ = np.ones((amount_signal, len_data))
+        self.__x_axis__ = np.empty((amount_signal, len_data))
 
-        y = np.random.normal(size=(amount_signal, len_data), scale=0.1) + np.arange(amount_signal)[:,np.newaxis]
-        x = np.empty((amount_signal, len_data))
-        #x[:] = np.arange(len_data)[np.newaxis,:]
+        count = 0
+        for signal_name in self.signals:
+            data = list(self.signals[signal_name]['buffer'])
 
-        x[:] = np.array(tdata)[np.newaxis,:]
+            self.__y_axis__[count,:] = np.array(data)
 
-        lines = MultiLine(x, y)
+            count += 1
+
+        # Set X-Axis
+
+        self.__x_axis__[:] = np.array(tdata)[np.newaxis,:]
+
+        lines = MultiLine(self.__x_axis__, self.__y_axis__, None)
 
         self.__plotWidget__.addItem(lines)
         self.__last_plot_time__ = pg.ptime.time()-now
-        print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+
+        if self.__papi_debug__:
+            print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
         self.__tdata_old__ = tdata
 
@@ -546,6 +501,7 @@ class Plot(vip_base):
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
                 for signal_name in subscription.get_signals():
+
                     signal = subscription.get_dblock().get_signal_by_uname(signal_name)
                     index += 1
                     current_signals[signal_name] = {}
@@ -559,15 +515,18 @@ class Plot(vip_base):
             if signal_name not in self.signals:
                 signal = current_signals[signal_name]['signal']
                 self.add_databuffer(signal, current_signals[signal_name]['index'])
+                print('Add ' + signal_name)
 
         # Delete old buffers
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
                 signal = self.signals[signal_name]['signal']
                 self.remove_databuffer(signal)
+                print('Remove ' + signal_name)
 
-        self.update_pens()
-        self.update_legend()
+
+        #self.update_pens()
+        #self.update_legend()
 
     def add_databuffer(self, signal, signal_id):
         """
