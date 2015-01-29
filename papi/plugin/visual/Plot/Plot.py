@@ -162,7 +162,8 @@ class Plot(vip_base):
 
 
         self.set_widget_for_internal_usage(self.__plotWidget__)
-
+        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
+        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
 
         #
         if self.config['xRange-auto']['value']=='1':
@@ -347,13 +348,13 @@ class Plot(vip_base):
 
         if name == 'xRange':
             self.config['xRange']['value'] = value
-            if self.config['xRange-auto']['value'] == '0':
-                self.use_range_for_x(value)
+            #if self.config['xRange-auto']['value'] == '0':
+            self.use_range_for_x(value)
 
         if name == 'yRange':
             self.config['yRange']['value'] = value
-            if self.config['yRange-auto']['value'] == '0':
-                self.use_range_for_y(value)
+            #if self.config['yRange-auto']['value'] == '0':
+            self.use_range_for_y(value)
 
     def update_pens(self):
         """
@@ -768,18 +769,12 @@ class Plot(vip_base):
             else:
                 mi = mi_buf
 
-
         ma = str(ma);
         mi = str(mi)
-        print(ma)
-        print(mi)
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
         self.yRange_AutoCheckbox.setChecked(False)
         self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
-
-    def range_changed(self):
-        print('r')
 
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
