@@ -334,6 +334,7 @@ class Plot(vip_base):
 
         if name == 'yRange-auto':
             self.config['yRange-auto']['value'] = value
+            return
             self.yRange_AutoCheckbox.setChecked(value=='1')
             if int(value) == 1:
                 self.yRange_minEdit.setDisabled(True)
@@ -648,7 +649,8 @@ class Plot(vip_base):
         self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.yRange_Layout.setSpacing(1)
 
-        self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
+        self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= False)#self.config['xRange-auto']['value'] == '1')
+        self.yRange_AutoCheckbox.setDisabled(True)
         self.yRange_AutoCheckbox.stateChanged.connect(self.contextMenu_yRange_toogle)
         self.yRange_AutoCheckbox.setText('Y-Autorange')
         self.yRange_Layout.addWidget(self.yRange_AutoCheckbox)
