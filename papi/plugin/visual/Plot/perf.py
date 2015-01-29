@@ -58,7 +58,7 @@ def do_fctn(plugin):
         plugin.execute(data)
         plugin.__t__ = t
 
-    if plugin.__t__ < 10:
+    if plugin.__t__ < 25:
         QtCore.QTimer.singleShot(20, lambda : do_fctn(plugin))
 
 imp_path = "Plot.py"

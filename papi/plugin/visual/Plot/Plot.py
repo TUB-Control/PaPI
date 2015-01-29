@@ -220,6 +220,7 @@ class Plot(vip_base):
         self.__last_time__ = current_milli_time()
 
         self.__update_intervall__ = 25  # in milliseconds
+        self.__last_plot_time__   = 0
 
         self.setup_context_menu()
 
@@ -278,7 +279,7 @@ class Plot(vip_base):
                     self.__signals_have_same_length &= (len(t) == len(y))
 
         if self.__input_size__ > 1 or self.__signals_have_same_length:
-            if current_milli_time() - self.__last_time__ > self.__update_intervall__:
+            if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
                 self.__last_time__ = current_milli_time()
                 self.update_plot()
                 self.__last_time__ = current_milli_time()
@@ -439,28 +440,38 @@ class Plot(vip_base):
 
         count = 0
 
-        for signal_name in self.signals:
+        # for signal_name in self.signals:
+        #
+        #     data = list(self.signals[signal_name]['buffer'])
+        #
+        #     y = np.random.normal(size=(len(self.signals),len(tdata)), scale=0.001) + np.arange(len(self.signals))[:,np.newaxis]
+        #     x = np.empty((len(self.signals),len(tdata)))
+        #     x[:] = np.arange(len(tdata))[np.newaxis,:]
+        #
+        #
+        #     y[count,:] = data
+        #     x[count,:] = tdata
+        #
+        #     count += 1
+        #
+        #     if count > 0:
+        #         break
 
-            data = list(self.signals[signal_name]['buffer'])
+        self.__plotWidget__.clear()
+        amount_signal = 3
+        len_data = len(tdata)
 
-            y = np.random.normal(size=(len(self.signals),len(tdata)), scale=0.001) + np.arange(len(self.signals))[:,np.newaxis]
-            x = np.empty((len(self.signals),len(tdata)))
-            x[:] = np.arange(len(tdata))[np.newaxis,:]
+        y = np.random.normal(size=(amount_signal, len_data), scale=0.1) + np.arange(amount_signal)[:,np.newaxis]
+        x = np.empty((amount_signal, len_data))
+        #x[:] = np.arange(len_data)[np.newaxis,:]
 
-
-            y[count,:] = data
-            x[count,:] = tdata
-
-            count += 1
-
-            if count > 0:
-                break
+        x[:] = np.array(tdata)[np.newaxis,:]
 
         lines = MultiLine(x, y)
 
         self.__plotWidget__.addItem(lines)
-
-        print("Plot time: %0.5f sec" % (pg.ptime.time()-now) )
+        self.__last_plot_time__ = pg.ptime.time()-now
+        print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
         self.__tdata_old__ = tdata
 
@@ -576,10 +587,10 @@ class Plot(vip_base):
 
             buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=False)
+            #curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=False)
 
             self.signals[signal_name]['buffer'] = buffer
-            self.signals[signal_name]['curve'] = curve
+            #self.signals[signal_name]['curve'] = curve
             self.signals[signal_name]['id'] = signal_id
             self.signals[signal_name]['signal'] = signal
 
