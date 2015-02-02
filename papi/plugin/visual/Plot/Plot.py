@@ -36,6 +36,7 @@ from papi.data.DSignal import DSignal
 import numpy as np
 import collections
 import re
+import copy
 import time
 import papi.pyqtgraph as pg
 
@@ -45,18 +46,93 @@ from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class MultiLine(pg.QtGui.QGraphicsPathItem):
-    def __init__(self, x, y, pen):
+    def __init__(self, x, y, pen=pg.mkPen('r')):
         """x and y are 2D arrays of shape (Nplots, Nsamples)"""
         connect = np.ones(x.shape, dtype=bool)
         connect[:,-1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
         pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
-        self.setPen(pg.mkPen('r'))
-        #self.setPen(pen)
+        self.setPen(pen)
+        self.drawn = False
+
     def shape(self): # override because QGraphicsPathItem.shape is too expensive.
         return pg.QtGui.QGraphicsItem.shape(self)
+
     def boundingRect(self):
         return self.path.boundingRect()
+
+
+class PlotItem(object):
+
+    def __init__(self,signal_name, buffers, signal_id, signal, slices):
+        super(PlotItem,self).__init__()
+        self.signal_name = signal_name
+        self.buffers = buffers
+        self.id = signal_id
+        self.signal = signal
+        self.position = 0
+        self.item_ready = False
+        self.counter = len(buffers[0])
+        self.pen = None
+        self.slices = slices
+        self.graphics = []
+        self.slice_size = 10
+
+    def add_data(self, elements, tdata):
+        tdata = list(tdata)
+        buffer = self.buffers[0]
+
+        self.counter -= len(elements)
+
+        # It is possible to write all elements to the current buffer
+        if self.counter >= 0:
+            buffer.extend(elements)
+        # Some elements can't be written to the current buffer
+        if self.counter <= 0:
+            buffer.extend(elements[:self.counter])
+            if len(tdata) < self.slice_size:
+                x_axis = np.array(tdata)[np.newaxis,:]
+            else:
+                x_axis = np.array(tdata[-self.slice_size-1:])[np.newaxis,:]
+
+            self.create_graphic(x_axis)
+
+#            position = (self.position + 1) & self.slices
+            buffer.extend(elements[self.counter:])
+
+            self.counter = self.slice_size
+
+
+
+    def create_graphic(self, x_axis):
+
+        y_axis = np.array(list(self.buffers[0])[-self.slice_size-1:])
+
+        if len(y_axis) == 0:
+            return None
+        if len(y_axis) != len(x_axis[0]):
+            return None
+
+        graphic = MultiLine(x_axis, y_axis, self.pen)
+
+        self.graphics.append(graphic)
+        #print(self.graphics)
+
+    def get_graphic(self, tmp):
+
+        if len(self.graphics) > 0:
+            graphic = self.graphics[-1]
+
+            if not graphic.drawn:
+                graphic.drawn = True
+                return graphic
+        return None
+
+    def get_old_graphic(self):
+        if len(self.graphics) > self.slices:
+            graphic = self.graphics.pop(0)
+            return graphic
+        return None
 
 class Plot(vip_base):
     """
@@ -112,6 +188,7 @@ class Plot(vip_base):
         self.__offset_line__ = None
         self.__y_axis__ = None
         self.__x_axis__ = None
+        self.__amount_of_slices__ = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -137,6 +214,7 @@ class Plot(vip_base):
         :return:
         """
 
+
         # ---------------------------
         # Read configuration
         # ---------------------------
@@ -150,7 +228,7 @@ class Plot(vip_base):
         self.__styles_selected__ = int_re.findall(self.config['style']['value'])
 
         self.__buffer_size__ = int(int_re.findall(self.config['buffersize']['value'])[0])
-
+        self.__buffer_size__ = 1000
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
 
 
@@ -159,6 +237,7 @@ class Plot(vip_base):
         # ----------------------------
 
         self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
+        self.__amount_of_slices__ = 10
 
         # --------------------------------
         # Create PlotWidget
@@ -176,6 +255,8 @@ class Plot(vip_base):
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
+        self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
+        self.__plotWidget__.getPlotItem().getViewBox().setYRange(0,6)
 
         if not self.__papi_debug__:
             self.set_widget_for_internal_usage(self.__plotWidget__)
@@ -223,7 +304,7 @@ class Plot(vip_base):
 
         self.__last_time__ = current_milli_time()
 
-        self.__update_intervall__ = 25  # in milliseconds
+        self.__update_intervall__ = 100  # in milliseconds
         self.__last_plot_time__   = 0
 
         self.setup_context_menu()
@@ -265,6 +346,7 @@ class Plot(vip_base):
         :param block_name:
         :return:
         """
+
         t = Data['t']
 
         self.__input_size__ = len(t)
@@ -272,22 +354,30 @@ class Plot(vip_base):
         self.__new_added_data__ += len(t)
         self.__signals_have_same_length = True
 
+        now = pg.ptime.time()
+
         for key in Data:
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    buffer = self.signals[key]['buffer']
-                    buffer.extend(y)
+                    self.signals[key].add_data(y, self.__tbuffer__)
+
+                    # buffer = self.signals[key]['buffer']
+                    # buffer.extend(y)
                     self.__signals_have_same_length &= (len(t) == len(y))
 
         if self.__input_size__ > 1 or self.__signals_have_same_length:
+
             if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
+
                 self.__last_time__ = current_milli_time()
                 self.update_plot()
                 self.__last_time__ = current_milli_time()
                 self.__new_added_data__ = 0
         else:
             self.update_plot_single_timestamp(Data)
+
+        #print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def set_parameter(self, name, value):
         """
@@ -327,13 +417,13 @@ class Plot(vip_base):
             self.config['color']['value'] = value
             int_re = re.compile(r'(\d+)')
             self.__colors_selected__ = int_re.findall(self.config['color']['value'])
-#            self.update_pens()
+            self.update_pens()
 
         if name == 'style':
             self.config['style']['value'] = value
             int_re = re.compile(r'(\d+)')
             self.__styles_selected__ = int_re.findall(self.config['style']['value'])
-#            self.update_pens()
+            self.update_pens()
 
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
@@ -381,11 +471,11 @@ class Plot(vip_base):
         """
 
         for signal_name in self.signals.keys():
-            signal_id = self.signals[signal_name]['id']
+            signal_id = self.signals[signal_name].id
 
             new_pen = self.get_pen(signal_id)
 
-            self.signals[signal_name]['pen']  = new_pen
+            self.signals[signal_name].pen = new_pen
 
     def update_plot(self):
         """
@@ -393,42 +483,46 @@ class Plot(vip_base):
 
         :return:
         """
+
         shift_data = 0
 
         tdata = list(self.__tbuffer__)
         now = pg.ptime.time()
 
-        self.__plotWidget__.clear()
+        #self.__plotWidget__.clear()
 
         # Set Y-Axis
 
-        amount_signal = len(self.signals)
-
-        len_data = len(tdata)
-        self.__y_axis__ = np.ones((amount_signal, len_data))
-        self.__x_axis__ = np.empty((amount_signal, len_data))
-
         count = 0
+
+        x_axis = np.array(tdata[-100:])[np.newaxis,:]
+
+        #self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
+
         for signal_name in self.signals:
-            data = list(self.signals[signal_name]['buffer'])
 
-            self.__y_axis__[count,:] = np.array(data)
 
+            #y_axis = np.array(data)
+            #
+
+            graphic = self.signals[signal_name].get_graphic(x_axis)
+            #line = MultiLine(x_axis, y_axis, pen)
+            if graphic is not None:
+                self.__plotWidget__.addItem(graphic)
+
+            graphic = self.signals[signal_name].get_old_graphic()
+
+            #if graphic is not None:
+               #self.__plotWidget__.clear()
+               # self.__plotWidget__.removeItem(graphic)
             count += 1
 
-        # Set X-Axis
-
-        self.__x_axis__[:] = np.array(tdata)[np.newaxis,:]
-
-        lines = MultiLine(self.__x_axis__, self.__y_axis__, None)
-
-        self.__plotWidget__.addItem(lines)
         self.__last_plot_time__ = pg.ptime.time()-now
 
-        if self.__papi_debug__:
-            print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+        self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0],tdata[-1])
 
-        self.__tdata_old__ = tdata
+        # if self.__papi_debug__:
+        #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def update_plot_single_timestamp(self, data):
         """
@@ -464,7 +558,7 @@ class Plot(vip_base):
         # Change Time Buffer
         # -------------------------------
 
-        self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
+#        self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
 
         # -------------------------------
         # Change Buffer of current
@@ -476,10 +570,10 @@ class Plot(vip_base):
         for signal_name in self.signals:
             buffer_new = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
 
-            buffer_old = self.signals[signal_name]['buffer']
+#            buffer_old = self.signals[signal_name]['buffer']
             # buffer_new.extend(buffer_old)
 
-            self.signals[signal_name]['buffer'] = buffer_new
+#            self.signals[signal_name]['buffer'] = buffer_new
 
         self.__new_added_data__ = 0
 
@@ -525,7 +619,7 @@ class Plot(vip_base):
                 print('Remove ' + signal_name)
 
 
-        #self.update_pens()
+        self.update_pens()
         #self.update_legend()
 
     def add_databuffer(self, signal, signal_id):
@@ -544,15 +638,15 @@ class Plot(vip_base):
 
             start_size = len(self.__tbuffer__)
 
-            buffer = collections.deque([0.0] * start_size, self.__buffer_size__)  # COLLECTION
+            buffers = []
 
-            #curve = self.__plotWidget__.plot([0, 1], [0, 1], clear=False)
+            for i in range(0,self.__amount_of_slices__):
+                buffer = collections.deque([0.0] * start_size, int(self.__buffer_size__  ) )  # COLLECTION
+                buffers.append(buffer)
 
-            self.signals[signal_name]['buffer'] = buffer
-            #self.signals[signal_name]['curve'] = curve
-            self.signals[signal_name]['id'] = signal_id
-            self.signals[signal_name]['signal'] = signal
+            plot_item = PlotItem(signal_name, buffers,signal_id,signal, self.__amount_of_slices__)
 
+            self.signals[signal_name] = plot_item
 
     def remove_databuffer(self, signal):
         """
@@ -565,8 +659,8 @@ class Plot(vip_base):
         signal_name = signal.uname
 
         if signal_name in self.signals:
-            curve = self.signals[signal_name]['curve']
-            curve.clear()
+            # curve = self.signals[signal_name]['curve']
+            # curve.clear()
             # self.__legend__.removeItem(legend_name)
             del self.signals[signal_name]
 
@@ -874,6 +968,8 @@ class Plot(vip_base):
         self.add_databuffer(signal_3, 3)
         self.add_databuffer(signal_4, 4)
         self.add_databuffer(signal_5, 5)
+
+        self.update_pens()
 
         pass
 

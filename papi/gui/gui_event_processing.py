@@ -118,6 +118,7 @@ class GuiEventProcessing(QtCore.QObject):
                 # there was no new element, so event flag is set to false
                 isEvent = False
 
+
             # check if there was a new element to process it
             if isEvent:
                 # get the event operation
