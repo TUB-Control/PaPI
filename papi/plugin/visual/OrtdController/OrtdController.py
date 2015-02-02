@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
-
+from papi.gui.qt_new.custom import FileLineEdit
 from PySide import QtGui, QtCore
 from PySide.QtGui import QRegExpValidator
 
@@ -200,7 +200,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.uname = uname
         self.api = api
         self.ortd_uname = ortd_uname
-        self.setTitle("ORTD Controller")
+        #self.setTitle("ORTD Controller")
         label = QtGui.QLabel("Please configure the ORTD plugin.")
         label.setWordWrap(True)
 
@@ -228,6 +228,16 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.port_line_edit.setValidator(validator)
         self.port_line_edit.setText('20000')
 
+        # ----------- #
+        #  File dial. #
+        # ----------- #
+        self.file_edit =   FileLineEdit()
+        self.file_edit.setReadOnly(True)
+        self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
+        self.file_label = QtGui.QLabel('ProtocollConfig')
+        self.file_label.setBuddy(self.file_edit)
+
+
 
         layout = QtGui.QVBoxLayout()
         layout.addWidget(label)
@@ -235,6 +245,8 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         layout.addWidget(self.ip_line_edit)
         layout.addWidget(port_label)
         layout.addWidget(self.port_line_edit)
+        layout.addWidget(self.file_label)
+        layout.addWidget(self.file_edit)
 
         self.setLayout(layout)
 
@@ -242,6 +254,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         print('Start: next clicked')
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
+        json = self.file_edit.text()
         cfg ={
             'address': {
                 'value': IP,
@@ -254,7 +267,11 @@ class ControllerOrtdStart(QtGui.QWizardPage):
             'out_port': {
                 'value': '20001',
                 'advanced': '1'
-            }
+            },'Cfg_Path': {
+                'value': json,
+                'type': 'file',
+                'advanced': '0'
+            },
         }
         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, cfg, True)
 
