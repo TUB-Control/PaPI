@@ -165,17 +165,6 @@ class Plot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
 
-        #
-        if self.config['xRange-auto']['value']=='1':
-            pass
-        else:
-            self.use_range_for_x(self.config['xRange']['value'])
-
-        if self.config['yRange-auto']['value']== '1':
-            pass
-        else:
-            self.use_range_for_y(self.config['yRange']['value'])
-
         # ---------------------------
         # Create Parameters
         # ---------------------------
@@ -190,9 +179,7 @@ class Plot(vip_base):
         self.__parameters__['downsampling_rate'] = DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^([1-9][0-9]?|100)$')
         self.__parameters__['buffersize'] = DParameter('buffersize', self.__buffer_size__, Regex='^([1-9][0-9]{0,3}|10000)$')
 
-        self.__parameters__['xRange-auto'] = DParameter('xRange-auto', '1',  Regex='^(1|0){1}$')
-        self.__parameters__['xRange'] = DParameter('xRange', '[0,1]', Regex='(\d+\.\d+)')
-        self.__parameters__['yRange-auto'] = DParameter('yRange-auto', '1',  Regex='^(1|0){1}$')
+        #self.__parameters__['xRange'] = DParameter('xRange', '[0,1]', Regex='(\d+\.\d+)')
         self.__parameters__['yRange'] = DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
 
         self.send_new_parameter_list(list(self.__parameters__.values()))
@@ -210,16 +197,8 @@ class Plot(vip_base):
 
         self.setup_context_menu()
 
-                #
-        if self.config['xRange-auto']['value']=='1':
-            pass
-        else:
-            self.use_range_for_x(self.config['xRange']['value'])
-
-        if self.config['yRange-auto']['value']== '1':
-            pass
-        else:
-            self.use_range_for_y(self.config['yRange']['value'])
+        #self.use_range_for_x(self.config['xRange']['value'])
+        self.use_range_for_y(self.config['yRange']['value'])
 
         return True
 
@@ -321,39 +300,12 @@ class Plot(vip_base):
             self.config['buffersize']['value'] = value
             self.set_buffer_size(value)
 
-        if name == 'xRange-auto':
-            self.config['xRange-auto']['value'] = value
-            self.xRange_AutoCheckbox.setChecked(value=='1')
-            if int(value) == 1:
-                self.xRange_minEdit.setDisabled(True)
-                self.xRange_maxEdit.setDisabled(True)
-                self.__plotWidget__.getPlotItem().getViewBox().menu.xAutoClicked()
-            else:
-                self.use_range_for_x(self.config['xRange']['value'])
-                self.xRange_minEdit.setDisabled(False)
-                self.xRange_maxEdit.setDisabled(False)
-
-        if name == 'yRange-auto':
-            self.config['yRange-auto']['value'] = value
-            return
-            self.yRange_AutoCheckbox.setChecked(value=='1')
-            if int(value) == 1:
-                self.yRange_minEdit.setDisabled(True)
-                self.yRange_maxEdit.setDisabled(True)
-                self.__plotWidget__.getPlotItem().getViewBox().menu.yAutoClicked()
-            else:
-                self.yRange_minEdit.setDisabled(False)
-                self.yRange_maxEdit.setDisabled(False)
-                self.use_range_for_y(self.config['yRange']['value'])
-
-        if name == 'xRange':
-            self.config['xRange']['value'] = value
-            #if self.config['xRange-auto']['value'] == '0':
-            self.use_range_for_x(value)
+        # if name == 'xRange':
+        #     self.config['xRange']['value'] = value
+        #     self.use_range_for_x(value)
 
         if name == 'yRange':
             self.config['yRange']['value'] = value
-            #if self.config['yRange-auto']['value'] == '0':
             self.use_range_for_y(value)
 
     def update_pens(self):
@@ -405,6 +357,7 @@ class Plot(vip_base):
             curve = self.signals[signal_name]['curve']
 
             curve.setData(tdata, data, _callSync='off')
+            self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0],tdata[-1])
 
         self.__tdata_old__ = tdata
 
@@ -575,72 +528,70 @@ class Plot(vip_base):
         reg = re.compile(r'(\d+\.\d+)')
         range = reg.findall(value)
         if len(range) == 2:
-            self.xRange_minEdit.setText(range[0])
-            self.xRange_maxEdit.setText(range[1])
+            #self.xRange_minEdit.setText(range[0])
+            #self.xRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
 
     def use_range_for_y(self, value):
         reg = re.compile(r'([-]{0,1}\d+\.\d+)')
         range = reg.findall(value)
         if len(range) == 2:
+            self.yRange_minEdit.setText(range[0])
+            self.yRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
 
 
     def setup_context_menu(self):
         self.custMenu = QtGui.QMenu("Options")
-        self.axesMenu = QtGui.QMenu('Axes')
+        self.axesMenu = QtGui.QMenu('Y-Axis')
         self.gridMenu = QtGui.QMenu('Grid')
 
 
         # ---------------------------------------------------------
         # #### X-Range Actions
-        self.xRange_Widget = QtGui.QWidget()
-        self.xRange_Layout = QtGui.QVBoxLayout(self.xRange_Widget)
-        self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
-        self.xRange_Layout.setSpacing(1)
+        #self.xRange_Widget = QtGui.QWidget()
+        #self.xRange_Layout = QtGui.QVBoxLayout(self.xRange_Widget)
+        #self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
+        #self.xRange_Layout.setSpacing(1)
 
-        self.xRange_AutoCheckbox = QtGui.QCheckBox(checked= self.config['xRange-auto']['value'] == '1')
-        self.xRange_AutoCheckbox.stateChanged.connect(self.contextMenu_xRange_toogle)
-        self.xRange_AutoCheckbox.setText('X-Autorange')
-        self.xRange_Layout.addWidget(self.xRange_AutoCheckbox)
 
         ##### X Line Edits
         # Layout
-        self.xRange_EditWidget = QtGui.QWidget()
-        self.xRange_EditLayout = QtGui.QHBoxLayout(self.xRange_EditWidget)
-        self.xRange_EditLayout.setContentsMargins(2, 2, 2, 2)
-        self.xRange_EditLayout.setSpacing(1)
+        #self.xRange_EditWidget = QtGui.QWidget()
+        #self.xRange_EditLayout = QtGui.QHBoxLayout(self.xRange_EditWidget)
+        #self.xRange_EditLayout.setContentsMargins(2, 2, 2, 2)
+        #self.xRange_EditLayout.setSpacing(1)
 
         # get old values;
-        reg = re.compile(r'(\d+\.\d+)')
-        range = reg.findall(self.config['xRange']['value'])
-        if len(range) == 2:
-            x_min = range[0]
-            x_max = range[1]
-        else:
-            x_min = '0.0'
-            x_max = '1.0'
+        #reg = re.compile(r'(\d+\.\d+)')
+        #range = reg.findall(self.config['xRange']['value'])
+        #if len(range) == 2:
+        #    x_min = range[0]
+        #    x_max = range[1]
+        #else:
+        #    x_min = '0.0'
+        #    x_max = '1.0'
 
 
         # Min
-        self.xRange_minEdit = QtGui.QLineEdit()
-        self.xRange_minEdit.setFixedWidth(80)
-        self.xRange_minEdit.setText(x_min)
-        self.xRange_minEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
-        # Max
-        self.xRange_maxEdit = QtGui.QLineEdit()
-        self.xRange_maxEdit.setFixedWidth(80)
-        self.xRange_maxEdit.setText(x_max)
-        self.xRange_maxEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
-        # addTo Layout
-        self.xRange_EditLayout.addWidget(self.xRange_minEdit)
-        self.xRange_EditLayout.addWidget(QtGui.QLabel('<'))
-        self.xRange_EditLayout.addWidget(self.xRange_maxEdit)
-        self.xRange_Layout.addWidget(self.xRange_EditWidget)
-
-        # build Action
-        self.xRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
-        self.xRange_Action.setDefaultWidget(self.xRange_Widget)
+        # self.xRange_minEdit = QtGui.QLineEdit()
+        # self.xRange_minEdit.setFixedWidth(80)
+        # self.xRange_minEdit.setText(x_min)
+        # self.xRange_minEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
+        # # Max
+        # self.xRange_maxEdit = QtGui.QLineEdit()
+        # self.xRange_maxEdit.setFixedWidth(80)
+        # self.xRange_maxEdit.setText(x_max)
+        # self.xRange_maxEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
+        # # addTo Layout
+        # self.xRange_EditLayout.addWidget(self.xRange_minEdit)
+        # self.xRange_EditLayout.addWidget(QtGui.QLabel('<'))
+        # self.xRange_EditLayout.addWidget(self.xRange_maxEdit)
+        # self.xRange_Layout.addWidget(self.xRange_EditWidget)
+        #
+        # # build Action
+        # self.xRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        # self.xRange_Action.setDefaultWidget(self.xRange_Widget)
 
 
         # ---------------------------------------------------------------
@@ -650,15 +601,9 @@ class Plot(vip_base):
         self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.yRange_Layout.setSpacing(1)
 
-        self.yRange_AutoCheckbox = QtGui.QCheckBox(checked= False)#self.config['xRange-auto']['value'] == '1')
-        self.yRange_AutoCheckbox.setDisabled(True)
-        self.yRange_AutoCheckbox.stateChanged.connect(self.contextMenu_yRange_toogle)
-        self.yRange_AutoCheckbox.setText('Y-Autorange')
-        self.yRange_Layout.addWidget(self.yRange_AutoCheckbox)
-
         self.yAutoRangeButton = QtGui.QPushButton()
         self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
-        self.yAutoRangeButton.setText('Set range')
+        self.yAutoRangeButton.setText('Set y range')
         self.yRange_Layout.addWidget(self.yAutoRangeButton)
 
         ##### Y Line Edits
@@ -714,7 +659,7 @@ class Plot(vip_base):
 
 
         ##### Build axes menu
-        self.axesMenu.addAction(self.xRange_Action)
+        #self.axesMenu.addAction(self.xRange_Action)
         self.axesMenu.addSeparator().setText("Y-Range")
         self.axesMenu.addAction(self.yRange_Action)
 
@@ -773,7 +718,6 @@ class Plot(vip_base):
         mi = str(mi)
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
-        self.yRange_AutoCheckbox.setChecked(False)
         self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def contextMenu_rolling_toogled(self):
@@ -794,37 +738,11 @@ class Plot(vip_base):
         else:
             self.control_api.do_set_parameter(self.__id__, 'y-grid', '0')
 
-    def contextMenu_xRange_toogle(self):
-        if self.xRange_AutoCheckbox.isChecked():
-            # do autorange
-            self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '1')
-            self.xRange_minEdit.setDisabled(True)
-            self.xRange_maxEdit.setDisabled(True)
-        else:
-            mi = self.xRange_minEdit.text()
-            ma = self.xRange_maxEdit.text()
-            if float(mi) < float(ma):
-                self.xRange_minEdit.setDisabled(False)
-                self.xRange_maxEdit.setDisabled(False)
-                self.control_api.do_set_parameter(self.__id__, 'xRange-auto', '0')
-                self.control_api.do_set_parameter(self.__id__, 'xRange', '[' + mi + ' ' + ma + ']')
-
     def contextMenu_yRange_toogle(self):
-        if self.yRange_AutoCheckbox.isChecked():
-            # do autorange
-            self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '1')
-            self.yRange_minEdit.setDisabled(True)
-            self.yRange_maxEdit.setDisabled(True)
-        else:
-            mi = self.yRange_minEdit.text()
-            ma = self.yRange_maxEdit.text()
-            if float(mi) < float(ma):
-                self.yRange_minEdit.setDisabled(False)
-                self.yRange_maxEdit.setDisabled(False)
-                # do man range
-
-                self.control_api.do_set_parameter(self.__id__, 'yRange-auto', '0')
-                self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+        mi = self.yRange_minEdit.text()
+        ma = self.yRange_maxEdit.text()
+        if float(mi) < float(ma):
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def update_signals(self):
         subscriptions = self.dplugin_info.get_subscribtions()
@@ -914,23 +832,11 @@ class Plot(vip_base):
             'regex': '^(1|0)$',
             'type': 'bool',
             'display_text': 'Rolling Plot'
-        }, 'xRange-auto': {
-            'value': '1',
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'advanced': '1',
-            'display_text': 'x: auto range'
-        }, 'yRange-auto': {
-            'value': '1',
-            'regex': '^(1|0)$',
-            'type': 'bool',
-            'advanced': '1',
-            'display_text': 'y: auto range'
-        }, 'xRange': {
-            'value': '[0.0 1.0]',
-            'regex': '(\d+\.\d+)',
-            'advanced': '1',
-            'display_text': 'x: range'
+        # }, 'xRange': {
+        #     'value': '[0.0 1.0]',
+        #     'regex': '(\d+\.\d+)',
+        #     'advanced': '1',
+        #     'display_text': 'x: range'
         }, 'yRange': {
             'value': '[0.0 1.0]',
             'regex': '(\d+\.\d+)',
