@@ -152,6 +152,7 @@ class ORTD_UDP(iop_base):
 
 
             self.ControlBlock = DBlock('ControllerSignals')
+            self.ControlBlock.add_signal(DSignal('ControlSignalReset'))
             self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
             self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
             self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
@@ -277,11 +278,20 @@ class ORTD_UDP(iop_base):
 
     def set_parameter(self, name, value):
         if name == 'triggerConfiguration':
-            cfg, subs, para, close = self.plconf()
-            self.send_new_data('ControllerSignals', [1], {'ControlSignalCreate':cfg,
-                                                          'ControlSignalSub':subs,
-                                                          'ControllerSignalParameter':para,
-                                                          'ControllerSignalClose':close})
+            if value == '1':
+                cfg, subs, para, close = self.plconf()
+                self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
+                                                              'ControlSignalCreate':cfg,
+                                                              'ControlSignalSub':subs,
+                                                              'ControllerSignalParameter':para,
+                                                              'ControllerSignalClose':close})
+            if value == '2':
+                self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
+                                                              'ControlSignalCreate':None,
+                                                              'ControlSignalSub':None,
+                                                              'ControllerSignalParameter':None,
+                                                              'ControllerSignalClose':None})
+
         else:
             for para in self.Parameter_List:
                 if para.name == name:
