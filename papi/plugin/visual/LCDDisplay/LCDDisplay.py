@@ -50,9 +50,10 @@ class LCDDisplay(vip_base):
         # Read configuration
         # ---------------------------
         # Note: this cfg items have to exist!
-        self.time_treshold = int(self.config['updateFrequency']['value'])
-
-
+        self.time_treshold  = int(self.config['updateFrequency']['value'])
+        self.value_scale    = float(self.config['value_scale']['value'])
+        self.value_offset   = float(self.config['value_offset']['value'])
+        self.digit_count    = int(self.config['digit_count']['value'])
 
         # --------------------------------
         # Create Widget
@@ -74,9 +75,16 @@ class LCDDisplay(vip_base):
         # ---------------------------
         para_list = []
         # create a parameter object
-        self.para_treshold = DParameter('update_interval',default=self.time_treshold, Regex='[0-9]+')
+        self.para_treshold      = DParameter('update_interval',default=self.time_treshold, Regex='[0-9]+')
+        self.para_value_scale   = DParameter('value_scale',default= self.value_scale, Regex='-?[1-9]+[0-9]*(\.?[0-9]+)?')
+        self.para_value_offset  = DParameter('value_offset',default= self.value_offset, Regex='-?\d+(\.?\d+)?')
+        self.para_digit_count   = DParameter('digit_count',default= self.digit_count, Regex='[3-9]')
+
         para_list.append(self.para_treshold)
-        #   self.para2 = DParameter('ParameterName',default=0)
+        para_list.append(self.para_value_scale)
+        para_list.append(self.para_value_offset)
+        para_list.append(self.para_digit_count)
+
 
         # build parameter list to send to Core
         self.send_new_parameter_list(para_list)
@@ -127,7 +135,9 @@ class LCDDisplay(vip_base):
                 if len(keys) > 1:
                     y = Data[keys[1]][-1]
 
+            y = y*self.value_scale + self.value_offset
             self.LcdWidget.display(y)
+
 
 
     def set_parameter(self, name, value):
@@ -137,6 +147,20 @@ class LCDDisplay(vip_base):
         if name == self.para_treshold.name:
             self.time_treshold = int(value)
             self.config['updateFrequency']['value'] = value
+
+        if name == self.para_value_scale.name:
+            self.config[self.para_value_scale.name]['value'] = value
+            self.value_scale = float(value)
+
+        if name == self.para_value_offset.name:
+            self.config[self.para_value_offset.name]['value'] = value
+            self.value_offset = float(value)
+
+        if name == self.para_digit_count.name:
+            self.config[self.para_digit_count.name]['value'] = value
+            self.digit_count = int(value)
+            self.LcdWidget.setDigitCount(self.digit_count)
+
 
 
     def quit(self):
@@ -166,7 +190,24 @@ class LCDDisplay(vip_base):
         },   'name': {
                 'value': 'LCD',
                 'tooltip': 'Used for window title'
-        }}
+        },   'value_scale': {
+                'value': '1',
+                'tooltip': 'Used to scale displayed value',
+                'regex': '-?[1-9]+[0-9]*(\.?[0-9]+)?',
+                'advanced': '1'
+        },   'value_offset': {
+                'value': '0',
+                'tooltip': 'Used to offset displayed value',
+                'regex': '-?\d+(\.?\d+)?',
+                'advanced': '1'
+        },  'digit_count': {
+                'value': '3',
+                'tooltip': 'Number of digits',
+                'regex': '[3-9]',
+                'advanced': '1'
+        },
+
+             }
         return config
 
     def plugin_meta_updated(self):
