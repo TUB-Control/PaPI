@@ -58,11 +58,32 @@ class vip_base(base_visual):
         subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
+
+        tabMenu = QtGui.QMenu('Move to')
+        tabs = list(self.TabManager.get_tabs_by_uname().keys())
+        tab_entrys = []
+        for t in tabs:
+            if t != self.config['tab']['value']:
+                entry = QtGui.QAction(t, self.widget)
+                entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
+                tab_entrys.append(entry)
+                tabMenu.addAction(entry)
+
+
+        ctrlMenu.addMenu(tabMenu)
         ctrlMenu.addAction(subMenu_action)
         ctrlMenu.addAction(resume_action)
         ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
         return ctrlMenu
+
+    def tabMenu_triggered(self, item):
+        pos = self._subWindow.pos()
+        posX = pos.x()
+        posY = pos.y()
+        if self.TabManager.moveFromTo(self.config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
+            self.config['tab']['value'] = item
+
 
     def ctlrMenu_exit(self):
         self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)

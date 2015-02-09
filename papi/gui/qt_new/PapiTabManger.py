@@ -44,55 +44,52 @@ class PapiTabManger(QObject):
         self.tabWidget.customContextMenuRequested.connect(self.show_context_menu)
         self.cmenu = self.create_context_menu()
 
+
         # make tabs movable
         self.tabWidget.setMovable(True)
+        self.tabWidget.setTabsClosable(True)
 
         # create dict for saving tabs
-        self.tab_dict_id = {}
         self.tab_dict_uname = {}
 
-        self.add_tab()
-        self.add_tab()
         self.add_tab(name='Tab')
-
-    def get_tabs_by_id(self):
-        return self.tab_dict_id
 
     def get_tabs_by_uname(self):
         return self.tab_dict_uname
 
-    def add_tab(self, name = None):
-        # check tab name for existance
-        if name is None:
-            tab_name = 'Tab'
+    def add_tab(self, name):
+        if name in self.tab_dict_uname:
+            print('Tab with name already exists')
         else:
-            tab_name = name
+            newTab = TabObject( name)
+            newTab.index = self.tabWidget.addTab(newTab,newTab.name)
 
-        # check if unique
-        while tab_name in self.tab_dict_uname:
-            tab_name = tab_name + 'X'
-
-
-        area = QtGui.QMdiArea()
-        id = self.tabWidget.addTab(area,tab_name)
-        newTab = TabObject(id, area, tab_name)
-
-        if id not in self.tab_dict_id:
-            self.tab_dict_id[id] = newTab
-        else:
-            print('tab id already in list')
-
-        if newTab.name not in self.tab_dict_uname:
             self.tab_dict_uname[newTab.name] = newTab
-        else:
-            print('tab uname already in list')
 
-    def rename_tab(self, id, new_name ):
-        self.name = new_name
-        if id in self.tab_dict:
-            tab = self.tab_dict[id]
-            tab.name = new_name
-            self.tabWidget.setTabText(id,tab.name)
+            return newTab
+
+    def rename_tab(self, tabObject, new_name):
+        if new_name not in self.tab_dict_uname:
+            # rename it
+            self.tab_dict_uname.pop(tabObject.name)
+            tabObject.name = new_name
+            self.tab_dict_uname[tabObject.name] = tabObject
+            ind = self.tabWidget.indexOf(tabObject)
+            self.tabWidget.setTabText(ind,tabObject.name)
+
+
+    def get_first_tab(self):
+        return self.tabWidget.widget(0)
+
+    def moveFromTo(self, start, dest, subWindow, posX=0, posY=0):
+        if start in self.tab_dict_uname and dest in self.tab_dict_uname:
+            startTab = self.tab_dict_uname[start]
+            destTab = self.tab_dict_uname[dest]
+            startTab.removeSubWindow(subWindow)
+            destTab.addSubWindow(subWindow)
+            subWindow.move(posX, posY)
+            subWindow.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+            return True
 
     def show_context_menu(self, pos):
         gloPos = self.tabWidget.mapToGlobal(pos)
@@ -100,25 +97,46 @@ class PapiTabManger(QObject):
 
     def create_context_menu(self):
         ctrlMenu = QtGui.QMenu("Control")
+
         new_tab_action = QtGui.QAction('New Tab',self.tabWidget)
         new_tab_action.triggered.connect(self.cmenu_new_tab)
+
         close_tab_action = QtGui.QAction('Close Tab',self.tabWidget)
+        close_tab_action.triggered.connect(self.cmenu_close_tab)
+
+        rename_tab_action = QtGui.QAction('Rename Tab',self.tabWidget)
+        rename_tab_action.triggered.connect(self.cmenu_rename_tab)
+
         ctrlMenu.addAction(new_tab_action)
         ctrlMenu.addAction(close_tab_action)
+        ctrlMenu.addAction(rename_tab_action)
+
         return ctrlMenu
 
     def cmenu_new_tab(self):
-        print('TODO: new tab')
+        name = 'Tab'
+        while name in self.tab_dict_uname:
+            name = name + 'X'
+        self.add_tab(name)
 
 
     def cmenu_close_tab(self):
-        print('TODO: close tab')
+        ind = self.tabWidget.currentIndex()
 
-class TabObject(QObject):
-    def __init__(self, id, widgetArea, name, parent=None):
+
+    def cmenu_rename_tab(self):
+        tabOb = self.tabWidget.currentWidget()
+        self.rename_tab(tabOb,'NEW NAME')
+
+
+
+
+
+
+class TabObject(QtGui.QMdiArea):
+    def __init__(self, name, parent=None):
         super(TabObject, self).__init__(parent)
-        self.id = id
-        self.widgetArea = widgetArea
+        self.index = None
         self.name = name
         self.background = None
 

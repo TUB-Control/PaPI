@@ -55,6 +55,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
 
+
     def accept(self):
 
         config = self.cfg
@@ -123,11 +124,37 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
             position += 1
 
-            startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
+        if 'tab' in startup_config.keys():
+            value = startup_config['tab']['value']
+
+            display_text = 'Tab'
+
+            if 'display_text' in startup_config['tab'].keys():
+                display_text = startup_config['tab']['display_text']
+
+            #uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
+            #uname = self.gui_api.change_uname_to_uniqe(uname)
+
+
+            editable_field = QLineEdit(str(value))
+            editable_field.setText(value)
+            editable_field.setObjectName('Tab' + "_line_edit")
+
+            self.formSimple.addRow(str(display_text) , editable_field)
+
+            self.configuration_inputs['tab'] = editable_field
+
+
+            #line_edit.selectAll()
+            #line_edit.setFocus()
+
+            position += 1
+
+        startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
         for attr in startup_config_sorted:
             attr = attr[0]
-            if attr != 'uname':
+            if attr != 'uname' and attr !='tab':
                 value = startup_config[attr]['value']
 
                 display_text = attr

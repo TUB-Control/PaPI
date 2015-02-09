@@ -170,7 +170,7 @@ class DPlugin(DObject):
         self.__blocks = {}
         self.type = None
         self.alive_count = 0
-        self.on_tab = 0
+
 
     def subscribe_signals(self, dblock, signals):
         """

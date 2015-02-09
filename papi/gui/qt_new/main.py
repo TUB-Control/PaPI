@@ -88,9 +88,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
+        self.TabManager = PapiTabManger(self.widgetTabs)
+
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
 
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
+        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, TabManager=self.TabManager)
 
         self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
         self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
@@ -103,7 +105,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
-        self.TabManager = PapiTabManger(self.widgetTabs)
+
 
         self.gui_api.set_bg_gui.connect(self.update_background)
 
@@ -336,19 +338,19 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
             sub_window = dplugin.plugin.get_sub_window()
-            if dplugin.on_tab == 0:
-                area = self.TabManager.get_tabs_by_id()[0].widgetArea
+            config = dplugin.startup_config
+            tab_name = config['tab']['value']
+            if tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
             else:
-                tab_name = dplugin.on_tab
-                if tab_name in self.TabManager.get_tabs_by_uname():
-                    area = self.TabManager.get_tabs_by_uname()[tab_name].widgetArea
-                else:
-                    self.log.printText(1,'add dplugin: no tab with tab_id of dplugin')
+                self.log.printText(1,'add dplugin: no tab with tab_id of dplugin')
+                area = self.TabManager.add_tab(tab_name)
+
 
             area.addSubWindow(sub_window)
             sub_window.show()
             size_re = re.compile(r'([0-9]+)')
-            config = dplugin.startup_config
+
             pos = config['position']['value']
             window_pos = size_re.findall(pos)
             sub_window.move(int(window_pos[0]), int(window_pos[1]))
@@ -369,7 +371,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :return:
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
-            self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
+            config = dplugin.startup_config
+            tab_name = config['tab']['value']
+            if tab_name in self.TabManager.get_tabs_by_uname():
+                tabOb = self.TabManager.get_tabs_by_uname()[tab_name]
+                tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
 
     def changed_dgui(self):
         if self.overview_menu is not None:
