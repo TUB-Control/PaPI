@@ -88,7 +88,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
-        self.TabManager = PapiTabManger(self.widgetTabs)
+        self.TabManager = PapiTabManger(self.widgetTabs,dgui=self.gui_data)
 
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
 

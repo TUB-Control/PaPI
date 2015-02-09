@@ -32,10 +32,12 @@ from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabW
 from PySide.QtCore import *
 from papi.pyqtgraph import QtCore, QtGui
 
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER
+
 
 class PapiTabManger(QObject):
 
-    def __init__(self, tabWigdet = None, parent=None):
+    def __init__(self, tabWigdet = None, dgui = None, parent=None):
         super(PapiTabManger, self).__init__(parent)
 
         self.tabWidget = tabWigdet
@@ -44,7 +46,9 @@ class PapiTabManger(QObject):
         self.tabWidget.customContextMenuRequested.connect(self.show_context_menu)
         self.cmenu = self.create_context_menu()
 
+        self.tabWidget.tabCloseRequested.connect(self.closeTab)
 
+        self.dGui = dgui
         # make tabs movable
         self.tabWidget.setMovable(True)
         self.tabWidget.setTabsClosable(True)
@@ -67,6 +71,13 @@ class PapiTabManger(QObject):
             self.tab_dict_uname[newTab.name] = newTab
 
             return newTab
+
+    def remove_tab(self,tabObject):
+        self.tab_dict_uname.pop(tabObject.name)
+        ind = self.tabWidget.indexOf(tabObject)
+        self.tabWidget.removeTab(ind)
+        tabObject.destroy()
+
 
     def rename_tab(self, tabObject, new_name):
         if new_name not in self.tab_dict_uname:
@@ -122,7 +133,21 @@ class PapiTabManger(QObject):
 
     def cmenu_close_tab(self):
         ind = self.tabWidget.currentIndex()
+        self.closeTab(ind)
 
+    def closeTab(self, ind):
+        tabOb = self.tabWidget.widget(ind)
+        tab_name = tabOb.name
+
+        plugins = self.dGui.get_all_plugins()
+        for pl_id in plugins:
+            plugin = plugins[pl_id]
+            if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                if plugin.startup_config['tab']['value'] == tab_name:
+                    self.moveFromTo(tab_name,self.get_first_tab().name, plugin.plugin.get_sub_window())
+                    plugin.startup_config['tab']['value'] = self.get_first_tab()
+
+        self.remove_tab(tabOb)
 
     def cmenu_rename_tab(self):
         tabOb = self.tabWidget.currentWidget()
