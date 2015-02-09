@@ -58,6 +58,7 @@ from papi.gui.gui_event_processing import GuiEventProcessing
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 
+from papi.gui.qt_new.PapiTabManger import PapiTabManger
 
 # Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
@@ -102,6 +103,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
+        self.TabManager = PapiTabManger(self.widgetTabs)
 
         self.gui_api.set_bg_gui.connect(self.update_background)
 
@@ -210,8 +212,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :param path: Path of a picture.
         :return:
         """
-        pixmap  = QtGui.QPixmap(path)
-        self.widgetArea.setBackground(pixmap)
+        #TODO
+        pass
+        #pixmap  = QtGui.QPixmap(path)
+        #self.widgetArea.setBackground(pixmap)
 
     def run(self):
         """
@@ -332,7 +336,16 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
             sub_window = dplugin.plugin.get_sub_window()
-            self.widgetArea.addSubWindow(sub_window)
+            if dplugin.on_tab == 0:
+                area = self.TabManager.get_tabs_by_id()[0].widgetArea
+            else:
+                tab_name = dplugin.on_tab
+                if tab_name in self.TabManager.get_tabs_by_uname():
+                    area = self.TabManager.get_tabs_by_uname()[tab_name].widgetArea
+                else:
+                    self.log.printText(1,'add dplugin: no tab with tab_id of dplugin')
+
+            area.addSubWindow(sub_window)
             sub_window.show()
             size_re = re.compile(r'([0-9]+)')
             config = dplugin.startup_config

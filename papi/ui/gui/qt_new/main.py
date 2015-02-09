@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Mon Jan 12 16:53:31 2015
+# Created: Mon Feb  9 14:55:21 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,12 +28,11 @@ class Ui_QtNewMain(object):
         self.saveButton.setObjectName("saveButton")
         self.horizontalLayout.addWidget(self.saveButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.widgetArea = QtGui.QMdiArea(self.centralwidget)
-        self.widgetArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.widgetArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.widgetArea.setObjectName("widgetArea")
-        self.verticalLayout.addWidget(self.widgetArea)
         self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.widgetTabs = QtGui.QTabWidget(self.centralwidget)
+        self.widgetTabs.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.widgetTabs.setObjectName("widgetTabs")
+        self.verticalLayout_2.addWidget(self.widgetTabs)
         QtNewMain.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(QtNewMain)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 693, 25))
@@ -98,6 +97,7 @@ class Ui_QtNewMain(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(QtNewMain)
+        self.widgetTabs.setCurrentIndex(-1)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL("triggered()"), QtNewMain.close)
         QtCore.QMetaObject.connectSlotsByName(QtNewMain)
 
