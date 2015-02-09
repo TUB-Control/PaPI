@@ -260,13 +260,12 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a copy of a dictionary of all subcribtions.
+        Returns a reference to a dictionary of all subcribtions.
 
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
         """
-
-        return copy.deepcopy(self.__subscriptions.copy())
+        return self.__subscriptions
 
     def add_parameter(self, parameter):
         """

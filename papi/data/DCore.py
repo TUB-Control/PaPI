@@ -27,7 +27,7 @@ Sven Knuth
 """
 from papi.data.DPlugin import DPlugin
 from papi.ConsoleLog import ConsoleLog
-
+import copy
 import papi.error_codes as ERROR
 
 __author__ = 'knuth'
@@ -253,7 +253,8 @@ class DCore():
 
         dplugin = self.get_dplugin_by_id(dplugin_id)
 
-        subscribtion_ids = dplugin.get_subscribtions().copy()
+        # copy subscription for iteration and deletion
+        subscribtion_ids = copy.deepcopy( dplugin.get_subscribtions() )
 
         #Iterate over all DPlugins, which own a subscribed DBlock
         for sub_id in subscribtion_ids:

@@ -9,6 +9,7 @@ v.1.XX
  * [fix]: renamed some variables of ownProcess_base to be private
  * [fix]: fixed memory leak of gui event processing timer loop (#25)
  * [improvement]: changed the demux function to in imporve performance
+ * [improvement]: imporved core performance while processing new data (see #20)
 
 
 v.1.0
