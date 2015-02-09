@@ -33,6 +33,7 @@ import os
 import traceback
 import cProfile
 import re
+import threading
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
@@ -220,7 +221,13 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         # create a timer and set interval for processing events with working loop
 
-        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
+        #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
+        self.workingTimer = QtCore.QTimer(self)
+        self.workingTimer.timeout.connect(lambda: self.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
+        self.workingTimer.start(GUI_WOKRING_INTERVAL)
+
+
+
 
     def show_create_plugin_menu(self):
         """

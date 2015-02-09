@@ -29,6 +29,7 @@ Contributors:
 import copy
 import traceback
 import importlib.machinery
+import time
 
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
@@ -95,7 +96,7 @@ class GuiEventProcessing(QtCore.QObject):
                               'start_plugin': self.process_start_plugin
         }
 
-    def gui_working(self, close_mock):
+    def gui_working(self, close_mock, workingTimer):
         """
          Event processing loop of gui. Build to get called every 40ms after a run through.
          Will process all events of the queue at the time of call.
@@ -130,10 +131,11 @@ class GuiEventProcessing(QtCore.QObject):
                     close_mock()
                 else:
                     self.process_event[op](event)
-
         # after the loop ended, which means that there are no more new events, a new timer will be created to start
         # this method again in a specific time
-        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_working(close_mock))
+
+        workingTimer.start(GUI_WOKRING_INTERVAL)
+        #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_working(close_mock))
 
     def process_new_data_event(self, event):
         """

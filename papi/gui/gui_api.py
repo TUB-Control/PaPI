@@ -87,6 +87,13 @@ class Gui_api(QtCore.QObject):
         opt.plugin_config = config
         opt.autostart = autostart
 
+        # check if plugin with uname already exists
+        allPlugins = self.gui_data.get_all_plugins()
+        for pluginID in allPlugins:
+            plugin = allPlugins[pluginID]
+            if plugin.uname == uname:
+                return False
+
         # create event object and sent it to core
         event = Event.instruction.CreatePlugin(self.gui_id, 0, opt)
         self.core_queue.put(event)

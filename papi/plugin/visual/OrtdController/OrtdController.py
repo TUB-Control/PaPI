@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
-
+from papi.gui.qt_new.custom import FileLineEdit
 from PySide import QtGui, QtCore
 from PySide.QtGui import QRegExpValidator
 
@@ -59,6 +59,10 @@ class OrtdController(vip_base):
         self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname))
         self.ControllerWidget.addPage(ControllerWorking(api=self.control_api, uname=self.dplugin_info.uname))
 
+        self.lock = threading.Lock()
+
+        self.plugin_started_list = []
+
         return True
 
     def pause(self):
@@ -83,20 +87,34 @@ class OrtdController(vip_base):
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
-        if self.alreadyConfigured is False:
-            self.thread1 = threading.Thread(target=self.execute_cfg, args=[Data])
-            self.alreadyConfigured = True
-            self.thread1.start()
+        self.thread1 = threading.Thread(target=self.execute_cfg, args=[Data])
+        self.thread1.start()
 
-    def execute_cfg(self,Data):
+
+
+    def execute_cfg(self, Data):
+        ############################
+        #      Reset Signal        #
+        ############################
+        if 'ControlSignalReset' in Data:
+            val = Data['ControlSignalReset']
+            print(val)
+            if val == 1:
+               while len(self.plugin_started_list):
+                    pl_uname = self.plugin_started_list.pop()
+                    self.control_api.do_delete_plugin_uname(pl_uname)
+
         ############################
         #       Create Plugins     #
         ############################
         if 'ControlSignalCreate' in Data:
             cfg = Data['ControlSignalCreate']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
+            if cfg is not None:
+                for pl_uname in cfg:
+                    if pl_uname not in self.plugin_started_list:
+                        pl_cfg = cfg[pl_uname]
+                        self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
+                        self.plugin_started_list.append(pl_uname)
         time.sleep(0.5)
 
         ############################
@@ -104,32 +122,37 @@ class OrtdController(vip_base):
         ############################
         if 'ControlSignalSub' in Data:
             cfg = Data['ControlSignalSub']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                sig = []
-                if 'signals' in pl_cfg:
-                    sig = pl_cfg['signals']
-                self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
+            if cfg is not None:
+                for pl_uname in cfg:
+                    pl_cfg = cfg[pl_uname]
+                    sig = []
+                    if 'signals' in pl_cfg:
+                        sig = pl_cfg['signals']
+                    self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
 
         ############################
         #    Set parameter links   #
         ############################
         if 'ControllerSignalParameter' in Data:
             cfg = Data['ControllerSignalParameter']
-            for pl_uname in cfg:
-                pl_cfg = cfg[pl_uname]
-                para = None
-                if 'parameter' in pl_cfg:
-                    para = pl_cfg['parameter']
-                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+            if cfg is not None:
+                for pl_uname in cfg:
+                    pl_cfg = cfg[pl_uname]
+                    para = None
+                    if 'parameter' in pl_cfg:
+                        para = pl_cfg['parameter']
+                    self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
         ############################
         #    Close plugin          #
         ############################
         if 'ControllerSignalClose' in Data:
             cfg = Data['ControllerSignalClose']
-            for pl_uname in cfg:
-                self.control_api.do_delete_plugin_uname(pl_uname)
+            if cfg is not None:
+                for pl_uname in cfg:
+                    if pl_uname in self.plugin_started_list:
+                        self.control_api.do_delete_plugin_uname(pl_uname)
+                        self.plugin_started_list.remove(pl_uname)
 
 
     def set_parameter(self, name, value):
@@ -200,7 +223,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.uname = uname
         self.api = api
         self.ortd_uname = ortd_uname
-        self.setTitle("ORTD Controller")
+        #self.setTitle("ORTD Controller")
         label = QtGui.QLabel("Please configure the ORTD plugin.")
         label.setWordWrap(True)
 
@@ -228,6 +251,16 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.port_line_edit.setValidator(validator)
         self.port_line_edit.setText('20000')
 
+        # ----------- #
+        #  File dial. #
+        # ----------- #
+        self.file_edit =   FileLineEdit()
+        self.file_edit.setReadOnly(True)
+        self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
+        self.file_label = QtGui.QLabel('ProtocollConfig')
+        self.file_label.setBuddy(self.file_edit)
+
+
 
         layout = QtGui.QVBoxLayout()
         layout.addWidget(label)
@@ -235,6 +268,8 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         layout.addWidget(self.ip_line_edit)
         layout.addWidget(port_label)
         layout.addWidget(self.port_line_edit)
+        layout.addWidget(self.file_label)
+        layout.addWidget(self.file_edit)
 
         self.setLayout(layout)
 
@@ -242,6 +277,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         print('Start: next clicked')
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
+        json = self.file_edit.text()
         cfg ={
             'address': {
                 'value': IP,
@@ -254,7 +290,11 @@ class ControllerOrtdStart(QtGui.QWizardPage):
             'out_port': {
                 'value': '20001',
                 'advanced': '1'
-            }
+            },'Cfg_Path': {
+                'value': json,
+                'type': 'file',
+                'advanced': '0'
+            },
         }
         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, cfg, True)
 
@@ -265,11 +305,12 @@ class ControllerOrtdStart(QtGui.QWizardPage):
 
     def subscribe_control_signal(self):
         time.sleep(0.5)
-        self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalCreate',
+        self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+                                                                                              'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',
                                                                                               'ControllerSignalClose'])
-        self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', 0)
+        self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
 
 
 class ControllerWorking(QtGui.QWizardPage):
