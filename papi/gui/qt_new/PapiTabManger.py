@@ -143,7 +143,7 @@ class PapiTabManger(QObject):
         for pl_id in plugins:
             plugin = plugins[pl_id]
             if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
-                if plugin.startup_config['tab']['value'] == tab_name:
+                if plugin.plugin.config['tab']['value'] == tab_name:
                     self.moveFromTo(tab_name,self.get_first_tab().name, plugin.plugin.get_sub_window())
                     plugin.startup_config['tab']['value'] = self.get_first_tab()
 
