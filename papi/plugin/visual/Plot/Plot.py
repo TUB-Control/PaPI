@@ -54,9 +54,13 @@ class MultiLine(pg.QtGui.QGraphicsPathItem):
         pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
         self.setPen(pen)
         self.drawn = False
+        self.counter = len(y)
 
     def shape(self): # override because QGraphicsPathItem.shape is too expensive.
         return pg.QtGui.QGraphicsItem.shape(self)
+
+    def length(self):
+        return self.counter
 
     def boundingRect(self):
         return self.path.boundingRect()
@@ -64,59 +68,101 @@ class MultiLine(pg.QtGui.QGraphicsPathItem):
 
 class PlotItem(object):
 
-    def __init__(self,signal_name, buffers, signal_id, signal, slices):
+    def __init__(self,signal_name, buffer, signal_id, signal, slices):
         super(PlotItem,self).__init__()
         self.signal_name = signal_name
-        self.buffers = buffers
+        self.buffer = [] # buffer
         self.id = signal_id
         self.signal = signal
         self.position = 0
         self.item_ready = False
-        self.counter = len(buffers[0])
+        self.amount_elements = 0
+
+        self.max_elements = 1000 #len(buffer)
+
         self.pen = None
-        self.slices = slices
+        self.slices = 20 #slices
         self.graphics = []
-        self.slice_size = 10
+        self.slice_size = 50
+
 
     def add_data(self, elements, tdata):
         tdata = list(tdata)
-        buffer = self.buffers[0]
+        buffer = self.buffer
 
-        self.counter -= len(elements)
+        #count elements we are adding
+        #self.counter += len(elements)
 
-        # It is possible to write all elements to the current buffer
-        if self.counter >= 0:
-            buffer.extend(elements)
-        # Some elements can't be written to the current buffer
-        if self.counter <= 0:
-            buffer.extend(elements[:self.counter])
-            if len(tdata) < self.slice_size:
-                x_axis = np.array(tdata)[np.newaxis,:]
-            else:
-                x_axis = np.array(tdata[-self.slice_size-1:])[np.newaxis,:]
-
-            self.create_graphic(x_axis)
-
-#            position = (self.position + 1) & self.slices
-            buffer.extend(elements[self.counter:])
-
-            self.counter = self.slice_size
+        #append elements to our buffer
+        buffer.extend(elements)
 
 
+#     def add_data_old(self, elements, tdata):
+#         tdata = list(tdata)
+#         buffer = self.buffers[0]
+#
+#         self.counter -= len(elements)
+#
+#         # It is possible to write all elements to the current buffer
+#         if self.counter >= 0:
+#             buffer.extend(elements)
+#         # Some elements can't be written to the current buffer
+#         if self.counter <= 0:
+#             buffer.extend(elements[:self.counter])
+#             if len(tdata) < self.slice_size:
+#                 x_axis = np.array(tdata)[np.newaxis,:]
+#             else:
+#                 x_axis = np.array(tdata[-self.slice_size-1:])[np.newaxis,:]
+#
+#             self.create_graphic(x_axis)
+#
+# #            position = (self.position + 1) & self.slices
+#             buffer.extend(elements[self.counter:])
+#
+#             self.counter = self.slice_size
+#
 
-    def create_graphic(self, x_axis):
+    def create_graphic(self, tdata):
 
-        y_axis = np.array(list(self.buffers[0])[-self.slice_size-1:])
+        # get amount of elements in our buffer
+        counter = len(self.buffer)
+        self.amount_elements += counter
+        x_axis = np.array(tdata[-counter:])[np.newaxis,:]
 
-        if len(y_axis) == 0:
-            return None
-        if len(y_axis) != len(x_axis[0]):
-            return None
+        y_axis = np.array(list(self.buffer))
 
         graphic = MultiLine(x_axis, y_axis, self.pen)
 
+        # print('print new graphic')
+        # print(len(x_axis[0]))
+        # print(len(y_axis))
+        #Clear buffer
+
+        del self.buffer
+        self.buffer = []
+#        self.graphics.append(graphic)
+
+
+
         self.graphics.append(graphic)
+
+        return graphic
+
         #print(self.graphics)
+
+    # def create_graphic(self, x_axis):
+    #
+    #     y_axis = np.array(list(self.buffers[0])[-self.slice_size-1:])
+    #
+    #     if len(y_axis) == 0:
+    #         return None
+    #     if len(y_axis) != len(x_axis[0]):
+    #         return None
+    #
+    #     graphic = MultiLine(x_axis, y_axis, self.pen)
+    #
+    #     self.graphics.append(graphic)
+    #     #print(self.graphics)
 
     def get_graphic(self, tmp):
 
@@ -129,8 +175,10 @@ class PlotItem(object):
         return None
 
     def get_old_graphic(self):
-        if len(self.graphics) > self.slices:
+
+        if self.amount_elements > self.max_elements:
             graphic = self.graphics.pop(0)
+            self.amount_elements -= graphic.length()
             return graphic
         return None
 
@@ -257,6 +305,8 @@ class Plot(vip_base):
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
         self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
         self.__plotWidget__.getPlotItem().getViewBox().setYRange(0,6)
+
+        #self.__plotWidget__.getPlotItem().setDownsampling(auto=True)
 
         if not self.__papi_debug__:
             self.set_widget_for_internal_usage(self.__plotWidget__)
@@ -483,6 +533,7 @@ class Plot(vip_base):
 
         :return:
         """
+        self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
 
         shift_data = 0
 
@@ -493,36 +544,43 @@ class Plot(vip_base):
 
         # Set Y-Axis
 
-        count = 0
 
-        x_axis = np.array(tdata[-100:])[np.newaxis,:]
+       # x_axis = np.array(tdata[-100:])[np.newaxis,:]
 
         #self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
+
 
         for signal_name in self.signals:
 
 
             #y_axis = np.array(data)
             #
-
-            graphic = self.signals[signal_name].get_graphic(x_axis)
-            #line = MultiLine(x_axis, y_axis, pen)
-            if graphic is not None:
-                self.__plotWidget__.addItem(graphic)
-
             graphic = self.signals[signal_name].get_old_graphic()
-
-            #if graphic is not None:
+            if graphic is not None:
                #self.__plotWidget__.clear()
-               # self.__plotWidget__.removeItem(graphic)
-            count += 1
+               self.__plotWidget__.removeItem(graphic)
+
+           # graphic = self.signals[signal_name].get_graphic(tdata)
+
+            graphic = self.signals[signal_name].create_graphic(tdata)
+            #line = MultiLine(x_axis, y_axis, pen)
+
+            self.__plotWidget__.addItem(graphic)
+            #
+            #
+            #
+            # if graphic is not None:
+            #    #self.__plotWidget__.clear()
+            #    self.__plotWidget__.removeItem(graphic)
+
 
         self.__last_plot_time__ = pg.ptime.time()-now
 
-        self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0],tdata[-1])
+        self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
-        # if self.__papi_debug__:
-        #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+        #if self.__papi_debug__:
+
+        print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def update_plot_single_timestamp(self, data):
         """
@@ -638,13 +696,11 @@ class Plot(vip_base):
 
             start_size = len(self.__tbuffer__)
 
-            buffers = []
 
-            for i in range(0,self.__amount_of_slices__):
-                buffer = collections.deque([0.0] * start_size, int(self.__buffer_size__  ) )  # COLLECTION
-                buffers.append(buffer)
+            buffer = collections.deque([0.0] * start_size, int(self.__buffer_size__  ) )  # COLLECTION
 
-            plot_item = PlotItem(signal_name, buffers,signal_id,signal, self.__amount_of_slices__)
+
+            plot_item = PlotItem(signal_name, buffer, signal_id, signal, self.__amount_of_slices__)
 
             self.signals[signal_name] = plot_item
 

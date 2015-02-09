@@ -48,18 +48,18 @@ def do_fctn(plugin):
     for i in range(10):
         data['t'] = [t]
         t += 0.01
-        # data['signal_1'] = [random.randint(0, 5)]
-        # data['signal_2'] = [random.randint(10, 15)]
-        # data['signal_3'] = [random.randint(20, 25)]
-        # data['signal_4'] = [random.randint(30, 35)]
-        # data['signal_5'] = [random.randint(40, 45)]
+        data['signal_1'] = [random.randint(0, 5)]
+        data['signal_2'] = [random.randint(10, 15)]
+        data['signal_3'] = [random.randint(20, 25)]
+        data['signal_4'] = [random.randint(30, 35)]
+        data['signal_5'] = [random.randint(40, 45)]
 
 
-        data['signal_1'] = [1]
-        data['signal_2'] = [2]
-        data['signal_3'] = [3]
-        data['signal_4'] = [4]
-        data['signal_5'] = [5]
+        # data['signal_1'] = [1]
+        # data['signal_2'] = [2]
+        # data['signal_3'] = [3]
+        # data['signal_4'] = [4]
+        # data['signal_5'] = [5]
 
         plugin.execute(data)
         plugin.__t__ = t
