@@ -7,6 +7,7 @@ v.1.XX
  * [fix]: oboslete parameter in send_parameter_change was removed (#21)
  * [fix]: clean up of DParameter (#18)
  * [fix]: renamed some variables of ownProcess_base to be private
+ * [fix]: fixed memory leak of gui event processing timer loop (#25)
  * [improvement]: changed the demux function to in imporve performance
 
 
