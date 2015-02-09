@@ -43,7 +43,7 @@ CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
 
 CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
-CORE_ALIVE_MAX_COUNT            = 2
+CORE_ALIVE_MAX_COUNT            = 10
 
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
