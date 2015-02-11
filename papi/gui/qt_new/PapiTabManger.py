@@ -89,8 +89,15 @@ class PapiTabManger(QObject):
             self.tabWidget.setTabText(ind,tabObject.name)
 
 
-    def get_first_tab(self):
-        return self.tabWidget.widget(0)
+    def get_default_tab(self, NotThisIndex):
+        if NotThisIndex == 0:
+           if self.tabWidget.count() > 1:
+                return self.tabWidget.widget(1)
+           else:
+               return self.add_tab('Default')
+        else:
+            return self.tabWidget.widget(0)
+
 
     def moveFromTo(self, start, dest, subWindow, posX=0, posY=0):
         if start in self.tab_dict_uname and dest in self.tab_dict_uname:
@@ -138,22 +145,28 @@ class PapiTabManger(QObject):
     def closeTab(self, ind):
         tabOb = self.tabWidget.widget(ind)
         tab_name = tabOb.name
+        if tab_name != 'Default':
+            # not the default tab, just close and move plugins to default tab
+            plugins = self.dGui.get_all_plugins()
+            for pl_id in plugins:
+                plugin = plugins[pl_id]
+                if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                    if plugin.plugin.config['tab']['value'] == tab_name:
+                        self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin.get_sub_window())
+                        plugin.plugin.config['tab']['value'] = self.get_default_tab(ind).name
 
-        plugins = self.dGui.get_all_plugins()
-        for pl_id in plugins:
-            plugin = plugins[pl_id]
-            if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
-                if plugin.plugin.config['tab']['value'] == tab_name:
-                    self.moveFromTo(tab_name,self.get_first_tab().name, plugin.plugin.get_sub_window())
-                    plugin.startup_config['tab']['value'] = self.get_first_tab()
+            self.remove_tab(tabOb)
+        else:
+            # default tab: ask if really want to close
+            diag = DefaultCloseBox()#QtGui.QDialog()
+            ret = diag.exec_()
+            if ret == QtGui.QMessageBox.Ok:
+                print('close default tab')
 
-        self.remove_tab(tabOb)
 
     def cmenu_rename_tab(self):
         tabOb = self.tabWidget.currentWidget()
         self.rename_tab(tabOb,'NEW NAME')
-
-
 
 
 
@@ -165,4 +178,12 @@ class TabObject(QtGui.QMdiArea):
         self.name = name
         self.background = None
 
+
+class DefaultCloseBox(QtGui.QMessageBox):
+
+    def __init__(self, parent=None):
+        super(DefaultCloseBox, self).__init__(parent)
+        self.setWindowTitle('Close default tab?')
+        self.setText('All plugins in this tab will be closed. Are you sure?')
+        self.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
 
