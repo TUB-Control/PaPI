@@ -88,9 +88,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
-        self.TabManager = PapiTabManger(self.widgetTabs,dgui=self.gui_data)
-
         self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
+
+        self.TabManager = PapiTabManger(self.widgetTabs,dgui=self.gui_data, gui_api=self.gui_api)
 
         self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, TabManager=self.TabManager)
 
@@ -190,6 +190,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         :return:
         """
+        print('TO DELETE')
+        raise Exception
         fileNames = ''
 
         dialog = QFileDialog(self)
@@ -371,7 +373,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :return:
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
-            config = dplugin.startup_config
+            config = dplugin.plugin.config
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():
                 tabOb = self.TabManager.get_tabs_by_uname()[tab_name]

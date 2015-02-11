@@ -31,17 +31,17 @@ __author__ = 'control'
 from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabWidget
 from PySide.QtCore import *
 from papi.pyqtgraph import QtCore, QtGui
-
+from papi.gui.qt_new.custom import FileLineEdit
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER
 
 
 class PapiTabManger(QObject):
 
-    def __init__(self, tabWigdet = None, dgui = None, parent=None):
+    def __init__(self, tabWigdet = None, dgui = None,gui_api = None, parent=None):
         super(PapiTabManger, self).__init__(parent)
 
         self.tabWidget = tabWigdet
-
+        self.gui_api = gui_api
         self.tabWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tabWidget.customContextMenuRequested.connect(self.show_context_menu)
         self.cmenu = self.create_context_menu()
@@ -105,6 +105,7 @@ class PapiTabManger(QObject):
             destTab = self.tab_dict_uname[dest]
             startTab.removeSubWindow(subWindow)
             destTab.addSubWindow(subWindow)
+            subWindow.show()
             subWindow.move(posX, posY)
             subWindow.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
             return True
@@ -125,9 +126,13 @@ class PapiTabManger(QObject):
         rename_tab_action = QtGui.QAction('Rename Tab',self.tabWidget)
         rename_tab_action.triggered.connect(self.cmenu_rename_tab)
 
+        bg_action = QtGui.QAction('Set background',self.tabWidget)
+        bg_action.triggered.connect(self.cmenu_set_bg)
+
         ctrlMenu.addAction(new_tab_action)
         ctrlMenu.addAction(close_tab_action)
-        ctrlMenu.addAction(rename_tab_action)
+        #ctrlMenu.addAction(rename_tab_action)
+        ctrlMenu.addAction(bg_action)
 
         return ctrlMenu
 
@@ -136,6 +141,23 @@ class PapiTabManger(QObject):
         while name in self.tab_dict_uname:
             name = name + 'X'
         self.add_tab(name)
+
+    def cmenu_set_bg(self):
+        fileNames = ''
+
+        dialog = QtGui.QFileDialog(self.tabWidget)
+        dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                path = fileNames[0]
+                pixmap  = QtGui.QPixmap(path)
+                widgetArea = self.tabWidget.widget(self.tabWidget.currentIndex())
+                widgetArea.setBackground(pixmap)
+                widgetArea.background = path
 
 
     def cmenu_close_tab(self):
@@ -161,7 +183,14 @@ class PapiTabManger(QObject):
             diag = DefaultCloseBox()#QtGui.QDialog()
             ret = diag.exec_()
             if ret == QtGui.QMessageBox.Ok:
-                print('close default tab')
+                allPlugins = self.dGui.get_all_plugins()
+                for pl_id in allPlugins:
+                    dplugin = allPlugins[pl_id]
+                    if dplugin.own_process is False:
+                        self.gui_api.do_delete_plugin(dplugin.id)
+            self.remove_tab(tabOb)
+
+
 
 
     def cmenu_rename_tab(self):
@@ -176,7 +205,7 @@ class TabObject(QtGui.QMdiArea):
         super(TabObject, self).__init__(parent)
         self.index = None
         self.name = name
-        self.background = None
+        self.background = 'default'
 
 
 class DefaultCloseBox(QtGui.QMessageBox):

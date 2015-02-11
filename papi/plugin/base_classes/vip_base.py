@@ -87,6 +87,9 @@ class vip_base(base_visual):
 
     def ctlrMenu_exit(self):
         self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
+        print(self.config['tab']['value'])
+
+
 
     def ctlrMenu_pause(self):
         self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
