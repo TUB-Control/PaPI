@@ -34,7 +34,7 @@ import random
 sys.path.insert(0,os.path.abspath('../../../../'))
 
 print(sys.path)
-import papi.pyqtgraph as pq
+import papi.pyqtgraph as pg
 
 from PySide.QtGui import QApplication, QLabel
 from PySide import QtCore
@@ -45,9 +45,12 @@ import importlib.machinery
 def do_fctn(plugin):
     t = plugin.__t__
     data = {}
+
+    now = pg.ptime.time()
+
     for i in range(10):
         data['t'] = [t]
-        t += 0.01
+        t += 0.0025
         data['signal_1'] = [random.randint(0, 5)]
         data['signal_2'] = [random.randint(10, 15)]
         data['signal_3'] = [random.randint(20, 25)]
@@ -61,11 +64,24 @@ def do_fctn(plugin):
         # data['signal_4'] = [4]
         # data['signal_5'] = [5]
 
+
+
         plugin.execute(data)
+
+
+
+#
+
         plugin.__t__ = t
 
-    if plugin.__t__ < 25:
-        QtCore.QTimer.singleShot(20, lambda : do_fctn(plugin))
+    diff_time = pg.ptime.time()-now
+
+#    print("Plot time: %0.5f sec" % (diff_time ) )
+
+    #print(25 - diff_time * 1000)
+
+    if plugin.__t__ < 10:
+        QtCore.QTimer.singleShot(25-diff_time* 1000, lambda : do_fctn(plugin))
 
 
 imp_path = "Plot.py"

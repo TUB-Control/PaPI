@@ -139,7 +139,7 @@ class Plot(vip_base):
         self.__styles_selected__ = int_re.findall(self.config['style']['value'])
 
         self.__buffer_size__ = int(int_re.findall(self.config['buffersize']['value'])[0])
-        #self.__buffer_size__ = 1000
+
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
 
         # ----------------------------
@@ -156,11 +156,15 @@ class Plot(vip_base):
 
         self.__vertical_line__ = pq.InfiniteLine()
 
-        self.__plotWidget__ = pq.PlotWidget()
+#        self.__plotWidget__ = pq.PlotWidget()
+
+        self.__plotWidget__ = PlotWidget()
+
         self.__plotWidget__.addItem(self.__text_item__)
 
         if self.__rolling_plot__:
             self.__plotWidget__.addItem(self.__vertical_line__)
+
         self.__text_item__.setPos(0, 0)
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
@@ -173,7 +177,9 @@ class Plot(vip_base):
             self.set_widget_for_internal_usage(self.__plotWidget__)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
+
         #self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
+
         # ---------------------------
         # Create Parameters
         # ---------------------------
@@ -384,8 +390,13 @@ class Plot(vip_base):
         else:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
+        #self.__plotWidget__.update()
+
+        #self.__plotWidget__.repaint()
+
         # if self.__papi_debug__:
         #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+
 
     def update_plot_single_timestamp(self, data):
         """
@@ -860,6 +871,20 @@ class Plot(vip_base):
 
     def debug_papi(self):
         config = self.get_plugin_configuration()
+
+        config['yRange'] =  {
+            'value': '[0.0 50.0]',
+            'regex': '(\d+\.\d+)',
+            'advanced': '1',
+            'display_text': 'y: range'
+        }
+        config['buffersize'] =  {
+            'value': '1000',
+            'regex': '(\d+\.\d+)',
+            'advanced': '1',
+            'display_text': 'y: range'
+        }
+
         self.config = config
         self.__id__ = 0
         self.initiate_layer_0(config)
@@ -973,6 +998,7 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         connect[:, -1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
         pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
+        self.setCacheMode(pg.QtGui.QGraphicsItem.NoCache)
         self.setPen(pen)
         self.not_drawn = True
         self.counter = counter
@@ -1032,7 +1058,6 @@ class PlotItem(object):
         data_item.setPen(self.pen)
         return data_item
 
-
     def add_data(self, elements, tdata):
         """
 
@@ -1043,6 +1068,7 @@ class PlotItem(object):
 
         buffer = self.buffer
 
+        # TODO: Downsampling before extending the internal buffer
 
         # if self.downsampling_rate_start < len(elements):
         #     ds_elements = elements[self.downsampling_rate_start:self.downsampling_rate:]
@@ -1065,6 +1091,11 @@ class PlotItem(object):
         self.signal_name = new_signal.dname
 
     def set_downsampling_rate(self, rate):
+        """
+
+        :param rate:
+        :return:
+        """
 
         self.downsampling_rate = 2
 
@@ -1073,6 +1104,11 @@ class PlotItem(object):
 
 
     def create_graphics(self, tdata):
+        """
+
+        :param tdata:
+        :return:
+        """
 
         # get amount of elements in our buffer
         counter = len(self.buffer)
@@ -1080,8 +1116,6 @@ class PlotItem(object):
 
         x_axis = np.array(tdata[-counter:])[np.newaxis,:]
         y_axis = np.array(list(self.buffer))
-
-        # TODO: Downsampling before graphic creation
 
         if self.rolling_plot:
             #print('I keep it rolling')
@@ -1136,6 +1170,10 @@ class PlotItem(object):
         self.graphics.append(graphic)
 
     def get_graphics(self):
+        """
+
+        :return:
+        """
         res_graphics = []
 
         for graphic in self.graphics:
@@ -1147,6 +1185,10 @@ class PlotItem(object):
         return res_graphics
 
     def get_old_graphics(self):
+        """
+
+        :return:
+        """
         res_graphic = []
 
         # print(self.amount_elements)
@@ -1167,10 +1209,42 @@ class PlotItem(object):
         return res_graphic
 
     def clear(self):
+        """
+
+        :return:
+        """
         self.graphics = []
         self.downsampling_rate_start = 0
         self.buffer = []
         self.amount_elements = 0
 
     def get_buffersize(self):
+        """
+
+        :return:
+        """
         return len(self.buffer)
+
+
+class PlotWidget(pg.PlotWidget):
+
+    def __init__(self):
+        super(PlotWidget, self).__init__()
+        self.paint = True
+
+    # def enablePainting(self):
+    #     self.paint = True
+    #
+    # def disablePainting(self):
+    #     self.paint = False
+    #
+    # def refreshPlot(self):
+    #     self.enablePainting()
+    #     super(PlotWidget, self).repaint()
+    #     self.disablePainting()
+
+    def paintEvent(self, ev):
+
+#        if self.paint:
+#        print('REPAINT !!')
+        super(PlotWidget, self).paintEvent(ev)
