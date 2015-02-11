@@ -352,6 +352,10 @@ class Plot(vip_base):
 
         :return:
         """
+
+
+
+
         self.__plotWidget__.getPlotItem().setDownsampling(ds=30, auto=False)
 
         if not self.__rolling_plot__:
@@ -994,8 +998,11 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         :return:
         """
 
+
+        x = np.array(x[:])[np.newaxis, :]
+
         connect = np.ones(x.shape, dtype=bool)
-        connect[:, -1] = 0 # don't draw the segment between each trace
+        connect[:,-1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
         pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
         self.setCacheMode(pg.QtGui.QGraphicsItem.NoCache)
@@ -1114,19 +1121,19 @@ class PlotItem(object):
         counter = len(self.buffer)
         self.amount_elements += counter
 
-        x_axis = np.array(tdata[-counter:])[np.newaxis,:]
+        x_axis = np.array(tdata[-counter:])
         y_axis = np.array(list(self.buffer))
 
         if self.rolling_plot:
             #print('I keep it rolling')
 
-            i_max = np.argmax(x_axis[0])
-            i_min = np.argmin(x_axis[0])
+            i_max = np.argmax(x_axis)
+            i_min = np.argmin(x_axis)
 
             # Create two graphic objects due plot border
             if i_min > i_max:
-                x_axis_1 = np.array(x_axis[0][:i_max+1])[np.newaxis, :]
-                x_axis_2 = np.array(x_axis[0][i_min:])[np.newaxis, :]
+                x_axis_1 = np.array(x_axis[:i_max+1])
+                x_axis_2 = np.array(x_axis[i_min:])
 
                 y_axis_1 = y_axis[:i_max+1]
                 y_axis_2 = y_axis[i_min:]
@@ -1137,9 +1144,8 @@ class PlotItem(object):
                     prev_last_x = prev_graphic.last_x;
                     prev_last_y = prev_graphic.last_y;
 
-                    x_axis_1 = np.insert(x_axis_1[0], 0, prev_last_x)[np.newaxis,:]
+                    x_axis_1 = np.insert(x_axis_1, 0, prev_last_x)
                     y_axis_1 = np.insert(y_axis_1, 0, prev_last_y)
-
 
                 graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
                 graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
@@ -1158,8 +1164,8 @@ class PlotItem(object):
             prev_last_x = prev_graphic.last_x;
             prev_last_y = prev_graphic.last_y;
 
-            if prev_last_x < x_axis[0][0]:
-                x_axis = np.insert(x_axis[0], 0, prev_last_x)[np.newaxis,:]
+            if prev_last_x < x_axis[0]:
+                x_axis = np.insert(x_axis, 0, prev_last_x)
                 y_axis = np.insert(y_axis, 0, prev_last_y)
 
         graphic = GraphicItem(x_axis, y_axis, counter, pen=self.pen)
@@ -1232,19 +1238,22 @@ class PlotWidget(pg.PlotWidget):
         super(PlotWidget, self).__init__()
         self.paint = True
 
-    # def enablePainting(self):
-    #     self.paint = True
-    #
-    # def disablePainting(self):
-    #     self.paint = False
-    #
+    def enablePainting(self):
+        self.paint = True
+
+    def disablePainting(self):
+        self.paint = False
+
     # def refreshPlot(self):
     #     self.enablePainting()
     #     super(PlotWidget, self).repaint()
     #     self.disablePainting()
 
     def paintEvent(self, ev):
-
+        if self.paint:
+            self.scene().prepareForPaint()
+        return QtGui.QGraphicsView.paintEvent(self, ev)
 #        if self.paint:
 #        print('REPAINT !!')
-        super(PlotWidget, self).paintEvent(ev)
+ #       super(PlotWidget, self).paintEvent(ev)
+
