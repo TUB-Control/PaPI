@@ -87,6 +87,8 @@ GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 GUI_DEFAULT_WIDTH               = 771
 GUI_DEFAULT_HEIGHT              = 853
 
+GUI_DEFAULT_TAB                 = 'PaPI-Tab'
+
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''

@@ -171,6 +171,7 @@ class DPlugin(DObject):
         self.type = None
         self.alive_count = 0
 
+
     def subscribe_signals(self, dblock, signals):
         """
         This function is used to subscribe a bunch of signals.

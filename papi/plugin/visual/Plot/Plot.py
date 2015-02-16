@@ -196,6 +196,8 @@ class Plot(vip_base):
         self.__update_intervall__ = 25  # in milliseconds
 
         self.setup_context_menu()
+        self.__plotWidget__.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.__plotWidget__.customContextMenuRequested.connect(self.showContextMenu)
 
         #self.use_range_for_x(self.config['xRange']['value'])
         self.use_range_for_y(self.config['yRange']['value'])
@@ -694,6 +696,10 @@ class Plot(vip_base):
         self.custMenu.addAction(self.rolling_Checkbox_Action)
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
         self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+
+    def showContextMenu(self):
+        self.setup_context_menu()
+
 
     def contextMenu_yAutoRangeButton_clicked(self):
         mi = None;
