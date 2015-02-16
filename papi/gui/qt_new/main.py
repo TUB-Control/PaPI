@@ -88,7 +88,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
-        self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
+        self.gui_api = Gui_api(self.gui_data, core_queue, gui_id, get_gui_config_function=self.get_gui_config,
+                               set_gui_config_function= self.set_gui_config)
 
         self.TabManager = PapiTabManger(self.widgetTabs,dgui=self.gui_data, gui_api=self.gui_api)
 
@@ -101,22 +102,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.gui_api.error_occured.connect(self.error_occured)
 
-        self.gui_api.resize_gui.connect(self.resize_gui_window)
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
 
 
 
-        self.gui_api.set_bg_gui.connect(self.update_background)
-
         # set GUI size
-        size = self.size()
-        self.gui_api.gui_size_height    = size.height()
-        self.gui_api.gui_size_width     = size.width()
-
-        self.original_resize_function = self.resizeEvent
-        self.resizeEvent = self.user_window_resize
-
         self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
 
         self.core_queue = core_queue
@@ -131,8 +122,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.last_config = PAPI_LAST_CFG_PATH
-
-        self.update_background(PAPI_DEFAULT_BG_PATH)
 
         self.in_run_mode = False
 
@@ -184,6 +173,50 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.saveButton.setIcon(save_icon)
 
 
+    def get_gui_config(self):
+        tabs = {}
+        tab_dict = self.TabManager.get_tabs_by_uname()
+        for tab in tab_dict:
+            tabOb = tab_dict[tab]
+            tabs[tab]= {}
+            tabs[tab]['background'] = tabOb.background
+
+        size = {}
+        size['x'] = {}
+        size['x']['value'] = str(self.size().width())
+        size['y'] = {}
+        size['y']['value'] = str(self.size().height())
+
+        cfg = {}
+        cfg['tabs'] = tabs
+        cfg['size'] = size
+
+        return cfg
+
+    def set_gui_config(self, cfg):
+        #################
+        # Cfgs for Tabs #
+        #################
+        if 'tabs' in cfg:
+            for tab in cfg['tabs']:
+                name = tab
+
+                tabOb = self.TabManager.add_tab(name)
+
+                tabDetails = cfg['tabs'][tab]
+                if 'background' in tabDetails:
+                    bg = tabDetails['background']
+                    if bg != 'default':
+                        self.TabManager.set_background_for_tab_with_name(name,bg)
+
+        #################
+        # windows size: #
+        #################
+        if 'size' in cfg:
+            w = int(cfg['size']['x']['value'])
+            h = int(cfg['size']['y']['value'])
+            self.resize_gui_window(w,h)
+
     def set_background_for_gui(self):
         """
         Used to handle request for setting background image.
@@ -209,18 +242,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 self.gui_api.gui_bg_path = path
                 self.widgetArea.setBackground(pixmap)
 
-    def update_background(self, path):
-        """
-        Used to change the background by giving a path to a picture.
-
-        :param path: Path of a picture.
-        :return:
-        """
-        #TODO
-        pass
-        #pixmap  = QtGui.QPixmap(path)
-        #self.widgetArea.setBackground(pixmap)
-
     def run(self):
         """
 
@@ -243,7 +264,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         :return:
         """
-        self.create_plugin_menu = CreatePluginMenu(self.gui_api)
+        self.create_plugin_menu = CreatePluginMenu(self.gui_api, self.TabManager)
 
         self.create_plugin_menu.show()
         # self.create_plugin_menu.raise_()
@@ -378,6 +399,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
             if tab_name in self.TabManager.get_tabs_by_uname():
                 tabOb = self.TabManager.get_tabs_by_uname()[tab_name]
                 tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
+                if tabOb.closeIfempty is True:
+                    if len(tabOb.subWindowList()) == 0:
+                        self.TabManager.closeTab_by_name(tabOb.name)
+
 
     def changed_dgui(self):
         if self.overview_menu is not None:
@@ -426,17 +451,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 self.toggle_run_mode()
 
     def resize_gui_window(self, w, h):
-
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
-        size = self.size()
-        self.gui_api.gui_size_height    = size.height()
-        self.gui_api.gui_size_width     = size.width()
-
-    def user_window_resize(self, event):
-        size = event.size()
-        self.gui_api.gui_size_width = size.width()
-        self.gui_api.gui_size_height = size.height()
-        self.original_resize_function(event)
 
 
     def reload_config(self):
@@ -456,7 +471,13 @@ class GUI(QMainWindow, Ui_QtNewMain):
         h = GUI_DEFAULT_HEIGHT
         w = GUI_DEFAULT_WIDTH
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
+
+        self.TabManager.set_all_tabs_to_close_when_empty(True)
+        self.TabManager.close_all_empty_tabs()
+
         self.gui_api.do_reset_papi()
+
+
 
     def papi_wiki_triggerd(self):
         QDesktopServices.openUrl(QUrl("https://github.com/TUB-Control/PaPI/wiki", QUrl.TolerantMode))

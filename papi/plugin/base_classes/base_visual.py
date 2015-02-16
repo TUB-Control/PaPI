@@ -83,7 +83,7 @@ class base_visual(base_plugin):
                 'tooltip': 'Used for window title'
             },
             'tab': {
-                'value': 'Tab33',
+                'value': 'Tab',
                 'tooltip': 'Used for tabs'
             }}
         return config

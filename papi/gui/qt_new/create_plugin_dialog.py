@@ -30,21 +30,23 @@ __author__ = 'knuths'
 
 import operator
 
-from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox
+from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox, QComboBox
 from PySide.QtCore import *
 
 from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
 from papi.gui.qt_new.custom import FileLineEdit
 
+from papi.constants import GUI_DEFAULT_TAB
 
 class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
-    def __init__(self, gui_api, parent=None):
+    def __init__(self, gui_api, TabManager, parent=None):
         super(CreatePluginDialog, self).__init__(parent)
         self.setupUi(self)
         self.cfg = None
         self.configuration_inputs = {}
         self.gui_api = gui_api
+        self.TabManager = TabManager
 
 
     def set_plugin(self, plugin):
@@ -62,15 +64,18 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
         for attr in self.configuration_inputs:
 
-           if isinstance(self.configuration_inputs[attr], QCheckBox):
+            if isinstance(self.configuration_inputs[attr], QCheckBox):
 
                 if self.configuration_inputs[attr].isChecked():
                     config[attr]['value'] = '1'
                 else:
                     config[attr]['value'] = '0'
 
-           if isinstance(self.configuration_inputs[attr], QLineEdit):
+            if isinstance(self.configuration_inputs[attr], QLineEdit):
                 config[attr]['value'] = self.configuration_inputs[attr].text()
+
+            if isinstance(self.configuration_inputs[attr], QComboBox):
+                 config[attr]['value'] = self.configuration_inputs[attr].currentText()
 
         if not self.gui_api.do_test_name_to_be_unique(config['uname']['value']) :
             self.configuration_inputs['uname'].setStyleSheet("QLineEdit  { border : 2px solid red;}")
@@ -136,9 +141,13 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             #uname = self.gui_api.change_uname_to_uniqe(uname)
 
 
-            editable_field = QLineEdit(str(value))
-            editable_field.setText(value)
-            editable_field.setObjectName('Tab' + "_line_edit")
+            editable_field = QComboBox()
+            tabs = list(self.TabManager.get_tabs_by_uname().keys())
+            if len(tabs) == 0:
+                tabs = [GUI_DEFAULT_TAB]
+            tabs.sort(key=str.lower)
+            editable_field.addItems(tabs)
+            editable_field.setObjectName('Tab' + "_comboBox")
 
             self.formSimple.addRow(str(display_text) , editable_field)
 
