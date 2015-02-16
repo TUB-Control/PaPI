@@ -101,6 +101,8 @@ class Plot(vip_base):
         self.__y_axis__ = None
         self.__x_axis__ = None
         self.__amount_of_slices__ = None
+        self.downsampling_rate_start = None;
+        self.downsampling_rate = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -141,6 +143,8 @@ class Plot(vip_base):
         self.__buffer_size__ = int(int_re.findall(self.config['buffersize']['value'])[0])
 
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
+        self.downsampling_rate_start = 0
+        self.downsampling_rate = self.__downsampling_rate__
 
         # ----------------------------
         # Create internal variables
@@ -249,8 +253,9 @@ class Plot(vip_base):
         t = Data['t']
 
         self.__input_size__ = len(t)
-        self.__tbuffer__.extend(t)
-        self.__new_added_data__ += len(t)
+
+        #print('Execute')
+
         self.__signals_have_same_length = True
 
         now = pg.ptime.time()
@@ -259,9 +264,23 @@ class Plot(vip_base):
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    self.signals[key].add_data(y, self.__tbuffer__)
+                    if self.downsampling_rate_start < len(y):
+                        ds_y = y[self.downsampling_rate_start::self.downsampling_rate]
+                        #print(ds_y)
+                        self.signals[key].add_data(ds_y)
 
-                    self.__signals_have_same_length &= (len(t) == len(y))
+                        self.__signals_have_same_length &= ( len(y) == len(t) )
+
+        if self.downsampling_rate_start >= len(t):
+            self.downsampling_rate_start -= len(t)
+        else:
+            ds_t = t[self.downsampling_rate_start::self.downsampling_rate]
+            #print(ds_t)
+            self.downsampling_rate_start += self.downsampling_rate - len(ds_t)
+            self.__tbuffer__.extend(ds_t)
+
+
+        self.__new_added_data__ += len(t)
 
         if self.__input_size__ > 1 or self.__signals_have_same_length:
 
@@ -298,6 +317,7 @@ class Plot(vip_base):
             self.__downsampling_rate__ = int(value)
             #self.__plotWidget__.getPlotItem().setDownsampling(ds=int(value),auto=False,mode='mean')
             self.__new_added_data__ = 0
+            self.update_downsampling_rate()
 
         if name == 'rolling':
             self.clear()
@@ -354,16 +374,15 @@ class Plot(vip_base):
         """
 
 
-
-
-        self.__plotWidget__.getPlotItem().setDownsampling(ds=30, auto=False)
+        if len(self.__tbuffer__) == 0:
+            return
 
         if not self.__rolling_plot__:
             tdata = list(self.__tbuffer__)
+
         if self.__rolling_plot__:
             tdata = list(range(0, len(self.__tbuffer__)))
-
-            self.__append_at__ += self.signals[list(self.signals.keys())[0]].get_buffersize()
+            self.__append_at__ += self.signals[list(self.signals.keys())[0]].get_new_added_since_last_drawing()
             self.__append_at__ %= len(tdata)
             tdata = np.roll(tdata, -int(self.__append_at__))
 
@@ -374,7 +393,7 @@ class Plot(vip_base):
             # get all no more needed graphic items
             graphics = self.signals[signal_name].get_old_graphics()
             for graphic in graphics:
-               self.__plotWidget__.removeItem(graphic)
+                self.__plotWidget__.removeItem(graphic)
 
             # Create new new graphic items
             self.signals[signal_name].create_graphics(tdata)
@@ -384,6 +403,7 @@ class Plot(vip_base):
             for graphic in graphics:
                 self.__plotWidget__.addItem(graphic)
 
+                # Set positon for vertical line
                 if self.__rolling_plot__:
                     self.__vertical_line__.setValue(graphic.last_x)
 
@@ -394,13 +414,8 @@ class Plot(vip_base):
         else:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
-        #self.__plotWidget__.update()
-
-        #self.__plotWidget__.repaint()
-
         # if self.__papi_debug__:
         #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
-
 
     def update_plot_single_timestamp(self, data):
         """
@@ -410,14 +425,19 @@ class Plot(vip_base):
         """
 
         self.__text_item__.setText("Time " + str(data['t'][0]), color=(200, 200, 200))
-
+        self.__plotWidget__.clear()
         for signal_name in data:
             if signal_name != 't':
                 signal_data = data[signal_name]
                 if signal_name in self.signals:
                     pass
-                    #tdata = np.linspace(1, len(signal_data), len(signal_data))
+                    tdata = np.linspace(1, len(signal_data), len(signal_data))
 
+                    plot_item = self.signals[signal_name]
+
+                    graphic = GraphicItem(np.array(tdata), np.array(signal_data), 0, pen=plot_item.pen)
+
+                    self.__plotWidget__.addItem(graphic)
                     #curve = self.signals[signal_name]['curve']
                     #curve.setData(tdata, signal_data, _callSync='off')
 
@@ -503,6 +523,7 @@ class Plot(vip_base):
             self.update_pens()
             self.update_legend()
             self.update_rolling_plot()
+            self.update_downsampling_rate()
 
     def add_plot_item(self, signal, signal_id):
         """
@@ -778,8 +799,8 @@ class Plot(vip_base):
             self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
     def contextMenu_yAutoRangeButton_clicked(self):
-        mi = None;
-        ma = None;
+        mi = None
+        ma = None
         for sig in self.signals:
             graphics = self.signals[sig].graphics
             buf = []
@@ -800,7 +821,7 @@ class Plot(vip_base):
             else:
                 mi = mi_buf
 
-        ma = str(ma);
+        ma = str(ma)
         mi = str(mi)
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
@@ -865,6 +886,15 @@ class Plot(vip_base):
 
                 self.__legend__.addItem(graphic, legend_name)
 
+    def update_downsampling_rate(self):
+        rate = self.__downsampling_rate__
+
+        self.downsampling_rate_start = 0
+        self.downsampling_rate = rate
+
+        for signal_name in self.signals:
+            self.signals[signal_name].set_downsampling_rate(rate)
+
     def quit(self):
         """
         Function quit plugin
@@ -884,6 +914,12 @@ class Plot(vip_base):
         }
         config['buffersize'] =  {
             'value': '1000',
+            'regex': '(\d+\.\d+)',
+            'advanced': '1',
+            'display_text': 'y: range'
+        }
+        config['downsampling_rate'] =  {
+            'value': '10',
             'regex': '(\d+\.\d+)',
             'advanced': '1',
             'display_text': 'y: range'
@@ -947,8 +983,8 @@ class Plot(vip_base):
             'advanced': '1',
             'display_text': 'Style'
         }, 'buffersize': {
-            'value': "1000",
-            'regex': '^([1-9][0-9]{0,3}|10000)$',
+            'value': "100",
+            'regex': '^(\d+)$',
             'advanced': '1',
             'display_text': 'Buffersize'
         }, 'downsampling_rate': {
@@ -1038,13 +1074,18 @@ class PlotItem(object):
         """
         super(PlotItem,self).__init__()
         self.signal_name = signal.dname
-        self.buffer = [] # buffer
+
+        #self.buffer = [] # buffer
+
+        self.buffer = collections.deque([0.0] * 0, max_elements)
+
         self.id = signal_id
         self.signal = signal
 
         self.amount_elements = 0
 
         self.downsampling_rate_start = None;
+        self.downsampling_rate = None
 
         self.max_elements = max_elements
 
@@ -1053,6 +1094,7 @@ class PlotItem(object):
         self.rolling_plot = None
         self.last_x = None
         self.last_y = None
+        self.new_added_element = 0
 
     def get_legend_item(self):
         """
@@ -1065,7 +1107,7 @@ class PlotItem(object):
         data_item.setPen(self.pen)
         return data_item
 
-    def add_data(self, elements, tdata):
+    def add_data(self, elements):
         """
 
         :param elements:
@@ -1076,6 +1118,24 @@ class PlotItem(object):
         buffer = self.buffer
 
         # TODO: Downsampling before extending the internal buffer
+
+
+        # if self.downsampling_rate_start >= len(elements):
+        #     self.downsampling_rate_start -= len(elements)
+        # else:
+        #
+        #     # print('AddData')
+        #     # print('Start ' + str(self.downsampling_rate_start))
+        #     # print('Rate ' + str(self.downsampling_rate))
+        #     # print('Len ' + str(len(elements)))
+        #
+        #     ds_elements = elements[self.downsampling_rate_start::self.downsampling_rate]
+        #     self.downsampling_rate_start += self.downsampling_rate - len(ds_elements)
+        #     # print(elements)
+        #     # print(ds_elements)
+        #     buffer.extend(ds_elements)
+
+        self.new_added_element += len(elements)
 
         # if self.downsampling_rate_start < len(elements):
         #     ds_elements = elements[self.downsampling_rate_start:self.downsampling_rate:]
@@ -1103,76 +1163,124 @@ class PlotItem(object):
         :param rate:
         :return:
         """
-
-        self.downsampling_rate = 2
+        self.downsampling_rate = rate
 
         self.downsampling_rate_start = 0
 
-
-
-    def create_graphics(self, tdata):
+    def create_graphics(self, xdata):
         """
 
-        :param tdata:
+        :param xdata:
         :return:
         """
 
+        self.new_added_element = 0
+
         # get amount of elements in our buffer
         counter = len(self.buffer)
+
+        if not counter > 0:
+            return
+
         self.amount_elements += counter
 
-        x_axis = np.array(tdata[-counter:])
+        # shift_data = 0
+        # if self.last_x is not None:
+        #     if self.last_x in xdata:
+        #         shift_data = list(xdata).index(self.last_x)
+        #
+        #     print(shift_data)
+
+
+
+        #xdata = xdata[::self.downsampling_rate]
+        amount_elements = len(xdata)
+
+        self.last_x = xdata[0]
+        # print( "Len Buffer " + str(len(self.buffer)))
+        # print( "TData" + str(len(tdata)))
+
+        x_axis = np.array(xdata)
         y_axis = np.array(list(self.buffer))
 
+        # print( "Len Buffer " + str(len(x_axis)))
+        # print( "TData" + str(len(y_axis)))
+        #
+
+        # # Old Solution
+        # if False:
+        #
+        #     if self.rolling_plot:
+        #         #print('I keep it rolling')
+        #
+        #         i_max = np.argmax(x_axis)
+        #         i_min = np.argmin(x_axis)
+        #
+        #         # Create two graphic objects due plot border
+        #         if i_min > i_max:
+        #             x_axis_1 = np.array(x_axis[:i_max+1])
+        #             x_axis_2 = np.array(x_axis[i_min:])
+        #
+        #             y_axis_1 = y_axis[:i_max+1]
+        #             y_axis_2 = y_axis[i_min:]
+        #
+        #             if len(self.graphics):
+        #                 prev_graphic = self.graphics[-1]
+        #                 prev_last_x = prev_graphic.last_x;
+        #                 prev_last_y = prev_graphic.last_y;
+        #
+        #                 x_axis_1 = np.insert(x_axis_1, 0, prev_last_x)
+        #                 y_axis_1 = np.insert(y_axis_1, 0, prev_last_y)
+        #
+        #             graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
+        #             graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
+        #
+        #             self.graphics.append(graphic_1)
+        #             self.graphics.append(graphic_2)
+        #
+        #             del self.buffer
+        #             self.buffer = []
+        #
+        #             return
+        #     # Connect with previous graphic if a previous graphic exists
+        #
+        #     if len(self.graphics):
+        #         prev_graphic = self.graphics[-1]
+        #         prev_last_x = prev_graphic.last_x;
+        #         prev_last_y = prev_graphic.last_y;
+        #
+        #         if prev_last_x < x_axis[0]:
+        #             x_axis = np.insert(x_axis, 0, prev_last_x)
+        #             y_axis = np.insert(y_axis, 0, prev_last_y)
+        #
+        #     graphic = GraphicItem(x_axis, y_axis, counter, pen=self.pen)
+        #
+        #     del self.buffer
+        #     self.buffer = []
+        #
+        #     self.graphics.append(graphic)
+
         if self.rolling_plot:
-            #print('I keep it rolling')
+            #print('First X_Value' + str(xdata))
 
             i_max = np.argmax(x_axis)
             i_min = np.argmin(x_axis)
 
-            # Create two graphic objects due plot border
-            if i_min > i_max:
-                x_axis_1 = np.array(x_axis[:i_max+1])
-                x_axis_2 = np.array(x_axis[i_min:])
+            x_axis_1 = np.array(x_axis[:i_max+1])
+            x_axis_2 = np.array(x_axis[i_min:])
 
-                y_axis_1 = y_axis[:i_max+1]
-                y_axis_2 = y_axis[i_min:]
+            y_axis_1 = y_axis[:i_max+1]
+            y_axis_2 = y_axis[i_min:]
 
+            graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
+            graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
 
-                if len(self.graphics):
-                    prev_graphic = self.graphics[-1]
-                    prev_last_x = prev_graphic.last_x;
-                    prev_last_y = prev_graphic.last_y;
+            self.graphics.append(graphic_1)
+            self.graphics.append(graphic_2)
 
-                    x_axis_1 = np.insert(x_axis_1, 0, prev_last_x)
-                    y_axis_1 = np.insert(y_axis_1, 0, prev_last_y)
-
-                graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
-                graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
-
-                self.graphics.append(graphic_1)
-                self.graphics.append(graphic_2)
-
-                del self.buffer
-                self.buffer = []
-
-                return
-        # Connect with previous graphic if a previous graphic exists
-
-        if len(self.graphics):
-            prev_graphic = self.graphics[-1]
-            prev_last_x = prev_graphic.last_x;
-            prev_last_y = prev_graphic.last_y;
-
-            if prev_last_x < x_axis[0]:
-                x_axis = np.insert(x_axis, 0, prev_last_x)
-                y_axis = np.insert(y_axis, 0, prev_last_y)
+            return
 
         graphic = GraphicItem(x_axis, y_axis, counter, pen=self.pen)
-
-        del self.buffer
-        self.buffer = []
-
         self.graphics.append(graphic)
 
     def get_graphics(self):
@@ -1195,24 +1303,43 @@ class PlotItem(object):
 
         :return:
         """
+
+
+
         res_graphic = []
 
-        # print(self.amount_elements)
-        # print(len(self.graphics))
 
-        while self.amount_elements >= self.max_elements:
+        # if len(self.graphics):
+        #     res_graphic.append(self.graphics.pop(0))
 
+        for i in range(len(self.graphics)):
             graphic = self.graphics[0]
 
             if graphic.not_drawn:
                 break
 
             graphic = self.graphics.pop(0)
-            self.amount_elements -= graphic.length()
 
             res_graphic.append(graphic)
 
         return res_graphic
+
+        # # print(self.amount_elements)
+        # # print(len(self.graphics))
+        #
+        # while self.amount_elements >= self.max_elements:
+        #
+        #     graphic = self.graphics[0]
+        #
+        #     if graphic.not_drawn:
+        #         break
+        #
+        #     graphic = self.graphics.pop(0)
+        #     self.amount_elements -= graphic.length()
+        #
+        #     res_graphic.append(graphic)
+        #
+        # return res_graphic
 
     def clear(self):
         """
@@ -1221,16 +1348,22 @@ class PlotItem(object):
         """
         self.graphics = []
         self.downsampling_rate_start = 0
-        self.buffer = []
+        self.buffer = collections.deque([0.0] * 0, self.max_elements)
         self.amount_elements = 0
+
+    def get_new_added_since_last_drawing(self):
+        return self.new_added_element
 
     def get_buffersize(self):
         """
 
         :return:
         """
-        return len(self.buffer)
 
+        if len(self.buffer) < self.max_elements:
+            return len(self.buffer)
+        else:
+            return self.max_elements
 
 class PlotWidget(pg.PlotWidget):
 
