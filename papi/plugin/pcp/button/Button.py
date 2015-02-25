@@ -53,6 +53,12 @@ class Button(pcp_base):
         self.name = config['name']['value']
         self.cur_value = 0
 
+        self.value_up = float(self.config['state1']['value'])
+        self.value_down = float(self.config['state2']['value'])
+        self.text_up =  (self.config['state1_text']['value'])
+        self.text_down = (self.config['state2_text']['value'])
+        self.button_state = 'up'
+
         self.send_new_block_list([block])
 
         self.button = self.create_widget()
@@ -75,27 +81,41 @@ class Button(pcp_base):
         button = QPushButton(self.name)
         button.clicked.connect(self.clicked)
 
+        button.setText(self.text_up)
+
         return button
 
     def clicked(self):
-
-
-        if self.cur_value == float(self.config['up']['value']):
-            self.cur_value = float(self.config['low']['value'])
+        if self.button_state == 'up':
+            # Button is up, goes down now
+            self.button_state = 'down'
+            self.button.setText(self.text_down)
+            val = self.value_down
         else:
-            self.cur_value = float(self.config['up']['value'])
+            # Button is down, goes up now
+            self.button_state = 'up'
+            self.button.setText(self.text_up)
+            val = self.value_up
 
-        self.send_parameter_change(str(self.cur_value), 'Click_Event')
+        self.send_parameter_change(str(val), 'Click_Event')
 
 
     def get_plugin_configuration(self):
         config = {
-            "low": {
+            "state1": {
                 'value': 0,
                 'advanced' : '0'
-            }, "up": {
+            }, "state2": {
                 'value': 1,
-                'advanced' : '0'
+                'advanced' : '0',
+            }, "state1_text": {
+                'value': 'Go to state 2',
+                'advanced' : '0',
+                'display_text': 'Text for state 1'
+            }, "state2_text": {
+                'value': 'Go to state 1',
+                'advanced' : '0',
+                'display_text': 'Text for state 2'
             },"name": {
                 'value': "PaPI Button",
                 'advanced': '0'
