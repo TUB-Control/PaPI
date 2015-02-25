@@ -34,6 +34,8 @@ from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 from papi.pyqtgraph.Qt import QtGui, QtCore
 
+from papi.constants import REGEX_SIGNED_FLOAT
+
 class Button(pcp_base):
 
     def __init__(self):
@@ -104,9 +106,11 @@ class Button(pcp_base):
         config = {
             "state1": {
                 'value': 0,
+                'regex': REGEX_SIGNED_FLOAT,
                 'advanced' : '0'
             }, "state2": {
                 'value': 1,
+                'regex': REGEX_SIGNED_FLOAT,
                 'advanced' : '0',
             }, "state1_text": {
                 'value': 'Go to state 2',
