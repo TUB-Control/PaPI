@@ -10,7 +10,7 @@ v.1.XX
  * [fix]: fixed memory leak of gui event processing timer loop (#25)
  * [improvement]: changed the demux function to in imporve performance
  * [improvement]: imporved core performance while processing new data (see #20)
-
+ * [feature]: modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
 
 v.1.0
 ---
