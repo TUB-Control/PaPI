@@ -122,3 +122,11 @@ CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
 CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
+
+
+
+
+# REGEX Collection
+
+#REGEX_SINGLE_FLOAT =
+REGEX_SINGLE_INT   = '[0-9]+'

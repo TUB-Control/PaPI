@@ -32,6 +32,7 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QPushButton, QIcon
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
+from papi.pyqtgraph.Qt import QtGui, QtCore
 
 class Button(pcp_base):
 
@@ -56,7 +57,14 @@ class Button(pcp_base):
 
         self.button = self.create_widget()
         self.set_widget_for_internal_usage(self.button)
+        self.button.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.button.customContextMenuRequested.connect(self.show_context_menu)
 
+
+    def show_context_menu(self, pos):
+        gloPos = self.button.mapToGlobal(pos)
+        self.cmenu = self.create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
     def create_widget(self):
         """
