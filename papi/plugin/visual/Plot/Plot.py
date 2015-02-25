@@ -101,7 +101,14 @@ class Plot(vip_base):
         self.__y_axis__ = None
         self.__x_axis__ = None
         self.__amount_of_slices__ = None
-        self.downsampling_rate_start = None;
+        self.__stp_min_x = None
+        self.__stp_max_x = None
+
+        self.__stp_min_y = None
+        self.__stp_max_y = None
+        self.__stp_active__ = None
+
+        self.__downsampling_rate_start__ = None;
         self.downsampling_rate = None
 
         self.styles = {
@@ -143,20 +150,32 @@ class Plot(vip_base):
         self.__buffer_size__ = int(int_re.findall(self.config['buffersize']['value'])[0])
 
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
-        self.downsampling_rate_start = 0
+        self.__downsampling_rate_start__ = 0
         self.downsampling_rate = self.__downsampling_rate__
 
         # ----------------------------
-        # Create internal variables
+        # Set internal variables
         # ----------------------------
 
         self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
         self.__amount_of_slices__ = 10
 
+        # ----------------------------
+        # Set internal variables used for single timestamp plotting (stp)
+        # ----------------------------
+
+        self.__stp_min_x = 0
+        self.__stp_max_x = 0
+
+        self.__stp_min_y = 0
+        self.__stp_max_y = 1
+
+        self.__stp_active__ = False
+
         # --------------------------------
         # Create PlotWidget
         # --------------------------------
-        self.__text_item__ = pq.TextItem(text='', color=(200, 200, 200), anchor=(0, 0))
+        self.__text_item__ = pq.TextItem(text='', color=(200, 200, 200), anchor=(1, 0))
 
         self.__vertical_line__ = pq.InfiniteLine()
 
@@ -177,29 +196,38 @@ class Plot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().setYRange(0,6)
 
         self.__plotWidget__.getPlotItem().setDownsampling(auto=True)
+
         if not self.__papi_debug__:
             self.set_widget_for_internal_usage(self.__plotWidget__)
+
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
 
-        #self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
+        self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
 
         # ---------------------------
         # Create Parameters
         # ---------------------------
 
-        self.__parameters__['x-grid'] = DParameter('x-grid', 0, Regex='^(1|0){1}$')
-        self.__parameters__['y-grid'] = DParameter('y-grid', 0, Regex='^(1|0){1}$')
+        self.__parameters__['x-grid'] = \
+            DParameter('x-grid', 0, Regex='^(1|0){1}$')
+        self.__parameters__['y-grid'] = \
+            DParameter('y-grid', 0, Regex='^(1|0){1}$')
 
-        self.__parameters__['color'] = DParameter('color', '[0 1 2 3 4]', Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['style'] = DParameter('style', '[0 0 0 0 0]', Regex='^\[(\s*\d\s*)+\]')
-        self.__parameters__['rolling'] = DParameter('rolling', '0', Regex='^(1|0){1}')
+        self.__parameters__['color'] = \
+            DParameter('color', '[0 1 2 3 4]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['style'] = \
+            DParameter('style', '[0 0 0 0 0]', Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['rolling'] = \
+            DParameter('rolling', '0', Regex='^(1|0){1}')
 
-        self.__parameters__['downsampling_rate'] = DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^([1-9][0-9]?|100)$')
-        self.__parameters__['buffersize'] = DParameter('buffersize', self.__buffer_size__, Regex='^([1-9][0-9]{0,3}|10000)$')
+        self.__parameters__['downsampling_rate'] = \
+            DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^\d+$')
+        self.__parameters__['buffersize'] = \
+            DParameter('buffersize', self.__buffer_size__, Regex='^\d+$')
 
-        #self.__parameters__['xRange'] = DParameter('xRange', '[0,1]', Regex='(\d+\.\d+)')
-        self.__parameters__['yRange'] = DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
+        self.__parameters__['yRange'] = \
+            DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
 
         if not self.__papi_debug__:
             self.send_new_parameter_list(list(self.__parameters__.values()))
@@ -218,8 +246,13 @@ class Plot(vip_base):
 
         self.setup_context_menu()
 
-        #self.use_range_for_x(self.config['xRange']['value'])
         self.use_range_for_y(self.config['yRange']['value'])
+
+        # ----------------------------
+        # Initiate for default plotting
+        # ----------------------------
+
+        self.initate_update_plot()
 
         return True
 
@@ -230,7 +263,7 @@ class Plot(vip_base):
         :return:
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=True, y=True)
-        print('PlotPerformance paused')
+        #print('PlotPerformance paused')
 
     def resume(self):
         """
@@ -239,7 +272,7 @@ class Plot(vip_base):
         :return:
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
-        print('PlotPerformance resumed')
+        #print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name=None):
         """
@@ -254,8 +287,6 @@ class Plot(vip_base):
 
         self.__input_size__ = len(t)
 
-        #print('Execute')
-
         self.__signals_have_same_length = True
 
         now = pg.ptime.time()
@@ -264,25 +295,30 @@ class Plot(vip_base):
             if key != 't':
                 y = Data[key]
                 if key in self.signals:
-                    if self.downsampling_rate_start < len(y):
-                        ds_y = y[self.downsampling_rate_start::self.downsampling_rate]
-                        #print(ds_y)
+                    if self.__downsampling_rate_start__ < len(y):
+                        ds_y = y[self.__downsampling_rate_start__::self.downsampling_rate]
+
                         self.signals[key].add_data(ds_y)
 
-                        self.__signals_have_same_length &= ( len(y) == len(t) )
+                        self.__signals_have_same_length &= (len(y) == len(t))
 
-        if self.downsampling_rate_start >= len(t):
-            self.downsampling_rate_start -= len(t)
+        if self.__downsampling_rate_start__ >= len(t):
+            self.__downsampling_rate_start__ -= len(t)
         else:
-            ds_t = t[self.downsampling_rate_start::self.downsampling_rate]
-            #print(ds_t)
-            self.downsampling_rate_start += self.downsampling_rate - len(ds_t)
+            ds_t = t[self.__downsampling_rate_start__::self.downsampling_rate]
+            self.__downsampling_rate_start__ += self.downsampling_rate - len(ds_t)
             self.__tbuffer__.extend(ds_t)
-
 
         self.__new_added_data__ += len(t)
 
+        self.rolling_Checkbox.setDisabled(self.__stp_active__)
+
         if self.__input_size__ > 1 or self.__signals_have_same_length:
+
+            if self.__stp_active__:
+                self.initate_update_plot()
+
+            self.__stp_active__ = False
 
             if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
                 self.__last_time__ = current_milli_time()
@@ -290,9 +326,18 @@ class Plot(vip_base):
                 self.__last_time__ = current_milli_time()
                 self.__new_added_data__ = 0
         else:
+
+            if not self.__stp_active__ :
+                self.initate_update_plot_single_timestamp()
+
+            self.__stp_active__ = True
+
+
             self.update_plot_single_timestamp(Data)
 
-#        print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+
+            #
+        # print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def set_parameter(self, name, value):
         """
@@ -315,7 +360,6 @@ class Plot(vip_base):
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
             self.__downsampling_rate__ = int(value)
-            #self.__plotWidget__.getPlotItem().setDownsampling(ds=int(value),auto=False,mode='mean')
             self.__new_added_data__ = 0
             self.update_downsampling_rate()
 
@@ -343,10 +387,6 @@ class Plot(vip_base):
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.update_buffer_size(value)
-
-        # if name == 'xRange':
-        #     self.config['xRange']['value'] = value
-        #     self.use_range_for_x(value)
 
         if name == 'yRange':
             self.config['yRange']['value'] = value
@@ -411,11 +451,28 @@ class Plot(vip_base):
 
         if self.__rolling_plot__:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(0, len(tdata)-1)
+
+            axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
+            axis.setLabel(text=str(self.__tbuffer__[-1]), units='s')
+
         else:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
         # if self.__papi_debug__:
         #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
+
+    def initate_update_plot(self):
+        print('initaed update plot')
+        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
+        axis.setLabel(text='', units='')
+        axis.setHeight(h=None)
+
+        if self.__rolling_plot__:
+            self.__plotWidget__.addItem(self.__vertical_line__)
+        pass
+
+    def initate_update_plot_single_timestamp(self):
+        pass
 
     def update_plot_single_timestamp(self, data):
         """
@@ -426,22 +483,40 @@ class Plot(vip_base):
 
         self.__text_item__.setText("Time " + str(data['t'][0]), color=(200, 200, 200))
         self.__plotWidget__.clear()
+
+        cur_max_y = 0
+        cur_min_y = 1000
+
         for signal_name in data:
             if signal_name != 't':
                 signal_data = data[signal_name]
                 if signal_name in self.signals:
-                    pass
+
                     tdata = np.linspace(1, len(signal_data), len(signal_data))
 
                     plot_item = self.signals[signal_name]
 
-                    graphic = GraphicItem(np.array(tdata), np.array(signal_data), 0, pen=plot_item.pen)
+                    if len(tdata) == 1:
+                        graphic = GraphicItem(np.array([self.__stp_min_x, self.__stp_max_x]), np.array([signal_data[0], signal_data[0]]), 0, pen=plot_item.pen)
+                    else:
+                        graphic = GraphicItem(np.array(tdata), np.array(signal_data), 0, pen=plot_item.pen)
 
                     self.__plotWidget__.addItem(graphic)
-                    #curve = self.signals[signal_name]['curve']
-                    #curve.setData(tdata, signal_data, _callSync='off')
 
-        pass
+                    self.__stp_max_x = max(self.__stp_max_x, max(tdata))
+                    self.__stp_min_x = min(self.__stp_min_x, min(tdata))
+
+                    cur_max_y = max(cur_max_y, max(signal_data))
+                    cur_min_y = min(cur_min_y, min(signal_data))
+
+        self.__stp_max_y = cur_max_y
+        self.__stp_min_y = cur_min_y
+
+        self.__plotWidget__.getPlotItem().getViewBox().setXRange(self.__stp_min_x, self.__stp_max_x)
+
+        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
+        axis.setLabel(text=str(data['t'][0]), units='s')
+        axis.setHeight(h=0)
 
     def update_buffer_size(self, new_size):
         """
@@ -452,17 +527,6 @@ class Plot(vip_base):
         """
 
         self.__buffer_size__ = int(new_size)
-
-        # -------------------------------
-        # Change Time Buffer
-        # -------------------------------
-
-#        self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
-
-        # -------------------------------
-        # Change Buffer of current
-        # plotted signals
-        # -------------------------------
 
         start_size = len(self.__tbuffer__)
 
@@ -544,7 +608,6 @@ class Plot(vip_base):
 
             self.signals[signal_name] = plot_item
 
-
     def remove_plot_item(self, signal_name):
         """
         Remove the plot item object for a given signal_name.
@@ -593,6 +656,12 @@ class Plot(vip_base):
         return pq.mkPen(color=color, style=style)
 
     def update_rolling_plot(self):
+        """
+        Used to update the rolling plot by resolving all dependencies.
+        The configuration for the rolling plot depends on the current value in self.config['rolling_plot']['value']
+
+        :return:
+        """
 
         value = self.config['rolling_plot']['value']
 
@@ -602,6 +671,10 @@ class Plot(vip_base):
 
         self.clear()
 
+        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
+        axis.setLabel(text='', units='')
+        axis.setHeight(h=None)
+
         for signal_name in self.signals:
             self.signals[signal_name].rolling_plot = self.__rolling_plot__
 
@@ -609,7 +682,6 @@ class Plot(vip_base):
             # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
 
             self.__plotWidget__.addItem(self.__vertical_line__)
-
 
     def use_range_for_x(self, value):
         """
@@ -637,65 +709,16 @@ class Plot(vip_base):
             self.yRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
 
-
     def setup_context_menu(self):
         """
 
         :return:
         """
+
         self.custMenu = QtGui.QMenu("Options")
         self.axesMenu = QtGui.QMenu('Y-Axis')
         self.gridMenu = QtGui.QMenu('Grid')
 
-
-        # ---------------------------------------------------------
-        # #### X-Range Actions
-        #self.xRange_Widget = QtGui.QWidget()
-        #self.xRange_Layout = QtGui.QVBoxLayout(self.xRange_Widget)
-        #self.xRange_Layout.setContentsMargins(2, 2, 2, 2)
-        #self.xRange_Layout.setSpacing(1)
-
-
-        ##### X Line Edits
-        # Layout
-        #self.xRange_EditWidget = QtGui.QWidget()
-        #self.xRange_EditLayout = QtGui.QHBoxLayout(self.xRange_EditWidget)
-        #self.xRange_EditLayout.setContentsMargins(2, 2, 2, 2)
-        #self.xRange_EditLayout.setSpacing(1)
-
-        # get old values;
-        #reg = re.compile(r'(\d+\.\d+)')
-        #range = reg.findall(self.config['xRange']['value'])
-        #if len(range) == 2:
-        #    x_min = range[0]
-        #    x_max = range[1]
-        #else:
-        #    x_min = '0.0'
-        #    x_max = '1.0'
-
-
-        # Min
-        # self.xRange_minEdit = QtGui.QLineEdit()
-        # self.xRange_minEdit.setFixedWidth(80)
-        # self.xRange_minEdit.setText(x_min)
-        # self.xRange_minEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
-        # # Max
-        # self.xRange_maxEdit = QtGui.QLineEdit()
-        # self.xRange_maxEdit.setFixedWidth(80)
-        # self.xRange_maxEdit.setText(x_max)
-        # self.xRange_maxEdit.editingFinished.connect(self.contextMenu_xRange_toogle)
-        # # addTo Layout
-        # self.xRange_EditLayout.addWidget(self.xRange_minEdit)
-        # self.xRange_EditLayout.addWidget(QtGui.QLabel('<'))
-        # self.xRange_EditLayout.addWidget(self.xRange_maxEdit)
-        # self.xRange_Layout.addWidget(self.xRange_EditWidget)
-        #
-        # # build Action
-        # self.xRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
-        # self.xRange_Action.setDefaultWidget(self.xRange_Widget)
-
-
-        # ---------------------------------------------------------------
         ##### Y-Range Actions
         self.yRange_Widget = QtGui.QWidget()
         self.yRange_Layout = QtGui.QVBoxLayout(self.yRange_Widget)
@@ -756,7 +779,8 @@ class Plot(vip_base):
         self.rolling_Checkbox.stateChanged.connect(self.contextMenu_rolling_toogled)
         self.rolling_Checkbox_Action = QtGui.QWidgetAction(self.__plotWidget__)
         self.rolling_Checkbox_Action.setDefaultWidget(self.rolling_Checkbox)
-
+        if self.__stp_active__:
+            self.rolling_Checkbox.setDisabled(True)
 
 
         ##### Build axes menu
@@ -801,28 +825,34 @@ class Plot(vip_base):
     def contextMenu_yAutoRangeButton_clicked(self):
         mi = None
         ma = None
-        for sig in self.signals:
-            graphics = self.signals[sig].graphics
-            buf = []
-            for graphic in graphics:
-                buf.extend(graphic.y)
 
-            ma_buf = max(buf)
-            mi_buf = min(buf)
-            if ma is not None:
-                if ma_buf > ma:
+        if self.__stp_active__:
+            mi = self.__stp_min_y
+            ma = self.__stp_max_y
+        else:
+            for sig in self.signals:
+                graphics = self.signals[sig].graphics
+                buf = []
+                for graphic in graphics:
+                    buf.extend(graphic.y)
+
+                ma_buf = max(buf)
+                mi_buf = min(buf)
+                if ma is not None:
+                    if ma_buf > ma:
+                        ma = ma_buf
+                else:
                     ma = ma_buf
-            else:
-                ma = ma_buf
 
-            if mi is not None:
-                if mi_buf < mi:
+                if mi is not None:
+                    if mi_buf < mi:
+                        mi = mi_buf
+                else:
                     mi = mi_buf
-            else:
-                mi = mi_buf
 
         ma = str(ma)
         mi = str(mi)
+
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
         self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
@@ -852,6 +882,12 @@ class Plot(vip_base):
             self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def update_signals(self):
+        """
+        Used to update the signals as they are described in self.dplugin_info
+
+        :return:
+        """
+
         subscriptions = self.dplugin_info.get_subscribtions()
 
         for dpluginsub_id in subscriptions:
@@ -866,7 +902,12 @@ class Plot(vip_base):
                     self.signals[signal_name].update_signal(signal)
 
     def update_legend(self):
-        # self.__plotWidget__.removeItem(self.__legend__)
+        """
+        Used to update the legend.
+
+        :return:
+        """
+
         self.__legend__.scene().removeItem(self.__legend__)
         del self.__legend__
 
@@ -887,9 +928,15 @@ class Plot(vip_base):
                 self.__legend__.addItem(graphic, legend_name)
 
     def update_downsampling_rate(self):
+        """
+        Used to update the downsampling rate by resolving all dependencies.
+        The new downsampling rate is taken by using the private attribute __downsampling_rate__.
+
+        :return:
+        """
         rate = self.__downsampling_rate__
 
-        self.downsampling_rate_start = 0
+        self.__downsampling_rate_start__ = 0
         self.downsampling_rate = rate
 
         for signal_name in self.signals:
@@ -953,15 +1000,6 @@ class Plot(vip_base):
         :return {}:
         """
         config = {
-        #     'label_y': {
-        #         'value': "amplitude, V",
-        #         'regex': '\w+,\s+\w+',
-        #         'display_text': 'Label-Y'
-        #     }, 'label_x': {
-        #     'value': "time, s",
-        #     'regex': '\w+,\s*\w+',
-        #     'display_text': 'Label-X'
-        # },
         'x-grid': {
             'value': "0",
             'regex': '^(1|0)$',
@@ -995,11 +1033,6 @@ class Plot(vip_base):
             'regex': '^(1|0)$',
             'type': 'bool',
             'display_text': 'Rolling Plot'
-        # }, 'xRange': {
-        #     'value': '[0.0 1.0]',
-        #     'regex': '(\d+\.\d+)',
-        #     'advanced': '1',
-        #     'display_text': 'x: range'
         }, 'yRange': {
             'value': '[0.0 1.0]',
             'regex': '(\d+\.\d+)',
@@ -1021,6 +1054,7 @@ class Plot(vip_base):
         for signal_name in self.signals:
             self.signals[signal_name].clear()
 
+
 class GraphicItem(pg.QtGui.QGraphicsPathItem):
     """
 
@@ -1033,7 +1067,6 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         :param pen:
         :return:
         """
-
 
         x = np.array(x[:])[np.newaxis, :]
 
@@ -1075,8 +1108,6 @@ class PlotItem(object):
         super(PlotItem,self).__init__()
         self.signal_name = signal.dname
 
-        #self.buffer = [] # buffer
-
         self.buffer = collections.deque([0.0] * 0, max_elements)
 
         self.id = signal_id
@@ -1117,33 +1148,7 @@ class PlotItem(object):
 
         buffer = self.buffer
 
-        # TODO: Downsampling before extending the internal buffer
-
-
-        # if self.downsampling_rate_start >= len(elements):
-        #     self.downsampling_rate_start -= len(elements)
-        # else:
-        #
-        #     # print('AddData')
-        #     # print('Start ' + str(self.downsampling_rate_start))
-        #     # print('Rate ' + str(self.downsampling_rate))
-        #     # print('Len ' + str(len(elements)))
-        #
-        #     ds_elements = elements[self.downsampling_rate_start::self.downsampling_rate]
-        #     self.downsampling_rate_start += self.downsampling_rate - len(ds_elements)
-        #     # print(elements)
-        #     # print(ds_elements)
-        #     buffer.extend(ds_elements)
-
         self.new_added_element += len(elements)
-
-        # if self.downsampling_rate_start < len(elements):
-        #     ds_elements = elements[self.downsampling_rate_start:self.downsampling_rate:]
-        #
-        #     if self.downsampling_rate > len(elements):
-        #         self.downsampling_rate_start = self.downsampling_rate - len(elements)
-        # else:
-        #     self.downsampling_rate_start -= len(elements)
 
         buffer.extend(elements)
 
@@ -1184,84 +1189,12 @@ class PlotItem(object):
 
         self.amount_elements += counter
 
-        # shift_data = 0
-        # if self.last_x is not None:
-        #     if self.last_x in xdata:
-        #         shift_data = list(xdata).index(self.last_x)
-        #
-        #     print(shift_data)
-
-
-
-        #xdata = xdata[::self.downsampling_rate]
-        amount_elements = len(xdata)
-
         self.last_x = xdata[0]
-        # print( "Len Buffer " + str(len(self.buffer)))
-        # print( "TData" + str(len(tdata)))
 
         x_axis = np.array(xdata)
         y_axis = np.array(list(self.buffer))
 
-        # print( "Len Buffer " + str(len(x_axis)))
-        # print( "TData" + str(len(y_axis)))
-        #
-
-        # # Old Solution
-        # if False:
-        #
-        #     if self.rolling_plot:
-        #         #print('I keep it rolling')
-        #
-        #         i_max = np.argmax(x_axis)
-        #         i_min = np.argmin(x_axis)
-        #
-        #         # Create two graphic objects due plot border
-        #         if i_min > i_max:
-        #             x_axis_1 = np.array(x_axis[:i_max+1])
-        #             x_axis_2 = np.array(x_axis[i_min:])
-        #
-        #             y_axis_1 = y_axis[:i_max+1]
-        #             y_axis_2 = y_axis[i_min:]
-        #
-        #             if len(self.graphics):
-        #                 prev_graphic = self.graphics[-1]
-        #                 prev_last_x = prev_graphic.last_x;
-        #                 prev_last_y = prev_graphic.last_y;
-        #
-        #                 x_axis_1 = np.insert(x_axis_1, 0, prev_last_x)
-        #                 y_axis_1 = np.insert(y_axis_1, 0, prev_last_y)
-        #
-        #             graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
-        #             graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
-        #
-        #             self.graphics.append(graphic_1)
-        #             self.graphics.append(graphic_2)
-        #
-        #             del self.buffer
-        #             self.buffer = []
-        #
-        #             return
-        #     # Connect with previous graphic if a previous graphic exists
-        #
-        #     if len(self.graphics):
-        #         prev_graphic = self.graphics[-1]
-        #         prev_last_x = prev_graphic.last_x;
-        #         prev_last_y = prev_graphic.last_y;
-        #
-        #         if prev_last_x < x_axis[0]:
-        #             x_axis = np.insert(x_axis, 0, prev_last_x)
-        #             y_axis = np.insert(y_axis, 0, prev_last_y)
-        #
-        #     graphic = GraphicItem(x_axis, y_axis, counter, pen=self.pen)
-        #
-        #     del self.buffer
-        #     self.buffer = []
-        #
-        #     self.graphics.append(graphic)
-
         if self.rolling_plot:
-            #print('First X_Value' + str(xdata))
 
             i_max = np.argmax(x_axis)
             i_min = np.argmin(x_axis)
@@ -1304,13 +1237,7 @@ class PlotItem(object):
         :return:
         """
 
-
-
         res_graphic = []
-
-
-        # if len(self.graphics):
-        #     res_graphic.append(self.graphics.pop(0))
 
         for i in range(len(self.graphics)):
             graphic = self.graphics[0]
@@ -1323,23 +1250,6 @@ class PlotItem(object):
             res_graphic.append(graphic)
 
         return res_graphic
-
-        # # print(self.amount_elements)
-        # # print(len(self.graphics))
-        #
-        # while self.amount_elements >= self.max_elements:
-        #
-        #     graphic = self.graphics[0]
-        #
-        #     if graphic.not_drawn:
-        #         break
-        #
-        #     graphic = self.graphics.pop(0)
-        #     self.amount_elements -= graphic.length()
-        #
-        #     res_graphic.append(graphic)
-        #
-        # return res_graphic
 
     def clear(self):
         """
