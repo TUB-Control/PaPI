@@ -284,6 +284,8 @@ class Plot(vip_base):
         self.__last_plot_time__   = 0
 
         self.setup_context_menu()
+        self.__plotWidget__.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.__plotWidget__.customContextMenuRequested.connect(self.showContextMenu)
 
         self.use_range_for_y(self.config['yRange']['value'])
 
@@ -867,6 +869,10 @@ class Plot(vip_base):
 
         if not self.__papi_debug__:
             self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+
+    def showContextMenu(self):
+        self.setup_context_menu()
+
 
     def contextMenu_yAutoRangeButton_clicked(self):
         mi = None

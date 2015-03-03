@@ -59,7 +59,7 @@ class GuiEventProcessing(QtCore.QObject):
     dgui_changed = QtCore.Signal()
     plugin_died = QtCore.Signal(DPlugin, Exception, str)
 
-    def __init__(self, gui_data, core_queue, gui_id, gui_queue):
+    def __init__(self, gui_data, core_queue, gui_id, gui_queue, TabManager):
         """
         Init for eventProcessing
 
@@ -81,7 +81,7 @@ class GuiEventProcessing(QtCore.QObject):
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
         self.gui_queue = gui_queue
-
+        self.TabManger = TabManager
         # switch case for event processing
         self.process_event = {'new_data': self.process_new_data_event,
                               'close_programm': self.process_close_program_event,
@@ -312,7 +312,7 @@ class GuiEventProcessing(QtCore.QObject):
             # call the plugin developers init function with config
             try:
                 dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api,
-                                           dpluginInfo=dplugin.get_meta())
+                                           dpluginInfo=dplugin.get_meta(),TabManger=self.TabManger)
                 if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
                     # start succcessfull
                     self.core_queue.put(Event.status.StartSuccessfull(dplugin.id, 0, None))

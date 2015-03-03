@@ -34,6 +34,8 @@ from PySide import QtCore
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 
+from papi.constants import REGEX_SINGLE_INT
+
 class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
@@ -52,26 +54,43 @@ class Slider(pcp_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.slider.setMinimum(float(self.config['lower_bound']['value']))
-        self.slider.setMaximum(float(self.config['upper_bound']['value']))
-        self.slider.setSingleStep(float(self.config['step_size']['value']))
+        self.value_max = float(self.config['upper_bound']['value'])
+        self.value_min = float(self.config['lower_bound']['value'])
+        self.tick_count = float(self.config['step_count']['value'])
+
+        self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
+
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(self.tick_count-1)
 
         self.slider.setOrientation(QtCore.Qt.Horizontal)
 
         self.text_field = QLineEdit()
         self.text_field.setReadOnly(True)
         self.text_field.setFixedWidth(50)
+        self.text_field.setText('0')
+
 
         self.layout = QHBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
         self.layout.addWidget(self.text_field)
 
+        self.slider.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.slider.customContextMenuRequested.connect(self.show_context_menu)
+
         return self.central_widget
 
+    def show_context_menu(self, pos):
+        gloPos = self.slider.mapToGlobal(pos)
+        self.cmenu = self.create_control_context_menu()
+        self.cmenu.exec_(gloPos)
+
     def value_changed(self, change):
-        self.text_field.setText(str(change))
-        self.send_parameter_change(change, 'SliderBlock')
+        val = change * self.tick_width + self.value_min
+        val = round(val, 8)
+        self.text_field.setText(str(val))
+        self.send_parameter_change(val, 'SliderBlock')
 
     def clicked(self):
         pass
@@ -87,8 +106,9 @@ class Slider(pcp_base):
             'upper_bound': {
                 'value': '1.0'
                 },
-            'step_size': {
-                'value': '0.1'
+            'step_count': {
+                'value': '11',
+                'regex': REGEX_SINGLE_INT,
                 },
             'size': {
                 'value': "(150,75)",

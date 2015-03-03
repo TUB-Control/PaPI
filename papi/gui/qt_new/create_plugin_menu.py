@@ -41,10 +41,11 @@ from PySide.QtCore import *
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
 
-    def __init__(self, gui_api, parent=None):
+    def __init__(self, gui_api, TabManger, parent=None):
         super(CreatePluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = gui_api.gui_data
+        self.TabManager = TabManger
 
         self.gui_api = gui_api
 
@@ -82,7 +83,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
-        self.plugin_create_dialog = CreatePluginDialog(self.gui_api)
+        self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
     def keyPressEvent(self, event):

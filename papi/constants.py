@@ -43,7 +43,7 @@ CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
 
 CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
-CORE_ALIVE_MAX_COUNT            = 2
+CORE_ALIVE_MAX_COUNT            = 10
 
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
@@ -87,6 +87,8 @@ GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 GUI_DEFAULT_WIDTH               = 771
 GUI_DEFAULT_HEIGHT              = 853
 
+GUI_DEFAULT_TAB                 = 'PaPI-Tab'
+
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''
@@ -120,3 +122,12 @@ CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
 CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
+
+
+
+
+# REGEX Collection
+REGEX_SINGLE_INT   = '[0-9]+'
+REGEX_BOOL_BIN     = '^(1|0)$'
+REGEX_SINGLE_UNSIGNED_FLOAT_FORCED = '(\d+\.\d+)'
+REGEX_SIGNED_FLOAT = r'([-]{0,1}\d+\.\d+)'

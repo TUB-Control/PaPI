@@ -171,6 +171,7 @@ class DPlugin(DObject):
         self.type = None
         self.alive_count = 0
 
+
     def subscribe_signals(self, dblock, signals):
         """
         This function is used to subscribe a bunch of signals.
@@ -260,13 +261,12 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a copy of a dictionary of all subcribtions.
+        Returns a reference to a dictionary of all subcribtions.
 
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
         """
-
-        return copy.deepcopy(self.__subscriptions.copy())
+        return self.__subscriptions
 
     def add_parameter(self, parameter):
         """

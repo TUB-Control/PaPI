@@ -31,17 +31,18 @@ __author__ = 'stefan'
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
 from PySide.QtGui import QMdiSubWindow
-
+from papi.pyqtgraph.Qt import QtGui
+from papi.constants import PLUGIN_VIP_IDENTIFIER
 
 class base_visual(base_plugin):
-    def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None):
+    def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
         super(base_visual, self).papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
         self.control_api = control_api
         self.dplugin_info = dpluginInfo
-
+        self.TabManager = TabManger
 
     def start_init(self, config=None):
         self.config = config
@@ -81,6 +82,10 @@ class base_visual(base_plugin):
             'name': {
                 'value': 'VisualPlugin',
                 'tooltip': 'Used for window title'
+            },
+            'tab': {
+                'value': 'Tab',
+                'tooltip': 'Used for tabs'
             }}
         return config
 
@@ -117,3 +122,58 @@ class base_visual(base_plugin):
 
     def get_sub_window(self):
         return self._subWindow
+
+    def create_control_context_menu(self):
+        ctrlMenu = QtGui.QMenu("Control")
+
+        del_action = QtGui.QAction('Close plugin',self.widget)
+        del_action.triggered.connect(self.ctlrMenu_exit)
+
+        pause_action = QtGui.QAction('Pause plugin',self.widget)
+        pause_action.triggered.connect(self.ctlrMenu_pause)
+
+        resume_action = QtGui.QAction('Resume plugin',self.widget)
+        resume_action.triggered.connect(self.ctlrMenu_resume)
+
+        subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
+        #subMenu_action.triggered.connect(self.ctlrMenu_resume)
+
+
+        tabMenu = QtGui.QMenu('Move to')
+        tabs = list(self.TabManager.get_tabs_by_uname().keys())
+        tab_entrys = []
+        for t in tabs:
+            if t != self.config['tab']['value']:
+                entry = QtGui.QAction(t, self.widget)
+                entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
+                tab_entrys.append(entry)
+                tabMenu.addAction(entry)
+
+
+        ctrlMenu.addMenu(tabMenu)
+        ctrlMenu.addAction(subMenu_action)
+        if self.get_type() == PLUGIN_VIP_IDENTIFIER:
+            ctrlMenu.addAction(resume_action)
+            ctrlMenu.addAction(pause_action)
+        ctrlMenu.addAction(del_action)
+        return ctrlMenu
+
+    def tabMenu_triggered(self, item):
+        pos = self._subWindow.pos()
+        posX = pos.x()
+        posY = pos.y()
+        if self.TabManager.moveFromTo(self.config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
+            self.config['tab']['value'] = item
+
+
+    def ctlrMenu_exit(self):
+        self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
+        print(self.config['tab']['value'])
+
+
+
+    def ctlrMenu_pause(self):
+        self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
+
+    def ctlrMenu_resume(self):
+        self.control_api.do_resume_plugin_by_uname(self.dplugin_info.uname)
