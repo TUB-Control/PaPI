@@ -232,7 +232,6 @@ class ORTD_UDP(iop_base):
         SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
         signal_values = {}
         print(SenderId, Counter, SourceId)
-        #SourceId = -4
 
         if SourceId == -1:
             # data stream finished
@@ -244,6 +243,7 @@ class ORTD_UDP(iop_base):
             # got data stream
             #self.process_data_stream(SourceId, rev, signal_values)
             pass
+
         if SourceId == -2:
             # new config in ORTD available
             # send trigger to get new config
@@ -260,7 +260,22 @@ class ORTD_UDP(iop_base):
             # receive new config item and execute cfg in PaPI
 
             print(rev)
+            print(len(rev))
 
+            #SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
+            unp = struct.unpack_from('<s',rev,17)[0]
+            unp = str(unp)
+            print(unp)
+
+            i = 17
+            unp = ''
+            while i < len(rev):
+                unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
+
+
+                i += 1
+
+            print(unp)
 
 
             # config completely received
