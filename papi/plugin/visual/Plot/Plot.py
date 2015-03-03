@@ -39,6 +39,7 @@ import re
 import copy
 import time
 import papi.pyqtgraph as pg
+import papi.constants as pc
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
@@ -78,9 +79,9 @@ class Plot(vip_base):
         self.__buffer_size__ = None
         self.__downsampling_rate__ = 1
         self.__tbuffer__ = []
-        self.__tdata_old__ = [0]
+
         self.__signals_have_same_length = True
-        self.__roll_shift__ = None
+
         self.__append_at__ = 1
         self.__new_added_data__ = 0
         self.__input_size__ = 0
@@ -95,12 +96,7 @@ class Plot(vip_base):
         self.__last_plot_time__ = None
         self.__plotWidget__ = None
         self.__legend__ = None
-        self.__text_item__ = None
 
-        self.__offset_line__ = None
-        self.__y_axis__ = None
-        self.__x_axis__ = None
-        self.__amount_of_slices__ = None
         self.__stp_min_x = None
         self.__stp_max_x = None
 
@@ -109,7 +105,7 @@ class Plot(vip_base):
         self.__stp_active__ = None
 
         self.__downsampling_rate_start__ = None;
-        self.downsampling_rate = None
+        self.__downsampling_rate__ = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -151,14 +147,12 @@ class Plot(vip_base):
 
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
         self.__downsampling_rate_start__ = 0
-        self.downsampling_rate = self.__downsampling_rate__
 
         # ----------------------------
         # Set internal variables
         # ----------------------------
 
         self.__tbuffer__ = collections.deque([0.0] * 0, self.__buffer_size__)
-        self.__amount_of_slices__ = 10
 
         # ----------------------------
         # Set internal variables used for single timestamp plotting (stp)
@@ -173,36 +167,54 @@ class Plot(vip_base):
         self.__stp_active__ = False
 
 
-
         # --------------------------------
-        # Create Layout
+        # Create Layout and labels
         # --------------------------------
 
-#        self.__plotWidget__ = pq.PlotWidget()
-
-        # Create internal layout
         self.central_widget = QtGui.QWidget()
         self.central_widget.setContentsMargins(0,0,0,0)
+
+        self.label_widget = QtGui.QWidget()
+        self.label_widget.setContentsMargins(0,0,0,0)
 
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setContentsMargins(0,0,0,0)
         self.verticalLayout.setSpacing(0)
 
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0,0,0,0)
+        self.horizontalLayout.setSpacing(0)
+
+        self.space_label = QtGui.QLabel()
+        self.space_label.setMargin(0)
+        self.space_label.setAlignment(Qt.AlignJustify)
+        self.space_label.setStyleSheet("QLabel { background-color : black; color : grey;"
+                                      "border : 0px solid black ; border-bottom-width : 5px }")
+
         self.time_label = QtGui.QLabel()
         self.time_label.setMargin(0)
-        self.time_label.setAlignment(Qt.AlignHCenter)
+        self.time_label.setAlignment(Qt.AlignJustify)
         self.time_label.setStyleSheet("QLabel { background-color : black; color : grey;"
-                                      "border : 1px solid black ; border-bottom-width : 5px }")
+                                      "border : 0px solid black ; border-bottom-width : 5px }")
+        self.time_label.setMaximumWidth(55)
+
+
+        self.unit_label = QtGui.QLabel()
+        self.unit_label.setMargin(0)
+        self.unit_label.setAlignment(Qt.AlignLeft)
+        self.unit_label.setStyleSheet("QLabel { background-color : black; color : grey;"
+                                      "border : 0px solid black ; border-bottom-width : 5px }")
+
+        self.unit_label.setText('[s]')
 
         self.central_widget.setLayout(self.verticalLayout)
+        self.label_widget.setLayout(self.horizontalLayout)
 
         # --------------------------------
         # Create PlotWidget
         # --------------------------------
 
         self.__plotWidget__ = PlotWidget()
-        self.verticalLayout.addWidget(self.__plotWidget__)
-        self.verticalLayout.addWidget(self.time_label)
 
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
@@ -212,6 +224,15 @@ class Plot(vip_base):
 
         self.__plotWidget__.getPlotItem().setDownsampling(auto=True)
 
+        # ------------------------------
+        # Add Widget to Layout
+        # ------------------------------
+        self.horizontalLayout.addWidget(self.space_label)
+        self.horizontalLayout.addWidget(self.time_label)
+        self.horizontalLayout.addWidget(self.unit_label)
+
+        self.verticalLayout.addWidget(self.__plotWidget__)
+        self.verticalLayout.addWidget(self.label_widget)
 
 
         if not self.__papi_debug__:
@@ -228,16 +249,16 @@ class Plot(vip_base):
         # ---------------------------
 
         self.__parameters__['x-grid'] = \
-            DParameter('x-grid', 0, Regex='^(1|0){1}$')
+            DParameter('x-grid', self.config['x-grid']['value'], Regex='^(1|0){1}$')
         self.__parameters__['y-grid'] = \
-            DParameter('y-grid', 0, Regex='^(1|0){1}$')
+            DParameter('y-grid', self.config['y-grid']['value'], Regex='^(1|0){1}$')
 
         self.__parameters__['color'] = \
-            DParameter('color', '[0 1 2 3 4]', Regex='^\[(\s*\d\s*)+\]')
+            DParameter('color', self.config['color']['value'], Regex='^\[(\s*\d\s*)+\]')
         self.__parameters__['style'] = \
-            DParameter('style', '[0 0 0 0 0]', Regex='^\[(\s*\d\s*)+\]')
+            DParameter('style', self.config['style']['value'], Regex='^\[(\s*\d\s*)+\]')
         self.__parameters__['rolling'] = \
-            DParameter('rolling', '0', Regex='^(1|0){1}')
+            DParameter('rolling', self.config['rolling_plot']['value'], Regex='^(1|0){1}')
 
         self.__parameters__['downsampling_rate'] = \
             DParameter('downsampling_rate', self.__downsampling_rate__, Regex='^\d+$')
@@ -245,7 +266,7 @@ class Plot(vip_base):
             DParameter('buffersize', self.__buffer_size__, Regex='^\d+$')
 
         self.__parameters__['yRange'] = \
-            DParameter('yRange', '[0,1]',  Regex='(\d+\.\d+)')
+            DParameter('yRange', '[0,1]',  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
         if not self.__papi_debug__:
             self.send_new_parameter_list(list(self.__parameters__.values()))
@@ -281,7 +302,6 @@ class Plot(vip_base):
         :return:
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=True, y=True)
-        #print('PlotPerformance paused')
 
     def resume(self):
         """
@@ -290,7 +310,6 @@ class Plot(vip_base):
         :return:
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
-        #print('PlotPerformance resumed')
 
     def execute(self, Data=None, block_name=None):
         """
@@ -314,7 +333,7 @@ class Plot(vip_base):
                 y = Data[key]
                 if key in self.signals:
                     if self.__downsampling_rate_start__ < len(y):
-                        ds_y = y[self.__downsampling_rate_start__::self.downsampling_rate]
+                        ds_y = y[self.__downsampling_rate_start__::self.__downsampling_rate__]
 
                         self.signals[key].add_data(ds_y)
 
@@ -323,8 +342,8 @@ class Plot(vip_base):
         if self.__downsampling_rate_start__ >= len(t):
             self.__downsampling_rate_start__ -= len(t)
         else:
-            ds_t = t[self.__downsampling_rate_start__::self.downsampling_rate]
-            self.__downsampling_rate_start__ += self.downsampling_rate - len(ds_t)
+            ds_t = t[self.__downsampling_rate_start__::self.__downsampling_rate__]
+            self.__downsampling_rate_start__ += self.__downsampling_rate__ - len(ds_t)
             self.__tbuffer__.extend(ds_t)
 
         self.__new_added_data__ += len(t)
@@ -344,7 +363,7 @@ class Plot(vip_base):
         else:
 
             if not self.__stp_active__ :
-                self.initate_update_plot_single_timestamp()
+                self.initiate_update_plot_single_timestamp()
 
             if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
                 self.__last_time__ = current_milli_time()
@@ -354,9 +373,6 @@ class Plot(vip_base):
                 self.__last_time__ = current_milli_time()
                 self.__new_added_data__ = 0
 
-
-
-            #
         # print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def set_parameter(self, name, value):
@@ -472,8 +488,7 @@ class Plot(vip_base):
 
         if self.__rolling_plot__:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(0, len(tdata)-1)
-
-            self.time_label.setText(str(self.__tbuffer__[-1])  + ' [s]')
+            self.time_label.setNum(self.__tbuffer__[-1])
         else:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
@@ -481,8 +496,11 @@ class Plot(vip_base):
         #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
     def initiate_update_plot(self):
+        """
+        To all needed changes to use default plotting
 
-        print('initiate_update_plot')
+        :return:
+        """
         self.__stp_active__ = False
 
         if self.__rolling_plot__:
@@ -492,12 +510,16 @@ class Plot(vip_base):
 
         pass
 
-    def initate_update_plot_single_timestamp(self):
-        print('initiate_update_plot_single_timestamp')
+    def initiate_update_plot_single_timestamp(self):
+        """
+        To all needed changes to use single timestamp plotting
+
+        :return:
+        """
+
         self.__stp_active__ = True
 
         self.time_label.setHidden(False)
-
 
     def update_plot_single_timestamp(self, data):
         """
@@ -538,7 +560,7 @@ class Plot(vip_base):
 
         self.__plotWidget__.getPlotItem().getViewBox().setXRange(self.__stp_min_x, self.__stp_max_x)
 
-        self.time_label.setText(str(data['t'][0]) + ' [s]')
+        self.time_label.setNum(data['t'][0])
 
     def update_buffer_size(self, new_size):
         """
@@ -586,10 +608,10 @@ class Plot(vip_base):
                 for signal_name in subscription.get_signals():
 
                     signal = subscription.get_dblock().get_signal_by_uname(signal_name)
-                    index += 1
                     current_signals[signal_name] = {}
                     current_signals[signal_name]['signal'] = signal
                     current_signals[signal_name]['index'] = index
+                    index += 1
 
         # ----------------------------
         # Add new subscribed signals
@@ -675,12 +697,12 @@ class Plot(vip_base):
         if style_code in self.styles:
             style = self.styles[style_code]
         else:
-            style = self.styles[1]
+            style = self.styles[0]
 
         if color_code in self.colors:
             color = self.colors[color_code]
         else:
-            color = self.colors[1]
+            color = self.colors[0]
 
         return pq.mkPen(color=color, style=style)
 
@@ -727,7 +749,7 @@ class Plot(vip_base):
         """
         reg = re.compile(r'([-]{0,1}\d+\.\d+)')
         range = reg.findall(value)
-        print(range)
+
         if len(range) == 2:
             self.yRange_minEdit.setText(range[0])
             self.yRange_maxEdit.setText(range[1])
@@ -961,7 +983,7 @@ class Plot(vip_base):
         rate = self.__downsampling_rate__
 
         self.__downsampling_rate_start__ = 0
-        self.downsampling_rate = rate
+        self.__downsampling_rate__ = rate
 
         for signal_name in self.signals:
             self.signals[signal_name].set_downsampling_rate(rate)
@@ -1306,6 +1328,7 @@ class PlotItem(object):
         else:
             return self.max_elements
 
+
 class PlotWidget(pg.PlotWidget):
 
     def __init__(self):
@@ -1318,16 +1341,9 @@ class PlotWidget(pg.PlotWidget):
     def disablePainting(self):
         self.paint = False
 
-    # def refreshPlot(self):
-    #     self.enablePainting()
-    #     super(PlotWidget, self).repaint()
-    #     self.disablePainting()
-
     def paintEvent(self, ev):
         if self.paint:
             self.scene().prepareForPaint()
         return QtGui.QGraphicsView.paintEvent(self, ev)
-#        if self.paint:
-#        print('REPAINT !!')
- #       super(PlotWidget, self).paintEvent(ev)
+
 
