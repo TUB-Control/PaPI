@@ -96,7 +96,7 @@ class Plot(vip_base):
         self.__plotWidget__ = None
         self.__legend__ = None
         self.__text_item__ = None
-        self.__vertical_line__ = None
+
         self.__offset_line__ = None
         self.__y_axis__ = None
         self.__x_axis__ = None
@@ -172,23 +172,38 @@ class Plot(vip_base):
 
         self.__stp_active__ = False
 
-        # --------------------------------
-        # Create PlotWidget
-        # --------------------------------
-        self.__text_item__ = pq.TextItem(text='', color=(200, 200, 200), anchor=(1, 0))
 
-        self.__vertical_line__ = pq.InfiniteLine()
+
+        # --------------------------------
+        # Create Layout
+        # --------------------------------
 
 #        self.__plotWidget__ = pq.PlotWidget()
 
+        # Create internal layout
+        self.central_widget = QtGui.QWidget()
+        self.central_widget.setContentsMargins(0,0,0,0)
+
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setContentsMargins(0,0,0,0)
+        self.verticalLayout.setSpacing(0)
+
+        self.time_label = QtGui.QLabel()
+        self.time_label.setMargin(0)
+        self.time_label.setAlignment(Qt.AlignHCenter)
+        self.time_label.setStyleSheet("QLabel { background-color : black; color : grey;"
+                                      "border : 1px solid black ; border-bottom-width : 5px }")
+
+        self.central_widget.setLayout(self.verticalLayout)
+
+        # --------------------------------
+        # Create PlotWidget
+        # --------------------------------
+
         self.__plotWidget__ = PlotWidget()
+        self.verticalLayout.addWidget(self.__plotWidget__)
+        self.verticalLayout.addWidget(self.time_label)
 
-        self.__plotWidget__.addItem(self.__text_item__)
-
-        if self.__rolling_plot__:
-            self.__plotWidget__.addItem(self.__vertical_line__)
-
-        self.__text_item__.setPos(0, 0)
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
@@ -197,8 +212,11 @@ class Plot(vip_base):
 
         self.__plotWidget__.getPlotItem().setDownsampling(auto=True)
 
+
+
         if not self.__papi_debug__:
-            self.set_widget_for_internal_usage(self.__plotWidget__)
+#            self.set_widget_for_internal_usage(self.__plotWidget__)
+            self.set_widget_for_internal_usage(self.central_widget)
 
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
@@ -252,7 +270,7 @@ class Plot(vip_base):
         # Initiate for default plotting
         # ----------------------------
 
-        self.initate_update_plot()
+        self.initiate_update_plot()
 
         return True
 
@@ -316,9 +334,7 @@ class Plot(vip_base):
         if self.__input_size__ > 1 or self.__signals_have_same_length:
 
             if self.__stp_active__:
-                self.initate_update_plot()
-
-            self.__stp_active__ = False
+                self.initiate_update_plot()
 
             if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
                 self.__last_time__ = current_milli_time()
@@ -330,10 +346,14 @@ class Plot(vip_base):
             if not self.__stp_active__ :
                 self.initate_update_plot_single_timestamp()
 
-            self.__stp_active__ = True
+            if current_milli_time() - self.__last_time__ > self.__update_intervall__ - self.__last_plot_time__:
+                self.__last_time__ = current_milli_time()
 
+                self.update_plot_single_timestamp(Data)
 
-            self.update_plot_single_timestamp(Data)
+                self.__last_time__ = current_milli_time()
+                self.__new_added_data__ = 0
+
 
 
             #
@@ -403,8 +423,14 @@ class Plot(vip_base):
             signal_id = self.signals[signal_name].id
 
             new_pen = self.get_pen(signal_id)
+            other_pen = self.get_pen(signal_id)
+
+            o_color = other_pen.color()
+            o_color.setAlpha(100)
+            other_pen.setColor(o_color)
 
             self.signals[signal_name].pen = new_pen
+            self.signals[signal_name].other_pen = other_pen
 
     def update_plot(self):
         """
@@ -412,7 +438,6 @@ class Plot(vip_base):
 
         :return:
         """
-
 
         if len(self.__tbuffer__) == 0:
             return
@@ -443,36 +468,36 @@ class Plot(vip_base):
             for graphic in graphics:
                 self.__plotWidget__.addItem(graphic)
 
-                # Set positon for vertical line
-                if self.__rolling_plot__:
-                    self.__vertical_line__.setValue(graphic.last_x)
-
         self.__last_plot_time__ = pg.ptime.time()-now
 
         if self.__rolling_plot__:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(0, len(tdata)-1)
 
-            axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
-            axis.setLabel(text=str(self.__tbuffer__[-1]), units='s')
-
+            self.time_label.setText(str(self.__tbuffer__[-1])  + ' [s]')
         else:
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(tdata[0], tdata[-1])
 
         # if self.__papi_debug__:
         #     print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
-    def initate_update_plot(self):
-        print('initaed update plot')
-        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
-        axis.setLabel(text='', units='')
-        axis.setHeight(h=None)
+    def initiate_update_plot(self):
+
+        print('initiate_update_plot')
+        self.__stp_active__ = False
 
         if self.__rolling_plot__:
-            self.__plotWidget__.addItem(self.__vertical_line__)
+            self.time_label.setHidden(False)
+        else:
+            self.time_label.setHidden(True)
+
         pass
 
     def initate_update_plot_single_timestamp(self):
-        pass
+        print('initiate_update_plot_single_timestamp')
+        self.__stp_active__ = True
+
+        self.time_label.setHidden(False)
+
 
     def update_plot_single_timestamp(self, data):
         """
@@ -481,7 +506,6 @@ class Plot(vip_base):
         :return:
         """
 
-        self.__text_item__.setText("Time " + str(data['t'][0]), color=(200, 200, 200))
         self.__plotWidget__.clear()
 
         cur_max_y = 0
@@ -514,9 +538,7 @@ class Plot(vip_base):
 
         self.__plotWidget__.getPlotItem().getViewBox().setXRange(self.__stp_min_x, self.__stp_max_x)
 
-        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
-        axis.setLabel(text=str(data['t'][0]), units='s')
-        axis.setHeight(h=0)
+        self.time_label.setText(str(data['t'][0]) + ' [s]')
 
     def update_buffer_size(self, new_size):
         """
@@ -544,7 +566,8 @@ class Plot(vip_base):
 
     def plugin_meta_updated(self):
         """
-        By this function the plot is able to handle more than one input for plotting.
+        This function is called whenever meta information are changed.
+        This enables the plot to handle more than one input for plotting.
 
         :return:
         """
@@ -568,16 +591,18 @@ class Plot(vip_base):
                     current_signals[signal_name]['signal'] = signal
                     current_signals[signal_name]['index'] = index
 
-                # current_signals = sorted(current_signals)
-
-        # Add missing buffers
+        # ----------------------------
+        # Add new subscribed signals
+        # ----------------------------
         for signal_name in sorted(current_signals.keys()):
             if signal_name not in self.signals:
                 signal = current_signals[signal_name]['signal']
                 self.add_plot_item(signal, current_signals[signal_name]['index'])
                 changes = True
 
-        # Delete old buffers
+        # -------------------------------
+        # Remove unsubscribed signals
+        # -------------------------------
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
                 self.remove_plot_item(signal_name)
@@ -585,9 +610,13 @@ class Plot(vip_base):
 
         if changes:
             self.update_pens()
+            self.update_signals()
             self.update_legend()
             self.update_rolling_plot()
             self.update_downsampling_rate()
+        else:
+            self.update_signals()
+            self.update_legend()
 
     def add_plot_item(self, signal, signal_id):
         """
@@ -671,17 +700,11 @@ class Plot(vip_base):
 
         self.clear()
 
-        axis = self.__plotWidget__.getPlotItem().getAxis('bottom')
-        axis.setLabel(text='', units='')
-        axis.setHeight(h=None)
 
         for signal_name in self.signals:
             self.signals[signal_name].rolling_plot = self.__rolling_plot__
 
-        if self.__rolling_plot__:
-            # if self.__vertical_line__ not in self.__plotWidget__.listDataItems():
-
-            self.__plotWidget__.addItem(self.__vertical_line__)
+        self.initiate_update_plot()
 
     def use_range_for_x(self, value):
         """
@@ -704,6 +727,7 @@ class Plot(vip_base):
         """
         reg = re.compile(r'([-]{0,1}\d+\.\d+)')
         range = reg.findall(value)
+        print(range)
         if len(range) == 2:
             self.yRange_minEdit.setText(range[0])
             self.yRange_maxEdit.setText(range[1])
@@ -855,7 +879,7 @@ class Plot(vip_base):
 
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
-        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + str(float(mi)) + ' ' + str(float(ma)) + ']')
 
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
@@ -879,7 +903,7 @@ class Plot(vip_base):
         mi = self.yRange_minEdit.text()
         ma = self.yRange_maxEdit.text()
         if float(mi) < float(ma):
-            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + float(mi) + ' ' + float(ma) + ']')
 
     def update_signals(self):
         """
@@ -1057,7 +1081,7 @@ class Plot(vip_base):
 
 class GraphicItem(pg.QtGui.QGraphicsPathItem):
     """
-
+    Represents a single object which is drawn by a plot.
     """
     def __init__(self, x, y, counter, pen=pg.mkPen('r')):
         """
@@ -1094,7 +1118,7 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
 
 class PlotItem(object):
     """
-    This object is used to manage the graphic items for a single signal object.
+    This object is used to manage a single signal object.
     """
 
     def __init__(self, signal, signal_id, max_elements):
@@ -1121,6 +1145,7 @@ class PlotItem(object):
         self.max_elements = max_elements
 
         self.pen = None
+        self.other_pen = None
         self.graphics = []
         self.rolling_plot = None
         self.last_x = None
@@ -1140,6 +1165,7 @@ class PlotItem(object):
 
     def add_data(self, elements):
         """
+        Used to add data which a sent for a given signal object.
 
         :param elements:
         :param tdata:
@@ -1154,6 +1180,7 @@ class PlotItem(object):
 
     def update_signal(self, new_signal):
         """
+        Used to update the corresponding signal object.
 
         :param new_signal:
         :return:
@@ -1164,6 +1191,7 @@ class PlotItem(object):
 
     def set_downsampling_rate(self, rate):
         """
+        Used to set the current downsampling rate.
 
         :param rate:
         :return:
@@ -1174,6 +1202,7 @@ class PlotItem(object):
 
     def create_graphics(self, xdata):
         """
+        Creates the needed graphics which can be drawn by the plot object for a given x-axis described by xdata.
 
         :param xdata:
         :return:
@@ -1205,7 +1234,8 @@ class PlotItem(object):
             y_axis_1 = y_axis[:i_max+1]
             y_axis_2 = y_axis[i_min:]
 
-            graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.pen)
+            graphic_1 = GraphicItem(x_axis_1, y_axis_1, len(y_axis_1) - 1, self.other_pen)
+
             graphic_2 = GraphicItem(x_axis_2, y_axis_2, len(y_axis_2), self.pen)
 
             self.graphics.append(graphic_1)
@@ -1218,6 +1248,7 @@ class PlotItem(object):
 
     def get_graphics(self):
         """
+        Returns all graphics which still need to be drawn.
 
         :return:
         """
