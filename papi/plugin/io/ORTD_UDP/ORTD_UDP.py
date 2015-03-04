@@ -110,73 +110,16 @@ class ORTD_UDP(iop_base):
         self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_parameter.setblocking(1)
 
-        # Load protocol config.
-        #path = config['Cfg_Path']['value']
-        #f = open(path, 'r')
-        #self.ProtocolConfig = json.load(f)
-        #self.Sources = self.ProtocolConfig['SourcesConfig']
-        #self.Parameters = self.ProtocolConfig['ParametersConfig']
 
 
-        # For each group:: loop through all sources (=signals) in the group and register the signals
-        # Register signals
+        self.ControlBlock = DBlock('ControllerSignals')
+        self.ControlBlock.add_signal(DSignal('ControlSignalReset'))
+        self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
+        self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
+        self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+        self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
+        self.send_new_block_list([self.ControlBlock])
 
-
-        # if self.separate == 1:
-        #
-        #     self.blocks = {}
-        #
-        #     # sort hash keys for usage in right order!
-        #     keys = list(self.Sources.keys())
-        #     #keys.sort()
-        #     for key in keys:
-        #         Source = self.Sources[key]
-        #         block = DBlock('SourceGroup' + str(key))
-        #         block.add_signal(DSignal(Source['SourceName']))
-        #         self.blocks[int(key)] = block
-        #
-        #
-        #     self.send_new_block_list(list(self.blocks.values()))
-        #
-        # else:
-        #     self.block1 = DBlock('SourceGroup0')
-        #
-        #     keys = list(self.Sources.keys())
-        #     #keys.sort()
-        #     for key in keys:
-        #         Source = self.Sources[key]
-        #         sig_name = Source['SourceName']
-        #         self.block1.add_signal(DSignal(sig_name))
-
-
-
-
-
-            # self.ControlBlock = DBlock('ControllerSignals')
-            # self.ControlBlock.add_signal(DSignal('ControlSignalReset'))
-            # self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
-            # self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
-            # self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
-            # self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
-            #
-            # #self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
-            # self.send_new_block_list([self.block1, self.ControlBlock])
-
-        # Register parameters
-        #self.Parameter_List = []
-        #
-        # for Pid in self.Parameters:
-        #     Para = self.Parameters[Pid]
-        #     para_name = Para['ParameterName']
-        #     val_count = Para['NValues']
-        #     opt_object = OptionalObject(Pid, val_count)
-        #     Parameter = DParameter(para_name, default=0, OptionalObject=opt_object)
-        #     self.Parameter_List.append(Parameter)
-        #
-        # self.ControlParameter = DParameter('triggerConfiguration',default=0)
-        # self.Parameter_List.append(self.ControlParameter)
-
-        #self.send_new_parameter_list(self.Parameter_List)
 
         self.t = 0
 
@@ -191,8 +134,6 @@ class ORTD_UDP(iop_base):
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
-        #self.process_received_package(None)
-
         self.blocks = {}
         self.Sources = {}
 
@@ -201,6 +142,9 @@ class ORTD_UDP(iop_base):
         self.signal_values = {}
 
         self.block_id = 0
+
+        self.send_new_block_list([DBlock('Test1')])
+        self.send_delete_block('Test1')
 
         return True
 
@@ -243,26 +187,20 @@ class ORTD_UDP(iop_base):
 
     def process_received_package(self, rev):
         SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
-        #print(SenderId, Counter, SourceId)
-        signal_values = {}
-        if SourceId == -1:
+
+        if SourceId == -1 and len(self.blocks) > 0:
             # data stream finished
             self.process_finished_action(SourceId, rev)
             self.signal_values = {}
 
-
-        if SourceId >= 0:
+        if SourceId >= 0 and len(self.blocks) > 0:
             # got data stream
             self.process_data_stream(SourceId, rev)
-
 
         if SourceId == -2:
             # new config in ORTD available
             # send trigger to get new config
-            print('newcfg')
-            Counter = 1
-            data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            print('NEW ORTD CONFIG')
             Counter = 1
             data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
             self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
@@ -276,30 +214,52 @@ class ORTD_UDP(iop_base):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
                 i += 1
 
-            print(unp)
+            #print(unp)
 
             js = unp.replace('\\', '')
-            js = js + '}'
+
 
             d = json.loads(js)
-            #print('json',d)
-
 
 
             # config completely received
             # extract new configuration
             cfg = d
+
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections = self.extract_config_elements(cfg)
-            print(ORTDSources)
-            print(ORTDParameters)
-            print(plToCreate)
-            print(plToClose)
-            print(subscriptions)
-            print(paraConnections)
+            # print(ORTDSources)
+            # print(ORTDParameters)
+            # print(plToCreate)
+            # print(plToClose)
+            # print(subscriptions)
+            # print(paraConnections)
 
             self.update_block_list(ORTDSources)
             self.update_parameter_list(ORTDParameters)
+
+            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections)
+
+    def process_papi_configuration(self, toCreate, toClose, subs, paraConnections):
+
+        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
+                                                              'ControlSignalCreate':None,
+                                                              'ControlSignalSub':None,
+                                                              'ControllerSignalParameter':None,
+                                                              'ControllerSignalClose':None})
+
+        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
+                                                              'ControlSignalCreate':toCreate,
+                                                              'ControlSignalSub':subs,
+                                                              'ControllerSignalParameter':paraConnections,
+                                                              'ControllerSignalClose':toClose})
+
+    def parse_json_stream(self,stream):
+        decoder = json.JSONDecoder()
+        while stream:
+            obj, idx = decoder.raw_decode(stream)
+            yield obj
+            stream = stream[idx:].lstrip()
 
     def update_parameter_list(self, ORTDParameter):
 
@@ -340,7 +300,7 @@ class ORTD_UDP(iop_base):
 
         # Remove BLOCKS
         if 'SourceGroup'+str(self.block_id-1) in self.blocks:
-            self.blocks.pop('SourceGroup'+str(self.block_id-1))
+            self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)))
 
     def process_data_stream(self, SourceId, rev):
         # Received a data packet
@@ -387,7 +347,8 @@ class ORTD_UDP(iop_base):
                     signals_to_send[sig_name] = self.signal_values[key]
 
                 block = list(self.blocks.keys())[0]
-                self.send_new_data(block, [self.t], signals_to_send )
+                if len(self.blocks[block].signals) == len(signals_to_send):
+                    self.send_new_data(block, [self.t], signals_to_send )
 
     def thread_executeBackUP(self):
         goOn = True
@@ -462,35 +423,12 @@ class ORTD_UDP(iop_base):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
-        if name == 'triggerConfiguration':
-            if value == '1':
-                cfg, subs, para, close = self.plconf()
-                self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
-                                                              'ControlSignalCreate':cfg,
-                                                              'ControlSignalSub':subs,
-                                                              'ControllerSignalParameter':para,
-                                                              'ControllerSignalClose':close})
-            if value == '2':
-                self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
-                                                              'ControlSignalCreate':None,
-                                                              'ControlSignalSub':None,
-                                                              'ControllerSignalParameter':None,
-                                                              'ControllerSignalClose':None})
-
-        else:
-            # for para in self.Parameter_List:
-            #     if para.name == name:
-            #         Pid = para.OptionalObject.ORTD_par_id
-            #         Counter = 111
-            #         data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-            #         self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
-
-            if name in self.parameters:
-                parameter = self.parameters[name]
-                Pid = parameter.OptionalObject.ORTD_par_id
-                Counter = 111
-                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if name in self.parameters:
+            parameter = self.parameters[name]
+            Pid = parameter.OptionalObject.ORTD_par_id
+            Counter = 111
+            data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()

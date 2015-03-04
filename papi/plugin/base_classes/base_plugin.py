@@ -152,6 +152,10 @@ class base_plugin(IPlugin):
         event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
+    def send_delete_block(self, blockname):
+        event = Event.data.DeleteBlock(self.__id__, 0,blockname)
+        self._Core_event_queue__.put(event)
+
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
         self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
