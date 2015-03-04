@@ -61,6 +61,7 @@ import socket
 import struct
 import json
 
+import pickle
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
@@ -103,7 +104,7 @@ class ORTD_UDP(iop_base):
         self.HOST = config['address']['value']
         self.SOURCE_PORT = int(config['source_port']['value'])
         self.OUT_PORT = int(config['out_port']['value'])
-        #self.separate = int(config['SeparateSignals']['value'])
+        self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -192,7 +193,14 @@ class ORTD_UDP(iop_base):
 
         #self.process_received_package(None)
 
+        self.blocks = {}
+        self.Sources = {}
 
+        self.parameters = {}
+
+        self.signal_values = {}
+
+        self.block_id = 0
 
         return True
 
@@ -209,17 +217,22 @@ class ORTD_UDP(iop_base):
 
     def thread_execute(self):
         goOn = True
+        newData = False
         signal_values = {}
         while goOn:
             try:
                 rev = self.sock_recv.recv(1600)
             except socket.timeout:
                 # print('timeout')
-                pass
+                newData = False
+
             except socket.error:
                 print('ORTD got socket error')
             else:
-                self.process_received_package(rev)
+               newData = True
+
+            if newData:
+               self.process_received_package(rev)
 
             # check if thread should go on
             self.lock.acquire()
@@ -230,19 +243,18 @@ class ORTD_UDP(iop_base):
 
     def process_received_package(self, rev):
         SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
+        #print(SenderId, Counter, SourceId)
         signal_values = {}
-        print(SenderId, Counter, SourceId)
-
         if SourceId == -1:
             # data stream finished
-            #self.process_finished_action(SourceId, rev, signal_values)
-            #signal_values = {}
-            pass
+            self.process_finished_action(SourceId, rev)
+            self.signal_values = {}
+
 
         if SourceId >= 0:
             # got data stream
-            #self.process_data_stream(SourceId, rev, signal_values)
-            pass
+            self.process_data_stream(SourceId, rev)
+
 
         if SourceId == -2:
             # new config in ORTD available
@@ -258,71 +270,79 @@ class ORTD_UDP(iop_base):
         if SourceId == -4:
             # new configItem
             # receive new config item and execute cfg in PaPI
-
-            print(rev)
-            print(len(rev))
-
-            #SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
-            unp = struct.unpack_from('<s',rev,17)[0]
-            unp = str(unp)
-            print(unp)
-
             i = 17
             unp = ''
             while i < len(rev):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
-
-
                 i += 1
 
             print(unp)
 
+            js = unp.replace('\\', '')
+            js = js + '}'
+
+            d = json.loads(js)
+            #print('json',d)
+
+
 
             # config completely received
             # extract new configuration
-            #cfg = {}
-            #ORTDSources, ORTDParameters, plToCreate, \
-            #plToClose, subscriptions, paraConnections = self.extract_config_elements(cfg)
+            cfg = d
+            ORTDSources, ORTDParameters, plToCreate, \
+            plToClose, subscriptions, paraConnections = self.extract_config_elements(cfg)
+            print(ORTDSources)
+            print(ORTDParameters)
+            print(plToCreate)
+            print(plToClose)
+            print(subscriptions)
+            print(paraConnections)
 
-
+            self.update_block_list(ORTDSources)
+            self.update_parameter_list(ORTDParameters)
 
     def update_parameter_list(self, ORTDParameter):
-        oldParameterToDelete = self.Parameter_List
 
-        newParameterList = []
-        namesOfNewParameters = []
-        for Pid in ORTDParameter:
-            Para = ORTDParameter[Pid]
-            para_name = Para['ParameterName']
-            val_count = Para['NValues']
-            opt_object = OptionalObject(Pid, val_count)
-            Parameter = DParameter(para_name, default=0, OptionalObject=opt_object)
-            newParameterList.append(Parameter)
-            namesOfNewParameters.append(para_name)
+        newList ={}
 
-        print(namesOfNewParameters)
+        for para_id in ORTDParameter:
+            para_name = ORTDParameter[para_id]['ParameterName']
+            if para_name in self.parameters:
+                para_object = self.parameters.pop(para_name)
+            else:
+                val_count = ORTDParameter[para_id]['NValues']
+                opt_object = OptionalObject(para_id, val_count)
+                para_object = DParameter(para_name,default=0,OptionalObject=opt_object)
+                self.send_new_parameter_list([para_object])
 
-        for parameter in oldParameterToDelete:
-            print(parameter.name)
-            if parameter.name in namesOfNewParameters:
-                oldParameterToDelete.remove(parameter)
 
-        return newParameterList, oldParameterToDelete
+            newList[para_name] = para_object
+
+        toDeleteDict = self.parameters
+        self.parameters = newList
+
+
+        print('ToDo: Delete parameter:', toDeleteDict)
 
     def update_block_list(self,ORTDSources):
-        return
-        self.block1 = DBlock('SourceGroup0')
+        self.block_id = self.block_id +1
+        newBlock = DBlock('SourceGroup'+str(self.block_id))
+        self.blocks['SourceGroup'+str(self.block_id)] = newBlock
 
+        self.Sources = ORTDSources
         keys = list(self.Sources.keys())
-        #keys.sort()
         for key in keys:
             Source = self.Sources[key]
             sig_name = Source['SourceName']
-            self.block1.add_signal(DSignal(sig_name))
+            newBlock.add_signal(DSignal(sig_name))
 
+        self.send_new_block_list([newBlock])
 
+        # Remove BLOCKS
+        if 'SourceGroup'+str(self.block_id-1) in self.blocks:
+            self.blocks.pop('SourceGroup'+str(self.block_id-1))
 
-    def process_data_stream(self, SourceId, rev, signal_values):
+    def process_data_stream(self, SourceId, rev):
         # Received a data packet
         # Lookup the Source behind the given SourceId
         if str(SourceId) in self.Sources:
@@ -337,36 +357,37 @@ class ORTD_UDP(iop_base):
                 except:
                     val.append(0)
 
-            signal_values[SourceId] = val
+            self.signal_values[SourceId] = val
+
         else:
             print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
 
-    def process_finished_action(self, SourceId, rev, signal_values):
+    def process_finished_action(self, SourceId, rev):
         if SourceId == -1:
             # unpack group ID
             # GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
             self.t += 1.0
 
-            keys = list(signal_values.keys())
+            keys = list(self.signal_values.keys())
             keys.sort()                    # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
-
             if self.separate == 1:
                 for key in keys:
                     # signals_to_send.append(signal_values[key])
                     Source = self.Sources[str(key)]
                     NValues = int(Source['NValues_send'])
-                    n = len(signal_values[key])
+                    n = len(self.signal_values[key])
                     t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
                     # flush data to papi
                     sig_name = self.Sources[str(key)]['SourceName']
-                    self.send_new_data(self.blocks[key].name, t, {sig_name:signal_values[key]})
+                    self.send_new_data(self.blocks[key].name, t, {sig_name:self.signal_values[key]})
             else:
                 signals_to_send = {}
                 for key in keys:
                     sig_name = self.Sources[str(key)]['SourceName']
-                    signals_to_send[sig_name] = signal_values[key]
+                    signals_to_send[sig_name] = self.signal_values[key]
 
-                self.send_new_data('SourceGroup0', [self.t], signals_to_send )
+                block = list(self.blocks.keys())[0]
+                self.send_new_data(block, [self.t], signals_to_send )
 
     def thread_executeBackUP(self):
         goOn = True
@@ -457,12 +478,19 @@ class ORTD_UDP(iop_base):
                                                               'ControllerSignalClose':None})
 
         else:
-            for para in self.Parameter_List:
-                if para.name == name:
-                    Pid = para.OptionalObject.ORTD_par_id
-                    Counter = 111
-                    data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            # for para in self.Parameter_List:
+            #     if para.name == name:
+            #         Pid = para.OptionalObject.ORTD_par_id
+            #         Counter = 111
+            #         data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+            #         self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
+            if name in self.parameters:
+                parameter = self.parameters[name]
+                Pid = parameter.OptionalObject.ORTD_par_id
+                Counter = 111
+                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
@@ -496,13 +524,8 @@ class ORTD_UDP(iop_base):
         subscriptions  = {}
         paraConnections = {}
         plToClose = {}
-        ORTDSources = {
-    "0" : { "SourceName" : "X" , "NValues_send" : "1", "datatype" : "257"  } ,
-    "1" : { "SourceName" : "V" , "NValues_send" : "1", "datatype" : "257"  } }
-        ORTDParameters = {
-    "0" : { "ParameterName" : "Oscillator input" , "NValues" : "1", "datatype" : "257"  } ,
-    "1" : { "ParameterName" : "A vectorial parameter" , "NValues" : "10", "datatype" : "257"  } ,
-    "2" : { "ParameterName" : "Test" , "NValues" : "2", "datatype" : "257"  }  }
+        ORTDSources = {}
+        ORTDParameters = {}
 
         if 'PaPIConfig' in configuration:
             if 'ToCreate' in configuration['PaPIConfig']:
