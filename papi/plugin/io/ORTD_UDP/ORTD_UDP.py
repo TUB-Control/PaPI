@@ -143,8 +143,8 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
-        self.send_new_block_list([DBlock('Test1')])
-        self.send_delete_block('Test1')
+        self.send_new_parameter_list([DParameter('Test1')])
+        self.send_delete_parameter('Test1')
 
         return True
 
@@ -281,8 +281,9 @@ class ORTD_UDP(iop_base):
         toDeleteDict = self.parameters
         self.parameters = newList
 
+        for par in toDeleteDict:
+            self.send_delete_parameter(par)
 
-        print('ToDo: Delete parameter:', toDeleteDict)
 
     def update_block_list(self,ORTDSources):
         self.block_id = self.block_id +1
@@ -300,7 +301,7 @@ class ORTD_UDP(iop_base):
 
         # Remove BLOCKS
         if 'SourceGroup'+str(self.block_id-1) in self.blocks:
-            self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)))
+            self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
 
     def process_data_stream(self, SourceId, rev):
         # Received a data packet

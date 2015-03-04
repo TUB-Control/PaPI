@@ -153,7 +153,11 @@ class base_plugin(IPlugin):
         self._Core_event_queue__.put(event)
 
     def send_delete_block(self, blockname):
-        event = Event.data.DeleteBlock(self.__id__, 0,blockname)
+        event = Event.data.DeleteBlock(self.__id__, 0, blockname)
+        self._Core_event_queue__.put(event)
+
+    def send_delete_parameter(self, parameterName):
+        event = Event.data.DeleteParameter(self.__id__, 0, parameterName)
         self._Core_event_queue__.put(event)
 
     def update_plugin_meta(self, dplug):

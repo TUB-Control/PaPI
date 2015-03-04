@@ -82,6 +82,8 @@ class Core:
                                          'new_block': self.__process_new_block__,
                                          'new_parameter': self.__process_new_parameter__,
                                          'edit_dplugin': self.__process_edit_dplugin,
+                                         'delete_block': self.__process_delete_block__,
+                                         'delete_parameter': self.__delete_parameter__
         }
 
         self.__process_instr_event_l__ = {'create_plugin': self.__process_create_plugin__,
@@ -836,7 +838,6 @@ class Core:
                 self.gui_event_queue.put(event)
                 self.update_meta_data_to_gui(id)
 
-
     def __process_plugin_stopped__(self, event):
         """
         Process plugin_stopped event.
@@ -1054,6 +1055,28 @@ class Core:
             # plugin does not exist
             self.log.printText(1, 'new_block, plugin with id ' + str(pl_id) + ' not found')
             return -1
+
+    def __process_delete_block__(self, event):
+        """
+        Processes delete_block event.
+        Will try to delete a Block of a plugin
+
+        :param event: event to process
+        :type event: PapiEventBase
+        """
+        pl_id = event.get_originID()
+        self.core_data.rm_all_subscribers_of_a_dblock(pl_id, event.blockname)
+
+        plugin = self.core_data.get_dplugin_by_id(pl_id)
+        dblock = plugin.get_dblock_by_name(event.blockname)
+        plugin.rm_dblock(dblock)
+
+        self.update_meta_data_to_gui_for_all()
+
+    def __delete_parameter__(self, event):
+        print('Delete')
+
+
 
     def __process_new_parameter__(self, event):
         """

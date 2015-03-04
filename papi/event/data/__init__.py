@@ -6,3 +6,4 @@ from .NewBlock import NewBlock
 from .NewParameter import NewParameter
 from .EditDPlugin import EditDPlugin
 from .DeleteBlock import DeleteBlock
+from .DeleteParameter import DeleteParameter

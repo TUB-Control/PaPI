@@ -299,10 +299,25 @@ class DCore():
                 subscriber.unsubscribe(dblock)
                 dblock.rm_subscriber(subscriber)
 
-        if len(dplugin.get_dblocks()) == 0:
-            return True
-        else:
-            return False
+        # if len(dplugin.get_dblocks()) == 0:
+        #     return True
+        # else:
+        #     return False
+
+
+    def rm_all_subscribers_of_a_dblock(self, dplugin_id, dblock_name):
+        dplugin = self.get_dplugin_by_id(dplugin_id)
+        if dplugin is not None:
+            dblock = dplugin.get_dblock_by_name(dblock_name)
+            if dblock is not None:
+                dplugin_ids = dblock.get_subscribers()
+                for dplugin_id in dplugin_ids:
+
+                    subscriber = self.get_dplugin_by_id(dplugin_id)
+
+                    subscriber.unsubscribe(dblock)
+                    dblock.rm_subscriber(subscriber)
+
 
     def subscribe_signals(self, subscriber_id, target_id, dblock_name, signals):
         """
