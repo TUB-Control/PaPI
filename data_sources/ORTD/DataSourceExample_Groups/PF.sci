@@ -8,7 +8,7 @@
 //   nodejs. 
 //   webappUDP.js is the counterpart that provides a web-interface 
 // 
-// Current Rev: 9
+// Current Rev: 10
 // 
 // Revisions:
 // 
@@ -18,7 +18,8 @@
 // 7.4.14  - Bugfix
 // 12.6.14 - Bugfix
 // 2.11.14 - Added group finalising packet
-// 12.14 - Added Support for Groups
+// 12.1.14 - Added Support for Groups
+// 27.1.14 - Added the possibility to request the protocoll configuration via network
 // 
 
 
@@ -302,6 +303,10 @@ function [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework) // PARSEDOC
 
             // Sync the simulation to incomming UDP-packets
             [sim, Data, SrcAddr] = ld_UDPSocket_Recv(sim, 0, ObjectIdentifyer=InstanceName+"aSocket", outsize=PacketSize );
+
+
+
+
 
             // disassemble packet's structure
             [sim, DisAsm] = ld_DisassembleData(sim, 0, in=Data, ...
