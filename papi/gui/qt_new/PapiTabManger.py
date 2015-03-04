@@ -156,7 +156,7 @@ class PapiTabManger(QObject):
                     dplugin = allPlugins[pl_id]
                     if dplugin.own_process is False:
                         self.gui_api.do_delete_plugin(dplugin.id)
-            self.remove_tab(tabOb)
+                self.remove_tab(tabOb)
 
     def closeTab_by_name(self,name):
         if name in self.tab_dict_uname:
