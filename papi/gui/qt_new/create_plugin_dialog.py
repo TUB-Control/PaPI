@@ -34,7 +34,7 @@ from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox, QCombo
 from PySide.QtCore import *
 
 from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
-from papi.gui.qt_new.custom import FileLineEdit
+from papi.gui.qt_new.custom import FileLineEdit, ColorLineEdit
 
 from papi.constants import GUI_DEFAULT_TAB
 
@@ -72,6 +72,9 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
                     config[attr]['value'] = '0'
 
             if isinstance(self.configuration_inputs[attr], QLineEdit):
+                config[attr]['value'] = self.configuration_inputs[attr].text()
+
+            if isinstance(self.configuration_inputs[attr], ColorLineEdit):
                 config[attr]['value'] = self.configuration_inputs[attr].text()
 
             if isinstance(self.configuration_inputs[attr], QComboBox):
@@ -193,6 +196,12 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
                         editable_field = FileLineEdit()
                         editable_field.setReadOnly(True)
                         editable_field.setText(value)
+
+                    if parameter_type == 'color':
+                        editable_field = ColorLineEdit()
+                        editable_field.set_default_color(startup_config[attr]['value'])
+                        #
+                        #editable_field.setText(value)
 
                 else:
                     editable_field = QLineEdit()
