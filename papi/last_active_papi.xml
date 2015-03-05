@@ -1,64 +1,64 @@
-<PaPiConfig Date="2015-03-05 20:43:07" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-05 20:46:03" PaPI_version="1.0.0">
   <guiConfig>
-    <size>
-      <y>
-        <value>853</value>
-      </y>
-      <x>
-        <value>771</value>
-      </x>
-    </size>
     <tabs>
       <PaPI-Tab>
         <background>default</background>
       </PaPI-Tab>
     </tabs>
+    <size>
+      <x>
+        <value>771</value>
+      </x>
+      <y>
+        <value>853</value>
+      </y>
+    </size>
   </guiConfig>
   <Plugin uname="ButtonX2">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ButtonX2</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>0</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>Button2</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(159,54)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
+        <value>Click</value>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ButtonX2</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(159,54)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
-        <value>0</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>1</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
+        <value>Clack</value>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -74,19 +74,30 @@
   <Plugin uname="ProgressBarShowAll">
     <Identifier>ProgressBar</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ProgressBarShowAll</value>
+      <Parameter Name="display_text">
+        <tooltip>Show</tooltip>
+        <advanced>1</advanced>
+        <value>1</value>
       </Parameter>
       <Parameter Name="name">
         <tooltip>Used for window title</tooltip>
         <value>Button3</value>
       </Parameter>
+      <Parameter Name="uname">
+        <value>ProgressBarShowAll</value>
+      </Parameter>
       <Parameter Name="max_range">
-        <tooltip>Set maximum range for the progress bar.</tooltip>
+        <regex>\d+</regex>
         <advanced>1</advanced>
         <value>153</value>
+        <tooltip>Set maximum range for the progress bar.</tooltip>
         <display_text>Show current/max</display_text>
-        <regex>\d+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(314,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="progress_value">
         <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
@@ -94,33 +105,32 @@
         <value>percent</value>
         <display_text>Progress Value</display_text>
       </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
+      <Parameter Name="min_rage">
+        <regex>\d+</regex>
+        <advanced>1</advanced>
+        <value>0</value>
+        <tooltip>Set minimum range for the progress bar.</tooltip>
+        <display_text>Min Range</display_text>
+      </Parameter>
+      <Parameter Name="show_current_max">
+        <tooltip>A label next to the bar shows the current and max value</tooltip>
         <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
+        <value>1</value>
+        <type>bool</type>
+        <display_text>Show current/max</display_text>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(156,53)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="show_percent">
         <tooltip>Show progress in percent over the progress bar</tooltip>
         <advanced>0</advanced>
         <value>0</value>
-        <display_text>Show percent</display_text>
         <type>bool</type>
-      </Parameter>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(314,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <display_text>Show percent</display_text>
       </Parameter>
       <Parameter Name="reset_trigger_value">
         <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
@@ -128,25 +138,15 @@
         <value>reset</value>
         <display_text>Reset Value</display_text>
       </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="trigger_value">
+        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
         <advanced>0</advanced>
-        <value>1</value>
-        <display_text>Show current/max</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <advanced>1</advanced>
-        <value>0</value>
-        <display_text>Min Range</display_text>
-        <regex>\d+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(156,53)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>trigger</value>
+        <display_text>Trigger Value</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -162,6 +162,10 @@
       </Subscription>
       <Subscription>
         <data_source>Trigger</data_source>
+        <block Name="Progress">
+          <alias />
+          <Signal>percent</Signal>
+        </block>
         <block Name="Trigger">
           <alias />
           <Signal>trigger</Signal>
@@ -170,58 +174,54 @@
           <alias />
           <Signal>reset</Signal>
         </block>
-        <block Name="Progress">
-          <alias />
-          <Signal>percent</Signal>
-        </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
   <Plugin uname="ButtonX3">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ButtonX3</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>0</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>Button3</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(313,52)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
+        <value>Click</value>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ButtonX3</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(313,52)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
-        <value>0</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>1</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
+        <value>Clack</value>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -242,7 +242,7 @@
       </Parameter>
     </StartConfig>
     <PreviousParameters>
-      <Parameter Name="Choose">0</Parameter>
+      <Parameter Name="Choose">1.0</Parameter>
     </PreviousParameters>
     <DBlocks>
       <DBlock Name="Trigger">
@@ -250,14 +250,14 @@
           <dname>trigger</dname>
         </DSignal>
       </DBlock>
-      <DBlock Name="ResetTrigger">
-        <DSignal uname="reset">
-          <dname>reset</dname>
-        </DSignal>
-      </DBlock>
       <DBlock Name="Progress">
         <DSignal uname="percent">
           <dname>percent</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="ResetTrigger">
+        <DSignal uname="reset">
+          <dname>reset</dname>
         </DSignal>
       </DBlock>
     </DBlocks>
@@ -285,48 +285,48 @@
   <Plugin uname="ButtonReset">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ButtonReset</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>2</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>2</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>ResetAll</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(309,176)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
         <value>ResetAll</value>
-        <display_text>Text for state 2</display_text>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ButtonReset</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(309,176)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
-        <advanced>0</advanced>
-        <value>2</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>2</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
         <value>ResetAll</value>
-        <display_text>Text for state 1</display_text>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -342,48 +342,48 @@
   <Plugin uname="ButtonX5">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ButtonX5</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>1</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>TriggerAll</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(154,176)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
         <value>TriggerAll</value>
-        <display_text>Text for state 2</display_text>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ButtonX5</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(154,176)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
-        <advanced>0</advanced>
-        <value>1</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>1</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
         <value>TriggerAll</value>
-        <display_text>Text for state 1</display_text>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -399,48 +399,48 @@
   <Plugin uname="ButtonX6">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ButtonX6</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>0</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>0</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>SetAll</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(2,174)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
         <value>To 20</value>
-        <display_text>Text for state 2</display_text>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>ButtonX6</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(2,174)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
-        <advanced>0</advanced>
-        <value>0</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>0</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
         <value>To 20</value>
-        <display_text>Text for state 1</display_text>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -456,19 +456,30 @@
   <Plugin uname="ProgressBar">
     <Identifier>ProgressBar</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ProgressBar</value>
+      <Parameter Name="display_text">
+        <tooltip>Show</tooltip>
+        <advanced>1</advanced>
+        <value>1</value>
       </Parameter>
       <Parameter Name="name">
         <tooltip>Used for window title</tooltip>
         <value>Button1</value>
       </Parameter>
+      <Parameter Name="uname">
+        <value>ProgressBar</value>
+      </Parameter>
       <Parameter Name="max_range">
-        <tooltip>Set maximum range for the progress bar.</tooltip>
+        <regex>\d+</regex>
         <advanced>1</advanced>
         <value>100</value>
+        <tooltip>Set maximum range for the progress bar.</tooltip>
         <display_text>Show current/max</display_text>
-        <regex>\d+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="progress_value">
         <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
@@ -476,33 +487,32 @@
         <value>percent</value>
         <display_text>Progress Value</display_text>
       </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
+      <Parameter Name="min_rage">
+        <regex>\d+</regex>
+        <advanced>1</advanced>
+        <value>0</value>
+        <tooltip>Set minimum range for the progress bar.</tooltip>
+        <display_text>Min Range</display_text>
+      </Parameter>
+      <Parameter Name="show_current_max">
+        <tooltip>A label next to the bar shows the current and max value</tooltip>
         <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
+        <value>1</value>
+        <type>bool</type>
+        <display_text>Show current/max</display_text>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,50)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="show_percent">
         <tooltip>Show progress in percent over the progress bar</tooltip>
         <advanced>0</advanced>
         <value>1</value>
-        <display_text>Show percent</display_text>
         <type>bool</type>
-      </Parameter>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <display_text>Show percent</display_text>
       </Parameter>
       <Parameter Name="reset_trigger_value">
         <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
@@ -510,25 +520,15 @@
         <value>reset</value>
         <display_text>Reset Value</display_text>
       </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="trigger_value">
+        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
         <advanced>0</advanced>
-        <value>1</value>
-        <display_text>Show current/max</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <advanced>1</advanced>
-        <value>0</value>
-        <display_text>Min Range</display_text>
-        <regex>\d+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,50)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>trigger</value>
+        <display_text>Trigger Value</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -544,6 +544,10 @@
       </Subscription>
       <Subscription>
         <data_source>Trigger</data_source>
+        <block Name="Progress">
+          <alias />
+          <Signal>percent</Signal>
+        </block>
         <block Name="Trigger">
           <alias />
           <Signal>trigger</Signal>
@@ -552,58 +556,54 @@
           <alias />
           <Signal>reset</Signal>
         </block>
-        <block Name="Progress">
-          <alias />
-          <Signal>percent</Signal>
-        </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
   <Plugin uname="Button">
     <Identifier>Button</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>Button</value>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>1</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>0</value>
       </Parameter>
       <Parameter Name="name">
         <advanced>0</advanced>
         <value>Button1</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(0,52)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="state1_text">
         <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
+        <value>Click</value>
+        <display_text>Text for state 1</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Button</value>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,55)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="tab">
         <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
+      <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(0,52)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state1">
+      <Parameter Name="state2_text">
         <advanced>0</advanced>
-        <value>0</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state2">
-        <advanced>0</advanced>
-        <value>1</value>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
+        <value>Clack</value>
+        <display_text>Text for state 2</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -619,19 +619,30 @@
   <Plugin uname="ProgressBarShowCurrentMax">
     <Identifier>ProgressBar</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>ProgressBarShowCurrentMax</value>
+      <Parameter Name="display_text">
+        <tooltip>Show</tooltip>
+        <advanced>1</advanced>
+        <value>1</value>
       </Parameter>
       <Parameter Name="name">
         <tooltip>Used for window title</tooltip>
         <value>Button2</value>
       </Parameter>
+      <Parameter Name="uname">
+        <value>ProgressBarShowCurrentMax</value>
+      </Parameter>
       <Parameter Name="max_range">
-        <tooltip>Set maximum range for the progress bar.</tooltip>
+        <regex>\d+</regex>
         <advanced>1</advanced>
         <value>100</value>
+        <tooltip>Set maximum range for the progress bar.</tooltip>
         <display_text>Show current/max</display_text>
-        <regex>\d+</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(158,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="progress_value">
         <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
@@ -639,33 +650,32 @@
         <value>percent</value>
         <display_text>Progress Value</display_text>
       </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
+      <Parameter Name="min_rage">
+        <regex>\d+</regex>
+        <advanced>1</advanced>
+        <value>0</value>
+        <tooltip>Set minimum range for the progress bar.</tooltip>
+        <display_text>Min Range</display_text>
+      </Parameter>
+      <Parameter Name="show_current_max">
+        <tooltip>A label next to the bar shows the current and max value</tooltip>
         <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
+        <value>0</value>
+        <type>bool</type>
+        <display_text>Show current/max</display_text>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(150,53)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="show_percent">
         <tooltip>Show progress in percent over the progress bar</tooltip>
         <advanced>0</advanced>
         <value>0</value>
-        <display_text>Show percent</display_text>
         <type>bool</type>
-      </Parameter>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <advanced>1</advanced>
-        <value>(158,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <display_text>Show percent</display_text>
       </Parameter>
       <Parameter Name="reset_trigger_value">
         <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
@@ -673,25 +683,15 @@
         <value>reset</value>
         <display_text>Reset Value</display_text>
       </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="trigger_value">
+        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
         <advanced>0</advanced>
-        <value>0</value>
-        <display_text>Show current/max</display_text>
-        <type>bool</type>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <advanced>1</advanced>
-        <value>0</value>
-        <display_text>Min Range</display_text>
-        <regex>\d+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <advanced>1</advanced>
-        <value>(150,53)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>trigger</value>
+        <display_text>Trigger Value</display_text>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -707,6 +707,10 @@
       </Subscription>
       <Subscription>
         <data_source>Trigger</data_source>
+        <block Name="Progress">
+          <alias />
+          <Signal>percent</Signal>
+        </block>
         <block Name="Trigger">
           <alias />
           <Signal>trigger</Signal>
@@ -714,10 +718,6 @@
         <block Name="ResetTrigger">
           <alias />
           <Signal>reset</Signal>
-        </block>
-        <block Name="Progress">
-          <alias />
-          <Signal>percent</Signal>
         </block>
       </Subscription>
     </Subscriptions>

@@ -65,6 +65,8 @@ class Trigger(dpp_base):
 
         self.send_new_parameter_list(para_l)
 
+        self.set_event_trigger_mode(True)
+
         self.initialized = True
 
         return True
