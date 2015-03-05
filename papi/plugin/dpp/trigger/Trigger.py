@@ -30,14 +30,14 @@ from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 
 from papi.data.DParameter import DParameter
-from papi.plugin.base_classes.iop_base import iop_base
+from papi.plugin.base_classes.dpp_base import dpp_base
 
 import time
 import math
 import numpy
 
 
-class Trigger(iop_base):
+class Trigger(dpp_base):
     def __init__(self):
         self.initialized = False
 
