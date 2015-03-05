@@ -136,11 +136,11 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
           // Stream the data of the oscillator
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'ControllerSignals';
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); 
  
 
@@ -148,6 +148,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
+          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
 
           // Wait until a number of time steps has passed, then notify that
           // the experiment has finished by setting "finished" to 1.
@@ -165,15 +166,16 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       
           // Stream a constant
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=in1, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="Const");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup2';
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); 
           
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim, PacketFramework);
+          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
           
           // Wait until a number of time steps has passed, then notify that
           // the experiment (control system in this case) has finished.
