@@ -136,12 +136,12 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
           // Stream the data of the oscillator
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot_x';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
           PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = 'X'; // not okay so far, need an array of str
+          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); // not okay so far, need an array of str
  
 
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V");
@@ -165,12 +165,12 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       
           // Stream a constant
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=in1, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="Const");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot_X';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
           PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = 'Const'; // not okay so far, need an array of str
+          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); // not okay so far, need an array of str
           
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim, PacketFramework);
