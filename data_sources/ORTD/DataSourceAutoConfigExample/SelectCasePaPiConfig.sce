@@ -136,7 +136,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
           // Stream the data of the oscillator
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
@@ -166,7 +166,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       
           // Stream a constant
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=in1, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="Const");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'plot';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
