@@ -6,4 +6,4 @@ Module = ProgressBar
 Author = S. Knuth
 Version = 0.1
 Website =
-Description = Simple progress bar which is used to display a value between 0 and 100. A simple increment by one is possible by using the 'trigger'-Parameter.
+Description = Simple progress bar which is used to display a value between 0 and 100. A simple increment by one is possible by using the 'trigger'-Parameter. It is possible to subscribe signals to controll the progress bar. By sending

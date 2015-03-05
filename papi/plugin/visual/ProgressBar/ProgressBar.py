@@ -194,7 +194,7 @@ class ProgressBar(vip_base):
              "progress_value": {
                  'value': 'percent',
                  'display_text' : 'Progress Value',
-                 'tooltip' : 'Name of the scalar which is used for the progress bar.',
+                 'tooltip' : 'Name of the signal whose first value is used to set the current value for the progress bar.',
                  'advanced' : '0'
             },
             "show_percent": {
@@ -220,7 +220,7 @@ class ProgressBar(vip_base):
             },
             "max_range": {
                  'value': '100',
-                 'display_text' : 'Show current/max',
+                 'display_text' : 'Max Range',
                  'regex': '\d+',
                  'tooltip' : 'Set maximum range for the progress bar.',
                  'advanced' : '1'
@@ -228,13 +228,13 @@ class ProgressBar(vip_base):
              "trigger_value": {
                  'value': 'trigger',
                  'display_text' : 'Trigger Value',
-                 'tooltip' : 'Name of the scalar which is used to increment progress bar by one.',
+                 'tooltip' : 'Name of the signal which triggers the progress bar to increment by one.',
                  'advanced' : '0'
             },
              "reset_trigger_value": {
                  'value': 'reset',
                  'display_text' : 'Reset Value',
-                 'tooltip' : 'Name of the scalar which is used to reset the progress bar.',
+                 'tooltip' : 'Name of the signal which triggers the progress bar to reset.',
                  'advanced' : '0'
             },
              'name': {
