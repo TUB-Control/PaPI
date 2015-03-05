@@ -27,7 +27,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
     // Define parameters. They must be defined once again at this place, because this will also be called at
     // runtime.
-    NSamples=50;
+    NSamples=300;
 
     if CalledOnline == %t then
       // The contents of this part will be compiled on-line, while the control
@@ -132,15 +132,16 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           [sim] = ld_printf(sim, ev, AParVector, "A vectorial parameter", 10);
 
           // The system to control
+          [sim, Input] = ld_add_ofs(sim, 0, Input, 0.2);
           T_a = 0.1; [sim, x,v] = damped_oscillator(sim, Input, T_a);
 
           // Stream the data of the oscillator
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X");
           PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,500)';
+          PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(100,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'ControllerSignals';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup'+string(userdata.Acounter);
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); 
  
 
@@ -170,7 +171,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup2';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup'+string(userdata.Acounter) ;
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); 
           
           // finalise the communication interface
@@ -185,7 +186,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           outlist=list(out);
           
           // chose the next state to enter when the demo experiment has finished
-          userdata.State = "finished";
+          userdata.State = "oscillator";
           
         case "finished" // experiment finished - nothing to do
           in1 = inlist(1);
@@ -260,7 +261,7 @@ endfunction
 // The main real-time thread
 function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
   // This will run in a thread
-  [sim, Tpause] = ld_const(sim, ev, 1/5);  // The sampling time that is constant at 20 Hz in this example
+  [sim, Tpause] = ld_const(sim, ev, 1/20);  // The sampling time that is constant at 20 Hz in this example
   [sim, out] = ld_ClockSync(sim, ev, in=Tpause); // synchronise this simulation
 
   //
