@@ -81,18 +81,15 @@ class Trigger(iop_base):
     def set_parameter(self, name, value):
         if not self.initialized:
             return
-        value = int(value)
+        value = int(float(value))
         if name == self.para3.name:
             if value == 0:
-                print(value)
                 self.send_new_data('Progress', [0], {'percent': [20]})
 
             if value == 1:
-                print(value)
                 self.send_new_data('Trigger', [0], {'trigger': [0]})
 
             if value == 2:
-                print(value)
                 self.send_new_data('ResetTrigger', [0], {'reset': [0]})
 
 

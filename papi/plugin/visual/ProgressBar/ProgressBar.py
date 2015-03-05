@@ -57,6 +57,8 @@ class ProgressBar(vip_base):
         self.show_percent = self.config['show_percent']['value'] == '1'
         self.show_current_max = self.config['show_current_max']['value'] == '1'
 
+        self.min_range = int(self.config['min_rage']['value'])
+        self.max_range = int(self.config['max_range']['value'])
         # --------------------------------
         # Create Widget
         # --------------------------------
@@ -65,6 +67,7 @@ class ProgressBar(vip_base):
         self.central_widget = QtGui.QWidget()
 
         self.horizontal_layoyt = QtGui.QHBoxLayout()
+        self.horizontal_layoyt.setContentsMargins(0,0,0,0)
 
         self.central_widget.setLayout(self.horizontal_layoyt)
 
@@ -76,7 +79,7 @@ class ProgressBar(vip_base):
 
 
         self.progressbar = QtGui.QProgressBar()
-        self.progressbar.setRange(0, 157)
+        self.progressbar.setRange(self.min_range, self.max_range)
         self.progressbar.setTextVisible(True)
         self.progressbar.setValue(0)
 
@@ -85,12 +88,20 @@ class ProgressBar(vip_base):
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
 
+        if self.show_current_max:
 
-        self.horizontal_layoyt.addWidget(self.progressbar)
-        self.horizontal_layoyt.addWidget(self.label)
+            self.horizontal_layoyt.addWidget(self.progressbar)
 
+            self.horizontal_layoyt.addWidget(self.label)
+            self.refresh_label()
 
-        self.set_widget_for_internal_usage(self.central_widget)
+        if self.show_current_max:
+            self.set_widget_for_internal_usage(self.central_widget)
+        else:
+            self.set_widget_for_internal_usage(self.progressbar)
+
+        if not self.show_percent:
+            self.progressbar.setTextVisible(False)
         # ---------------------------
         # Create Parameters
         # ---------------------------
@@ -102,10 +113,6 @@ class ProgressBar(vip_base):
         para_list.append(self.para_trigger)
         # build parameter list to send to Core
         self.send_new_parameter_list(para_list)
-
-        # ---------------------------
-        # Create Legend
-        # ---------------------------
 
         return True
 
@@ -138,7 +145,7 @@ class ProgressBar(vip_base):
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         if self.reset_trigger_value in Data:
-            self.progressbar.reset()
+            self.reset()
 
         if self.trigger_value in Data:
             old_value = self.progressbar.value() + 1
@@ -149,14 +156,26 @@ class ProgressBar(vip_base):
 
             self.progressbar.setValue(new_value)
 
+        self.refresh_label()
+
     def set_parameter(self, name, value):
-        # attetion: value is a string and need to be processed !
+        # attention: value is a string and need to be processed !
         # if name == 'irgendeinParameter':
         #   do that .... with value
 
         if name == self.para_trigger.name:
-            self.para_trigger.value += 1
-            self.progressbar.setValue(self.para_trigger.value)
+            new_value = self.progressbar.value() + 1
+            self.progressbar.setValue(new_value)
+
+        self.refresh_label()
+
+    def refresh_label(self):
+        if self.show_current_max:
+            self.label.setText(str(self.progressbar.value()) + ' / ' + str(self.max_range))
+
+    def reset(self):
+        self.progressbar.setValue(0)
+        self.refresh_label()
 
     def quit(self):
         # do something before plugin will close, e.a. close connections ...
@@ -191,6 +210,20 @@ class ProgressBar(vip_base):
                  'tooltip' : 'A label next to the bar shows the current and max value',
                  'type' : 'bool',
                  'advanced' : '0'
+            },
+            "min_rage": {
+                 'value': '0',
+                 'display_text' : 'Min Range',
+                 'regex': '\d+',
+                 'tooltip' : 'Set minimum range for the progress bar.',
+                 'advanced' : '1'
+            },
+            "max_range": {
+                 'value': '100',
+                 'display_text' : 'Show current/max',
+                 'regex': '\d+',
+                 'tooltip' : 'Set maximum range for the progress bar.',
+                 'advanced' : '1'
             },
              "trigger_value": {
                  'value': 'trigger',
