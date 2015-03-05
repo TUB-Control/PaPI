@@ -1101,7 +1101,7 @@ function str=ld_PF_Export_str(PacketFramework)
 
 
     end  
-    str=str+'}, '+char(10)+ 'PaPIConfig : ' + PaPIConfigstr + char(10) +  '}'; // 
+    str=str+'}, '+char(10)+ '''' + 'PaPIConfig' + '''' + ' : ' + PaPIConfigstr + char(10) +  '}'; // 
 
     // print the configuration to be send to Papi
     disp(str);
