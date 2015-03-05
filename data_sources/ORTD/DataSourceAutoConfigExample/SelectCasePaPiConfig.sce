@@ -148,6 +148,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
+          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
 
           // Wait until a number of time steps has passed, then notify that
           // the experiment has finished by setting "finished" to 1.
@@ -174,6 +175,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim, PacketFramework);
+          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
           
           // Wait until a number of time steps has passed, then notify that
           // the experiment (control system in this case) has finished.

@@ -996,7 +996,7 @@ function str=ld_PF_Export_str(PacketFramework)
 
             case "string"
                 if length(length(val)) == 1 then
-                    valstr = '''' + string(val) + '''';
+                    valstr = """" + string(val) + """";
                 end
 
             case "list" // convert to array of strings
@@ -1004,23 +1004,23 @@ function str=ld_PF_Export_str(PacketFramework)
 
                 N = length(val);
                 for i=1:(N-1)
-                    valstr = valstr + '''' + string( val(i) ) + '''' + ',';
+                    valstr = valstr + """" + string( val(i) ) + """" + ',';
                 end
-                valstr = valstr + '''' + string( val(N) ) + '''' + ']';
+                valstr = valstr + """" + string( val(N) ) + """" + ']';
 
 
             case "constant"
                 if length(val) == 1 then
                     valstr = string(val);
                 else
-                    valstr = '''' + "** Matrix not supported **" + '''';
+                    valstr = """" + "** Matrix not supported **" + """";
                 end
 
             case "st"
                 valstr = struct2json(val);
 
             else
-                valstr = '''' + "**Datatype " + typeof(val) + " not supported **" + '''';
+                valstr = """" + "**Datatype " + typeof(val) + " not supported **" + """";
             end
         endfunction
 
@@ -1033,13 +1033,13 @@ function str=ld_PF_Export_str(PacketFramework)
                 f = F(i);
                 val = eval('a.'+f);
                 valstr = val2str(val);
-                str = str + '''' + f + '''' + ' : ' + valstr + ' , ';
+                str = str + """" + f + """" + ' : ' + valstr + ' , ';
             end
 
             f = F(N);
             val = eval('a.'+f);
             valstr = val2str(val);
-            str = str + '''' + f + '''' + ' : ' + valstr + ' } ';
+            str = str + """" + f + """" + ' : ' + valstr + ' } ';
 
         else
             error("Not a structure")
@@ -1115,7 +1115,7 @@ function str=ld_PF_Export_str(PacketFramework)
 
 
     end  
-    str=str+'}, '+char(10)+ '''' + 'PaPIConfig' + '''' + ' : ' + PaPIConfigstr + char(10) +  '}'; // 
+    str=str+'}, '+char(10)+ """" + 'PaPIConfig' + """" + ' : ' + PaPIConfigstr + char(10) +  '}'; // 
 
     // print the configuration to be send to Papi
     disp(str);
