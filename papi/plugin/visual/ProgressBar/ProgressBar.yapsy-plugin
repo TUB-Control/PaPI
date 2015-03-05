@@ -1,0 +1,9 @@
+[Core]
+Name = ProgressBar
+Module = ProgressBar
+
+[Documentation]
+Author = S. Knuth
+Version = 0.1
+Website =
+Description = Simple progress bar which is used to display a value between 0 and 100. A simple increment by one is possible by using the 'trigger'-Parameter.
