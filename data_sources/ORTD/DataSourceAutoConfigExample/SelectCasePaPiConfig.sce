@@ -140,7 +140,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'ControllerSignals';
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); 
  
 
@@ -170,7 +170,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
+          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup2';
           PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); 
           
           // finalise the communication interface
