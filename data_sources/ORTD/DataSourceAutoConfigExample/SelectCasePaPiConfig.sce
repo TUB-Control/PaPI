@@ -141,7 +141,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
           PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); // not okay so far, need an array of str
+          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); 
  
 
           [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V");
@@ -170,7 +170,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
           PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
           PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup0';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); // not okay so far, need an array of str
+          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); 
           
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim, PacketFramework);
