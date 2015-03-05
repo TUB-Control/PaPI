@@ -968,11 +968,12 @@ endfunction
 
 
 function str=ld_PF_Export_str(PacketFramework)
-//     Added possibility to add GUI-configurations on 5.3.15
+    //     Added possibility to add GUI-configurations on 5.3.15
 
     function jsonstr = struct2json(a)
         //
         // Rev 1 as of 4.3.15: Initial version
+        // Rev 2 as of 4.3.15: added arrays of strings that are defined by e.g. list('str1', 'str2')
         //
         //
         // Example usage:
@@ -987,14 +988,26 @@ function str=ld_PF_Export_str(PacketFramework)
         // jsonstr = struct2json(a);
         // disp(jsonstr);
         //    
-        //     Warning: For strings, make sure you escape the special characters that are used by the JSON-format!
+        //     Warning: For strings make sure you escape the special characters that are used by the JSON-format!
         //
 
         function valstr=val2str(val)
             select typeof(val)
 
             case "string"
-                valstr = '''' + string(val) + '''';
+                if length(length(val)) == 1 then
+                    valstr = '''' + string(val) + '''';
+                end
+
+            case "list" // convert to array of strings
+                valstr = '[';
+
+                N = length(val);
+                for i=1:(N-1)
+                    valstr = valstr + '''' + string( val(i) ) + '''' + ',';
+                end
+                valstr = valstr + '''' + string( val(N) ) + '''' + ']';
+
 
             case "constant"
                 if length(val) == 1 then
@@ -1034,6 +1047,7 @@ function str=ld_PF_Export_str(PacketFramework)
 
         jsonstr = str;
     endfunction
+
 
     // check if there is a GUI to be set-up in Papi
     if  isfield(PacketFramework, 'PaPIConfig') then
