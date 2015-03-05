@@ -31,13 +31,13 @@ __author__ = 'Stefan'
 from PySide.QtGui import QMdiSubWindow
 import papi.pyqtgraph as pq
 
+import papi
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-import collections
-import re
 import time
 
+import papi.helper as ph
 from papi.pyqtgraph.Qt import QtGui, QtCore
 
 #RENAME TO PLUGIN NAME
@@ -50,10 +50,13 @@ class ProgressBar(vip_base):
         # Read configuration
         # ---------------------------
         # Note: this cfg items have to exist!
-        self.color  = self.config['color']['value']
+
         self.progress_value = self.config['progress_value']['value']
         self.trigger_value = self.config['trigger_value']['value']
         self.reset_trigger_value = self.config['reset_trigger_value']['value']
+        self.show_percent = self.config['show_percent']['value'] == '1'
+        self.show_current_max = self.config['show_current_max']['value'] == '1'
+
         # --------------------------------
         # Create Widget
         # --------------------------------
@@ -65,8 +68,15 @@ class ProgressBar(vip_base):
 
         self.central_widget.setLayout(self.horizontal_layoyt)
 
+        # --------------------
+        # Create SubWidgets
+        # --------------------
+
+        self.label = QtGui.QLabel()
+
+
         self.progressbar = QtGui.QProgressBar()
-        self.progressbar.setRange(0, 100)
+        self.progressbar.setRange(0, 157)
         self.progressbar.setTextVisible(True)
         self.progressbar.setValue(0)
 
@@ -74,18 +84,21 @@ class ProgressBar(vip_base):
         self.progressbar.customContextMenuRequested.connect(self.show_context_menu)
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
-        self.set_widget_for_internal_usage( self.progressbar)
 
 
+        self.horizontal_layoyt.addWidget(self.progressbar)
+        self.horizontal_layoyt.addWidget(self.label)
+
+
+        self.set_widget_for_internal_usage(self.central_widget)
         # ---------------------------
         # Create Parameters
         # ---------------------------
         para_list = []
         # create a parameter object
-        self.para_color   = DParameter('color',   default=self.color)
+
         self.para_trigger = DParameter('trigger', default=0)
 
-        para_list.append(self.para_color)
         para_list.append(self.para_trigger)
         # build parameter list to send to Core
         self.send_new_parameter_list(para_list)
@@ -94,7 +107,6 @@ class ProgressBar(vip_base):
         # Create Legend
         # ---------------------------
 
-        self.last_time = int(round(time.time() * 1000))
         return True
 
     def show_context_menu(self, pos):
@@ -141,9 +153,6 @@ class ProgressBar(vip_base):
         # attetion: value is a string and need to be processed !
         # if name == 'irgendeinParameter':
         #   do that .... with value
-        if name == self.para_color.name:
-            self.color = value
-            self.config['color']['value'] = value
 
         if name == self.para_trigger.name:
             self.para_trigger.value += 1
@@ -163,15 +172,24 @@ class ProgressBar(vip_base):
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
         config = {
-             "color": {
-                 'value': '(100, 50, 50)',
-                 'display_text' : 'Used color for the progress bar',
-                 'advanced' : '1'
-            },
              "progress_value": {
                  'value': 'percent',
                  'display_text' : 'Progress Value',
                  'tooltip' : 'Name of the scalar which is used for the progress bar.',
+                 'advanced' : '0'
+            },
+            "show_percent": {
+                 'value': '1',
+                 'display_text' : 'Show percent',
+                 'tooltip' : 'Show progress in percent over the progress bar',
+                 'type' : 'bool',
+                 'advanced' : '0'
+            },
+            "show_current_max": {
+                 'value': '0',
+                 'display_text' : 'Show current/max',
+                 'tooltip' : 'A label next to the bar shows the current and max value',
+                 'type' : 'bool',
                  'advanced' : '0'
             },
              "trigger_value": {
@@ -194,6 +212,11 @@ class ProgressBar(vip_base):
                 'value': '1',
                 'tooltip': 'Show',
                 'advanced' : '1'
+            },'size': {
+                'value': "(150,50)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
             }
           }
         return config
