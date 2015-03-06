@@ -12,6 +12,7 @@ v.1.XX
  * [improvement]: improved core performance while processing new data (see #20)
  * [improvement]: huge changes in the plotting plugin with performance benefits
  * [feature]: modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
+ * [plugin]: added a new visual plugin: ProgressBar
  
 v.1.0
 ---
