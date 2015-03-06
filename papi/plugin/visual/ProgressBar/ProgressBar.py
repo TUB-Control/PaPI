@@ -280,11 +280,7 @@ class ProgressBar(vip_base):
                 'value': 'ProgressBar',
                 'tooltip': 'Used for window title'
             },
-             'color': {
-                'value': '(212, 123, 123)',
-                'type': 'color',
-                'advanced' : '1'
-            },'size': {
+             'size': {
                 'value': "(150,50)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
                 'advanced': '1',
