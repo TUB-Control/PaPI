@@ -26,12 +26,12 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+__author__ = 'knuths'
 
 from PySide.QtGui import QMdiSubWindow
 import papi.pyqtgraph as pq
 
-import papi
+import papi.constants as pc
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
@@ -40,12 +40,11 @@ import time
 import papi.helper as ph
 from papi.pyqtgraph.Qt import QtGui, QtCore
 
+
 #RENAME TO PLUGIN NAME
 class ProgressBar(vip_base):
 
-
     def initiate_layer_0(self, config=None):
-
         # ---------------------------
         # Read configuration
         # ---------------------------
@@ -56,30 +55,17 @@ class ProgressBar(vip_base):
         self.reset_trigger_value = self.config['reset_trigger_value']['value']
         self.show_percent = self.config['show_percent']['value'] == '1'
         self.show_current_max = self.config['show_current_max']['value'] == '1'
+        self.round_digit = int(self.config['round_digit']['value'])
 
-        self.min_range = int(self.config['min_rage']['value'])
-        self.max_range = int(self.config['max_range']['value'])
+        self.min_range = float(self.config['min_rage']['value'])
+        self.max_range = float(self.config['max_range']['value'])
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
 
-        self.central_widget = QtGui.QWidget()
-
-        self.horizontal_layoyt = QtGui.QHBoxLayout()
-        self.horizontal_layoyt.setContentsMargins(0,0,0,0)
-
-        self.central_widget.setLayout(self.horizontal_layoyt)
-
-        # --------------------
-        # Create SubWidgets
-        # --------------------
-
-        self.label = QtGui.QLabel()
-
-
         self.progressbar = QtGui.QProgressBar()
-        self.progressbar.setRange(self.min_range, self.max_range)
+        self.progressbar.setRange(0, 100)
         self.progressbar.setTextVisible(True)
         self.progressbar.setValue(0)
 
@@ -88,20 +74,12 @@ class ProgressBar(vip_base):
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
 
-        if self.show_current_max:
 
-            self.horizontal_layoyt.addWidget(self.progressbar)
+        self.set_value(self.min_range)
 
-            self.horizontal_layoyt.addWidget(self.label)
-            self.refresh_label()
+        self.set_widget_for_internal_usage(self.progressbar)
 
-        if self.show_current_max:
-            self.set_widget_for_internal_usage(self.central_widget)
-        else:
-            self.set_widget_for_internal_usage(self.progressbar)
 
-        if not self.show_percent:
-            self.progressbar.setTextVisible(False)
         # ---------------------------
         # Create Parameters
         # ---------------------------
@@ -110,7 +88,25 @@ class ProgressBar(vip_base):
 
         self.para_trigger = DParameter('trigger', default=0)
 
+        self.para_change_progress_value = DParameter('ProgressValue', default=self.progress_value)
+        self.para_change_reset_value = DParameter('ResetValue', default=self.reset_trigger_value)
+        self.para_change_trigger_value = DParameter('TriggerValue', default=self.trigger_value)
+
+        self.para_change_min_range = DParameter('MinRange', default=self.min_range, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_change_max_range = DParameter('MaxRange', default=self.max_range, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+
+        self.para_show_percent = DParameter('ShowPercent', default=self.config['show_percent']['value'], Regex=pc.REGEX_BOOL_BIN)
+        self.para_show_current_max = DParameter('ShowCurrentMax', default=self.config['show_current_max']['value'], Regex=pc.REGEX_BOOL_BIN)
+
         para_list.append(self.para_trigger)
+        para_list.append(self.para_change_progress_value)
+        para_list.append(self.para_change_reset_value)
+        para_list.append(self.para_change_trigger_value)
+        para_list.append(self.para_change_min_range)
+        para_list.append(self.para_change_max_range)
+        para_list.append(self.para_show_percent)
+        para_list.append(self.para_show_current_max)
+
         # build parameter list to send to Core
         self.send_new_parameter_list(para_list)
 
@@ -148,15 +144,11 @@ class ProgressBar(vip_base):
             self.reset()
 
         if self.trigger_value in Data:
-            old_value = self.progressbar.value() + 1
-            self.progressbar.setValue(old_value)
+            self.trigger()
 
         if self.progress_value in Data:
             new_value = Data[self.progress_value][0]
-
-            self.progressbar.setValue(new_value)
-
-        self.refresh_label()
+            self.set_value(new_value)
 
     def set_parameter(self, name, value):
         # attention: value is a string and need to be processed !
@@ -164,23 +156,63 @@ class ProgressBar(vip_base):
         #   do that .... with value
 
         if name == self.para_trigger.name:
-            new_value = self.progressbar.value() + 1
-            self.progressbar.setValue(new_value)
+            self.trigger()
 
-        self.refresh_label()
+        if name == self.para_change_progress_value.name:
+            self.progress_value = value
 
-    def refresh_label(self):
-        if self.show_current_max:
-            self.label.setText(str(self.progressbar.value()) + ' / ' + str(self.max_range))
+        if name == self.para_change_reset_value.name:
+            self.reset_trigger_value = value
+
+        if name == self.para_change_trigger_value.name:
+            self.trigger_value = value
+
+        if name == self.para_change_min_range.name:
+            self.min_range = float(value)
+
+        if name == self.para_change_max_range.name:
+            self.max_range = float(value)
+
+        if name == self.para_show_current_max.name:
+            self.show_current_max = value == '1'
+
+        if name == self.para_show_percent.name:
+            self.show_percent = value == '1'
+
+    def set_value(self, value, setvalue = True):
+
+        bar_format = ""
+
+        if self.min_range <= value and value <= self.max_range:
+
+            percent = 100 / (abs(self.min_range) + abs(self.max_range)) * ( float(value) + abs(self.min_range))
+
+            if setvalue:
+                self.progressbar.setValue(percent)
+
+            if self.show_percent and self.show_current_max:
+                bar_format = "%p% [ {0}/{1}]".format(str(round(value, self.round_digit)), str(self.max_range))
+            elif self.show_percent:
+                bar_format = "%p%"
+
+            elif self.show_current_max:
+                bar_format = "%v/%m"
+
+            self.progressbar.setFormat(bar_format)
+
+    def trigger(self):
+        percent = self.progressbar.value() + 1
+        new_value = (abs(self.min_range) + abs(self.max_range)) / 100 * percent
+        self.set_value(new_value, setvalue=False)
+        self.progressbar.setValue(percent)
 
     def reset(self):
+        self.set_value(self.min_range, setvalue=False)
         self.progressbar.setValue(0)
-        self.refresh_label()
 
     def quit(self):
         # do something before plugin will close, e.a. close connections ...
         pass
-
 
     def get_plugin_configuration(self):
         #
@@ -214,14 +246,14 @@ class ProgressBar(vip_base):
             "min_rage": {
                  'value': '0',
                  'display_text' : 'Min Range',
-                 'regex': '\d+',
+                 'regex': pc.REGEX_SIGNED_FLOAT_OR_INT,
                  'tooltip' : 'Set minimum range for the progress bar.',
                  'advanced' : '1'
             },
             "max_range": {
                  'value': '100',
                  'display_text' : 'Max Range',
-                 'regex': '\d+',
+                 'regex': pc.REGEX_SIGNED_FLOAT_OR_INT,
                  'tooltip' : 'Set maximum range for the progress bar.',
                  'advanced' : '1'
             },
@@ -237,13 +269,20 @@ class ProgressBar(vip_base):
                  'tooltip' : 'Name of the signal which triggers the progress bar to reset.',
                  'advanced' : '0'
             },
+            'round_digit': {
+                'value': '2',
+                'regex' : pc.REGEX_SINGLE_INT,
+                'display_text' : 'Round to ndigits',
+                'tooltip': 'Current value is rounded to ndigits after the decimal point. ',
+                'advanced' : '1'
+            },
              'name': {
                 'value': 'ProgressBar',
                 'tooltip': 'Used for window title'
             },
-             'display_text': {
-                'value': '1',
-                'tooltip': 'Show',
+             'color': {
+                'value': '(212, 123, 123)',
+                'type': 'color',
                 'advanced' : '1'
             },'size': {
                 'value': "(150,50)",
