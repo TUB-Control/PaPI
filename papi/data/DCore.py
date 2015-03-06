@@ -46,7 +46,7 @@ class DCore():
         self.__DPlugins = {}
 
         self.__newid = 0
-        self.log = ConsoleLog(2, "DCore")
+        self.log = ConsoleLog(2, "DCore: ")
 
     def create_id(self):
         """
@@ -396,8 +396,4 @@ class DCore():
 
         return True
 
-    def subscribe_dparameter(self, subscriber_id, target_id):
-        pass
 
-    def unsubscribe_dparameter(self, subscriber_id, target_id):
-        pass

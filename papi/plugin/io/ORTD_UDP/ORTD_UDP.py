@@ -143,9 +143,18 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
-        self.send_new_parameter_list([DParameter('Test1')])
-        self.send_delete_parameter('Test1')
-
+        # db = DBlock('SourceGroup0')
+        # db.add_signal(DSignal('TestSig1'))
+        #
+        # self.send_new_block_list([db])
+        #
+        # self.send_delete_block('SourceGroup0')
+        #
+        # db = DBlock('SourceGroup0')
+        # db.add_signal(DSignal('TestSig2'))
+        #
+        # self.send_new_block_list([db])
+        # self.blocks['SourceGroup0'] = db
         return True
 
     def pause(self):
@@ -286,10 +295,13 @@ class ORTD_UDP(iop_base):
 
 
     def update_block_list(self,ORTDSources):
-        self.block_id = self.block_id +1
-        newBlock = DBlock('SourceGroup'+str(self.block_id))
-        self.blocks['SourceGroup'+str(self.block_id)] = newBlock
-
+        #self.block_id = self.block_id +1
+        #newBlock = DBlock('SourceGroup'+str(self.block_id))
+        #self.blocks['SourceGroup'+str(self.block_id)] = newBlock
+        if 'SourceGroup0' in self.blocks:
+            self.send_delete_block('SourceGroup0')
+        newBlock = DBlock('SourceGroup0')
+        self.blocks['SourceGroup0'] = newBlock
         self.Sources = ORTDSources
         keys = list(self.Sources.keys())
         for key in keys:
@@ -300,8 +312,8 @@ class ORTD_UDP(iop_base):
         self.send_new_block_list([newBlock])
 
         # Remove BLOCKS
-        if 'SourceGroup'+str(self.block_id-1) in self.blocks:
-            self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
+        #if 'SourceGroup'+str(self.block_id-1) in self.blocks:
+            #self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
 
     def process_data_stream(self, SourceId, rev):
         # Received a data packet
@@ -331,22 +343,13 @@ class ORTD_UDP(iop_base):
 
             keys = list(self.signal_values.keys())
             keys.sort()                    # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
-            if self.separate == 1:
-                for key in keys:
-                    # signals_to_send.append(signal_values[key])
-                    Source = self.Sources[str(key)]
-                    NValues = int(Source['NValues_send'])
-                    n = len(self.signal_values[key])
-                    t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
-                    # flush data to papi
-                    sig_name = self.Sources[str(key)]['SourceName']
-                    self.send_new_data(self.blocks[key].name, t, {sig_name:self.signal_values[key]})
-            else:
-                signals_to_send = {}
-                for key in keys:
-                    sig_name = self.Sources[str(key)]['SourceName']
-                    signals_to_send[sig_name] = self.signal_values[key]
 
+            signals_to_send = {}
+            for key in keys:
+                sig_name = self.Sources[str(key)]['SourceName']
+                signals_to_send[sig_name] = self.signal_values[key]
+
+            if len( list(self.blocks.keys()) ) >0:
                 block = list(self.blocks.keys())[0]
                 if len(self.blocks[block].signals) == len(signals_to_send):
                     self.send_new_data(block, [self.t], signals_to_send )

@@ -31,7 +31,7 @@ __author__ = 'ruppin'
 import os
 from multiprocessing import Process, Queue
 from threading import Timer
-
+import copy
 from papi.yapsy.PluginManager import PluginManager
 from papi.data.DCore import DCore
 from papi.data.DPlugin import DPlugin, DBlock
@@ -1064,6 +1064,7 @@ class Core:
         :param event: event to process
         :type event: PapiEventBase
         """
+        print('Block Delete: ', event.blockname)
         pl_id = event.get_originID()
         self.core_data.rm_all_subscribers_of_a_dblock(pl_id, event.blockname)
 
@@ -1074,9 +1075,26 @@ class Core:
         self.update_meta_data_to_gui_for_all()
 
     def __delete_parameter__(self, event):
-        print('Delete')
+        pl_id = event.get_originID()
+        print('ToDelete:', event.parameterName)
 
+        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if dplugin is not None:
+            # get connections of this dplugin
+            subscriptions = copy.deepcopy(dplugin.get_subscribtions())
+            # iterate over all source plugins by id in subscription dict
+            for source_id in subscriptions:
+                # iterate over all blocks
+                for blockName in subscriptions[source_id]:
+                    dSubObject = subscriptions[source_id][blockName]
+                    # search for parameter to delete in subscription
+                    if dSubObject.alias == event.parameterName:
+                        self.core_data.unsubscribe(pl_id, source_id, blockName)
 
+            paraObject = dplugin.get_parameters()[event.parameterName]
+
+            dplugin.rm_parameter(paraObject)
+            self.update_meta_data_to_gui_for_all()
 
     def __process_new_parameter__(self, event):
         """
