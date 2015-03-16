@@ -52,13 +52,14 @@ from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROC
 
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
-from papi.gui.gui_api import Gui_api
-from papi.gui.gui_event_processing import GuiEventProcessing
+
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 
 from papi.gui.qt_new.PapiTabManger import PapiTabManger
+
+from papi.gui.gui_management import GuiManagement
 
 # Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
@@ -88,19 +89,24 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
-        self.gui_api = Gui_api(self.gui_data, core_queue, gui_id, get_gui_config_function=self.get_gui_config,
-                               set_gui_config_function= self.set_gui_config)
+        self.TabManager = PapiTabManger(self.widgetTabs)
 
-        self.TabManager = PapiTabManger(self.widgetTabs,dgui=self.gui_data, gui_api=self.gui_api)
+        self.gui_management = GuiManagement(core_queue,
+                                    gui_queue,
+                                    gui_id,
+                                    self.TabManager,
+                                    self.get_gui_config,
+                                    self.set_gui_config)
 
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue, TabManager=self.TabManager)
+        self.TabManager.gui_api = self.gui_management.gui_api
+        self.TabManager.dGui    = self.gui_management.gui_data
 
-        self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
-        self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
-        self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
-        self.gui_event_processing.plugin_died.connect(self.plugin_died)
+        self.gui_management.gui_event_processing.added_dplugin.connect(self.add_dplugin)
+        self.gui_management.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
+        self.gui_management.gui_event_processing.dgui_changed.connect(self.changed_dgui)
+        self.gui_management.gui_event_processing.plugin_died.connect(self.plugin_died)
 
-        self.gui_api.error_occured.connect(self.error_occured)
+        self.gui_management.gui_api.error_occured.connect(self.error_occured)
 
 
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
@@ -109,11 +115,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         # set GUI size
         self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
-
-        self.core_queue = core_queue
-        self.gui_queue = gui_queue
-
-        self.gui_id = gui_id
 
         self.count = 0
 
@@ -150,7 +151,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionRunMode.triggered.connect(self.toggle_run_mode)
 
-        self.actionSetBackground.triggered.connect(self.set_background_for_gui)
+        self.actionReload_Plugin_DB.triggered.connect(self.reload_plugin_db)
 
         self.actionPaPI_Wiki.triggered.connect(self.papi_wiki_triggerd)
 
@@ -217,30 +218,13 @@ class GUI(QMainWindow, Ui_QtNewMain):
             h = int(cfg['size']['y']['value'])
             self.resize_gui_window(w,h)
 
-    def set_background_for_gui(self):
+    def reload_plugin_db(self):
         """
-        Used to handle request for setting background image.
+        This Callback function will reload the plugin list of the plugin manager
 
         :return:
         """
-        print('TO DELETE')
-        raise Exception
-        fileNames = ''
-
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.AnyFile)
-        #dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
-        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
-
-        if dialog.exec_():
-            fileNames = dialog.selectedFiles()
-
-        if len(fileNames):
-            if fileNames[0] != '':
-                path = fileNames[0]
-                pixmap  = QtGui.QPixmap(path)
-                self.gui_api.gui_bg_path = path
-                self.widgetArea.setBackground(pixmap)
+        self.gui_management.plugin_manager.collectPlugins()
 
     def run(self):
         """
@@ -252,7 +236,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
         self.workingTimer = QtCore.QTimer(self)
-        self.workingTimer.timeout.connect(lambda: self.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
+        self.workingTimer.timeout.connect(lambda: self.gui_management.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
         self.workingTimer.start(GUI_WOKRING_INTERVAL)
 
 
@@ -264,15 +248,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         :return:
         """
-        self.create_plugin_menu = CreatePluginMenu(self.gui_api, self.TabManager)
+        self.create_plugin_menu = CreatePluginMenu(self.gui_management.gui_api,
+                                                   self.TabManager,
+                                                   self.gui_management.plugin_manager )
 
         self.create_plugin_menu.show()
-        # self.create_plugin_menu.raise_()
-        # self.create_plugin_menu.activateWindow()
-
-        # del self.create_plugin_menu
-        #
-        # self.create_plugin_menu = None
 
     def show_overview_menu(self):
         """
@@ -280,7 +260,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         :return:
         """
-        self.overview_menu = OverviewPluginMenu(self.gui_api)
+        self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api)
         self.overview_menu.show()
 
     def load_triggered(self):
@@ -303,7 +283,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if len(fileNames):
             if fileNames[0] != '':
                 self.last_config = fileNames[0]
-                self.gui_api.do_load_xml(fileNames[0])
+                self.gui_management.gui_api.do_load_xml(fileNames[0])
 
     def save_triggered(self):
         """
@@ -325,7 +305,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         if len(fileNames):
             if fileNames[0] != '':
-                self.gui_api.do_save_xml_config(fileNames[0])
+                self.gui_management.gui_api.do_save_xml_config(fileNames[0])
 
     def closeEvent(self, *args, **kwargs):
         """
@@ -338,11 +318,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :return:
         """
         try:
-            self.gui_api.do_save_xml_config('papi/last_active_papi.xml')
+            self.gui_management.gui_api.do_save_xml_config('papi/last_active_papi.xml')
         except Exception as E:
             tb = traceback.format_exc()
 
-        self.gui_api.do_close_program()
+        self.gui_management.gui_api.do_close_program()
         if self.create_plugin_menu is not None:
             self.create_plugin_menu.close()
 
@@ -411,7 +391,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def plugin_died(self, dplugin, e, msg):
         dplugin.state = PLUGIN_STATE_STOPPED
 
-        self.gui_api.do_stopReset_plugin_uname(dplugin.uname)
+        self.gui_management.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
         errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
@@ -461,7 +441,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if self.last_config is not None:
             self.reset_papi()
-            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_api.do_load_xml(self.last_config))
+            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
 
     def reset_papi(self):
         """
@@ -475,7 +455,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.TabManager.set_all_tabs_to_close_when_empty(True)
         self.TabManager.close_all_empty_tabs()
 
-        self.gui_api.do_reset_papi()
+        self.gui_management.gui_api.do_reset_papi()
 
 
 

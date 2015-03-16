@@ -41,7 +41,7 @@ from PySide.QtCore import *
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
 
-    def __init__(self, gui_api, TabManger, parent=None):
+    def __init__(self, gui_api, TabManger, plugin_manager, parent=None):
         super(CreatePluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = gui_api.gui_data
@@ -54,12 +54,11 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.blockName = None
         self.setWindowTitle("Add Plugin")
 
-        self.plugin_manager = PluginManager()
-        self.plugin_path = "../plugin/"
+        self.plugin_manager = plugin_manager
 
-        self.plugin_manager.setPluginPlaces(
-            PLUGIN_ROOT_FOLDER_LIST
-        )
+        # self.plugin_manager.setPluginPlaces(
+        #     PLUGIN_ROOT_FOLDER_LIST
+        # )
         self.setWindowTitle('Available Plugins')
 
         model = PaPITreeModel()
