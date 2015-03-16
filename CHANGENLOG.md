@@ -15,7 +15,7 @@ v.1.XX
  * [feature]: modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
  * [plugin]: added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
- 
+
 v.1.0
 ---
 
