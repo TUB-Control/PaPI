@@ -1,0 +1,9 @@
+[Core]
+Name = Trigger
+Module = Trigger
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website = www
+Description = Used to trigger specific data vectors by parameter events.
