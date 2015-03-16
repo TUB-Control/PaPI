@@ -1,4 +1,4 @@
-<PaPiConfig Date="2015-03-16 16:30:01" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-16 16:43:07" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
       <PaPI-Tab>
@@ -14,41 +14,150 @@
       </y>
     </size>
   </guiConfig>
-  <Plugin uname="Slider">
+  <Plugin uname="SliderX3">
     <Identifier>Slider</Identifier>
     <StartConfig>
+      <Parameter Name="upper_bound">
+        <value>1.0</value>
+      </Parameter>
       <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PaPI Slider</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="step_count">
+        <value>11</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(150,75)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
       </Parameter>
       <Parameter Name="lower_bound">
         <value>0.0</value>
       </Parameter>
       <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(239,57)</value>
         <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>PaPI Slider</value>
-      </Parameter>
-      <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(150,75)</value>
         <advanced>1</advanced>
       </Parameter>
+      <Parameter Name="value_init">
+        <value>0.81</value>
+        <tooltip>Used as initial value for the Slider</tooltip>
+        <regex>([-]{0,1}\d+(.\d+)?)</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>SliderX3</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="SliderBlock">
+        <DSignal uname="SliderParameter1">
+          <dname>SliderParameter1</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Slider">
+    <Identifier>Slider</Identifier>
+    <StartConfig>
       <Parameter Name="upper_bound">
         <value>1.0</value>
       </Parameter>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PaPI Slider</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
       <Parameter Name="step_count">
-        <regex>[0-9]+</regex>
         <value>11</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(150,75)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="lower_bound">
+        <value>0.0</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="value_init">
+        <value>0.57</value>
+        <tooltip>Used as initial value for the Slider</tooltip>
+        <regex>([-]{0,1}\d+(.\d+)?)</regex>
       </Parameter>
       <Parameter Name="uname">
         <value>Slider</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="SliderBlock">
+        <DSignal uname="SliderParameter1">
+          <dname>SliderParameter1</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="SliderX2">
+    <Identifier>Slider</Identifier>
+    <StartConfig>
+      <Parameter Name="upper_bound">
+        <value>1.0</value>
+      </Parameter>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
+      <Parameter Name="name">
+        <value>PaPI Slider</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="step_count">
+        <value>11</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(150,75)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="lower_bound">
+        <value>0.0</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(57,173)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="value_init">
+        <value>0.79</value>
+        <tooltip>Used as initial value for the Slider</tooltip>
+        <regex>([-]{0,1}\d+(.\d+)?)</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>SliderX2</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
