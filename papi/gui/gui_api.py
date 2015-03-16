@@ -52,12 +52,12 @@ import xml.etree.cElementTree as ET
 class Gui_api(QtCore.QObject):
     error_occured = QtCore.Signal(str, str, str)
 
-    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, LOG_IDENT=GUI_PROCESS_CONSOLE_IDENTIFIER):
+    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None):
         super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
         self.core_queue = core_queue
-        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, LOG_IDENT)
+        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
         self.get_gui_config_function = get_gui_config_function
         self.set_gui_config_function = set_gui_config_function
 
