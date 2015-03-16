@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Mon Feb  9 14:55:21 2015
+# Created: Mon Mar 16 16:42:20 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -77,15 +77,19 @@ class Ui_QtNewMain(object):
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionAbout_PySide = QtGui.QAction(QtNewMain)
         self.actionAbout_PySide.setObjectName("actionAbout_PySide")
+        self.actionReload_Plugin_DB = QtGui.QAction(QtNewMain)
+        self.actionReload_Plugin_DB.setObjectName("actionReload_Plugin_DB")
         self.menuPaPI.addAction(self.actionLoad)
         self.menuPaPI.addAction(self.actionSave)
-        self.menuPaPI.addAction(self.actionExit)
         self.menuPaPI.addAction(self.actionReloadConfig)
         self.menuPaPI.addAction(self.actionResetPaPI)
+        self.menuPaPI.addSeparator()
+        self.menuPaPI.addAction(self.actionExit)
         self.menuPlugin.addAction(self.actionOverview)
         self.menuPlugin.addAction(self.actionCreate)
+        self.menuPlugin.addSeparator()
+        self.menuPlugin.addAction(self.actionReload_Plugin_DB)
         self.menuView.addAction(self.actionRunMode)
-        self.menuView.addAction(self.actionSetBackground)
         self.menuHelp.addAction(self.actionPaPI_Wiki)
         self.menuHelp.addAction(self.actionPaPI_Doc)
         self.menuHelp.addSeparator()
@@ -123,4 +127,5 @@ class Ui_QtNewMain(object):
         self.actionAbout.setText(QtGui.QApplication.translate("QtNewMain", "About", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_Qt.setText(QtGui.QApplication.translate("QtNewMain", "About Qt", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_PySide.setText(QtGui.QApplication.translate("QtNewMain", "About PySide", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionReload_Plugin_DB.setText(QtGui.QApplication.translate("QtNewMain", "Reload DB", None, QtGui.QApplication.UnicodeUTF8))
 

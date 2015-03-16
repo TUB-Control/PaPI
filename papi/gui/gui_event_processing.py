@@ -59,7 +59,7 @@ class GuiEventProcessing(QtCore.QObject):
     dgui_changed = QtCore.Signal()
     plugin_died = QtCore.Signal(DPlugin, Exception, str)
 
-    def __init__(self, gui_data, core_queue, gui_id, gui_queue, TabManager):
+    def __init__(self, gui_data, core_queue, gui_id, gui_queue, TabManager, plugin_manager):
         """
         Init for eventProcessing
 
@@ -78,8 +78,8 @@ class GuiEventProcessing(QtCore.QObject):
         self.core_queue = core_queue
         self.gui_id = gui_id
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
-        self.plugin_manager = PluginManager()
-        self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
+        self.plugin_manager = plugin_manager
+
         self.gui_queue = gui_queue
         self.TabManger = TabManager
         # switch case for event processing
@@ -269,8 +269,6 @@ class GuiEventProcessing(QtCore.QObject):
         self.log.printText(2,
                            'create_plugin, Try to create plugin with Name  ' + plugin_identifier + " and UName " + uname)
 
-        # collect plugin in folder for yapsy manager
-        self.plugin_manager.collectPlugins()
         # get the plugin object from yapsy manager
         plugin_orginal = self.plugin_manager.getPluginByName(plugin_identifier)
 
