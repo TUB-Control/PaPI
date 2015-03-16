@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.base_classes.pcp_base import pcp_base
 from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
 from PySide import QtCore
+from PySide.QtCore import Qt
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 
@@ -79,6 +80,8 @@ class Slider(pcp_base):
         self.slider.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.slider.customContextMenuRequested.connect(self.show_context_menu)
 
+        self.central_widget.keyPressEvent = self.key_event
+
         return self.central_widget
 
     def show_context_menu(self, pos):
@@ -121,6 +124,14 @@ class Slider(pcp_base):
                 'tooltip': 'Used for window title'
             } }
         return config
+
+    def key_event(self, event):
+
+        if event.key() == Qt.Key_Plus:
+            self.slider.setValue(self.slider.value() + 1)
+
+        if event.key() == Qt.Key_Minus:
+            self.slider.setValue(self.slider.value() - 1)
 
     def quit(self):
         pass

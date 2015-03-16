@@ -1,4 +1,4 @@
-<PaPiConfig Date="2015-03-16 16:19:16" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-16 16:30:01" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
       <PaPI-Tab>
@@ -6,142 +6,59 @@
       </PaPI-Tab>
     </tabs>
     <size>
-      <y>
-        <value>853</value>
-      </y>
       <x>
         <value>771</value>
       </x>
+      <y>
+        <value>853</value>
+      </y>
     </size>
   </guiConfig>
-  <Plugin uname="LCDDisplay">
-    <Identifier>LCDDisplay</Identifier>
+  <Plugin uname="Slider">
+    <Identifier>Slider</Identifier>
     <StartConfig>
-      <Parameter Name="name">
-        <value>LCD</value>
-        <tooltip>Used for window title</tooltip>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>0.3</value>
-        <tooltip>Used as initial value for the LCD-Display</tooltip>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(150,75)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="value_offset">
-        <value>0</value>
-        <tooltip>Used to offset displayed value</tooltip>
-        <advanced>1</advanced>
-        <regex>-?\d+(\.?\d+)?</regex>
-      </Parameter>
-      <Parameter Name="digit_count">
-        <value>3</value>
-        <tooltip>Number of digits</tooltip>
-        <advanced>1</advanced>
-        <regex>[3-9]</regex>
-      </Parameter>
-      <Parameter Name="value_scale">
-        <value>1</value>
-        <tooltip>Used to scale displayed value</tooltip>
-        <advanced>1</advanced>
-        <regex>-?[1-9]+[0-9]*(\.?[0-9]+)?</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>LCDDisplay</value>
-      </Parameter>
       <Parameter Name="tab">
-        <value>PaPI-Tab</value>
         <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="lower_bound">
+        <value>0.0</value>
       </Parameter>
       <Parameter Name="position">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
         <value>(0,0)</value>
         <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="updateFrequency">
-        <value>1000</value>
-        <advanced>1</advanced>
-        <display_text>Minimal time between updates (in ms)</display_text>
-        <regex>[0-9]+</regex>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="value_offset">0.0</Parameter>
-      <Parameter Name="digit_count">3</Parameter>
-      <Parameter Name="value_scale">1.0</Parameter>
-      <Parameter Name="update_interval">1000</Parameter>
-    </PreviousParameters>
-    <DBlocks />
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="LCDDisplayX2">
-    <Identifier>LCDDisplay</Identifier>
-    <StartConfig>
       <Parameter Name="name">
-        <value>LCD</value>
         <tooltip>Used for window title</tooltip>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>-1.3</value>
-        <tooltip>Used as initial value for the LCD-Display</tooltip>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
+        <value>PaPI Slider</value>
       </Parameter>
       <Parameter Name="size">
         <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
         <value>(150,75)</value>
         <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
-      <Parameter Name="value_offset">
-        <value>0</value>
-        <tooltip>Used to offset displayed value</tooltip>
-        <advanced>1</advanced>
-        <regex>-?\d+(\.?\d+)?</regex>
+      <Parameter Name="upper_bound">
+        <value>1.0</value>
       </Parameter>
-      <Parameter Name="digit_count">
-        <value>3</value>
-        <tooltip>Number of digits</tooltip>
-        <advanced>1</advanced>
-        <regex>[3-9]</regex>
-      </Parameter>
-      <Parameter Name="value_scale">
-        <value>1</value>
-        <tooltip>Used to scale displayed value</tooltip>
-        <advanced>1</advanced>
-        <regex>-?[1-9]+[0-9]*(\.?[0-9]+)?</regex>
+      <Parameter Name="step_count">
+        <regex>[0-9]+</regex>
+        <value>11</value>
       </Parameter>
       <Parameter Name="uname">
-        <value>LCDDisplayX2</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(23,62)</value>
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="updateFrequency">
-        <value>1000</value>
-        <advanced>1</advanced>
-        <display_text>Minimal time between updates (in ms)</display_text>
-        <regex>[0-9]+</regex>
+        <value>Slider</value>
       </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="value_offset">0.0</Parameter>
-      <Parameter Name="digit_count">3</Parameter>
-      <Parameter Name="value_scale">1.0</Parameter>
-      <Parameter Name="update_interval">1000</Parameter>
-    </PreviousParameters>
-    <DBlocks />
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="SliderBlock">
+        <DSignal uname="SliderParameter1">
+          <dname>SliderParameter1</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
     <Subscriptions />
   </Plugin>
 </PaPiConfig>
