@@ -28,14 +28,11 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
+import papi.constants as pc
 
-import collections
-import re
 import time
 
 from papi.pyqtgraph.Qt import QtGui, QtCore
@@ -54,6 +51,7 @@ class LCDDisplay(vip_base):
         self.value_scale    = float(self.config['value_scale']['value'])
         self.value_offset   = float(self.config['value_offset']['value'])
         self.digit_count    = int(self.config['digit_count']['value'])
+        self.init_value     = float(self.config['value_init']['value'])
 
         # --------------------------------
         # Create Widget
@@ -61,7 +59,7 @@ class LCDDisplay(vip_base):
         # Create Widget needed for this plugin
         self.LcdWidget = QtGui.QLCDNumber()
         self.LcdWidget.setSmallDecimalPoint(True)
-        self.LcdWidget.display(0)
+        self.LcdWidget.display(self.init_value)
 
         self.LcdWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.LcdWidget.customContextMenuRequested.connect(self.show_context_menu)
@@ -179,36 +177,39 @@ class LCDDisplay(vip_base):
         # http://utilitymill.com/utility/Regex_For_Range
         config = {
              "updateFrequency": {
-                 'value': '1000',
-                 'regex': '[0-9]+',
-                 'display_text' : 'Minimal time between updates (in ms)',
-                 'advanced' : '1'
-        },   'size': {
-                'value': "(150,75)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine size: (height,width)'
-        },   'name': {
-                'value': 'LCD',
-                'tooltip': 'Used for window title'
-        },   'value_scale': {
-                'value': '1',
-                'tooltip': 'Used to scale displayed value',
-                'regex': '-?[1-9]+[0-9]*(\.?[0-9]+)?',
-                'advanced': '1'
-        },   'value_offset': {
-                'value': '0',
-                'tooltip': 'Used to offset displayed value',
-                'regex': '-?\d+(\.?\d+)?',
-                'advanced': '1'
-        },  'digit_count': {
-                'value': '3',
-                'tooltip': 'Number of digits',
-                'regex': '[3-9]',
-                'advanced': '1'
-        },
-
-             }
+                     'value': '1000',
+                     'regex': '[0-9]+',
+                     'display_text' : 'Minimal time between updates (in ms)',
+                     'advanced' : '1'
+            },   'size': {
+                    'value': "(150,75)",
+                    'regex': '\(([0-9]+),([0-9]+)\)',
+                    'advanced': '1',
+                    'tooltip': 'Determine size: (height,width)'
+            },   'name': {
+                    'value': 'LCD',
+                    'tooltip': 'Used for window title'
+            },   'value_init': {
+                    'value': 0,
+                    'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
+                    'tooltip': 'Used as initial value for the LCD-Display'
+            },   'value_scale': {
+                    'value': '1',
+                    'tooltip': 'Used to scale displayed value',
+                    'regex': '-?[1-9]+[0-9]*(\.?[0-9]+)?',
+                    'advanced': '1'
+            },   'value_offset': {
+                    'value': '0',
+                    'tooltip': 'Used to offset displayed value',
+                    'regex': '-?\d+(\.?\d+)?',
+                    'advanced': '1'
+            },  'digit_count': {
+                    'value': '3',
+                    'tooltip': 'Number of digits',
+                    'regex': '[3-9]',
+                    'advanced': '1'
+            }
+        }
         return config
 
     def plugin_meta_updated(self):
