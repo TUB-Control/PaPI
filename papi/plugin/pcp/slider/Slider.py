@@ -29,12 +29,14 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
+from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
 from PySide import QtCore
+from PySide.QtCore import Qt
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 
-from papi.constants import REGEX_SINGLE_INT
+import papi.constants as pc
+
 
 class Slider(pcp_base):
 
@@ -54,9 +56,13 @@ class Slider(pcp_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
+
+
         self.value_max = float(self.config['upper_bound']['value'])
         self.value_min = float(self.config['lower_bound']['value'])
         self.tick_count = float(self.config['step_count']['value'])
+        self.init_value = float(self.config['value_init']['value'])
+
 
         self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
 
@@ -65,12 +71,12 @@ class Slider(pcp_base):
 
         self.slider.setOrientation(QtCore.Qt.Horizontal)
 
-        self.text_field = QLineEdit()
-        self.text_field.setReadOnly(True)
-        self.text_field.setFixedWidth(50)
-        self.text_field.setText('0')
+        self.text_field = QLabel()
+        self.text_field.setMinimumWidth(25)
+        self.text_field.setText(str(self.init_value))
 
-
+        init_value = (self.init_value - self.value_min)/self.tick_width
+        self.slider.setValue(init_value)
         self.layout = QHBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
@@ -78,6 +84,8 @@ class Slider(pcp_base):
 
         self.slider.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.slider.customContextMenuRequested.connect(self.show_context_menu)
+
+        self.central_widget.keyPressEvent = self.key_event
 
         return self.central_widget
 
@@ -108,7 +116,7 @@ class Slider(pcp_base):
                 },
             'step_count': {
                 'value': '11',
-                'regex': REGEX_SINGLE_INT,
+                'regex': pc.REGEX_SINGLE_INT,
                 },
             'size': {
                 'value': "(150,75)",
@@ -116,11 +124,24 @@ class Slider(pcp_base):
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
                 },
+            'value_init': {
+                    'value': 0,
+                    'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
+                    'tooltip': 'Used as initial value for the Slider'
+            },
             'name': {
                 'value': 'PaPI Slider',
                 'tooltip': 'Used for window title'
-            } }
+            }}
         return config
+
+    def key_event(self, event):
+
+        if event.key() == Qt.Key_Plus:
+            self.slider.setValue(self.slider.value() + 1)
+
+        if event.key() == Qt.Key_Minus:
+            self.slider.setValue(self.slider.value() - 1)
 
     def quit(self):
         pass

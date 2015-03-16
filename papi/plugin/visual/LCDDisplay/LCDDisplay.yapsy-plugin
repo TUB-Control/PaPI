@@ -4,6 +4,6 @@ Module = LCDDisplay
 
 [Documentation]
 Author = S. Ruppin
-Version = 0.1
+Version = 1.0
 Website =
 Description = LCD Display for displaying floating point numbers up to 5 digits with sign. Refresh rate is user defined.
