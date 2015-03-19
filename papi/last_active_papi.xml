@@ -1,10 +1,5 @@
-<PaPiConfig Date="2015-03-05 20:46:03" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-19 19:29:23" PaPI_version="1.0.0">
   <guiConfig>
-    <tabs>
-      <PaPI-Tab>
-        <background>default</background>
-      </PaPI-Tab>
-    </tabs>
     <size>
       <x>
         <value>771</value>
@@ -13,713 +8,100 @@
         <value>853</value>
       </y>
     </size>
+    <tabs>
+      <PaPI-Tab>
+        <background>default</background>
+      </PaPI-Tab>
+    </tabs>
   </guiConfig>
-  <Plugin uname="ButtonX2">
-    <Identifier>Button</Identifier>
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>0</value>
-      </Parameter>
       <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>Button2</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ButtonX2</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
+        <value>ORTDController</value>
       </Parameter>
       <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(159,54)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="state2_text">
-        <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ProgressBarShowAll">
-    <Identifier>ProgressBar</Identifier>
-    <StartConfig>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>Button3</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ProgressBarShowAll</value>
-      </Parameter>
-      <Parameter Name="max_range">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>153</value>
-        <tooltip>Set maximum range for the progress bar.</tooltip>
-        <display_text>Show current/max</display_text>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(314,0)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="progress_value">
-        <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>percent</value>
-        <display_text>Progress Value</display_text>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>0</value>
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <display_text>Min Range</display_text>
-      </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
-        <advanced>0</advanced>
-        <value>1</value>
-        <type>bool</type>
-        <display_text>Show current/max</display_text>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(156,53)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="show_percent">
-        <tooltip>Show progress in percent over the progress bar</tooltip>
-        <advanced>0</advanced>
-        <value>0</value>
-        <type>bool</type>
-        <display_text>Show percent</display_text>
-      </Parameter>
-      <Parameter Name="reset_trigger_value">
-        <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>reset</value>
-        <display_text>Reset Value</display_text>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
-        <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="trigger">0</Parameter>
-    </PreviousParameters>
-    <DBlocks />
-    <Subscriptions>
-      <Subscription>
-        <data_source>ButtonX3</data_source>
-        <block Name="Click_Event">
-          <alias>trigger</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Trigger</data_source>
-        <block Name="Progress">
-          <alias />
-          <Signal>percent</Signal>
-        </block>
-        <block Name="Trigger">
-          <alias />
-          <Signal>trigger</Signal>
-        </block>
-        <block Name="ResetTrigger">
-          <alias />
-          <Signal>reset</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="ButtonX3">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>Button3</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ButtonX3</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(313,52)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="state2_text">
-        <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Trigger">
-    <Identifier>Trigger</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>Trigger</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Choose">1.0</Parameter>
-    </PreviousParameters>
-    <DBlocks>
-      <DBlock Name="Trigger">
-        <DSignal uname="trigger">
-          <dname>trigger</dname>
-        </DSignal>
-      </DBlock>
-      <DBlock Name="Progress">
-        <DSignal uname="percent">
-          <dname>percent</dname>
-        </DSignal>
-      </DBlock>
-      <DBlock Name="ResetTrigger">
-        <DSignal uname="reset">
-          <dname>reset</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions>
-      <Subscription>
-        <data_source>ButtonX6</data_source>
-        <block Name="Click_Event">
-          <alias>Choose</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>ButtonReset</data_source>
-        <block Name="Click_Event">
-          <alias>Choose</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>ButtonX5</data_source>
-        <block Name="Click_Event">
-          <alias>Choose</alias>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="ButtonReset">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>2</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>2</value>
-      </Parameter>
-      <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>ResetAll</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>ResetAll</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ButtonReset</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(309,176)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="state2_text">
-        <advanced>0</advanced>
-        <value>ResetAll</value>
-        <display_text>Text for state 2</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ButtonX5">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>TriggerAll</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>TriggerAll</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ButtonX5</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(154,176)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="state2_text">
-        <advanced>0</advanced>
-        <value>TriggerAll</value>
-        <display_text>Text for state 2</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ButtonX6">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>SetAll</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>To 20</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ButtonX6</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(2,174)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="state2_text">
-        <advanced>0</advanced>
-        <value>To 20</value>
-        <display_text>Text for state 2</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="ProgressBar">
-    <Identifier>ProgressBar</Identifier>
-    <StartConfig>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>Button1</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ProgressBar</value>
-      </Parameter>
-      <Parameter Name="max_range">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>100</value>
-        <tooltip>Set maximum range for the progress bar.</tooltip>
-        <display_text>Show current/max</display_text>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
         <value>(0,0)</value>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
         <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="progress_value">
-        <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>percent</value>
-        <display_text>Progress Value</display_text>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>0</value>
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <display_text>Min Range</display_text>
-      </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
-        <advanced>0</advanced>
-        <value>1</value>
-        <type>bool</type>
-        <display_text>Show current/max</display_text>
+      <Parameter Name="uname">
+        <value>OrtdController</value>
       </Parameter>
       <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(378,313)</value>
         <advanced>1</advanced>
-        <value>(150,50)</value>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
         <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
-      <Parameter Name="show_percent">
-        <tooltip>Show progress in percent over the progress bar</tooltip>
-        <advanced>0</advanced>
-        <value>1</value>
-        <type>bool</type>
-        <display_text>Show percent</display_text>
-      </Parameter>
-      <Parameter Name="reset_trigger_value">
-        <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>reset</value>
-        <display_text>Reset Value</display_text>
-      </Parameter>
       <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
         <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
       </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
+      <Parameter Name="ORTD_Plugin_uname">
+        <value>ORTDPlugin1</value>
         <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
+        <display_text>Uname to use for ortd plugin instance</display_text>
       </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="trigger">0</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <DBlocks />
     <Subscriptions>
       <Subscription>
-        <data_source>Button</data_source>
-        <block Name="Click_Event">
-          <alias>trigger</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Trigger</data_source>
-        <block Name="Progress">
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="ControllerSignals">
           <alias />
-          <Signal>percent</Signal>
-        </block>
-        <block Name="Trigger">
-          <alias />
-          <Signal>trigger</Signal>
-        </block>
-        <block Name="ResetTrigger">
-          <alias />
-          <Signal>reset</Signal>
+          <Signal>ControlSignalReset</Signal>
+          <Signal>ControlSignalCreate</Signal>
+          <Signal>ControlSignalSub</Signal>
+          <Signal>ControllerSignalParameter</Signal>
+          <Signal>ControllerSignalClose</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-  <Plugin uname="Button">
-    <Identifier>Button</Identifier>
+  <Plugin uname="ORTDPlugin1">
+    <Identifier>ORTD_UDP</Identifier>
     <StartConfig>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="name">
-        <advanced>0</advanced>
-        <value>Button1</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <advanced>0</advanced>
-        <value>Click</value>
-        <display_text>Text for state 1</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Button</value>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      <Parameter Name="source_port">
+        <value>20000</value>
         <advanced>1</advanced>
-        <value>(150,55)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
         <advanced>1</advanced>
-        <value>(0,52)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
-      <Parameter Name="state2_text">
+      <Parameter Name="Cfg_Path">
+        <value>/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json</value>
         <advanced>0</advanced>
-        <value>Clack</value>
-        <display_text>Text for state 2</display_text>
+        <type>file</type>
+      </Parameter>
+      <Parameter Name="out_port">
+        <value>20001</value>
+        <advanced>1</advanced>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
+      <DBlock Name="ControllerSignals">
+        <DSignal uname="ControlSignalReset">
+          <dname>ControlSignalReset</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalCreate">
+          <dname>ControlSignalCreate</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalSub">
+          <dname>ControlSignalSub</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalParameter">
+          <dname>ControllerSignalParameter</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalClose">
+          <dname>ControllerSignalClose</dname>
         </DSignal>
       </DBlock>
     </DBlocks>
     <Subscriptions />
-  </Plugin>
-  <Plugin uname="ProgressBarShowCurrentMax">
-    <Identifier>ProgressBar</Identifier>
-    <StartConfig>
-      <Parameter Name="display_text">
-        <tooltip>Show</tooltip>
-        <advanced>1</advanced>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>Button2</value>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>ProgressBarShowCurrentMax</value>
-      </Parameter>
-      <Parameter Name="max_range">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>100</value>
-        <tooltip>Set maximum range for the progress bar.</tooltip>
-        <display_text>Show current/max</display_text>
-      </Parameter>
-      <Parameter Name="position">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(158,0)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="progress_value">
-        <tooltip>Name of the scalar which is used for the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>percent</value>
-        <display_text>Progress Value</display_text>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <regex>\d+</regex>
-        <advanced>1</advanced>
-        <value>0</value>
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <display_text>Min Range</display_text>
-      </Parameter>
-      <Parameter Name="show_current_max">
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
-        <advanced>0</advanced>
-        <value>0</value>
-        <type>bool</type>
-        <display_text>Show current/max</display_text>
-      </Parameter>
-      <Parameter Name="size">
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-        <value>(150,53)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="show_percent">
-        <tooltip>Show progress in percent over the progress bar</tooltip>
-        <advanced>0</advanced>
-        <value>0</value>
-        <type>bool</type>
-        <display_text>Show percent</display_text>
-      </Parameter>
-      <Parameter Name="reset_trigger_value">
-        <tooltip>Name of the scalar which is used to reset the progress bar.</tooltip>
-        <advanced>0</advanced>
-        <value>reset</value>
-        <display_text>Reset Value</display_text>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="trigger_value">
-        <tooltip>Name of the scalar which is used to increment progress bar by one.</tooltip>
-        <advanced>0</advanced>
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="trigger">0</Parameter>
-    </PreviousParameters>
-    <DBlocks />
-    <Subscriptions>
-      <Subscription>
-        <data_source>ButtonX2</data_source>
-        <block Name="Click_Event">
-          <alias>trigger</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Trigger</data_source>
-        <block Name="Progress">
-          <alias />
-          <Signal>percent</Signal>
-        </block>
-        <block Name="Trigger">
-          <alias />
-          <Signal>trigger</Signal>
-        </block>
-        <block Name="ResetTrigger">
-          <alias />
-          <Signal>reset</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
   </Plugin>
 </PaPiConfig>
