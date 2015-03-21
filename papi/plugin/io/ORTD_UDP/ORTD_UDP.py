@@ -174,7 +174,7 @@ class ORTD_UDP(iop_base):
         signal_values = {}
         while goOn:
             try:
-                rev = self.sock_recv.recv(1600)
+                rev = self.sock_recv.recv(20000) # not feasible for network connection other than loopback
             except socket.timeout:
                 # print('timeout')
                 newData = False
@@ -223,12 +223,21 @@ class ORTD_UDP(iop_base):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
                 i += 1
 
-            #print(unp)
+            print("*********************************************/n")
+            print(unp)
+            print("*********************************************/n")
 
             js = unp.replace('\\', '')
+            
+            
 
 
             d = json.loads(js)
+            
+            print("*********************************************/n")
+            print(d)
+            print("*********************************************/n")
+            
 
 
             # config completely received
