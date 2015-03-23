@@ -111,7 +111,7 @@ class OrtdController(vip_base):
                    while len(self.plugin_started_list):
                         pl_uname = self.plugin_started_list.pop()
                         self.control_api.do_delete_plugin_uname(pl_uname)
-                time.sleep(1)
+                time.sleep(0.5)
 
             ############################
             #       Create Plugins     #
@@ -124,7 +124,7 @@ class OrtdController(vip_base):
                             pl_cfg = cfg[pl_uname]
                             self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
                             self.plugin_started_list.append(pl_uname)
-            time.sleep(1)
+            time.sleep(1.5)
 
             ############################
             #       Create Subs        #
