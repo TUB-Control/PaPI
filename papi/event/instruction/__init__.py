@@ -7,6 +7,7 @@ from .PausePlugin import PausePlugin
 from .ResumePlugin import ResumePlugin
 from .startPlugin import StartPlugin
 from .Subscribe import Subscribe
+from .SubsribeByUname import SubscribeByUname
 from .Unsubscribe import Unsubscribe
 from .SetParameter import SetParameter
 from .CloseProgram import CloseProgram

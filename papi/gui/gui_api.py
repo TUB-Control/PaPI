@@ -149,12 +149,9 @@ class Gui_api(QtCore.QObject):
         :param changeRequest:
         :return:
         """
-        pl_id = self.do_get_plugin_id_from_uname(uname)
+        event = Event.data.EditDPluginByUname(self.gui_id, uname, eObject, changeRequest)
 
-        if pl_id is not None:
-            self.do_edit_plugin(pl_id, eObject, changeRequest)
-        else:
-            self.log.printText(1, " Do edit plugin with uname " + uname + ' failed')
+        self.core_queue.put(event)
 
     def do_stopReset_pluign(self, id):
         """
@@ -246,20 +243,9 @@ class Gui_api(QtCore.QObject):
         :type block_name: basestring
         :return:
         """
-        subscriber_id = self.do_get_plugin_id_from_uname(subscriber_uname)
-        if subscriber_id is None:
-            # plugin with uname does not exist
-            self.log.printText(1, 'do_subscribe, sub uname worng')
-            return -1
-
-        source_id = self.do_get_plugin_id_from_uname(source_uname)
-        if source_id is None:
-            # plugin with uname does not exist
-            self.log.printText(1, 'do_subscribe, target uname wrong')
-            return -1
-
-        # call do_subscribe with ids to subscribe
-        self.do_subscribe(subscriber_id, source_id, block_name, signals, sub_alias)
+        event = Event.instruction.SubscribeByUname(self.gui_id, 0, subscriber_uname, source_uname, block_name,
+                                                   signals=signals, sub_alias= sub_alias)
+        self.core_queue.put(event)
 
     def do_unsubscribe(self, subscriber_id, source_id, block_name, signal_index=None):
         """
@@ -562,9 +548,10 @@ class Gui_api(QtCore.QObject):
             # 0: ident, 1: uname, 2: config
             self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \
-                                 lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \
-                                                                 parameters_to_change, signals_to_change))
+        # QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \
+        #                         lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \
+        #                                                         parameters_to_change, signals_to_change))
+        self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
 
     def change_uname_to_uniqe(self, uname):
         """

@@ -78,23 +78,25 @@ class Core:
                                            'plugin_stopped': self.__process_plugin_stopped__
         }
 
-        self.__process_data_event_l__ = {'new_data': self.__process_new_data__,
-                                         'new_block': self.__process_new_block__,
-                                         'new_parameter': self.__process_new_parameter__,
-                                         'edit_dplugin': self.__process_edit_dplugin,
-                                         'delete_block': self.__process_delete_block__,
-                                         'delete_parameter': self.__delete_parameter__
+        self.__process_data_event_l__ = {'new_data':            self.__process_new_data__,
+                                         'new_block':           self.__process_new_block__,
+                                         'new_parameter':       self.__process_new_parameter__,
+                                         'edit_dplugin':        self.__process_edit_dplugin,
+                                         'edit_dplugin_by_uname': self.__process_edit_dplugin_by_uname__,
+                                         'delete_block':        self.__process_delete_block__,
+                                         'delete_parameter':     self.__delete_parameter__
         }
 
-        self.__process_instr_event_l__ = {'create_plugin': self.__process_create_plugin__,
-                                          'stop_plugin': self.__process_stop_plugin__,
-                                          'close_program': self.__process_close_programm__,
-                                          'subscribe': self.__process_subscribe__,
-                                          'unsubscribe': self.__process_unsubsribe__,
-                                          'set_parameter': self.__process_set_parameter__,
-                                          'pause_plugin': self.__process_pause_plugin__,
-                                          'resume_plugin': self.__process_resume_plugin__,
-                                          'start_plugin': self.__process_start_plugin__
+        self.__process_instr_event_l__ = {'create_plugin':      self.__process_create_plugin__,
+                                          'stop_plugin':        self.__process_stop_plugin__,
+                                          'close_program':      self.__process_close_programm__,
+                                          'subscribe':          self.__process_subscribe__,
+                                          'subscribe_by_uname': self.__process_subscribe_by_uname__,
+                                          'unsubscribe':        self.__process_unsubsribe__,
+                                          'set_parameter':      self.__process_set_parameter__,
+                                          'pause_plugin':       self.__process_pause_plugin__,
+                                          'resume_plugin':      self.__process_resume_plugin__,
+                                          'start_plugin':       self.__process_start_plugin__
         }
 
         # creating the main core data object DCore and core queue
@@ -122,6 +124,9 @@ class Core:
         self.alive_timer = Timer(self.alive_intervall, self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
+
+        #
+        self.core_delayed_operation_queue = []
 
     def run(self):
         """
@@ -339,6 +344,64 @@ class Core:
         else:
             return -1
 
+    def new_subscription(self, subscriber_id, source_id, block_name, signals, sub_alias, orginal_event=None):
+        """
+        Gets information of a new and wanted subscription.
+        This methond will try to create the wanted subscription.
+
+        :param subscriber_id: Id of the plugin that want to get data
+        :param source_id:  Id of the plugin that will be the data source
+        :param block_name:  name of source block of source plugin
+        :param signals:  signals to subscribe
+        :param sub_alias:  optional alias for parameter
+        :return:
+        """
+        already_sub = False
+        # test if already subscribed
+        source_pl = self.core_data.get_dplugin_by_id(source_id)
+        if source_pl is not None:
+
+            if source_pl.state != PLUGIN_STATE_START_SUCCESFUL:
+                self.core_delayed_operation_queue.append(orginal_event)
+                self.log.printText(2, 'subscribe, event was placed in delayed queue because plugin with id: '
+                                   + str(source_id) + ' is still starting.')
+                return 0
+
+            blocks = source_pl.get_dblocks()
+            if block_name in blocks:
+                b = blocks[block_name]
+                subs = b.get_subscribers()
+                if subscriber_id in subs:
+                    already_sub = True
+
+        if already_sub is False:
+            dsubscription = self.core_data.subscribe(subscriber_id, source_id, block_name)
+            if dsubscription is None:
+                # subscribtion failed
+                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+                    subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name))
+                return -1
+            else:
+                # subscribtion correct
+                dsubscription.alias = sub_alias
+
+        if signals != []:
+            if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
+                # subscribtion failed
+                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+                    subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name)
+                                   + '. A Problem with signals')
+                return -1
+            else:
+                pass
+
+        self.log.printText(1, 'subscribe, subscribtion correct: ' + str(subscriber_id) + '->(' + str(source_id) + ',' + str(
+            block_name) + ')')
+        self.update_meta_data_to_gui(subscriber_id)
+        self.update_meta_data_to_gui(source_id)
+        return ERROR.NO_ERROR
+
+
 
     # ------- Event processing initial stage ---------
     def __process_event__(self, event):
@@ -396,6 +459,10 @@ class Core:
             # plugin exists and sent successfull event, so change it state
             dplug.state = PLUGIN_STATE_START_SUCCESFUL
             self.update_meta_data_to_gui(dplug.id)
+
+            # process delayed_operation_queue
+            while len(self.core_delayed_operation_queue) != 0:
+                self.core_event_queue.put(self.core_delayed_operation_queue.pop(0))
             return 1
         else:
             # plugin does not exist
@@ -645,25 +712,45 @@ class Core:
 
         pl = self.core_data.get_dplugin_by_id(dID)
 
-        # DBlock of DPlugin should be edited
-        if isinstance(eObject, DBlock):
+        if pl is not None:
+            if pl.state != PLUGIN_STATE_START_SUCCESFUL:
+                self.core_delayed_operation_queue.append(event)
+                self.log.printText(2, 'edit_dplugin, event was placed in delayed queue because plugin with name: ' +
+                                   pl.uname + ' is still starting')
 
-            dblock = pl.get_dblock_by_name(eObject.name)
+                return 0
 
-            if "edit" in cRequest:
-                cObject = cRequest["edit"]
+            # DBlock of DPlugin should be edited
+            if isinstance(eObject, DBlock):
 
-                # Signal should be modified in DBlock
-                if isinstance(cObject, DSignal):
-                    dsignal = dblock.get_signal_by_uname(cObject.uname)
+                dblock = pl.get_dblock_by_name(eObject.name)
 
-                    dsignal.dname = cObject.dname
+                if "edit" in cRequest:
+                    cObject = cRequest["edit"]
 
-                    self.log.printText(3,
-                                       'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname +
-                                       " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
+                    # Signal should be modified in DBlock
+                    if isinstance(cObject, DSignal):
+                        dsignal = dblock.get_signal_by_uname(cObject.uname)
 
-        self.update_meta_data_to_gui(pl.id, True)
+                        dsignal.dname = cObject.dname
+
+                        self.log.printText(3,
+                                           'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname +
+                                           " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
+
+            self.update_meta_data_to_gui(pl.id, True)
+
+    def __process_edit_dplugin_by_uname__(self, event):
+
+        dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
+        if dplugin is not None:
+            pl_id = dplugin.id
+
+            idEvent = Event.data.EditDPlugin(self.gui_id, pl_id, event.editedObject, event.changeRequest)
+
+            self.__process_edit_dplugin(idEvent)
+        else:
+            self.log.printText(1, " Do edit plugin with uname " + event.plugin_uname + ' failed')
 
     # ------- Event processing second stage: instr events ---------
     def __process_create_plugin__(self, event):
@@ -923,43 +1010,71 @@ class Core:
         """
         # get event origin id and optional parameters
         opt = event.get_optional_parameter()
-        oID = event.get_originID()
+        self.new_subscription(event.get_originID(), opt.source_ID, opt.block_name, opt.signals, opt.subscription_alias,
+                              orginal_event=event)
 
-        already_sub = False
-        # test if already subscribed
-        source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
-        if source_pl is not None:
-            blocks = source_pl.get_dblocks()
-            if opt.block_name in blocks:
-                b = blocks[opt.block_name]
-                subs = b.get_subscribers()
-                if oID in subs:
-                    already_sub = True
+        # already_sub = False
+        # # test if already subscribed
+        # source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
+        # if source_pl is not None:
+        #     blocks = source_pl.get_dblocks()
+        #     if opt.block_name in blocks:
+        #         b = blocks[opt.block_name]
+        #         subs = b.get_subscribers()
+        #         if oID in subs:
+        #             already_sub = True
+        #
+        # if already_sub is False:
+        #     dsubscription = self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
+        #     if dsubscription is None:
+        #         # subscribtion failed
+        #         self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+        #             oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
+        #         return -1
+        #     else:
+        #         # subscribtion correct
+        #         dsubscription.alias = opt.subscription_alias
+        #
+        # if opt.signals != []:
+        #     if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is None:
+        #         # subscribtion failed
+        #         self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+        #             oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
+        #         return -1
+        #     else:
+        #         pass
+        #
+        # self.log.printText(1, 'subscribe, subscribtion correct: ' + str(oID) + '->(' + str(opt.source_ID) + ',' + str(
+        #     opt.block_name) + ')')
+        # self.update_meta_data_to_gui(oID)
+        # self.update_meta_data_to_gui(opt.source_ID)
 
-        if already_sub is False:
-            dsubscription = self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
-            if dsubscription is None:
-                # subscribtion failed
-                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
-                    oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
-                return -1
-            else:
-                # subscribtion correct
-                dsubscription.alias = opt.subscription_alias
+    def __process_subscribe_by_uname__(self, event):
+        """
+        Process subscribe_event.
+        Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
 
-        if opt.signals != []:
-            if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is None:
-                # subscribtion failed
-                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
-                    oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
-                return -1
-            else:
-                pass
+        :param event: event to process
+        :type event: PapiEventBase
+        :type dplugin_sub: DPlugin
+        :type dplugin_source: DPlugin
+        """
+        subscriber_id = self.core_data.get_dplugin_by_uname(event.subscriber_uname).id
+            #self.do_get_plugin_id_from_uname(event.subscriber_uname)
+        if subscriber_id is None:
+            # plugin with uname does not exist
+            self.log.printText(1, 'do_subscribe, sub uname worng')
+            return -1
 
-        self.log.printText(1, 'subscribe, subscribtion correct: ' + str(oID) + '->(' + str(opt.source_ID) + ',' + str(
-            opt.block_name) + ')')
-        self.update_meta_data_to_gui(oID)
-        self.update_meta_data_to_gui(opt.source_ID)
+        source_id = self.core_data.get_dplugin_by_uname(event.source_uname).id
+        #self.do_get_plugin_id_from_uname(event.source_uname)
+        if source_id is None:
+            # plugin with uname does not exist
+            self.log.printText(1, 'do_subscribe, target uname wrong')
+            return -1
+        #print(subscriber_id, source_id, event.block_name, event.signals, event.sub_alias)
+        self.new_subscription(subscriber_id, source_id, event.block_name, event.signals, event.sub_alias,
+                              orginal_event=event)
 
     def __process_unsubsribe__(self, event):
         """
