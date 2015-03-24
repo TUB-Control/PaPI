@@ -1,29 +1,84 @@
-<PaPiConfig Date="2015-03-24 16:26:38" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-24 17:21:27" PaPI_version="1.0.0">
   <guiConfig>
     <size>
-      <x>
-        <value>771</value>
-      </x>
       <y>
         <value>853</value>
       </y>
+      <x>
+        <value>771</value>
+      </x>
     </size>
     <tabs>
       <PaPI-Tab>
         <background>default</background>
       </PaPI-Tab>
-      <Tab>
-        <background>default</background>
-      </Tab>
     </tabs>
   </guiConfig>
-  <Plugin uname="Plugin1">
-    <Identifier>Button</Identifier>
+  <Plugin uname="HTMLViewer">
+    <Identifier>HTMLViewer</Identifier>
     <StartConfig>
-      <Parameter Name="size">
-        <value>(150,50)</value>
+      <Parameter Name="uname">
+        <value>HTMLViewer</value>
       </Parameter>
-      <Parameter Name="state2">
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-        <value>
+      <Parameter Name="size">
+        <value>(319,144)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="name">
+        <value>VisualPlugin</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="content">
+        <value>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+&lt;style&gt;
+table, th, td {
+    border: 1px solid black;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Jill&lt;/td&gt;
+    &lt;td&gt;Smith&lt;/td&gt;
+    &lt;td&gt;50&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Eve&lt;/td&gt;
+    &lt;td&gt;Jackson&lt;/td&gt;
+    &lt;td&gt;94&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;John&lt;/td&gt;
+    &lt;td&gt;Doe&lt;/td&gt;
+    &lt;td&gt;80&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</value>
+      </Parameter>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks />
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>
