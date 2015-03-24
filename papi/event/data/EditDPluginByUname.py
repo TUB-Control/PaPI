@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-#-*- coding: utf-8 -*-
+#-*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische Universit√§t Berlin,
-Fakult√§t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit‰t Berlin,
+Fakult‰t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
  
@@ -23,22 +23,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
-Stefan Ruppin
 Sven Knuth
 """
 
-from papi.plugin.base_classes.base_visual import base_visual
+__author__ = 'Sven Knuth'
 
-from papi.constants import PLUGIN_PCP_IDENTIFIER
+from papi.event.data.DataBase import DataBase
 
 
-class pcp_base(base_visual):
+class EditDPluginByUname(DataBase):
+    def __init__(self, oID, plugin_uname, eObject, changeRequest):
+        super().__init__(oID, None, 'edit_dplugin_by_uname', None)
+        #Object of DPlugin, which should be changed
+        self.editedObject = eObject
+        #Kind of action. e.g. {'edit': DSignal}
+        self.changeRequest = changeRequest
 
-    def initiate_layer_1(self, config):
-        return self.initiate_layer_0(config)
-
-    def initiate_layer_0(self, config):
-        raise NotImplementedError("Please Implement this method")
-
-    def get_type(self):
-        return PLUGIN_PCP_IDENTIFIER
+        self.plugin_uname = plugin_uname

@@ -63,6 +63,9 @@ class OrtdController(vip_base):
 
         self.plugin_started_list = []
 
+        self.event_list = []
+        self.thread_alive = False
+
         return True
 
     def pause(self):
@@ -87,73 +90,80 @@ class OrtdController(vip_base):
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
-        self.thread1 = threading.Thread(target=self.execute_cfg, args=[Data])
-        self.thread1.start()
+        self.thread1 = threading.Thread(target=self.execute_cfg)
+
+
+        self.event_list.append(Data)
+        if self.thread_alive is False:
+            self.thread1.start()
 
 
 
-    def execute_cfg(self, Data):
-        ############################
-        #      Reset Signal        #
-        ############################
-        if 'ControlSignalReset' in Data:
-            val = Data['ControlSignalReset']
-            print(val)
-            if val == 1:
-               while len(self.plugin_started_list):
-                    pl_uname = self.plugin_started_list.pop()
-                    self.control_api.do_delete_plugin_uname(pl_uname)
-
-        ############################
-        #       Create Plugins     #
-        ############################
-        if 'ControlSignalCreate' in Data:
-            cfg = Data['ControlSignalCreate']
-            if cfg is not None:
-                for pl_uname in cfg:
-                    if pl_uname not in self.plugin_started_list:
-                        pl_cfg = cfg[pl_uname]
-                        self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
-                        self.plugin_started_list.append(pl_uname)
-        time.sleep(0.5)
-
-        ############################
-        #       Create Subs        #
-        ############################
-        if 'ControlSignalSub' in Data:
-            cfg = Data['ControlSignalSub']
-            if cfg is not None:
-                for pl_uname in cfg:
-                    pl_cfg = cfg[pl_uname]
-                    sig = []
-                    if 'signals' in pl_cfg:
-                        sig = pl_cfg['signals']
-                    self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
-
-        ############################
-        #    Set parameter links   #
-        ############################
-        if 'ControllerSignalParameter' in Data:
-            cfg = Data['ControllerSignalParameter']
-            if cfg is not None:
-                for pl_uname in cfg:
-                    pl_cfg = cfg[pl_uname]
-                    para = None
-                    if 'parameter' in pl_cfg:
-                        para = pl_cfg['parameter']
-                    self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
-
-        ############################
-        #    Close plugin          #
-        ############################
-        if 'ControllerSignalClose' in Data:
-            cfg = Data['ControllerSignalClose']
-            if cfg is not None:
-                for pl_uname in cfg:
-                    if pl_uname in self.plugin_started_list:
+    def execute_cfg(self):
+        while len(self.event_list) > 0:
+            Data = self.event_list.pop(0)
+            ############################
+            #      Reset Signal        #
+            ############################
+            if 'ControlSignalReset' in Data:
+                val = Data['ControlSignalReset']
+                if val == 1:
+                   while len(self.plugin_started_list):
+                        pl_uname = self.plugin_started_list.pop()
                         self.control_api.do_delete_plugin_uname(pl_uname)
-                        self.plugin_started_list.remove(pl_uname)
+                time.sleep(0.5)
 
+            ############################
+            #       Create Plugins     #
+            ############################
+            if 'ControlSignalCreate' in Data:
+                cfg = Data['ControlSignalCreate']
+                if cfg is not None:
+                    for pl_uname in cfg:
+                        if pl_uname not in self.plugin_started_list:
+                            pl_cfg = cfg[pl_uname]
+                            self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
+                            self.plugin_started_list.append(pl_uname)
+
+
+            ############################
+            #       Create Subs        #
+            ############################
+            if 'ControlSignalSub' in Data:
+                cfg = Data['ControlSignalSub']
+                if cfg is not None:
+                    for pl_uname in cfg:
+                        pl_cfg = cfg[pl_uname]
+                        sig = []
+                        if 'signals' in pl_cfg:
+                            sig = pl_cfg['signals']
+                        self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
+
+            ############################
+            #    Set parameter links   #
+            ############################
+            if 'ControllerSignalParameter' in Data:
+                cfg = Data['ControllerSignalParameter']
+                if cfg is not None:
+                    for pl_uname in cfg:
+                        pl_cfg = cfg[pl_uname]
+                        para = None
+                        if 'parameter' in pl_cfg:
+                            para = pl_cfg['parameter']
+                        self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+
+            ############################
+            #    Close plugin          #
+            ############################
+            if 'ControllerSignalClose' in Data:
+                cfg = Data['ControllerSignalClose']
+                if cfg is not None:
+                    for pl_uname in cfg:
+                        if pl_uname in self.plugin_started_list:
+                            self.control_api.do_delete_plugin_uname(pl_uname)
+                            self.plugin_started_list.remove(pl_uname)
+
+        self.thread_alive = False
 
     def set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
@@ -274,7 +284,6 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.setLayout(layout)
 
     def validatePage(self):
-        print('Start: next clicked')
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
         json = self.file_edit.text()
@@ -304,7 +313,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         return True
 
     def subscribe_control_signal(self):
-        time.sleep(0.5)
+
         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',

@@ -49,6 +49,8 @@ class Slider(pcp_base):
         self.send_new_block_list([block])
         self.set_widget_for_internal_usage(self.create_widget())
 
+        return True
+
     def create_widget(self):
         self.central_widget = QWidget()
 

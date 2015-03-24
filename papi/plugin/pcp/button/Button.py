@@ -68,6 +68,8 @@ class Button(pcp_base):
         self.button.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.button.customContextMenuRequested.connect(self.show_context_menu)
 
+        return True
+
 
     def show_context_menu(self, pos):
         gloPos = self.button.mapToGlobal(pos)
