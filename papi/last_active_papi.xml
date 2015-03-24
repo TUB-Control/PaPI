@@ -1,47 +1,47 @@
-<PaPiConfig Date="2015-03-16 16:56:56" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-19 19:29:23" PaPI_version="1.0.0">
   <guiConfig>
     <size>
-      <y>
-        <value>853</value>
-      </y>
       <x>
         <value>771</value>
       </x>
+      <y>
+        <value>853</value>
+      </y>
     </size>
     <tabs>
-      <Tab>
+      <PaPI-Tab>
         <background>default</background>
-      </Tab>
+      </PaPI-Tab>
     </tabs>
   </guiConfig>
   <Plugin uname="OrtdController">
     <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="size">
-        <advanced>1</advanced>
-        <value>(300,300)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
       <Parameter Name="name">
         <value>ORTDController</value>
       </Parameter>
       <Parameter Name="position">
-        <advanced>1</advanced>
         <value>(0,0)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>Tab</value>
-        <tooltip>Used for tabs</tooltip>
+        <tooltip>Determine position: (x,y)</tooltip>
       </Parameter>
       <Parameter Name="uname">
         <value>OrtdController</value>
       </Parameter>
+      <Parameter Name="size">
+        <value>(378,313)</value>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine size: (height,width)</tooltip>
+      </Parameter>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
       <Parameter Name="ORTD_Plugin_uname">
-        <advanced>0</advanced>
         <value>ORTDPlugin1</value>
+        <advanced>0</advanced>
         <display_text>Uname to use for ortd plugin instance</display_text>
       </Parameter>
     </StartConfig>
@@ -65,21 +65,21 @@
     <Identifier>ORTD_UDP</Identifier>
     <StartConfig>
       <Parameter Name="source_port">
-        <advanced>1</advanced>
         <value>20000</value>
-      </Parameter>
-      <Parameter Name="out_port">
         <advanced>1</advanced>
-        <value>20001</value>
       </Parameter>
       <Parameter Name="address">
-        <advanced>1</advanced>
         <value>127.0.0.1</value>
+        <advanced>1</advanced>
       </Parameter>
       <Parameter Name="Cfg_Path">
-        <advanced>0</advanced>
         <value>/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json</value>
+        <advanced>0</advanced>
         <type>file</type>
+      </Parameter>
+      <Parameter Name="out_port">
+        <value>20001</value>
+        <advanced>1</advanced>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -99,11 +99,6 @@
         </DSignal>
         <DSignal uname="ControllerSignalClose">
           <dname>ControllerSignalClose</dname>
-        </DSignal>
-      </DBlock>
-      <DBlock Name="SourceGroup0">
-        <DSignal uname="Const">
-          <dname>Const</dname>
         </DSignal>
       </DBlock>
     </DBlocks>
