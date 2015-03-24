@@ -425,9 +425,6 @@ class DBlockTreeModel(PaPITreeModel):
                 return True
 
         return False
-<<<<<<< Updated upstream
-=======
-
 
 class CustomFieldModel(QStandardItemModel):
     def __init__(self, parent=None):
@@ -677,4 +674,3 @@ class StructTreeNode(QStandardItem):
             return None
 
         return None
->>>>>>> Stashed changes
