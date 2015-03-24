@@ -240,12 +240,6 @@ class ORTD_UDP(iop_base):
 
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections = self.extract_config_elements(cfg)
-            # print(ORTDSources)
-            # print(ORTDParameters)
-            # print(plToCreate)
-            # print(plToClose)
-            # print(subscriptions)
-            # print(paraConnections)
 
             self.update_block_list(ORTDSources)
             self.update_parameter_list(ORTDParameters)
@@ -253,6 +247,8 @@ class ORTD_UDP(iop_base):
             self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections)
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections):
+
+        print(toCreate)
 
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
