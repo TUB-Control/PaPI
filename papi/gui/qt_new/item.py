@@ -425,3 +425,256 @@ class DBlockTreeModel(PaPITreeModel):
                 return True
 
         return False
+<<<<<<< Updated upstream
+=======
+
+
+class CustomFieldModel(QStandardItemModel):
+    def __init__(self, parent=None):
+        super(CustomFieldModel, self).__init__(parent)
+
+    def data(self, index, role):
+        """
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param index:
+        :param role:
+        :return:
+        """
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.ToolTipRole:
+            return super(CustomFieldModel, self).data(index, Qt.ToolTipRole)
+
+        if role == Qt.DisplayRole:
+
+            if col == 0:
+                field = super(CustomFieldModel, self).data(index, Qt.UserRole)
+                return field.desc
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
+                return field.size
+            if col == 2:
+                return None
+
+        if role == Qt.DecorationRole:
+            pass
+
+        if role == Qt.UserRole:
+            pass
+
+        if role == Qt.EditRole:
+            if col == 0:
+                field = super(CustomFieldModel, self).data(index, Qt.UserRole)
+                return field.desc
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
+                return field.size
+            if col == 2:
+                return None
+
+        return None
+
+    def setData(self, index, value, role):
+        """
+        This function is called when a content in a row is edited by the user.
+
+        :param index: Current selected index.
+        :param value: New value from user
+        :param role:
+        :return:
+        """
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.EditRole:
+
+            if col == 0:
+
+                field = super(CustomFieldModel, self).data(index, Qt.UserRole)
+                field.desc = value
+                self.dataChanged.emit(index, None)
+
+                return True
+
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
+                field.size = value
+                self.dataChanged.emit(index, None)
+
+        return False
+
+
+class StructTreeModel(PaPITreeModel):
+    """
+    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
+    """
+    def __init__(self, parent=None):
+        super(StructTreeModel, self).__init__(parent)
+
+    def data(self, index, role):
+        """
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param index:
+        :param role:
+        :return:
+        """
+
+        if not index.isValid():
+            return None
+
+        row = index.row()
+        col = index.column()
+
+        if role == Qt.ToolTipRole:
+            return super(StructTreeModel, self).data(index, Qt.ToolTipRole)
+
+        if role == Qt.DisplayRole:
+
+            if col == 0:
+                item = super(StructTreeModel, self).data(index, Qt.UserRole)
+                if item is None:
+                    return super(StructTreeModel, self).data(index, Qt.DisplayRole)
+                return item.desc
+
+            return 'Quark'
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                item = super(StructTreeModel, self).data(index_sibling, Qt.UserRole)
+                return item.size
+            if col == 2:
+                return None
+
+        if role == Qt.DecorationRole:
+            pass
+
+        if role == Qt.UserRole:
+            pass
+
+        if role == Qt.EditRole:
+            if col == 0:
+                item = super(StructTreeModel, self).data(index, Qt.UserRole)
+                return item.field
+            if col == 1:
+                index_sibling = index.sibling(row, col-1)
+                item = super(StructTreeModel, self).data(index_sibling, Qt.UserRole)
+                return item.size
+            if col == 2:
+                return None
+
+        return None
+
+class StructRootNode(QStandardItem):
+    """
+    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
+    """
+    def __init__(self, name, parent=None):
+        super(StructRootNode, self).__init__(name)
+        self.nodes = {}
+        self.size = ''
+        self.field = 'Data'
+
+    def appendRow(self, field):
+
+        elements = str.split(field.desc, "::")
+
+        # Create new sub node for this element
+
+        if elements[0] not in self.nodes:
+
+#            sub_elements = str.split(field.desc, "::", 1)
+            #field.desc = sub_elements[1]
+            struct_node = StructTreeNode(field, 0)
+            self.nodes[elements[0]] = struct_node
+
+            super(StructRootNode, self).appendRow(struct_node)
+
+        # There is already a subnode for this element
+
+        if elements[0] in self.nodes:
+            self.nodes[elements[0]].appendRow(field)
+
+
+class StructTreeNode(QStandardItem):
+    """
+    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
+    """
+    def __init__(self, field, level, parent=None):
+
+        elements = str.split(field.desc, "::")
+
+        self.nodes = {}
+        self.level = level
+        self.time_identifier = 'time'
+        self.ptime_identifier = 'ptime'
+        self.size = ''
+        self.field = ''
+        self.object = field
+
+        super(StructTreeNode, self).__init__(elements[self.level])
+
+        self.appendRow(field)
+
+    def appendRow(self, field):
+
+        elements = str.split(field.desc, "::")
+
+        # Node is responsible for the first element
+
+        if len(elements) > self.level + 1:
+
+            if self.time_identifier not in self.nodes:
+                struct_node = QStandardItem(self.time_identifier)
+                self.nodes[self.time_identifier] = struct_node
+                super(StructTreeNode, self).appendRow(struct_node)
+
+            if self.ptime_identifier not in self.nodes:
+                struct_node = QStandardItem(self.ptime_identifier)
+                self.nodes[self.ptime_identifier] = struct_node
+                super(StructTreeNode, self).appendRow(struct_node)
+
+            if elements[self.level + 1] not in self.nodes:
+                struct_node = StructTreeNode(field, self.level + 1)
+                self.nodes[elements[self.level + 1]] = struct_node
+                super(StructTreeNode, self).appendRow(struct_node)
+
+            if elements[self.level + 1] in self.nodes:
+                self.nodes[elements[self.level + 1]].appendRow(field)
+        else:
+            self.size = '3x1'
+            self.field = elements[self.level]
+
+    def data(self, role):
+        """
+        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
+        :param role:
+        :return:
+        """
+        if role == Qt.ToolTipRole:
+            return None
+
+        if role == Qt.DisplayRole:
+            return self.field
+
+        if role == Qt.DecorationRole:
+            return None
+
+        if role == Qt.UserRole:
+            return self.object
+
+        if role == Qt.EditRole:
+            return None
+
+        return None
+>>>>>>> Stashed changes

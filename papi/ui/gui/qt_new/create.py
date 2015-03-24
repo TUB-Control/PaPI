@@ -2,7 +2,11 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/create.ui'
 #
+<<<<<<< Updated upstream
 # Created: Mon Mar 16 16:37:08 2015
+=======
+# Created: Tue Mar 24 11:15:40 2015
+>>>>>>> Stashed changes
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!

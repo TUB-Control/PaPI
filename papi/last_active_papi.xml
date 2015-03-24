@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <PaPiConfig Date="2015-03-16 16:43:07" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
@@ -5,6 +6,11 @@
         <background>default</background>
       </PaPI-Tab>
     </tabs>
+=======
+<PaPiConfig Date="2015-03-24 11:48:19" PaPI_version="1.0.0">
+  <guiConfig>
+    <tabs />
+>>>>>>> Stashed changes
     <size>
       <x>
         <value>771</value>
