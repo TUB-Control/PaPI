@@ -34,12 +34,10 @@ import papi.pyqtgraph as pq
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-import collections
-import re
 
-from papi.pyqtgraph.Qt import QtGui, QtCore
+from papi.pyqtgraph.Qt import QtCore
 
-#RENAME TO PLUGIN NAME
+
 class HTMLViewer(vip_base):
 
 
