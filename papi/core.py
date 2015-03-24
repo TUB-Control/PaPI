@@ -78,25 +78,26 @@ class Core:
                                            'plugin_stopped': self.__process_plugin_stopped__
         }
 
-        self.__process_data_event_l__ = {'new_data':            self.__process_new_data__,
-                                         'new_block':           self.__process_new_block__,
-                                         'new_parameter':       self.__process_new_parameter__,
-                                         'edit_dplugin':        self.__process_edit_dplugin,
-                                         'edit_dplugin_by_uname': self.__process_edit_dplugin_by_uname__,
-                                         'delete_block':        self.__process_delete_block__,
-                                         'delete_parameter':     self.__delete_parameter__
+        self.__process_data_event_l__ = {'new_data':                self.__process_new_data__,
+                                         'new_block':               self.__process_new_block__,
+                                         'new_parameter':           self.__process_new_parameter__,
+                                         'edit_dplugin':            self.__process_edit_dplugin,
+                                         'edit_dplugin_by_uname':   self.__process_edit_dplugin_by_uname__,
+                                         'delete_block':            self.__process_delete_block__,
+                                         'delete_parameter':        self.__delete_parameter__
         }
 
-        self.__process_instr_event_l__ = {'create_plugin':      self.__process_create_plugin__,
-                                          'stop_plugin':        self.__process_stop_plugin__,
-                                          'close_program':      self.__process_close_programm__,
-                                          'subscribe':          self.__process_subscribe__,
-                                          'subscribe_by_uname': self.__process_subscribe_by_uname__,
-                                          'unsubscribe':        self.__process_unsubsribe__,
-                                          'set_parameter':      self.__process_set_parameter__,
-                                          'pause_plugin':       self.__process_pause_plugin__,
-                                          'resume_plugin':      self.__process_resume_plugin__,
-                                          'start_plugin':       self.__process_start_plugin__
+        self.__process_instr_event_l__ = {'create_plugin':          self.__process_create_plugin__,
+                                          'stop_plugin':            self.__process_stop_plugin__,
+                                          'stop_plugin_by_uname':   self.__process_stop_plugin_by_uname__,
+                                          'close_program':          self.__process_close_programm__,
+                                          'subscribe':              self.__process_subscribe__,
+                                          'subscribe_by_uname':     self.__process_subscribe_by_uname__,
+                                          'unsubscribe':            self.__process_unsubsribe__,
+                                          'set_parameter':          self.__process_set_parameter__,
+                                          'pause_plugin':           self.__process_pause_plugin__,
+                                          'resume_plugin':          self.__process_resume_plugin__,
+                                          'start_plugin':           self.__process_start_plugin__
         }
 
         # creating the main core data object DCore and core queue
@@ -908,6 +909,21 @@ class Core:
             self.log.printText(1, 'stop_plugin, plugin with id ' + str(id) + ' not found')
             return ERROR.UNKNOWN_ERROR
 
+    def __process_stop_plugin_by_uname__(self, event):
+        """
+
+        :param event:
+        :return:
+        """
+        dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
+
+        if dplugin is not None:
+            id = dplugin.id
+
+            idEvent = Event.instruction.StopPlugin(self.gui_id, id, None)
+            self.__process_stop_plugin__(idEvent)
+
+
     def __process_start_plugin__(self, event):
         # get destination id
         id = event.get_destinatioID()
@@ -1059,20 +1075,22 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-        subscriber_id = self.core_data.get_dplugin_by_uname(event.subscriber_uname).id
-            #self.do_get_plugin_id_from_uname(event.subscriber_uname)
-        if subscriber_id is None:
+        pl = self.core_data.get_dplugin_by_uname(event.subscriber_uname)
+        if pl is not None:
+            subscriber_id = pl.id
+        else:
             # plugin with uname does not exist
             self.log.printText(1, 'do_subscribe, sub uname worng')
             return -1
 
-        source_id = self.core_data.get_dplugin_by_uname(event.source_uname).id
-        #self.do_get_plugin_id_from_uname(event.source_uname)
-        if source_id is None:
+        pl = self.core_data.get_dplugin_by_uname(event.source_uname)
+        if pl is not None:
+            source_id = pl.id
+        else:
             # plugin with uname does not exist
             self.log.printText(1, 'do_subscribe, target uname wrong')
             return -1
-        #print(subscriber_id, source_id, event.block_name, event.signals, event.sub_alias)
+
         self.new_subscription(subscriber_id, source_id, event.block_name, event.signals, event.sub_alias,
                               orginal_event=event)
 
@@ -1179,7 +1197,6 @@ class Core:
         :param event: event to process
         :type event: PapiEventBase
         """
-        print('Block Delete: ', event.blockname)
         pl_id = event.get_originID()
         self.core_data.rm_all_subscribers_of_a_dblock(pl_id, event.blockname)
 
@@ -1191,7 +1208,6 @@ class Core:
 
     def __delete_parameter__(self, event):
         pl_id = event.get_originID()
-        print('ToDelete:', event.parameterName)
 
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:

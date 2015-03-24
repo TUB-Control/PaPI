@@ -60,7 +60,7 @@ import socket
 
 import struct
 import json
-
+import time
 import pickle
 
 class OptionalObject(object):
@@ -143,10 +143,6 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
-        Counter = 1
-        data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
-
         return True
 
     def pause(self):
@@ -161,6 +157,10 @@ class ORTD_UDP(iop_base):
         self.thread.start()
 
     def thread_execute(self):
+        time.sleep(1)
+        data = struct.pack('<iiid', 12, 1, int(-3), float(0))
+        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
         goOn = True
         newData = False
         signal_values = {}
@@ -201,14 +201,14 @@ class ORTD_UDP(iop_base):
         if SourceId == -2:
             # new config in ORTD available
             # send trigger to get new config
-            print('NEW ORTD CONFIG')
+            #print('NEW ORTD CONFIG')
             Counter = 1
             data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
             self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
         if SourceId == -4:
-            print('new CFG')
-            print(rev)
+            #print('new CFG')
+            #print(rev)
             # new configItem
             # receive new config item and execute cfg in PaPI
             i = 17
@@ -217,9 +217,9 @@ class ORTD_UDP(iop_base):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
                 i += 1
 
-            print("*********************************************/n")
-            print(unp)
-            print("*********************************************/n")
+            # print("*********************************************/n")
+            # print(unp)
+            # print("*********************************************/n")
 
             js = unp.replace('\\', '')
             
@@ -228,9 +228,9 @@ class ORTD_UDP(iop_base):
 
             d = json.loads(js)
             
-            print("*********************************************/n")
-            print(d)
-            print("*********************************************/n")
+            # print("*********************************************/n")
+            # print(d)
+            # print("*********************************************/n")
             
 
 

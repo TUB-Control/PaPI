@@ -284,7 +284,6 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.setLayout(layout)
 
     def validatePage(self):
-        print('Start: next clicked')
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
         json = self.file_edit.text()
@@ -314,7 +313,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         return True
 
     def subscribe_control_signal(self):
-        time.sleep(0.5)
+
         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',

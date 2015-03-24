@@ -3,6 +3,7 @@ __author__ = 'stefan'
 
 from .CreatePlugin import CreatePlugin
 from .StopPlugin import StopPlugin
+from .StopPluginByUname import StopPluginByUname
 from .PausePlugin import PausePlugin
 from .ResumePlugin import ResumePlugin
 from .startPlugin import StartPlugin
