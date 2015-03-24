@@ -16,6 +16,7 @@ v.1.XX
  * [plugin]: added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
  * [improvement]: shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
+ * 
 v.1.0
 ---
 
