@@ -45,41 +45,22 @@ class HTMLViewer(vip_base):
 
     def initiate_layer_0(self, config=None):
 
-#        self.config = config
-
         # ---------------------------
         # Read configuration
         # ---------------------------
-        # Note: this cfg items have to exist!
-        # self.show_grid_x = int(self.config['x-grid']['value']) == '1'
-        # self.show_grid_y = int(self.config['y-grid']['value']) == '1'
-        #
-        # int_re = re.compile(r'(\d+)')
-        #
-        # self.colors_selected = int_re.findall(self.config['color']['value']);
-        # self.types_selected = int_re.findall(self.config['style']['value']);
-
-
-
+        content = config['content']['value']
 
         # --------------------------------
         # Create Widget
         # --------------------------------
-        # Create Widget needed for this plugin
-
         self.WebView = QWebView()
 
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.WebView )
-
-        content = config['content']['value']
-
-
         self.WebView.setHtml(content)
         self.WebView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.WebView.customContextMenuRequested.connect(self.show_context_menu)
-
 
         return True
 
@@ -135,41 +116,10 @@ class HTMLViewer(vip_base):
 
         config = {
             "content": {
-                #'value': '<![CDATA[<p>your wefwefwef here</p>]]>'
-                'value': """<!DOCTYPE html>
-<html>
-
-<head>
-<style>
-table, th, td {
-    border: 1px solid black;
-}
-</style>
-</head>
-
-<body>
-
-<table style="width:100%">
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td>
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>Jackson</td>
-    <td>94</td>
-  </tr>
-  <tr>
-    <td>John</td>
-    <td>Doe</td>
-    <td>80</td>
-  </tr>
-</table>
-
-</body>
-</html>
-"""
+                'value': """<p> Insert your html code here </p>""",
+                'display_text' : 'HTML Content',
+                'advanced' : '0',
+                'tooltip' : 'Plain html code to be displayed'
         }}
 
         return config
