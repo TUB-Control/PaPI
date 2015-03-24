@@ -1,170 +1,109 @@
-<PaPiConfig Date="2015-03-16 16:43:07" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-16 16:56:56" PaPI_version="1.0.0">
   <guiConfig>
-    <tabs>
-      <PaPI-Tab>
-        <background>default</background>
-      </PaPI-Tab>
-    </tabs>
     <size>
-      <x>
-        <value>771</value>
-      </x>
       <y>
         <value>853</value>
       </y>
+      <x>
+        <value>771</value>
+      </x>
     </size>
+    <tabs>
+      <Tab>
+        <background>default</background>
+      </Tab>
+    </tabs>
   </guiConfig>
-  <Plugin uname="SliderX3">
-    <Identifier>Slider</Identifier>
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="upper_bound">
-        <value>1.0</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
-      </Parameter>
-      <Parameter Name="name">
-        <value>PaPI Slider</value>
-        <tooltip>Used for window title</tooltip>
-      </Parameter>
-      <Parameter Name="step_count">
-        <value>11</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
       <Parameter Name="size">
-        <value>(150,75)</value>
+        <advanced>1</advanced>
+        <value>(300,300)</value>
         <tooltip>Determine size: (height,width)</tooltip>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="lower_bound">
-        <value>0.0</value>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(239,57)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>0.81</value>
-        <tooltip>Used as initial value for the Slider</tooltip>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>SliderX3</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="SliderBlock">
-        <DSignal uname="SliderParameter1">
-          <dname>SliderParameter1</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Slider">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="upper_bound">
-        <value>1.0</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
       </Parameter>
       <Parameter Name="name">
-        <value>PaPI Slider</value>
-        <tooltip>Used for window title</tooltip>
-      </Parameter>
-      <Parameter Name="step_count">
-        <value>11</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(150,75)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="lower_bound">
-        <value>0.0</value>
+        <value>ORTDController</value>
       </Parameter>
       <Parameter Name="position">
+        <advanced>1</advanced>
         <value>(0,0)</value>
         <tooltip>Determine position: (x,y)</tooltip>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>0.57</value>
-        <tooltip>Used as initial value for the Slider</tooltip>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Slider</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="SliderBlock">
-        <DSignal uname="SliderParameter1">
-          <dname>SliderParameter1</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="SliderX2">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="upper_bound">
-        <value>1.0</value>
       </Parameter>
       <Parameter Name="tab">
-        <value>PaPI-Tab</value>
+        <value>Tab</value>
         <tooltip>Used for tabs</tooltip>
       </Parameter>
-      <Parameter Name="name">
-        <value>PaPI Slider</value>
-        <tooltip>Used for window title</tooltip>
-      </Parameter>
-      <Parameter Name="step_count">
-        <value>11</value>
-        <regex>[0-9]+</regex>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(150,75)</value>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="lower_bound">
-        <value>0.0</value>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(57,173)</value>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>0.79</value>
-        <tooltip>Used as initial value for the Slider</tooltip>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-      </Parameter>
       <Parameter Name="uname">
-        <value>SliderX2</value>
+        <value>OrtdController</value>
+      </Parameter>
+      <Parameter Name="ORTD_Plugin_uname">
+        <advanced>0</advanced>
+        <value>ORTDPlugin1</value>
+        <display_text>Uname to use for ortd plugin instance</display_text>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="ControllerSignals">
+          <alias />
+          <Signal>ControlSignalReset</Signal>
+          <Signal>ControlSignalCreate</Signal>
+          <Signal>ControlSignalSub</Signal>
+          <Signal>ControllerSignalParameter</Signal>
+          <Signal>ControllerSignalClose</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="ORTDPlugin1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="source_port">
+        <advanced>1</advanced>
+        <value>20000</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <advanced>1</advanced>
+        <value>20001</value>
+      </Parameter>
+      <Parameter Name="address">
+        <advanced>1</advanced>
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="Cfg_Path">
+        <advanced>0</advanced>
+        <value>/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json</value>
+        <type>file</type>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="SliderBlock">
-        <DSignal uname="SliderParameter1">
-          <dname>SliderParameter1</dname>
+      <DBlock Name="ControllerSignals">
+        <DSignal uname="ControlSignalReset">
+          <dname>ControlSignalReset</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalCreate">
+          <dname>ControlSignalCreate</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalSub">
+          <dname>ControlSignalSub</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalParameter">
+          <dname>ControllerSignalParameter</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalClose">
+          <dname>ControllerSignalClose</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="SourceGroup0">
+        <DSignal uname="Const">
+          <dname>Const</dname>
         </DSignal>
       </DBlock>
     </DBlocks>

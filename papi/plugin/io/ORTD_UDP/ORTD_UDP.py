@@ -143,18 +143,10 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
-        # db = DBlock('SourceGroup0')
-        # db.add_signal(DSignal('TestSig1'))
-        #
-        # self.send_new_block_list([db])
-        #
-        # self.send_delete_block('SourceGroup0')
-        #
-        # db = DBlock('SourceGroup0')
-        # db.add_signal(DSignal('TestSig2'))
-        #
-        # self.send_new_block_list([db])
-        # self.blocks['SourceGroup0'] = db
+        Counter = 1
+        data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
+        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
         return True
 
     def pause(self):
@@ -215,6 +207,8 @@ class ORTD_UDP(iop_base):
             self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
         if SourceId == -4:
+            print('new CFG')
+            print(rev)
             # new configItem
             # receive new config item and execute cfg in PaPI
             i = 17
