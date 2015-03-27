@@ -33,6 +33,8 @@ from PySide.QtGui import QSlider, QVBoxLayout, QWidget, QLabel, QRadioButton
 from PySide import QtCore
 
 from papi.data.DPlugin import DBlock
+from papi.data.DParameter import DParameter
+
 import papi.constants as pc
 
 class Radiobutton(pcp_base):
@@ -42,6 +44,16 @@ class Radiobutton(pcp_base):
 
         self.send_new_block_list([self.block])
         self.set_widget_for_internal_usage(self.create_widget())
+
+        para_list = []
+
+        self.para_texts    = DParameter('texts')
+        self.para_values   = DParameter('values')
+
+        para_list.append(self.para_texts)
+        para_list.append(self.para_values)
+
+        self.send_parameter_change(para_list)
 
         return True
 
