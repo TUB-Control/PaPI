@@ -1,0 +1,509 @@
+<PaPiConfig Date="2015-03-27 18:03:56" PaPI_version="1.0.0">
+  <guiConfig>
+    <size>
+      <y>
+        <value>849</value>
+      </y>
+      <x>
+        <value>787</value>
+      </x>
+    </size>
+    <tabs>
+      <PaPI-Tab>
+        <background>default</background>
+      </PaPI-Tab>
+    </tabs>
+  </guiConfig>
+  <Plugin uname="Plot">
+    <Identifier>Plot</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="x-grid">
+        <display_text>Grid-X</display_text>
+        <value>0</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="downsampling_rate">
+        <value>5</value>
+        <regex>(\d+)</regex>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="y-grid">
+        <display_text>Grid-Y</display_text>
+        <value>0</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(299,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="buffersize">
+        <value>400</value>
+        <display_text>Buffersize</display_text>
+        <advanced>1</advanced>
+        <regex>^(\d+)$</regex>
+      </Parameter>
+      <Parameter Name="rolling_plot">
+        <display_text>Rolling Plot</display_text>
+        <value>1</value>
+        <type>bool</type>
+        <regex>^(1|0)$</regex>
+      </Parameter>
+      <Parameter Name="color">
+        <value>[0 1 2 3 4]</value>
+        <display_text>Color</display_text>
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Plot</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used for window title</tooltip>
+        <value>VisualPlugin</value>
+      </Parameter>
+      <Parameter Name="yRange">
+        <value>[-1.0 0.999980260856]</value>
+        <display_text>y: range</display_text>
+        <advanced>1</advanced>
+        <regex>(\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="style">
+        <value>[0 0 0 0 0]</value>
+        <display_text>Style</display_text>
+        <advanced>1</advanced>
+        <regex>^\[(\s*\d\s*)+\]</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="x-grid">0</Parameter>
+      <Parameter Name="downsampling_rate">5</Parameter>
+      <Parameter Name="color">[0 1 2 3 4]</Parameter>
+      <Parameter Name="y-grid">0</Parameter>
+      <Parameter Name="rolling">1</Parameter>
+      <Parameter Name="yRange">[0,1]</Parameter>
+      <Parameter Name="style">[0 0 0 0 0]</Parameter>
+      <Parameter Name="buffersize">400</Parameter>
+    </PreviousParameters>
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>RBSetDS</data_source>
+        <block Name="Choice">
+          <alias>downsampling_rate</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Sinus</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>f3_1</Signal>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>RBXGrid</data_source>
+        <block Name="Choice">
+          <alias>x-grid</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>RBYGrid</data_source>
+        <block Name="Choice">
+          <alias>y-grid</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>RBSetBuffersize</data_source>
+        <block Name="Choice">
+          <alias>buffersize</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="RBSetDS">
+    <Identifier>Radiobutton</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(300,300)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="option_texts">
+        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+        <value>1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50</value>
+      </Parameter>
+      <Parameter Name="option_values">
+        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+        <value />
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used for window title</tooltip>
+        <value>Set Downsampling Rate</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="selected_index">
+        <value>1</value>
+        <display_text>Preselected Option</display_text>
+        <advanced>1</advanced>
+        <tooltip>Preselect an option by its index.</tooltip>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>RBSetDS</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Choice" />
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="Sinus">
+    <Identifier>Sinus</Identifier>
+    <StartConfig>
+      <Parameter Name="amax">
+        <value>3</value>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>Sinus</value>
+      </Parameter>
+      <Parameter Name="f">
+        <value>1</value>
+        <regex>\d+.{0,1}\d*</regex>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Frequenz Block SinMit_f3">0.6</Parameter>
+    </PreviousParameters>
+    <DBlocks>
+      <DBlock Name="SinMit_f3">
+        <DSignal uname="f3_1">
+          <dname>f3_1</dname>
+        </DSignal>
+        <DSignal uname="f3_2">
+          <dname>f3_2</dname>
+        </DSignal>
+        <DSignal uname="f3_scalar">
+          <dname>f3_scalar</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="SinMit_f1">
+        <DSignal uname="f1_1">
+          <dname>f1_f1DNAME</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="SinMit_f2">
+        <DSignal uname="f2_1">
+          <dname>f2_1</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="RBXGrid">
+    <Identifier>Radiobutton</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(219,96)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="option_texts">
+        <display_text>Displayed Option</display_text>
+        <value>Off, On</value>
+        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+      </Parameter>
+      <Parameter Name="option_values">
+        <display_text>Value per Option</display_text>
+        <value>0, 1</value>
+        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <display_text>Plugin Name</display_text>
+        <value>Enable/Disable X-Grid</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(1,301)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="selected_index">
+        <value>0</value>
+        <display_text>Preselected Option</display_text>
+        <advanced>1</advanced>
+        <tooltip>Preselect an option by its index.</tooltip>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>RBXGrid</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Choice" />
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="RBYGrid">
+    <Identifier>Radiobutton</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(218,96)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="option_texts">
+        <display_text>Displayed Option</display_text>
+        <value>Off, On</value>
+        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+      </Parameter>
+      <Parameter Name="option_values">
+        <display_text>Value per Option</display_text>
+        <value>0, 1</value>
+        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <display_text>Plugin Name</display_text>
+        <value>Enable/Disable Y-Grid</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(1,398)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="selected_index">
+        <value>0</value>
+        <display_text>Preselected Option</display_text>
+        <advanced>1</advanced>
+        <tooltip>Preselect an option by its index.</tooltip>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>RBYGrid</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Choice" />
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="RBSetBuffersize">
+    <Identifier>Radiobutton</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(167,292)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="option_texts">
+        <display_text>Displayed Option</display_text>
+        <value>100, 200, 400, 800, 1200, 1600, 2000, 2500, 3000</value>
+        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+      </Parameter>
+      <Parameter Name="option_values">
+        <display_text>Value per Option</display_text>
+        <value />
+        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <display_text>Plugin Name</display_text>
+        <value>Set Buffersize</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(598,2)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="selected_index">
+        <value>2</value>
+        <display_text>Preselected Option</display_text>
+        <advanced>1</advanced>
+        <tooltip>Preselect an option by its index.</tooltip>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>RBSetBuffersize</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Choice" />
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+  <Plugin uname="LCDSinus">
+    <Identifier>LCDDisplay</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(150,75)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="value_init">
+        <tooltip>Used as initial value for the LCD-Display</tooltip>
+        <value>0</value>
+        <regex>([-]{0,1}\d+(.\d+)?)</regex>
+      </Parameter>
+      <Parameter Name="value_scale">
+        <value>1</value>
+        <tooltip>Used to scale displayed value</tooltip>
+        <advanced>1</advanced>
+        <regex>-?[1-9]+[0-9]*(\.?[0-9]+)?</regex>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <tooltip>Used for window title</tooltip>
+        <value>Sinus Value</value>
+      </Parameter>
+      <Parameter Name="digit_count">
+        <value>3</value>
+        <tooltip>Number of digits</tooltip>
+        <advanced>1</advanced>
+        <regex>[3-9]</regex>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(564,364)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="value_offset">
+        <value>0</value>
+        <tooltip>Used to offset displayed value</tooltip>
+        <advanced>1</advanced>
+        <regex>-?\d+(\.?\d+)?</regex>
+      </Parameter>
+      <Parameter Name="updateFrequency">
+        <value>100</value>
+        <display_text>Minimal time between updates (in ms)</display_text>
+        <advanced>1</advanced>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>LCDSinus</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="value_offset">0.0</Parameter>
+      <Parameter Name="value_scale">1.0</Parameter>
+      <Parameter Name="digit_count">3</Parameter>
+      <Parameter Name="update_interval">100</Parameter>
+    </PreviousParameters>
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>RBRefreshRate</data_source>
+        <block Name="Choice">
+          <alias>update_interval</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Sinus</data_source>
+        <block Name="SinMit_f3">
+          <alias />
+          <Signal>f3_1</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="RBRefreshRate">
+    <Identifier>Radiobutton</Identifier>
+    <StartConfig>
+      <Parameter Name="size">
+        <value>(221,124)</value>
+        <tooltip>Determine size: (height,width)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="option_texts">
+        <display_text>Displayed Option</display_text>
+        <value>Low, Mid, High</value>
+        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+      </Parameter>
+      <Parameter Name="option_values">
+        <display_text>Value per Option</display_text>
+        <value>1000, 500, 100</value>
+        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+      </Parameter>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="name">
+        <display_text>Plugin Name</display_text>
+        <value>Set LCD refresh rate</value>
+        <tooltip>Used for window title</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(342,363)</value>
+        <tooltip>Determine position: (x,y)</tooltip>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+      </Parameter>
+      <Parameter Name="selected_index">
+        <value>2</value>
+        <display_text>Preselected Option</display_text>
+        <advanced>1</advanced>
+        <tooltip>Preselect an option by its index.</tooltip>
+        <regex>[0-9]+</regex>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>RBRefreshRate</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks>
+      <DBlock Name="Choice" />
+    </DBlocks>
+    <Subscriptions />
+  </Plugin>
+</PaPiConfig>
