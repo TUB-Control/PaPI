@@ -453,6 +453,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.loadButton.show()
             self.saveButton.show()
             self.menubar.setHidden(False)
+            self.disable_lock()
 
         elif not self.in_run_mode:
             self.in_run_mode = True
@@ -460,6 +461,35 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.loadButton.hide()
             self.saveButton.hide()
             self.menubar.hide()
+            self.enable_lock()
+
+    def enable_lock(self):
+        for tab_name in self.TabManager.get_tabs_by_uname():
+            area = self.TabManager.get_tabs_by_uname()[tab_name]
+
+            windowsList = area.subWindowList()
+
+            for window in windowsList:
+
+                #window.setAttribute(Qt.WA_NoBackground)
+
+                #window.setAttribute(Qt.WA_NoSystemBackground)
+                #window.setAttribute(Qt.WA_TranslucentBackground)
+
+                window.setMouseTracking(False)
+                window.setWindowFlags( Qt.WindowTitleHint | Qt.FramelessWindowHint  )
+
+    def disable_lock(self):
+        for tab_name in self.TabManager.get_tabs_by_uname():
+            area = self.TabManager.get_tabs_by_uname()[tab_name]
+
+            windowsList = area.subWindowList()
+
+            for window in windowsList:
+
+                window.setMouseTracking(True)
+                window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
