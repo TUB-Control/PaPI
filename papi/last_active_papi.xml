@@ -1,30 +1,8 @@
-<PaPiConfig Date="2015-03-27 17:46:11" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-27 18:25:19" PaPI_version="1.0.0">
   <guiConfig>
-    <tabs>
-      <TabX>
-        <background>default</background>
-        <position>1</position>
-      </TabX>
-      <Tab>
-        <background>default</background>
-        <position>0</position>
-      </Tab>
-      <TabXXX>
-        <background>default</background>
-        <position>3</position>
-      </TabXXX>
-      <TabXX>
-        <background>default</background>
-        <position>2</position>
-      </TabXX>
-      <TabXXXX>
-        <background>default</background>
-        <position>4</position>
-      </TabXXXX>
-    </tabs>
     <activeTab>
       <active>
-        <value>3</value>
+        <value>1</value>
       </active>
     </activeTab>
     <size>
@@ -35,5 +13,54 @@
         <value>853</value>
       </y>
     </size>
+    <tabs>
+      <TabXX>
+        <background>default</background>
+        <position>0</position>
+      </TabXX>
+      <TabXXX>
+        <background>default</background>
+        <position>2</position>
+      </TabXXX>
+      <Tab000>
+        <background>default</background>
+        <position>1</position>
+      </Tab000>
+    </tabs>
   </guiConfig>
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
+    <StartConfig>
+      <Parameter Name="ORTD_Plugin_uname">
+        <display_text>Uname to use for ortd plugin instance</display_text>
+        <value>ORTDPlugin1</value>
+        <advanced>0</advanced>
+      </Parameter>
+      <Parameter Name="size">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(300,300)</value>
+        <advanced>1</advanced>
+        <tooltip>Determine size: (height,width)</tooltip>
+      </Parameter>
+      <Parameter Name="name">
+        <value>ORTDController</value>
+      </Parameter>
+      <Parameter Name="tab">
+        <value>TabXX</value>
+        <tooltip>Used for tabs</tooltip>
+      </Parameter>
+      <Parameter Name="position">
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <value>(0,0)</value>
+        <advanced>1</advanced>
+        <tooltip>Determine position: (x,y)</tooltip>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>OrtdController</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters />
+    <DBlocks />
+    <Subscriptions />
+  </Plugin>
 </PaPiConfig>

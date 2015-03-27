@@ -239,7 +239,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 tabOb = self.TabManager.add_tab(name)
                 self.TabManager.set_background_for_tab_with_name(name,bg)
 
-            if 'activeTab' in cfg:
+        if 'activeTab' in cfg:
+            if 'value' in cfg['activeTab']['active']:
                 self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
 
         #################

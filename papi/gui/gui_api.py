@@ -52,7 +52,7 @@ import xml.etree.cElementTree as ET
 class Gui_api(QtCore.QObject):
     error_occured = QtCore.Signal(str, str, str)
 
-    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None):
+    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None):
         super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
@@ -60,6 +60,7 @@ class Gui_api(QtCore.QObject):
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
         self.get_gui_config_function = get_gui_config_function
         self.set_gui_config_function = set_gui_config_function
+        self.tabManager = TabManager
 
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart=True):
         """
@@ -437,6 +438,9 @@ class Gui_api(QtCore.QObject):
         opt.reason = 'User clicked close Button'
         event = Event.instruction.CloseProgram(self.gui_id, 0, opt)
         self.core_queue.put(event)
+
+    def do_set_tab_active_by_name(self, tabName):
+        self.tabManager.set_tab_active_by_name(tabName)
 
     def do_load_xml(self, path):
         """
