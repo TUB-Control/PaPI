@@ -3,19 +3,20 @@ Changelog
 
 v.1.XX
 ---
- * [fix]: core will check plugin state before routing, so data to paused plugins will not be routed (#19)
- * [fix]: oboslete parameter in send_parameter_change was removed (#21)
- * [fix]: clean up of DParameter (#18)
- * [fix]: renamed some variables of ownProcess_base to be private
- * [fix]: fixed memory leak of gui event processing timer loop (#25)
- * [fix]: fixed memory leak due to recall of the plugin manager collection function
- * [improvement]: changed the demux function to in improve performance
- * [improvement]: improved core performance while processing new data (see #20)
- * [improvement]: huge changes in the plotting plugin with performance benefits
- * [feature]: modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
- * [plugin]: added a new visual plugin: ProgressBar
+ * [fix]: Core will check plugin state before routing, so data to paused plugins will not be routed (#19)
+ * [fix]: Oboslete parameter in send_parameter_change was removed (#21)
+ * [fix]: Clean up of DParameter (#18)
+ * [fix]: Renamed some variables of ownProcess_base to be private
+ * [fix]: Fixed memory leak of gui event processing timer loop (#25)
+ * [fix]: Fixed memory leak due to recall of the plugin manager collection function
+ * [improvement]: Changed the demux function to in improve performance
+ * [improvement]: Improved core performance while processing new data (see #20)
+ * [improvement]: Huge changes in the plotting plugin with performance benefits
+ * [feature]: Modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
+ * [plugin]: Added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
- * [improvement]: shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
+ * [plugin]: Added a new pcp plugin: Radiobutton
+ * [improvement]: Shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
   
 v.1.0
 ---
