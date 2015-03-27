@@ -163,6 +163,15 @@ class OrtdController(vip_base):
                             self.control_api.do_delete_plugin_uname(pl_uname)
                             self.plugin_started_list.remove(pl_uname)
 
+
+            # wait before set active tab
+            time.sleep(1.0)
+            if 'ActiveTab' in Data:
+                cfg = Data['ActiveTab']
+                if cfg is not None:
+                    tabName = cfg
+                    self.control_api.do_set_tab_active_by_name(tabName)
+
         self.thread_alive = False
 
     def set_parameter(self, name, value):
@@ -318,7 +327,8 @@ class ControllerOrtdStart(QtGui.QWizardPage):
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',
-                                                                                              'ControllerSignalClose'])
+                                                                                              'ControllerSignalClose',
+                                                                                              'ActiveTab'])
         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
 
 

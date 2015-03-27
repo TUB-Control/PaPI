@@ -1,5 +1,20 @@
-<PaPiConfig Date="2015-03-27 18:45:46" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-27 19:04:02" PaPI_version="1.0.0">
   <guiConfig>
+    <activeTab>
+      <active>
+        <value>0</value>
+      </active>
+    </activeTab>
+    <tabs>
+      <Tab>
+        <position>1</position>
+        <background>default</background>
+      </Tab>
+      <PaPI-Tab>
+        <position>0</position>
+        <background>default</background>
+      </PaPI-Tab>
+    </tabs>
     <size>
       <y>
         <value>853</value>
@@ -8,67 +23,142 @@
         <value>771</value>
       </x>
     </size>
-    <activeTab>
-      <active>
-        <value>0</value>
-      </active>
-    </activeTab>
-    <tabs>
-      <PaPI-Tab>
-        <background>default</background>
-        <position>0</position>
-      </PaPI-Tab>
-    </tabs>
   </guiConfig>
-  <Plugin uname="Radiobutton">
-    <Identifier>Radiobutton</Identifier>
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="option_texts">
-        <display_text>Displayed Option</display_text>
-        <value>O, P, T</value>
-        <tooltip>This text is seen by the user. Must be separated by commas.</tooltip>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
       </Parameter>
-      <Parameter Name="option_values">
-        <display_text>Value per Option</display_text>
-        <value>1,2,3</value>
-        <tooltip>It is possible to set a value for every option. The corresponding value is send instead of the displayed text. </tooltip>
+      <Parameter Name="ORTD_Plugin_uname">
+        <display_text>Uname to use for ortd plugin instance</display_text>
+        <advanced>0</advanced>
+        <value>ORTDPlugin1</value>
       </Parameter>
       <Parameter Name="size">
-        <value>(84,138)</value>
-        <advanced>1</advanced>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
         <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="selected_index">
-        <display_text>Preselected Option</display_text>
-        <value />
-        <tooltip>Preselect an option by its index.</tooltip>
-        <regex>[0-9]+</regex>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
-        <advanced>1</advanced>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Radiobutton</value>
+        <advanced>1</advanced>
+        <value>(300,300)</value>
       </Parameter>
       <Parameter Name="name">
-        <display_text>Plugin Name</display_text>
-        <value>RadioButton Label</value>
-        <tooltip>Used for window title</tooltip>
+        <value>ORTDController</value>
+      </Parameter>
+      <Parameter Name="position">
+        <tooltip>Determine position: (x,y)</tooltip>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <advanced>1</advanced>
+        <value>(0,0)</value>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>OrtdController</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="Choice" />
-    </DBlocks>
-    <Subscriptions />
+    <DBlocks />
+    <Subscriptions>
+      <Subscription>
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="ControllerSignals">
+          <alias />
+          <Signal>ControlSignalReset</Signal>
+          <Signal>ControlSignalCreate</Signal>
+          <Signal>ControlSignalSub</Signal>
+          <Signal>ControllerSignalParameter</Signal>
+          <Signal>ControllerSignalClose</Signal>
+          <Signal>ActiveTab</Signal>
+        </block>
+      </Subscription>
+    </Subscriptions>
   </Plugin>
-</PaPiConfig>
+  <Plugin uname="ORTDPlugin1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="address">
+        <advanced>1</advanced>
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="out_port">
+        <advanced>1</advanced>
+        <value>20001</value>
+      </Parameter>
+      <Parameter Name="Cfg_Path">
+        <type>file</type>
+        <advanced>0</advanced>
+        <value>/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json</value>
+      </Parameter>
+      <Parameter Name="source_port">
+        <advanced>1</advanced>
+        <value>20000</value>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="Osci">0</Parameter>
+      <Parameter Name="SliderLCDProgress">0</Parameter>
+    </PreviousParameters>
+    <DBlocks>
+      <DBlock Name="ControllerSignals">
+        <DSignal uname="ControlSignalReset">
+          <dname>ControlSignalReset</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalCreate">
+          <dname>ControlSignalCreate</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalSub">
+          <dname>ControlSignalSub</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalParameter">
+          <dname>ControllerSignalParameter</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalClose">
+          <dname>ControllerSignalClose</dname>
+        </DSignal>
+        <DSignal uname="ActiveTab">
+          <dname>ActiveTab</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="SourceGroup0" />
+    </DBlocks>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Plugin2</data_source>
+        <block Name="Click_Event">
+          <alias>SliderLCDProgress</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Plugin1</data_source>
+        <block Name="Click_Event">
+          <alias>Osci</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plugin2">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value />
+      </Parameter>
+      <Parameter Name="state1_text">
+        <value>Go to</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Slider LCD ProgressBar</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(250,250)</value>
+      </Parameter>
+      <Parameter Name="state2_text">
+        <value>Leaving to</value>
+      </Parameter>
+      <Parameter Name="state2">
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+        <advanced>0</advanced>
+        <value>
