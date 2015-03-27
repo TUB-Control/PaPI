@@ -226,7 +226,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 if 'position' in tabDetails:
                     pos = int(tabDetails['position'])
                 else:
-                    pos = max(list(tabList.keys()))+1
+                    if len(list(tabList.keys())) > 1:
+                        pos = max(list(tabList.keys()))+1
+                    else:
+                        pos = 0
 
                 tabList[pos] = [name, bg]
 
