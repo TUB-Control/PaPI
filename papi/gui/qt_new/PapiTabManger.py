@@ -122,10 +122,12 @@ class PapiTabManger(QObject):
             return False
 
     def set_background_for_tab_with_name(self, name, bg):
-        pixmap  = QtGui.QPixmap(bg)
-        widgetArea = self.tab_dict_uname[name]
-        widgetArea.setBackground(pixmap)
-        widgetArea.background = bg
+        if bg is not None:
+            if name in self.tab_dict_uname:
+                pixmap  = QtGui.QPixmap(bg)
+                widgetArea = self.tab_dict_uname[name]
+                widgetArea.setBackground(pixmap)
+                widgetArea.background = bg
 
     def set_all_tabs_to_close_when_empty(self, state):
         for tabName in self.tab_dict_uname:
@@ -174,6 +176,17 @@ class PapiTabManger(QObject):
 
         for tab in tabs_to_close:
             self.closeTab_by_name(tab)
+
+    def getTabPosition_by_name(self, tabName):
+        if tabName in self.tab_dict_uname:
+            tabObj = self.tab_dict_uname[tabName]
+            ind = self.tabWidget.indexOf(tabObj)
+            return ind
+
+    def setTabPosition_by_name(self, tabName):
+        if tabName in self.tab_dict_uname:
+            tabObj = self.tab_dict_uname[tabName]
+            #self.tabWidget.
 
     def show_context_menu(self, pos):
         self.cmenu = self.create_context_menu()

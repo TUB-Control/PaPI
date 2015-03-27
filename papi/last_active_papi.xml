@@ -1,9 +1,22 @@
-<PaPiConfig Date="2015-03-24 17:57:30" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-27 17:34:33" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
-      <PaPI-Tab>
+      <Tab000>
+        <position>0</position>
         <background>default</background>
-      </PaPI-Tab>
+      </Tab000>
+      <Tab3>
+        <position>3</position>
+        <background>default</background>
+      </Tab3>
+      <Tab0>
+        <position>1</position>
+        <background>default</background>
+      </Tab0>
+      <Tab1>
+        <position>2</position>
+        <background>default</background>
+      </Tab1>
     </tabs>
     <size>
       <x>
@@ -14,53 +27,4 @@
       </y>
     </size>
   </guiConfig>
-  <Plugin uname="HTMLViewer">
-    <Identifier>HTMLViewer</Identifier>
-    <StartConfig>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>VisualPlugin</value>
-      </Parameter>
-      <Parameter Name="content">
-        <advanced>0</advanced>
-        <tooltip>Plain html code to be displayed</tooltip>
-        <display_text>HTML Content</display_text>
-        <value>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-
-&lt;p id="demo"&gt;&lt;/p&gt;
-
-&lt;script&gt;
-document.getElementById("demo").innerHTML = "Hello JavaScript!";
-&lt;/script&gt; 
-
-&lt;/body&gt;
-&lt;/html&gt;
-</value>
-      </Parameter>
-      <Parameter Name="position">
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>HTMLViewer</value>
-      </Parameter>
-      <Parameter Name="size">
-        <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(300,300)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks />
-    <Subscriptions />
-  </Plugin>
 </PaPiConfig>
