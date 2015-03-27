@@ -118,6 +118,7 @@ class ORTD_UDP(iop_base):
         self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
         self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
         self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
+        self.ControlBlock.add_signal(DSignal('ActiveTab'))
         self.send_new_block_list([self.ControlBlock])
 
 
@@ -247,20 +248,19 @@ class ORTD_UDP(iop_base):
             self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections)
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections):
-
-        print(toCreate)
-
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
                                                               'ControlSignalSub':None,
                                                               'ControllerSignalParameter':None,
-                                                              'ControllerSignalClose':None})
+                                                              'ControllerSignalClose':None,
+                                                              'ActiveTab': None })
 
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
                                                               'ControlSignalCreate':toCreate,
                                                               'ControlSignalSub':subs,
                                                               'ControllerSignalParameter':paraConnections,
-                                                              'ControllerSignalClose':toClose})
+                                                              'ControllerSignalClose':toClose,
+                                                              'ActiveTab': 'PaPI-Tab'})
 
     def parse_json_stream(self,stream):
         decoder = json.JSONDecoder()

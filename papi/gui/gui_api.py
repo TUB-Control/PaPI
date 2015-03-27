@@ -442,6 +442,10 @@ class Gui_api(QtCore.QObject):
     def do_set_tab_active_by_name(self, tabName):
         self.tabManager.set_tab_active_by_name(tabName)
 
+    def do_open_new_tabs_with_names_in_order(self, tabNames = None):
+        for name in tabNames:
+            self.tabManager.add_tab(name)
+
     def do_load_xml(self, path):
         """
         Function to load a xml config to papi and apply the configuration.
