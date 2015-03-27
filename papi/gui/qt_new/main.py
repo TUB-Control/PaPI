@@ -175,12 +175,18 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
     def get_gui_config(self):
+
+        actTab = {}
+        actTab['active'] = {}
+        actTab['active']['value'] = str(self.TabManager.get_currently_active_tab())
+
         tabs = {}
         tab_dict = self.TabManager.get_tabs_by_uname()
         for tab in tab_dict:
             tabOb = tab_dict[tab]
             tabs[tab]= {}
             tabs[tab]['background'] = tabOb.background
+            tabs[tab]['position'] = str(self.TabManager.getTabPosition_by_name(tab))
 
         size = {}
         size['x'] = {}
@@ -189,6 +195,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         size['y']['value'] = str(self.size().height())
 
         cfg = {}
+        cfg['activeTab'] = actTab
         cfg['tabs'] = tabs
         cfg['size'] = size
 
@@ -199,16 +206,41 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Cfgs for Tabs #
         #################
         if 'tabs' in cfg:
+            tabList = {}
             for tab in cfg['tabs']:
+                # Tab Name
                 name = tab
 
-                tabOb = self.TabManager.add_tab(name)
-
+                # Tab details
                 tabDetails = cfg['tabs'][tab]
+
+                # check for background
                 if 'background' in tabDetails:
                     bg = tabDetails['background']
                     if bg != 'default':
                         self.TabManager.set_background_for_tab_with_name(name,bg)
+                else:
+                    bg = None
+
+                # check for position
+                if 'position' in tabDetails:
+                    pos = int(tabDetails['position'])
+                else:
+                    pos = max(list(tabList.keys()))+1
+
+                tabList[pos] = [name, bg]
+
+            # sort tabs acoriding to positions
+            keys = list(tabList.keys())
+            keys.sort()
+            for position in keys:
+                name = tabList[position][0]
+                bg = tabList[position][1]
+                tabOb = self.TabManager.add_tab(name)
+                self.TabManager.set_background_for_tab_with_name(name,bg)
+
+            if 'activeTab' in cfg:
+                self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
 
         #################
         # windows size: #

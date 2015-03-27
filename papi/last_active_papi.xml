@@ -1,10 +1,32 @@
-<PaPiConfig Date="2015-03-24 17:57:30" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-27 17:46:11" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
-      <PaPI-Tab>
+      <TabX>
         <background>default</background>
-      </PaPI-Tab>
+        <position>1</position>
+      </TabX>
+      <Tab>
+        <background>default</background>
+        <position>0</position>
+      </Tab>
+      <TabXXX>
+        <background>default</background>
+        <position>3</position>
+      </TabXXX>
+      <TabXX>
+        <background>default</background>
+        <position>2</position>
+      </TabXX>
+      <TabXXXX>
+        <background>default</background>
+        <position>4</position>
+      </TabXXXX>
     </tabs>
+    <activeTab>
+      <active>
+        <value>3</value>
+      </active>
+    </activeTab>
     <size>
       <x>
         <value>771</value>
@@ -14,53 +36,4 @@
       </y>
     </size>
   </guiConfig>
-  <Plugin uname="HTMLViewer">
-    <Identifier>HTMLViewer</Identifier>
-    <StartConfig>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>VisualPlugin</value>
-      </Parameter>
-      <Parameter Name="content">
-        <advanced>0</advanced>
-        <tooltip>Plain html code to be displayed</tooltip>
-        <display_text>HTML Content</display_text>
-        <value>&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-
-&lt;p id="demo"&gt;&lt;/p&gt;
-
-&lt;script&gt;
-document.getElementById("demo").innerHTML = "Hello JavaScript!";
-&lt;/script&gt; 
-
-&lt;/body&gt;
-&lt;/html&gt;
-</value>
-      </Parameter>
-      <Parameter Name="position">
-        <advanced>1</advanced>
-        <tooltip>Determine position: (x,y)</tooltip>
-        <value>(0,0)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>HTMLViewer</value>
-      </Parameter>
-      <Parameter Name="size">
-        <advanced>1</advanced>
-        <tooltip>Determine size: (height,width)</tooltip>
-        <value>(300,300)</value>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks />
-    <Subscriptions />
-  </Plugin>
 </PaPiConfig>
