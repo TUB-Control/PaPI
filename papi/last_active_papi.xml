@@ -1,23 +1,32 @@
-<PaPiConfig Date="2015-03-27 17:34:33" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-03-27 17:46:11" PaPI_version="1.0.0">
   <guiConfig>
     <tabs>
-      <Tab000>
-        <position>0</position>
+      <TabX>
         <background>default</background>
-      </Tab000>
-      <Tab3>
-        <position>3</position>
-        <background>default</background>
-      </Tab3>
-      <Tab0>
         <position>1</position>
+      </TabX>
+      <Tab>
         <background>default</background>
-      </Tab0>
-      <Tab1>
+        <position>0</position>
+      </Tab>
+      <TabXXX>
+        <background>default</background>
+        <position>3</position>
+      </TabXXX>
+      <TabXX>
+        <background>default</background>
         <position>2</position>
+      </TabXX>
+      <TabXXXX>
         <background>default</background>
-      </Tab1>
+        <position>4</position>
+      </TabXXXX>
     </tabs>
+    <activeTab>
+      <active>
+        <value>3</value>
+      </active>
+    </activeTab>
     <size>
       <x>
         <value>771</value>

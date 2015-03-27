@@ -108,6 +108,12 @@ class PapiTabManger(QObject):
         else:
             return self.tabWidget.widget(0)
 
+    def get_currently_active_tab(self):
+        return self.tabWidget.currentIndex()
+
+    def set_tab_active_by_index(self, index):
+        self.tabWidget.setCurrentIndex(index)
+
     def moveFromTo(self, start, dest, subWindow, posX=0, posY=0):
         if start in self.tab_dict_uname and dest in self.tab_dict_uname:
             startTab = self.tab_dict_uname[start]

@@ -175,6 +175,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
     def get_gui_config(self):
+
+        actTab = {}
+        actTab['active'] = {}
+        actTab['active']['value'] = str(self.TabManager.get_currently_active_tab())
+
         tabs = {}
         tab_dict = self.TabManager.get_tabs_by_uname()
         for tab in tab_dict:
@@ -190,6 +195,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         size['y']['value'] = str(self.size().height())
 
         cfg = {}
+        cfg['activeTab'] = actTab
         cfg['tabs'] = tabs
         cfg['size'] = size
 
@@ -232,6 +238,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 bg = tabList[position][1]
                 tabOb = self.TabManager.add_tab(name)
                 self.TabManager.set_background_for_tab_with_name(name,bg)
+
+            if 'activeTab' in cfg:
+                self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
 
         #################
         # windows size: #
