@@ -240,14 +240,14 @@ class ORTD_UDP(iop_base):
             cfg = d
 
             ORTDSources, ORTDParameters, plToCreate, \
-            plToClose, subscriptions, paraConnections = self.extract_config_elements(cfg)
+            plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
 
             self.update_block_list(ORTDSources)
             self.update_parameter_list(ORTDParameters)
 
-            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections)
+            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
 
-    def process_papi_configuration(self, toCreate, toClose, subs, paraConnections):
+    def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
                                                               'ControlSignalSub':None,
@@ -260,7 +260,7 @@ class ORTD_UDP(iop_base):
                                                               'ControlSignalSub':subs,
                                                               'ControllerSignalParameter':paraConnections,
                                                               'ControllerSignalClose':toClose,
-                                                              'ActiveTab': 'PaPI-Tab'})
+                                                              'ActiveTab': activeTab})
 
     def parse_json_stream(self,stream):
         decoder = json.JSONDecoder()
@@ -467,6 +467,7 @@ class ORTD_UDP(iop_base):
         plToClose = {}
         ORTDSources = {}
         ORTDParameters = {}
+        activeTab = 'PaPI-Tab'
 
         if 'PaPIConfig' in configuration:
             if 'ToCreate' in configuration['PaPIConfig']:
@@ -481,12 +482,15 @@ class ORTD_UDP(iop_base):
             if 'ToClose' in configuration['PaPIConfig']:
                 plToClose = configuration['PaPIConfig']['ToClose']
 
+            if 'ActiveTab' in configuration['PaPIConfig']:
+                activeTab = configuration['PaPIConfig']['tab']
+
         if 'SourcesConfig' in configuration:
             ORTDSources = configuration['SourcesConfig']
 
         if 'ParametersConfig' in configuration:
             ORTDParameters = configuration['ParametersConfig']
 
-        return ORTDSources, ORTDParameters, plToCreate, plToClose, subscriptions, paraConnections
+        return ORTDSources, ORTDParameters, plToCreate, plToClose, subscriptions, paraConnections, activeTab
 
 
