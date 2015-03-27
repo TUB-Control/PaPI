@@ -43,49 +43,63 @@ class Radiobutton(pcp_base):
         self.block = DBlock('Choice')
 
         self.send_new_block_list([self.block])
-        self.set_widget_for_internal_usage(self.create_widget())
+
 
         para_list = []
 
-        self.para_texts    = DParameter('texts')
-        self.para_values   = DParameter('values')
+        self.para_texts    = DParameter('texts', default=self.config['option_texts']['value'])
+        self.para_values   = DParameter('values', default=self.config['option_values']['value'])
 
         para_list.append(self.para_texts)
         para_list.append(self.para_values)
 
-        self.send_parameter_change(para_list)
+        self.send_new_parameter_list(para_list)
 
-        return True
-
-    def create_widget(self):
         self.central_widget = QWidget()
 
         self.option_texts = []
         self.option_values = []
         self.pre_selected_index = None
 
-
         if isinstance(self.config['selected_index']['value'], str):
             if self.config['selected_index']['value'] != '':
                 self.pre_selected_index = int(self.config['selected_index']['value'])
 
-        if isinstance(self.config['option_values']['value'], str):
-            self.option_values = str.split(self.config['option_values']['value'], ',')
+        self.set_widget_for_internal_usage(self.central_widget)
+        self.layout = QVBoxLayout(self.central_widget)
+
+        self.buttons = []
+
+        self.set_option_texts(self.config['option_texts']['value'])
+        self.set_option_values(self.config['option_values']['value'])
+
+        self.update_widget()
+
+        return True
+
+    def set_option_values(self, values):
+
+        if isinstance(values, str):
+            self.option_values = str.split(values, ',')
 
             for i in range(len(self.option_values)):
                 self.option_values[i] = self.option_values[i].lstrip().rstrip()
 
+    def set_option_texts(self, texts):
 
-        if isinstance(self.config['option_texts']['value'], str):
-            self.option_texts = str.split(self.config['option_texts']['value'], ',')
+        if isinstance(texts, str):
+            self.option_texts = str.split(texts, ',')
 
             for i in range(len(self.option_texts)):
                 self.option_texts[i] = self.option_texts[i].lstrip().rstrip()
 
+    def update_widget(self):
+
+        for button in self.buttons:
+            self.layout.removeWidget(button)
+            button.deleteLater()
 
         self.buttons = []
-
-        self.layout = QVBoxLayout(self.central_widget)
 
         for i in range(len(self.option_texts)):
             button = QRadioButton(self.option_texts[i])
@@ -116,6 +130,17 @@ class Radiobutton(pcp_base):
                     self.send_parameter_change(self.option_values[i], self.block.name)
                 else:
                     self.send_parameter_change(self.option_texts[i], self.block.name)
+
+    def set_parameter(self, parameter_name, parameter_value):
+
+
+        if parameter_name == self.para_texts.name:
+            self.set_option_texts(parameter_value)
+            self.update_widget()
+
+        if parameter_name == self.para_values.name:
+            self.set_option_values(parameter_value)
+
 
     def plugin_meta_updated(self):
         pass
