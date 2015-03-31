@@ -60,6 +60,10 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-data_sources/ORTD/DataSourceAutoConfigExample/AutoConfigDemo_ReplaceableSimulation.ipar
+data_sources/ORTD/DataSourceAutoConfigExample/ProtocollConfig.json
 
 data_sources/ORTD/DataSourceAutoConfigExample/AutoConfigDemo_ReplaceableSimulation.rpar
+
+data_sources/ORTD/DataSourceAutoConfigExample/AutoConfigDemo_ReplaceableSimulation.ipar
+
+data_sources/ORTD/DataSourceAutoConfigExample/ProtocollConfig.json

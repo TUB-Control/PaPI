@@ -16,9 +16,26 @@
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with OpenRTDynamics.  If not, see <http://www.gnu.org/licenses/>.
 //
+
+
+
+// 
+// 
+//   Example for a changing PaPI-configuration, which is given by the ORTD-program.
+//   The ORTD-program has several states, one to choose between two experiments,
+//   one which evaluates the selection and two states with the different experiments.
+//   In the first experiment an oscillator-system is given with a button to disturb it.
+//   The second experiment shows a slider and the adjusted value is sent to the ORTD and
+//   from there sent back to a LCD and a progress bar in PaPI. There is an additional
+//   finish-state, which is normally not possible to be used.
+// 
+//   Rev 1
+// 
+
+
 funcprot(0);
 // The name of the program
-ProgramName = 'SelectCasePaPiConfig'; // must be the filename without .sce
+ProgramName = 'SwitchingPaPiConfig'; // must be the filename without .sce
 
 
 function [sim, outlist] = AutoConfigExample(sim, Signal)
@@ -27,7 +44,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
     // Define parameters. They must be defined once again at this place, because this will also be called at
     // runtime.
-    NSamples=50;
+    NSamples=300;
 
     if CalledOnline == %t then
       // The contents of this part will be compiled on-line, while the control
@@ -37,7 +54,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       // occuring in this part become only visible during runtime.
 
       printf("Compiling a new control system\n");
-      exec('webinterface/PacketFramework.sce');
+      
       funcprot(0);
       z = poly(0,'z');
       // And example-system that is controlled via UDP and one step further with the Web-gui
@@ -75,7 +92,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
         // State variables can be initialise at this place
         //
         userdata.Acounter = 0;
-        userdata.State = "oscillator";
+        userdata.State = "chooseExp";
     
         userdata.isInitialised = %t; // prevent from initialising the variables once again
       end
@@ -99,7 +116,7 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       Configuration.LocalSocketHost = "127.0.0.1";
       Configuration.LocalSocketPort = 20001;
       PacketFramework.Configuration.debugmode = %t;
-      [sim, PacketFramework] = ld_PF_InitInstance(sim, InstanceName="TrockenofenRemoteControl", Configuration);
+      [sim, PacketFramework] = ld_PF_InitInstance(sim, InstanceName="SwitchingAutoConfig", Configuration);
   
       [sim, zero] = ld_const(sim, ev, 0);
       [sim, one] = ld_const(sim, 0, 1);
@@ -115,83 +132,123 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
       // at runtime.
       // 
       select userdata.State
+        case "chooseExp"
+          // Add some parameters to choose the next state
+          [PacketFramework, OscillatorButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Oscillator", "(250,100)", "(250,100)", "PaPI-Tab", list(["state1_text","Go to"], ["state2_text","Leaving to"]));
+          [sim, PacketFramework, GoToOscillator]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Osci", OscillatorButton, 'Click_Event');
+          
+          [PacketFramework, SliderLCDprogressbarButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Slider LCD ProgressBar", "(250,100)", "(250,250)", "PaPI-Tab", list(["state1_text","Go to"], ["state2_text","Leaving to"]));
+          [sim, PacketFramework, GoToSliderLCDProgress]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="SliderLCDProgress", SliderLCDprogressbarButton, 'Click_Event');
+          
+          // finalise the communication interface
+          [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
+          
+          // finish if next state is chosen
+          [sim, expState] = ld_add(sim, ev, list(GoToOscillator, GoToSliderLCDProgress), [1,2]);
+          // write the next state on the first position of the global memory
+          [sim] = ld_write_global_memory(sim, ev, data=expState, index=one, ...
+                                         ident_str="NextStateData", datatype=ORTD.DATATYPE_FLOAT, ...
+                                         ElementsToWrite=1);
+          
+          [sim, finished] = ld_and(sim, ev, list(expState, one));
+          
+          outlist=list(expState);
+          [sim] = ld_printf(sim, ev, expState, "Case choose experiment active. Next Experiment is (0 means no change):", 1);
+          // chose the next state to enter when the demo experiment has finished
+          userdata.State = "choosedExp";
+          
+        case "choosedExp"
+          printf("Got the following chosen experiment for iteration %d:\n", userdata.Acounter);  disp(userdata.InputData(1));
+          [sim, nextExp] = ld_const(sim, ev, userdata.InputData(1));
+          
+          // finalise the communication interface
+          [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
+          
+          finished = one; // finish directly
+          
+          // chose the next state to enter when the demo experiment has finished
+          select userdata.InputData(1)
+          case 1
+              userdata.State = "oscillator";
+          case 2
+              userdata.State = "sliderLCDprogressbar";
+          else
+              userdata.State = "finished";
+          end
+          
+          outlist=list(nextExp);
+          [sim] = ld_printf(sim, ev, nextExp, "Case choosed experiment active. Next Experiment is "+ userdata.State, 1);
+          
         case "oscillator"  // define an experiment to perform an oscillator experiment
           in1 = inlist(1);
           [sim] = ld_printf(sim, 0, in1, "Case oscillator active: ", 1);
 
           // Add a parameter for controlling the oscillator
-          [sim, PacketFramework, Input]=ld_PF_Parameter(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input");
+          [PacketFramework, DisturbanceButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Disturbance", "(150,50)", "(600,100)", "PaPI-Tab", list(["state1_text","Disturb"], ["state2_text","Disturbing"]));
+          [sim, PacketFramework, Input]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input", DisturbanceButton, 'Click_Event');
+          
+          // Add a button parameter to go to the experiment selection dialog
+          [PacketFramework, OkButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Leave", "(150,50)", "(600,325)", "PaPI-Tab", list(["state1_text","Ok"], ["state2_text","Leaving"]));
+          [sim, PacketFramework, GoToChoose]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="ok", OkButton, 'Click_Event');
 
-          // some more parameters
-          [sim, PacketFramework, AParVector]=ld_PF_Parameter(sim, PacketFramework, NValues=10, datatype=ORTD.DATATYPE_FLOAT, ParameterName="A vectorial parameter");
-          [sim, PacketFramework, par2]=ld_PF_Parameter(sim, PacketFramework, NValues=2, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Test");
-
-          // printf these parameters
+          // printf the parameter
           [sim] = ld_printf(sim, ev, Input, "Oscillator input ", 1);
-          [sim] = ld_printf(sim, ev, par2, "Test ", 2);
-          [sim] = ld_printf(sim, ev, AParVector, "A vectorial parameter", 10);
 
           // The system to control
+          [sim, Input] = ld_add_ofs(sim, 0, Input, 0.2);
           T_a = 0.1; [sim, x,v] = damped_oscillator(sim, Input, T_a);
 
           // Stream the data of the oscillator
-          [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot X';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'ControllerSignals';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('X'); 
- 
-
-          [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V");
+          [PacketFramework, PlotXY] = ld_PF_addpluginAdvanced(PacketFramework, "Plot", "Plot XV", "(500,500)", "(0,0)", "PaPI-Tab", list(["yRange","[-10.0 10.0]"]));
+          [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X", PlotXY, 'SourceGroup0');
+          [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V", PlotXY, 'SourceGroup0');
 
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
-          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
 
-          // Wait until a number of time steps has passed, then notify that
-          // the experiment has finished by setting "finished" to 1.
-          [sim, finished] = ld_steps2(sim, ev, activation_simsteps=NSamples, values=[0,1] );
+          outlist=list(x);
 
-          [sim, out] = ld_const(sim, 0, 11);
-          outlist=list(out);
+          finished = GoToChoose;
+          
+          // chose the next state to enter when the demo experiment has finished
+          userdata.State = "chooseExp";
 
-          // chose the next state to enter when the calibration experiment has finished
-          userdata.State = "constant";
-
-        case "constant" // design a constant signal to send to PaPi
+        case "sliderLCDprogressbar" // design a constant signal to send to PaPi
           in1 = inlist(1);
-          [sim] = ld_printf(sim, 0, in1, "Case constant active: ", 1);
-      
-          // Stream a constant
-          [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=in1, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="Const");
-          PacketFramework.PaPIConfig.ToCreate.plot_X.identifier.value = 'Plot';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.size.value = '(300,300)';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.position.value = '(300,0)';
-          PacketFramework.PaPIConfig.ToCreate.plot_X.config.name.value = 'Plot Const';
-          PacketFramework.PaPIConfig.ToSub.plot_X.block = 'SourceGroup2';
-          PacketFramework.PaPIConfig.ToSub.plot_X.signals = list('Const'); 
+          [sim] = ld_printf(sim, 0, in1, "Case sliderLCDprogressbar active: ", 1);
+          
+          // Add a button parameter to go to the experiment selection dialog
+          [PacketFramework, OkButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Leave", "(150,50)", "(600,225)", "PaPI-Tab", list(["state1_text","Ok"], ["state2_text","Leaving"]));
+          [sim, PacketFramework, GoToChoose]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="ok", OkButton, 'Click_Event');
+          
+          // Add a slider
+          [PacketFramework, Slider] = ld_PF_addpluginAdvanced(PacketFramework, "Slider", "Slider Example", "(500,75)", "(50,50)", "PaPI-Tab", list(["step_count","101"], ["lower_bound","0.0"], ["upper_bound","1.0"]));
+          [sim, PacketFramework, sliderValue]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="sliderVal", Slider, 'SliderBlock');
+          
+          // show the slider value on a progress bar
+          [sim, percSliderValue] = ld_gain(sim, ev, sliderValue, 100);
+          [PacketFramework, Pbar] = ld_PF_addpluginAdvanced(PacketFramework, "ProgressBar", "ProgressBar Example", "(500,75)", "(50,250)", "PaPI-Tab", list());
+          [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=percSliderValue, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="percent", Pbar, 'SourceGroup0');
+          
+          // show the slider value on a lcd display
+          [PacketFramework, LCD] = ld_PF_addpluginAdvanced(PacketFramework, "LCDDisplay", "LCD Example", "(210,120)", "(195,450)", "PaPI-Tab", list(["updateFrequency","50"]));
+          [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=sliderValue, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="LCDVal", LCD, 'SourceGroup0');
           
           // finalise the communication interface
           [sim,PacketFramework] = ld_PF_Finalise(sim, PacketFramework);
-          ld_PF_Export_js(PacketFramework, fname="ProtocollConfig.json");
           
-          // Wait until a number of time steps has passed, then notify that
-          // the experiment (control system in this case) has finished.
-          [sim, finished] = ld_steps2(sim, ev, activation_simsteps=NSamples, values=[0,1] );
+          outlist=list(sliderValue);
           
-          [sim, out] = ld_const(sim, 0, 22);
-          outlist=list(out);
+          finished = GoToChoose;
           
           // chose the next state to enter when the demo experiment has finished
-          userdata.State = "finished";
+          userdata.State = "chooseExp";
           
         case "finished" // experiment finished - nothing to do
           in1 = inlist(1);
           [sim] = ld_printf(sim, ev, in1, "Case finished active" , 1);
           [sim, finished] = ld_const(sim, ev, 0); // never finish
-          [sim, out] = ld_const(sim, 0, 33);
+          [sim, out] = ld_const(sim, 0, 5);
           outlist=list(out);
           
       end
@@ -229,9 +286,19 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 	userdata = par.userdata;
 
 	// get the stored sensor data
-	[sim, ToScilab] = ld_const(sim, ev, 0);
+	[sim, readI] = ld_const(sim, 0, 1); // start at index 1
+	[sim, ToScilab] = ld_read_global_memory(sim, 0, index=readI, ident_str="NextStateData", ...
+                                            datatype=ORTD.DATATYPE_FLOAT, ...
+                                            ElementsToRead=1);
+	//[sim, ToScilab] = ld_const(sim, ev, 0);
   endfunction
 
+
+  // initialise a global memory for storing the next state
+  [sim] = ld_global_memory(sim, ev, ident_str="NextStateData", ... 
+                           datatype=ORTD.DATATYPE_FLOAT, len=1, ...
+                           initial_data=[zeros(1,1)], ... 
+                           visibility='global', useMutex=1);
 
   // Start the experiment
   ThreadPrioStruct.prio1=ORTD.ORTD_RT_NORMALTASK;
@@ -260,7 +327,7 @@ endfunction
 // The main real-time thread
 function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
   // This will run in a thread
-  [sim, Tpause] = ld_const(sim, ev, 1/5);  // The sampling time that is constant at 20 Hz in this example
+  [sim, Tpause] = ld_const(sim, ev, 1/20);  // The sampling time that is constant at 20 Hz in this example
   [sim, out] = ld_ClockSync(sim, ev, in=Tpause); // synchronise this simulation
 
   //
@@ -268,7 +335,7 @@ function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
   //
 
    // some dummy input to the state machine
-  [sim,Signal] = ld_const(sim, 0, 1.234);   
+  [sim,Signal] = ld_const(sim, 0, 0.4321);   
 
   [sim, outlist] = AutoConfigExample(sim, Signal);
 
@@ -321,8 +388,6 @@ endfunction
 thispath = get_absolute_file_path(ProgramName+'.sce');
 cd(thispath);
 z = poly(0,'z');
-
-exec('webinterface/PacketFramework.sce');
 
 // defile ev
 ev = [0]; // main event

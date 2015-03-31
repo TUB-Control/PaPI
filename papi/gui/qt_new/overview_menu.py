@@ -507,6 +507,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if self.parameterTree.isIndexHidden(index):
             return
 
+        index_sibling = index.sibling(index.row(), index.column()-1)
+
+        if index_sibling.isValid():
+            index = index_sibling
+
         dparameter = self.parameterTree.model().data(index, Qt.UserRole)
         dplugin = self.pluginTree.model().data(self.pluginTree.currentIndex(), Qt.UserRole)
 

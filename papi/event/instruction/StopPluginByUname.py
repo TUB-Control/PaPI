@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-#-*- coding: utf-8 -*-
+#-*- coding: latin-1 -*-
 
 """
-Copyright (C) 2014 Technische Universit√§t Berlin,
-Fakult√§t IV - Elektrotechnik und Informatik,
+Copyright (C) 2014 Technische Universit‰t Berlin,
+Fakult‰t IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
  
@@ -24,21 +24,15 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
 Stefan Ruppin
-Sven Knuth
 """
 
-from papi.plugin.base_classes.base_visual import base_visual
+__author__ = 'stefan'
 
-from papi.constants import PLUGIN_PCP_IDENTIFIER
+from papi.event.instruction.InstructionBase import InstructionBase
 
+class StopPluginByUname(InstructionBase):
+    def __init__(self, oID, plugin_uname, delete = True):
+        self.delete = delete
+        super().__init__(oID, None, 'stop_plugin_by_uname', None)
 
-class pcp_base(base_visual):
-
-    def initiate_layer_1(self, config):
-        return self.initiate_layer_0(config)
-
-    def initiate_layer_0(self, config):
-        raise NotImplementedError("Please Implement this method")
-
-    def get_type(self):
-        return PLUGIN_PCP_IDENTIFIER
+        self.plugin_uname = plugin_uname

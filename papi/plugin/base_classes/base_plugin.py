@@ -73,6 +73,9 @@ class base_plugin(IPlugin):
     def quit(self):
         raise NotImplementedError("Please Implement this method")
 
+    def set_parameter(self, parameter_name, parameter_value):
+        raise NotImplementedError("Please Implement this method")
+
     def set_parameter_internal(self, name, value):
         self.set_parameter(name, value)
 
@@ -150,6 +153,14 @@ class base_plugin(IPlugin):
         opt.parameter_list = parameters
 
         event = Event.data.NewParameter(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
+
+    def send_delete_block(self, blockname):
+        event = Event.data.DeleteBlock(self.__id__, 0, blockname)
+        self._Core_event_queue__.put(event)
+
+    def send_delete_parameter(self, parameterName):
+        event = Event.data.DeleteParameter(self.__id__, 0, parameterName)
         self._Core_event_queue__.put(event)
 
     def update_plugin_meta(self, dplug):

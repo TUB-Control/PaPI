@@ -304,7 +304,7 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.plugin_identifier = plugin_identifier
             dplugin.startup_config = config
             # call the init function of plugin and set queues and id
-            api = Plugin_api(self.gui_data, self.core_queue, self.gui_id, uname + ' API:')
+            api = Plugin_api(self.gui_data, self.core_queue, self.gui_id, uname + ' API:', tabManager=self.TabManger)
 
 
             # call the plugin developers init function with config

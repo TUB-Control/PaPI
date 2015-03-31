@@ -1,0 +1,9 @@
+[Core]
+Name = HTMLViewer
+Module = HTMLViewer
+
+[Documentation]
+Author = S. Ruppin
+Version = 1.0
+Website =
+Description = HTMLViewer for displaying HTML

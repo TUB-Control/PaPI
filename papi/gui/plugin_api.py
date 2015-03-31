@@ -49,9 +49,9 @@ class Plugin_api(QtCore.QObject):
 
     resize_gui = QtCore.Signal(int, int)
 
-    def __init__(self, gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER):
+    def __init__(self, gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER, tabManager = None):
         super(Plugin_api, self).__init__()
-        self.__default_api = Gui_api(gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER)
+        self.__default_api = Gui_api(gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER, TabManager=tabManager)
 
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart = True):
         """
@@ -146,3 +146,7 @@ class Plugin_api(QtCore.QObject):
         :type plugin_uname: basestring
         """
         self.__default_api.do_pause_plugin_by_uname(plugin_uname)
+
+
+    def do_set_tab_active_by_name(self, tabName):
+       self.__default_api.do_set_tab_active_by_name(tabName)
