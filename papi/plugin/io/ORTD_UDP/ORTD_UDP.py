@@ -63,6 +63,8 @@ import json
 import time
 import pickle
 
+from threading import Timer
+
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
         self.ORTD_par_id = ORTD_par_id
@@ -144,7 +146,11 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
-        self.json_config_file = ''
+        self.config_complete = False
+        self.config_buffer = {}
+
+        self.timer = Timer(3,self.callback_timeout_timer)
+        self.timer_active = False
 
         return True
 
@@ -161,8 +167,7 @@ class ORTD_UDP(iop_base):
 
     def thread_execute(self):
         time.sleep(1)
-        data = struct.pack('<iiid', 12, 1, int(-3), float(0))
-        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        self.request_new_config_from_ORTD()
 
         goOn = True
         newData = False
@@ -204,59 +209,92 @@ class ORTD_UDP(iop_base):
         if SourceId == -2:
             # new config in ORTD available
             # send trigger to get new config
-            #print('NEW ORTD CONFIG')
-            Counter = 1
-            data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
-            self.json_config_file = ''
+            self.request_new_config_from_ORTD()
+            self.config_complete = False
+            self.config_buffer = {}
 
         if SourceId == -4:
-            #print('new CFG')
-            #print(rev)
             # new configItem
             # receive new config item and execute cfg in PaPI
-            i = 16
+
+            # unpack package
+            i = 16 # Offset: 4 ints
             unp = ''
             while i < len(rev):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
                 i += 1
 
-            # print("*********************************************/n")
-            # print(unp)
-            # print("*********************************************/n")
+            self.config_buffer[int(Counter)] = unp
 
-            js = unp.replace('\\', '')
-            
-            print(Counter, SenderId, SourceId)
-            #print(js)
-            self.json_config_file += js
-            try:
-                d = json.loads(self.json_config_file)
-
-
-
-                # print("*********************************************/n")
-                # print(d)
-                # print("*********************************************/n")
+            # Check counter key series for holes
+            counters = list(self.config_buffer.keys())
+            counters.sort()
+            i = 1
+            config_file = ''
+            self.config_complete = True
+            for c in counters:
+                if i == c:
+                    config_file += self.config_buffer[c]
+                    i += 1
+                else:
+                    self.config_complete = False
+                    break
 
 
+            if self.config_complete:
+                if not self.check_and_process_cfg(config_file):
+                    self.start_timeout_timer()
+                else:
+                    self.stop_timeout_timer()
 
-                # config completely received
-                # extract new configuration
-                cfg = d
+            else:
+                self.start_timeout_timer()
 
-                ORTDSources, ORTDParameters, plToCreate, \
-                plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
 
-                self.update_block_list(ORTDSources)
-                self.update_parameter_list(ORTDParameters)
+    def start_timeout_timer(self):
+        if not self.timer_active:
+            self.timer = Timer(3,self.callback_timeout_timer)
+            self.timer.start()
+            self.timer_active = True
+        else:
+            self.timer.cancel()
+            self.timer = Timer(3,self.callback_timeout_timer)
+            self.timer.start()
 
-                self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
+    def stop_timeout_timer(self):
+        if self.timer_active:
+            self.timer.cancel()
+            self.timer_active = False
 
-            except ValueError:
-                print("data was not valid JSON")
-                print(self.json_config_file)
+    def callback_timeout_timer(self):
+        print('ORTD_PLUGIN: Config timeout appeard, requesting a new config')
+        self.timer_active = False
 
+        self.config_buffer = {}
+        self.request_new_config_from_ORTD()
+
+    def request_new_config_from_ORTD(self):
+        Counter = 1
+        data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
+        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
+    def check_and_process_cfg(self, config_file):
+        try:
+            # config completely received
+            # extract new configuration
+            cfg = json.loads(config_file)
+
+            ORTDSources, ORTDParameters, plToCreate, \
+            plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
+
+            self.update_block_list(ORTDSources)
+            self.update_parameter_list(ORTDParameters)
+
+            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
+
+            return True
+        except ValueError:
+            return False
 
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
@@ -364,75 +402,6 @@ class ORTD_UDP(iop_base):
                 block = list(self.blocks.keys())[0]
                 if len(self.blocks[block].signals) == len(signals_to_send):
                     self.send_new_data(block, [self.t], signals_to_send )
-
-    def thread_executeBackUP(self):
-        goOn = True
-
-        signal_values = {}
-        while goOn:
-            try:
-                rev = self.sock_recv.recv(1600)
-            except socket.timeout:
-                # print('timeout')
-                pass
-            except socket.error:
-                print('ORTD got socket error')
-            else:
-                # unpack header
-                SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
-                if SourceId == -1:
-                    # unpack group ID
-                    GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
-                    self.t += 1.0
-
-                    keys = list(signal_values.keys())
-                    keys.sort()                           # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
-
-                    if self.separate == 1:
-                        for key in keys:
-                            # signals_to_send.append(signal_values[key])
-                            Source = self.Sources[str(key)]
-                            NValues = int(Source['NValues_send'])
-                            n = len(signal_values[key])
-                            t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
-                            # flush data to papi
-                            sig_name = self.Sources[str(key)]['SourceName']
-                            self.send_new_data(self.blocks[key].name, t, {sig_name:signal_values[key]})
-                    else:
-                        signals_to_send = {}
-                        for key in keys:
-                            sig_name = self.Sources[str(key)]['SourceName']
-                            signals_to_send[sig_name] = signal_values[key]
-
-                        self.send_new_data('SourceGroup0', [self.t], signals_to_send )
-
-                    signal_values = {}
-                else:
-                    # Received a data packet
-                    # Lookup the Source behind the given SourceId
-                    if str(SourceId) in self.Sources:
-                        Source = self.Sources[str(SourceId)]
-                        NValues = int(Source['NValues_send'])
-
-                        # Read NVales from the received packet
-                        val = []
-                        for i in range(NValues):
-                            # TODO: why try except?
-                            try:
-                                val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
-                            except:
-                                val.append(0)
-
-                        signal_values[SourceId] = val
-                    else:
-                        print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
-
-            # check if thread should go on
-            self.lock.acquire()
-            goOn = self.thread_goOn
-            self.lock.release()
-        # Thread ended
-        self.sock_recv.close()
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
