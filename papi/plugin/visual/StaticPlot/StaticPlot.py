@@ -258,13 +258,13 @@ class StaticPlot(vip_base):
     def read_json_data(self):
 
         json_str = self.config['json_data']['value']
-        time_id  = self.config['time_identifier']['value']
+        axis_id  = self.config['axis_identifier']['value']
         data = json.loads(json_str)
 
 
-        self.plot_data(data, time_id)
+        self.plot_data(data, axis_id)
 
-    def plot_data(self, data, time_identifier):
+    def plot_data(self, data, axis_id):
         """
         Function update_plot_single_timestamp
 
@@ -274,7 +274,7 @@ class StaticPlot(vip_base):
         self.__plotWidget__.clear()
 
 
-        tdata = data[time_identifier]
+        tdata = data[axis_id]
 
         x_min = min(tdata)
         x_max = max(tdata)
@@ -283,7 +283,7 @@ class StaticPlot(vip_base):
         y_max = None
 
         for signal_name in data:
-            if signal_name != time_identifier:
+            if signal_name != axis_id:
                 signal_data = data[signal_name]
                 print(signal_data)
 
@@ -552,7 +552,7 @@ class StaticPlot(vip_base):
                           '"t": [ 0, 1, 2, 3, 4 ]}',
                 'tooltip' : 'Used as data source. Format: { "time" : [...], "y1" : [...], "y2" : [...]}'
             },
-            'time_identifier' : {
+            'axis_identifier' : {
                 'value' :  't',
                 'tooltip' : 'Used to specify the identifier for the X-Axis e.g. time in json_data'
             },
