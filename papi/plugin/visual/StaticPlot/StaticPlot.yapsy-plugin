@@ -1,0 +1,9 @@
+[Core]
+Name = StaticPlot
+Module = StaticPlot
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website =
+Description = Used to plot static data provided by the configuration.

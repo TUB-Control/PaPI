@@ -34,6 +34,8 @@ from PySide.QtGui import *
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
 
+
+
 # ------------------------------------
 # Item Object
 # ------------------------------------
@@ -674,3 +676,20 @@ class StructTreeNode(QStandardItem):
             return None
 
         return None
+
+# ------------------------------------
+# Custom GUI elements
+# ------------------------------------
+
+
+class PaPIMDISubWindow(QMdiSubWindow):
+    def __init__(self):
+        super(PaPIMDISubWindow, self).__init__()
+        self.movable = True
+
+    def mouseMoveEvent(self, event):
+        if self.movable:
+            super(PaPIMDISubWindow, self).mouseMoveEvent(event)
+
+    def set_movable(self, flag):
+        self.movable = flag

@@ -43,6 +43,7 @@ class base_visual(base_plugin):
         self.control_api = control_api
         self.dplugin_info = dpluginInfo
         self.TabManager = TabManger
+        self.movable = True
 
     def start_init(self, config=None):
         self.config = config
@@ -93,9 +94,13 @@ class base_visual(base_plugin):
     def set_window_for_internal_usage(self, subwindow):
         self._subWindow = subwindow
         self.original_resize_function = self._subWindow.resizeEvent
-        self._subWindow.resizeEvent = self.window_resize
         self.original_move_function = self._subWindow.moveEvent
+        self.original_mouse_move_function = self._subWindow.mouseMoveEvent
+
+        self._subWindow.resizeEvent = self.window_resize
         self._subWindow.moveEvent = self.window_move
+
+
         self._subWindow.setWindowTitle(self.window_name)
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
 
@@ -120,8 +125,15 @@ class base_visual(base_plugin):
         self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
+    def window_mouse_move(self, event):
+        if self.movable:
+            self.original_mouse_move_function(event)
+
     def get_sub_window(self):
         return self._subWindow
+
+    def get_widget(self):
+        return self.widget
 
     def create_control_context_menu(self):
         ctrlMenu = QtGui.QMenu("Control")

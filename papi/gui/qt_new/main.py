@@ -31,9 +31,7 @@ __author__ = 'knuths'
 import sys
 import os
 import traceback
-import cProfile
 import re
-import threading
 
 from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
@@ -46,17 +44,17 @@ from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
+from papi.gui.qt_new.item import PaPIMDISubWindow
+
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
     PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
-
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
 
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-
 from papi.gui.qt_new.PapiTabManger import PapiTabManger
 
 from papi.gui.gui_management import GuiManagement
@@ -376,7 +374,14 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :return:
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+
+            sub_window_ori = dplugin.plugin.get_sub_window()
+
+            dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
+            dplugin.plugin.set_widget_for_internal_usage(sub_window_ori.widget())
+
             sub_window = dplugin.plugin.get_sub_window()
+
             config = dplugin.startup_config
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():
@@ -385,9 +390,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 self.log.printText(1,'add dplugin: no tab with tab_id of dplugin')
                 area = self.TabManager.add_tab(tab_name)
 
-
             area.addSubWindow(sub_window)
+
             sub_window.show()
+
             size_re = re.compile(r'([0-9]+)')
 
             pos = config['position']['value']
@@ -453,45 +459,43 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.loadButton.show()
             self.saveButton.show()
             self.menubar.setHidden(False)
-            self.disable_lock()
-            self.TabManager.setTabs_movable_closable(True, True)
+            self.toogle_lock()
 
         elif not self.in_run_mode:
             self.in_run_mode = True
-
             self.loadButton.hide()
             self.saveButton.hide()
             self.menubar.hide()
-            self.enable_lock()
-            self.TabManager.setTabs_movable_closable(False, False)
+            self.toogle_lock()
 
-    def enable_lock(self):
-        for tab_name in self.TabManager.get_tabs_by_uname():
-            area = self.TabManager.get_tabs_by_uname()[tab_name]
+    def toogle_lock(self):
 
-            windowsList = area.subWindowList()
+        if self.in_run_mode:
+            for tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
 
-            for window in windowsList:
+                windowsList = area.subWindowList()
 
-                #window.setAttribute(Qt.WA_NoBackground)
+                for window in windowsList:
 
-                #window.setAttribute(Qt.WA_NoSystemBackground)
-                #window.setAttribute(Qt.WA_TranslucentBackground)
+                    #window.setAttribute(Qt.WA_NoBackground)
 
-                window.setMouseTracking(False)
-                window.setWindowFlags( Qt.WindowTitleHint | Qt.FramelessWindowHint  )
+                    #window.setAttribute(Qt.WA_NoSystemBackground)
+                    #window.setAttribute(Qt.WA_TranslucentBackground)
+                    window.set_movable(False)
+                    window.setMouseTracking(False)
+                    window.setWindowFlags(~Qt.WindowMinMaxButtonsHint & (Qt.CustomizeWindowHint | Qt.WindowTitleHint))
 
-    def disable_lock(self):
-        for tab_name in self.TabManager.get_tabs_by_uname():
-            area = self.TabManager.get_tabs_by_uname()[tab_name]
+        if not self.in_run_mode:
+            for tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
 
-            windowsList = area.subWindowList()
+                windowsList = area.subWindowList()
 
-            for window in windowsList:
-
-                window.setMouseTracking(True)
-                window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
-
+                for window in windowsList:
+                    window.set_movable(True)
+                    window.setMouseTracking(True)
+                    window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
