@@ -422,7 +422,7 @@ class ORTD_UDP(iop_base):
         # Thread ended
         self.sock_recv.close()
 
-    def execute(self, Data=None, block_name=None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):

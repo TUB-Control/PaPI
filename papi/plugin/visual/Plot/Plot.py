@@ -313,7 +313,7 @@ class Plot(vip_base):
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
 
-    def execute(self, Data=None, block_name=None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         """
         Function execute
 

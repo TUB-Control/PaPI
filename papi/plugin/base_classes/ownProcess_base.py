@@ -102,7 +102,7 @@ class ownProcess_base(base_plugin):
                     opt = event.get_optional_parameter()
                     if opt.is_parameter is False:
                         data = self.demux(opt.data_source_id, opt.block_name, opt.data)
-                        self.execute(Data=data, block_name = opt.block_name)
+                        self.execute(Data=data, block_name = opt.block_name, plugin_uname= event.source_plugin_uname)
                     if opt.is_parameter is True:
                         self.set_parameter_internal(opt.parameter_alias, opt.data)
                 if op == 'set_parameter' and self.__plugin_stopped is False:

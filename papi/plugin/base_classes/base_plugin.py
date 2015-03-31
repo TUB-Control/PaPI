@@ -46,7 +46,7 @@ class base_plugin(IPlugin):
     def get_type(self):
         raise NotImplementedError("Please Implement this method")
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise NotImplementedError("Please Implement this method")
 
     def get_configuration_base(self):
@@ -116,7 +116,7 @@ class base_plugin(IPlugin):
         opt.data_source_id = self.__id__
         opt.block_name = block_name
 
-        event = Event.data.NewData(self.__id__, 0, opt)
+        event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
 
