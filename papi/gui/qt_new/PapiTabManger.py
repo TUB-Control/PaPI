@@ -195,10 +195,13 @@ class PapiTabManger(QObject):
             ind = self.tabWidget.indexOf(tabObj)
             return ind
 
-    def setTabPosition_by_name(self, tabName):
-        if tabName in self.tab_dict_uname:
-            tabObj = self.tab_dict_uname[tabName]
-            #self.tabWidget.
+    def setTabs_movable_closable(self, move, close):
+        if isinstance(move, bool):
+            self.tabWidget.setMovable(move)
+
+        if isinstance(close,bool):
+            self.tabWidget.setTabsClosable(close)
+
 
     def show_context_menu(self, pos):
         self.cmenu = self.create_context_menu()

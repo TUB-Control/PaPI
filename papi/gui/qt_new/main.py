@@ -454,6 +454,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.saveButton.show()
             self.menubar.setHidden(False)
             self.disable_lock()
+            self.TabManager.setTabs_movable_closable(True, True)
 
         elif not self.in_run_mode:
             self.in_run_mode = True
@@ -462,6 +463,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.saveButton.hide()
             self.menubar.hide()
             self.enable_lock()
+            self.TabManager.setTabs_movable_closable(False, False)
 
     def enable_lock(self):
         for tab_name in self.TabManager.get_tabs_by_uname():
