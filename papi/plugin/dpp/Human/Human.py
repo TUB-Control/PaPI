@@ -47,12 +47,12 @@ import time
 # This class initializes a WebSocket to enable bidirectional communication between browser and server
 class WSHandler(tornado.websocket.WebSocketHandler):
 
-	# WebSockets don't use CORS headers and can bypass the usual same-origin policies
+    # WebSockets don't use CORS headers and can bypass the usual same-origin policies
     # to accept cross-origin traffic, always return True
-    #def check_origin(self, origin): 
-        #return True
-	
-	# initialize the data that shall be sent
+    #def check_origin(self, origin):
+    #return True
+
+    # initialize the data that shall be sent
     def initialize(self, QuatData):
         self.QuatData = QuatData
 
@@ -104,25 +104,30 @@ class Human(dpp_base):
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
 		
         # IMPORTANT: The identification names have to be the same as written in RTmain.sce!
 
-        # quaternion for upper arm
-        self.Angle_Data_Up_w = Data['quat_upperarm_w'][0]
-        self.Angle_Data_Up_x = Data['quat_upperarm_x'][0]
-        self.Angle_Data_Up_y = Data['quat_upperarm_y'][0]
-        self.Angle_Data_Up_z = Data['quat_upperarm_z'][0]
-
-        # quaternion for forearm
-        self.Angle_Data_Fo_w = Data['quat_forearm_w'][0]
-        self.Angle_Data_Fo_x = Data['quat_forearm_x'][0]
-        self.Angle_Data_Fo_y = Data['quat_forearm_y'][0]
-        self.Angle_Data_Fo_z = Data['quat_forearm_z'][0]
-
         # be sure, data has the right identification names
-        if 'quat_forearm_w' & 'quat_forearm_x' & 'quat_forearm_y' & 'quat_forearm_z' & 'quat_upperarm_w' & 'quat_upperarm_x' & 'quat_upperarm_y' & 'quat_upperarm_z' in Data:
-            self.Angle_Data = [self.Angle_Data_Up_w,self.Angle_Data_Up_x,self.Angle_Data_Up_y,self.Angle_Data_Up_z, self.Angle_Data_Fo_w, self.Angle_Data_Fo_x, self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
+        if 'quat_forearm_w' in Data and 'quat_forearm_x' in Data and 'quat_forearm_y' in Data and 'quat_forearm_z' in Data and\
+                                                'quat_upperarm_w' in Data and 'quat_upperarm_x' in Data and\
+                                'quat_upperarm_y' in Data and 'quat_upperarm_z' in Data:
+
+            # quaternion for upper arm
+            self.Angle_Data_Up_w = Data['quat_upperarm_w'][0]
+            self.Angle_Data_Up_x = Data['quat_upperarm_x'][0]
+            self.Angle_Data_Up_y = Data['quat_upperarm_y'][0]
+            self.Angle_Data_Up_z = Data['quat_upperarm_z'][0]
+
+            # quaternion for forearm
+            self.Angle_Data_Fo_w = Data['quat_forearm_w'][0]
+            self.Angle_Data_Fo_x = Data['quat_forearm_x'][0]
+            self.Angle_Data_Fo_y = Data['quat_forearm_y'][0]
+            self.Angle_Data_Fo_z = Data['quat_forearm_z'][0]
+
+            self.Angle_Data = [self.Angle_Data_Up_w,self.Angle_Data_Up_x,self.Angle_Data_Up_y,
+                               self.Angle_Data_Up_z, self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
+                               self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
 
         else:
             print('Wrong identification names for data!')
