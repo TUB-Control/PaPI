@@ -9,3 +9,5 @@ Website = www
 Description = Enables a user to select between distinct options.
     It is possible to define an 'option_texts' and an 'option_values'.
     If the length between both settings differs the selected 'option_texts' will be send.
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/
