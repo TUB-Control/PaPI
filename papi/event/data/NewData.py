@@ -32,5 +32,9 @@ from papi.event.data.DataBase import DataBase
 
 
 class NewData(DataBase):
-    def __init__(self, oID, destID, opt):
+    def __init__(self, oID, destID, opt, source_plugin_uname):
         super().__init__(oID,destID, 'new_data', opt)
+
+        #self.block_name =
+        self.source_plugin_uname = source_plugin_uname
+

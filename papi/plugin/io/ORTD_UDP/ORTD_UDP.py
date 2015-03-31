@@ -144,6 +144,8 @@ class ORTD_UDP(iop_base):
 
         self.block_id = 0
 
+        self.json_config_file = ''
+
         return True
 
     def pause(self):
@@ -206,13 +208,14 @@ class ORTD_UDP(iop_base):
             Counter = 1
             data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
             self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            self.json_config_file = ''
 
         if SourceId == -4:
             #print('new CFG')
             #print(rev)
             # new configItem
             # receive new config item and execute cfg in PaPI
-            i = 17
+            i = 16
             unp = ''
             while i < len(rev):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
@@ -224,28 +227,37 @@ class ORTD_UDP(iop_base):
 
             js = unp.replace('\\', '')
             
-            
+            print(Counter, SenderId, SourceId)
+            #print(js)
+            self.json_config_file += js
+            try:
+                d = json.loads(self.json_config_file)
 
 
-            d = json.loads(js)
-            
-            # print("*********************************************/n")
-            # print(d)
-            # print("*********************************************/n")
-            
+
+                # print("*********************************************/n")
+                # print(d)
+                # print("*********************************************/n")
 
 
-            # config completely received
-            # extract new configuration
-            cfg = d
 
-            ORTDSources, ORTDParameters, plToCreate, \
-            plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
+                # config completely received
+                # extract new configuration
+                cfg = d
 
-            self.update_block_list(ORTDSources)
-            self.update_parameter_list(ORTDParameters)
+                ORTDSources, ORTDParameters, plToCreate, \
+                plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
 
-            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
+                self.update_block_list(ORTDSources)
+                self.update_parameter_list(ORTDParameters)
+
+                self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
+
+            except ValueError:
+                print("data was not valid JSON")
+                print(self.json_config_file)
+
+
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
@@ -422,7 +434,7 @@ class ORTD_UDP(iop_base):
         # Thread ended
         self.sock_recv.close()
 
-    def execute(self, Data=None, block_name=None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):

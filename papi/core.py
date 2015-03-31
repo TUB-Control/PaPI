@@ -592,7 +592,7 @@ class Core:
                                 else:
                                     # Plugin is not running in GUI, so just 1:1 relation for event and destinations
                                     opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                    new_event = Event.data.NewData(oID, [pl.id], opt)
+                                    new_event = Event.data.NewData(oID, [pl.id], opt, source_plugin_uname= dplug.uname)
                                     pl.queue.put(new_event)
 
                                     # this event will be a new parameter value for a plugin
@@ -612,7 +612,7 @@ class Core:
                         # send new_data event to GUI with id_list of destinations
                         opt = event.get_optional_parameter()
                         opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                        new_event = Event.data.NewData(oID, id_list, opt)
+                        new_event = Event.data.NewData(oID, id_list, opt, source_plugin_uname= dplug.uname)
                         self.gui_event_queue.put(new_event)
                     # process new_data seemed correct
                     return 1

@@ -77,7 +77,7 @@ class Trigger(dpp_base):
     def resume(self):
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         pass
 
     def set_parameter(self, name, value):

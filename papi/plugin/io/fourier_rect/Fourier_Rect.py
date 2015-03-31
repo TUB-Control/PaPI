@@ -80,7 +80,7 @@ class Fourier_Rect(iop_base):
     def resume(self):
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         # amount of elements per vector: self.amax
         # amount of vectors : self.max_approx+1
         vec = numpy.zeros( (self.max_approx,  (self.amax) ))

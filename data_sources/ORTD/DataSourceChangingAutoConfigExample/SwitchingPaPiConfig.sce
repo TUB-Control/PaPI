@@ -184,11 +184,11 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
           [sim] = ld_printf(sim, 0, in1, "Case oscillator active: ", 1);
 
           // Add a parameter for controlling the oscillator
-          [PacketFramework, DisturbanceButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Disturbance", "(150,50)", "(600,100)", "PaPI-Tab", list(["state1_text","Disturb"], ["state2_text","Disturbing"]));
+          [PacketFramework, DisturbanceButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Disturbancegrgrgrrgrgrgrgrggegerggeregeg", "(150,50)", "(600,100)", "PaPI-Tab", list(["state1_text","Disturb"], ["state2_text","Disturbing"]));
           [sim, PacketFramework, Input]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input", DisturbanceButton, 'Click_Event');
           
           // Add a button parameter to go to the experiment selection dialog
-          [PacketFramework, OkButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Leave", "(150,50)", "(600,325)", "PaPI-Tab", list(["state1_text","Ok"], ["state2_text","Leaving"]));
+          [PacketFramework, OkButton] = ld_PF_addpluginAdvanced(PacketFramework, "Button", "Leaveergergergergerggegrggregegrgeegg", "(150,50)", "(600,325)", "PaPI-Tab", list(["state1_text","Ok"], ["state2_text","Leaving"]));
           [sim, PacketFramework, GoToChoose]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="ok", OkButton, 'Click_Event');
 
           // printf the parameter

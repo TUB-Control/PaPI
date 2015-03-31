@@ -165,7 +165,8 @@ class GuiEventProcessing(QtCore.QObject):
                         if opt.is_parameter is False:
                             dplugin.plugin.execute(
                                 Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
-                                block_name=opt.block_name)
+                                block_name=opt.block_name,
+                                plugin_uname = event.source_plugin_uname)
                         else:
                             dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
                     except Exception as E:

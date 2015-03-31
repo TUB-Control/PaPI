@@ -63,7 +63,7 @@ class ToHDD_CSV(dpp_base):
         print('toHDD resume')
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         t = Data['t']
 
         if block_name not in self.known_blocks.keys():
