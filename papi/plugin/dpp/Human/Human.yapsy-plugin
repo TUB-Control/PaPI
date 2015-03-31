@@ -1,0 +1,9 @@
+[Core]
+Name = Human
+Module = Human
+
+[Documentation]
+Author = Mirjana Ruppel
+Version = 0.1
+Website = openrtdynamics.sf.net
+Description = openrtdynamics interface

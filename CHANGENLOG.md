@@ -9,6 +9,7 @@ v.1.XX
  * [fix]: Renamed some variables of ownProcess_base to be private
  * [fix]: Fixed memory leak of gui event processing timer loop (#25)
  * [fix]: Fixed memory leak due to recall of the plugin manager collection function
+ * [fix]: Tab position and active tab will now be saved to xml
  * [improvement]: Changed the demux function to in improve performance
  * [improvement]: Improved core performance while processing new data (see #20)
  * [improvement]: Huge changes in the plotting plugin with performance benefits
@@ -17,6 +18,7 @@ v.1.XX
  * [plugin]: Minor changes in LCDDisplay and Slider
  * [plugin]: Added a new pcp plugin: Radiobutton
  * [improvement]: Shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
+ * [imporvement]: ORTD can now receive its configuration via udp in multiple packages
   
 v.1.0
 ---

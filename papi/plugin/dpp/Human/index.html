@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html>
+ <head> 
+  <title>3d-Simulation </title> 
+  <script type="text/javascript" src="js/three.js"></script> 
+  <script type="text/javascript" src="js/jquery-1.9.0.js"></script> 
+  <script type="text/javascript" src="js/stats.min.js"></script> 
+  <script type="text/javascript" src="js/dat.gui.min.js"></script> 
+  <script type="text/javascript" src="js/tween.min.js"></script>
+  <script src="js/TrackballControls.js"></script>
+  <style>
+        body {
+            // set margin to 0 and overflow to hidden to use full screen
+            margin: 0;
+            overflow: hidden;
+        }
+    </style> 
+ </head> 
+ <body> 
+  <div id="Stats-output"> 
+  </div> 
+  <!-- This Div will show how many frames per second are rendered --> 
+  <div id="WebGL-output"> 
+  </div> 
+  <!-- Javascript code that opens a websocket and runs the simulation --> 
+  <script type="text/javascript">
+
+// here begins the main function
+  	$(function () {
+		
+		// initialize variable to choose, if left or right arm is moved
+		var LeftorRight;	
+		
+		//########## Change this value to decide, which arm should move: 1 for left arm and 2 for right arm #########
+	    LeftorRight = 1;	
+		
+		// initialize variable to store the incoming data
+	    var data;			
+		
+		// initialize variables to store the quaternions for the upper arm
+	    var quatup_w;		
+	    var quatup_x;
+	    var quatup_y;
+	    var quatup_z;
+	    
+		// initialize variables to store the quaternions for the lower arm
+	    var quatlow_w;		
+	    var quatlow_x;
+	    var quatlow_y;
+	    var quatlow_z;
+	    
+		
+		
+	    //################################## initialize WebSocket ###################################
+		
+		// if WebSocket should use another port, change 9999 to your desired port address
+  		var host = "ws://localhost:9999/ws";	
+		
+		// open WebSocket
+	    var socket = new WebSocket(host);		
+	    console.log("socket status: " + socket.readyState);		 
+
+		// define functionality of the WebSocket
+	    if(socket){
+			
+			// if the connection is established, say so 
+			socket.onopen = function(){
+				console.log("The connection has been opened");
+			} 
+			
+			// if the Server sent a message, do the following:
+			socket.onmessage = function(message){
+			
+				// The Server sends data as string, so it has to be converted into float
+				var length = message.data.length;
+				
+				// don't use first and last entry of string, because they are brackets
+				var new_string = message.data.substr(1, length-2);
+
+				// split string at all commas to get individual values
+				var values = new_string.split(",");					
+			
+				// assign values to quaternions and parse them into float, be careful to consider the order in which data is sent 
+				// in this case, the first four entries are the values of the quaternion for the upper arm
+				quatup_w = parseFloat(values[0]);
+				quatup_x = parseFloat(values[1]);
+				quatup_y = parseFloat(values[2]);
+				quatup_z = parseFloat(values[3]);
+	        
+				// the last four entries are the values of the quaternion for the lower arm
+				quatlow_w = parseFloat(values[4]);
+				quatlow_x = parseFloat(values[5]);
+				quatlow_y = parseFloat(values[6]);
+				quatlow_z = parseFloat(values[7]);
+				
+				/* At the moment data for only two sensors is processed, more is possible. Change RTmain.sce and Human.py
+				   to send more data. Please consider the order in which data for different limbs is sent.*/
+	
+			}
+			
+			// if the Socket is closed, say so
+			socket.onclose = function(){
+				console.log("The connection has been closed");
+			}
+
+	    }else{
+		
+			// report, if WebSocket could not be opened
+			console.log("invalid socket");	
+	    }
+
+		
+		
+		//######################### Establish the THREE.js scene ############################# 
+
+        // initialize the small output window that shows how many frames per second are rendered
+		var stats = initStats(); 			
+		
+		// create a scene, that will hold the objects, cameras and lights
+        var scene = new THREE.Scene();		
+		
+		// create a camera and define in which direction we are looking 
+		// PerspectiveCamera(vertical field of view in degrees, aspect ratio, near plane, far plane) 
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000); 
+		camera.position.z = 4;
+	
+        // create a renderer and set the size of it, use shadows
+        var webGLRenderer = new THREE.WebGLRenderer();
+        webGLRenderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+        webGLRenderer.shadowMapEnabled = true;
+
+		// initialize mouse controls to zoom and rotate the scene, has to be updated in animate()!
+		var controls = new THREE.TrackballControls( camera );
+		controls.rotateSpeed = 1.0;
+		controls.zoomSpeed = 1.2;
+		controls.panSpeed = 0.8;
+		controls.noZoom = false;
+		controls.noPan = false;
+		controls.staticMoving = true;
+		controls.dynamicDampingFactor = 0.3;
+		controls.keys = [ 65, 83, 68 ];
+		controls.addEventListener( 'change', render );	// if scene gets rotated or zoomed into, render scene again
+		
+
+        // add spotlight for the shadows, position it and set intensity
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(0, 50, 30);
+        spotLight.intensity = 2;
+        scene.add(spotLight);
+
+        // add the output of the renderer to the html element
+        $("#WebGL-output").append(webGLRenderer.domElement);
+
+        // initialize variable to contain the loaded model 
+		var mesh;
+		
+		// initialize JSONLoader to load the js-file
+        var loader = new THREE.JSONLoader();
+		
+		// create a function to scale and position the model, add a material to its surface
+		loadModel = function(geometry, materials) {						 
+			var material = new THREE.MeshLambertMaterial({color: 0xF0C8C9, skinning: true});
+			mesh = new THREE.SkinnedMesh(geometry, material);
+			mesh.scale.set(0.35, 0.35, 0.35); 	// downscale the model, so it fits onto the screen
+			mesh.position.set(0, -1, 0);		// rotate the model, so its front is visible
+
+			// add the model to the scene
+			scene.add(mesh);
+
+			// and start the tweening
+			tween.start();
+        };
+		
+		// load the model and use the above created function to add it to the scene
+        loader.load('blender.js/Mensch.js', loadModel);
+
+		// initialize tweening
+		//tweening means, that the way between two positions is interpolated to create a much more fluent movement
+         var posSrc = {pos: -1};
+         var tween = new TWEEN.Tween(posSrc).to({pos: 0}, 3000);
+         tween.easing(TWEEN.Easing.Cubic.InOut);
+         var tweenBack = new TWEEN.Tween(posSrc).to({pos: -1}, 3000);
+         tweenBack.easing(TWEEN.Easing.Cubic.InOut);
+ 
+         tween.chain(tweenBack);
+         tweenBack.chain(tween);
+		
+		// define function, that declares the necessary actions on an update by the render and animate functions
+        var onUpdate = function () {
+			
+			// use quaternions for moving
+            mesh.bones.useQuaternion = true;
+            
+			/* If further limbs shall be simulated via this script, note that the coordinate system of the sensor is not necessarily 
+			   the same as the coordinate system of the model. So while the quaternion.w of the sensor will always be 
+			   the quaternion.w of the model, the x,y and z coordinates can be interchanged. Just try one setting and 
+			   adjust the coordinates, so that the coordinate systems align. A quaternion in javascript is defined
+			   as follows: quaternion=(x,y,z,w).*/
+			
+			// set the quaternion for the upper arm with the data sent from PaPI
+            var quat_upperarm = new THREE.Quaternion(); 
+			quat_upperarm.set(quatup_y, quatup_z, quatup_x, quatup_w);
+			
+			// if the left arm is moved, multiply the upper arm quaternion by this quaternion to erase a blender intern export error
+			var quat_align = new THREE.Quaternion();
+			quat_align.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), -1.0 );
+			var quat_upperarm_left = new THREE.Quaternion();
+			quat_upperarm_left.multiplyQuaternions(quat_upperarm, quat_align);
+			
+			
+			// set the local quaternion for the forearm with the data sent from PaPI. 
+			var quat_forearm_local = new THREE.Quaternion(); 
+			quat_forearm_local.set(quatlow_y, quatlow_z, quatlow_x, quatlow_w);
+			
+			/* The quaternion sent for the forearm does not show the movement of the forearm related to the upper arm
+			   but the movement of the forearm in relation to earth. To get the dependent movement, the forearm quaternion 
+			   has to be multiplied by the inverse quaternion of the upper arm. 
+			   Please note, that the function A.inverse() changes the quaternion stored in A, therefore a second quaternion 
+			   with the data of the upper arm quaternion has to be initialized to save the actual used upper arm quaternion. */
+			
+			// second upper arm quaternion that will be inverted
+			var quat_upperarm_inverse = new THREE.Quaternion();
+			quat_upperarm_inverse.set(quatup_y, quatup_z, quatup_x, quatup_w);
+			
+			// lower arm quaternion dependent on upper arm movement
+			var quat_forearm_global = new THREE.Quaternion();
+			quat_lowerarm_global.multiplyQuaternions(quat_upperarm_inverse.inverse(), quat_forearm_local)
+			
+			/* If  further limbs shall be simulated via this script, add more possibilities for 
+			   LeftorRight (e.g. 3,4...). 
+			   With the function mesh.bones[], single bones can be chosen. Check the following list to determine which number accords to a particular bone:
+					
+					mesh.bones[0] => 'spine' 
+					mesh.bones[1] => left shoulder
+					mesh.bones[2] => left upper arm
+					mesh.bones[3] => left forearm
+					mesh.bones[4] => right shoulder
+					mesh.bones[5] => right upper arm
+					mesh.bones[6] => right forearm
+					mesh.bones[7] => 'head'
+					mesh.bones[8] => right hip
+					mesh.bones[9] => right thigh
+					mesh.bones[10] => right shin
+					mesh.bones[11] => right foot
+					mesh.bones[12] => left hip
+					mesh.bones[13] => left thigh
+					mesh.bones[14] => left shin
+					mesh.bones[15] => left foot
+					
+			   IMPORTANT: this list only matches this specific model. The order of the bones depends on the order in which you create the bones in blender. */
+			   
+            if (LeftorRight == 1){ // move left arm
+	      
+				mesh.bones[2].quaternion.set(quat_upperarm_left.x, quat_upperarm_left.y, quat_upperarm_left.z, quat_upperarm_left.w); 
+				mesh.bones[3].quaternion.set(-quat_forearm_global.y, quat_forearm_global.x, quat_forearm_global.z, quat_forearm_global.w); 
+	      
+			}
+			else if (LeftorRight == 2){ // move right arm
+	      
+				mesh.bones[5].quaternion.set(quat_upperarm.x, quat_upperarm.y, quat_upperarm.z, quat_upperarm.w); 
+				mesh.bones[6].quaternion.set(quat_forearm_global.x,quat_forearm_global.y , quat_forearm_global.z, quat_forearm_global.w);
+	    
+			} // insert further possible limb movements here, e.g legs or both arms at the same time
+
+        };
+		
+		// tween between positions
+        tween.onUpdate(onUpdate); 
+        tweenBack.onUpdate(onUpdate);
+		
+		// call animate() to get animation frames and to start the render loop
+        animate();
+
+		function animate() {
+			// request frame and call rendering function to render it
+			requestAnimationFrame(animate);
+			
+			// update TrackballControls, so mouse actions (zooming and rotating) can be processed
+			controls.update();
+			
+			render();
+		}
+	
+        function render() {
+		
+			// update stats to see output on screen
+            stats.update();
+			
+			// update tween
+            TWEEN.update();
+            
+			//render the scene and camera
+            webGLRenderer.render(scene, camera);
+
+			// send message to server to get the current quaternion data as response, when a new frame is rendered
+            socket.send("Hallo!")
+            
+        }
+
+		// show how many frames per second are rendered in a small output window 
+        function initStats() {
+
+            var stats = new Stats();
+            stats.setMode(0); // 0: fps
+
+            // position output window in upper left corner
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+
+            $("#Stats-output").append(stats.domElement);
+
+            return stats;
+        }
+    });
+
+
+</script>  
+ </body>
+</html>
