@@ -226,7 +226,7 @@
 			
 			// lower arm quaternion dependent on upper arm movement
 			var quat_forearm_global = new THREE.Quaternion();
-			quat_lowerarm_global.multiplyQuaternions(quat_upperarm_inverse.inverse(), quat_forearm_local)
+			quat_forearm_global.multiplyQuaternions(quat_upperarm_inverse.inverse(), quat_forearm_local)
 			
 			/* If  further limbs shall be simulated via this script, add more possibilities for 
 			   LeftorRight (e.g. 3,4...). 
