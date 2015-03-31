@@ -132,3 +132,9 @@ REGEX_BOOL_BIN     = '^(1|0)$'
 REGEX_SINGLE_UNSIGNED_FLOAT_FORCED = '(\d+\.\d+)'
 REGEX_SIGNED_FLOAT = r'([-]{0,1}\d+\.\d+)'
 REGEX_SIGNED_FLOAT_OR_INT = r'([-]{0,1}\d+(.\d+)?)'
+
+# CONFIGURATION TYPE Collection
+
+CFG_TYPE_FILE = 'file'
+CFG_TYPE_COLOR = 'color'
+CFG_TYPE_BOOL = 'bool'

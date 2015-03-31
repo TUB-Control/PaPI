@@ -31,24 +31,18 @@ __author__ = 'Stefan'
 import papi.pyqtgraph as pq
 
 import numpy as np
-import collections
 import re
-import copy
-import time
 import json
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-from papi.data.DSignal import DSignal
+
 import papi.pyqtgraph as pg
 import papi.constants as pc
 
 
-current_milli_time = lambda: int(round(time.time() * 1000))
-
 from papi.pyqtgraph.Qt import QtCore, QtGui
-from PySide.QtGui import QRegExpValidator
-from PySide.QtCore import *
+
 
 class StaticPlot(vip_base):
     """
@@ -67,7 +61,7 @@ class StaticPlot(vip_base):
             4 : (100, 100, 100)
     """
 
-    def __init__(self, debug=False):
+    def __init__(self):
         super(StaticPlot, self).__init__()
         """
         Function init
@@ -76,39 +70,13 @@ class StaticPlot(vip_base):
         :return:
         """
 
-        self.signals = {}
-
-        self.__papi_debug__ = debug
-        self.__buffer_size__ = None
-        self.__downsampling_rate__ = 1
-        self.__tbuffer__ = []
-
-        self.__signals_have_same_length = True
-
-        self.__append_at__ = 1
-        self.__new_added_data__ = 0
-        self.__input_size__ = 0
-        self.__rolling_plot__ = False
         self.__colors_selected__ = []
         self.__styles_selected__ = []
         self.__show_grid_x__ = None
         self.__show_grid_y__ = None
         self.__parameters__ = {}
-        self.__update_intervall__ = None
-        self.__last_time__ = None
-        self.__last_plot_time__ = None
         self.__plotWidget__ = None
         self.__legend__ = None
-
-        self.__stp_min_x = None
-        self.__stp_max_x = None
-
-        self.__stp_min_y = None
-        self.__stp_max_y = None
-        self.__stp_active__ = None
-
-        self.__downsampling_rate_start__ = None;
-        self.__downsampling_rate__ = None
 
         self.styles = {
             0: QtCore.Qt.SolidLine,
@@ -164,9 +132,9 @@ class StaticPlot(vip_base):
         # ---------------------------
 
         self.__parameters__['x-grid'] = \
-            DParameter('x-grid', self.config['x-grid']['value'], Regex='^(1|0){1}$')
+            DParameter('x-grid', '[0 1]', Regex='^(1|0){1}$')
         self.__parameters__['y-grid'] = \
-            DParameter('y-grid', self.config['y-grid']['value'], Regex='^(1|0){1}$')
+            DParameter('y-grid', '[0 1]', Regex='^(1|0){1}$')
 
         self.__parameters__['color'] = \
             DParameter('color', self.config['color']['value'], Regex='^\[(\s*\d\s*)+\]')
@@ -181,15 +149,13 @@ class StaticPlot(vip_base):
         # ---------------------------
         # Create Legend
         # ---------------------------
-
-        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
-        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+        if self.config['show_legend']['value']=='1':
+            self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+            self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
 
         self.setup_context_menu()
         self.__plotWidget__.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.__plotWidget__.customContextMenuRequested.connect(self.showContextMenu)
-
-        self.use_range_for_y(self.config['yRange']['value'])
 
         self.read_json_data()
 
@@ -211,10 +177,12 @@ class StaticPlot(vip_base):
         """
         pass
 
-    def execute(self, Data=None, block_name=None):
+
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         """
         Function execute
 
+        :param **kwargs:
         :param Data:
         :param block_name:
         :return:
@@ -229,7 +197,7 @@ class StaticPlot(vip_base):
         :param value:
         :return:
         """
-        print(value)
+
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
@@ -253,9 +221,10 @@ class StaticPlot(vip_base):
             self.__styles_selected__ = int_re.findall(self.config['style']['value'])
 
         if name == 'yRange':
-            self.config['yRange']['value'] = value
             self.use_range_for_y(value)
 
+        if name == 'xRange':
+            self.use_range_for_x(value)
 
     def read_json_data(self):
 
@@ -273,8 +242,7 @@ class StaticPlot(vip_base):
         :return:
         """
 
-        self.__plotWidget__.clear()
-
+        self.clear()
 
         tdata = data[axis_id]
 
@@ -284,10 +252,11 @@ class StaticPlot(vip_base):
         y_min = None
         y_max = None
 
+        counter = 0
+
         for signal_name in data:
             if signal_name != axis_id:
                 signal_data = data[signal_name]
-                print(signal_data)
 
                 if y_max is not None:
                     y_max = max(max(signal_data), y_max)
@@ -299,16 +268,24 @@ class StaticPlot(vip_base):
                 else:
                     y_min = min(signal_data)
 
-                graphic = GraphicItem(np.array(tdata), np.array(signal_data), 0)
+                pen = self.get_pen(counter)
+
+                graphic = GraphicItem(np.array(tdata), np.array(signal_data), 0, pen=pen)
 
                 self.__plotWidget__.addItem(graphic)
 
+                if self.__legend__ is not None:
+                    data_item = pg.PlotDataItem()
+                    data_item.setPen(pen)
+
+                    self.__legend__.addItem(data_item, signal_name)
+
+                counter += 1
 
         self.use_range_for_x("[{:2.2f} {:2.2f}]".format(x_min, x_max))
         self.use_range_for_y("[{:2.2f} {:2.2f}]".format(y_min, y_max))
 
 #        self.__plotWidget__.getPlotItem().getViewBox().setXRange(x_min, x_max)
-
 
     def plugin_meta_updated(self):
         """
@@ -381,22 +358,6 @@ class StaticPlot(vip_base):
         self.gridMenu = QtGui.QMenu('Grid')
 
 
-        # get old values;
-        reg = re.compile(r'(\d+\.\d+)')
-        range = reg.findall(self.config['yRange']['value'])
-        if len(range) == 2:
-            y_min = range[0]
-            y_max = range[1]
-        else:
-            y_min = '0.0'
-            y_max = '1.0'
-
-        rx = QRegExp(r'([-]{0,1}\d+\.\d+)')
-        validator = QRegExpValidator(rx, self.__plotWidget__)
-
-
-
-
         # Grid Menu:
         # -----------------------------------------------------------
         # Y-Grid checkbox
@@ -422,50 +383,14 @@ class StaticPlot(vip_base):
             self.yGrid_Checkbox.setChecked(True)
 
         # add Menus
-
         self.custMenu.addMenu(self.gridMenu)
-        self.custMenu.addSeparator().setText("Rolling Plot")
 
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
 
-        if not self.__papi_debug__:
-            self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+        self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
 
     def showContextMenu(self):
         self.setup_context_menu()
-
-
-    def contextMenu_yAutoRangeButton_clicked(self):
-        mi = None
-        ma = None
-
-        if self.__stp_active__:
-            mi = self.__stp_min_y
-            ma = self.__stp_max_y
-        else:
-            for sig in self.signals:
-                graphics = self.signals[sig].graphics
-                buf = []
-                for graphic in graphics:
-                    buf.extend(graphic.y)
-
-                ma_buf = max(buf)
-                mi_buf = min(buf)
-                if ma is not None:
-                    if ma_buf > ma:
-                        ma = ma_buf
-                else:
-                    ma = ma_buf
-
-                if mi is not None:
-                    if mi_buf < mi:
-                        mi = mi_buf
-                else:
-                    mi = mi_buf
-
-        self.yRange_maxEdit.setText(ma)
-        self.yRange_minEdit.setText(mi)
-        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + str(float(mi)) + ' ' + str(float(ma)) + ']')
 
     def contextMenu_xGrid_toogle(self):
         if self.xGrid_Checkbox.isChecked():
@@ -511,15 +436,19 @@ class StaticPlot(vip_base):
                 'value' :  't',
                 'tooltip' : 'Used to specify the identifier for the X-Axis e.g. time in json_data'
             },
+            'show_legend' : {
+                'value' : pc.REGEX_BOOL_BIN,
+                'type'  : pc.CFG_TYPE_BOOL
+            },
             'x-grid': {
                 'value': "0",
                 'regex': pc.REGEX_BOOL_BIN,
-                'type': 'bool',
+                'type': pc.CFG_TYPE_BOOL,
                 'display_text': 'Grid-X'
             }, 'y-grid': {
                 'value': "0",
                 'regex': pc.REGEX_BOOL_BIN,
-                'type': 'bool',
+                'type': pc.CFG_TYPE_BOOL,
                 'display_text': 'Grid-Y'
             }, 'color': {
                 'value': "[0 1 2 3 4]",
@@ -531,11 +460,6 @@ class StaticPlot(vip_base):
                 'regex': '^\[(\s*\d\s*)+\]',
                 'advanced': '1',
                 'display_text': 'Style'
-            }, 'yRange': {
-                'value': '[0.0 1.0]',
-                'regex': '(\d+\.\d+)',
-                'advanced': '1',
-                'display_text': 'y: range'
             }
         }
         # http://www.regexr.com/
