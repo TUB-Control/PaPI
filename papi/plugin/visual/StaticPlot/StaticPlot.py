@@ -176,6 +176,7 @@ class StaticPlot(vip_base):
         self.__parameters__['yRange'] = \
             DParameter('yRange', '[0,1]',  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
+        self.send_new_parameter_list(list(self.__parameters__.values()))
 
         # ---------------------------
         # Create Legend
@@ -228,6 +229,7 @@ class StaticPlot(vip_base):
         :param value:
         :return:
         """
+        print(value)
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
@@ -353,10 +355,8 @@ class StaticPlot(vip_base):
         """
         reg = re.compile(r'(\d+\.\d+)')
         range = reg.findall(value)
-        print(value)
+
         if len(range) == 2:
-            #self.xRange_minEdit.setText(range[0])
-            #self.xRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setXRange(float(range[0]),float(range[1]))
 
     def use_range_for_y(self, value):
@@ -369,8 +369,6 @@ class StaticPlot(vip_base):
         range = reg.findall(value)
 
         if len(range) == 2:
-            self.yRange_minEdit.setText(range[0])
-            self.yRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
 
     def setup_context_menu(self):
@@ -380,26 +378,8 @@ class StaticPlot(vip_base):
         """
 
         self.custMenu = QtGui.QMenu("Options")
-        self.axesMenu = QtGui.QMenu('Y-Axis')
         self.gridMenu = QtGui.QMenu('Grid')
 
-        ##### Y-Range Actions
-        self.yRange_Widget = QtGui.QWidget()
-        self.yRange_Layout = QtGui.QVBoxLayout(self.yRange_Widget)
-        self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
-        self.yRange_Layout.setSpacing(1)
-
-        self.yAutoRangeButton = QtGui.QPushButton()
-        self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
-        self.yAutoRangeButton.setText('Set y range')
-        self.yRange_Layout.addWidget(self.yAutoRangeButton)
-
-        ##### Y Line Edits
-        # Layout
-        self.yRange_EditWidget = QtGui.QWidget()
-        self.yRange_EditLayout = QtGui.QHBoxLayout(self.yRange_EditWidget)
-        self.yRange_EditLayout.setContentsMargins(2, 2, 2, 2)
-        self.yRange_EditLayout.setSpacing(1)
 
         # get old values;
         reg = re.compile(r'(\d+\.\d+)')
@@ -414,33 +394,8 @@ class StaticPlot(vip_base):
         rx = QRegExp(r'([-]{0,1}\d+\.\d+)')
         validator = QRegExpValidator(rx, self.__plotWidget__)
 
-        # Min
-        self.yRange_minEdit = QtGui.QLineEdit()
-        self.yRange_minEdit.setFixedWidth(80)
-        self.yRange_minEdit.setText(y_min)
-        self.yRange_minEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
-        self.yRange_minEdit.setValidator(validator)
-        # Max
-        self.yRange_maxEdit = QtGui.QLineEdit()
-        self.yRange_maxEdit.setFixedWidth(80)
-        self.yRange_maxEdit.setText(y_max)
-        self.yRange_maxEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
-        self.yRange_maxEdit.setValidator(validator)
-        # addTo Layout
-        self.yRange_EditLayout.addWidget(self.yRange_minEdit)
-        self.yRange_EditLayout.addWidget(QtGui.QLabel('<'))
-        self.yRange_EditLayout.addWidget(self.yRange_maxEdit)
-        self.yRange_Layout.addWidget(self.yRange_EditWidget)
-
-        # build Action
-        self.yRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
-        self.yRange_Action.setDefaultWidget(self.yRange_Widget)
 
 
-        ##### Build axes menu
-        #self.axesMenu.addAction(self.xRange_Action)
-        self.axesMenu.addSeparator().setText("Y-Range")
-        self.axesMenu.addAction(self.yRange_Action)
 
         # Grid Menu:
         # -----------------------------------------------------------
@@ -467,7 +422,7 @@ class StaticPlot(vip_base):
             self.yGrid_Checkbox.setChecked(True)
 
         # add Menus
-        self.custMenu.addMenu(self.axesMenu)
+
         self.custMenu.addMenu(self.gridMenu)
         self.custMenu.addSeparator().setText("Rolling Plot")
 
