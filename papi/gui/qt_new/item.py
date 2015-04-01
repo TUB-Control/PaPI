@@ -177,17 +177,11 @@ class DPluginTreeItem(PaPITreeItem):
         self.setEditable(False)
 
     def get_decoration(self):
-        # l = len(self.dplugin.name)
-        # path = self.dplugin.plugin_identifier[:-l]
-        # path += 'box.png'
-        # px = QPixmap(path)
-        # return px
-        # path = self.dplugin.type + "/" +self.dplugin.plugin_identifier
-        # path += '/box.png'
-        # #print(path)
-        # print(self.dplugin.path)
-        return QIcon.fromTheme("list-add")
-
+        l = len(self.dplugin.plugin_identifier)
+        path = self.dplugin.path[:-l]
+        path += 'box.png'
+        px = QPixmap(path)
+        return px
 
 class DParameterTreeItem(PaPITreeItem):
     def __init__(self,  dparameter: DParameter):

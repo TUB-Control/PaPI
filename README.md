@@ -48,3 +48,8 @@ Embedded Packages
 Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
 
 pyqtgraph-0.9.10 published under MIT-License
+
+Used icon-set
+------
+
+fatcow-hosting-icons-3.9.2, License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

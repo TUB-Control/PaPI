@@ -170,7 +170,7 @@ class DPlugin(DObject):
         self.__blocks = {}
         self.type = None
         self.alive_count = 0
-
+        self.path = None
 
     def subscribe_signals(self, dblock, signals):
         """
@@ -381,6 +381,7 @@ class DPlugin(DObject):
         DPlugin_new.own_process = self.own_process
         DPlugin_new.uname = self.uname
         DPlugin_new.type = self.type
+        DPlugin_new.path = self.path
 
         DPlugin_new.__parameters = copy.deepcopy(self.__parameters)
         DPlugin_new.__subscriptions = copy.deepcopy(self.__subscriptions)
@@ -406,6 +407,7 @@ class DPlugin(DObject):
         self.own_process = meta.own_process
         self.uname = meta.uname
         self.type = meta.type
+        self.path = meta.path
 
         # -----------------------------
         # Update DParameters of DPlugin
