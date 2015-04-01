@@ -826,6 +826,7 @@ class Core:
             dplug.type = plugin.plugin_object.get_type()
             dplug.alive_count = self.alive_count
             dplug.startup_config = plugin_config
+            dplug.path = plugin.path
 
             # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
@@ -846,6 +847,7 @@ class Core:
             dplug.type = plugin.plugin_object.get_type()
             dplug.plugin_identifier = plugin.name
             dplug.startup_config = optData.plugin_config
+            dplug.path = plugin.path
 
             # change some attributes of optional data before sending it back to GUI for local creation
             optData.plugin_identifier = plugin.name
