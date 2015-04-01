@@ -49,28 +49,29 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     # WebSockets don't use CORS headers and can bypass the usual same-origin policies
     # to accept cross-origin traffic, always return True
-    #def check_origin(self, origin):
-    #return True
-
-    # initialize the data that shall be sent
+    def check_origin(self, origin):
+        return True
+      
+    # Initialize the data that shall be sent
     def initialize(self, QuatData):
         self.QuatData = QuatData
 
-    # this function is called when a new WebSocket is opened
     def open(self):
-        print('Connection established')
-
-    # this function handles incoming messages
+        print('Connection opened')
+  
+    # This function is called when a new WebSocket is opened
     def on_message(self, message):
-        # index.html sends a message to the server when it is ready to render a new frame
+
+    # index.html sends a message to the server when it is ready to render a new frame
         # the answer to this message is the current quaternion data received from the ORTD Plugin
         self.write_message(str(self.QuatData()).encode('utf-8'))
 
-    # this function is called when the WebSocket is closed
+
+    # This function is called when the WebSocket is closed
     def on_close(self):
         print('Connection closed')
 
-
+# Main Plugin
 class Human(dpp_base):
 
     def start_init(self, config=None):
@@ -78,72 +79,62 @@ class Human(dpp_base):
         # Plugin is triggered by arrival of data
         self.set_event_trigger_mode(True)
 
-        # initialize and start a thread
+    # Initialize and start a thread
         self.thread_goOn = True
         self.lock = threading.Lock()
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
-
-        # initialize a variable to store the data
+        
+        # Initialize a variable to store the data 
         self.Angle_Data = 0
 
-        # return init success
+        # Return init success
         return True
 
     def pause(self):
-        # will be called, when plugin gets paused
-        # stop thread and join into main thread
-        self.thread_goOn = False
-        self.thread.join()
+        # Will be called, when plugin gets paused
+        pass
 
     def resume(self):
-        # will be called when plugin gets resumed
-        # restart thread
-        self.thread_goOn = True
-        self.lock = threading.Lock()
-        self.thread = threading.Thread(target=self.thread_execute)
-        self.thread.start()
+        # Will be called when plugin gets resumed
+        pass
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
-		
+
         # IMPORTANT: The identification names have to be the same as written in RTmain.sce!
 
-        # be sure, data has the right identification names
-        if 'quat_forearm_w' in Data and 'quat_forearm_x' in Data and 'quat_forearm_y' in Data and 'quat_forearm_z' in Data and\
-                                                'quat_upperarm_w' in Data and 'quat_upperarm_x' in Data and\
-                                'quat_upperarm_y' in Data and 'quat_upperarm_z' in Data:
+        if 'quat_upperarm_w' in Data and 'quat_upperarm_x' in Data and 'quat_upperarm_y' in Data \
+            and 'quat_upperarm_z' in Data and 'quat_forearm_w' in Data and 'quat_forearm_x' in Data \
+            and 'quat_forearm_y' in Data and 'quat_forearm_z' in Data:
 
-            # quaternion for upper arm
+            # Quaternion for upper arm
             self.Angle_Data_Up_w = Data['quat_upperarm_w'][0]
             self.Angle_Data_Up_x = Data['quat_upperarm_x'][0]
             self.Angle_Data_Up_y = Data['quat_upperarm_y'][0]
             self.Angle_Data_Up_z = Data['quat_upperarm_z'][0]
 
-            # quaternion for forearm
+            # Quaternion for forearm
             self.Angle_Data_Fo_w = Data['quat_forearm_w'][0]
             self.Angle_Data_Fo_x = Data['quat_forearm_x'][0]
             self.Angle_Data_Fo_y = Data['quat_forearm_y'][0]
             self.Angle_Data_Fo_z = Data['quat_forearm_z'][0]
 
-            self.Angle_Data = [self.Angle_Data_Up_w,self.Angle_Data_Up_x,self.Angle_Data_Up_y,
-                               self.Angle_Data_Up_z, self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
+            # Be sure the order is equal to the order used in index.html!
+            self.Angle_Data = [self.Angle_Data_Up_w,self.Angle_Data_Up_x,
+                               self.Angle_Data_Up_y,self.Angle_Data_Up_z,
+                               self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
                                self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
-
-        else:
-            print('Wrong identification names for data!')
 
 
     def set_parameter(self, name, value):
         pass
 
     def quit(self):
-        self.thread_goOn = False
-        self.thread.join()
-        print('Human-Plugin quits')
+        #TODO: self.thread.join()
+        pass
 
 
     def get_plugin_configuration(self):
-
         config = {}
         return config
 
@@ -151,20 +142,23 @@ class Human(dpp_base):
         pass
 
 
+
+
     def thread_execute(self):
         print('Start a thread')
-
-        # start a tornado web application in the thread
+        # Start a tornado web application in the thread 
         # tornado.web.Application() is a collection of request handlers that create a web application
-        # pass a list of regexp or request_class tuples
+        # Pass a list of regexp or request_class tuples
         application = tornado.web.Application([
-            (r'/ws', WSHandler, {'QuatData': self.get_data} ), # pass quaternion data, so class WSHandler can process it
+            (r'/ws', WSHandler, {'QuatData': self.get_data} ),	# Pass quaternion data, so class WSHandler can process it
             (r"/(.*)", tornado.web.StaticFileHandler, {"path": "./resources"}),
         ])
 
         print('Application created successfully')
-        # port has to be the same as the WebSocket port in index.html
+        
+        # Port has to be the same as the WebSocket port in index.html
         application.listen(9999)
+        
         print('Start IOLoop')
         # tornado.ioloop is an I/O event loop for non-blocking sockets
         # start the main ioloop
@@ -174,4 +168,3 @@ class Human(dpp_base):
 
     def get_data(self):
         return self.Angle_Data
-		
