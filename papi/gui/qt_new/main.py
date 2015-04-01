@@ -59,6 +59,8 @@ from papi.gui.qt_new.PapiTabManger import PapiTabManger
 
 from papi.gui.gui_management import GuiManagement
 
+from papi.gui.qt_new import get32Icon, get16Icon
+
 # Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
 
@@ -156,21 +158,74 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.actionPaPI_Doc.triggered.connect(self.papi_doc_triggerd)
         self.actionAbout.triggered.connect(self.papi_about_triggerd)
         self.actionAbout_Qt.triggered.connect(self.papi_about_qt_triggerd)
+
+        self.set_icons()
+
+    def set_icons(self):
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
-        load_icon = QIcon.fromTheme("document-open")
-        save_icon = QIcon.fromTheme("document-save")
-
+        load_icon = get32Icon('folder')
+        save_icon = get32Icon('file_save_as')
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
-        self.loadButton.setIconSize(QSize(30, 30))
+        self.loadButton.setIconSize(QSize(32, 32))
         self.loadButton.setIcon(load_icon)
 
-        self.saveButton.setIconSize(QSize(30, 30))
+        self.saveButton.setIconSize(QSize(32, 32))
         self.saveButton.setIcon(save_icon)
 
+        # -------------------------------------
+        # Create Icons for actions
+        # -------------------------------------
+        load_icon = get16Icon('folder')
+        save_icon = get16Icon('file_save_as')
+        exit_icon = get16Icon('cancel')
+        overview_icon = get16Icon('tree_list')
+        create_icon = get16Icon('application_add')
+        reload_icon = get16Icon('arrow_rotate_clockwise')
+        help_icon = get16Icon('help')
+        info_icon = get16Icon('information')
+        refresh_icon = get16Icon('arrow_refresh')
+        delete_icon = get16Icon('delete')
+        view_icon = get16Icon('reviewing_pane')
+
+        # -------------------------------------
+        # Set Icons for actions
+        # -------------------------------------
+        self.actionLoad.setIcon(load_icon)
+        self.actionSave.setIcon(save_icon)
+        self.actionExit.setIcon(exit_icon)
+        self.actionOverview.setIcon(overview_icon)
+        self.actionCreate.setIcon(create_icon)
+        self.actionReload_Plugin_DB.setIcon(reload_icon)
+        self.actionReloadConfig.setIcon(reload_icon)
+        self.actionPaPI_Wiki.setIcon(help_icon)
+        self.actionPaPI_Doc.setIcon(help_icon)
+        self.actionAbout.setIcon(info_icon)
+        self.actionAbout_Qt.setIcon(info_icon)
+        self.actionAbout_PySide.setIcon(info_icon)
+        self.actionResetPaPI.setIcon(delete_icon)
+        self.actionRunMode.setIcon(view_icon)
+
+        # -------------------------------------
+        # Set Icons visible in menu
+        # -------------------------------------
+        self.actionLoad.setIconVisibleInMenu(True)
+        self.actionSave.setIconVisibleInMenu(True)
+        self.actionExit.setIconVisibleInMenu(True)
+        self.actionOverview.setIconVisibleInMenu(True)
+        self.actionCreate.setIconVisibleInMenu(True)
+        self.actionReload_Plugin_DB.setIconVisibleInMenu(True)
+        self.actionReloadConfig.setIconVisibleInMenu(True)
+        self.actionPaPI_Wiki.setIconVisibleInMenu(True)
+        self.actionPaPI_Doc.setIconVisibleInMenu(True)
+        self.actionAbout.setIconVisibleInMenu(True)
+        self.actionAbout_Qt.setIconVisibleInMenu(True)
+        self.actionAbout_PySide.setIconVisibleInMenu(True)
+        self.actionResetPaPI.setIconVisibleInMenu(True)
+        self.actionRunMode.setIconVisibleInMenu(True)
 
     def get_gui_config(self):
 
