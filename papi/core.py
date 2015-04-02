@@ -384,7 +384,20 @@ class Core:
                 return -1
             else:
                 # subscribtion correct
+                # set alias for parameter control (can be none if no parameter)
                 dsubscription.alias = sub_alias
+                # send event to plugin which will controll this parameter with information of parameter
+                if sub_alias is not None:
+                    sub_pl = self.core_data.get_dplugin_by_id(subscriber_id)
+                    if sub_pl is not None:
+                        parameters = sub_pl.get_parameters()
+                        if sub_alias in parameters:
+                            parameter = parameters[sub_alias]
+                            para_event = Event.status.ParameterInfo(self.core_id, source_id, copy.deepcopy(parameter) )
+                            source_pl.queue.put(para_event)
+
+                            print('Event content:',parameter.default)
+
 
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
