@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/create.ui'
 #
-# Created: Mon Mar 16 16:42:19 2015
+# Created: Thu Apr  2 18:33:30 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -60,6 +60,12 @@ class Ui_Create(object):
         self.pathEdit = QtGui.QLineEdit(self.scrollAreaWidgetContents)
         self.pathEdit.setObjectName("pathEdit")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.pathEdit)
+        self.modulesLabel = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.modulesLabel.setObjectName("modulesLabel")
+        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.modulesLabel)
+        self.modulesList = QtGui.QListWidget(self.scrollAreaWidgetContents)
+        self.modulesList.setObjectName("modulesList")
+        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.modulesList)
         self.verticalLayout.addLayout(self.formLayout)
         self.createButton = QtGui.QPushButton(self.scrollAreaWidgetContents)
         self.createButton.setObjectName("createButton")
@@ -85,5 +91,6 @@ class Ui_Create(object):
         self.authorLabel.setText(QtGui.QApplication.translate("Create", "Author", None, QtGui.QApplication.UnicodeUTF8))
         self.pathLabel.setText(QtGui.QApplication.translate("Create", "Path", None, QtGui.QApplication.UnicodeUTF8))
         self.descriptionLabel.setText(QtGui.QApplication.translate("Create", "Description", None, QtGui.QApplication.UnicodeUTF8))
+        self.modulesLabel.setText(QtGui.QApplication.translate("Create", "Modules", None, QtGui.QApplication.UnicodeUTF8))
         self.createButton.setText(QtGui.QApplication.translate("Create", "Create Plugin", None, QtGui.QApplication.UnicodeUTF8))
 

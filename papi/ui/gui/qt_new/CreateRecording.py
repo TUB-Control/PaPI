@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/CreateRecording.ui'
 #
-# Created: Tue Mar 24 11:57:40 2015
+# Created: Thu Apr  2 18:33:30 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!

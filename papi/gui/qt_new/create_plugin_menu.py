@@ -25,6 +25,11 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
+
+from modulefinder import ModuleFinder
+import importlib
+import re
+
 from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import PluginTreeItem
 from papi.yapsy.PluginManager import PluginManager
@@ -33,10 +38,11 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow
+from PySide.QtGui import QMainWindow, QListWidgetItem
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
+
 
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
@@ -52,7 +58,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.subscriberID = None
         self.targetID = None
         self.blockName = None
-        self.setWindowTitle("Add Plugin")
 
         self.plugin_manager = plugin_manager
 
@@ -85,6 +90,8 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
+        self.finder = ModuleFinder()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
@@ -94,40 +101,83 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
 
     def pluginItemChanged(self, index):
-        item = self.pluginTree.model().data(index, Qt.UserRole)
+        plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.clear()
 
         self.scrollArea.setDisabled(True)
 
-        if item is None:
+        if plugin_info is None:
             return
 
         self.scrollArea.setDisabled(False)
 
-        self.nameEdit.setText(item.name)
-        self.authorEdit.setText(item.author)
-        self.descriptionText.setText(item.description)
-        self.pathEdit.setText(item.path)
+        self.nameEdit.setText(plugin_info.name)
+        self.authorEdit.setText(plugin_info.author)
+        self.descriptionText.setText(plugin_info.description)
+        self.pathEdit.setText(plugin_info.path)
 
+        self.createButton.setEnabled(plugin_info.loadable)
+
+
+        lines = None
+        with open(plugin_info.path + '.py') as f:
+            lines = f.readlines()
+
+        found_imports = []
+
+        for line in lines:
+            if line.startswith('import'):
+
+                m = re.search('(import)\s+([\w.]*)(\s+as){0,1}',str.strip(line))
+                if m is not None:
+                    if len(m.groups()) > 2:
+                        found_imports.append(m.group(2))
+
+            if line.startswith('from'):
+                m = re.search('(from)\s+([\w.]*)(\s+import)',str.strip(line))
+                if m is not None:
+                    if len(m.groups()) > 2:
+                        found_imports.append(m.group(2))
+        found_imports.sort()
+
+
+        for imp in found_imports:
+            item = QListWidgetItem(imp)
+
+            self.modulesList.addItem(item)
+
+            spam_loader = importlib.find_loader(imp)
+            found = spam_loader is not None
+            if not found:
+                item.setBackground(Qt.red)
 
 
     def show_create_plugin_dialog(self):
         index = self.pluginTree.currentIndex()
-        item = self.pluginTree.model().data(index, Qt.UserRole)
+        plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
-
-        if item is not None:
-
-            self.plugin_create_dialog.set_plugin(item)
-
+        if plugin_info is not None:
+            self.plugin_create_dialog.set_plugin(plugin_info)
             self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
-        self.plugin_manager.collectPlugins()
 
-        for pluginfo in self.plugin_manager.getAllPlugins():
 
+        self.plugin_manager.locatePlugins()
+        candidates = self.plugin_manager.getPluginCandidates()
+
+        all_pluginfo = {c[2].path:c[2] for c in candidates}
+
+        loadable_pluginfo = {p.path:p for p in self.plugin_manager.getAllPlugins()}
+
+        for pluginfo in all_pluginfo.values():
+
+            if pluginfo.path in loadable_pluginfo.keys():
+                pluginfo = loadable_pluginfo[pluginfo.path]
+                pluginfo.loadable = True
+            else:
+                pluginfo.loadable = False
             plugin_item = PluginTreeItem(pluginfo)
 
             if '/visual/' in pluginfo.path:
@@ -149,6 +199,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.authorEdit.setText('')
         self.descriptionText.setText('')
         self.pathEdit.setText('')
+        self.modulesList.clear()
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()

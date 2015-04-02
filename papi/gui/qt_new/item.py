@@ -28,7 +28,6 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-
 from PySide.QtCore import *
 from PySide.QtGui import *
 from papi.data.DPlugin import *
@@ -156,9 +155,9 @@ class PaPITreeModel(QStandardItemModel):
 
 
 class PluginTreeItem(PaPITreeItem):
-    def __init__(self,  plugin):
-        super(PluginTreeItem, self).__init__(plugin, plugin.name)
-        self.plugin = plugin
+    def __init__(self,  plugin_info):
+        super(PluginTreeItem, self).__init__(plugin_info, plugin_info.name)
+        self.plugin_info = plugin_info
         self.setEditable(False)
 
     def get_decoration(self):
@@ -168,6 +167,13 @@ class PluginTreeItem(PaPITreeItem):
         px = QPixmap(path)
         return px
 
+    def data(self, role):
+
+        if role == Qt.BackgroundRole:
+            if not self.object.loadable:
+                return QBrush(Qt.red)
+
+        return super(PluginTreeItem, self).data(role)
 
 class DPluginTreeItem(PaPITreeItem):
     def __init__(self,  dplugin: DPlugin):
@@ -256,7 +262,6 @@ class PluginTreeModel(PaPITreeModel):
     """
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
-
 
 class DPluginTreeModel(PaPITreeModel):
     """

@@ -49,11 +49,11 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.TabManager = TabManager
 
 
-    def set_plugin(self, plugin):
-        startup_config = plugin.plugin_object.get_startup_configuration()
+    def set_plugin(self, plugin_info):
+        startup_config = plugin_info.plugin_object.get_startup_configuration()
         self.cfg = startup_config
-        self.plugin_name = plugin.name
-        self.plugin_type = plugin.plugin_object.get_type()
+        self.plugin_name = plugin_info.name
+        self.plugin_type = plugin_info.plugin_object.get_type()
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
 
