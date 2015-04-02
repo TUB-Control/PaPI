@@ -141,7 +141,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
                         found_imports.append(m.group(2))
         found_imports.sort()
 
-
         for imp in found_imports:
             item = QListWidgetItem(imp)
 

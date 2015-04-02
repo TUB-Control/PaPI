@@ -52,7 +52,8 @@ class GuiManagement(object):
                                self.core_queue,
                                self.gui_id,
                                get_gui_config_function=get_gui_config,
-                               set_gui_config_function= set_gui_config )
+                               set_gui_config_function= set_gui_config,
+                               plugin_manager=self.plugin_manager )
 
         self.gui_event_processing = GuiEventProcessing(self.gui_data,
                                                        self.core_queue,
