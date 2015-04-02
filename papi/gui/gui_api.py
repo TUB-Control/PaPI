@@ -86,12 +86,18 @@ class Gui_api(QtCore.QObject):
         opt.plugin_config = config
         opt.autostart = autostart
 
+
+        plugin_info = self.pluginManager.getPluginByName(plugin_identifier)
+        if plugin_info is None:
+            self.log.printText(1, " Do create plugin with identifier "
+                               + plugin_identifier + ' failed. Missing dependencies, not found or not loadable. ')
+            return False
+
         # check if plugin with uname already exists
         allPlugins = self.gui_data.get_all_plugins()
         for pluginID in allPlugins:
             plugin = allPlugins[pluginID]
             if plugin.uname == uname:
-                print('UNAME GLEICH')
                 return False
 
         # create event object and sent it to core
