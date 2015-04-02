@@ -38,7 +38,7 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow, QListWidgetItem
+from PySide.QtGui import QMainWindow, QListWidgetItem, QColor
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
@@ -141,15 +141,19 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
                         found_imports.append(m.group(2))
         found_imports.sort()
 
+
         for imp in found_imports:
             item = QListWidgetItem(imp)
 
-            self.modulesList.addItem(item)
+
 
             spam_loader = importlib.find_loader(imp)
             found = spam_loader is not None
             if not found:
-                item.setBackground(Qt.red)
+                self.modulesList.addItem(item)
+                item.setBackground(QColor(255,0,0,50))
+                self.modulesList.setEnabled(True)
+                self.modulesLabel.setEnabled(True)
 
 
     def show_create_plugin_dialog(self):
@@ -199,6 +203,8 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.descriptionText.setText('')
         self.pathEdit.setText('')
         self.modulesList.clear()
+        self.modulesList.setEnabled(False)
+        self.modulesLabel.setEnabled(False)
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()

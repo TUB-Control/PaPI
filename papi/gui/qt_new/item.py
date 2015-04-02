@@ -171,7 +171,7 @@ class PluginTreeItem(PaPITreeItem):
 
         if role == Qt.BackgroundRole:
             if not self.object.loadable:
-                return QBrush(Qt.red)
+                return QBrush(QColor(255,0,0,50))
 
         return super(PluginTreeItem, self).data(role)
 
