@@ -384,7 +384,17 @@ class Core:
                 return -1
             else:
                 # subscribtion correct
+                # set alias for parameter control (can be none if no parameter)
                 dsubscription.alias = sub_alias
+                # send event to plugin which will controll this parameter with information of parameter
+                if sub_alias is not None:
+                    sub_pl = self.core_data.get_dplugin_by_id(subscriber_id)
+                    if sub_pl is not None:
+                        parameters = sub_pl.get_parameters()
+                        if sub_alias in parameters:
+                            parameter = parameters[sub_alias]
+                            para_event = Event.status.ParameterInfo(self.core_id, source_id, copy.deepcopy(parameter) )
+                            source_pl.queue.put(para_event)
 
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
@@ -596,8 +606,8 @@ class Core:
                                     pl.queue.put(new_event)
 
                                     # this event will be a new parameter value for a plugin
-                                    if opt.is_parameter is True:
-                                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                                    #if opt.is_parameter is True:
+                                    #    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                             else:
                                 # plugin is paused
                                 pass
@@ -614,6 +624,10 @@ class Core:
                         opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                         new_event = Event.data.NewData(oID, id_list, opt, source_plugin_uname= dplug.uname)
                         self.gui_event_queue.put(new_event)
+
+                    # this event will be a new parameter value for a plugin, so update dcore data
+                    if opt.is_parameter is True:
+                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                     # process new_data seemed correct
                     return 1
                 else:

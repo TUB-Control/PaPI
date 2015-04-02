@@ -93,7 +93,8 @@ class GuiEventProcessing(QtCore.QObject):
                               'pause_plugin': self.process_pause_plugin,
                               'resume_plugin': self.process_resume_plugin,
                               'stop_plugin': self.process_stop_plugin,
-                              'start_plugin': self.process_start_plugin
+                              'start_plugin': self.process_start_plugin,
+                              'parameter_info': self.process_parameter_info
         }
 
     def gui_working(self, close_mock, workingTimer):
@@ -454,3 +455,19 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
             dplugin.plugin.resume()
+
+    def process_parameter_info(self, event):
+        """
+
+        :param event:
+        :return:
+        """
+        pl_id = event.get_destinatioID()
+
+        dplugin = self.gui_data.get_dplugin_by_id(pl_id)
+
+        if dplugin is not None:
+            if dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+                dplugin.plugin.new_parameter_info(event.dparameter_object)
+            else:
+                self.log.printText(1, 'non-pcp plugin received new parameter information. Why? Check if bug!')
