@@ -537,7 +537,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
                     #window.setAttribute(Qt.WA_NoSystemBackground)
                     #window.setAttribute(Qt.WA_TranslucentBackground)
-                    window.set_movable(False)
+                    #window.set_movable(False)
                     window.setMouseTracking(False)
                     window.setWindowFlags(~Qt.WindowMinMaxButtonsHint & (Qt.CustomizeWindowHint | Qt.WindowTitleHint))
 
@@ -548,7 +548,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 windowsList = area.subWindowList()
 
                 for window in windowsList:
-                    window.set_movable(True)
+                    #window.set_movable(True)
                     window.setMouseTracking(True)
                     window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
