@@ -174,3 +174,10 @@ class Radiobutton(pcp_base):
 
     def quit(self):
         pass
+
+    def new_parameter_info(self, dparameter_object):
+        if isinstance(dparameter_object, DParameter):
+            value = dparameter_object.default
+            if str(value) in self.option_values:
+                self.pre_selected_index = self.option_values.index(str(value))
+                self.update_widget()

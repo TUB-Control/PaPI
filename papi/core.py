@@ -396,9 +396,6 @@ class Core:
                             para_event = Event.status.ParameterInfo(self.core_id, source_id, copy.deepcopy(parameter) )
                             source_pl.queue.put(para_event)
 
-                            print('Event content:',parameter.default)
-
-
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
                 # subscribtion failed
@@ -609,8 +606,8 @@ class Core:
                                     pl.queue.put(new_event)
 
                                     # this event will be a new parameter value for a plugin
-                                    if opt.is_parameter is True:
-                                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                                    #if opt.is_parameter is True:
+                                    #    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                             else:
                                 # plugin is paused
                                 pass
@@ -627,6 +624,10 @@ class Core:
                         opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                         new_event = Event.data.NewData(oID, id_list, opt, source_plugin_uname= dplug.uname)
                         self.gui_event_queue.put(new_event)
+
+                    # this event will be a new parameter value for a plugin, so update dcore data
+                    if opt.is_parameter is True:
+                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                     # process new_data seemed correct
                     return 1
                 else:
