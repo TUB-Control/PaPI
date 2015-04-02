@@ -138,3 +138,6 @@ class Button(pcp_base):
 
     def quit(self):
         pass
+
+    def new_parameter_info(self, dparameter_object):
+        pass
