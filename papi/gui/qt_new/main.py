@@ -430,10 +430,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
 
-            sub_window_ori = dplugin.plugin.get_sub_window()
-
-            dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
-            dplugin.plugin.set_widget_for_internal_usage(sub_window_ori.widget())
+            # sub_window_ori = dplugin.plugin.get_sub_window()
+            #
+            # dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
+            # dplugin.plugin.set_widget_for_internal_usage(sub_window_ori.widget())
 
             sub_window = dplugin.plugin.get_sub_window()
 
