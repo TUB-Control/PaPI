@@ -283,6 +283,8 @@ class ORTD_UDP(iop_base):
             # config completely received
             # extract new configuration
             cfg = json.loads(config_file)
+            
+            print(config_file)
 
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)

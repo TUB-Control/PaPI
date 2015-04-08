@@ -1,0 +1,18 @@
+<PaPiConfig Date="2015-04-08 11:22:25" PaPI_version="1.0.0">
+  <guiConfig>
+    <size>
+      <x>
+        <value>771</value>
+      </x>
+      <y>
+        <value>748</value>
+      </y>
+    </size>
+    <activeTab>
+      <active>
+        <value>-1</value>
+      </active>
+    </activeTab>
+    <tabs />
+  </guiConfig>
+</PaPiConfig>
