@@ -328,11 +328,11 @@ class ORTD_UDP(iop_base):
             if para_name in self.parameters:
                 para_object = self.parameters.pop(para_name)
             else:
-                val_count = ORTDParameter[para_id]['NValues']
+                val_count = int(ORTDParameter[para_id]['NValues'])
                 opt_object = OptionalObject(para_id, val_count)
 
                 if "initial_value" in ORTDParameter[para_id]:
-                    val = ORTDParameter[para_id]
+                    val = ORTDParameter[para_id]['initial_value']
                     if val_count > 1:
                         val = val[1:-1]
                         init_value = list(map(float,val.split(',')))
