@@ -61,6 +61,9 @@ from papi.gui.gui_management import GuiManagement
 
 from papi.gui.qt_new import get32Icon, get16Icon
 
+from multiprocessing import Queue, Process
+from papi.core import start_core_child
+
 # Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
 
@@ -70,7 +73,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
     Used to create the qt based PaPI gui.
 
     """
-    def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
+    def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, is_parent = False, parent=None):
         """
         Init function
 
@@ -89,11 +92,26 @@ class GUI(QMainWindow, Ui_QtNewMain):
         else:
             self.gui_data = gui_data
 
+        self.is_parent = is_parent
+
+        self.core_process = None
+        if is_parent:
+            print('GUI IS PARENT')
+            core_queue_ref = Queue()
+            gui_queue_ref = Queue()
+            gui_id_ref = 1
+            self.core_process = Process(target = start_core_child, args=(gui_queue_ref,core_queue_ref, gui_id_ref ))
+            self.core_process.start()
+        else:
+            core_queue_ref = core_queue
+            gui_queue_ref = gui_queue
+            gui_id_ref = gui_id
+
         self.TabManager = PapiTabManger(self.widgetTabs)
 
-        self.gui_management = GuiManagement(core_queue,
-                                    gui_queue,
-                                    gui_id,
+        self.gui_management = GuiManagement(core_queue_ref,
+                                    gui_queue_ref,
+                                    gui_id_ref,
                                     self.TabManager,
                                     self.get_gui_config,
                                     self.set_gui_config)

@@ -54,8 +54,21 @@ from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
 
+def start_core_child(gui_queue, core_queue, gui_id):
+    core = Core(None,False,False)
+    core.gui_id = gui_id
+    core.core_event_queue = core_queue
+    core.gui_event_queue = gui_queue
+
+    core.run()
+
+class Process_dummy(object):
+    def __init__(self):
+        self.pid= 0
+
+
 class Core:
-    def __init__(self, gui_start_function, use_gui=True):
+    def __init__(self, gui_start_function, use_gui=True, is_parent = True, gui_process_pid = None):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -64,6 +77,7 @@ class Core:
         .. automethod:: __*
         """
         self.gui_start_function = gui_start_function
+        self.is_parent = is_parent
 
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {'status_event': self.__process_status_event__,
@@ -102,7 +116,6 @@ class Core:
 
         # creating the main core data object DCore and core queue
         self.core_data = DCore()
-        self.core_event_queue = Queue()
         self.core_goOn = 1
         self.core_id = 0
 
@@ -111,7 +124,6 @@ class Core:
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
         # define gui information. ID and alive status as well as gui queue for events
-        self.gui_event_queue = Queue()
         self.gui_id = self.core_data.create_id()
         self.gui_alive = False
         self.use_gui = use_gui
@@ -125,6 +137,16 @@ class Core:
         self.alive_timer = Timer(self.alive_intervall, self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
+
+        self.core_event_queue = None
+        self.gui_event_queue = None
+        self.gui_process = Process_dummy()
+        self.gui_process.pid = gui_process_pid
+        self.gui_alive = True
+
+        if is_parent:
+            self.core_event_queue = Queue()
+            self.gui_event_queue = Queue()
 
         #
         self.core_delayed_operation_queue = []
@@ -141,11 +163,12 @@ class Core:
         self.log.printText(1, CORE_CORE_CONSOLE_START_MESSAGE + ' .. Process id: ' + str(os.getpid()))
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
-        if self.use_gui is True:
+
+        if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
                                        args=(self.core_event_queue, self.gui_event_queue, self.gui_id))
             self.gui_process.start()
-            self.gui_alive = True
+
 
 
         # start the check alive timer

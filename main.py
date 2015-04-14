@@ -31,11 +31,31 @@ __author__ = 'control'
 import sys
 from papi.core import Core
 from papi.gui.qt_new.main import startGUI as new_startGui
-
+from papi.gui.qt_new.main import GUI
+from PySide.QtGui    import QMainWindow, QApplication
+import platform
 
 def main():
-    core = Core(new_startGui)
-    core.run()
+
+    if False:
+        core = Core(new_startGui,is_parent=True, use_gui=True)
+        core.run()
+    else:
+        app = QApplication(sys.argv)
+        gui = GUI(None,None,1,None,is_parent=True)
+        gui.run()
+        gui.show()
+        app.exec_()
+
+    return
+
+    if platform.system() == 'Linux':
+        core = Core(new_startGui)
+        core.run()
+    elif platform.system() == 'Windows':
+        print('not Linux, Windows')
+    else:
+        print('Mac Test ToDO')
 
 
 if __name__ == '__main__':
