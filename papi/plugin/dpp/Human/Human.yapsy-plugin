@@ -4,6 +4,6 @@ Module = Human
 
 [Documentation]
 Author = Mirjana Ruppel
-Version = 0.1
+Version = 0.2
 Website = openrtdynamics.sf.net
-Description = openrtdynamics interface
+Description = openrtdynamics interface. Necessary html and javascript were provided by an internal web server. Default http://localhost:8080
