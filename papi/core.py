@@ -1029,7 +1029,7 @@ class Core:
         """
 
         # GUI wants to close, so join process
-        if self.gui_alive is True:
+        if self.gui_alive is True and self.is_parent is True:
             self.gui_process.join()
 
         # Set gui_alive to false for core loop to know that is it closed
