@@ -34,24 +34,31 @@ from PySide.QtGui           import  QApplication
 import platform
 import sys
 
-def main():
+def start_PaPI():
     print('Plattform of the system running PaPI: ' + platform.system())
+
+    # start on PaPI on system running Linux
     if platform.system() == 'Linux':
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
         core.run()
         return
+
+    # start on PaPI on system running Windows
     if platform.system() == 'Windows':
         print('Windows port is NOT ready')
+        raise Exception('Windows is not supported yet')
         return
+
+    # start on PaPI on system running Mac OS X
     if platform.system() == 'Darwin':
         app = QApplication(sys.argv)
         gui = GUI(is_parent=True)
         gui.run()
         gui.show()
         app.exec_()
+        return
 
-
-
+    raise Exception('Seems like the os you are using is not supported by PaPI')
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(start_PaPI())

@@ -109,6 +109,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
         # Create a data structure for gui if it is missing
+        # -------------------------------------------------- #
         if not isinstance(gui_data, DGui):
             self.gui_data = DGui()
         else:
@@ -117,6 +118,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         # check if gui should be the parent process or core is the parent
         # start core if gui is parent
+        # -------------------------------------------------- #
         self.core_process = None
         if is_parent:
             core_queue_ref = Queue()
@@ -139,7 +141,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
         # Create the Tab Manager and the gui management unit #
-        # connect some signals of manament to gui            #
+        # connect some signals of management to gui          #
         # -------------------------------------------------- #
         self.TabManager = PapiTabManger(self.widgetTabs)
 
@@ -161,6 +163,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.gui_management.gui_api.error_occured.connect(self.error_occured)
 
         # initialize the graphic of the gui
+        # -------------------------------------------------- #
         self.gui_graphic_init()
 
 
