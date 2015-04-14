@@ -54,7 +54,7 @@ from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
 
-def start_core_child(gui_queue, core_queue, gui_id):
+def run_core_in_own_process(gui_queue, core_queue, gui_id):
     core = Core(None,False,False)
     core.gui_id = gui_id
     core.core_event_queue = core_queue
@@ -68,7 +68,7 @@ class Process_dummy(object):
 
 
 class Core:
-    def __init__(self, gui_start_function, use_gui=True, is_parent = True, gui_process_pid = None):
+    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -76,7 +76,6 @@ class Core:
         .. document private functions
         .. automethod:: __*
         """
-        self.gui_start_function = gui_start_function
         self.is_parent = is_parent
 
         # switch case structure for processing incoming events
@@ -145,10 +144,18 @@ class Core:
         self.gui_alive = True
 
         if is_parent:
+            if gui_start_function is None:
+                raise Exception('Core started with wrong arguments')
+            if use_gui is True and is_parent is False:
+                 raise Exception('Core started with wrong arguments')
+            if is_parent is False and gui_process_pid is None:
+                 raise Exception('Core started with wrong arguments')
+
+            self.gui_start_function = gui_start_function
             self.core_event_queue = Queue()
             self.gui_event_queue = Queue()
 
-        #
+
         self.core_delayed_operation_queue = []
 
     def run(self):

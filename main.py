@@ -28,35 +28,37 @@ Sven Knuth
 
 __author__ = 'control'
 
-import sys
-from papi.core import Core
-from papi.gui.qt_new.main import startGUI as new_startGui
-from papi.gui.qt_new.main import GUI
-from PySide.QtGui    import QMainWindow, QApplication
+from papi.core              import Core
+from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
+from PySide.QtGui           import  QApplication
 import platform
+import sys
 
-def main():
+def start_PaPI():
+    print('Plattform of the system running PaPI: ' + platform.system())
 
-    if False:
-        core = Core(new_startGui,is_parent=True, use_gui=True)
+    # start on PaPI on system running Linux
+    if platform.system() == 'Linux':
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
         core.run()
-    else:
+        return
+
+    # start on PaPI on system running Windows
+    if platform.system() == 'Windows':
+        print('Windows port is NOT ready')
+        raise Exception('Windows is not supported yet')
+        return
+
+    # start on PaPI on system running Mac OS X
+    if platform.system() == 'Darwin':
         app = QApplication(sys.argv)
-        gui = GUI(None,None,1,None,is_parent=True)
+        gui = GUI(is_parent=True)
         gui.run()
         gui.show()
         app.exec_()
+        return
 
-    return
-
-    if platform.system() == 'Linux':
-        core = Core(new_startGui)
-        core.run()
-    elif platform.system() == 'Windows':
-        print('not Linux, Windows')
-    else:
-        print('Mac Test ToDO')
-
+    raise Exception('Seems like the os you are using is not supported by PaPI')
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(start_PaPI())
