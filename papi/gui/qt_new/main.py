@@ -62,10 +62,28 @@ from papi.gui.gui_management import GuiManagement
 from papi.gui.qt_new import get32Icon, get16Icon
 
 from multiprocessing import Queue, Process
-from papi.core import start_core_child
+from papi.core import run_core_in_own_process
 
 # Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
+
+def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
+    """
+    Function to call to start gui operation
+    :param CoreQueue: link to queue of core
+    :type CoreQueue: Queue
+    :param GUIQueue: queue where gui receives messages
+    :type GUIQueue: Queue
+    :param gui_id: id of gui for events
+    :type gui_id: int
+    :return:
+    """
+    app = QApplication(sys.argv)
+    gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
+    gui.run()
+    # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
+    gui.show()
+    app.exec_()
 
 
 class GUI(QMainWindow, Ui_QtNewMain):
@@ -73,7 +91,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
     Used to create the qt based PaPI gui.
 
     """
-    def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, is_parent = False, parent=None):
+    def __init__(self, core_queue = None, gui_queue= None, gui_id = None, gui_data = None, is_parent = False, parent=None):
         """
         Init function
 
@@ -104,7 +122,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
             core_queue_ref = Queue()
             gui_queue_ref = Queue()
             gui_id_ref = 1
-            self.core_process = Process(target = start_core_child, args=(gui_queue_ref,core_queue_ref, gui_id_ref ))
+            self.core_process = Process(target = run_core_in_own_process,
+                                        args=(gui_queue_ref,core_queue_ref, gui_id_ref ))
             self.core_process.start()
         else:
             if core_queue is None:
@@ -632,25 +651,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def papi_about_qt_triggerd(self):
         QtGui.QMessageBox.aboutQt(self)
 
-def startGUI(CoreQueue, GUIQueue,gui_id):
-    """
-    Function to call to start gui operation
-    :param CoreQueue: link to queue of core
-    :type CoreQueue: Queue
-    :param GUIQueue: queue where gui receives messages
-    :type GUIQueue: Queue
-    :param gui_id: id of gui for events
-    :type gui_id: int
-    :return:
-    """
-    app = QApplication(sys.argv)
-    gui = GUI(CoreQueue, GUIQueue,gui_id)
-    gui.run()
 
-#   cProfile.runctx('gui.run()', globals(), locals())
 
-    gui.show()
-    app.exec_()
 
 def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     """

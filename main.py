@@ -28,28 +28,27 @@ Sven Knuth
 
 __author__ = 'control'
 
-import sys
-from papi.core import Core
-from papi.gui.qt_new.main import startGUI as new_startGui
-from papi.gui.qt_new.main import GUI
-from PySide.QtGui    import QMainWindow, QApplication
+from papi.core              import Core
+from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
+from PySide.QtGui           import  QApplication
 import platform
+import sys
 
 def main():
-    print(platform.system())
-    # if platform.system() == 'Linux':
-    #     core = Core(new_startGui,is_parent=True, use_gui=True)
-    #     core.run()
-    #     return
-    # if platform.system() == 'Windows':
-    #     print('Windows port is NOT ready')
-    #     return
-    # if platform.system() == 'Mac OS X':
-    app = QApplication(sys.argv)
-    gui = GUI(None,None,1,None,is_parent=True)
-    gui.run()
-    gui.show()
-    app.exec_()
+    print('Plattform of the system running PaPI: ' + platform.system())
+    if platform.system() == 'Linux':
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
+        core.run()
+        return
+    if platform.system() == 'Windows':
+        print('Windows port is NOT ready')
+        return
+    if platform.system() == 'Mac OS X':
+        app = QApplication(sys.argv)
+        gui = GUI(is_parent=True)
+        gui.run()
+        gui.show()
+        app.exec_()
 
 
 
