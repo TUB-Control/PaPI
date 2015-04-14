@@ -36,26 +36,22 @@ from PySide.QtGui    import QMainWindow, QApplication
 import platform
 
 def main():
+    print(platform.system())
+    # if platform.system() == 'Linux':
+    #     core = Core(new_startGui,is_parent=True, use_gui=True)
+    #     core.run()
+    #     return
+    # if platform.system() == 'Windows':
+    #     print('Windows port is NOT ready')
+    #     return
+    # if platform.system() == 'Mac OS X':
+    app = QApplication(sys.argv)
+    gui = GUI(None,None,1,None,is_parent=True)
+    gui.run()
+    gui.show()
+    app.exec_()
 
-    if False:
-        core = Core(new_startGui,is_parent=True, use_gui=True)
-        core.run()
-    else:
-        app = QApplication(sys.argv)
-        gui = GUI(None,None,1,None,is_parent=True)
-        gui.run()
-        gui.show()
-        app.exec_()
 
-    return
-
-    if platform.system() == 'Linux':
-        core = Core(new_startGui)
-        core.run()
-    elif platform.system() == 'Windows':
-        print('not Linux, Windows')
-    else:
-        print('Mac Test ToDO')
 
 
 if __name__ == '__main__':

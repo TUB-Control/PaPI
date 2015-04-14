@@ -85,28 +85,43 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :return:
         """
         super(GUI, self).__init__(parent)
+        self.is_parent = is_parent
+
         self.setupUi(self)
 
-        if gui_data is None:
+
+        # Create a data structure for gui if it is missing
+        if not isinstance(gui_data, DGui):
             self.gui_data = DGui()
         else:
             self.gui_data = gui_data
 
-        self.is_parent = is_parent
 
+        # check if gui should be the parent process or core is the parent
+        # start core if gui is parent
         self.core_process = None
         if is_parent:
-            print('GUI IS PARENT')
             core_queue_ref = Queue()
             gui_queue_ref = Queue()
             gui_id_ref = 1
             self.core_process = Process(target = start_core_child, args=(gui_queue_ref,core_queue_ref, gui_id_ref ))
             self.core_process.start()
         else:
+            if core_queue is None:
+                raise Exception('Gui started with wrong arguments')
+            if gui_queue is None:
+                raise Exception('Gui started with wrong arguments')
+            if not isinstance(gui_id, int):
+                raise Exception('Gui started with wrong arguments')
+
             core_queue_ref = core_queue
             gui_queue_ref = gui_queue
             gui_id_ref = gui_id
 
+
+        # Create the Tab Manager and the gui management unit #
+        # connect some signals of manament to gui            #
+        # -------------------------------------------------- #
         self.TabManager = PapiTabManger(self.widgetTabs)
 
         self.gui_management = GuiManagement(core_queue_ref,
@@ -126,11 +141,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.gui_management.gui_api.error_occured.connect(self.error_occured)
 
+        # initialize the graphic of the gui
+        self.gui_graphic_init()
 
+
+    def gui_graphic_init(self):
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
-
-
-
         # set GUI size
         self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
 
