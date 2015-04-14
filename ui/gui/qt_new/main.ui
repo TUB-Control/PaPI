@@ -58,6 +58,12 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
    <widget class="QMenu" name="menuPaPI">
     <property name="title">
      <string>PaPI</string>
