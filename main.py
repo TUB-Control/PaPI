@@ -43,7 +43,7 @@ def main():
     if platform.system() == 'Windows':
         print('Windows port is NOT ready')
         return
-    if platform.system() == 'Mac OS X':
+    if platform.system() == 'Darwin':
         app = QApplication(sys.argv)
         gui = GUI(is_parent=True)
         gui.run()
