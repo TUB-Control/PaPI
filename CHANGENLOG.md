@@ -13,12 +13,13 @@ v.1.XX
  * [improvement]: Changed the demux function to in improve performance
  * [improvement]: Improved core performance while processing new data (see #20)
  * [improvement]: Huge changes in the plotting plugin with performance benefits
+ * [improvement]: Shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
+ * [improvement]: ORTD can now receive its configuration via udp in multiple packages
  * [feature]: Modified PaPI gui to have tabs. User can organise visual plugins in tabs, remove tabs, rename tabs.
+ * [feature]: PaPI now supports Mac OS X based on Darwin.
  * [plugin]: Added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
  * [plugin]: Added a new pcp plugin: Radiobutton
- * [improvement]: Shifted some control logic from gui to core to increase speed when changing cfgs incl. subscriptions
- * [imporvement]: ORTD can now receive its configuration via udp in multiple packages
   
 v.1.0
 ---

@@ -68,7 +68,7 @@ class Sinus(iop_base):
         blockList = [self.block1, self.block2, self.block3]
         self.send_new_block_list(blockList)
 
-        self.para3 = DParameter('Frequenz Block SinMit_f3', default= 0.6, Regex='[0-9]+.[0-9]+')
+        self.para3 = DParameter('Frequenz Block SinMit_f3', default= 0.3, Regex='[0-9]+.[0-9]+')
         para_l = [self.para3]
 
         self.send_new_parameter_list(para_l)

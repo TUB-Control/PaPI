@@ -52,7 +52,7 @@ import xml.etree.cElementTree as ET
 class Gui_api(QtCore.QObject):
     error_occured = QtCore.Signal(str, str, str)
 
-    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None):
+    def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None, plugin_manager = None):
         super(Gui_api, self).__init__()
         self.gui_id = gui_id
         self.gui_data = gui_data
@@ -61,6 +61,7 @@ class Gui_api(QtCore.QObject):
         self.get_gui_config_function = get_gui_config_function
         self.set_gui_config_function = set_gui_config_function
         self.tabManager = TabManager
+        self.pluginManager = plugin_manager
 
     def do_create_plugin(self, plugin_identifier, uname, config={}, autostart=True):
         """
@@ -90,7 +91,6 @@ class Gui_api(QtCore.QObject):
         for pluginID in allPlugins:
             plugin = allPlugins[pluginID]
             if plugin.uname == uname:
-                print('UNAME GLEICH')
                 return False
 
         # create event object and sent it to core
@@ -549,14 +549,34 @@ class Gui_api(QtCore.QObject):
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
 
-        for pl in plugins_to_start:
-            # 0: ident, 1: uname, 2: config
-            self.do_create_plugin(pl[0], pl[1], pl[2])
 
-        # QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \
-        #                         lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \
-        #                                                         parameters_to_change, signals_to_change))
-        self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
+        # -----------------------------------------------
+        # Check: Are there unloadable plugins?
+        # -----------------------------------------------
+
+        unloadable_plugins = []
+        for pl in plugins_to_start:
+            plugin_info = self.pluginManager.getPluginByName(pl[0])
+
+            if plugin_info is None:
+                if pl[0] not in unloadable_plugins:
+                    unloadable_plugins.append(pl[0])
+
+
+
+        if not len(unloadable_plugins):
+            for pl in plugins_to_start:
+                # 0: ident, 1: uname, 2: config
+
+                self.do_create_plugin(pl[0], pl[1], pl[2])
+
+            # QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \
+            #                         lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \
+            #                                                         parameters_to_change, signals_to_change))
+            self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
+        else:
+            self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
+                                    "\nConfiguration from \n" + path + "\nwill not be used.", None)
 
     def change_uname_to_uniqe(self, uname):
         """

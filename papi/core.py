@@ -54,8 +54,21 @@ from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
 
+def run_core_in_own_process(gui_queue, core_queue, gui_id):
+    core = Core(None,False,False)
+    core.gui_id = gui_id
+    core.core_event_queue = core_queue
+    core.gui_event_queue = gui_queue
+
+    core.run()
+
+class Process_dummy(object):
+    def __init__(self):
+        self.pid= 0
+
+
 class Core:
-    def __init__(self, gui_start_function, use_gui=True):
+    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -63,7 +76,7 @@ class Core:
         .. document private functions
         .. automethod:: __*
         """
-        self.gui_start_function = gui_start_function
+        self.is_parent = is_parent
 
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {'status_event': self.__process_status_event__,
@@ -102,7 +115,6 @@ class Core:
 
         # creating the main core data object DCore and core queue
         self.core_data = DCore()
-        self.core_event_queue = Queue()
         self.core_goOn = 1
         self.core_id = 0
 
@@ -111,7 +123,6 @@ class Core:
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
         # define gui information. ID and alive status as well as gui queue for events
-        self.gui_event_queue = Queue()
         self.gui_id = self.core_data.create_id()
         self.gui_alive = False
         self.use_gui = use_gui
@@ -126,7 +137,25 @@ class Core:
         self.alive_count = 0
         self.gui_alive_count = 0
 
-        #
+        self.core_event_queue = None
+        self.gui_event_queue = None
+        self.gui_process = Process_dummy()
+        self.gui_process.pid = gui_process_pid
+        self.gui_alive = True
+
+        if is_parent:
+            if gui_start_function is None:
+                raise Exception('Core started with wrong arguments')
+            if use_gui is True and is_parent is False:
+                 raise Exception('Core started with wrong arguments')
+            if is_parent is False and gui_process_pid is None:
+                 raise Exception('Core started with wrong arguments')
+
+            self.gui_start_function = gui_start_function
+            self.core_event_queue = Queue()
+            self.gui_event_queue = Queue()
+
+
         self.core_delayed_operation_queue = []
 
     def run(self):
@@ -141,11 +170,12 @@ class Core:
         self.log.printText(1, CORE_CORE_CONSOLE_START_MESSAGE + ' .. Process id: ' + str(os.getpid()))
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
-        if self.use_gui is True:
+
+        if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
                                        args=(self.core_event_queue, self.gui_event_queue, self.gui_id))
             self.gui_process.start()
-            self.gui_alive = True
+
 
 
         # start the check alive timer
@@ -384,7 +414,17 @@ class Core:
                 return -1
             else:
                 # subscribtion correct
+                # set alias for parameter control (can be none if no parameter)
                 dsubscription.alias = sub_alias
+                # send event to plugin which will controll this parameter with information of parameter
+                if sub_alias is not None:
+                    sub_pl = self.core_data.get_dplugin_by_id(subscriber_id)
+                    if sub_pl is not None:
+                        parameters = sub_pl.get_parameters()
+                        if sub_alias in parameters:
+                            parameter = parameters[sub_alias]
+                            para_event = Event.status.ParameterInfo(self.core_id, source_id, copy.deepcopy(parameter) )
+                            source_pl.queue.put(para_event)
 
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
@@ -596,8 +636,8 @@ class Core:
                                     pl.queue.put(new_event)
 
                                     # this event will be a new parameter value for a plugin
-                                    if opt.is_parameter is True:
-                                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                                    #if opt.is_parameter is True:
+                                    #    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                             else:
                                 # plugin is paused
                                 pass
@@ -614,6 +654,10 @@ class Core:
                         opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                         new_event = Event.data.NewData(oID, id_list, opt, source_plugin_uname= dplug.uname)
                         self.gui_event_queue.put(new_event)
+
+                    # this event will be a new parameter value for a plugin, so update dcore data
+                    if opt.is_parameter is True:
+                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                     # process new_data seemed correct
                     return 1
                 else:
@@ -992,7 +1036,7 @@ class Core:
         """
 
         # GUI wants to close, so join process
-        if self.gui_alive is True:
+        if self.gui_alive is True and self.is_parent is True:
             self.gui_process.join()
 
         # Set gui_alive to false for core loop to know that is it closed

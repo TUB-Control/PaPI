@@ -33,6 +33,7 @@ from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 from papi.data.DSignal import DSignal
 from papi.plugin.base_classes.dpp_base import dpp_base
+import papi.constants as pc
 
 import tornado.ioloop
 import tornado.web
@@ -43,6 +44,9 @@ import threading
 import multiprocessing
 
 import time
+import os
+import http.server
+import socketserver
 
 # This class initializes a WebSocket to enable bidirectional communication between browser and server
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -71,6 +75,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         print('Connection closed')
 
+class HumanRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+
+        if self.path == '/':
+            parent = 'papi/plugin/dpp/Human'
+            self.path += parent
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
 # Main Plugin
 class Human(dpp_base):
 
@@ -78,15 +90,57 @@ class Human(dpp_base):
 
         # Plugin is triggered by arrival of data
         self.set_event_trigger_mode(True)
+        self.config = config
+        # Read Configuration
 
-    # Initialize and start a thread
+        self.Up_w_Id = self.config['quat_upperarm_w']['value']
+        self.Up_x_Id = self.config['quat_upperarm_x']['value']
+        self.Up_y_Id = self.config['quat_upperarm_y']['value']
+        self.Up_z_Id = self.config['quat_upperarm_z']['value']
+
+        self.Fo_w_Id = self.config['quat_forearm_w']['value']
+        self.Fo_x_Id = self.config['quat_forearm_x']['value']
+        self.Fo_y_Id = self.config['quat_forearm_y']['value']
+        self.Fo_z_Id = self.config['quat_forearm_z']['value']
+
+        self.http_port = int(self.config['http_port']['value'])
+
+        self.Angle_Data_Up_w = 0
+        self.Angle_Data_Up_x = 0
+        self.Angle_Data_Up_y = 0
+        self.Angle_Data_Up_z = 0
+
+        # Quaternion for forearm
+        self.Angle_Data_Fo_w = 0
+        self.Angle_Data_Fo_x = 0
+        self.Angle_Data_Fo_y = 0
+        self.Angle_Data_Fo_z = 0
+
+        self.Angle_Data = [self.Angle_Data_Up_w, self.Angle_Data_Up_x,
+                           self.Angle_Data_Up_y, self.Angle_Data_Up_z,
+                           self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
+                           self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
+
+        # Initialize and start a thread
         self.thread_goOn = True
         self.lock = threading.Lock()
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
         
         # Initialize a variable to store the data 
-        self.Angle_Data = 0
+        #self.Angle_Data = 0
+
+        # Start simple web server
+
+
+        Handler = HumanRequestHandler
+
+        self.httpd = socketserver.TCPServer(("", self.http_port), Handler)
+
+        print("serving at port", self.http_port)
+
+        self.thread_http = threading.Thread(target=self.thread_http)
+        self.thread_http.start()
 
         # Return init success
         return True
@@ -103,27 +157,62 @@ class Human(dpp_base):
 
         # IMPORTANT: The identification names have to be the same as written in RTmain.sce!
 
-        if 'quat_upperarm_w' in Data and 'quat_upperarm_x' in Data and 'quat_upperarm_y' in Data \
-            and 'quat_upperarm_z' in Data and 'quat_forearm_w' in Data and 'quat_forearm_x' in Data \
-            and 'quat_forearm_y' in Data and 'quat_forearm_z' in Data:
 
-            # Quaternion for upper arm
-            self.Angle_Data_Up_w = Data['quat_upperarm_w'][0]
-            self.Angle_Data_Up_x = Data['quat_upperarm_x'][0]
-            self.Angle_Data_Up_y = Data['quat_upperarm_y'][0]
-            self.Angle_Data_Up_z = Data['quat_upperarm_z'][0]
+        # if 'quat_upperarm_w' in Data and 'quat_upperarm_x' in Data and 'quat_upperarm_y' in Data \
+        #     and 'quat_upperarm_z' in Data and 'quat_forearm_w' in Data and 'quat_forearm_x' in Data \
+        #     and 'quat_forearm_y' in Data and 'quat_forearm_z' in Data:
+        #
+        #     # Quaternion for upper arm
+        #     self.Angle_Data_Up_w = Data['quat_upperarm_w'][0]
+        #     self.Angle_Data_Up_x = Data['quat_upperarm_x'][0]
+        #     self.Angle_Data_Up_y = Data['quat_upperarm_y'][0]
+        #     self.Angle_Data_Up_z = Data['quat_upperarm_z'][0]
+        #
+        #     # Quaternion for forearm
+        #     self.Angle_Data_Fo_w = Data['quat_forearm_w'][0]
+        #     self.Angle_Data_Fo_x = Data['quat_forearm_x'][0]
+        #     self.Angle_Data_Fo_y = Data['quat_forearm_y'][0]
+        #     self.Angle_Data_Fo_z = Data['quat_forearm_z'][0]
+        #
+        #     # Be sure the order is equal to the order used in index.html!
+        #     self.Angle_Data = [self.Angle_Data_Up_w, self.Angle_Data_Up_x,
+        #                        self.Angle_Data_Up_y, self.Angle_Data_Up_z,
+        #                        self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
+        #                        self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
 
-            # Quaternion for forearm
-            self.Angle_Data_Fo_w = Data['quat_forearm_w'][0]
-            self.Angle_Data_Fo_x = Data['quat_forearm_x'][0]
-            self.Angle_Data_Fo_y = Data['quat_forearm_y'][0]
-            self.Angle_Data_Fo_z = Data['quat_forearm_z'][0]
 
-            # Be sure the order is equal to the order used in index.html!
-            self.Angle_Data = [self.Angle_Data_Up_w,self.Angle_Data_Up_x,
-                               self.Angle_Data_Up_y,self.Angle_Data_Up_z,
-                               self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
-                               self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
+
+        if self.Fo_w_Id in Data:
+            self.Angle_Data_Fo_w = Data[self.Fo_w_Id][0]
+
+        if self.Fo_x_Id in Data:
+            self.Angle_Data_Fo_x = Data[self.Fo_x_Id][0]
+
+        if self.Fo_y_Id in Data:
+            self.Angle_Data_Fo_y = Data[self.Fo_y_Id][0]
+
+        if self.Fo_z_Id in Data:
+            self.Angle_Data_Fo_z = Data[self.Fo_z_Id][0]
+
+
+        if self.Up_w_Id in Data:
+            self.Angle_Data_Up_w = Data[self.Up_w_Id][0]
+
+        if self.Up_x_Id in Data:
+            self.Angle_Data_Up_x = Data[self.Up_x_Id][0]
+
+        if self.Up_y_Id in Data:
+            self.Angle_Data_Up_y = Data[self.Up_y_Id][0]
+
+        if self.Up_z_Id in Data:
+            self.Angle_Data_Up_z = Data[self.Up_z_Id][0]
+
+        #
+        # Be sure the order is equal to the order used in index.html!
+        self.Angle_Data = [self.Angle_Data_Up_w, self.Angle_Data_Up_x,
+                           self.Angle_Data_Up_y, self.Angle_Data_Up_z,
+                           self.Angle_Data_Fo_w, self.Angle_Data_Fo_x,
+                           self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
 
 
     def set_parameter(self, name, value):
@@ -131,18 +220,54 @@ class Human(dpp_base):
 
     def quit(self):
         #TODO: self.thread.join()
+
+        self.thread_goOn = False
+        self.httpd.shutdown()
+        self.thread_http.join()
+
         pass
 
 
     def get_plugin_configuration(self):
-        config = {}
+        config = {
+            "quat_upperarm_w": {
+                'value': 'quat_upperarm_w'
+            },
+            "quat_upperarm_x": {
+                'value': 'quat_upperarm_x'
+            },
+            "quat_upperarm_y": {
+                'value': 'quat_upperarm_y'
+            },
+            "quat_upperarm_z": {
+                'value': 'quat_upperarm_z'
+            },
+            "quat_forearm_w": {
+                'value': 'quat_forearm_w'
+            },
+            "quat_forearm_x": {
+                'value': 'quat_forearm_x'
+            },
+            "quat_forearm_y": {
+                'value': 'quat_forearm_y'
+            },
+            "quat_forearm_z": {
+                'value': 'quat_forearm_z'
+            },
+            "http_port": {
+                'value': '8080',
+                'regex' : pc.REGEX_SINGLE_INT
+            }
+        }
         return config
 
     def plugin_meta_updated(self):
         pass
 
 
+    def thread_http(self):
 
+        self.httpd.serve_forever()
 
     def thread_execute(self):
         print('Start a thread')

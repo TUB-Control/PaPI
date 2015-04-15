@@ -388,12 +388,16 @@ class Plot(vip_base):
         if name == 'x-grid':
             self.config['x-grid']['value'] = value
             self.__plotWidget__.showGrid(x=value == '1')
+            self.xGrid_Checkbox.stateChanged.disconnect()
             self.xGrid_Checkbox.setChecked(value=='1')
+            self.xGrid_Checkbox.stateChanged.connect(self.contextMenu_xGrid_toogle)
 
         if name == 'y-grid':
             self.config['y-grid']['value'] = value
             self.__plotWidget__.showGrid(y=value == '1')
+            self.yGrid_Checkbox.stateChanged.disconnect()
             self.yGrid_Checkbox.setChecked(value=='1')
+            self.yGrid_Checkbox.stateChanged.connect(self.contextMenu_yGrid_toogle)
 
         if name == 'downsampling_rate':
             self.config['downsampling_rate']['value'] = value
@@ -720,7 +724,9 @@ class Plot(vip_base):
 
         self.__rolling_plot__ = int(float(self.config['rolling_plot']['value'])) == int('1')
 
+        self.rolling_Checkbox.stateChanged.disconnect()
         self.rolling_Checkbox.setChecked(value == '1')
+        self.rolling_Checkbox.stateChanged.connect(self.contextMenu_rolling_toogled)
 
         self.clear()
 

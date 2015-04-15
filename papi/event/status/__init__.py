@@ -8,3 +8,4 @@ from .Alive import Alive
 from .CheckAliveStatus import CheckAliveStatus
 from .PluginClosed import PluginClosed
 from .PluginStopped import PluginStopped
+from .ParameterInfo import ParameterInfo

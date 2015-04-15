@@ -34,6 +34,7 @@ from PySide import QtCore
 from PySide.QtCore import Qt
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
+from papi.data.DParameter import DParameter
 
 import papi.constants as pc
 
@@ -78,6 +79,7 @@ class Slider(pcp_base):
         self.text_field.setText(str(self.init_value))
 
         init_value = (self.init_value - self.value_min)/self.tick_width
+        init_value = round(init_value,0)
         self.slider.setValue(init_value)
         self.layout = QHBoxLayout(self.central_widget)
 
@@ -147,3 +149,16 @@ class Slider(pcp_base):
 
     def quit(self):
         pass
+
+    def new_parameter_info(self, dparameter_object):
+        if isinstance(dparameter_object, DParameter):
+            value = dparameter_object.default
+            self.text_field.setText(str(value))
+            init_value = (value - self.value_min)/self.tick_width
+            init_value = round(init_value,0)
+
+            self.slider.valueChanged.disconnect()
+            self.slider.sliderPressed.disconnect()
+            self.slider.setValue(init_value)
+            self.slider.valueChanged.connect(self.value_changed)
+            self.slider.sliderPressed.connect(self.clicked)

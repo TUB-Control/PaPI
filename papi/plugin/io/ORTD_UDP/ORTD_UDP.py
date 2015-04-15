@@ -330,9 +330,20 @@ class ORTD_UDP(iop_base):
             if para_name in self.parameters:
                 para_object = self.parameters.pop(para_name)
             else:
-                val_count = ORTDParameter[para_id]['NValues']
+                val_count = int(ORTDParameter[para_id]['NValues'])
                 opt_object = OptionalObject(para_id, val_count)
-                para_object = DParameter(para_name,default=0,OptionalObject=opt_object)
+
+                if "initial_value" in ORTDParameter[para_id]:
+                    val = ORTDParameter[para_id]['initial_value']
+                    if val_count > 1:
+                        val = val[1:-1]
+                        init_value = list(map(float,val.split(',')))
+                    else:
+                        init_value = float(val)
+                else:
+                    init_value = 0
+
+                para_object = DParameter(para_name, default=init_value, OptionalObject=opt_object)
                 self.send_new_parameter_list([para_object])
 
 
