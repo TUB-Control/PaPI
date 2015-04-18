@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/CreateRecording.ui'
 #
-# Created: Tue Apr 14 15:50:34 2015
+# Created: Thu Apr 16 19:34:59 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,23 +57,16 @@ class Ui_CreateRecording(object):
         self.horizontalLayout_3.addLayout(self.verticalLayout_3)
         self.verticalLayout_4 = QtGui.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.subView = QtGui.QTableView(self.Subscription)
-        self.subView.setObjectName("subView")
-        self.verticalLayout_4.addWidget(self.subView)
-        self.pushButton_2 = QtGui.QPushButton(self.Subscription)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.verticalLayout_4.addWidget(self.pushButton_2)
+        self.selectionGrid = QtGui.QGridLayout()
+        self.selectionGrid.setObjectName("selectionGrid")
+        self.verticalLayout_4.addLayout(self.selectionGrid)
+        self.sendConfigButton = QtGui.QPushButton(self.Subscription)
+        self.sendConfigButton.setObjectName("sendConfigButton")
+        self.verticalLayout_4.addWidget(self.sendConfigButton)
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
         self.tabWidget.addTab(self.Subscription, "")
         self.horizontalLayout_2.addWidget(self.tabWidget)
         CreateRecording.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(CreateRecording)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
-        self.menubar.setObjectName("menubar")
-        CreateRecording.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(CreateRecording)
-        self.statusbar.setObjectName("statusbar")
-        CreateRecording.setStatusBar(self.statusbar)
 
         self.retranslateUi(CreateRecording)
         self.tabWidget.setCurrentIndex(0)
@@ -85,6 +78,6 @@ class Ui_CreateRecording(object):
         self.previewButton.setText(QtGui.QApplication.translate("CreateRecording", "Preview", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Fields), QtGui.QApplication.translate("CreateRecording", "Fields", None, QtGui.QApplication.UnicodeUTF8))
         self.previewButton_sub.setText(QtGui.QApplication.translate("CreateRecording", "PreviewButton", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("CreateRecording", "SendConfig", None, QtGui.QApplication.UnicodeUTF8))
+        self.sendConfigButton.setText(QtGui.QApplication.translate("CreateRecording", "SendConfig", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Subscription), QtGui.QApplication.translate("CreateRecording", "Subscription", None, QtGui.QApplication.UnicodeUTF8))
 
