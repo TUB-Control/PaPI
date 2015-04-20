@@ -138,7 +138,10 @@ class PapiTabManger(QObject):
             if name in self.tab_dict_uname:
                 pixmap  = QtGui.QPixmap(bg)
                 widgetArea = self.tab_dict_uname[name]
-                widgetArea.setBackground(pixmap)
+
+                qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
+
+                widgetArea.setBackground(qbrush_bg)
                 widgetArea.background = bg
 
     def set_all_tabs_to_close_when_empty(self, state):

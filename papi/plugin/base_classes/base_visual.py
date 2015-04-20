@@ -150,8 +150,7 @@ class base_visual(base_plugin):
         subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
-
-        tabMenu = QtGui.QMenu('Move to')
+        tabMenu = ctrlMenu.addMenu('Move to tab')
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
         tab_entrys = []
         for t in tabs:
@@ -162,15 +161,16 @@ class base_visual(base_plugin):
                 tabMenu.addAction(entry)
 
 
-        ctrlMenu.addMenu(tabMenu)
+        #ctrlMenu.addMenu(tabMenu)
         ctrlMenu.addAction(subMenu_action)
         if self.get_type() == PLUGIN_VIP_IDENTIFIER:
-            ctrlMenu.addAction(resume_action)
-            ctrlMenu.addAction(pause_action)
+           ctrlMenu.addAction(resume_action)
+           ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
         return ctrlMenu
 
     def tabMenu_triggered(self, item):
+        print(item)
         pos = self._subWindow.pos()
         posX = pos.x()
         posY = pos.y()
