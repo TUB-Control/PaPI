@@ -33,12 +33,13 @@ import os
 import traceback
 import re
 
-from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
-from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QUrl
+from PyQt4.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
+from PyQt4.QtGui               import QIcon
+from PyQt4.QtCore              import QSize, Qt, QUrl
+from PyQt4 import QtCore, QtGui
 
 import papi.pyqtgraph as pg
-from papi.pyqtgraph import QtCore, QtGui
+#from papi.pyqtgraph import QtCore, QtGui
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
