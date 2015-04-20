@@ -30,7 +30,7 @@ __author__ = 'stefan'
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
-from PySide.QtGui import QMdiSubWindow
+from PyQt4.QtGui import QMdiSubWindow
 from papi.pyqtgraph.Qt import QtGui
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 

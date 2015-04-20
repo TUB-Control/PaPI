@@ -34,13 +34,13 @@ from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTree
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
-from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction, QStandardItemModel
+from PyQt4.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction, QStandardItemModel
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
 import copy
-from PySide.QtCore import *
-from PySide.QtGui import QLineEdit
+from PyQt4.QtCore import *
+from PyQt4.QtGui import QLineEdit
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
 

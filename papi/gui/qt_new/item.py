@@ -28,8 +28,8 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
 

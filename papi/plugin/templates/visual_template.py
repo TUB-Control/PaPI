@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtGui import QMdiSubWindow
+from PyQt4.QtGui import QMdiSubWindow
 import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base

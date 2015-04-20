@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtWebKit import QWebView
+from PyQt4.QtWebKit import QWebView
 import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base

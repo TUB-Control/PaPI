@@ -30,8 +30,8 @@ __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.gui.qt_new.custom import FileLineEdit
-from PySide import QtGui, QtCore
-from PySide.QtGui import QRegExpValidator
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QRegExpValidator
 
 import threading, time
 

@@ -29,9 +29,9 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
-from PySide import QtCore
-from PySide.QtCore import Qt
+from PyQt4.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
+from PyQt4 import QtCore
+from PyQt4.QtCore import Qt
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter

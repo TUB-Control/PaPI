@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'knuths'
 
-from PySide.QtGui import QColor
+from PyQt4.QtGui import QColor
 import re
 
 

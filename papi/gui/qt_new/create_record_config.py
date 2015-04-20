@@ -26,11 +26,11 @@ Contributors:
 Sven Knuth
 """
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 
 from papi.ui.gui.qt_new.CreateRecording import Ui_CreateRecording
-from PySide.QtGui import QMainWindow
+from PyQt4.QtGui import QMainWindow
 
 from papi.gui.qt_new.item import CustomFieldModel, CustomFieldItem, StructTreeModel, StructTreeNode, StructRootNode
 

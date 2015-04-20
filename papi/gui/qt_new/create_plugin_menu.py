@@ -38,10 +38,10 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow, QListWidgetItem, QColor
+from PyQt4.QtGui import QMainWindow, QListWidgetItem, QColor
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
-from PySide.QtCore import *
+from PyQt4.QtCore import *
 
 
 

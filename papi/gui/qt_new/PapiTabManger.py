@@ -28,8 +28,8 @@ Contributors:
 
 __author__ = 'control'
 
-from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabWidget
-from PySide.QtCore import *
+from PyQt4.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabWidget
+from PyQt4.QtCore import *
 from papi.pyqtgraph import QtCore, QtGui
 from papi.gui.qt_new.custom import FileLineEdit
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER

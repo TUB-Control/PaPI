@@ -44,8 +44,8 @@ import papi.constants as pc
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 from papi.pyqtgraph.Qt import QtCore, QtGui
-from PySide.QtGui import QRegExpValidator
-from PySide.QtCore import *
+from PyQt4.QtGui import QRegExpValidator
+from PyQt4.QtCore import *
 
 class Plot(vip_base):
     """

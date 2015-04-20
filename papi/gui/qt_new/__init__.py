@@ -29,7 +29,7 @@ Sven Knuth
 __author__ = 'knuths'
 
 import os
-from PySide.QtGui import QIcon
+from PyQt4.QtGui import QIcon
 
 def get32Icon(file):
     path = os.path.abspath('./papi/gui/qt_new/images/32/' + file)

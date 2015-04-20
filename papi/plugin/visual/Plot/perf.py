@@ -36,8 +36,8 @@ sys.path.insert(0,os.path.abspath('../../../../'))
 print(sys.path)
 import papi.pyqtgraph as pg
 
-from PySide.QtGui import QApplication, QLabel
-from PySide import QtCore
+from PyQt4.QtGui import QApplication, QLabel
+from PyQt4 import QtCore
 
 import importlib.machinery
 

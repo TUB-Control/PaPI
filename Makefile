@@ -1,5 +1,5 @@
 
-UIPY = pyside-uic
+UIPY = pyuic4
 
 SRC_DIR = ./ui/
 

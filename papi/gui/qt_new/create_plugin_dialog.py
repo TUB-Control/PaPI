@@ -30,8 +30,8 @@ __author__ = 'knuths'
 
 import operator
 
-from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox, QComboBox
-from PySide.QtCore import *
+from PyQt4.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox, QComboBox
+from PyQt4.QtCore import *
 
 from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
 from papi.gui.qt_new.custom import FileLineEdit, ColorLineEdit
