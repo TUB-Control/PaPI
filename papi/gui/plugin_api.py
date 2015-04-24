@@ -35,7 +35,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 from papi.gui.gui_api import Gui_api
 
 import papi.error_codes as ERROR
@@ -47,7 +47,7 @@ import xml.etree.cElementTree as ET
 
 class Plugin_api(QtCore.QObject):
 
-    resize_gui = QtCore.Signal(int, int)
+#    resize_gui = QtCore.Signal(int, int)
 
     def __init__(self, gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER, tabManager = None):
         super(Plugin_api, self).__init__()

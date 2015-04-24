@@ -1,5 +1,5 @@
 
-UIPY = pyuic4
+UIPY = pyuic5
 
 SRC_DIR = ./ui/
 

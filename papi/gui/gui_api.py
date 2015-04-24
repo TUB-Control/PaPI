@@ -39,7 +39,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 
 from papi.data.DSignal import DSignal
 from papi.data.DPlugin import DBlock
@@ -50,7 +50,7 @@ import xml.etree.cElementTree as ET
 
 
 class Gui_api(QtCore.QObject):
-    error_occured = QtCore.Signal(str, str, str)
+    error_occured = QtCore.pyqtSignal(str, str, str)
 
     def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None, plugin_manager = None):
         super(Gui_api, self).__init__()

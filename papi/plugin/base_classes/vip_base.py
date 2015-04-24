@@ -30,7 +30,7 @@ from papi.plugin.base_classes.base_visual import base_visual
 
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph.Qt import QtGui
+
 
 class vip_base(base_visual):
 

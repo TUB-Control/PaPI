@@ -35,7 +35,7 @@ import papi.constants as pc
 
 import time
 
-from papi.pyqtgraph.Qt import QtGui, QtCore
+from PyQt5 import QtGui, QtWidgets, QtCore
 
 #RENAME TO PLUGIN NAME
 class LCDDisplay(vip_base):
@@ -57,7 +57,7 @@ class LCDDisplay(vip_base):
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-        self.LcdWidget = QtGui.QLCDNumber()
+        self.LcdWidget = QtWidgets.QLCDNumber()
         self.LcdWidget.setSmallDecimalPoint(True)
         self.LcdWidget.display(self.init_value)
 

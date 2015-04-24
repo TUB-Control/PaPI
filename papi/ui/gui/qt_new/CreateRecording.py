@@ -2,91 +2,77 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/CreateRecording.ui'
 #
-# Created: Mon Apr 20 15:47:05 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Apr 24 15:30:18 2015
+#      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_CreateRecording(object):
     def setupUi(self, CreateRecording):
-        CreateRecording.setObjectName(_fromUtf8("CreateRecording"))
+        CreateRecording.setObjectName("CreateRecording")
         CreateRecording.resize(800, 600)
-        self.centralwidget = QtGui.QWidget(CreateRecording)
-        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
-        self.Fields = QtGui.QWidget()
-        self.Fields.setObjectName(_fromUtf8("Fields"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.Fields)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.customFieldTable = QtGui.QTableView(self.Fields)
-        self.customFieldTable.setObjectName(_fromUtf8("customFieldTable"))
+        self.centralwidget = QtWidgets.QWidget(CreateRecording)
+        self.centralwidget.setObjectName("centralwidget")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName("tabWidget")
+        self.Fields = QtWidgets.QWidget()
+        self.Fields.setObjectName("Fields")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.Fields)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.customFieldTable = QtWidgets.QTableView(self.Fields)
+        self.customFieldTable.setObjectName("customFieldTable")
         self.verticalLayout.addWidget(self.customFieldTable)
-        self.addFieldButton = QtGui.QPushButton(self.Fields)
-        self.addFieldButton.setObjectName(_fromUtf8("addFieldButton"))
+        self.addFieldButton = QtWidgets.QPushButton(self.Fields)
+        self.addFieldButton.setObjectName("addFieldButton")
         self.verticalLayout.addWidget(self.addFieldButton)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.verticalLayout_2 = QtGui.QVBoxLayout()
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.structureView = QtGui.QTreeView(self.Fields)
-        self.structureView.setObjectName(_fromUtf8("structureView"))
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.structureView = QtWidgets.QTreeView(self.Fields)
+        self.structureView.setObjectName("structureView")
         self.verticalLayout_2.addWidget(self.structureView)
-        self.previewButton = QtGui.QPushButton(self.Fields)
-        self.previewButton.setObjectName(_fromUtf8("previewButton"))
+        self.previewButton = QtWidgets.QPushButton(self.Fields)
+        self.previewButton.setObjectName("previewButton")
         self.verticalLayout_2.addWidget(self.previewButton)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        self.tabWidget.addTab(self.Fields, _fromUtf8(""))
-        self.Subscription = QtGui.QWidget()
-        self.Subscription.setObjectName(_fromUtf8("Subscription"))
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.Subscription)
-        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
-        self.verticalLayout_3 = QtGui.QVBoxLayout()
-        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.structureView_sub = QtGui.QTreeView(self.Subscription)
-        self.structureView_sub.setObjectName(_fromUtf8("structureView_sub"))
+        self.tabWidget.addTab(self.Fields, "")
+        self.Subscription = QtWidgets.QWidget()
+        self.Subscription.setObjectName("Subscription")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.Subscription)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.structureView_sub = QtWidgets.QTreeView(self.Subscription)
+        self.structureView_sub.setObjectName("structureView_sub")
         self.verticalLayout_3.addWidget(self.structureView_sub)
-        self.previewButton_sub = QtGui.QPushButton(self.Subscription)
-        self.previewButton_sub.setObjectName(_fromUtf8("previewButton_sub"))
+        self.previewButton_sub = QtWidgets.QPushButton(self.Subscription)
+        self.previewButton_sub.setObjectName("previewButton_sub")
         self.verticalLayout_3.addWidget(self.previewButton_sub)
         self.horizontalLayout_3.addLayout(self.verticalLayout_3)
-        self.verticalLayout_4 = QtGui.QVBoxLayout()
-        self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
-        self.subView = QtGui.QTableView(self.Subscription)
-        self.subView.setObjectName(_fromUtf8("subView"))
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.subView = QtWidgets.QTableView(self.Subscription)
+        self.subView.setObjectName("subView")
         self.verticalLayout_4.addWidget(self.subView)
-        self.pushButton_2 = QtGui.QPushButton(self.Subscription)
-        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.pushButton_2 = QtWidgets.QPushButton(self.Subscription)
+        self.pushButton_2.setObjectName("pushButton_2")
         self.verticalLayout_4.addWidget(self.pushButton_2)
         self.horizontalLayout_3.addLayout(self.verticalLayout_4)
-        self.tabWidget.addTab(self.Subscription, _fromUtf8(""))
+        self.tabWidget.addTab(self.Subscription, "")
         self.horizontalLayout_2.addWidget(self.tabWidget)
         CreateRecording.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(CreateRecording)
+        self.menubar = QtWidgets.QMenuBar(CreateRecording)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menubar.setObjectName("menubar")
         CreateRecording.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(CreateRecording)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        self.statusbar = QtWidgets.QStatusBar(CreateRecording)
+        self.statusbar.setObjectName("statusbar")
         CreateRecording.setStatusBar(self.statusbar)
 
         self.retranslateUi(CreateRecording)
@@ -94,11 +80,12 @@ class Ui_CreateRecording(object):
         QtCore.QMetaObject.connectSlotsByName(CreateRecording)
 
     def retranslateUi(self, CreateRecording):
-        CreateRecording.setWindowTitle(_translate("CreateRecording", "MainWindow", None))
-        self.addFieldButton.setText(_translate("CreateRecording", "AddField", None))
-        self.previewButton.setText(_translate("CreateRecording", "Preview", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Fields), _translate("CreateRecording", "Fields", None))
-        self.previewButton_sub.setText(_translate("CreateRecording", "PreviewButton", None))
-        self.pushButton_2.setText(_translate("CreateRecording", "SendConfig", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Subscription), _translate("CreateRecording", "Subscription", None))
+        _translate = QtCore.QCoreApplication.translate
+        CreateRecording.setWindowTitle(_translate("CreateRecording", "MainWindow"))
+        self.addFieldButton.setText(_translate("CreateRecording", "AddField"))
+        self.previewButton.setText(_translate("CreateRecording", "Preview"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Fields), _translate("CreateRecording", "Fields"))
+        self.previewButton_sub.setText(_translate("CreateRecording", "PreviewButton"))
+        self.pushButton_2.setText(_translate("CreateRecording", "SendConfig"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Subscription), _translate("CreateRecording", "Subscription"))
 

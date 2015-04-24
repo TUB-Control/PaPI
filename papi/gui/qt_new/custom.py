@@ -28,7 +28,10 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PyQt4.QtGui import QLineEdit, QFileDialog, QColorDialog, QPushButton, QColor
+from PyQt5.QtGui        import QColor
+from PyQt5.QtWidgets    import QLineEdit, QFileDialog, QColorDialog, QPushButton
+
+#from PyQt5.QtWidgets import QLineEdit, QFileDialog, QColorDialog, QPushButton, QColor
 import os, re
 import papi.helper as ph
 

@@ -42,7 +42,7 @@ from papi.event.event_base import PapiEventBase
 from papi.ConsoleLog import ConsoleLog
 from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 
 __author__ = 'Stefan'
 
@@ -54,10 +54,10 @@ class GuiEventProcessing(QtCore.QObject):
     To get all the functionality, one should link the callback functions (slots) for the needed signals.
 
     """
-    added_dplugin = QtCore.Signal(DPlugin)
-    removed_dplugin = QtCore.Signal(DPlugin)
-    dgui_changed = QtCore.Signal()
-    plugin_died = QtCore.Signal(DPlugin, Exception, str)
+    added_dplugin = QtCore.pyqtSignal(DPlugin)
+    removed_dplugin = QtCore.pyqtSignal(DPlugin)
+    dgui_changed = QtCore.pyqtSignal()
+    plugin_died = QtCore.pyqtSignal(DPlugin, Exception, str)
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue, TabManager, plugin_manager):
         """

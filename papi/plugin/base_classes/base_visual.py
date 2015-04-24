@@ -30,8 +30,8 @@ __author__ = 'stefan'
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
-from PyQt4.QtGui import QMdiSubWindow
-from papi.pyqtgraph.Qt import QtGui
+from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
+
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
 class base_visual(base_plugin):
@@ -136,18 +136,18 @@ class base_visual(base_plugin):
         return self.widget
 
     def create_control_context_menu(self):
-        ctrlMenu = QtGui.QMenu("Control")
+        ctrlMenu = QMenu("Control")
 
-        del_action = QtGui.QAction('Close plugin',self.widget)
+        del_action = QAction('Close plugin',self.widget)
         del_action.triggered.connect(self.ctlrMenu_exit)
 
-        pause_action = QtGui.QAction('Pause plugin',self.widget)
+        pause_action = QAction('Pause plugin',self.widget)
         pause_action.triggered.connect(self.ctlrMenu_pause)
 
-        resume_action = QtGui.QAction('Resume plugin',self.widget)
+        resume_action = QAction('Resume plugin',self.widget)
         resume_action.triggered.connect(self.ctlrMenu_resume)
 
-        subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
+        subMenu_action = QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
         tabMenu = ctrlMenu.addMenu('Move to tab')
@@ -155,7 +155,7 @@ class base_visual(base_plugin):
         tab_entrys = []
         for t in tabs:
             if t != self.config['tab']['value']:
-                entry = QtGui.QAction(t, self.widget)
+                entry = QAction(t, self.widget)
                 entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
                 tab_entrys.append(entry)
                 tabMenu.addAction(entry)

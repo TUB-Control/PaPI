@@ -30,7 +30,7 @@ __author__ = 'control'
 
 from papi.core              import Core
 from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
-from PyQt4.QtGui           import  QApplication
+from PyQt5.QtWidgets           import  QApplication
 import platform
 import sys
 

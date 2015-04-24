@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'control'
 
 from papi.plugin.base_classes.vip_base import vip_base
-from PyQt4.QtGui import QMdiSubWindow
+from PyQt5.QtGui import QMdiSubWindow
 from papi.pyqtgraph.Qt import QtCore, QtGui
 
 

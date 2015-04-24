@@ -28,7 +28,7 @@ Contributors:
 
 __author__ = 'knuths'
 
-from PyQt4.QtGui import QMdiSubWindow
+from PyQt5.QtGui import QMdiSubWindow
 import papi.pyqtgraph as pq
 
 import papi.constants as pc

@@ -28,19 +28,20 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
+from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
-from PyQt4.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction, QStandardItemModel
+
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
-import copy
-from PyQt4.QtCore import *
-from PyQt4.QtGui import QLineEdit
+from PyQt5.QtGui        import QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
+from PyQt5.QtCore import *
+
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
 

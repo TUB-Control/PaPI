@@ -28,9 +28,13 @@ Contributors:
 
 __author__ = 'control'
 
-from PyQt4.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabWidget
-from PyQt4.QtCore import *
-from papi.pyqtgraph import QtCore, QtGui
+
+from PyQt5.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui        import QRegExpValidator
+from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, QMessageBox, QMenu, QAction
+
+
 from papi.gui.qt_new.custom import FileLineEdit
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER
 
@@ -48,8 +52,8 @@ class PapiTabManger(QObject):
 
         self.tabWidget.tabCloseRequested.connect(self.closeTab_by_ind)
 
-        self.tabWidget.setTabShape(QtGui.QTabWidget.Triangular)
-        self.tabWidget.setTabPosition(QtGui.QTabWidget.North)
+        #self.tabWidget.setTabShape(QtGui.QTabWidget.Triangular)
+        #self.tabWidget.setTabPosition(QtGui.QTabWidget.North)
 
         self.dGui = dgui
         # make tabs movable
@@ -212,28 +216,28 @@ class PapiTabManger(QObject):
         self.cmenu.exec_(gloPos)
 
     def create_context_menu(self):
-        ctrlMenu = QtGui.QMenu("")
+        ctrlMenu = QMenu("")
 
 
-        title_action = QtGui.QAction('Tab menu', self.tabWidget)
+        title_action = QAction('Tab menu', self.tabWidget)
         title_action.setDisabled(True)
 
-        sep_action = QtGui.QAction('',self.tabWidget)
+        sep_action = QAction('',self.tabWidget)
         sep_action.setSeparator(True)
 
-        new_tab_action = QtGui.QAction('New Tab',self.tabWidget)
+        new_tab_action = QAction('New Tab',self.tabWidget)
         new_tab_action.triggered.connect(self.cmenu_new_tab)
 
-        new_tab_action_cust_name = QtGui.QAction('New Tab with name',self.tabWidget)
+        new_tab_action_cust_name = QAction('New Tab with name',self.tabWidget)
         new_tab_action_cust_name.triggered.connect(self.cmenu_new_tab_custom_name)
 
-        close_tab_action = QtGui.QAction('Close Tab',self.tabWidget)
+        close_tab_action = QAction('Close Tab',self.tabWidget)
         close_tab_action.triggered.connect(self.cmenu_close_tab)
 
-        rename_tab_action = QtGui.QAction('Rename Tab',self.tabWidget)
+        rename_tab_action = QAction('Rename Tab',self.tabWidget)
         rename_tab_action.triggered.connect(self.cmenu_rename_tab)
 
-        bg_action = QtGui.QAction('Set background',self.tabWidget)
+        bg_action = QAction('Set background',self.tabWidget)
         bg_action.triggered.connect(self.cmenu_set_bg)
 
         ctrlMenu.addAction(title_action)
@@ -299,7 +303,7 @@ class PapiTabManger(QObject):
 
 
 
-class TabObject(QtGui.QMdiArea):
+class TabObject(QMdiArea):
     def __init__(self, name, parent=None):
         super(TabObject, self).__init__(parent)
         self.index = None
@@ -311,7 +315,7 @@ class TabObject(QtGui.QMdiArea):
         return len(self.subWindowList()) == 0
 
 
-class DefaultCloseBox(QtGui.QMessageBox):
+class DefaultCloseBox(QMessageBox):
 
     def __init__(self, parent=None):
         super(DefaultCloseBox, self).__init__(parent)

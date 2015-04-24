@@ -33,12 +33,13 @@ import os
 import traceback
 import re
 
-from PyQt4.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
-from PyQt4.QtGui               import QIcon
-from PyQt4.QtCore              import QSize, Qt, QUrl
-from PyQt4 import QtCore, QtGui
 
-import papi.pyqtgraph as pg
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog
+from PyQt5.QtGui               import QIcon, QDesktopServices
+from PyQt5.QtCore              import QSize, Qt, QUrl
+from PyQt5 import QtCore, QtGui
+
+#import papi.pyqtgraph as pg
 #from papi.pyqtgraph import QtCore, QtGui
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
@@ -66,7 +67,7 @@ from multiprocessing import Queue, Process
 from papi.core import run_core_in_own_process
 
 # Disable antialiasing for prettier plots
-pg.setConfigOptions(antialias=False)
+#pg.setConfigOptions(antialias=False)
 
 def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
     """

@@ -28,14 +28,12 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PyQt4.QtWebKit import QWebView
-import papi.pyqtgraph as pq
+from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5 import QtCore
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-
-from papi.pyqtgraph.Qt import QtCore
 
 
 class HTMLViewer(vip_base):

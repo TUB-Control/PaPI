@@ -38,12 +38,10 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PyQt4.QtGui import QMainWindow, QListWidgetItem, QColor
 
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST
-from PyQt4.QtCore import *
-
-
+from PyQt5.QtCore       import *
+from PyQt5.QtGui        import QColor
+from PyQt5.QtWidgets    import QListWidgetItem, QMainWindow
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
 
