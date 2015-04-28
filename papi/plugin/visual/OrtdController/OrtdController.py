@@ -30,9 +30,10 @@ __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.gui.qt_new.custom import FileLineEdit
-from PyQt5 import QtGui, QtCore
+
+from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout
 
 import threading, time
 
@@ -50,11 +51,11 @@ class OrtdController(vip_base):
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-        self.ControllerWidget = QtWidgets.QWizard()
-        self.ControllerWidget.setOption(QtWidgets.QWizard.NoCancelButton)
-        self.ControllerWidget.setOption(QtWidgets.QWizard.NoBackButtonOnLastPage)
-        self.ControllerWidget.setOption(QtWidgets.QWizard.NoBackButtonOnStartPage)
-        self.ControllerWidget.setOption(QtWidgets.QWizard.DisabledBackButtonOnLastPage)
+        self.ControllerWidget = QWizard()
+        self.ControllerWidget.setOption(QWizard.NoCancelButton)
+        self.ControllerWidget.setOption(QWizard.NoBackButtonOnLastPage)
+        self.ControllerWidget.setOption(QWizard.NoBackButtonOnStartPage)
+        self.ControllerWidget.setOption(QWizard.DisabledBackButtonOnLastPage)
         self.set_widget_for_internal_usage( self.ControllerWidget )
         self.ControllerWidget.addPage(ControllerIntroPage())
         self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname))
@@ -217,16 +218,16 @@ class OrtdController(vip_base):
 
 
 
-class ControllerIntroPage(QtWidgets.QWizardPage):
+class ControllerIntroPage(QWizardPage):
     def __init__(self,parent = None):
-        QtWidgets.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self.setTitle("ORTD Controller")
-        label = QtWidgets.QLabel("This is the ORTD Controller plugin.")
+        label = QLabel("This is the ORTD Controller plugin.")
         label.setWordWrap(True)
 
-        label2 = QtWidgets.QLabel("Click next to start the configuration")
+        label2 = QLabel("Click next to start the configuration")
 
-        layout = QtWidgets.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(label2)
 
@@ -237,24 +238,24 @@ class ControllerIntroPage(QtWidgets.QWizardPage):
         return True
 
 
-class ControllerOrtdStart(QtWidgets.QWizardPage):
+class ControllerOrtdStart(QWizardPage):
     def __init__(self,api = None, uname= None, parent = None, ortd_uname = None):
-        QtWidgets.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self.uname = uname
         self.api = api
         self.ortd_uname = ortd_uname
         #self.setTitle("ORTD Controller")
-        label = QtWidgets.QLabel("Please configure the ORTD plugin.")
+        label = QLabel("Please configure the ORTD plugin.")
         label.setWordWrap(True)
 
         # ----------- #
         # IP line edit#
         # ----------- #
-        self.ip_line_edit = QtWidgets.QLineEdit()
-        ip_label = QtWidgets.QLabel('IP-Address:')
+        self.ip_line_edit = QLineEdit()
+        ip_label = QLabel('IP-Address:')
         ip_label.setBuddy(self.ip_line_edit)
         regex = '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'
-        rx = QtCore.QRegExp(regex)
+        rx = QRegExp(regex)
         validator = QRegExpValidator(rx, self)
         self.ip_line_edit.setValidator(validator)
         self.ip_line_edit.setText('127.0.0.1')
@@ -262,11 +263,11 @@ class ControllerOrtdStart(QtWidgets.QWizardPage):
         # ----------- #
         # Port line edit#
         # ----------- #
-        self.port_line_edit = QtWidgets.QLineEdit()
-        port_label = QtWidgets.QLabel('Port:')
+        self.port_line_edit = QLineEdit()
+        port_label = QLabel('Port:')
         port_label.setBuddy(self.port_line_edit)
         regex = '\d{1,5}'
-        rx = QtCore.QRegExp(regex)
+        rx = QRegExp(regex)
         validator = QRegExpValidator(rx, self)
         self.port_line_edit.setValidator(validator)
         self.port_line_edit.setText('20000')
@@ -277,12 +278,12 @@ class ControllerOrtdStart(QtWidgets.QWizardPage):
         self.file_edit =   FileLineEdit()
         self.file_edit.setReadOnly(True)
         self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
-        self.file_label = QtWidgets.QLabel('ProtocollConfig')
+        self.file_label = QLabel('ProtocollConfig')
         self.file_label.setBuddy(self.file_edit)
 
 
 
-        layout = QtWidgets.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(ip_label)
         layout.addWidget(self.ip_line_edit)
@@ -333,18 +334,18 @@ class ControllerOrtdStart(QtWidgets.QWizardPage):
         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
 
 
-class ControllerWorking(QtWidgets.QWizardPage):
+class ControllerWorking(QWizardPage):
     def __init__(self,api = None, uname= None, parent = None):
-        QtWidgets.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self. api = api
 
         self.setTitle("ORTD Controller")
-        label = QtWidgets.QLabel("Controller plugin is working")
+        label = QLabel("Controller plugin is working")
         label.setWordWrap(True)
 
-        label2 = QtWidgets.QLabel("")
+        label2 = QLabel("")
 
-        layout = QtWidgets.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(label2)
 
