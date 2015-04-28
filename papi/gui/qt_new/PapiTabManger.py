@@ -32,7 +32,8 @@ __author__ = 'control'
 from PyQt5.QtCore import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui        import QRegExpValidator
-from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, QMessageBox, QMenu, QAction
+from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, \
+                                QMessageBox, QMenu, QAction, QInputDialog, QFileDialog
 
 
 from papi.gui.qt_new.custom import FileLineEdit
@@ -262,7 +263,7 @@ class PapiTabManger(QObject):
         name = 'Tab'
         while name in self.tab_dict_uname:
             name = name + 'X'
-        text, ok = QtGui.QInputDialog.getText(self.tabWidget, 'Tab name',' Name of new tab', QtGui.QLineEdit.Normal,name)
+        text, ok = QInputDialog.getText(self.tabWidget, 'Tab name',' Name of new tab', QLineEdit.Normal,name)
 
         if ok:
             if text in self.tab_dict_uname:
@@ -273,8 +274,8 @@ class PapiTabManger(QObject):
     def cmenu_set_bg(self):
         fileNames = ''
 
-        dialog = QtGui.QFileDialog(self.tabWidget)
-        dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+        dialog = QFileDialog(self.tabWidget)
+        dialog.setFileMode(QFileDialog.AnyFile)
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()
@@ -291,8 +292,8 @@ class PapiTabManger(QObject):
     def cmenu_rename_tab(self):
         tabOb = self.tabWidget.currentWidget()
 
-        text, ok = QtGui.QInputDialog.getText(self.tabWidget, 'Rename a tab','New name for tab: '+ tabOb.name,
-                                              QtGui.QLineEdit.Normal,tabOb.name)
+        text, ok = QInputDialog.getText(self.tabWidget, 'Rename a tab','New name for tab: '+ tabOb.name,
+                                              QLineEdit.Normal,tabOb.name)
 
         if ok:
             if text in self.tab_dict_uname:

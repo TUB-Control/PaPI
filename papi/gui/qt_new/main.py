@@ -611,7 +611,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
                     window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape:
+        if event.key() == QtCore.Qt.Key_Escape:
             if self.in_run_mode:
                 self.toggle_run_mode()
 
