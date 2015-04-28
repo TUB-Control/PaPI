@@ -29,7 +29,7 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PyQt5.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
+from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 from papi.data.DPlugin import DBlock

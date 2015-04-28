@@ -28,11 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
-from PyQt5.QtGui import QPushButton, QIcon
+
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtGui    import QIcon
+from PyQt5 import QtGui, QtCore
+
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
-from PyQt5 import QtGui, QtCore
+from papi.plugin.base_classes.pcp_base import pcp_base
 
 from papi.constants import REGEX_SIGNED_FLOAT
 

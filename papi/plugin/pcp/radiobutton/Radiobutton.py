@@ -28,13 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
-from PyQt5.QtGui import QSlider, QVBoxLayout, QWidget, QLabel, QRadioButton
+
+
+from PyQt5.QtWidgets import QSlider,QVBoxLayout, QWidget, QLabel, QRadioButton
 from PyQt5 import QtCore
 
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
-
+from papi.plugin.base_classes.pcp_base import pcp_base
 import papi.constants as pc
 
 class Radiobutton(pcp_base):
