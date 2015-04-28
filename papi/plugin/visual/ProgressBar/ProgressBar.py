@@ -28,17 +28,14 @@ Contributors:
 
 __author__ = 'knuths'
 
-from PyQt5.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
+from PyQt5.QtWidgets import QMdiSubWindow, QProgressBar
+from PyQt5 import  QtCore
 
 import papi.constants as pc
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-
-import time
-
 import papi.helper as ph
-from papi.pyqtgraph.Qt import QtGui, QtCore
+import time
 
 
 #RENAME TO PLUGIN NAME
@@ -64,7 +61,7 @@ class ProgressBar(vip_base):
         # --------------------------------
         # Create Widget needed for this plugin
 
-        self.progressbar = QtGui.QProgressBar()
+        self.progressbar = QProgressBar()
         self.progressbar.setRange(0, 100)
         self.progressbar.setTextVisible(True)
         self.progressbar.setValue(0)

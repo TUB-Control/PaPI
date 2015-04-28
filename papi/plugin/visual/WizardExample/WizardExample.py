@@ -29,23 +29,23 @@ Contributors:
 __author__ = 'control'
 
 from papi.plugin.base_classes.vip_base import vip_base
-from PyQt5.QtGui import QMdiSubWindow
-from papi.pyqtgraph.Qt import QtCore, QtGui
+from PyQt5.QtWidgets import QMdiSubWindow, QLabel, QVBoxLayout, QWizardPage, QWizard, QLineEdit
+from PyQt5 import QtCore, QtGui
 
 
 class WizardExample(vip_base):
 
     def createIntroPage(self):
-        page = QtGui.QWizardPage()
+        page = QWizardPage()
         page.setTitle("Introduction")
 
-        label = QtGui.QLabel("This wizard will show you a simple wizard.")
+        label = QLabel("This wizard will show you a simple wizard.")
         label.setWordWrap(True)
 
-        label2 = QtGui.QLabel("Therefore it will create a sinus plugin, a plot and connect these two.")
+        label2 = QLabel("Therefore it will create a sinus plugin, a plot and connect these two.")
         label2.setWordWrap(True)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(label2)
 
@@ -78,7 +78,7 @@ class WizardExample(vip_base):
         # --------------------------------
         # Create Widget needed for this plugin
 
-        self.wizardwidget = QtGui.QWizard()
+        self.wizardwidget = QWizard()
         self.wizardwidget.addPage(self.createIntroPage())
         self.wizardwidget.addPage(sinPage(self.control_api))
         self.wizardwidget.addPage(plotPage(self.control_api))
@@ -181,22 +181,22 @@ class WizardExample(vip_base):
 
 
 # CLASS FOR SINUS CREATION PAGE
-class sinPage(QtGui.QWizardPage):
+class sinPage(QWizardPage):
     def __init__(self, controlAPI,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self.setTitle("Create the SINUS")
         self.control_api = controlAPI
-        label = QtGui.QLabel("Now you should enter a uname for the Sinus.")
+        label = QLabel("Now you should enter a uname for the Sinus.")
         label.setWordWrap(True)
 
-        uname_label = QtGui.QLabel("Uname of Sinus (wird aber nicht benutzt)")
-        self.uname_edit = QtGui.QLineEdit()
+        uname_label = QLabel("Uname of Sinus (wird aber nicht benutzt)")
+        self.uname_edit = QLineEdit()
         uname_label.setBuddy(self.uname_edit)
 
         #QtGui.QWizardPage.registerField("uname",uname_edit)
 
 
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(uname_label)
         layout.addWidget(self.uname_edit)
@@ -210,15 +210,15 @@ class sinPage(QtGui.QWizardPage):
 
 
 # CLASS FOR PLOT CREATION PAGE
-class plotPage(QtGui.QWizardPage):
+class plotPage(QWizardPage):
     def __init__(self, controlAPI,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self.setTitle("Create the Plot")
         self.control_api = controlAPI
-        label = QtGui.QLabel("This page will create a plot.")
+        label = QLabel("This page will create a plot.")
         label.setWordWrap(True)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
 
 
@@ -244,16 +244,16 @@ class plotPage(QtGui.QWizardPage):
 
 
 # CLASS FOR SUB OF BOTH PLUGINS
-class connectPage(QtGui.QWizardPage):
+class connectPage(QWizardPage):
     def __init__(self, controlAPI,name,parent = None):
-        QtGui.QWizardPage.__init__(self, parent)
+        QWizardPage.__init__(self, parent)
         self.setTitle("Connect the Plot")
         self.control_api = controlAPI
         self.uname = name
-        label = QtGui.QLabel("This page connect plot and sinus.")
+        label = QLabel("This page connect plot and sinus.")
         label.setWordWrap(True)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(label)
 
 
