@@ -36,7 +36,6 @@ from PyQt5 import QtGui, QtCore
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
 from papi.plugin.base_classes.pcp_base import pcp_base
-
 from papi.constants import REGEX_SIGNED_FLOAT
 
 class Button(pcp_base):
