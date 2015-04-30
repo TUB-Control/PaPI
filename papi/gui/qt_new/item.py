@@ -28,9 +28,9 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets    import QMdiSubWindow
+from PyQt5.QtCore       import Qt, QRegExp
+from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
 
@@ -393,20 +393,24 @@ class DBlockTreeModel(PaPITreeModel):
         :param index:
         :return:
         """
-        row = index.row()
-        col = index.column()
-
         parent = index.parent()
+        flags = parent.flags()
 
         if not parent.isValid():
-            return ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable
+            flags ^= Qt.ItemIsSelectable
+            flags ^= Qt.ItemIsEditable
+            return flags
+
 
         if parent.isValid():
-
             if self.check_box.isChecked():
-                return ~Qt.ItemIsEditable
+                flags ^= Qt.ItemIsEditable
+                return flags
             else:
-                return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+                flags |= Qt.ItemIsSelectable
+                flags |= Qt.ItemIsEnabled
+                flags |= Qt.ItemIsEditable
+                return flags
 
 
     def setData(self, index, value, role):
