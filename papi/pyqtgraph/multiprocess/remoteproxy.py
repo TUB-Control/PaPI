@@ -252,8 +252,6 @@ class RemoteEventHandler(object):
             elif cmd == 'import':
                 name = opts['module']
                 fromlist = opts.get('fromlist', [])
-
-                name = "papi." + name
                 mod = builtins.__import__(name, fromlist=fromlist)
                 
                 if len(fromlist) == 0:

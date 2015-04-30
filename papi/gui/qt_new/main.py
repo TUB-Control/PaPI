@@ -34,7 +34,7 @@ import traceback
 import re
 
 
-from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.QtGui               import QIcon, QDesktopServices
 from PyQt5.QtCore              import QSize, Qt, QUrl
 from PyQt5 import QtCore, QtGui
@@ -651,10 +651,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QDesktopServices.openUrl(QUrl("http://tub-control.github.io/PaPI/", QUrl.TolerantMode))
 
     def papi_about_triggerd(self):
-        QtGui.QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
+        QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
 
     def papi_about_qt_triggerd(self):
-        QtGui.QMessageBox.aboutQt(self)
+        QMessageBox.aboutQt(self)
 
 
 

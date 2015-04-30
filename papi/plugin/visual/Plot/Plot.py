@@ -28,7 +28,6 @@ Contributors:
 
 __author__ = 'Stefan'
 
-import papi.pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -38,14 +37,18 @@ import collections
 import re
 import copy
 import time
-import papi.pyqtgraph as pg
 import papi.constants as pc
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-from papi.pyqtgraph.Qt import QtCore, QtGui
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtCore import *
+import papi.pyqtgraph as pg
+
+
+from PyQt5.QtGui        import QRegExpValidator
+from PyQt5              import QtCore
+from PyQt5.QtCore       import QRegExp
+from PyQt5.QtWidgets    import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QMenu, QPushButton, QLineEdit, \
+                                QWidgetAction, QCheckBox, QGraphicsView, QGraphicsPathItem, QGraphicsItem
 
 class Plot(vip_base):
     """
@@ -171,37 +174,37 @@ class Plot(vip_base):
         # Create Layout and labels
         # --------------------------------
 
-        self.central_widget = QtGui.QWidget()
+        self.central_widget = QWidget()
         self.central_widget.setContentsMargins(0,0,0,0)
 
-        self.label_widget = QtGui.QWidget()
+        self.label_widget = QWidget()
         self.label_widget.setContentsMargins(0,0,0,0)
 
-        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setContentsMargins(0,0,0,0)
         self.verticalLayout.setSpacing(0)
 
-        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setContentsMargins(0,0,0,0)
         self.horizontalLayout.setSpacing(0)
 
-        self.space_label = QtGui.QLabel()
+        self.space_label = QLabel()
         self.space_label.setMargin(0)
-        self.space_label.setAlignment(Qt.AlignJustify)
+        self.space_label.setAlignment(QtCore.Qt.AlignJustify)
         self.space_label.setStyleSheet("QLabel { background-color : black; color : grey;"
                                       "border : 0px solid black ; border-bottom-width : 5px }")
 
-        self.time_label = QtGui.QLabel()
+        self.time_label = QLabel()
         self.time_label.setMargin(0)
-        self.time_label.setAlignment(Qt.AlignJustify)
+        self.time_label.setAlignment(QtCore.Qt.AlignJustify)
         self.time_label.setStyleSheet("QLabel { background-color : black; color : grey;"
                                       "border : 0px solid black ; border-bottom-width : 5px }")
         self.time_label.setMaximumWidth(55)
 
 
-        self.unit_label = QtGui.QLabel()
+        self.unit_label = QLabel()
         self.unit_label.setMargin(0)
-        self.unit_label.setAlignment(Qt.AlignLeft)
+        self.unit_label.setAlignment(QtCore.Qt.AlignLeft)
         self.unit_label.setStyleSheet("QLabel { background-color : black; color : grey;"
                                       "border : 0px solid black ; border-bottom-width : 5px }")
 
@@ -239,8 +242,8 @@ class Plot(vip_base):
 #            self.set_widget_for_internal_usage(self.__plotWidget__)
             self.set_widget_for_internal_usage(self.central_widget)
 
-        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.YAxis, enable=False)
-        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pq.ViewBox.XAxis, enable=False)
+        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pg.ViewBox.YAxis, enable=False)
+        self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pg.ViewBox.XAxis, enable=False)
 
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
 
@@ -275,7 +278,7 @@ class Plot(vip_base):
         # Create Legend
         # ---------------------------
 
-        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.__legend__ = pg.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
 
         self.__last_time__ = current_milli_time()
@@ -710,7 +713,7 @@ class Plot(vip_base):
         else:
             color = self.colors[0]
 
-        return pq.mkPen(color=color, style=style)
+        return pg.mkPen(color=color, style=style)
 
     def update_rolling_plot(self):
         """
@@ -769,25 +772,25 @@ class Plot(vip_base):
         :return:
         """
 
-        self.custMenu = QtGui.QMenu("Options")
-        self.axesMenu = QtGui.QMenu('Y-Axis')
-        self.gridMenu = QtGui.QMenu('Grid')
+        self.custMenu = QMenu("Options")
+        self.axesMenu = QMenu('Y-Axis')
+        self.gridMenu = QMenu('Grid')
 
         ##### Y-Range Actions
-        self.yRange_Widget = QtGui.QWidget()
-        self.yRange_Layout = QtGui.QVBoxLayout(self.yRange_Widget)
+        self.yRange_Widget = QWidget()
+        self.yRange_Layout = QVBoxLayout(self.yRange_Widget)
         self.yRange_Layout.setContentsMargins(2, 2, 2, 2)
         self.yRange_Layout.setSpacing(1)
 
-        self.yAutoRangeButton = QtGui.QPushButton()
+        self.yAutoRangeButton = QPushButton()
         self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
         self.yAutoRangeButton.setText('Set y range')
         self.yRange_Layout.addWidget(self.yAutoRangeButton)
 
         ##### Y Line Edits
         # Layout
-        self.yRange_EditWidget = QtGui.QWidget()
-        self.yRange_EditLayout = QtGui.QHBoxLayout(self.yRange_EditWidget)
+        self.yRange_EditWidget = QWidget()
+        self.yRange_EditLayout = QHBoxLayout(self.yRange_EditWidget)
         self.yRange_EditLayout.setContentsMargins(2, 2, 2, 2)
         self.yRange_EditLayout.setSpacing(1)
 
@@ -805,33 +808,33 @@ class Plot(vip_base):
         validator = QRegExpValidator(rx, self.__plotWidget__)
 
         # Min
-        self.yRange_minEdit = QtGui.QLineEdit()
+        self.yRange_minEdit = QLineEdit()
         self.yRange_minEdit.setFixedWidth(80)
         self.yRange_minEdit.setText(y_min)
         self.yRange_minEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
         self.yRange_minEdit.setValidator(validator)
         # Max
-        self.yRange_maxEdit = QtGui.QLineEdit()
+        self.yRange_maxEdit = QLineEdit()
         self.yRange_maxEdit.setFixedWidth(80)
         self.yRange_maxEdit.setText(y_max)
         self.yRange_maxEdit.editingFinished.connect(self.contextMenu_yRange_toogle)
         self.yRange_maxEdit.setValidator(validator)
         # addTo Layout
         self.yRange_EditLayout.addWidget(self.yRange_minEdit)
-        self.yRange_EditLayout.addWidget(QtGui.QLabel('<'))
+        self.yRange_EditLayout.addWidget(QLabel('<'))
         self.yRange_EditLayout.addWidget(self.yRange_maxEdit)
         self.yRange_Layout.addWidget(self.yRange_EditWidget)
 
         # build Action
-        self.yRange_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.yRange_Action = QWidgetAction(self.__plotWidget__)
         self.yRange_Action.setDefaultWidget(self.yRange_Widget)
 
         ##### Rolling Plot
-        self.rolling_Checkbox = QtGui.QCheckBox()
+        self.rolling_Checkbox = QCheckBox()
         self.rolling_Checkbox.setText('Rolling plot')
         self.rolling_Checkbox.setChecked(self.config['rolling_plot']['value'] == '1')
         self.rolling_Checkbox.stateChanged.connect(self.contextMenu_rolling_toogled)
-        self.rolling_Checkbox_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.rolling_Checkbox_Action = QWidgetAction(self.__plotWidget__)
         self.rolling_Checkbox_Action.setDefaultWidget(self.rolling_Checkbox)
         if self.__stp_active__:
             self.rolling_Checkbox.setDisabled(True)
@@ -845,10 +848,10 @@ class Plot(vip_base):
         # Grid Menu:
         # -----------------------------------------------------------
         # Y-Grid checkbox
-        self.xGrid_Checkbox = QtGui.QCheckBox()
+        self.xGrid_Checkbox = QCheckBox()
         self.xGrid_Checkbox.stateChanged.connect(self.contextMenu_xGrid_toogle)
         self.xGrid_Checkbox.setText('X-Grid')
-        self.xGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.xGrid_Action = QWidgetAction(self.__plotWidget__)
         self.xGrid_Action.setDefaultWidget(self.xGrid_Checkbox)
         self.gridMenu.addAction(self.xGrid_Action)
         # Check config for startup  state
@@ -856,10 +859,10 @@ class Plot(vip_base):
             self.xGrid_Checkbox.setChecked(True)
 
         # X-Grid checkbox
-        self.yGrid_Checkbox = QtGui.QCheckBox()
+        self.yGrid_Checkbox = QCheckBox()
         self.yGrid_Checkbox.stateChanged.connect(self.contextMenu_yGrid_toogle)
         self.yGrid_Checkbox.setText('Y-Grid')
-        self.yGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.yGrid_Action = QWidgetAction(self.__plotWidget__)
         self.yGrid_Action.setDefaultWidget(self.yGrid_Checkbox)
         self.gridMenu.addAction(self.yGrid_Action)
         # Check config for startup  state
@@ -969,7 +972,7 @@ class Plot(vip_base):
         self.__legend__.scene().removeItem(self.__legend__)
         del self.__legend__
 
-        self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+        self.__legend__ = pg.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
         self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
 
         if not self.__papi_debug__:
@@ -1113,7 +1116,7 @@ class Plot(vip_base):
             self.signals[signal_name].clear()
 
 
-class GraphicItem(pg.QtGui.QGraphicsPathItem):
+class GraphicItem(QGraphicsPathItem):
     """
     Represents a single object which is drawn by a plot.
     """
@@ -1131,8 +1134,8 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         connect = np.ones(x.shape, dtype=bool)
         connect[:,-1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
-        pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
-        self.setCacheMode(pg.QtGui.QGraphicsItem.NoCache)
+        QGraphicsPathItem.__init__(self, self.path)
+        self.setCacheMode(QGraphicsItem.NoCache)
         self.setPen(pen)
         self.not_drawn = True
         self.counter = counter
@@ -1141,7 +1144,7 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         self.last_y = y[-1]
 
     def shape(self): # override because QGraphicsPathItem.shape is too expensive.
-        return pg.QtGui.QGraphicsItem.shape(self)
+        return QGraphicsItem.shape(self)
 
     def length(self):
         return self.counter
@@ -1356,6 +1359,6 @@ class PlotWidget(pg.PlotWidget):
     def paintEvent(self, ev):
         if self.paint:
             self.scene().prepareForPaint()
-        return QtGui.QGraphicsView.paintEvent(self, ev)
+        return QGraphicsView.paintEvent(self, ev)
 
 
