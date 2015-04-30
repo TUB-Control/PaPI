@@ -16,9 +16,15 @@ Installation
 ------
 Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
-`sudo apt-get install python3.4 git python3-pyside python3-numpy python3-pip`
+`sudo apt-get install git`
 
-`sudo pip3 install tornado`
+`sudo apt-get install python3.4 python3-numpy python3-pip`
+
+`sudo apt-get install python3-pyqt5`
+
+`sudo apt-get install python3-pyqt5.qtwebkit` [optional] (just needed for the HTMLViewer plugin)
+
+`sudo pip3 install tornado` [optional] (just needed for the Human plugin)
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
 
