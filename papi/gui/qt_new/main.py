@@ -39,9 +39,6 @@ from PyQt5.QtGui               import QIcon, QDesktopServices
 from PyQt5.QtCore              import QSize, Qt, QUrl
 from PyQt5 import QtCore, QtGui
 
-#import papi.pyqtgraph as pg
-#from papi.pyqtgraph import QtCore, QtGui
-
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
