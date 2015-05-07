@@ -764,7 +764,7 @@ class Plot(vip_base):
 
 
         if len(range) == 2:
-            print(range[0], range[1])
+          
             self.yRange_minEdit.setText(range[0])
             self.yRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
