@@ -266,7 +266,7 @@ class Plot(vip_base):
             DParameter('buffersize', self.__buffer_size__, Regex='^\d+$')
 
         self.__parameters__['yRange'] = \
-            DParameter('yRange', '[0,1]',  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
+            DParameter('yRange', self.config['yRange']['value'],  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
         if not self.__papi_debug__:
             self.send_new_parameter_list(list(self.__parameters__.values()))
@@ -781,7 +781,7 @@ class Plot(vip_base):
 
         self.yAutoRangeButton = QtGui.QPushButton()
         self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
-        self.yAutoRangeButton.setText('Set y range')
+        self.yAutoRangeButton.setText('Use autorange')
         self.yRange_Layout.addWidget(self.yAutoRangeButton)
 
         ##### Y Line Edits
@@ -913,7 +913,7 @@ class Plot(vip_base):
 
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
-        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + str(float(mi)) + ' ' + str(float(ma)) + ']')
+        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' +mi + ' ' + ma + ']')
 
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
@@ -937,7 +937,7 @@ class Plot(vip_base):
         mi = self.yRange_minEdit.text()
         ma = self.yRange_maxEdit.text()
         if float(mi) < float(ma):
-            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + float(mi) + ' ' + float(ma) + ']')
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def update_signals(self):
         """
@@ -1093,7 +1093,7 @@ class Plot(vip_base):
             'display_text': 'Rolling Plot'
         }, 'yRange': {
             'value': '[0.0 1.0]',
-            'regex': '(\d+\.\d+)',
+            'regex': '^\[(\d+\.\d+)\s+(\d+\.\d+)\]$',
             'advanced': '1',
             'display_text': 'y: range'
         }
