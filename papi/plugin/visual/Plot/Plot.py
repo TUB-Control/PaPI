@@ -269,7 +269,7 @@ class Plot(vip_base):
             DParameter('buffersize', self.__buffer_size__, Regex='^\d+$')
 
         self.__parameters__['yRange'] = \
-            DParameter('yRange', '[0,1]',  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
+            DParameter('yRange', self.config['yRange']['value'],  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
         if not self.__papi_debug__:
             self.send_new_parameter_list(list(self.__parameters__.values()))
@@ -761,7 +761,10 @@ class Plot(vip_base):
         reg = re.compile(r'([-]{0,1}\d+\.\d+)')
         range = reg.findall(value)
 
+
+
         if len(range) == 2:
+            print(range[0], range[1])
             self.yRange_minEdit.setText(range[0])
             self.yRange_maxEdit.setText(range[1])
             self.__plotWidget__.getPlotItem().getViewBox().setYRange(float(range[0]), float(range[1]))
@@ -784,7 +787,7 @@ class Plot(vip_base):
 
         self.yAutoRangeButton = QPushButton()
         self.yAutoRangeButton.clicked.connect(self.contextMenu_yAutoRangeButton_clicked)
-        self.yAutoRangeButton.setText('Set y range')
+        self.yAutoRangeButton.setText('Use autorange')
         self.yRange_Layout.addWidget(self.yAutoRangeButton)
 
         ##### Y Line Edits
@@ -1096,7 +1099,7 @@ class Plot(vip_base):
             'display_text': 'Rolling Plot'
         }, 'yRange': {
             'value': '[0.0 1.0]',
-            'regex': '(\d+\.\d+)',
+            'regex': '^\[(\d+\.\d+)\s+(\d+\.\d+)\]$',
             'advanced': '1',
             'display_text': 'y: range'
         }

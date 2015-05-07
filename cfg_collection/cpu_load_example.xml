@@ -54,7 +54,7 @@
       </Parameter>
       <Parameter Name="yRange">
         <display_text>y: range</display_text>
-        <value>[0,1]</value>
+        <value>[0.0 100.0]</value>
         <regex>(\d+\.\d+)</regex>
         <advanced>1</advanced>
       </Parameter>
