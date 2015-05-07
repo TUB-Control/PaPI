@@ -370,10 +370,10 @@ class DParameterTreeModel(PaPITreeModel):
                     rx = QRegExp(dparameter.regex)
                     if rx.exactMatch(value):
                         dparameter.value = value
-                        self.dataChanged.emit(index_sibling, None)
+                        self.dataChanged.emit(index_sibling, index_sibling)
                 else:
                     dparameter.value = value
-                    self.dataChanged.emit(index_sibling, None)
+                    self.dataChanged.emit(index_sibling, index_sibling)
 
                 return True
 
@@ -435,7 +435,7 @@ class DBlockTreeModel(PaPITreeModel):
 
                 if value != dsignal.dname:
                     dsignal.dname = value
-                    self.dataChanged.emit(index, None)
+                    self.dataChanged.emit(index, index)
 
                 return True
 

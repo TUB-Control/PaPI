@@ -345,7 +345,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove DPlugin', self)
         submenu.addAction(action)
 
-        action.triggered.connect(lambda p=dplugin.id: self.gui_api.do_delete_plugin(p))
+        action.triggered.connect(lambda ignore, p=dplugin.id: self.gui_api.do_delete_plugin(p))
 
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
@@ -385,7 +385,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 if dplugin_sel.id != dplugin_id:
                     action = QAction(self.tr(dplugin.uname), self)
                     sub_menu.addAction(action)
-                    action.triggered.connect(lambda p=dplugin.uname: self.add_subscription_action(p))
+                    action.triggered.connect(lambda ignore, p=dplugin.uname: self.add_subscription_action(p))
 
             menu = QMenu()
             menu.addMenu(sub_menu)
@@ -419,7 +419,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove Subscriber', self)
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
+        action.triggered.connect(lambda ignore, p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
 
         menu.exec_(self.subscribersTree.viewport().mapToGlobal(position))
 
@@ -472,7 +472,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if not isSignal:
             dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
             dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            action = QAction('Remove Subscriber', self)
+            action = QAction('Remove Subscription', self)
         else:
             signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
             dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
@@ -488,7 +488,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         menu = QMenu()
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
+        action.triggered.connect(lambda ignore, p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
 
         menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
@@ -537,7 +537,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                     action = QAction(self.tr(dblock_pcp.name), self)
                     pcp_menu.addAction(action)
 
-                    action.triggered.connect(lambda p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
+                    action.triggered.connect(lambda ignore, p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
                                              self.add_pcp_subscription_action(p1, p2, p3, p4))
 
         menu = QMenu()
