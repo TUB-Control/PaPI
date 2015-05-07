@@ -916,7 +916,7 @@ class Plot(vip_base):
 
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
-        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + str(float(mi)) + ' ' + str(float(ma)) + ']')
+        self.control_api.do_set_parameter(self.__id__, 'yRange', '[' +mi + ' ' + ma + ']')
 
     def contextMenu_rolling_toogled(self):
         if self.rolling_Checkbox.isChecked():
@@ -940,7 +940,7 @@ class Plot(vip_base):
         mi = self.yRange_minEdit.text()
         ma = self.yRange_maxEdit.text()
         if float(mi) < float(ma):
-            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + float(mi) + ' ' + float(ma) + ']')
+            self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + mi + ' ' + ma + ']')
 
     def update_signals(self):
         """

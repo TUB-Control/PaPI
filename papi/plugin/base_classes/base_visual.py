@@ -150,15 +150,16 @@ class base_visual(base_plugin):
         subMenu_action = QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
-        tabMenu = ctrlMenu.addMenu('Move to tab')
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
-        tab_entrys = []
-        for t in tabs:
-            if t != self.config['tab']['value']:
-                entry = QAction(t, self.widget)
-                entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
-                tab_entrys.append(entry)
-                tabMenu.addAction(entry)
+        if len(tabs) > 1:
+            tabMenu = ctrlMenu.addMenu('Move to tab')
+            tab_entrys = []
+            for t in tabs:
+                if t != self.config['tab']['value']:
+                    entry = QAction(t, self.widget)
+                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
+                    tab_entrys.append(entry)
+                    tabMenu.addAction(entry)
 
         ctrlMenu.addAction(subMenu_action)
         if self.get_type() == PLUGIN_VIP_IDENTIFIER:
