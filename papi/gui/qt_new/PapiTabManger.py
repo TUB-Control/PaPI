@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'control'
 
 
-from PyQt5.QtCore import *
+from PyQt5.QtCore import Qt, QObject
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, \
@@ -126,6 +126,7 @@ class PapiTabManger(QObject):
             self.set_tab_active_by_index(ind)
 
     def moveFromTo(self, start, dest, subWindow, posX=0, posY=0):
+        print('TabManager, fromTo:',start,' to ',  dest)
         if start in self.tab_dict_uname and dest in self.tab_dict_uname:
             startTab = self.tab_dict_uname[start]
             destTab = self.tab_dict_uname[dest]

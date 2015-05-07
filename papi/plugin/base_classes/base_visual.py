@@ -156,12 +156,10 @@ class base_visual(base_plugin):
         for t in tabs:
             if t != self.config['tab']['value']:
                 entry = QAction(t, self.widget)
-                entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
+                entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
                 tab_entrys.append(entry)
                 tabMenu.addAction(entry)
 
-
-        #ctrlMenu.addMenu(tabMenu)
         ctrlMenu.addAction(subMenu_action)
         if self.get_type() == PLUGIN_VIP_IDENTIFIER:
            ctrlMenu.addAction(resume_action)
@@ -170,7 +168,6 @@ class base_visual(base_plugin):
         return ctrlMenu
 
     def tabMenu_triggered(self, item):
-        print(item)
         pos = self._subWindow.pos()
         posX = pos.x()
         posY = pos.y()

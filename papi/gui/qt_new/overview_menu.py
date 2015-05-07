@@ -40,7 +40,7 @@ from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_
 
 from PyQt5.QtGui        import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
-from PyQt5.QtCore import *
+from PyQt5.QtCore import Qt
 
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
