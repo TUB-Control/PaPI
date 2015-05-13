@@ -259,7 +259,7 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.ip_line_edit.setText('127.0.0.1')
 
         # ----------- #
-        # Port line edit#
+        # Port line edit recv#
         # ----------- #
         self.port_line_edit = QtGui.QLineEdit()
         port_label = QtGui.QLabel('Port:')
@@ -271,13 +271,16 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         self.port_line_edit.setText('20000')
 
         # ----------- #
-        #  File dial. #
+        # Port line edit send#
         # ----------- #
-        self.file_edit =   FileLineEdit()
-        self.file_edit.setReadOnly(True)
-        self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
-        self.file_label = QtGui.QLabel('ProtocollConfig')
-        self.file_label.setBuddy(self.file_edit)
+        self.port_send_line_edit = QtGui.QLineEdit()
+        port_send_label = QtGui.QLabel('Port Send:')
+        port_send_label.setBuddy(self.port_send_line_edit)
+        regex = '\d{1,5}'
+        rx = QtCore.QRegExp(regex)
+        validator = QRegExpValidator(rx, self)
+        self.port_send_line_edit.setValidator(validator)
+        self.port_send_line_edit.setText('20001')
 
 
 
@@ -287,15 +290,15 @@ class ControllerOrtdStart(QtGui.QWizardPage):
         layout.addWidget(self.ip_line_edit)
         layout.addWidget(port_label)
         layout.addWidget(self.port_line_edit)
-        layout.addWidget(self.file_label)
-        layout.addWidget(self.file_edit)
+        layout.addWidget(port_send_label)
+        layout.addWidget(self.port_send_line_edit)
 
         self.setLayout(layout)
 
     def validatePage(self):
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
-        json = self.file_edit.text()
+        port_send = self.port_send_line_edit.text()
         cfg ={
             'address': {
                 'value': IP,
@@ -306,13 +309,9 @@ class ControllerOrtdStart(QtGui.QWizardPage):
                 'advanced': '1'
             },
             'out_port': {
-                'value': '20001',
+                'value': port_send,
                 'advanced': '1'
-            },'Cfg_Path': {
-                'value': json,
-                'type': 'file',
-                'advanced': '0'
-            },
+            }
         }
         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, cfg, True)
 
