@@ -1,0 +1,70 @@
+papi.plugin.base_classes package
+================================
+
+Submodules
+----------
+
+papi.plugin.base_classes.base_plugin module
+-------------------------------------------
+
+.. automodule:: papi.plugin.base_classes.base_plugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.base_visual module
+-------------------------------------------
+
+.. automodule:: papi.plugin.base_classes.base_visual
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.dpp_base module
+----------------------------------------
+
+.. automodule:: papi.plugin.base_classes.dpp_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.iop_base module
+----------------------------------------
+
+.. automodule:: papi.plugin.base_classes.iop_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.ownProcess_base module
+-----------------------------------------------
+
+.. automodule:: papi.plugin.base_classes.ownProcess_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.pcp_base module
+----------------------------------------
+
+.. automodule:: papi.plugin.base_classes.pcp_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.vip_base module
+----------------------------------------
+
+.. automodule:: papi.plugin.base_classes.vip_base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: papi.plugin.base_classes
+    :members:
+    :undoc-members:
+    :show-inheritance:

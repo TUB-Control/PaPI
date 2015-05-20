@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.plugin.base_classes.ownProcess_base &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.plugin.base_classes.ownProcess_base</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+<span class="sd"> </span>
+<span class="sd">This file is part of PaPI.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd"> </span>
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="sd"> </span>
+<span class="sd">Contributors:</span>
+<span class="sd">&lt;Stefan Ruppin</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;control&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">papi.plugin.base_classes.base_plugin</span> <span class="kn">import</span> <span class="n">base_plugin</span>
+<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
+
+<div class="viewcode-block" id="ownProcess_base"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base">[docs]</a><span class="k">class</span> <span class="nc">ownProcess_base</span><span class="p">(</span><span class="n">base_plugin</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ownProcess_base.work_process"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.work_process">[docs]</a>    <span class="k">def</span> <span class="nf">work_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CoreQueue</span><span class="p">,</span> <span class="n">pluginQueue</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">defaultEventTriggered</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">autostart</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="c"># set queues and id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span> <span class="o">=</span> <span class="n">CoreQueue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_queue__</span> <span class="o">=</span> <span class="n">pluginQueue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="o">=</span> <span class="n">defaultEventTriggered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__user_event_triggered</span> <span class="o">=</span> <span class="s">&#39;default&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">papi_init</span><span class="p">()</span>
+
+        <span class="c"># working should go at least one time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__goOn</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="n">autostart</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="c"># call start_init function to use developers init</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">starting_sequence</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="c"># main working loop</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__goOn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_event_trigger</span><span class="p">(</span><span class="n">defaultEventTriggered</span><span class="p">)</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_queue__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span><span class="p">)</span>
+                <span class="c">#process event</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">event</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+            <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;stop_plugin&#39;</span> <span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">delete</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                        <span class="c"># delete plugin, so work_progress will stop completely</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__goOn</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">JoinRequest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c"># plugin should stop but is not getting deleted</span>
+                        <span class="c"># response to core and rm_all_subs, blocks, paras</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">PluginStopped</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;start_plugin&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="c"># maybe new config?</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">starting_sequence</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;pause_plugin&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;resume_plugin&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="ow">is</span> <span class="bp">True</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;check_alive_status&#39;</span><span class="p">:</span>
+                    <span class="n">alive_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">Alive</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">alive_event</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">op</span><span class="o">==</span><span class="s">&#39;new_data&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">demux</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">Data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">source_plugin_uname</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;set_parameter&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s">&#39;update_meta&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                    <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">plugin_object</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__paused</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__plugin_stopped</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ownProcess_base.starting_sequence"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.starting_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">starting_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+            <span class="c"># report start successfull event</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartSuccessfull</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># init failed, so report it to core</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartFailed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="c"># end plugin</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__goOn</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c"># sent join request to core</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">JoinRequest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ownProcess_base.start_init"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.start_init">[docs]</a>    <span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ownProcess_base.evaluate_event_trigger"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.evaluate_event_trigger">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_event_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">default</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_event_triggered</span> <span class="o">==</span> <span class="s">&#39;default&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_event_triggered</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_event_triggered</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__EventTriggered</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="ownProcess_base.set_event_trigger_mode"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.set_event_trigger_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_event_trigger_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="bp">True</span> <span class="ow">or</span> <span class="n">mode</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;default&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__user_event_triggered</span> <span class="o">=</span> <span class="n">mode</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

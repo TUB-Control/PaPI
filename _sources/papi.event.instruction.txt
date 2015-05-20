@@ -1,0 +1,118 @@
+papi.event.instruction package
+==============================
+
+Submodules
+----------
+
+papi.event.instruction.CloseProgram module
+------------------------------------------
+
+.. automodule:: papi.event.instruction.CloseProgram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.CreatePlugin module
+------------------------------------------
+
+.. automodule:: papi.event.instruction.CreatePlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.InstructionBase module
+---------------------------------------------
+
+.. automodule:: papi.event.instruction.InstructionBase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.PausePlugin module
+-----------------------------------------
+
+.. automodule:: papi.event.instruction.PausePlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.ResumePlugin module
+------------------------------------------
+
+.. automodule:: papi.event.instruction.ResumePlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.SetParameter module
+------------------------------------------
+
+.. automodule:: papi.event.instruction.SetParameter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.StopPlugin module
+----------------------------------------
+
+.. automodule:: papi.event.instruction.StopPlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.StopPluginByUname module
+-----------------------------------------------
+
+.. automodule:: papi.event.instruction.StopPluginByUname
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.Subscribe module
+---------------------------------------
+
+.. automodule:: papi.event.instruction.Subscribe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.SubsribeByUname module
+---------------------------------------------
+
+.. automodule:: papi.event.instruction.SubsribeByUname
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.Unsubscribe module
+-----------------------------------------
+
+.. automodule:: papi.event.instruction.Unsubscribe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.UpdateMeta module
+----------------------------------------
+
+.. automodule:: papi.event.instruction.UpdateMeta
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.startPlugin module
+-----------------------------------------
+
+.. automodule:: papi.event.instruction.startPlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: papi.event.instruction
+    :members:
+    :undoc-members:
+    :show-inheritance:
