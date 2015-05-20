@@ -111,6 +111,7 @@ PLUGIN_STATE_ALIVE              = 'alive'
 PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
+PLUGIN_STATE_DELETE             = 'deleted'
 
 #
 PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '

@@ -36,7 +36,8 @@ from papi.ui.gui.qt_new.overview import Ui_Overview
 
 
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
-    PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
+    PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
+    PLUGIN_STATE_DELETE
 
 from PyQt5.QtGui        import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
@@ -623,7 +624,16 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # -----------------------------------------
 
         index = self.pluginTree.currentIndex()
-        self.pluginTree.clicked.emit(index)
+
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
+
+        if dplugin.state == PLUGIN_STATE_DELETE:
+            self.tabWidget.setDisabled(True)
+            self.clear()
+        else:
+            self.tabWidget.setEnabled(True)
+            self.pluginTree.clicked.emit(index)
+
 
         # -----------------------------------------
         # case: remove already deleted plugins
@@ -653,6 +663,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
                 if not self.pcp_root.hasItem(new_dplugin):
                     self.pcp_root.appendRow(plugin_item)
+
+        index = self.pluginTree.currentIndex()
+        if index.isValid():
+            self.pluginTree.clicked.emit(index)
+
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
         """
