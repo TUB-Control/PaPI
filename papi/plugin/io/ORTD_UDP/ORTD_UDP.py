@@ -106,6 +106,9 @@ class ORTD_UDP(iop_base):
         self.HOST = config['address']['value']
         self.SOURCE_PORT = int(config['source_port']['value'])
         self.OUT_PORT = int(config['out_port']['value'])
+
+        self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
+
         self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
@@ -129,7 +132,8 @@ class ORTD_UDP(iop_base):
         self.set_event_trigger_mode(True)
 
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_recv.bind((self.HOST, self.SOURCE_PORT))
+        self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+        print("ORTD listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
         self.sock_recv.settimeout(1)
 
         self.thread_goOn = True
@@ -278,11 +282,15 @@ class ORTD_UDP(iop_base):
         data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
         self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
+        #print("Data send to ", self.HOST, ":", self.OUT_PORT)
+
     def check_and_process_cfg(self, config_file):
         try:
             # config completely received
             # extract new configuration
             cfg = json.loads(config_file)
+            
+            print(config_file)
 
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
