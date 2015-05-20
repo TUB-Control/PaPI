@@ -330,6 +330,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         index = self.pluginTree.indexAt(position)
 
+        if index.parent().isValid() is False:
+            return None
+
         if index.isValid() is False:
             return None
 
