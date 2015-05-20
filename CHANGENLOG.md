@@ -1,10 +1,14 @@
 Changelog
 ------
 
+v.1.X:
+---
+ * [major-change] Switched from PySide to PyQt and upgraded to use Qt5 (also switched to develop branch of pyqtgraph)
+ 
 v.1.1: LAST RELEASE WITH PYSIDE
 ---
  * [fix]: Core will check plugin state before routing, so data to paused plugins will not be routed (#19)
- * [fix]: Oboslete parameter in send_parameter_change was removed (#21)
+ * [fix]: Obsolete parameter in send_parameter_change was removed (#21)
  * [fix]: Clean up of DParameter (#18)
  * [fix]: Renamed some variables of ownProcess_base to be private
  * [fix]: Fixed memory leak of gui event processing timer loop (#25)
@@ -20,7 +24,6 @@ v.1.1: LAST RELEASE WITH PYSIDE
  * [plugin]: Added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
  * [plugin]: Added a new pcp plugin: Radiobutton
- * [major-change] Switched from PySide to PyQt and upgraded to use Qt5 (also switched to develop branch of pyqtgraph)
 
 v.1.0
 ---

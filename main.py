@@ -51,12 +51,15 @@ def start_PaPI():
 
     # start on PaPI on system running Mac OS X
     if platform.system() == 'Darwin':
-        app = QApplication(sys.argv)
-        gui = GUI(is_parent=True)
-        gui.run()
-        gui.show()
-        app.exec_()
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
+        core.run()
         return
+        # app = QApplication(sys.argv)
+        # gui = GUI(is_parent=True)
+        # gui.run()
+        # gui.show()
+        # app.exec_()
+        # return
 
     raise Exception('Seems like the os you are using is not supported by PaPI')
 
