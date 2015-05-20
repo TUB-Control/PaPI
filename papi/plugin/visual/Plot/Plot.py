@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -41,14 +41,17 @@ import papi.constants as pc
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-import papi.pyqtgraph as pg
-
+import PyQt5
 
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5              import QtCore
 from PyQt5.QtCore       import QRegExp
 from PyQt5.QtWidgets    import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QMenu, QPushButton, QLineEdit, \
                                 QWidgetAction, QCheckBox, QGraphicsView, QGraphicsPathItem, QGraphicsItem
+
+import papi.pyqtgraph as pg
+
+
 
 class Plot(vip_base):
     """

@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,7 +28,19 @@ Contributors:
 
 __author__ = 'Stefan'
 
-import papi.pyqtgraph as pg
+import sys, traceback
+
+from PyQt5.QtWidgets import QMenu, QCheckBox, QWidgetAction, QGraphicsItem, QGraphicsPathItem
+from PyQt5 import QtCore
+
+print('Pre Import')
+try:
+    import papi.pyqtgraph as pg
+except ImportError :
+    print('FAILED')
+    traceback.print_exc(file=sys.stdout)
+
+    print('Post Import: ', ImportError )
 
 import numpy as np
 import re
@@ -40,8 +52,6 @@ from papi.data.DParameter import DParameter
 
 import papi.constants as pc
 
-from PyQt5.QtWidgets import QMenu, QCheckBox, QWidgetAction, QGraphicsItem, QGraphicsPathItem
-from PyQt5 import QtCore
 
 class StaticPlot(vip_base):
     """
