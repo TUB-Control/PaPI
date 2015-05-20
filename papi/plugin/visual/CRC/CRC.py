@@ -28,11 +28,12 @@ Contributors:
 
 __author__ = 'Knuths'
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from papi.ui.gui.qt_new.CreateRecording import Ui_CreateRecording
-from PySide.QtGui import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QComboBox, QStyleOptionButton,\
+     QStyledItemDelegate, QStyle, QApplication
 
 
 from papi.gui.qt_new.item import PaPITreeModel
@@ -98,7 +99,9 @@ class CreateRecordingConfig(QMainWindow, Ui_CreateRecording):
         # Internal variables
         # ---------------------------------------------
         self.boxes = []
-        self.selectionGrid.setAlignment(Qt.AlignTop)
+        #self.selectionGrid.setAlignment(Qt.AlignTop)
+
+
 
     def showEvent(self, *args, **kwargs):
         pass
@@ -544,13 +547,19 @@ class CustomFieldModel(QStandardItemModel):
         return False
 
     def flags(self, index):
+
+
+        parent = index.parent()
+        flags = parent.flags()
+
         row = index.row()
         col = index.column()
 
         if col == 2:
-            return ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable
-
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+            flags ^= ~Qt.ItemIsEditable & ~Qt.ItemIsSelectable
+            return flags
+        flags ^=Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+        return flags
 
 class StructTreeModel(PaPITreeModel):
     """
@@ -605,12 +614,16 @@ class StructTreeModel(PaPITreeModel):
         return None
 
     def flags(self, index):
+
+        parent = index.parent()
+        flags = parent.flags()
+
         if not index.isValid():
-            return None
+            return flags
 
         row = index.row()
         col = index.column()
-        flags = Qt.ItemIsEnabled & ~Qt.ItemIsSelectable
+        flags ^= Qt.ItemIsEnabled & ~Qt.ItemIsSelectable
 
         if col == 0:
             item = super(StructTreeModel, self).data(index, Qt.UserRole)
@@ -627,7 +640,7 @@ class StructTreeModel(PaPITreeModel):
                     flags |= Qt.ItemIsSelectable
 
         if col == 2:
-            return None
+            return flags
 
         return flags
 
