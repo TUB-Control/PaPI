@@ -3,7 +3,7 @@ PaPI v. 1.1.0
 
 Plugin based Process Interaction
 
-NOTE: This will be the last release which uses PySide as a QT integration.
+NOTE: This will be the last release which uses PySide as a Qt integration and therfore the last release under LGPL.
 
 Introduction
 ------
