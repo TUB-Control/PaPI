@@ -627,12 +627,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
-        if dplugin.state == PLUGIN_STATE_DELETE:
-            self.tabWidget.setDisabled(True)
-            self.clear()
-        else:
-            self.tabWidget.setEnabled(True)
-            self.pluginTree.clicked.emit(index)
+        if dplugin is not None:
+
+            if dplugin.state == PLUGIN_STATE_DELETE:
+                self.tabWidget.setDisabled(True)
+                self.clear()
+            else:
+                self.tabWidget.setEnabled(True)
+                self.pluginTree.clicked.emit(index)
 
 
         # -----------------------------------------
