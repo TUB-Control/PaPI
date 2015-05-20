@@ -150,3 +150,9 @@ class Plugin_api(QtCore.QObject):
 
     def do_set_tab_active_by_name(self, tabName):
        self.__default_api.do_set_tab_active_by_name(tabName)
+
+    def get_all_plugins(self):
+        return self.__default_api.gui_data.get_all_plugins()
+
+    def get_dplugin_by_uname(self, name):
+        return self.__default_api.gui_data.get_dplugin_by_uname(name)

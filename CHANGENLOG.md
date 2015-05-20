@@ -1,7 +1,7 @@
 Changelog
 ------
 
-v.1.XX
+v.1.1: LAST RELEASE WITH PYSIDE
 ---
  * [fix]: Core will check plugin state before routing, so data to paused plugins will not be routed (#19)
  * [fix]: Oboslete parameter in send_parameter_change was removed (#21)
