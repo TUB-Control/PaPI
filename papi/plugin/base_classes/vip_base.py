@@ -30,8 +30,6 @@ from papi.plugin.base_classes.base_visual import base_visual
 
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph.Qt import QtGui
-
 class vip_base(base_visual):
 
     def initiate_layer_1(self, config):
@@ -42,33 +40,3 @@ class vip_base(base_visual):
 
     def get_type(self):
         return PLUGIN_VIP_IDENTIFIER
-
-    def create_control_context_menu(self):
-        ctrlMenu = QtGui.QMenu("Control")
-
-        del_action = QtGui.QAction('Exit plugin',self.widget)
-        del_action.triggered.connect(self.ctlrMenu_exit)
-
-        pause_action = QtGui.QAction('Pause plugin',self.widget)
-        pause_action.triggered.connect(self.ctlrMenu_pause)
-
-        resume_action = QtGui.QAction('Resume plugin',self.widget)
-        resume_action.triggered.connect(self.ctlrMenu_resume)
-
-        subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
-        #subMenu_action.triggered.connect(self.ctlrMenu_resume)
-
-        ctrlMenu.addAction(subMenu_action)
-        ctrlMenu.addAction(resume_action)
-        ctrlMenu.addAction(pause_action)
-        ctrlMenu.addAction(del_action)
-        return ctrlMenu
-
-    def ctlrMenu_exit(self):
-        self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
-
-    def ctlrMenu_pause(self):
-        self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
-
-    def ctlrMenu_resume(self):
-        self.control_api.do_resume_plugin_by_uname(self.dplugin_info.uname)

@@ -30,7 +30,7 @@ __author__ = 'knuths'
 
 from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
-from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
+from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
@@ -38,7 +38,6 @@ from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, Q
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
-import copy
 from PySide.QtCore import *
 from PySide.QtGui import QLineEdit
 
@@ -95,14 +94,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # Build structure of block tree
         # -----------------------------------
 
-        self.bModel = DBlockTreeModel(self.showInternalNameCheckBox)
+        self.bModel = DBlockTreeModel()
         self.bModel.setHorizontalHeaderLabels(['Name'])
-        self.bModel.setColumnCount(2)
         self.blockTree.setModel(self.bModel)
         self.blockTree.setUniformRowHeights(True)
-        self.bModel.dataChanged.connect(self.data_changed_block_model)
 
-        self.showInternalNameCheckBox.clicked.connect(self.show_internal_name_callback)
 
         # -----------------------------------
         # Build structure of subscriber tree
@@ -158,7 +154,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def clear(self):
         """
         This function will clear this window.
-
         :return:
         """
         self.bModel.clear()
@@ -180,7 +175,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         Used to display all known information for a DPlugin which is
         accessible in the pluginTree by its index.
-
         :param index: Current selected index
         :return:
         """
@@ -241,12 +235,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             # Add Signals of this DBlock
             # -------------------------
 
-            for signal in dblock.get_signals():
-                signal_item = DSignalTreeItem(signal, self.showInternalNameCheckBox)
+            signal_names = dblock.get_signals()
 
-                block_item.appendRow(signal_item)
-
-            block_item.sortChildren(0)
+            for signal_index in range(len(signal_names)):
+                if signal_index != 0:
+                    signal_name = signal_names[signal_index]
+                    signal_item = PaPITreeItem(signal_index, signal_name)
+                    block_item.appendRow(signal_item)
 
             # ----------------------------------
             # Add Subscribers of this DBlock
@@ -264,7 +259,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
                 self.subscriberModel.appendRow(subscriber_item)
 
-
         # -------------------------
         # Add all Subscriptions
         # for this plugin
@@ -276,7 +270,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
 
             dblock_names = dplugin_sub_ids[dplugin_sub_id]
-
             dplugin_sub = self.gui_api.gui_data.get_dplugin_by_id(dplugin_sub_id)
             dplugin_sub_item = DPluginTreeItem(dplugin_sub)
             self.subscriptionModel.appendRow(dplugin_sub_item)
@@ -288,11 +281,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 dplugin_sub_item.appendRow(dblock_sub_item)
 
                 subscription = dblock_names[dblock_name]
+                signals = subscription.get_signals()
 
-                for signal_uname in sorted(subscription.get_signals()):
-
-                    signal_item = QStandardItem(signal_uname)
-
+                for signal in signals:
+                    signal_item = QStandardItem(str(signal))
                     dblock_sub_item.appendRow(signal_item)
 
         # --------------------------
@@ -300,11 +292,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # --------------------------
 
         dparameter_names = dplugin.get_parameters()
-        for dparameter_name in sorted(dparameter_names):
+        for dparameter_name in dparameter_names:
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
             self.dparameterModel.appendRow(dparameter_item)
-
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
 
@@ -315,15 +306,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # #PySide.QtGui.PySide.QtGui.QAbstractItemView.SelectionMode
         self.blockTree.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
-        # Sort Models
-        self.bModel.sort(0)
-
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
         """
         This callback function is called to create a context menu
         for the dplugin tree
-
         :param position:
         :return:
         """
@@ -337,12 +324,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         dplugin = self.pluginTree.model().data(index, Qt.UserRole)
 
-        menu = QMenu('Menu')
+        menu = QMenu('Remove')
 
-        submenu = QMenu('Action')
-        menu.addMenu(submenu)
         action = QAction('Remove DPlugin', self)
-        submenu.addAction(action)
+        menu.addAction(action)
 
         action.triggered.connect(lambda p=dplugin.id: self.gui_api.do_delete_plugin(p))
 
@@ -352,7 +337,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the block tree
-
         :param position:
         :return:
         """
@@ -395,7 +379,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the subscriper tree
-
         :param position:
         :return:
         """
@@ -426,15 +409,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the subscription tree
-
         :param position:
         :return:
         """
         index = self.subscriptionsTree.indexAt(position)
-        isSignal = False
-        menu = None
-        action = None
-        signals = []
 
         # ----------------------------------
         # Open no context menu if invalid
@@ -462,32 +440,25 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # ----------------------------------
 
         if not index.child(0, 0).isValid():
-            isSignal = True
+            return None
 
         # ----------------------------------
         # Get necessary objects for this subscription
         # ----------------------------------
 
-        if not isSignal:
-            dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
-            dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            action = QAction('Remove Subscriber', self)
-        else:
-            signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
-            dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            dplugin = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
-
-            action = QAction('Remove Signal -> ' + signal_uname, self)
-            signals.append(signal_uname)
+        dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
+        dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
 
         # ----------------------------------
         # Create context menu
         # ----------------------------------
 
         menu = QMenu()
+
+        action = QAction('Remove Subscriber', self)
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
+        action.triggered.connect(lambda p=dblock, m=dplugin: self.cancel_subscription_action(m, p))
 
         menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
@@ -495,7 +466,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         This callback function is called to create a context menu
         for the parameter tree
-
         :param position:
         :return:
         """
@@ -543,21 +513,20 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                                     dblock_pcp: DBlock):
         """
         This function is used to create a subscription for a process control plugin.
-
         :param dplugin: Subscriber of a pcp plugin
         :param dparameter: Parameter of the subscriber which should be controlled by the pcp plugin.
         :param dplugin_pcp: The pcp plugin
         :param dblock_pcp: Block of the pcp plugin which is used to control the subscriber's parameter.
         :return:
         """
-        self.gui_api.do_subscribe(dplugin.id, dplugin_pcp.id, dblock_pcp.name, [], dparameter.name)
 
+        self.gui_api.do_subscribe(dplugin.id, dplugin_pcp.id, dblock_pcp.name, [], dparameter.name)
+        pass
 
     def add_subscription_action(self, dplugin_uname):
         """
-        Used to add subscription for a specific dplugin
 
-        :param dplugin_uname: Add Subscription for this DPlugin
+        :param dplugin_uname:
         :return:
         """
 
@@ -567,11 +536,10 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         indexes = self.blockTree.selectedIndexes()
 
-
         for index in indexes:
             if index.isValid():
-                signal = self.blockTree.model().data(index, Qt.UserRole)
-                signals.append(signal.uname)
+                signal_index = self.blockTree.model().data(index, Qt.UserRole)
+                signals.append(signal_index)
 
         index_dblock = index.parent()
 
@@ -581,17 +549,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         dplugin_source = self.pluginTree.model().data(index, Qt.UserRole)
 
-
         self.gui_api.do_subscribe(dplugin.id, dplugin_source.id, dblock.name, signals)
-
-        #self.blockTree.scrollTo(indexes[-1])
 
     def remove_subscriber_action(self, subscriber: DPlugin, dblock: DBlock):
         """
-        Used to remove a subscriber of the dplugin selected in the DPlugin tree.
 
-        :param subscriber: Subscriber which is effected
-        :param dblock: DBlock which should be unsubscribed by Subscriber
+        :param subscriber:
+        :param dblock:
         :return:
         """
         index = self.pluginTree.currentIndex()
@@ -603,7 +567,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def refresh_action(self, new_dplugin: DPlugin=None):
         """
         Used to refresh the overview menu view.
-
         :param new_dplugin: New dplugin which should be added in self.dpluginTreev.
         :return:
         """
@@ -632,23 +595,18 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if new_dplugin is not None:
             plugin_item = DPluginTreeItem(new_dplugin)
             if new_dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                if not self.visual_root.hasItem(new_dplugin):
-                    self.visual_root.appendRow(plugin_item)
+                self.visual_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_IOP_IDENTIFIER:
-                if not self.io_root.hasItem(new_dplugin):
-#                plugin_item = DPluginTreeItem(new_dplugin)
-                    self.io_root.appendRow(plugin_item)
+                plugin_item = DPluginTreeItem(new_dplugin)
+                self.io_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
-                if not self.dpp_root.hasItem(new_dplugin):
-                    self.dpp_root.appendRow(plugin_item)
+                self.dpp_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
-                if not self.pcp_root.hasItem(new_dplugin):
-                    self.pcp_root.appendRow(plugin_item)
+                self.pcp_root.appendRow(plugin_item)
 
-    def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
+    def cancel_subscription_action(self, source: DPlugin, dblock: DBlock):
         """
         Action called to cancel a subscription of the current selected dplugin.
-
         :param source:
         :param dblock:
         :return:
@@ -656,12 +614,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
 
-        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, signals)
+        self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
     def showEvent(self, *args, **kwargs):
         """
         ShowEvent of this class.
-
         :param args:
         :param kwargs:
         :return:
@@ -687,7 +644,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
     def play_button_callback(self):
         """
         Callback function for the play button.
-
         :return:
         """
         index = self.pluginTree.currentIndex()
@@ -734,18 +690,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.playButton.setDisabled(False)
                 self.stopButton.setDisabled(False)
 
-    def show_internal_name_callback(self):
-        """
-        Callback function for 'showInternalNameCheckBox'
-
-        :return:
-        """
-        self.plugin_item_changed(self.pluginTree.currentIndex())
-
     def data_changed_parameter_model(self, index, n):
         """
         This function is called when a dparameter value is changed by editing the 'value'-column.
-
         :param index: Index of current changed dparameter
         :param n: None
         :return:
@@ -758,32 +705,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         self.gui_api.do_set_parameter(dplugin.id, dparameter.name, dparameter.value)
 
-    def data_changed_block_model(self, index, n):
-        """
-        This function is called when a dblock child, a disgnal, is changed.
-
-        :param index: Index of current changed dsignal object
-        :param n: None
-        :return:
-        """
-
-        dsignal = self.blockTree.model().data(index, Qt.UserRole)
-        dblock  = self.blockTree.model().data(index.parent(), Qt.UserRole)
-
-        dplugin = self.pluginTree.model().data(self.pluginTree.currentIndex(), Qt.UserRole)
-
-        self.gui_api.do_edit_plugin_uname(dplugin.uname, dblock, {"edit" : dsignal})
-
     def keyPressEvent(self, event):
-        """
-        Used to handle key events for this gui element.
-
-        :param event: KeyEvent
-        :return:
-        """
         if event.key() == Qt.Key_Escape:
             self.close()
-
-        if self.pluginTree.hasFocus() and \
-                event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
-            self.plugin_item_changed(self.pluginTree.currentIndex())

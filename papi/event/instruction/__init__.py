@@ -10,4 +10,3 @@ from .Subscribe import Subscribe
 from .Unsubscribe import Unsubscribe
 from .SetParameter import SetParameter
 from .CloseProgram import CloseProgram
-from .UpdateMeta import UpdateMeta

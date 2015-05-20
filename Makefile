@@ -36,11 +36,5 @@ $(UI_FILES):
 	else echo "__author__ = '$(AUTHOR)'" > $(DES_DIR)$(dir $@)__init__.py  ; \
 	fi 
 
-create_rst:
-	sphinx-apidoc -f -o docs papi ./papi/pyqtgraph/ ./papi/yapsy/
-
-docs: create_rst
-	make -C docs html
-
-html:
-	make -C docs html
+rst:
+	sphinx-apidoc -f -o docs papi

@@ -34,8 +34,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = '1.0.0' # no spaces allowed
-CORE_CORE_VERSION               = '1.0.0' # no spaces allowed
+CORE_PAPI_VERSION               = 'v_0.6' # no spaces allowed
+CORE_CORE_VERSION               = 'v_0.9' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -45,30 +45,6 @@ CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 2
 
-PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
-PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
-
-PAPI_COPYRIGHT                  = '&copy; 2014'
-PAPI_ABOUT_TITLE                = 'About PaPI'
-PAPI_ABOUT_TEXT                 = """
-<html><body>
-<h2>PaPI</h2>
-Version """ + CORE_PAPI_VERSION + """
-<br/>
-<br/>
-Copyright """ + PAPI_COPYRIGHT + """ <a href="http://www.control.tu-berlin.de/">Control Systems Group</a>, TU-Berlin.<br/>
-Published under <a href="https://www.gnu.org/licenses/lgpl.html">LGPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
-<br/><br/>
-PaPI uses:
-<ul>
-<li>Yapsy 1.10.423 published under BSD-License, <a href="http://yapsy.sourceforge.net/#license">License</a></li>
-<li>pyqtgraph-0.9.10 published under MIT-License, <a href="http://www.opensource.org/licenses/mit-license.php">License</a></li>
-</ul>
-</body
-</html>
-"""
-
-
 # EVENT CONSTANTS
 # TODO
 # somethink like: EVENT_TYPE_STATUS = 'status_event' and EVENT_OPERATION_CHECK_ALIVE = 'check_alive'
@@ -77,18 +53,18 @@ PaPI uses:
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_1.0.0'
+GUI_VERSION                      = 'v_0.5'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
 GUI_WOKRING_INTERVAL            = 16 # in ms
 GUI_WAIT_TILL_RELOAD            = 1000 # in ms
 
-GUI_DEFAULT_WIDTH               = 771
-GUI_DEFAULT_HEIGHT              = 853
+GUI_DEFAULT_WIDTH               = 800
+GUI_DEFAULT_HEIGHT              = 800
 
 # PLUGIN LOCATION CONSTANTS
-PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
+PLUGIN_ROOT_FOLDER_LIST         = ['plugin','papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''
 PLUGIN_VIP_FOLDER               = ''
 PLUGIN_DPP_FOLDER               = ''
@@ -110,13 +86,12 @@ PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
 
+
 #
 PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '
 PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
 
 # CONFIG/PROFILE SYSTEM CONSTANTS
-
-CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
-CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
+CONFIG_LOADER_SUBCRIBE_DELAY    = 1000 # ms

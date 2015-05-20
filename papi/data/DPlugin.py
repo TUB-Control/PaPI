@@ -35,27 +35,23 @@ import copy
 
 
 class DBlock(DObject):
-    """
-    DBlock is used for the internal description of a block.
-    Contains a bunch of signals of a the same data source.
-    """
-    def __init__(self, name):
-        """
-        A block is described by name, which has to be unique within the context of the plugin owning this block.
 
-        :param name: name of the block
-        :return:
-        """
+    def __init__(self, dplugin_id, count, freq,name, signal_names_internal=None, signal_types=None):
         super(DObject, self).__init__()
-
+        self.signals_count = count
+        self.freq = freq
         self.subscribers = {}
-        self.dplugin_id = None
+        self.dplugin_id = dplugin_id
         self.name = name
-        self.signals = []
+        self.singal_types = signal_types
+
+        if signal_names_internal is not None:
+            self.signal_names_internal = signal_names_internal
+        else:
+            self.signal_names_internal = []
 
     def add_subscribers(self, dplugin):
         """
-        Add dplugin as subscriber for this dblock.
 
         :param dplugin:
         :return:
@@ -69,7 +65,6 @@ class DBlock(DObject):
 
     def rm_subscriber(self, dplugin):
         """
-        Remove dplugin as subscriber of this dblock.
 
         :param dplugin:
         :return:
@@ -81,77 +76,30 @@ class DBlock(DObject):
         else:
             return False
 
-    def add_signal(self, signal):
-        """
-        Add Signal for this DBlock
-
-        :param signal:
-        :return:
-        """
-        if signal not in self.signals:
-            self.signals.append(signal)
-            return True
-        return False
-
-    def rm_signal(self, signal):
-        """
-        Remove Signal for this DBlock
-
-        :param signal:
-        :return:
-        """
-        if signal in self.signals:
-            signal.uname = signal.uname + "_deleted"
-            signal.dname = signal.dname + "_deleted"
-            self.signals.remove(signal)
-
-            return True
-        return False
+    def get_signal_name(self, signal: int):
+        if signal > len(self.signal_names_internal):
+            return None
+        return self.signal_names_internal[signal]
 
     def get_subscribers(self):
         """
-        Returns all subscribers of this plugin. Returns a copy that means
-        changes have no effect on the PaPI data structure.
 
         :return:
         :rtype []:
         """
-        return copy.deepcopy(self.subscribers)
-
-    def get_signal_by_uname(self, uname):
-        """
-        Returns a signal object by a signal's uname.
-
-        :param uname:
-        :return DSignal:
-        """
-
-        for signal in self.signals:
-            if signal.uname == uname:
-                return signal
-
-        return None
+        return self.subscribers.copy().values()
 
     def get_signals(self):
         """
         Returns a copy of the internal signal names
-
         :return:
         """
-        return copy.deepcopy(self.signals)
+        return self.signal_names_internal.copy()
 
 
 class DPlugin(DObject):
-    """
-    DPlugin is used for the internal description of a plugin.
 
-    """
     def __init__(self):
-        """
-        Used to create the plugin data object.
-
-        :return:
-        """
         super(DPlugin, self).__init__()
         self.process = None
         self.pid = None
@@ -173,8 +121,7 @@ class DPlugin(DObject):
 
     def subscribe_signals(self, dblock, signals):
         """
-        This function is used to subscribe a bunch of signals.
-
+        This function is used to subscribe a bunch of signals
         :param dblock:
         :param signals:
         :return:
@@ -185,7 +132,7 @@ class DPlugin(DObject):
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
-                    subscription.add_signal(signal)
+                    subscription.attach_signal(signal)
                 return subscription
             else:
                 return None
@@ -194,8 +141,7 @@ class DPlugin(DObject):
 
     def unsubscribe_signals(self, dblock, signals):
         """
-        This function is used to unsubscribe a bunch of signals.
-
+        This function is used to unsubscribe a bunch of signals
         :param dblock:
         :param signals:
         :return:
@@ -206,7 +152,7 @@ class DPlugin(DObject):
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
-                    subscription.rm_signal(signal)
+                    subscription.remove_signal(signal)
 
                 return subscription
             else:
@@ -216,14 +162,15 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock):
         """
-        This plugin subscribes a 'dblock' by remembering the dblog id.
-
+        This plugins subscribes 'dblock' by remembering the dblog id
         :param dblock: DBlock which should be subscribed
         :return:
         :rtype boolean:
         """
 
         if dblock.dplugin_id not in self.__subscriptions:
+            #dblock.add_subscribers(self)
+            #self.__subscriptions.append(dblock.id)
             self.__subscriptions[dblock.dplugin_id] = {}
             self.__subscriptions[dblock.dplugin_id][dblock.name] = DSubscription(dblock)
             return self.__subscriptions[dblock.dplugin_id][dblock.name]
@@ -237,8 +184,7 @@ class DPlugin(DObject):
 
     def unsubscribe(self, dblock):
         """
-        This plugin unsubscribes a 'dblock' by forgetting the dblog id.
-
+        This plugins unsubscribes 'dblock' by forgetting the dblog id
         :param dblock: DBlock which should be unsubscribed
         :return:
         :rtype boolean:
@@ -260,8 +206,7 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a copy of a dictionary of all subcribtions.
-
+        Returns a dictionary of all susbcribtions
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
         """
@@ -270,9 +215,6 @@ class DPlugin(DObject):
 
     def add_parameter(self, parameter):
         """
-        Used to add a parameter for this plugin.
-        Returns true if parameter doesn't existed and was added,
-        returns false if parameter already exists.
 
         :param parameter:
         :return:
@@ -286,11 +228,8 @@ class DPlugin(DObject):
 
     def rm_parameter(self, parameter):
         """
-        Used to remove a parameter for this plugin.
-        Returns true if parameter existed and was deleted,
-        returns false if parameter doesn't exist.
 
-        :param parameter: Parameter which should be removed.
+        :param parameter_id:
         :return:
         :rtype boolean:
         """
@@ -303,7 +242,6 @@ class DPlugin(DObject):
 
     def get_parameters(self):
         """
-        Returns a list of all parameters.
 
         :return:
         :rtype {}:
@@ -312,11 +250,8 @@ class DPlugin(DObject):
 
     def add_dblock(self, dblock):
         """
-        Used to add a block for this plugin.
-        Returns true if parameter doesn't existed and was deleted,
-        returns false if parameter already exists.
 
-        :param dblock: Block which should be added.
+        :param dblock:
         :return:
         :rtype boolean:
         """
@@ -329,9 +264,6 @@ class DPlugin(DObject):
 
     def rm_dblock(self, dblock):
         """
-        Used to remove a block for this plugin.
-        Returns true if block existed and was deleted,
-        returns false if block doesn't exist.
 
         :param dblock:
         :return:
@@ -339,14 +271,12 @@ class DPlugin(DObject):
         """
         if dblock.name in self.__blocks:
             del self.__blocks[dblock.name]
-            dblock.name += "_deleted"
             return True
         else:
             return False
 
     def get_dblocks(self):
         """
-        Returns a list of all blocks.
 
         :return:
         :rtype {}:
@@ -355,10 +285,9 @@ class DPlugin(DObject):
 
     def get_dblock_by_name(self, dblock_name):
         """
-        Returns a single block by its unique name of all parameters.
 
-        :param dblock_name: Uniqueder identifier for this block.
         :return:
+        :rtype DBlock:
         """
 
         if dblock_name in self.__blocks:
@@ -395,10 +324,6 @@ class DPlugin(DObject):
         :return:
         """
 
-        # --------------------------
-        # Update DPlugin Attributes
-        # --------------------------
-
         self.id = meta.id
         self.pid = meta.pid
         self.state = meta.state
@@ -407,81 +332,34 @@ class DPlugin(DObject):
         self.uname = meta.uname
         self.type = meta.type
 
-        # -----------------------------
-        # Update DParameters of DPlugin
-        # -----------------------------
-
         self.__parameters = meta.__parameters
-
-        # -----------------------------
-        # Update DSubscriptions of DPlugin
-        # -----------------------------
-
         self.__subscriptions = meta.__subscriptions
-
-        # -----------------------------
-        # Update DBlocks of DPlugin
-        # -----------------------------
         self.__blocks = meta.__blocks
 
 
 class DSubscription(DObject):
-    """
-    DSubscription is used for the internal description of a subscription.
 
-    """
-    def __init__(self, dblock):
+    def __init__(self, dblock, signals=None):
         self.dblock = dblock
-        self.dblock_name = dblock.name
         self.alias = None
-        self.signals = []
+        if signals is None:
+            self.signals = []
+        else:
+            self.signals = signals
 
-    def add_signal(self, signal):
-        """
-        Add Signal for this Subscription
-
-        :param signal:
-        :return:
-        """
+    def attach_signal(self, signal):
         if signal not in self.signals:
             self.signals.append(signal)
             return True
+
         return False
 
-    def rm_signal(self, signal):
-        """
-        Remove Signal for this Subscription
-
-        :param signal:
-        :return:
-        """
+    def remove_signal(self, signal):
         if signal in self.signals:
             self.signals.remove(signal)
             return True
 
         return False
 
-    def get_dblock(self):
-        """
-        Returns the block whose signals are subscribed.
-
-        :return:
-        :rtype: DBlock
-        """
-        return self.dblock
-
     def get_signals(self):
-        """
-        Returns a copy of all signals which are subscribed.
-
-        :return:
-        :rtype: []
-        """
         return copy.copy(self.signals)
-
-    def attach_signal(self, signal):
-        raise NotImplementedError("Stop Using this function.")
-
-    def remove_signal(self, signal):
-        raise NotImplementedError("Stop Using this function.")
-

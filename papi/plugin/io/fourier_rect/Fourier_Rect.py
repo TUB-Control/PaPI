@@ -30,7 +30,6 @@ __author__ = 'knuths'
 
 from papi.plugin.base_classes.iop_base import iop_base
 from papi.data.DPlugin import DBlock
-from papi.data.DSignal import DSignal
 
 import time
 import numpy
@@ -66,10 +65,11 @@ class Fourier_Rect(iop_base):
         self.sock.setblocking(0)
 
 
-        self.block1 = DBlock('Rectangle')
+        names = ['t']
         for i in range(1,self.max_approx):
-            self.block1.add_signal(DSignal('rect'+str(i)))
+            names.append('rect'+str(i))
 
+        self.block1 = DBlock(None,300,10,'Rect1',names)
         self.send_new_block_list([self.block1])
 
         return True
@@ -100,13 +100,10 @@ class Fourier_Rect(iop_base):
         else:
             data = pickle.loads(received)
 
-            vech = {}
-            t = data[0*self.amax:(0+1)*self.amax]
-
             for i in range(self.max_approx):
-                vech['rect'+str(i)] = data[i*self.amax:(i+1)*self.amax]
+                vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
 
-            self.send_new_data('Rectangle', t, vech)
+            self.send_new_data(vec[0],vec[1:] ,'Rect1')
 
         time.sleep(0.001*self.amax )
 

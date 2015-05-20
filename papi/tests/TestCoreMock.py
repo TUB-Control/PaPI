@@ -1,14 +1,20 @@
 __author__ = 'stefan'
 
 import unittest
+from threading import Thread
+import time
+
 from papi.data.DGui import DGui
 from papi.core import Core
 from papi.gui.qt_new.main import startGUI_TESTMOCK
 
 from papi.gui.gui_api import Gui_api
+from papi.gui.gui_event_processing import GuiEventProcessing
+from papi.PapiEvent import PapiEvent
 from threading import Thread
 from multiprocessing import Queue
 import papi.constants as const
+from pyqtgraph import QtCore
 import time
 
 
@@ -25,7 +31,7 @@ class TestCoreMock(unittest.TestCase):
 
     def test_create_plugin_sub(self):
         # create a Plot and Sinus plugin
-        self.gui_api.do_create_plugin('Plot','Plot1')
+        self.gui_api.do_create_plugin('PlotPerformance','Plot1')
         self.gui_api.do_create_plugin('Sinus','Sin1')
 
 
@@ -48,7 +54,7 @@ class TestCoreMock(unittest.TestCase):
     def test_do_create_api(self):
 
 
-        self.gui_api.do_create_plugin('Plot','Plot1')
+        self.gui_api.do_create_plugin('PlotPerformance','Plot1')
         self.gui_api.do_create_plugin('Sinus','Sin1')
 
 
@@ -88,7 +94,7 @@ class TestCoreMock(unittest.TestCase):
 
     def test_delete_plugin_is_VIP_PCP(self):
         PL_1_NAME = 'Plot1'
-        PL_1_IDENT = 'Plot'
+        PL_1_IDENT = 'PlotPerformance'
         self.gui_api.do_create_plugin(PL_1_IDENT,PL_1_NAME)
 
         time.sleep(TestCoreMock.DELAY_TIME)
@@ -109,7 +115,7 @@ class TestCoreMock(unittest.TestCase):
 
     def test_reset_papi_1(self):
         PL_1_NAME = 'Plot1'
-        PL_1_IDENT = 'Plot'
+        PL_1_IDENT = 'PlotPerformance'
         self.gui_api.do_create_plugin(PL_1_IDENT,PL_1_NAME)
 
         time.sleep(TestCoreMock.DELAY_TIME)
@@ -130,7 +136,7 @@ class TestCoreMock(unittest.TestCase):
 
     def test_reset_papi_2(self):
 
-        Plugins = [ ['Plot1', 'Plot'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
+        Plugins = [ ['Plot1', 'PlotPerformance'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -161,7 +167,7 @@ class TestCoreMock(unittest.TestCase):
 
     def test_stopReset_iop(self):
 
-        Plugins = [ ['Plot1', 'Plot'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
+        Plugins = [ ['Plot1', 'PlotPerformance'], ['Sinus1', 'Sinus'], ['Add1', 'Add'], ['Butt', 'Button'] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -264,7 +270,7 @@ class TestCoreMock(unittest.TestCase):
         self.assertFalse( self.gui_api.do_test_name_to_be_unique('tt tt') )
 
     def test_do_subscribe(self):
-        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -289,7 +295,7 @@ class TestCoreMock(unittest.TestCase):
             self.assertEqual('Sinus1',dsub.uname)
 
     def test_do_unsubscribe(self):
-        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -322,7 +328,7 @@ class TestCoreMock(unittest.TestCase):
         self.assertEqual(len(subs.keys()), 0)
 
     def test_do_set_parameter(self):
-        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -354,7 +360,7 @@ class TestCoreMock(unittest.TestCase):
                          self.gui_data.get_dplugin_by_uname('Sinus1').get_parameters()['Frequenz Block SinMit_f3'].value)
 
     def test_pause_IOP(self):
-        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'Plot' ] ]
+        Plugins = [  ['Sinus1', 'Sinus'], ['Plot1', 'PlotPerformance' ] ]
 
         for pl in Plugins:
             self.gui_api.do_create_plugin(pl[1], pl[0])
@@ -419,7 +425,7 @@ class TestCoreMock(unittest.TestCase):
 
     def tearDown(self):
         # close Gui
-
+        self.gui_queue.put(  PapiEvent(1,1,'instr_event','test_close', None)  )
 
         # wait for close
         # time.sleep(1)

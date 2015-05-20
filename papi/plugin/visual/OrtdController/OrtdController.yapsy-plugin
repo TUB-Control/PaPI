@@ -1,9 +1,0 @@
-[Core]
-Name = OrtdController
-Module = OrtdController
-
-[Documentation]
-Author = S.R.
-Version = 0.1
-Website =
-Description = Plugin to setup a ORTD source and controll plugin creation from ortd source.

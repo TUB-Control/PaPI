@@ -30,16 +30,8 @@ __author__ = 'ruppins'
 
 
 class DOptionalData(object):
-    """
 
-    """
     def __init__(self,DATA=None,pluginID=None):
-        """
-
-        :param DATA:
-        :param pluginID:
-        :return:
-        """
         self.data = DATA
         self.data_source_id = None
         self.plugin_identifier = None

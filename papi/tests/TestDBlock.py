@@ -43,7 +43,7 @@ class TestCore(unittest.TestCase):
 
     def test_add_susbcribers(self):
 
-        dbl = DBlock('DBlock1')
+        dbl = DBlock(None, 1,5, 'DBlock1')
         dbl.id = 1
 
         dpl_1 = DPlugin()
@@ -57,7 +57,7 @@ class TestCore(unittest.TestCase):
         self.assertEqual(len(dbl.get_subscribers()),2)
 
     def test_rm_subscribers(self):
-        dbl = DBlock('DBlock1')
+        dbl = DBlock(None, 1,5, 'DBlock1')
         dbl.id = 1
 
         dpl_1 = DPlugin()

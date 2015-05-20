@@ -26,52 +26,41 @@ Contributors:
 <Stefan Ruppin
 """
 
-import copy
-import traceback
-import importlib.machinery
-
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
-    PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_STOPPED, \
+    PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_RESUMED, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_START_FAILED
+
+import copy
+
 from papi.gui.plugin_api import Plugin_api
+
 import papi.error_codes as ERROR
+
 import papi.event as Event
-from papi.event.event_base import PapiEventBase
+
+from papi.PapiEvent import PapiEvent
+
 from papi.ConsoleLog import ConsoleLog
-from papi.yapsy.PluginManager import PluginManager
+
+from yapsy.PluginManager import PluginManager
+
+import importlib.machinery
+
 from papi.data.DPlugin import DPlugin
-from papi.pyqtgraph import QtCore
+from pyqtgraph import QtCore
+
 
 __author__ = 'Stefan'
 
 
 class GuiEventProcessing(QtCore.QObject):
-    """
-    This class will do all the event handling for a GUI process. It should be created and initialized with database and
-    queues.
-    To get all the functionality, one should link the callback functions (slots) for the needed signals.
 
-    """
     added_dplugin = QtCore.Signal(DPlugin)
     removed_dplugin = QtCore.Signal(DPlugin)
     dgui_changed = QtCore.Signal()
-    plugin_died = QtCore.Signal(DPlugin, Exception, str)
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue):
-        """
-        Init for eventProcessing
-
-        :param gui_data:    Data object for all the plugin data
-        :type gui_data: DGui
-        :param core_queue:  multiprocessing queue for process interaction with core process
-        :type core_queue: multiprocessing.Queue
-        :param gui_id: id of gui process
-        :type gui_id: int
-        :param gui_queue:  multiprocessing queue for process interaction with gui process
-        :type gui_queue: multiprocessing.Queue
-        :return:
-        """
         super(GuiEventProcessing, self).__init__()
         self.gui_data = gui_data
         self.core_queue = core_queue
@@ -82,17 +71,17 @@ class GuiEventProcessing(QtCore.QObject):
         self.gui_queue = gui_queue
 
         # switch case for event processing
-        self.process_event = {'new_data': self.process_new_data_event,
-                              'close_programm': self.process_close_program_event,
-                              'check_alive_status': self.process_check_alive_status,
-                              'create_plugin': self.process_create_plugin,
-                              'update_meta': self.process_update_meta,
-                              'plugin_closed': self.process_plugin_closed,
-                              'set_parameter': self.process_set_parameter,
-                              'pause_plugin': self.process_pause_plugin,
-                              'resume_plugin': self.process_resume_plugin,
-                              'stop_plugin': self.process_stop_plugin,
-                              'start_plugin': self.process_start_plugin
+        self.process_event = {  'new_data':             self.process_new_data_event,
+                                'close_programm':       self.process_close_program_event,
+                                'check_alive_status':   self.process_check_alive_status,
+                                'create_plugin':        self.process_create_plugin,
+                                'update_meta':          self.process_update_meta,
+                                'plugin_closed':        self.process_plugin_closed,
+                                'set_parameter':        self.process_set_parameter,
+                                'pause_plugin':         self.process_pause_plugin,
+                                'resume_plugin':        self.process_resume_plugin,
+                                'stop_plugin':          self.process_stop_plugin,
+                                'start_plugin':         self.process_start_plugin
         }
 
     def gui_working(self, close_mock):
@@ -101,14 +90,14 @@ class GuiEventProcessing(QtCore.QObject):
          Will process all events of the queue at the time of call.
          Procedure was built this way, so that the processing of an event is not covered by the try/except structure.
 
-         :type event: PapiEventBase
+         :type event: PapiEvent
          :type dplugin: DPlugin
         """
         # event flag, true for first loop iteration to enter loop
         isEvent = True
         # event object, if there is an event
         event = None
-        while (isEvent):
+        while(isEvent):
             # look at queue and try to get a new element
             try:
                 event = self.gui_queue.get_nowait()
@@ -119,16 +108,17 @@ class GuiEventProcessing(QtCore.QObject):
                 isEvent = False
 
             # check if there was a new element to process it
-            if isEvent:
-                # get the event operation
+            if(isEvent):
+                                # get the event operation
                 op = event.get_event_operation()
                 # debug out
-                self.log.printText(2, 'Event: ' + op)
+                self.log.printText(2,'Event: ' + op)
                 # process this event
                 if op == 'test_close':
                     close_mock()
                 else:
                     self.process_event[op](event)
+
 
         # after the loop ended, which means that there are no more new events, a new timer will be created to start
         # this method again in a specific time
@@ -140,11 +130,11 @@ class GuiEventProcessing(QtCore.QObject):
         with the new data.
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         # debug print
-        self.log.printText(2, 'new data event')
+        self.log.printText(2,'new data event')
         # get list of destination IDs
         dID_list = event.get_destinatioID()
         # get optional data of event
@@ -158,21 +148,13 @@ class GuiEventProcessing(QtCore.QObject):
                 # it exists, so call its execute function, but just if it is not paused ( no data delivery when paused )
                 if dplugin.state != PLUGIN_STATE_PAUSE and dplugin.state != PLUGIN_STATE_STOPPED:
                     # check if new_data is a parameter or new raw data
-                    try:
-                        if opt.is_parameter is False:
-                            dplugin.plugin.execute(
-                                Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
-                                block_name=opt.block_name)
-                        else:
-                            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
-                    except Exception as E:
-                        tb = traceback.format_exc()
-
-                        self.plugin_died.emit(dplugin, E, tb)
-
+                    if opt.is_parameter is False:
+                        dplugin.plugin.execute(dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data))
+                    else:
+                        dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
             else:
                 # plugin does not exist in DGUI
-                self.log.printText(1, 'new_data, Plugin with id  ' + str(dID) + '  does not exist in DGui')
+                self.log.printText(1,'new_data, Plugin with id  '+str(dID)+'  does not exist in DGui')
 
     def process_plugin_closed(self, event):
         """
@@ -180,7 +162,7 @@ class GuiEventProcessing(QtCore.QObject):
         Gui now knows, that a plugin was closed by core and needs to update its DGui data base
 
         :param event:
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :return:
         """
         opt = event.get_optional_parameter()
@@ -188,61 +170,36 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(opt.plugin_id)
         if dplugin is not None:
             if dplugin.own_process is False:
-                try:
-                    dplugin.plugin.quit()
-                except Exception as E:
-                    tb = traceback.format_exc()
-                    self.plugin_died.emit(dplugin, E, tb)
+                dplugin.plugin.quit()
 
         if self.gui_data.rm_dplugin(opt.plugin_id) == ERROR.NO_ERROR:
-            self.log.printText(1, 'plugin_closed, Plugin with id: ' + str(opt.plugin_id) + ' was removed in GUI')
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was removed in GUI')
             self.dgui_changed.emit()
             self.removed_dplugin.emit(dplugin)
         else:
-            self.log.printText(1, 'plugin_closed, Plugin with id: ' + str(opt.plugin_id) + ' was NOT removed in GUI')
+            self.log.printText(1,'plugin_closed, Plugin with id: '+str(opt.plugin_id)+' was NOT removed in GUI')
 
     def process_stop_plugin(self, event):
-        """
-        Processes plugin_stop events.
-        Quit plugin, emit DPlugin was removed -> necessary signal for the GUI.
-
-        :param event:
-        :return:
-        """
         id = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
-            try:
-                dplugin.plugin.quit()
-                dplugin.state = PLUGIN_STATE_STOPPED
-                self.removed_dplugin.emit(dplugin)
-                self.dgui_changed.emit()
-            except Exception as E:
-                tb = traceback.format_exc()
-                self.plugin_died.emit(dplugin, E, tb)
+            dplugin.plugin.quit()
+            dplugin.state = PLUGIN_STATE_STOPPED
+            self.dgui_changed.emit()
 
     def process_start_plugin(self, event):
-        """
-        Processes plugin_start event.
-        Used to start a plugin after the plugin was stopped. Emit DPlugin was added -> necessary signal for the GUI.
-
-        :param event:
-        :return:
-        """
         id = event.get_destinatioID()
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
-            try:
-                if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
-                    dplugin.state = PLUGIN_STATE_START_SUCCESFUL
-                    self.added_dplugin.emit(dplugin)
-                else:
-                    dplugin.state = PLUGIN_STATE_START_FAILED
-            except Exception as E:
-                tb = traceback.format_exc()
-                self.plugin_died.emit(dplugin, E, tb)
+            if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
+                dplugin.state = PLUGIN_STATE_START_SUCCESFUL
+            else:
+                dplugin.state = PLUGIN_STATE_START_FAILED
 
             self.dgui_changed.emit()
+
+
+
 
 
     def process_create_plugin(self, event):
@@ -251,7 +208,7 @@ class GuiEventProcessing(QtCore.QObject):
         Gui now needs to add a new plugin to DGUI and decide whether it is a plugin running in the GUI process or not.
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         # get optional data: the plugin id, identifier and uname
@@ -263,8 +220,7 @@ class GuiEventProcessing(QtCore.QObject):
         config = opt.plugin_config
 
         # debug print
-        self.log.printText(2,
-                           'create_plugin, Try to create plugin with Name  ' + plugin_identifier + " and UName " + uname)
+        self.log.printText(2,'create_plugin, Try to create plugin with Name  '+plugin_identifier+ " and UName " + uname )
 
         # collect plugin in folder for yapsy manager
         self.plugin_manager.collectPlugins()
@@ -274,8 +230,7 @@ class GuiEventProcessing(QtCore.QObject):
         # check for existance
         if plugin_orginal is None:
             # plugin with given identifier does not exist
-            self.log.printText(1,
-                               'create_plugin, Plugin with Name  ' + plugin_identifier + '  does not exist in file system')
+            self.log.printText(1, 'create_plugin, Plugin with Name  ' + plugin_identifier + '  does not exist in file system')
             # end function
             return -1
 
@@ -291,68 +246,55 @@ class GuiEventProcessing(QtCore.QObject):
         plugin = getattr(current_modul, class_name)()
         # get default startup configuration for merge with user defined startup_configuration
         start_config = plugin.get_startup_configuration()
-        config = dict(list(start_config.items()) + list(config.items()))
+        config = dict(list(start_config.items()) + list(config.items()) )
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
         if plugin.get_type() == PLUGIN_VIP_IDENTIFIER or plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
-            dplugin = self.gui_data.add_plugin(None, None, False, self.gui_queue, plugin, id)
+            dplugin =self.gui_data.add_plugin(None, None, False, self.gui_queue,plugin,id)
             dplugin.uname = uname
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
             dplugin.startup_config = config
             # call the init function of plugin and set queues and id
-            api = Plugin_api(self.gui_data, self.core_queue, self.gui_id, uname + ' API:')
-
+            api = Plugin_api(self.gui_data,self.core_queue,self.gui_id, uname + ' API:')
+            dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api)
 
             # call the plugin developers init function with config
-            try:
-                dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api,
-                                           dpluginInfo=dplugin.get_meta())
-                if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
-                    # start succcessfull
-                    self.core_queue.put(Event.status.StartSuccessfull(dplugin.id, 0, None))
-                else:
-                    self.core_queue.put(Event.status.StartFailed(dplugin.id, 0, None))
+            if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
+                #start succcessfull
+                self.core_queue.put( Event.status.StartSuccessfull(dplugin.id, 0, None))
+            else:
+                self.core_queue.put( Event.status.StartFailed(dplugin.id, 0, None))
 
-                # first set meta to plugin (meta infos in plugin)
-                if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    dplugin.plugin.update_plugin_meta(dplugin.get_meta())
-
-            except Exception as E:
-                dplugin.state = PLUGIN_STATE_STOPPED
-                tb = traceback.format_exc()
-                self.plugin_died.emit(dplugin, E, tb)
-
-
+            # first set meta to plugin (meta infos in plugin)
+            dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             # debug print
-            self.log.printText(1, 'create_plugin, Plugin with name  ' + str(uname) + '  was started as ViP')
+            self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was started as ViP')
         else:
             # plugin will not be running in gui process, so we just need to add information to DGui
             # so add a new dplugin to DGUI and set name und type
-            dplugin = self.gui_data.add_plugin(None, None, True, None, plugin, id)
+            dplugin =self.gui_data.add_plugin(None,None,True,None,plugin,id)
             dplugin.plugin_identifier = plugin_identifier
             dplugin.uname = uname
             dplugin.startup_config = opt.plugin_config
             dplugin.type = opt.plugin_type
             # debug print
-            self.log.printText(1, 'create_plugin, Plugin with name  ' + str(uname) + '  was added as non ViP')
+            self.log.printText(1,'create_plugin, Plugin with name  '+str(uname)+'  was added as non ViP')
 
         self.added_dplugin.emit(dplugin)
         self.dgui_changed.emit()
 
     def process_close_program_event(self, event):
         """
-        Processes close programm event.
-        Nothing important happens.
 
          :param event: event to process
-         :type event: PapiEventBase
+         :type event: PapiEvent
          :type dplugin: DPlugin
         """
-        self.log.printText(1, 'event: close_progam was received but there is no action for it')
+        self.log.printText(1,'event: close_progam was received but there is no action for it')
         pass
 
     def process_check_alive_status(self, event):
@@ -360,11 +302,11 @@ class GuiEventProcessing(QtCore.QObject):
         Gui received check_alive request form core, so gui will respond to it
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         # send event from GUI to Core
-        event = Event.status.Alive(1,0,None)
+        event = PapiEvent(1,0,'status_event','alive',None)
         self.core_queue.put(event)
 
     def process_update_meta(self, event):
@@ -372,7 +314,7 @@ class GuiEventProcessing(QtCore.QObject):
         Core sent new meta information of an existing plugin. This function will update DGui with these information
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         # get information of event
@@ -388,29 +330,21 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.update_meta(opt.plugin_object)
             # check if plugin runs in gui to update its copy of meta informations
             if dplugin.own_process is False:
-                if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    try:
-                        dplugin.plugin.update_plugin_meta(dplugin.get_meta())
-                    except Exception as E:
-                        dplugin.state = PLUGIN_STATE_STOPPED
-                        tb = traceback.format_exc()
-                        # self.plugin_died.emit(dplugin, E, tb)
+                dplugin.plugin.update_plugin_meta(dplugin.get_meta())
 
             self.dgui_changed.emit()
         else:
             # plugin does not exist
-            self.log.printText(1, 'update_meta, Plugin with id  ' + str(pl_id) + '  does not exist')
+            self.log.printText(1,'update_meta, Plugin with id  '+str(pl_id)+'  does not exist')
 
-    def process_set_parameter(self, event):
+    def process_set_parameter(self,event):
         """
-        Processes set_parameter event.
-        Used to handle parameter sets by the gui or other plugins.
 
         :param event:
         :return:
         """
         # debug print
-        self.log.printText(2, 'set parameter event')
+        self.log.printText(2,'set parameter event')
 
         dID = event.get_destinatioID()
         # get optional data of event
@@ -425,14 +359,14 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
         else:
             # plugin does not exist in DGUI
-            self.log.printText(1, 'set_parameter, Plugin with id  ' + str(dID) + '  does not exist in DGui')
+            self.log.printText(1,'set_parameter, Plugin with id  '+str(dID)+'  does not exist in DGui')
 
     def process_pause_plugin(self, event):
         """
         Core sent event to pause a plugin in GUI, so call the pause function of this plugin
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()
@@ -446,7 +380,7 @@ class GuiEventProcessing(QtCore.QObject):
         Core sent event to resume a plugin in GUI, so call the resume function of this plugin
 
         :param event: event to process
-        :type event: PapiEventBase
+        :type event: PapiEvent
         :type dplugin: DPlugin
         """
         pl_id = event.get_destinatioID()

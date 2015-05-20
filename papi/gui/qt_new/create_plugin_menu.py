@@ -25,18 +25,18 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
+from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import PluginTreeItem
-from papi.yapsy.PluginManager import PluginManager
-
 __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow
+from PySide.QtGui import QMainWindow, QStandardItem, QStandardItemModel
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST
 from PySide.QtCore import *
+
+from yapsy.PluginManager import PluginManager
 
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
@@ -66,7 +66,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
-        self.pluginTree.setSortingEnabled(True)
 
         self.visual_root = PaPIRootItem('ViP')
         self.io_root = PaPIRootItem('IOP')
@@ -89,8 +88,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-           self.show_create_plugin_dialog()
 
 
     def pluginItemChanged(self, index):
@@ -139,11 +136,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
             if '/pcp/' in pluginfo.path:
                 self.pcp_root.appendRow(plugin_item)
 
-        self.visual_root.sortChildren(0)
-        self.io_root.sortChildren(0)
-        self.dpp_root.sortChildren(0)
-        self.pcp_root.sortChildren(0)
-
     def clear(self):
         self.nameEdit.setText('')
         self.authorEdit.setText('')
@@ -152,4 +144,3 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()
-

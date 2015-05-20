@@ -45,13 +45,10 @@ class TestDPlugin(unittest.TestCase):
         dpl_2 = DPlugin()
         dpl_2.id = 2
 
-        dbl_1 = DBlock('DBlock1')
+        dbl_1 = DBlock(dpl_2,1,5,'DBlock1')
         dbl_1.id = 3
-        dbl_1.dplugin_id = dpl_2.id
-
-        dbl_2 = DBlock('DBlock2')
+        dbl_2 = DBlock(dpl_2,1,5,'DBlock2')
         dbl_2.id = 4
-        dbl_2.dplugin_id = dpl_2.id
 
         dpl_2.add_dblock(dbl_1)
         dpl_2.add_dblock(dbl_2)
@@ -105,11 +102,9 @@ class TestDPlugin(unittest.TestCase):
         dpl_1 = DPlugin()
         dpl_1.id = 1
 
-        dbl_1 = DBlock('Block1')
-        dbl_1.dplugin_id = dpl_1.id
+        dbl_1 = DBlock(dpl_1, 1, 5, 'Block1')
 
-        dbl_2 = DBlock('Block2')
-        dbl_2.dplugin_id = dpl_1.id
+        dbl_2 = DBlock(dpl_1, 1, 5, 'Block2')
 
         #check: add Parameter
         self.assertTrue(dpl_1.add_dblock(dbl_1))

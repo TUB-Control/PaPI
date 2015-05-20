@@ -26,17 +26,18 @@ Contributors:
 Stefan Ruppin
 """
 
+from yapsy.IPlugin import IPlugin
 from papi.data.DPlugin import DBlock
 import papi.event as Event
 from papi.exceptions.block_exceptions import Wrong_type, Wrong_length
 from papi.data.DOptionalData import DOptionalData
-from papi.yapsy.IPlugin import IPlugin
+
 
 
 class base_plugin(IPlugin):
 
 
-    def papi_init(self, ):
+    def papi_init(self):
         #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
 
@@ -94,6 +95,13 @@ class base_plugin(IPlugin):
         if mode is True or mode is False or mode == 'default':
             self.user_event_triggered = mode
 
+    def send_new_data_old(self, data, block_name):
+        opt = DOptionalData(DATA=data)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
 
     def send_parameter_change(self, data, block_name, alias):
         opt = DOptionalData(DATA=data)
@@ -118,19 +126,7 @@ class base_plugin(IPlugin):
 
         return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
 
-    def send_new_data(self, block_name, time_line, data):
-
-        dataHash = data
-        dataHash['t'] = time_line
-        opt = DOptionalData(DATA = dataHash)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
-        self._Core_event_queue__.put(event)
-
-
-    def send_new_data_old2(self, time_line, data, block_name):
+    def send_new_data(self, time_line, data, block_name):
         # TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name
         vec_data = []
         vec_data.append(time_line)
@@ -138,14 +134,6 @@ class base_plugin(IPlugin):
             vec_data.append(item)
 
         opt = DOptionalData(DATA=vec_data)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
-        self._Core_event_queue__.put(event)
-
-    def send_new_data_old1(self, data, block_name):
-        opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
 
@@ -175,11 +163,18 @@ class base_plugin(IPlugin):
 
     def demux(self, source_id, block_name, data):
 
+        returnData = {}
+
         subcribtions = self.dplugin_info.get_subscribtions()
-        sub_object = subcribtions[source_id][block_name]
+        dblocksub = subcribtions[source_id][block_name]
+        if dblocksub.signals == []:
+            sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
+        else:
+            sig_range = dblocksub.signals
 
-        sub_signals = sub_object.signals
-        sub_signals.append('t')
+        for ind in sig_range:
+            returnData[dblocksub.dblock.signal_names_internal[ind]] = data[ind]
 
-        return dict([(i, data[i]) for i in sub_signals if i in data])
-        #return data
+        returnData['t'] = data[0]
+
+        return returnData

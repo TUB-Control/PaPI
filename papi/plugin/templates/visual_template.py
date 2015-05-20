@@ -6,6 +6,40 @@ Copyright (C) 2014 Technische Universität Berlin,
 Fakultät IV - Elektrotechnik und Informatik,
 Fachgebiet Regelungssysteme,
 Einsteinufer 17, D-10587 Berlin, Germany
+ 
+This file is part of PaPI.
+ 
+PaPI is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+PaPI is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+ 
+You should have received a copy of the GNU Lesser General Public License
+along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
+ 
+Contributors:
+<Stefan Ruppin
+"""
+
+__author__ = 'Stefan'
+
+from papi.plugin.visual_base import visual_base
+from PySide.QtGui import QMdiSubWindow
+
+
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+Copyright (C) 2014 Technische Universität Berlin,
+Fakultät IV - Elektrotechnik und Informatik,
+Fachgebiet Regelungssysteme,
+Einsteinufer 17, D-10587 Berlin, Germany
 
 This file is part of PaPI.
 
@@ -29,18 +63,19 @@ Contributors:
 __author__ = 'Stefan'
 
 from PySide.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
+import pyqtgraph as pq
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
+import numpy as np
 
 import collections
 import re
 
-from papi.pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore
 
-#RENAME TO PLUGIN NAME
-class TemplateName(vip_base):
+
+class PlotPerformance(vip_base):
 
 
     def initiate_layer_0(self, config=None):
@@ -75,8 +110,8 @@ class TemplateName(vip_base):
         # Create Parameters
         # ---------------------------
         # create a parameter object
-        #   self.para1 = DParameter('ParameterName',default=0)
-        #   self.para2 = DParameter('ParameterName',default=0)
+        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
