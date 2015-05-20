@@ -31,6 +31,7 @@ __author__ = 'knuths'
 import unittest
 
 from papi.data.DPlugin import DPlugin, DBlock, DSubscription
+from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter
 
 
@@ -40,23 +41,29 @@ class TestDSusbcription(unittest.TestCase):
         pass
 
     def test_attach_signal(self):
-        dblock = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
+        dblock = DBlock('SinMit_f1')
+        ds_1 = DSignal('t')
+        ds_2 = DSignal('f1_1')
+        dblock.add_signal(ds_1)
+        dblock.add_signal(ds_2)
 
-        subscription = DSubscription(dblock, [1,2,3])
+        subscription = DSubscription(dblock)
 
-        self.assertTrue(subscription.attach_signal(4))
+        self.assertTrue(subscription.add_signal(ds_1))
 
-        self.assertIn(4, subscription.get_signals())
+        self.assertIn(ds_1, subscription.get_signals())
 
-        self.assertFalse(subscription.attach_signal(1))
+        self.assertFalse(subscription.add_signal(ds_1))
 
     def test_remove_signal(self):
-        dblock = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
+        dblock = DBlock('SinMit_f1')
+        ds_1 = DSignal('t')
+        dblock.add_signal(ds_1)
 
-        subscription = DSubscription(dblock, [1,2,3])
+        subscription = DSubscription(dblock)
+        subscription.add_signal(ds_1)
+        self.assertTrue(subscription.rm_signal(ds_1))
 
-        self.assertTrue(subscription.remove_signal(1))
+        self.assertNotIn(ds_1, subscription.get_signals())
 
-        self.assertNotIn(1, subscription.get_signals())
-
-        self.assertTrue(subscription.attach_signal(1))
+        self.assertTrue(subscription.add_signal(ds_1))

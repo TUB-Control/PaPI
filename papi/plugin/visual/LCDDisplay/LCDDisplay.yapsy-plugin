@@ -1,0 +1,11 @@
+[Core]
+Name = LCDDisplay
+Module = LCDDisplay
+
+[Documentation]
+Author = S. Ruppin
+Version = 1.0
+Website =
+Description = LCD Display for displaying floating point numbers up to 5 digits with sign. Refresh rate is user defined.
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

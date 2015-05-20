@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='PaPI',
-    version='0.7',
+    version='1.1',
     packages=['papi'],
     url='https://github.com/TUB-Control/PaPI',
     license='LGPL v3',

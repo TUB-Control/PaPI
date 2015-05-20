@@ -29,73 +29,148 @@ Sven Knuth, Stefan Ruppin
 __author__ = 'knuths'
 
 import sys
-import time
 import os
+import traceback
+import re
 
-from PySide.QtGui               import QMainWindow, QApplication, QFileDialog
+from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
 from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QThread
+from PySide.QtCore              import QSize, Qt, QUrl
+
+import papi.pyqtgraph as pg
+from papi.pyqtgraph import QtCore, QtGui
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
+from papi.gui.qt_new.item import PaPIMDISubWindow
+
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH
+    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
+    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
+from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
-from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER
 
-from papi.gui.gui_api import Gui_api
-from papi.gui.gui_event_processing import GuiEventProcessing
-import pyqtgraph as pg
-from pyqtgraph import QtCore
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-import cProfile
-import re
+from papi.gui.qt_new.PapiTabManger import PapiTabManger
 
-# Enable antialiasing for prettier plots
+from papi.gui.gui_management import GuiManagement
+
+from papi.gui.qt_new import get32Icon, get16Icon
+
+from multiprocessing import Queue, Process
+from papi.core import run_core_in_own_process
+
+# Disable antialiasing for prettier plots
 pg.setConfigOptions(antialias=False)
+
+def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
+    """
+    Function to call to start gui operation
+    :param CoreQueue: link to queue of core
+    :type CoreQueue: Queue
+    :param GUIQueue: queue where gui receives messages
+    :type GUIQueue: Queue
+    :param gui_id: id of gui for events
+    :type gui_id: int
+    :return:
+    """
+    app = QApplication(sys.argv)
+    gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
+    gui.run()
+    # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
+    gui.show()
+    app.exec_()
 
 
 class GUI(QMainWindow, Ui_QtNewMain):
+    """
+    Used to create the qt based PaPI gui.
 
-    def __init__(self, core_queue, gui_queue,gui_id, gui_data = None, parent=None):
+    """
+    def __init__(self, core_queue = None, gui_queue= None, gui_id = None, gui_data = None, is_parent = False, parent=None):
+        """
+        Init function
+
+        :param core_queue: Queue used to send papi events to Core
+        :param gui_queue: GUI queue which contains papi events for the gui
+        :param gui_id: Unique ID for this gui
+        :param gui_data: Contains all data for the current session
+        :param parent: parent element
+        :return:
+        """
         super(GUI, self).__init__(parent)
+        self.is_parent = is_parent
+
         self.setupUi(self)
 
-        if gui_data is None:
+
+        # Create a data structure for gui if it is missing
+        # -------------------------------------------------- #
+        if not isinstance(gui_data, DGui):
             self.gui_data = DGui()
         else:
             self.gui_data = gui_data
 
-        self.gui_api = Gui_api(self.gui_data, core_queue, gui_id)
 
-        self.gui_event_processing = GuiEventProcessing(self.gui_data, core_queue, gui_id, gui_queue)
+        # check if gui should be the parent process or core is the parent
+        # start core if gui is parent
+        # -------------------------------------------------- #
+        self.core_process = None
+        if is_parent:
+            core_queue_ref = Queue()
+            gui_queue_ref = Queue()
+            gui_id_ref = 1
+            self.core_process = Process(target = run_core_in_own_process,
+                                        args=(gui_queue_ref,core_queue_ref, gui_id_ref ))
+            self.core_process.start()
+        else:
+            if core_queue is None:
+                raise Exception('Gui started with wrong arguments')
+            if gui_queue is None:
+                raise Exception('Gui started with wrong arguments')
+            if not isinstance(gui_id, int):
+                raise Exception('Gui started with wrong arguments')
 
-        self.gui_event_processing.added_dplugin.connect(self.add_dplugin)
-        self.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
-        self.gui_event_processing.dgui_changed.connect(self.changed_dgui)
+            core_queue_ref = core_queue
+            gui_queue_ref = gui_queue
+            gui_id_ref = gui_id
 
-        self.gui_api.resize_gui.connect(self.resize_gui_window)
 
+        # Create the Tab Manager and the gui management unit #
+        # connect some signals of management to gui          #
+        # -------------------------------------------------- #
+        self.TabManager = PapiTabManger(self.widgetTabs)
+
+        self.gui_management = GuiManagement(core_queue_ref,
+                                    gui_queue_ref,
+                                    gui_id_ref,
+                                    self.TabManager,
+                                    self.get_gui_config,
+                                    self.set_gui_config)
+
+        self.TabManager.gui_api = self.gui_management.gui_api
+        self.TabManager.dGui    = self.gui_management.gui_data
+
+        self.gui_management.gui_event_processing.added_dplugin.connect(self.add_dplugin)
+        self.gui_management.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
+        self.gui_management.gui_event_processing.dgui_changed.connect(self.changed_dgui)
+        self.gui_management.gui_event_processing.plugin_died.connect(self.plugin_died)
+
+        self.gui_management.gui_api.error_occured.connect(self.error_occured)
+
+        # initialize the graphic of the gui
+        # -------------------------------------------------- #
+        self.gui_graphic_init()
+
+
+    def gui_graphic_init(self):
         self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
-
         # set GUI size
-        size = self.size()
-        self.gui_api.gui_size_height    = size.height()
-        self.gui_api.gui_size_width     = size.width()
-
-        self.original_resize_function = self.resizeEvent
-        self.resizeEvent = self.user_window_resize
-
         self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
-
-        self.core_queue = core_queue
-        self.gui_queue = gui_queue
-
-        self.gui_id = gui_id
 
         self.count = 0
 
@@ -103,7 +178,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
-        self.last_config = None
+        self.last_config = PAPI_LAST_CFG_PATH
+
+        self.in_run_mode = False
 
         # -------------------------------------
         # Create placeholder
@@ -114,137 +191,283 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create callback functions for buttons
         # -------------------------------------
         self.loadButton.clicked.connect(self.load_triggered)
-        self.saveButton.clicked.connect(self.save_triggered_thread)
-
-        # self.buttonCreatePlugin.clicked.connect(self.create_plugin)
-        # self.buttonCreateSubscription.clicked.connect(self.create_subscription)
-        # self.buttonCreatePCPSubscription.clicked.connect(self.create_pcp_subscription)
-        # self.buttonShowOverview.clicked.connect(self.ap_overview)
-        # self.buttonExit.clicked.connect(self.close)
+        self.saveButton.clicked.connect(self.save_triggered)
 
         # -------------------------------------
         # Create actions
         # -------------------------------------
-
         self.actionLoad.triggered.connect(self.load_triggered)
-        self.actionSave.triggered.connect(self.save_triggered_thread)
+        self.actionSave.triggered.connect(self.save_triggered)
 
         self.actionOverview.triggered.connect(self.show_overview_menu)
         self.actionCreate.triggered.connect(self.show_create_plugin_menu)
 
         self.actionResetPaPI.triggered.connect(self.reset_papi)
         self.actionReloadConfig.triggered.connect(self.reload_config)
+
+        self.actionRunMode.triggered.connect(self.toggle_run_mode)
+
+        self.actionReload_Plugin_DB.triggered.connect(self.reload_plugin_db)
+
+        self.actionPaPI_Wiki.triggered.connect(self.papi_wiki_triggerd)
+
+        self.actionPaPI_Doc.triggered.connect(self.papi_doc_triggerd)
+        self.actionAbout.triggered.connect(self.papi_about_triggerd)
+        self.actionAbout_Qt.triggered.connect(self.papi_about_qt_triggerd)
+
+        self.set_icons()
+
+    def set_icons(self):
         # -------------------------------------
         # Create Icons for buttons
         # -------------------------------------
-
-        load_icon = QIcon.fromTheme("document-open")
-        save_icon = QIcon.fromTheme("document-save")
-
-        # addplugin_icon = QIcon.fromTheme("list-add")
-        # close_icon = QIcon.fromTheme("application-exit")
-        # overview_icon = QIcon.fromTheme("view-fullscreen")
-        # addsubscription_icon = QIcon.fromTheme("list-add")
-
+        load_icon = get32Icon('folder')
+        save_icon = get32Icon('file_save_as')
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
-
-        self.loadButton.setIconSize(QSize(30, 30))
+        self.loadButton.setIconSize(QSize(32, 32))
         self.loadButton.setIcon(load_icon)
 
-        self.saveButton.setIconSize(QSize(30, 30))
+        self.saveButton.setIconSize(QSize(32, 32))
         self.saveButton.setIcon(save_icon)
 
-        # self.buttonCreatePlugin.setIconSize(QSize(30, 30))
-        # self.buttonCreatePlugin.setIcon(addplugin_icon)
-        #
-        # self.buttonExit.setIcon(close_icon)
-        # self.buttonExit.setIconSize(QSize(30, 30))
-        #
-        # self.buttonShowOverview.setIcon(overview_icon)
-        # self.buttonShowOverview.setIconSize(QSize(30, 30))
-        #
-        # self.buttonCreateSubscription.setIcon(addsubscription_icon)
-        # self.buttonCreateSubscription.setIconSize(QSize(30, 30))
-        #
-        # self.buttonCreatePCPSubscription.setIcon(addsubscription_icon)
-        # self.buttonCreatePCPSubscription.setIconSize(QSize(30, 30))
+        # -------------------------------------
+        # Create Icons for actions
+        # -------------------------------------
+        load_icon = get16Icon('folder')
+        save_icon = get16Icon('file_save_as')
+        exit_icon = get16Icon('cancel')
+        overview_icon = get16Icon('tree_list')
+        create_icon = get16Icon('application_add')
+        reload_icon = get16Icon('arrow_rotate_clockwise')
+        help_icon = get16Icon('help')
+        info_icon = get16Icon('information')
+        refresh_icon = get16Icon('arrow_refresh')
+        delete_icon = get16Icon('delete')
+        view_icon = get16Icon('reviewing_pane')
 
         # -------------------------------------
-        # Set Tooltipps for buttons
+        # Set Icons for actions
         # -------------------------------------
-
-        # self.buttonExit.setToolTip("Exit PaPI")
-        # self.buttonCreatePlugin.setToolTip("Add New Plugin")
-        # self.buttonCreateSubscription.setToolTip("Create New Subscription")
-        # self.buttonCreatePCPSubscription.setToolTip("Create New PCP Subscription")
-        #
-        # self.buttonShowOverview.setToolTip("Show Overview")
+        self.actionLoad.setIcon(load_icon)
+        self.actionSave.setIcon(save_icon)
+        self.actionExit.setIcon(exit_icon)
+        self.actionOverview.setIcon(overview_icon)
+        self.actionCreate.setIcon(create_icon)
+        self.actionReload_Plugin_DB.setIcon(reload_icon)
+        self.actionReloadConfig.setIcon(reload_icon)
+        self.actionPaPI_Wiki.setIcon(help_icon)
+        self.actionPaPI_Doc.setIcon(help_icon)
+        self.actionAbout.setIcon(info_icon)
+        self.actionAbout_Qt.setIcon(info_icon)
+        self.actionAbout_PySide.setIcon(info_icon)
+        self.actionResetPaPI.setIcon(delete_icon)
+        self.actionRunMode.setIcon(view_icon)
 
         # -------------------------------------
-        # Set TextName to ''
+        # Set Icons visible in menu
         # -------------------------------------
+        self.actionLoad.setIconVisibleInMenu(True)
+        self.actionSave.setIconVisibleInMenu(True)
+        self.actionExit.setIconVisibleInMenu(True)
+        self.actionOverview.setIconVisibleInMenu(True)
+        self.actionCreate.setIconVisibleInMenu(True)
+        self.actionReload_Plugin_DB.setIconVisibleInMenu(True)
+        self.actionReloadConfig.setIconVisibleInMenu(True)
+        self.actionPaPI_Wiki.setIconVisibleInMenu(True)
+        self.actionPaPI_Doc.setIconVisibleInMenu(True)
+        self.actionAbout.setIconVisibleInMenu(True)
+        self.actionAbout_Qt.setIconVisibleInMenu(True)
+        self.actionAbout_PySide.setIconVisibleInMenu(True)
+        self.actionResetPaPI.setIconVisibleInMenu(True)
+        self.actionRunMode.setIconVisibleInMenu(True)
 
-        # self.buttonExit.setText('')
-        # self.buttonCreatePlugin.setText('')
-        # self.buttonCreateSubscription.setText('')
-        # self.buttonShowLicence.setText('')
-        # self.buttonShowOverview.setText('')
+    def get_gui_config(self):
 
+        actTab = {}
+        actTab['active'] = {}
+        actTab['active']['value'] = str(self.TabManager.get_currently_active_tab())
+
+        tabs = {}
+        tab_dict = self.TabManager.get_tabs_by_uname()
+        for tab in tab_dict:
+            tabOb = tab_dict[tab]
+            tabs[tab]= {}
+            tabs[tab]['background'] = tabOb.background
+            tabs[tab]['position'] = str(self.TabManager.getTabPosition_by_name(tab))
+
+        size = {}
+        size['x'] = {}
+        size['x']['value'] = str(self.size().width())
+        size['y'] = {}
+        size['y']['value'] = str(self.size().height())
+
+        cfg = {}
+        cfg['activeTab'] = actTab
+        cfg['tabs'] = tabs
+        cfg['size'] = size
+
+        return cfg
+
+    def set_gui_config(self, cfg):
+        #################
+        # Cfgs for Tabs #
+        #################
+        if 'tabs' in cfg:
+            tabList = {}
+            for tab in cfg['tabs']:
+                # Tab Name
+                name = tab
+
+                # Tab details
+                tabDetails = cfg['tabs'][tab]
+
+                # check for background
+                if 'background' in tabDetails:
+                    bg = tabDetails['background']
+                    if bg != 'default':
+                        self.TabManager.set_background_for_tab_with_name(name,bg)
+                else:
+                    bg = None
+
+                # check for position
+                if 'position' in tabDetails:
+                    pos = int(tabDetails['position'])
+                else:
+                    if len(list(tabList.keys())) > 1:
+                        pos = max(list(tabList.keys()))+1
+                    else:
+                        pos = 0
+
+                tabList[pos] = [name, bg]
+
+            # sort tabs acoriding to positions
+            keys = list(tabList.keys())
+            keys.sort()
+            for position in keys:
+                name = tabList[position][0]
+                bg = tabList[position][1]
+                tabOb = self.TabManager.add_tab(name)
+                self.TabManager.set_background_for_tab_with_name(name,bg)
+
+        if 'activeTab' in cfg:
+            if 'value' in cfg['activeTab']['active']:
+                self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
+
+        #################
+        # windows size: #
+        #################
+        if 'size' in cfg:
+            w = int(cfg['size']['x']['value'])
+            h = int(cfg['size']['y']['value'])
+            self.resize_gui_window(w,h)
+
+    def reload_plugin_db(self):
+        """
+        This Callback function will reload the plugin list of the plugin manager
+
+        :return:
+        """
+        self.gui_management.plugin_manager.collectPlugins()
 
     def run(self):
+        """
+
+
+        :return:
+        """
         # create a timer and set interval for processing events with working loop
-        
-        QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
+
+        #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
+        self.workingTimer = QtCore.QTimer(self)
+        self.workingTimer.timeout.connect(lambda: self.gui_management.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
+        self.workingTimer.start(GUI_WOKRING_INTERVAL)
 
 
-    def dbg(self):
-        print("Action")
 
-    def menu_license(self):
-        pass
-
-    def menu_quit(self):
-        pass
 
     def show_create_plugin_menu(self):
-        self.create_plugin_menu = CreatePluginMenu(self.gui_api)
+        """
+
+
+        :return:
+        """
+        self.create_plugin_menu = CreatePluginMenu(self.gui_management.gui_api,
+                                                   self.TabManager,
+                                                   self.gui_management.plugin_manager )
 
         self.create_plugin_menu.show()
-        # self.create_plugin_menu.raise_()
-        # self.create_plugin_menu.activateWindow()
-
-        # del self.create_plugin_menu
-        #
-        # self.create_plugin_menu = None
 
     def show_overview_menu(self):
-        self.overview_menu = OverviewPluginMenu(self.gui_api)
+        """
+        Used to show the overview menu.
+
+        :return:
+        """
+        self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api)
         self.overview_menu.show()
 
     def load_triggered(self):
+        """
+        Used to start the 'load config' dialog.
 
-        fileName = QFileDialog.getOpenFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE, self.tr("PaPI-Cfg (*.xml)"))
+        :return:
+        """
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.last_config = fileName[0]
-            self.gui_api.do_load_xml(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+        dialog.setWindowTitle("Load Configuration")
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.last_config = fileNames[0]
+                self.gui_management.gui_api.do_load_xml(fileNames[0])
 
     def save_triggered(self):
+        """
+        Used to start the 'save config' dialog.
 
-        fileName = QFileDialog.getSaveFileName(self,
-            self.tr("PaPI-Cfg"), CONFIG_DEFAULT_FILE , self.tr("PaPI-Cfg (*.xml)"))
+        :return:
+        """
+        fileNames = ''
 
-        if fileName[0] != '':
-            self.gui_api.do_save_xml_config(fileName[0])
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+        dialog.setWindowTitle("Save Configuration")
+        dialog.setAcceptMode(QFileDialog.AcceptSave)
 
-    def save_triggered_thread(self):
-        QtCore.QTimer.singleShot(0, self.save_triggered)
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.gui_management.gui_api.do_save_xml_config(fileNames[0])
 
     def closeEvent(self, *args, **kwargs):
-        self.gui_api.do_close_program()
+        """
+        Handle close event.
+        Saves current session as 'papi/last_active_papi.xml'
+        Closes all opened windows.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        try:
+            self.gui_management.gui_api.do_save_xml_config('papi/last_active_papi.xml')
+        except Exception as E:
+            tb = traceback.format_exc()
+
+        self.gui_management.gui_api.do_close_program()
         if self.create_plugin_menu is not None:
             self.create_plugin_menu.close()
 
@@ -254,13 +477,36 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.close()
 
     def add_dplugin(self, dplugin):
+        """
+        Callback function called by 'DPlugin added signal'
+        Used to add a DPlugin SubWindow on the GUI if possible.
 
+        :param dplugin:
+        :return:
+        """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+
+            # sub_window_ori = dplugin.plugin.get_sub_window()
+            #
+            # dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
+            # dplugin.plugin.set_widget_for_internal_usage(sub_window_ori.widget())
+
             sub_window = dplugin.plugin.get_sub_window()
-            self.widgetArea.addSubWindow(sub_window)
-            sub_window.show()
-            size_re = re.compile(r'([0-9]+)')
+
             config = dplugin.startup_config
+            tab_name = config['tab']['value']
+            if tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
+            else:
+                self.log.printText(1,'add dplugin: no tab with tab_id of dplugin')
+                area = self.TabManager.add_tab(tab_name)
+
+            area.addSubWindow(sub_window)
+
+            sub_window.show()
+
+            size_re = re.compile(r'([0-9]+)')
+
             pos = config['position']['value']
             window_pos = size_re.findall(pos)
             sub_window.move(int(window_pos[0]), int(window_pos[1]))
@@ -273,25 +519,102 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.refresh_action(dplugin)
 
     def remove_dplugin(self, dplugin):
+        """
+        Callback function called by 'DPlugin removed signal'
+        Used to removed a DPlugin SubWindow from the GUI if possible.
+
+        :param dplugin:
+        :return:
+        """
         if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
-            self.widgetArea.removeSubWindow(dplugin.plugin.get_sub_window())
+            config = dplugin.plugin.config
+            tab_name = config['tab']['value']
+            if tab_name in self.TabManager.get_tabs_by_uname():
+                tabOb = self.TabManager.get_tabs_by_uname()[tab_name]
+                tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
+                if tabOb.closeIfempty is True:
+                    if len(tabOb.subWindowList()) == 0:
+                        self.TabManager.closeTab_by_name(tabOb.name)
+
 
     def changed_dgui(self):
         if self.overview_menu is not None:
             self.overview_menu.refresh_action()
 
+    def plugin_died(self, dplugin, e, msg):
+        dplugin.state = PLUGIN_STATE_STOPPED
+
+        self.gui_management.gui_api.do_stopReset_plugin_uname(dplugin.uname)
+
+        errMsg = QtGui.QMessageBox(self)
+        errMsg.setFixedWidth(650)
+        errMsg.setWindowTitle("Plugin: " + dplugin.uname + " // " + str(e))
+        errMsg.setText("Error in plugin" + dplugin.uname + " // " + str(e))
+        errMsg.setDetailedText(str(msg))
+        errMsg.setWindowModality(Qt.NonModal)
+        errMsg.show()
+
+    def error_occured(self, title, msg, detailed_msg):
+
+        errMsg = QtGui.QMessageBox(self)
+        errMsg.setFixedWidth(650)
+        errMsg.setWindowTitle(title)
+        errMsg.setText(str(msg))
+        errMsg.setDetailedText(str(detailed_msg))
+        errMsg.setWindowModality(Qt.NonModal)
+        errMsg.show()
+
+    def toggle_run_mode(self):
+        if self.in_run_mode:
+            self.in_run_mode = False
+            self.loadButton.show()
+            self.saveButton.show()
+            self.menubar.setHidden(False)
+            self.toogle_lock()
+
+        elif not self.in_run_mode:
+            self.in_run_mode = True
+            self.loadButton.hide()
+            self.saveButton.hide()
+            self.menubar.hide()
+            self.toogle_lock()
+
+    def toogle_lock(self):
+
+        if self.in_run_mode:
+            for tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
+
+                windowsList = area.subWindowList()
+
+                for window in windowsList:
+
+                    #window.setAttribute(Qt.WA_NoBackground)
+
+                    #window.setAttribute(Qt.WA_NoSystemBackground)
+                    #window.setAttribute(Qt.WA_TranslucentBackground)
+                    #window.set_movable(False)
+                    window.setMouseTracking(False)
+                    window.setWindowFlags(~Qt.WindowMinMaxButtonsHint & (Qt.CustomizeWindowHint | Qt.WindowTitleHint))
+
+        if not self.in_run_mode:
+            for tab_name in self.TabManager.get_tabs_by_uname():
+                area = self.TabManager.get_tabs_by_uname()[tab_name]
+
+                windowsList = area.subWindowList()
+
+                for window in windowsList:
+                    #window.set_movable(True)
+                    window.setMouseTracking(True)
+                    window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            if self.in_run_mode:
+                self.toggle_run_mode()
+
     def resize_gui_window(self, w, h):
-
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
-        size = self.size()
-        self.gui_api.gui_size_height    = size.height()
-        self.gui_api.gui_size_width     = size.width()
-
-    def user_window_resize(self, event):
-        size = event.size()
-        self.gui_api.gui_size_width = size.width()
-        self.gui_api.gui_size_height = size.height()
-        self.original_resize_function(event)
 
 
     def reload_config(self):
@@ -301,7 +624,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if self.last_config is not None:
             self.reset_papi()
-            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_api.do_load_xml(self.last_config))
+            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
 
     def reset_papi(self):
         """
@@ -311,27 +634,28 @@ class GUI(QMainWindow, Ui_QtNewMain):
         h = GUI_DEFAULT_HEIGHT
         w = GUI_DEFAULT_WIDTH
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
-        self.gui_api.do_reset_papi()
 
-def startGUI(CoreQueue, GUIQueue,gui_id):
-    """
-    Function to call to start gui operation
-    :param CoreQueue: link to queue of core
-    :type CoreQueue: Queue
-    :param GUIQueue: queue where gui receives messages
-    :type GUIQueue: Queue
-    :param gui_id: id of gui for events
-    :type gui_id: int
-    :return:
-    """
-    app = QApplication(sys.argv)
-    gui = GUI(CoreQueue, GUIQueue,gui_id)
-    gui.run()
+        self.TabManager.set_all_tabs_to_close_when_empty(True)
+        self.TabManager.close_all_empty_tabs()
 
-#   cProfile.runctx('gui.run()', globals(), locals())
+        self.gui_management.gui_api.do_reset_papi()
 
-    gui.show()
-    app.exec_()
+
+
+    def papi_wiki_triggerd(self):
+        QDesktopServices.openUrl(QUrl("https://github.com/TUB-Control/PaPI/wiki", QUrl.TolerantMode))
+
+    def papi_doc_triggerd(self):
+        QDesktopServices.openUrl(QUrl("http://tub-control.github.io/PaPI/", QUrl.TolerantMode))
+
+    def papi_about_triggerd(self):
+        QtGui.QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
+
+    def papi_about_qt_triggerd(self):
+        QtGui.QMessageBox.aboutQt(self)
+
+
+
 
 def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     """

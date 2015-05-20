@@ -25,38 +25,38 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Sven Knuth
 """
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
 
 __author__ = 'knuths'
 
-from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
-from PySide.QtGui import QDialog, QLabel, QFormLayout, QLineEdit, QRegExpValidator, QCheckBox, QFileDialog
-from papi.gui.qt_new.custom import FileLineEdit
-
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST
-from PySide.QtCore import *
-from PySide import QtGui
-import PySide
-from yapsy.PluginManager import PluginManager
 import operator
+
+from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox, QComboBox
+from PySide.QtCore import *
+
+from papi.ui.gui.qt_new.create_dialog import Ui_CreatePluginDialog
+from papi.gui.qt_new.custom import FileLineEdit, ColorLineEdit
+
+from papi.constants import GUI_DEFAULT_TAB
 
 class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
-    def __init__(self, gui_api, parent=None):
+    def __init__(self, gui_api, TabManager, parent=None):
         super(CreatePluginDialog, self).__init__(parent)
         self.setupUi(self)
         self.cfg = None
         self.configuration_inputs = {}
         self.gui_api = gui_api
+        self.TabManager = TabManager
 
 
-    def set_plugin(self, plugin):
-        startup_config = plugin.plugin_object.get_startup_configuration()
+    def set_plugin(self, plugin_info):
+        startup_config = plugin_info.plugin_object.get_startup_configuration()
         self.cfg = startup_config
-        self.plugin_name = plugin.name
-        self.plugin_type = plugin.plugin_object.get_type()
+        self.plugin_name = plugin_info.name
+        self.plugin_type = plugin_info.plugin_object.get_type()
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
+
 
     def accept(self):
 
@@ -64,15 +64,21 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
         for attr in self.configuration_inputs:
 
-           if isinstance(self.configuration_inputs[attr], QCheckBox):
+            if isinstance(self.configuration_inputs[attr], QCheckBox):
 
                 if self.configuration_inputs[attr].isChecked():
                     config[attr]['value'] = '1'
                 else:
                     config[attr]['value'] = '0'
 
-           if isinstance(self.configuration_inputs[attr], QLineEdit):
+            if isinstance(self.configuration_inputs[attr], QLineEdit):
                 config[attr]['value'] = self.configuration_inputs[attr].text()
+
+            if isinstance(self.configuration_inputs[attr], ColorLineEdit):
+                config[attr]['value'] = self.configuration_inputs[attr].text()
+
+            if isinstance(self.configuration_inputs[attr], QComboBox):
+                 config[attr]['value'] = self.configuration_inputs[attr].currentText()
 
         if not self.gui_api.do_test_name_to_be_unique(config['uname']['value']) :
             self.configuration_inputs['uname'].setStyleSheet("QLineEdit  { border : 2px solid red;}")
@@ -109,7 +115,9 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             if 'display_text' in startup_config['uname'].keys():
                 display_text = startup_config['uname']['display_text']
 
-            uname = self.gui_api.change_uname_to_uniqe(self.plugin_name)
+            uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
+            uname = self.gui_api.change_uname_to_uniqe(uname)
+
 
             editable_field = QLineEdit(str(value))
             editable_field.setText(uname)
@@ -124,11 +132,41 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
             position += 1
 
-            startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
+        if 'tab' in startup_config.keys():
+            value = startup_config['tab']['value']
+
+            display_text = 'Tab'
+
+            if 'display_text' in startup_config['tab'].keys():
+                display_text = startup_config['tab']['display_text']
+
+            #uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
+            #uname = self.gui_api.change_uname_to_uniqe(uname)
+
+
+            editable_field = QComboBox()
+            tabs = list(self.TabManager.get_tabs_by_uname().keys())
+            if len(tabs) == 0:
+                tabs = [GUI_DEFAULT_TAB]
+            tabs.sort(key=str.lower)
+            editable_field.addItems(tabs)
+            editable_field.setObjectName('Tab' + "_comboBox")
+
+            self.formSimple.addRow(str(display_text) , editable_field)
+
+            self.configuration_inputs['tab'] = editable_field
+
+
+            #line_edit.selectAll()
+            #line_edit.setFocus()
+
+            position += 1
+
+        startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
         for attr in startup_config_sorted:
             attr = attr[0]
-            if attr != 'uname':
+            if attr != 'uname' and attr !='tab':
                 value = startup_config[attr]['value']
 
                 display_text = attr
@@ -158,6 +196,12 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
                         editable_field = FileLineEdit()
                         editable_field.setReadOnly(True)
                         editable_field.setText(value)
+
+                    if parameter_type == 'color':
+                        editable_field = ColorLineEdit()
+                        editable_field.set_default_color(startup_config[attr]['value'])
+                        #
+                        #editable_field.setText(value)
 
                 else:
                     editable_field = QLineEdit()

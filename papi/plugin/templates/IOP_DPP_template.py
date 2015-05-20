@@ -31,6 +31,7 @@ __author__ = 'control'
 # basic import for block and parameter structure
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
+from papi.data.DSignal import DSignal
 
 # one of them is not nedded!
 # delete line when you decided for iop or dpp
@@ -47,14 +48,19 @@ class IOP_DPP_template(iop_base):
         # define vars, connect to rtai .....
 
         # create a block object
-        #   self.block1 = DBlockself.__id__.,signal count,frequnce,'Blockname',['Signalname1','Signalname2'])
+        #   self.block1 = DBlock('blockName')
+
+        #signal = DSignal('signalName')
+
+        #self.block1.add_signal(signal)
+
 
         # send block list
         #   self.send_new_block_list([block1, block2, block3])
 
         # create a parameter object
-        #   self.para1 = DParameter('type','ParameterName',InitWert,RangeArray,1)
-        #   self.para2 = DParameter('type','ParameterName',InitWert,RangeArray,1)
+        #   self.para1 = DParameter('ParameterName',default=0)
+        #   self.para2 = DParameter('ParameterName',default=0)
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
@@ -82,7 +88,7 @@ class IOP_DPP_template(iop_base):
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
@@ -94,8 +100,9 @@ class IOP_DPP_template(iop_base):
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         # implement execute and send new data
-        #   self.send_new_data(time_vector, [ data1 data2 ... dataN ], 'block_name')
+        #    self.send_new_data('blockName', timeVector, signals_to_send )
         # Attention: block_name has to match the name defined in start_init for the specific block
+        # signals_to_send need to be a dict with "signalName->values"
 
 
         pass
@@ -136,7 +143,8 @@ class IOP_DPP_template(iop_base):
 
     def plugin_meta_updated(self):
         """
-        Whenever the meta information is updated this function is called (if implemented).
+        Whenever the meta information is updated this function is called.
+        If this function is called there is no guarantee anymore that previous used reference are still used.
 
         :return:
         """

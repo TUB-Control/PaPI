@@ -35,11 +35,13 @@ from papi.constants import PLUGIN_PCP_IDENTIFIER
 class pcp_base(base_visual):
 
     def initiate_layer_1(self, config):
-
-        self.initiate_layer_0(config)
+        return self.initiate_layer_0(config)
 
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")
 
     def get_type(self):
         return PLUGIN_PCP_IDENTIFIER
+
+    def new_parameter_info(self, dparameter_object):
+        raise NotImplementedError("Please Implement this method")

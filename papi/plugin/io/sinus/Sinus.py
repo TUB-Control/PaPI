@@ -27,6 +27,8 @@ Stefan Ruppin
 """
 
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
+
 from papi.data.DParameter import DParameter
 from papi.plugin.base_classes.iop_base import iop_base
 
@@ -43,17 +45,30 @@ class Sinus(iop_base):
         self.f = float(config['f']['value'])
 
 
-        block1 = DBlock(None,1,10,'SinMit_f1',['t','f1_1'])
-        #block1 = self.create_new_block('SinMit_f1', ['t', 'f1_1'], ['numpy_array', 'numpy_array'], 100)
-        block2 = DBlock(None,1,10,'SinMit_f2',['t','f2_1'])
-        block3 = DBlock(None,1,10,'SinMit_f3',['t','f3_1','f3_2', 'Scalar'], ['numpy_vec', 'numpy_vec', 'int'] )
+        self.block1 = DBlock('SinMit_f1')
+        signal = DSignal('f1_1')
+        signal.dname = 'f1_f1DNAME'
+        self.block1.add_signal(signal)
 
-        block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
+        self.block2 = DBlock('SinMit_f2')
+        signal = DSignal('f2_1')
+        self.block2.add_signal(signal)
 
-        self.send_new_block_list([block1, block2, block3])
+        self.block3 = DBlock('SinMit_f3')
+        signal = DSignal('f3_1')
+        self.block3.add_signal(signal)
+        signal = DSignal('f3_2')
+        self.block3.add_signal(signal)
+        signal = DSignal('f3_scalar')
+        self.block3.add_signal(signal)
 
-        self.para3 = DParameter(None,'Frequenz Block SinMit_f3', 0.6, [0,1],1, Regex='[0-9]+.[0-9]+')
-        self.para3.id = 1
+
+        #self.block4 = self.create_new_block('Sin4', ['t','f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
+
+        blockList = [self.block1, self.block2, self.block3]
+        self.send_new_block_list(blockList)
+
+        self.para3 = DParameter('Frequenz Block SinMit_f3', default= 0.3, Regex='[0-9]+.[0-9]+')
         para_l = [self.para3]
 
         self.send_new_parameter_list(para_l)
@@ -70,7 +85,7 @@ class Sinus(iop_base):
         print('Sinus resume')
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         vec = numpy.zeros( (2,self.amax))
         vec2 = numpy.zeros((2,self.amax))
         vec3 = numpy.zeros((3,self.amax))
@@ -84,9 +99,9 @@ class Sinus(iop_base):
             vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
             self.t += 0.005
 
-        self.send_new_data(vec[0], [ vec[1] ], 'SinMit_f1')
-        self.send_new_data(vec2[0], [ vec2[1] ], 'SinMit_f2')
-        self.send_new_data(vec3[0], [ vec3[1], vec3[2], 10 ], 'SinMit_f3')
+        self.send_new_data('SinMit_f1' , vec[0] , {'f1_1': vec[1] } )
+        self.send_new_data('SinMit_f2', vec2[0], {'f2_1': vec2[1]} )
+        self.send_new_data('SinMit_f3', vec3[0], {'f3_1': vec3[1], 'f3_2': vec3[2], 'f3_scalar': [10,10,10] } )
 
         time.sleep(self.amax*0.005)
 

@@ -26,28 +26,27 @@ Contributors:
 Stefan Ruppin
 """
 
-from yapsy.IPlugin import IPlugin
 from papi.data.DPlugin import DBlock
 import papi.event as Event
 from papi.exceptions.block_exceptions import Wrong_type, Wrong_length
 from papi.data.DOptionalData import DOptionalData
-
+from papi.yapsy.IPlugin import IPlugin
 
 
 class base_plugin(IPlugin):
 
 
-    def papi_init(self):
+    def papi_init(self, ):
         #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
-
+        self.__subscription_for_demux = None
 
 
 
     def get_type(self):
         raise NotImplementedError("Please Implement this method")
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise NotImplementedError("Please Implement this method")
 
     def get_configuration_base(self):
@@ -74,6 +73,9 @@ class base_plugin(IPlugin):
     def quit(self):
         raise NotImplementedError("Please Implement this method")
 
+    def set_parameter(self, parameter_name, parameter_value):
+        raise NotImplementedError("Please Implement this method")
+
     def set_parameter_internal(self, name, value):
         self.set_parameter(name, value)
 
@@ -83,33 +85,13 @@ class base_plugin(IPlugin):
     def merge_configs(self, cfg1, cfg2):
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
-    def evaluate_event_trigger(self,default):
-        if self.user_event_triggered == 'default':
-            self.EventTriggered = default
-        if self.user_event_triggered is True:
-            self.EventTriggered = True
-        if self.user_event_triggered is False:
-            self.EventTriggered = False
 
-    def set_event_trigger_mode(self, mode):
-        if mode is True or mode is False or mode == 'default':
-            self.user_event_triggered = mode
-
-    def send_new_data_old(self, data, block_name):
-        opt = DOptionalData(DATA=data)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
-        self._Core_event_queue__.put(event)
-
-    def send_parameter_change(self, data, block_name, alias):
+    def send_parameter_change(self, data, block_name):
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.is_parameter = True
         opt.block_name = block_name
-        opt.parameter_alias = alias
-        event = Event.data.NewData(self.__id__, 0, opt)
+        event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
     def create_new_block(self, name, signalNames, types, frequency):
@@ -126,7 +108,19 @@ class base_plugin(IPlugin):
 
         return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
 
-    def send_new_data(self, time_line, data, block_name):
+    def send_new_data(self, block_name, time_line, data):
+
+        dataHash = data
+        dataHash['t'] = time_line
+        opt = DOptionalData(DATA = dataHash)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt, None)
+        self._Core_event_queue__.put(event)
+
+
+    def send_new_data_old2(self, time_line, data, block_name):
         # TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name
         vec_data = []
         vec_data.append(time_line)
@@ -134,6 +128,14 @@ class base_plugin(IPlugin):
             vec_data.append(item)
 
         opt = DOptionalData(DATA=vec_data)
+        opt.data_source_id = self.__id__
+        opt.block_name = block_name
+
+        event = Event.data.NewData(self.__id__, 0, opt)
+        self._Core_event_queue__.put(event)
+
+    def send_new_data_old1(self, data, block_name):
+        opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
 
@@ -153,28 +155,29 @@ class base_plugin(IPlugin):
         event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
+    def send_delete_block(self, blockname):
+        event = Event.data.DeleteBlock(self.__id__, 0, blockname)
+        self._Core_event_queue__.put(event)
+
+    def send_delete_parameter(self, parameterName):
+        event = Event.data.DeleteParameter(self.__id__, 0, parameterName)
+        self._Core_event_queue__.put(event)
+
     def update_plugin_meta(self, dplug):
         self.dplugin_info = dplug
-
+        self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
         self.plugin_meta_updated()
 
     def plugin_meta_updated(self):
         raise NotImplementedError("Please Implement this method")
 
     def demux(self, source_id, block_name, data):
+        if self.__subscription_for_demux is None:
+           self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
 
-        returnData = {}
+        sub_object = self.__subscription_for_demux[source_id][block_name]
+        sub_signals = sub_object.signals
+        if 't' not in sub_signals:
+            sub_signals.append('t')
 
-        subcribtions = self.dplugin_info.get_subscribtions()
-        dblocksub = subcribtions[source_id][block_name]
-        if dblocksub.signals == []:
-            sig_range = range(0, len(dblocksub.dblock.signal_names_internal))
-        else:
-            sig_range = dblocksub.signals
-
-        for ind in sig_range:
-            returnData[dblocksub.dblock.signal_names_internal[ind]] = data[ind]
-
-        returnData['t'] = data[0]
-
-        return returnData
+        return dict([(i, data[i]) for i in sub_signals if i in data])

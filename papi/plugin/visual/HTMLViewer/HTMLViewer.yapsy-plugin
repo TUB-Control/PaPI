@@ -1,0 +1,11 @@
+[Core]
+Name = HTMLViewer
+Module = HTMLViewer
+
+[Documentation]
+Author = S. Ruppin
+Version = 1.0
+Website =
+Description = HTMLViewer for displaying HTML
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

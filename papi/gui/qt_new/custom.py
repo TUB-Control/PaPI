@@ -28,8 +28,9 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PySide.QtGui import QLineEdit, QFileDialog
-
+from PySide.QtGui import QLineEdit, QFileDialog, QColorDialog, QPushButton, QColor
+import os, re
+import papi.helper as ph
 
 class FileLineEdit(QLineEdit):
     def __init__(self):
@@ -41,8 +42,66 @@ class FileLineEdit(QLineEdit):
         self.file_type = type
 
     def mousePressEvent(self, event):
-        filename = QFileDialog.getOpenFileName(self,
-            self.tr("File"), "./", self.tr(self.file_type))
 
-        if len(filename[0]) > 0:
-            self.setText(filename[0])
+        fileNames = ''
+
+        path, file = os.path.split(self.text())
+
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.AnyFile)
+        dialog.setNameFilter( self.tr(self.file_type))
+        dialog.setDirectory(path)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                self.setText(fileNames[0])
+
+
+class ColorLineEdit(QPushButton):
+    def __init__(self):
+        super(ColorLineEdit, self).__init__()
+        self.clicked.connect(self.open_color_picker)
+        self.color_picker = QColorDialog()
+
+    def set_default_color(self, color_string):
+
+        #self.setStyleSheet("filter: invert(100%)")
+        self.setText(color_string)
+
+
+        color_inverse = ph.get_color_by_string(color_string, inverse=True)
+        color_string_inverse = self.__get_string_by_color(color_inverse)
+
+        self.setStyleSheet("\
+                QPushButton {   \
+                    border : 1px outset black;  \
+                    background-color: rgb" + color_string + " ;color: rgb" + color_string_inverse + ";    \
+                }   \
+                QPushButton:checked{\
+                    background-color: rgb" + color_string + "; \
+                    border-style: outset;  \
+                } \
+                QPushButton:hover{  \
+                    background-color: rgb " + color_string + "; \
+                    border-style: solid;  \
+                }  \
+                ");
+
+    def open_color_picker(self):
+        color = self.color_picker.getColor()
+
+        if color.isValid():
+
+            color_string = self.__get_string_by_color(color)
+            self.set_default_color(color_string)
+
+        pass
+
+    def __get_string_by_color(self, color):
+
+        color_string = '(' + str(color.red()) + ',' + str(color.green()) + ',' + str(color.blue()) + ')'
+
+        return color_string

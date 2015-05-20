@@ -29,17 +29,28 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLineEdit
+from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
 from PySide import QtCore
+from PySide.QtCore import Qt
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
+from papi.data.DParameter import DParameter
+
+import papi.constants as pc
+
 
 class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock(self.__id__, 1, 1, 'Parameter_1', ['Parameter'])
+        block = DBlock('SliderBlock')
+        signal = DSignal('SliderParameter1')
+        block.add_signal(signal)
+
         self.send_new_block_list([block])
         self.set_widget_for_internal_usage(self.create_widget())
+
+        return True
 
     def create_widget(self):
         self.central_widget = QWidget()
@@ -48,26 +59,50 @@ class Slider(pcp_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
+
+
+        self.value_max = float(self.config['upper_bound']['value'])
+        self.value_min = float(self.config['lower_bound']['value'])
+        self.tick_count = float(self.config['step_count']['value'])
+        self.init_value = float(self.config['value_init']['value'])
+
+
+        self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
+
         self.slider.setMinimum(0)
-        self.slider.setMaximum(100)
-        self.slider.setSingleStep(1)
+        self.slider.setMaximum(self.tick_count-1)
 
         self.slider.setOrientation(QtCore.Qt.Horizontal)
 
-        self.text_field = QLineEdit()
-        self.text_field.setReadOnly(True)
-        self.text_field.text = self.config['default']['value']
+        self.text_field = QLabel()
+        self.text_field.setMinimumWidth(25)
+        self.text_field.setText(str(self.init_value))
+
+        init_value = (self.init_value - self.value_min)/self.tick_width
+        init_value = round(init_value,0)
+        self.slider.setValue(init_value)
         self.layout = QHBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
         self.layout.addWidget(self.text_field)
 
+        self.slider.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.slider.customContextMenuRequested.connect(self.show_context_menu)
+
+        self.central_widget.keyPressEvent = self.key_event
+
         return self.central_widget
 
+    def show_context_menu(self, pos):
+        gloPos = self.slider.mapToGlobal(pos)
+        self.cmenu = self.create_control_context_menu()
+        self.cmenu.exec_(gloPos)
+
     def value_changed(self, change):
-        cur_value = change/100
-        self.text_field.setText(str(cur_value))
-        self.send_parameter_change(cur_value, 'Parameter_1', 'TESTALIAS')
+        val = change * self.tick_width + self.value_min
+        val = round(val, 8)
+        self.text_field.setText(str(val))
+        self.send_parameter_change(val, 'SliderBlock')
 
     def clicked(self):
         pass
@@ -77,11 +112,53 @@ class Slider(pcp_base):
 
     def get_plugin_configuration(self):
         config = {
-            'default': {
-                'value': '1'
-            }
-        }
+            'lower_bound': {
+                'value': '0.0'
+                },
+            'upper_bound': {
+                'value': '1.0'
+                },
+            'step_count': {
+                'value': '11',
+                'regex': pc.REGEX_SINGLE_INT,
+                },
+            'size': {
+                'value': "(150,75)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+                },
+            'value_init': {
+                    'value': 0,
+                    'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
+                    'tooltip': 'Used as initial value for the Slider'
+            },
+            'name': {
+                'value': 'PaPI Slider',
+                'tooltip': 'Used for window title'
+            }}
         return config
+
+    def key_event(self, event):
+
+        if event.key() == Qt.Key_Plus:
+            self.slider.setValue(self.slider.value() + 1)
+
+        if event.key() == Qt.Key_Minus:
+            self.slider.setValue(self.slider.value() - 1)
 
     def quit(self):
         pass
+
+    def new_parameter_info(self, dparameter_object):
+        if isinstance(dparameter_object, DParameter):
+            value = dparameter_object.default
+            self.text_field.setText(str(value))
+            init_value = (value - self.value_min)/self.tick_width
+            init_value = round(init_value,0)
+
+            self.slider.valueChanged.disconnect()
+            self.slider.sliderPressed.disconnect()
+            self.slider.setValue(init_value)
+            self.slider.valueChanged.connect(self.value_changed)
+            self.slider.sliderPressed.connect(self.clicked)

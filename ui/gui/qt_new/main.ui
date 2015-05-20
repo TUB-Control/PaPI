@@ -35,17 +35,17 @@
         </item>
        </layout>
       </item>
-      <item>
-       <widget class="QMdiArea" name="widgetArea">
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="widgetTabs">
+      <property name="contextMenuPolicy">
+       <enum>Qt::DefaultContextMenu</enum>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -58,15 +58,22 @@
      <height>25</height>
     </rect>
    </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
    <widget class="QMenu" name="menuPaPI">
     <property name="title">
      <string>PaPI</string>
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
-    <addaction name="actionExit"/>
     <addaction name="actionReloadConfig"/>
     <addaction name="actionResetPaPI"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuPlugin">
     <property name="title">
@@ -74,9 +81,29 @@
     </property>
     <addaction name="actionOverview"/>
     <addaction name="actionCreate"/>
+    <addaction name="separator"/>
+    <addaction name="actionReload_Plugin_DB"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionRunMode"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionPaPI_Wiki"/>
+    <addaction name="actionPaPI_Doc"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
    <addaction name="menuPaPI"/>
    <addaction name="menuPlugin"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
@@ -112,6 +139,46 @@
   <action name="actionResetPaPI">
    <property name="text">
     <string>ResetPaPI</string>
+   </property>
+  </action>
+  <action name="actionRunMode">
+   <property name="text">
+    <string>RunMode</string>
+   </property>
+  </action>
+  <action name="actionSetBackground">
+   <property name="text">
+    <string>SetBackground</string>
+   </property>
+  </action>
+  <action name="actionPaPI_Wiki">
+   <property name="text">
+    <string>PaPI Wiki</string>
+   </property>
+  </action>
+  <action name="actionPaPI_Doc">
+   <property name="text">
+    <string>PaPI Doc</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionAbout_PySide">
+   <property name="text">
+    <string>About PySide</string>
+   </property>
+  </action>
+  <action name="actionReload_Plugin_DB">
+   <property name="text">
+    <string>Reload DB</string>
    </property>
   </action>
  </widget>

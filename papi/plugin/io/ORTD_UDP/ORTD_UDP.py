@@ -25,6 +25,21 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Christian Klauer
 Stefan Ruppin
+
+
+
+
+IDEAS
+-----
+
+- The ProtocolConfig.json may contain information about how to place indivual elements in the GUI
+- How to handle multiple instances and dynamically created datasources?
+- Show a separated screen/page in the gui for each datasource; something like tabs?
+- initial Configuration and later updates via UDP
+
+
+
+
 """
 
 __author__ = 'CK'
@@ -32,12 +47,12 @@ __author__ = 'CK'
 from papi.plugin.base_classes.iop_base import iop_base
 
 from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter
 
 import numpy as np
 
 import threading
-import pickle
 
 import os
 
@@ -45,7 +60,10 @@ import socket
 
 import struct
 import json
+import time
+import pickle
 
+from threading import Timer
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
@@ -69,12 +87,12 @@ class ORTD_UDP(iop_base):
                 'advanced': '1'
             },
             'Cfg_Path': {
-                'value': 'papi/plugin/io/ORTD_UDP/DataSourceExample/ProtocollConfig.json',
+                'value': '/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfig.json',
                 'type': 'file',
                 'advanced': '0'
             },
             'SeparateSignals': {
-                'value': '1',
+                'value': '0',
                 'advanced': '1'
             }
         }
@@ -88,80 +106,55 @@ class ORTD_UDP(iop_base):
         self.HOST = config['address']['value']
         self.SOURCE_PORT = int(config['source_port']['value'])
         self.OUT_PORT = int(config['out_port']['value'])
+
+        self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
+
         self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_parameter.setblocking(1)
 
-        # Load protocol config.
-        path = config['Cfg_Path']['value']
-        f = open(path, 'r')
-        self.ProtocolConfig = json.load(f)
-
-        self.Sources = self.ProtocolConfig['SourcesConfig']
-        self.Parameters = self.ProtocolConfig['ParametersConfig']
 
 
+        self.ControlBlock = DBlock('ControllerSignals')
+        self.ControlBlock.add_signal(DSignal('ControlSignalReset'))
+        self.ControlBlock.add_signal(DSignal('ControlSignalCreate'))
+        self.ControlBlock.add_signal(DSignal('ControlSignalSub'))
+        self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
+        self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
+        self.ControlBlock.add_signal(DSignal('ActiveTab'))
+        self.send_new_block_list([self.ControlBlock])
 
-        # For each group:: loop through all sources (=signals) in the group and register the signals
-        # Register signals
-
-
-        if self.separate == 1:
-
-            self.blocks = {}
-
-            # sort hash keys for usage in right order!
-            keys = list(self.Sources.keys())
-            keys.sort()
-            for key in keys:
-                Source = self.Sources[key]
-                self.blocks[int(key)] = DBlock(None, 1, 2, 'SourceGroup' + str(key), ['t', Source['SourceName']])
-
-            self.send_new_block_list(list(self.blocks.values()))
-
-        else:
-            names = ['t']
-
-            keys = list(self.Sources.keys())
-            keys.sort()
-
-            for key in keys:
-                Source = self.Sources[key]
-                names.append(Source['SourceName'])
-
-            self.block1 = DBlock(None, 1, 2, 'SourceGroup0', names)
-            self.send_new_block_list([self.block1])
-
-
-
-        # Register parameters
-        self.Parameter_List = []
-
-        for Pid in self.Parameters:
-            Para = self.Parameters[Pid]
-            para_name = Para['ParameterName']
-            val_count = Para['NValues']
-            opt_object = OptionalObject(Pid, val_count)
-            Parameter = DParameter('', para_name, 0, 0, OptionalObject=opt_object)
-            self.Parameter_List.append(Parameter)
-
-        self.send_new_parameter_list(self.Parameter_List)
 
         self.t = 0
 
         self.set_event_trigger_mode(True)
 
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_recv.bind((self.HOST, self.SOURCE_PORT))
+        self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+        print("ORTD listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
         self.sock_recv.settimeout(1)
 
         self.thread_goOn = True
         self.lock = threading.Lock()
-        # self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT) )
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
+
+        self.blocks = {}
+        self.Sources = {}
+
+        self.parameters = {}
+
+        self.signal_values = {}
+
+        self.block_id = 0
+
+        self.config_complete = False
+        self.config_buffer = {}
+
+        self.timer = Timer(3,self.callback_timeout_timer)
+        self.timer_active = False
 
         return True
 
@@ -177,61 +170,26 @@ class ORTD_UDP(iop_base):
         self.thread.start()
 
     def thread_execute(self):
-        goOn = True
+        time.sleep(1)
+        self.request_new_config_from_ORTD()
 
+        goOn = True
+        newData = False
         signal_values = {}
         while goOn:
             try:
-                rev = self.sock_recv.recv(1600)
+                rev = self.sock_recv.recv(20000) # not feasible for network connection other than loopback
             except socket.timeout:
                 # print('timeout')
-                pass
+                newData = False
+
             except socket.error:
                 print('ORTD got socket error')
             else:
-                # unpack header
-                SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
-                if SourceId == -1:
-                    # unpack group ID
-                    GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
-                    self.t += 1.0
+               newData = True
 
-                    keys = list(signal_values.keys())
-                    keys.sort()
-
-                    if self.separate == 1:
-                        for key in keys:
-                            # signals_to_send.append(signal_values[key])
-                            Source = self.Sources[str(key)]
-                            NValues = int(Source['NValues_send'])
-                            n = len(signal_values[key])
-                            t = np.linspace(self.t, self.t + 1 - 1 / NValues, NValues)
-                            # flush data to papi
-                            self.send_new_data(t, [signal_values[key]], self.blocks[key].name)
-                    else:
-                        signals_to_send = []
-                        for key in keys:
-                            signals_to_send.append(signal_values[key])
-
-                        self.send_new_data([self.t], signals_to_send, 'SourceGroup0')
-
-                    signal_values = {}
-                else:
-                    # Received a data packet
-                    # Lookup the Source behind the given SourceId
-                    Source = self.Sources[str(SourceId)]
-                    NValues = int(Source['NValues_send'])
-
-                    # Read NVales from the received packet
-                    val = []
-                    for i in range(NValues):
-                        # TODO: why try except?
-                        try:
-                            val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
-                        except:
-                            val.append(0)
-
-                    signal_values[SourceId] = val
+            if newData:
+               self.process_received_package(rev)
 
             # check if thread should go on
             self.lock.acquire()
@@ -240,16 +198,240 @@ class ORTD_UDP(iop_base):
         # Thread ended
         self.sock_recv.close()
 
-    def execute(self, Data=None, block_name=None):
+    def process_received_package(self, rev):
+        SenderId, Counter, SourceId = struct.unpack_from('<iii', rev)
+
+        if SourceId == -1 and len(self.blocks) > 0:
+            # data stream finished
+            self.process_finished_action(SourceId, rev)
+            self.signal_values = {}
+
+        if SourceId >= 0 and len(self.blocks) > 0:
+            # got data stream
+            self.process_data_stream(SourceId, rev)
+
+        if SourceId == -2:
+            # new config in ORTD available
+            # send trigger to get new config
+            self.request_new_config_from_ORTD()
+            self.config_complete = False
+            self.config_buffer = {}
+
+        if SourceId == -4:
+            # new configItem
+            # receive new config item and execute cfg in PaPI
+
+            # unpack package
+            i = 16 # Offset: 4 ints
+            unp = ''
+            while i < len(rev):
+                unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
+                i += 1
+
+            self.config_buffer[int(Counter)] = unp
+
+            # Check counter key series for holes
+            counters = list(self.config_buffer.keys())
+            counters.sort()
+            i = 1
+            config_file = ''
+            self.config_complete = True
+            for c in counters:
+                if i == c:
+                    config_file += self.config_buffer[c]
+                    i += 1
+                else:
+                    self.config_complete = False
+                    break
+
+
+            if self.config_complete:
+                if not self.check_and_process_cfg(config_file):
+                    self.start_timeout_timer()
+                else:
+                    self.stop_timeout_timer()
+
+            else:
+                self.start_timeout_timer()
+
+
+    def start_timeout_timer(self):
+        if not self.timer_active:
+            self.timer = Timer(3,self.callback_timeout_timer)
+            self.timer.start()
+            self.timer_active = True
+        else:
+            self.timer.cancel()
+            self.timer = Timer(3,self.callback_timeout_timer)
+            self.timer.start()
+
+    def stop_timeout_timer(self):
+        if self.timer_active:
+            self.timer.cancel()
+            self.timer_active = False
+
+    def callback_timeout_timer(self):
+        print('ORTD_PLUGIN: Config timeout appeard, requesting a new config')
+        self.timer_active = False
+
+        self.config_buffer = {}
+        self.request_new_config_from_ORTD()
+
+    def request_new_config_from_ORTD(self):
+        Counter = 1
+        data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
+        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
+        #print("Data send to ", self.HOST, ":", self.OUT_PORT)
+
+    def check_and_process_cfg(self, config_file):
+        try:
+            # config completely received
+            # extract new configuration
+            cfg = json.loads(config_file)
+            
+            print(config_file)
+
+            ORTDSources, ORTDParameters, plToCreate, \
+            plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
+
+            self.update_block_list(ORTDSources)
+            self.update_parameter_list(ORTDParameters)
+
+            self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
+
+            return True
+        except ValueError:
+            return False
+
+
+    def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
+        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
+                                                              'ControlSignalCreate':None,
+                                                              'ControlSignalSub':None,
+                                                              'ControllerSignalParameter':None,
+                                                              'ControllerSignalClose':None,
+                                                              'ActiveTab': None })
+
+        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
+                                                              'ControlSignalCreate':toCreate,
+                                                              'ControlSignalSub':subs,
+                                                              'ControllerSignalParameter':paraConnections,
+                                                              'ControllerSignalClose':toClose,
+                                                              'ActiveTab': activeTab})
+
+    def parse_json_stream(self,stream):
+        decoder = json.JSONDecoder()
+        while stream:
+            obj, idx = decoder.raw_decode(stream)
+            yield obj
+            stream = stream[idx:].lstrip()
+
+    def update_parameter_list(self, ORTDParameter):
+
+        newList ={}
+
+        for para_id in ORTDParameter:
+            para_name = ORTDParameter[para_id]['ParameterName']
+            if para_name in self.parameters:
+                para_object = self.parameters.pop(para_name)
+            else:
+                val_count = int(ORTDParameter[para_id]['NValues'])
+                opt_object = OptionalObject(para_id, val_count)
+
+                if "initial_value" in ORTDParameter[para_id]:
+                    val = ORTDParameter[para_id]['initial_value']
+                    if val_count > 1:
+                        val = val[1:-1]
+                        init_value = list(map(float,val.split(',')))
+                    else:
+                        init_value = float(val)
+                else:
+                    init_value = 0
+
+                para_object = DParameter(para_name, default=init_value, OptionalObject=opt_object)
+                self.send_new_parameter_list([para_object])
+
+
+            newList[para_name] = para_object
+
+        toDeleteDict = self.parameters
+        self.parameters = newList
+
+        for par in toDeleteDict:
+            self.send_delete_parameter(par)
+
+
+    def update_block_list(self,ORTDSources):
+        #self.block_id = self.block_id +1
+        #newBlock = DBlock('SourceGroup'+str(self.block_id))
+        #self.blocks['SourceGroup'+str(self.block_id)] = newBlock
+        if 'SourceGroup0' in self.blocks:
+            self.send_delete_block('SourceGroup0')
+        newBlock = DBlock('SourceGroup0')
+        self.blocks['SourceGroup0'] = newBlock
+        self.Sources = ORTDSources
+        keys = list(self.Sources.keys())
+        for key in keys:
+            Source = self.Sources[key]
+            sig_name = Source['SourceName']
+            newBlock.add_signal(DSignal(sig_name))
+
+        self.send_new_block_list([newBlock])
+
+        # Remove BLOCKS
+        #if 'SourceGroup'+str(self.block_id-1) in self.blocks:
+            #self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
+
+    def process_data_stream(self, SourceId, rev):
+        # Received a data packet
+        # Lookup the Source behind the given SourceId
+        if str(SourceId) in self.Sources:
+            Source = self.Sources[str(SourceId)]
+            NValues = int(Source['NValues_send'])
+
+            # Read NVales from the received packet
+            val = []
+            for i in range(NValues):
+                try:
+                    val.append(struct.unpack_from('<d', rev, 3 * 4 + i * 8)[0])
+                except:
+                    val.append(0)
+
+            self.signal_values[SourceId] = val
+
+        else:
+            print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
+
+    def process_finished_action(self, SourceId, rev):
+        if SourceId == -1:
+            # unpack group ID
+            # GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
+            self.t += 1.0
+
+            keys = list(self.signal_values.keys())
+            keys.sort()                    # REMARK: Die liste keys nur einmal sortieren; bei initialisierung
+
+            signals_to_send = {}
+            for key in keys:
+                sig_name = self.Sources[str(key)]['SourceName']
+                signals_to_send[sig_name] = self.signal_values[key]
+
+            if len( list(self.blocks.keys()) ) >0:
+                block = list(self.blocks.keys())[0]
+                if len(self.blocks[block].signals) == len(signals_to_send):
+                    self.send_new_data(block, [self.t], signals_to_send )
+
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):
-        for para in self.Parameter_List:
-            if para.name == name:
-                Pid = para.OptionalObject.ORTD_par_id
-                Counter = 111
-                data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if name in self.parameters:
+            parameter = self.parameters[name]
+            Pid = parameter.OptionalObject.ORTD_par_id
+            Counter = 111
+            data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
@@ -261,3 +443,54 @@ class ORTD_UDP(iop_base):
 
     def plugin_meta_updated(self):
         pass
+
+    def plconf(self):
+        cfg   = {}
+        subs  = {}
+        paras = {}
+        close = {}
+        if 'PaPIConfig' in self.ProtocolConfig:
+            if 'ToCreate' in self.ProtocolConfig['PaPIConfig']:
+                cfg = self.ProtocolConfig['PaPIConfig']['ToCreate']
+            if 'ToSub' in self.ProtocolConfig['PaPIConfig']:
+                subs = self.ProtocolConfig['PaPIConfig']['ToSub']
+            if 'ToControl' in self.ProtocolConfig['PaPIConfig']:
+                paras = self.ProtocolConfig['PaPIConfig']['ToControl']
+            if 'ToClose' in self.ProtocolConfig['PaPIConfig']:
+                close = self.ProtocolConfig['PaPIConfig']['ToClose']
+        return cfg, subs, paras, close
+
+    def extract_config_elements(self, configuration):
+        plToCreate   = {}
+        subscriptions  = {}
+        paraConnections = {}
+        plToClose = {}
+        ORTDSources = {}
+        ORTDParameters = {}
+        activeTab = 'PaPI-Tab'
+
+        if 'PaPIConfig' in configuration:
+            if 'ToCreate' in configuration['PaPIConfig']:
+                plToCreate = configuration['PaPIConfig']['ToCreate']
+
+            if 'ToSub' in configuration['PaPIConfig']:
+                subscriptions = configuration['PaPIConfig']['ToSub']
+
+            if 'ToControl' in configuration['PaPIConfig']:
+                paraConnections = configuration['PaPIConfig']['ToControl']
+
+            if 'ToClose' in configuration['PaPIConfig']:
+                plToClose = configuration['PaPIConfig']['ToClose']
+
+            if 'ActiveTab' in configuration['PaPIConfig']:
+                activeTab = configuration['PaPIConfig']['tab']
+
+        if 'SourcesConfig' in configuration:
+            ORTDSources = configuration['SourcesConfig']
+
+        if 'ParametersConfig' in configuration:
+            ORTDParameters = configuration['ParametersConfig']
+
+        return ORTDSources, ORTDParameters, plToCreate, plToClose, subscriptions, paraConnections, activeTab
+
+

@@ -28,16 +28,37 @@ Sven Knuth
 
 __author__ = 'control'
 
+from papi.core              import Core
+from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
+from PySide.QtGui           import  QApplication
+import platform
 import sys
-from papi.core import Core
-from papi.gui.qt_dev.gui_main import startGUI as dev_startGui
-from papi.gui.qt_new.main import startGUI as new_startGui
 
+def start_PaPI():
+    print('Plattform of the system running PaPI: ' + platform.system())
 
-def main():
-    core = Core(new_startGui)
-    core.run()
+    # start on PaPI on system running Linux
+    if platform.system() == 'Linux':
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
+        core.run()
+        return
 
+    # start on PaPI on system running Windows
+    if platform.system() == 'Windows':
+        print('Windows port is NOT ready')
+        raise Exception('Windows is not supported yet')
+        return
+
+    # start on PaPI on system running Mac OS X
+    if platform.system() == 'Darwin':
+        app = QApplication(sys.argv)
+        gui = GUI(is_parent=True)
+        gui.run()
+        gui.show()
+        app.exec_()
+        return
+
+    raise Exception('Seems like the os you are using is not supported by PaPI')
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(start_PaPI())

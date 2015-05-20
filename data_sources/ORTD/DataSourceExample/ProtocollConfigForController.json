@@ -1,0 +1,82 @@
+ {
+"SourcesConfig" : {
+    "0" : { "SourceName" : "X" , "NValues_send" : "1", "datatype" : "257"  } ,
+    "1" : { "SourceName" : "V" , "NValues_send" : "1", "datatype" : "257"  } } ,
+"ParametersConfig" : {
+    "0" : { "ParameterName" : "Oscillator input" , "NValues" : "1", "datatype" : "257"  } ,
+    "1" : { "ParameterName" : "A vectorial parameter" , "NValues" : "10", "datatype" : "257"  } ,
+    "2" : { "ParameterName" : "Test" , "NValues" : "2", "datatype" : "257"  } },
+"PaPIConfig": {
+    "ToCreate": {
+        "Plot1":{
+            "identifier": {
+                "value": "Plot"
+            },
+            "config": {
+                "x-grid": {
+                    "value": "0"
+                },
+                "size": {
+                    "value": "(300,300)"
+                },
+                "position": {
+                    "value": "(300,0)"
+                },
+                "name": {
+                    "value": "TestPlot"
+                }
+            }
+        },
+        "Butt1":{
+                "identifier": {
+                    "value": "Button"
+                },
+                "config": {
+                    "size": {
+                        "value": "(150,50)"
+                    },
+                    "position": {
+                        "value": "(600,0)"
+                    },
+                    "name": {
+                        "value": "Disturbance"
+                    }
+
+                }
+        },
+        "Butt2":{
+                "identifier": {
+                    "value": "Button"
+                },
+                "config": {
+                    "size": {
+                        "value": "(150,50)"
+                    },
+                    "position": {
+                        "value": "(600,50)"
+                    },
+                    "name": {
+                        "value": "ToDelete"
+                    }
+
+                }
+        }
+     },
+
+    "ToSub": {
+        "Plot1": {
+                "block": "SourceGroup0",
+                "signals": ["V"]
+            }
+    },
+    "ToControl": {
+        "Butt1": {
+                "block": "Click_Event",
+                "parameter" : "Oscillator input"
+            }
+    },
+    "ToClose": {
+        "Butt2": {}
+    } }
+
+}

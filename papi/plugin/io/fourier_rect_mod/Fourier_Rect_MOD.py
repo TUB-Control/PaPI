@@ -31,6 +31,7 @@ __author__ = 'knuths'
 from papi.plugin.base_classes.iop_base import iop_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
+from papi.data.DSignal import DSignal
 
 import threading
 
@@ -63,32 +64,39 @@ class Fourier_Rect_MOD(iop_base):
         self.sock.setblocking(0)
 
 
-        names = ['t']
+        self.block1 = DBlock('Rectangle')
         for i in range(1,self.max_approx):
-            names.append('rect'+str(i))
+            self.block1.add_signal(DSignal('rect'+str(i)))
 
-        self.block1 = DBlock(None,300,10,'Rect1',names)
         self.send_new_block_list([self.block1])
 
         self.set_event_trigger_mode(True)
 
-        thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
-        thread.start()
+        self.goOn = True
+
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
+        self.thread.start()
+
+
 
         return True
 
     def pause(self):
-        pass
+        self.goOn = False
+        self.thread.join()
+
 
     def resume(self):
-        pass
+        self.goOn = True
+        self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
+        self.thread.start()
 
     def thread_execute(self,host,port):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock.setblocking(0)
         vec = numpy.zeros( (self.max_approx,  (self.amax) ))
 
-        while True:
+        while self.goOn:
             self.sock.sendto(b'GET', (self.HOST, self.PORT) )
 
             try:
@@ -98,15 +106,18 @@ class Fourier_Rect_MOD(iop_base):
             else:
                 data = pickle.loads(received)
 
-                for i in range(self.max_approx):
-                    vec[i, 0:self.amax] = data[i*self.amax:(i+1)*self.amax]
+                vech = {}
+                t = data[0*self.amax:(0+1)*self.amax]
 
-                self.send_new_data(vec[0],vec[1:] ,'Rect1')
+                for i in range(self.max_approx):
+                    vech['rect'+str(i)] = data[i*self.amax:(i+1)*self.amax]
+
+                self.send_new_data('Rectangle', t, vech)
 
             time.sleep(0.001*self.amax )
 
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
         print("EXECUTE FUNC")
         pass
 
@@ -114,7 +125,8 @@ class Fourier_Rect_MOD(iop_base):
         pass
 
     def quit(self):
-        print('Fourier_Rect: will quit')
+        self.goOn = False
+        self.thread.join()
 
     def plugin_meta_updated(self):
         pass
