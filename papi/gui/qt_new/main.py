@@ -39,6 +39,8 @@ from PyQt5.QtGui               import QIcon, QDesktopServices
 from PyQt5.QtCore              import QSize, Qt, QUrl
 from PyQt5 import QtCore, QtGui
 
+import papi.pyqtgraph
+
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
@@ -77,7 +79,9 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
     :type gui_id: int
     :return:
     """
+
     app = QApplication(sys.argv)
+
     gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
     gui.run()
     # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
