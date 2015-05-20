@@ -20,7 +20,8 @@ v.1.1: LAST RELEASE WITH PYSIDE
  * [plugin]: Added a new visual plugin: ProgressBar
  * [plugin]: Minor changes in LCDDisplay and Slider
  * [plugin]: Added a new pcp plugin: Radiobutton
-  
+ * [major-change] Switched from PySide to PyQt and upgraded to use Qt5 (also switched to develop branch of pyqtgraph)
+
 v.1.0
 ---
 

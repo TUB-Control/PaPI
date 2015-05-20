@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -30,8 +30,8 @@ __author__ = 'stefan'
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
-from PySide.QtGui import QMdiSubWindow
-from papi.pyqtgraph.Qt import QtGui
+from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
+
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
 class base_visual(base_plugin):
@@ -136,37 +136,35 @@ class base_visual(base_plugin):
         return self.widget
 
     def create_control_context_menu(self):
-        ctrlMenu = QtGui.QMenu("Control")
+        ctrlMenu = QMenu("Control")
 
-        del_action = QtGui.QAction('Close plugin',self.widget)
+        del_action = QAction('Close plugin',self.widget)
         del_action.triggered.connect(self.ctlrMenu_exit)
 
-        pause_action = QtGui.QAction('Pause plugin',self.widget)
+        pause_action = QAction('Pause plugin',self.widget)
         pause_action.triggered.connect(self.ctlrMenu_pause)
 
-        resume_action = QtGui.QAction('Resume plugin',self.widget)
+        resume_action = QAction('Resume plugin',self.widget)
         resume_action.triggered.connect(self.ctlrMenu_resume)
 
-        subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
+        subMenu_action = QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
-
-        tabMenu = QtGui.QMenu('Move to')
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
-        tab_entrys = []
-        for t in tabs:
-            if t != self.config['tab']['value']:
-                entry = QtGui.QAction(t, self.widget)
-                entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
-                tab_entrys.append(entry)
-                tabMenu.addAction(entry)
+        if len(tabs) > 1:
+            tabMenu = ctrlMenu.addMenu('Move to tab')
+            tab_entrys = []
+            for t in tabs:
+                if t != self.config['tab']['value']:
+                    entry = QAction(t, self.widget)
+                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
+                    tab_entrys.append(entry)
+                    tabMenu.addAction(entry)
 
-
-        ctrlMenu.addMenu(tabMenu)
         ctrlMenu.addAction(subMenu_action)
         if self.get_type() == PLUGIN_VIP_IDENTIFIER:
-            ctrlMenu.addAction(resume_action)
-            ctrlMenu.addAction(pause_action)
+           ctrlMenu.addAction(resume_action)
+           ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
         return ctrlMenu
 

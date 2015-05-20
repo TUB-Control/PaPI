@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,12 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QPushButton, QIcon
+
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtGui    import QIcon
+from PyQt5 import QtGui, QtCore
+
 from papi.data.DPlugin import DBlock
 from papi.data.DSignal import DSignal
-from papi.pyqtgraph.Qt import QtGui, QtCore
-
+from papi.plugin.base_classes.pcp_base import pcp_base
 from papi.constants import REGEX_SIGNED_FLOAT
 
 class Button(pcp_base):

@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -39,7 +39,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 
 from papi.data.DSignal import DSignal
 from papi.data.DPlugin import DBlock
@@ -50,7 +50,7 @@ import xml.etree.cElementTree as ET
 
 
 class Gui_api(QtCore.QObject):
-    error_occured = QtCore.Signal(str, str, str)
+    error_occured = QtCore.pyqtSignal(str, str, str)
 
     def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None, plugin_manager = None):
         super(Gui_api, self).__init__()

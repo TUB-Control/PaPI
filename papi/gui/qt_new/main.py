@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -33,12 +33,11 @@ import os
 import traceback
 import re
 
-from PySide.QtGui               import QMainWindow, QApplication, QFileDialog, QDesktopServices
-from PySide.QtGui               import QIcon
-from PySide.QtCore              import QSize, Qt, QUrl
 
-import papi.pyqtgraph as pg
-from papi.pyqtgraph import QtCore, QtGui
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PyQt5.QtGui               import QIcon, QDesktopServices
+from PyQt5.QtCore              import QSize, Qt, QUrl
+from PyQt5 import QtCore, QtGui
 
 from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
@@ -65,7 +64,7 @@ from multiprocessing import Queue, Process
 from papi.core import run_core_in_own_process
 
 # Disable antialiasing for prettier plots
-pg.setConfigOptions(antialias=False)
+#pg.setConfigOptions(antialias=False)
 
 def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
     """
@@ -609,7 +608,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
                     window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape:
+        if event.key() == QtCore.Qt.Key_Escape:
             if self.in_run_mode:
                 self.toggle_run_mode()
 
@@ -649,10 +648,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QDesktopServices.openUrl(QUrl("http://tub-control.github.io/PaPI/", QUrl.TolerantMode))
 
     def papi_about_triggerd(self):
-        QtGui.QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
+        QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
 
     def papi_about_qt_triggerd(self):
-        QtGui.QMessageBox.aboutQt(self)
+        QMessageBox.aboutQt(self)
 
 
 
