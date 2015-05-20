@@ -24,6 +24,8 @@ Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 
 `sudo apt-get install python3-pyqt5.qtwebkit` (just needed for the HTMLViewer plugin) [optional]
 
+`sudo apt-get installl python3-pyqt5.qtsvg` (just needed for the export feature of the Plot plugin) [optional]
+
 `sudo pip3 install tornado` (just needed for the Human plugin) [optional]
 
 `git clone https://github.com/TUB-Control/PaPI.git PaPI`
@@ -53,7 +55,7 @@ Embedded Packages
 
 Yapsy 1.10.423 published under BSD-License, http://yapsy.sourceforge.net/#license
 
-pyqtgraph-0.9.10 published under MIT-License
+pyqtgraph-0.9.11 [unreleased] published under MIT-License
 
 Used icon-set
 ------
