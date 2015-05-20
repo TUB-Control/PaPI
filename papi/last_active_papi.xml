@@ -1,16 +1,5 @@
-<PaPiConfig Date="2015-05-07 14:57:10" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-05-20 15:15:14" PaPI_version="1.1.0">
   <guiConfig>
-    <tabs>
-      <Tab>
-        <background>default</background>
-        <position>0</position>
-      </Tab>
-    </tabs>
-    <activeTab>
-      <active>
-        <value>0</value>
-      </active>
-    </activeTab>
     <size>
       <x>
         <value>771</value>
@@ -19,138 +8,11 @@
         <value>853</value>
       </y>
     </size>
+    <activeTab>
+      <active>
+        <value>-1</value>
+      </active>
+    </activeTab>
+    <tabs />
   </guiConfig>
-  <Plugin uname="CPUXLoad">
-    <Identifier>CPU_Load</Identifier>
-    <StartConfig>
-      <Parameter Name="uname">
-        <value>CPUXLoad</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Delta_t">0.01</Parameter>
-    </PreviousParameters>
-    <DBlocks>
-      <DBlock Name="CPUload">
-        <DSignal uname="load_in_percent">
-          <dname>load_in_percent</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Plot">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="xRange-auto">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>x: auto range</display_text>
-        <value>1</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Rolling Plot</display_text>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="downsampling_rate">
-        <regex>(\d+)</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(449,449)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-        <display_text>Color</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="xRange">
-        <regex>(\d+\.\d+)</regex>
-        <value>[0,1]</value>
-        <display_text>x: range</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="yRange">
-        <regex>(\d+\.\d+)</regex>
-        <value>[1.0 3.0]</value>
-        <display_text>y: range</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>Plot</value>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <value>50</value>
-        <display_text>Buffersize</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-X</display_text>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="y-grid">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-Y</display_text>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <tooltip>Used for tabs</tooltip>
-        <value>Tab</value>
-      </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-        <display_text>Style</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>CPU Load Plot</value>
-      </Parameter>
-      <Parameter Name="yRange-auto">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>y: auto range</display_text>
-        <value>1</value>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="rolling">1</Parameter>
-      <Parameter Name="yRange">[1.0 3.0]</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="buffersize">50</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
-    </PreviousParameters>
-    <DBlocks />
-    <Subscriptions>
-      <Subscription>
-        <data_source>CPUXLoad</data_source>
-        <block Name="CPUload">
-          <alias />
-          <Signal>load_in_percent</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
 </PaPiConfig>

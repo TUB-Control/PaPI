@@ -33,14 +33,7 @@ import sys, traceback
 from PyQt5.QtWidgets import QMenu, QCheckBox, QWidgetAction, QGraphicsItem, QGraphicsPathItem
 from PyQt5 import QtCore
 
-print('Pre Import')
-try:
-    import papi.pyqtgraph as pg
-except ImportError :
-    print('FAILED')
-    traceback.print_exc(file=sys.stdout)
-
-    print('Post Import: ', ImportError )
+import papi.pyqtgraph as pg
 
 import numpy as np
 import re
