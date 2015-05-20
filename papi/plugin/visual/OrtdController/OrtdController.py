@@ -31,6 +31,7 @@ __author__ = 'Stefan'
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.gui.qt_new.custom import FileLineEdit
 
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout
@@ -261,7 +262,7 @@ class ControllerOrtdStart(QWizardPage):
         self.ip_line_edit.setText('127.0.0.1')
 
         # ----------- #
-        # Port line edit#
+        # Port line edit recv#
         # ----------- #
         self.port_line_edit = QLineEdit()
         port_label = QLabel('Port:')
@@ -273,13 +274,16 @@ class ControllerOrtdStart(QWizardPage):
         self.port_line_edit.setText('20000')
 
         # ----------- #
-        #  File dial. #
+        # Port line edit send#
         # ----------- #
-        self.file_edit =   FileLineEdit()
-        self.file_edit.setReadOnly(True)
-        self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
-        self.file_label = QLabel('ProtocollConfig')
-        self.file_label.setBuddy(self.file_edit)
+        self.port_send_line_edit = QtGui.QLineEdit()
+        port_send_label = QtGui.QLabel('Port Send:')
+        port_send_label.setBuddy(self.port_send_line_edit)
+        regex = '\d{1,5}'
+        rx = QtCore.QRegExp(regex)
+        validator = QRegExpValidator(rx, self)
+        self.port_send_line_edit.setValidator(validator)
+        self.port_send_line_edit.setText('20001')
 
 
 
@@ -289,15 +293,15 @@ class ControllerOrtdStart(QWizardPage):
         layout.addWidget(self.ip_line_edit)
         layout.addWidget(port_label)
         layout.addWidget(self.port_line_edit)
-        layout.addWidget(self.file_label)
-        layout.addWidget(self.file_edit)
+        layout.addWidget(port_send_label)
+        layout.addWidget(self.port_send_line_edit)
 
         self.setLayout(layout)
 
     def validatePage(self):
         IP = self.ip_line_edit.text()
         port = self.port_line_edit.text()
-        json = self.file_edit.text()
+        port_send = self.port_send_line_edit.text()
         cfg ={
             'address': {
                 'value': IP,
@@ -308,13 +312,9 @@ class ControllerOrtdStart(QWizardPage):
                 'advanced': '1'
             },
             'out_port': {
-                'value': '20001',
+                'value': port_send,
                 'advanced': '1'
-            },'Cfg_Path': {
-                'value': json,
-                'type': 'file',
-                'advanced': '0'
-            },
+            }
         }
         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, cfg, True)
 
