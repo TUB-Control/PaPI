@@ -129,7 +129,7 @@ class Slider(pcp_base):
                 'tooltip': 'Determine size: (height,width)'
                 },
             'value_init': {
-                    'value': 0,
+                    'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
                     'tooltip': 'Used as initial value for the Slider'
             },

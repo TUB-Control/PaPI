@@ -110,6 +110,8 @@ class ORTD_UDP(iop_base):
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
+        self.PAPI_SIMULINK_BLOCK = False
+
         self.separate = int(config['SeparateSignals']['value'])
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
@@ -219,10 +221,12 @@ class ORTD_UDP(iop_base):
             self.config_buffer = {}
 
         if SourceId == -100:
+            self.PAPI_SIMULINK_BLOCK = True
             # got data stream from the PaPI-Simulink Block
             self.process_papi_data_stream(rev)
     
         if SourceId == -4:
+            self.PAPI_SIMULINK_BLOCK = False
             # new configItem
             # print("Part of a new configuration");
             # receive new config item and execute cfg in PaPI
@@ -467,10 +471,14 @@ class ORTD_UDP(iop_base):
             parameter = self.parameters[name]
             Pid = parameter.OptionalObject.ORTD_par_id
             Counter = 111
-            print("Send data " + str(float(value)))
-            data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-            print(data)
-            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            if value is not None:
+                data = None
+                if self.PAPI_SIMULINK_BLOCK:
+                    data = struct.pack('iiid', 12, Counter, int(Pid), float(value))
+                else:
+                    data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+
+                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
 
     def quit(self):
         self.lock.acquire()
