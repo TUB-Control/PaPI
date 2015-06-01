@@ -46,7 +46,6 @@ class OrtdController(vip_base):
         # Read configuration
         # ---------------------------
         self.ortd_uname = config['ORTD_Plugin_uname']['value']
-        self.alreadyConfigured = False
         # --------------------------------
         # Create Widget
         # --------------------------------
@@ -57,9 +56,9 @@ class OrtdController(vip_base):
         self.ControllerWidget.setOption(QWizard.NoBackButtonOnStartPage)
         self.ControllerWidget.setOption(QWizard.DisabledBackButtonOnLastPage)
         self.set_widget_for_internal_usage( self.ControllerWidget )
-        self.ControllerWidget.addPage(ControllerIntroPage())
-        self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname))
+        self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname, config = self.config))
         self.ControllerWidget.addPage(ControllerWorking(api=self.control_api, uname=self.dplugin_info.uname))
+
 
         self.lock = threading.Lock()
 
@@ -93,7 +92,6 @@ class OrtdController(vip_base):
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
         self.thread1 = threading.Thread(target=self.execute_cfg)
-
 
         self.event_list.append(Data)
         if self.thread_alive is False:
@@ -202,7 +200,25 @@ class OrtdController(vip_base):
             },
             'name': {
                 'value': 'ORTDController'
-            }
+            },
+            '1:address': {
+                'value': '127.0.0.1',
+                'advanced': '1'
+            },
+            '2:source_port': {
+                'value': '20000',
+                'advanced': '1'
+            },
+            '3:out_port': {
+                'value': '20001',
+                'advanced': '1'
+            },
+            'size': {
+                'value': "(150,300)",
+                'regex': '\(([0-9]+),([0-9]+)\)',
+                'advanced': '1',
+                'tooltip': 'Determine size: (height,width)'
+            },
         }
         return config
 
@@ -218,105 +234,43 @@ class OrtdController(vip_base):
 
 
 
-class ControllerIntroPage(QWizardPage):
-    def __init__(self,parent = None):
-        QWizardPage.__init__(self, parent)
-        self.setTitle("ORTD Controller")
-        label = QLabel("This is the ORTD Controller plugin.")
-        label.setWordWrap(True)
-
-        label2 = QLabel("Click next to start the configuration")
-
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        layout.addWidget(label2)
-
-        self.setLayout(layout)
-
-    def validatePage(self):
-        print('intro: next clicked')
-        return True
-
 
 class ControllerOrtdStart(QWizardPage):
-    def __init__(self,api = None, uname= None, parent = None, ortd_uname = None):
+    def __init__(self,api = None, uname= None, parent = None, ortd_uname = None, config = None):
         QWizardPage.__init__(self, parent)
-        self.uname = uname
+        self.config = config
         self.api = api
         self.ortd_uname = ortd_uname
-        #self.setTitle("ORTD Controller")
-        label = QLabel("Please configure the ORTD plugin.")
+        self.uname = uname
+        label = QLabel("Press 'Next' to start ORTD interaction")
         label.setWordWrap(True)
-
-        # ----------- #
-        # IP line edit#
-        # ----------- #
-        self.ip_line_edit = QLineEdit()
-        ip_label = QLabel('IP-Address:')
-        ip_label.setBuddy(self.ip_line_edit)
-        regex = '\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}'
-        rx = QRegExp(regex)
-        validator = QRegExpValidator(rx, self)
-        self.ip_line_edit.setValidator(validator)
-        self.ip_line_edit.setText('127.0.0.1')
-
-        # ----------- #
-        # Port line edit#
-        # ----------- #
-        self.port_line_edit = QLineEdit()
-        port_label = QLabel('Port:')
-        port_label.setBuddy(self.port_line_edit)
-        regex = '\d{1,5}'
-        rx = QRegExp(regex)
-        validator = QRegExpValidator(rx, self)
-        self.port_line_edit.setValidator(validator)
-        self.port_line_edit.setText('20000')
-
-        # ----------- #
-        #  File dial. #
-        # ----------- #
-        self.file_edit =   FileLineEdit()
-        self.file_edit.setReadOnly(True)
-        self.file_edit.setText('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfigForController.json')
-        self.file_label = QLabel('ProtocollConfig')
-        self.file_label.setBuddy(self.file_edit)
-
-
-
         layout = QVBoxLayout()
         layout.addWidget(label)
-        layout.addWidget(ip_label)
-        layout.addWidget(self.ip_line_edit)
-        layout.addWidget(port_label)
-        layout.addWidget(self.port_line_edit)
-        layout.addWidget(self.file_label)
-        layout.addWidget(self.file_edit)
-
         self.setLayout(layout)
 
     def validatePage(self):
-        IP = self.ip_line_edit.text()
-        port = self.port_line_edit.text()
-        json = self.file_edit.text()
-        cfg ={
+
+        IP =  self.config ['1:address']['value']
+        out_port = self.config ['2:source_port']['value']
+        in_port  = self.config ['3:out_port']['value']
+
+        ortd_cfg ={
             'address': {
                 'value': IP,
                 'advanced': '1'
             },
             'source_port': {
-                'value': port,
+                'value': out_port,
                 'advanced': '1'
             },
             'out_port': {
-                'value': '20001',
+                'value': in_port,
                 'advanced': '1'
-            },'Cfg_Path': {
-                'value': json,
-                'type': 'file',
-                'advanced': '0'
-            },
+            }
         }
-        self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, cfg, True)
+
+
+        self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
 
         self.thread = threading.Thread(target=self.subscribe_control_signal)
         self.thread.start()

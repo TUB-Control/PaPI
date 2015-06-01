@@ -1,156 +1,175 @@
-<PaPiConfig Date="2015-05-07 14:57:10" PaPI_version="1.0.0">
+<PaPiConfig Date="2015-06-01 12:58:16" PaPI_version="1.1.0">
   <guiConfig>
     <tabs>
-      <Tab>
+      <PaPI-Tab>
         <background>default</background>
         <position>0</position>
-      </Tab>
+      </PaPI-Tab>
     </tabs>
+    <size>
+      <y>
+        <value>853</value>
+      </y>
+      <x>
+        <value>771</value>
+      </x>
+    </size>
     <activeTab>
       <active>
         <value>0</value>
       </active>
     </activeTab>
-    <size>
-      <x>
-        <value>771</value>
-      </x>
-      <y>
-        <value>853</value>
-      </y>
-    </size>
   </guiConfig>
-  <Plugin uname="CPUXLoad">
-    <Identifier>CPU_Load</Identifier>
+  <Plugin uname="OrtdController">
+    <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="uname">
-        <value>CPUXLoad</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="Delta_t">0.01</Parameter>
-    </PreviousParameters>
-    <DBlocks>
-      <DBlock Name="CPUload">
-        <DSignal uname="load_in_percent">
-          <dname>load_in_percent</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions />
-  </Plugin>
-  <Plugin uname="Plot">
-    <Identifier>Plot</Identifier>
-    <StartConfig>
-      <Parameter Name="xRange-auto">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>x: auto range</display_text>
-        <value>1</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="rolling_plot">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Rolling Plot</display_text>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="downsampling_rate">
-        <regex>(\d+)</regex>
-        <value>1</value>
-      </Parameter>
-      <Parameter Name="size">
-        <tooltip>Determine size: (height,width)</tooltip>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(449,449)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="color">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 1 2 3 4]</value>
-        <display_text>Color</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="xRange">
-        <regex>(\d+\.\d+)</regex>
-        <value>[0,1]</value>
-        <display_text>x: range</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="yRange">
-        <regex>(\d+\.\d+)</regex>
-        <value>[1.0 3.0]</value>
-        <display_text>y: range</display_text>
-        <advanced>1</advanced>
+      <Parameter Name="ORTD_Plugin_uname">
+        <value>ORTDPlugin1</value>
+        <advanced>0</advanced>
+        <display_text>Uname to use for ortd plugin instance</display_text>
       </Parameter>
       <Parameter Name="uname">
-        <value>Plot</value>
-      </Parameter>
-      <Parameter Name="buffersize">
-        <regex>^([1-9][0-9]{0,3}|10000)$</regex>
-        <value>50</value>
-        <display_text>Buffersize</display_text>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="x-grid">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-X</display_text>
-        <value>0</value>
-      </Parameter>
-      <Parameter Name="y-grid">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>Grid-Y</display_text>
-        <value>0</value>
+        <value>OrtdController</value>
       </Parameter>
       <Parameter Name="tab">
+        <value>PaPI-Tab</value>
         <tooltip>Used for tabs</tooltip>
-        <value>Tab</value>
       </Parameter>
-      <Parameter Name="position">
-        <tooltip>Determine position: (x,y)</tooltip>
+      <Parameter Name="3:out_port">
+        <value>20001</value>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="2:source_port">
+        <value>20000</value>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(150,300)</value>
+        <advanced>1</advanced>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="style">
-        <regex>^\[(\s*\d\s*)+\]</regex>
-        <value>[0 0 0 0 0]</value>
-        <display_text>Style</display_text>
-        <advanced>1</advanced>
+        <tooltip>Determine size: (height,width)</tooltip>
       </Parameter>
       <Parameter Name="name">
-        <tooltip>Used for window title</tooltip>
-        <value>CPU Load Plot</value>
+        <value>ORTDController</value>
       </Parameter>
-      <Parameter Name="yRange-auto">
-        <regex>^(1|0)$</regex>
-        <type>bool</type>
-        <display_text>y: auto range</display_text>
-        <value>1</value>
+      <Parameter Name="position">
+        <value>(0,0)</value>
+        <advanced>1</advanced>
+        <regex>\(([0-9]+),([0-9]+)\)</regex>
+        <tooltip>Determine position: (x,y)</tooltip>
+      </Parameter>
+      <Parameter Name="1:address">
+        <value>127.0.0.1</value>
         <advanced>1</advanced>
       </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="rolling">1</Parameter>
-      <Parameter Name="yRange">[1.0 3.0]</Parameter>
-      <Parameter Name="downsampling_rate">1</Parameter>
-      <Parameter Name="color">[0 1 2 3 4]</Parameter>
-      <Parameter Name="style">[0 0 0 0 0]</Parameter>
-      <Parameter Name="x-grid">0</Parameter>
-      <Parameter Name="buffersize">50</Parameter>
-      <Parameter Name="y-grid">0</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <DBlocks />
     <Subscriptions>
       <Subscription>
-        <data_source>CPUXLoad</data_source>
-        <block Name="CPUload">
+        <data_source>ORTDPlugin1</data_source>
+        <block Name="ControllerSignals">
           <alias />
-          <Signal>load_in_percent</Signal>
+          <Signal>ControlSignalReset</Signal>
+          <Signal>ControlSignalCreate</Signal>
+          <Signal>ControlSignalSub</Signal>
+          <Signal>ControllerSignalParameter</Signal>
+          <Signal>ControllerSignalClose</Signal>
+          <Signal>ActiveTab</Signal>
         </block>
       </Subscription>
     </Subscriptions>
   </Plugin>
-</PaPiConfig>
+  <Plugin uname="ORTDPlugin1">
+    <Identifier>ORTD_UDP</Identifier>
+    <StartConfig>
+      <Parameter Name="out_port">
+        <value>20001</value>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="source_port">
+        <value>20000</value>
+        <advanced>1</advanced>
+      </Parameter>
+      <Parameter Name="address">
+        <value>127.0.0.1</value>
+        <advanced>1</advanced>
+      </Parameter>
+    </StartConfig>
+    <PreviousParameters>
+      <Parameter Name="ok">0.0</Parameter>
+      <Parameter Name="Oscillator input">1.0</Parameter>
+    </PreviousParameters>
+    <DBlocks>
+      <DBlock Name="ControllerSignals">
+        <DSignal uname="ControlSignalReset">
+          <dname>ControlSignalReset</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalCreate">
+          <dname>ControlSignalCreate</dname>
+        </DSignal>
+        <DSignal uname="ControlSignalSub">
+          <dname>ControlSignalSub</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalParameter">
+          <dname>ControllerSignalParameter</dname>
+        </DSignal>
+        <DSignal uname="ControllerSignalClose">
+          <dname>ControllerSignalClose</dname>
+        </DSignal>
+        <DSignal uname="ActiveTab">
+          <dname>ActiveTab</dname>
+        </DSignal>
+      </DBlock>
+      <DBlock Name="SourceGroup0">
+        <DSignal uname="V">
+          <dname>V</dname>
+        </DSignal>
+        <DSignal uname="X">
+          <dname>X</dname>
+        </DSignal>
+      </DBlock>
+    </DBlocks>
+    <Subscriptions>
+      <Subscription>
+        <data_source>Plugin1</data_source>
+        <block Name="Click_Event">
+          <alias>Oscillator input</alias>
+        </block>
+      </Subscription>
+      <Subscription>
+        <data_source>Plugin2</data_source>
+        <block Name="Click_Event">
+          <alias>ok</alias>
+        </block>
+      </Subscription>
+    </Subscriptions>
+  </Plugin>
+  <Plugin uname="Plugin2">
+    <Identifier>Button</Identifier>
+    <StartConfig>
+      <Parameter Name="state2_text">
+        <value>Leaving</value>
+      </Parameter>
+      <Parameter Name="state1">
+        <value />
+        <advanced>0</advanced>
+        <regex>([-]{0,1}\d+\.\d+)</regex>
+      </Parameter>
+      <Parameter Name="tab">
+        <value>PaPI-Tab</value>
+      </Parameter>
+      <Parameter Name="size">
+        <value>(150,50)</value>
+      </Parameter>
+      <Parameter Name="state1_text">
+        <value>Ok</value>
+      </Parameter>
+      <Parameter Name="name">
+        <value>Leaveergergergergerggegrggregegrgeegg</value>
+      </Parameter>
+      <Parameter Name="position">
+        <value>(600,325)</value>
+      </Parameter>
+      <Parameter Name="state2">
+        <value>
