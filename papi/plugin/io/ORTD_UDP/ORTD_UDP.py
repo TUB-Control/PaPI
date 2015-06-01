@@ -95,6 +95,11 @@ class ORTD_UDP(iop_base):
             'SeparateSignals': {
                 'value': '0',
                 'advanced': '1'
+            },
+            'SendOnReceivePort': {
+                'value': '0',
+                'advaned': '1',
+                'display_text': 'Use same port for send and receive'
             }
         }
 
@@ -110,13 +115,15 @@ class ORTD_UDP(iop_base):
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
+        self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == 1 else False
         self.PAPI_SIMULINK_BLOCK = False
 
         self.separate = int(config['SeparateSignals']['value'])
 
-        # SOCK_DGRAM is the socket type to use for UDP sockets
-        self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_parameter.setblocking(1)
+        if (not self.sendOnReceivePort):
+            # SOCK_DGRAM is the socket type to use for UDP sockets
+            self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.sock_parameter.setblocking(1)
 
 
 
@@ -478,7 +485,11 @@ class ORTD_UDP(iop_base):
                 else:
                     data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
 
+
+            if not self.sendOnReceivePort:
                 self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            else:
+                self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
 
     def quit(self):
         self.lock.acquire()
