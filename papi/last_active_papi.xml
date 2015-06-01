@@ -1,5 +1,13 @@
-<PaPiConfig Date="2015-06-01 13:35:30" PaPI_version="1.1.0">
+<PaPiConfig Date="2015-06-01 13:42:49" PaPI_version="1.1.0">
   <guiConfig>
+    <size>
+      <y>
+        <value>853</value>
+      </y>
+      <x>
+        <value>771</value>
+      </x>
+    </size>
     <tabs>
       <PaPI-Tab>
         <background>default</background>
@@ -11,61 +19,53 @@
         <value>0</value>
       </active>
     </activeTab>
-    <size>
-      <y>
-        <value>853</value>
-      </y>
-      <x>
-        <value>771</value>
-      </x>
-    </size>
   </guiConfig>
   <Plugin uname="OrtdController">
     <Identifier>OrtdController</Identifier>
     <StartConfig>
-      <Parameter Name="3:out_port">
-        <value>20001</value>
+      <Parameter Name="2:source_port">
         <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="ORTD_Plugin_uname">
-        <value>ORTDPlugin1</value>
-        <display_text>Uname to use for ortd plugin instance</display_text>
-        <advanced>0</advanced>
+        <value>20000</value>
       </Parameter>
       <Parameter Name="name">
         <value>ORTDController</value>
       </Parameter>
-      <Parameter Name="uname">
-        <value>OrtdController</value>
-      </Parameter>
-      <Parameter Name="SendOnReceivePort">
-        <value>0</value>
-        <display_text>Use same port for send and receive</display_text>
-        <advaned>1</advaned>
-      </Parameter>
-      <Parameter Name="2:source_port">
-        <value>20000</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="1:address">
-        <value>127.0.0.1</value>
-        <advanced>1</advanced>
+      <Parameter Name="tab">
+        <tooltip>Used for tabs</tooltip>
+        <value>PaPI-Tab</value>
       </Parameter>
       <Parameter Name="size">
-        <value>(150,300)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <advanced>1</advanced>
         <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
+        <value>(150,300)</value>
       </Parameter>
       <Parameter Name="position">
-        <value>(0,0)</value>
         <regex>\(([0-9]+),([0-9]+)\)</regex>
         <advanced>1</advanced>
         <tooltip>Determine position: (x,y)</tooltip>
+        <value>(0,0)</value>
+      </Parameter>
+      <Parameter Name="ORTD_Plugin_uname">
+        <advanced>0</advanced>
+        <value>ORTDPlugin1</value>
+        <display_text>Uname to use for ortd plugin instance</display_text>
+      </Parameter>
+      <Parameter Name="1:address">
+        <advanced>1</advanced>
+        <value>127.0.0.1</value>
+      </Parameter>
+      <Parameter Name="3:out_port">
+        <advanced>1</advanced>
+        <value>20001</value>
+      </Parameter>
+      <Parameter Name="SendOnReceivePort">
+        <advanced>1</advanced>
+        <value>1</value>
+        <display_text>Use same port for send and receive</display_text>
+      </Parameter>
+      <Parameter Name="uname">
+        <value>OrtdController</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters />
@@ -89,34 +89,23 @@
     <Identifier>ORTD_UDP</Identifier>
     <StartConfig>
       <Parameter Name="out_port">
-        <value>20001</value>
         <advanced>1</advanced>
+        <value>20001</value>
       </Parameter>
       <Parameter Name="address">
-        <value>127.0.0.1</value>
         <advanced>1</advanced>
+        <value>127.0.0.1</value>
       </Parameter>
       <Parameter Name="source_port">
-        <value>20000</value>
         <advanced>1</advanced>
+        <value>20000</value>
       </Parameter>
       <Parameter Name="SendOnReceivePort">
-        <value>0</value>
+        <value>1</value>
       </Parameter>
     </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="sliderVal">0.0</Parameter>
-      <Parameter Name="ok">0.0</Parameter>
-    </PreviousParameters>
+    <PreviousParameters />
     <DBlocks>
-      <DBlock Name="SourceGroup0">
-        <DSignal uname="percent">
-          <dname>percent</dname>
-        </DSignal>
-        <DSignal uname="LCDVal">
-          <dname>LCDVal</dname>
-        </DSignal>
-      </DBlock>
       <DBlock Name="ControllerSignals">
         <DSignal uname="ControlSignalReset">
           <dname>ControlSignalReset</dname>
@@ -138,161 +127,6 @@
         </DSignal>
       </DBlock>
     </DBlocks>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Plugin2</data_source>
-        <block Name="SliderBlock">
-          <alias>sliderVal</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Plugin1</data_source>
-        <block Name="Click_Event">
-          <alias>ok</alias>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Plugin3">
-    <Identifier>ProgressBar</Identifier>
-    <StartConfig>
-      <Parameter Name="round_digit">
-        <regex>[0-9]+</regex>
-        <value>2</value>
-        <display_text>Round to ndigits</display_text>
-        <tooltip>Current value is rounded to ndigits after the decimal point. </tooltip>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="name">
-        <value>ProgressBar Example</value>
-      </Parameter>
-      <Parameter Name="max_range">
-        <display_text>Max Range</display_text>
-        <value>100</value>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-        <tooltip>Set maximum range for the progress bar.</tooltip>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(500,75)</value>
-      </Parameter>
-      <Parameter Name="trigger_value">
-        <value>trigger</value>
-        <display_text>Trigger Value</display_text>
-        <tooltip>Name of the signal which triggers the progress bar to increment by one.</tooltip>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="show_percent">
-        <type>bool</type>
-        <value>1</value>
-        <display_text>Show percent</display_text>
-        <tooltip>Show progress in percent over the progress bar</tooltip>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="progress_value">
-        <value>percent</value>
-        <display_text>Progress Value</display_text>
-        <tooltip>Name of the signal whose first value is used to set the current value for the progress bar.</tooltip>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="show_current_max">
-        <type>bool</type>
-        <value>0</value>
-        <display_text>Show current/max</display_text>
-        <tooltip>A label next to the bar shows the current and max value</tooltip>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="min_rage">
-        <display_text>Min Range</display_text>
-        <value>0</value>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-        <tooltip>Set minimum range for the progress bar.</tooltip>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="reset_trigger_value">
-        <value>reset</value>
-        <display_text>Reset Value</display_text>
-        <tooltip>Name of the signal which triggers the progress bar to reset.</tooltip>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(50,250)</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="ProgressValue">percent</Parameter>
-      <Parameter Name="TriggerValue">trigger</Parameter>
-      <Parameter Name="ShowCurrentMax">0</Parameter>
-      <Parameter Name="ShowPercent">1</Parameter>
-      <Parameter Name="MaxRange">100.0</Parameter>
-      <Parameter Name="MinRange">0.0</Parameter>
-      <Parameter Name="ResetValue">reset</Parameter>
-      <Parameter Name="trigger">0</Parameter>
-    </PreviousParameters>
-    <DBlocks />
-    <Subscriptions>
-      <Subscription>
-        <data_source>ORTDPlugin1</data_source>
-        <block Name="SourceGroup0">
-          <alias />
-          <Signal>percent</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Plugin2">
-    <Identifier>Slider</Identifier>
-    <StartConfig>
-      <Parameter Name="upper_bound">
-        <value>1.0</value>
-      </Parameter>
-      <Parameter Name="step_count">
-        <value>101</value>
-      </Parameter>
-      <Parameter Name="value_init">
-        <value>0</value>
-        <regex>([-]{0,1}\d+(.\d+)?)</regex>
-        <tooltip>Used as initial value for the Slider</tooltip>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Slider Example</value>
-      </Parameter>
-      <Parameter Name="lower_bound">
-        <value>0.0</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(500,75)</value>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(50,50)</value>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks>
-      <DBlock Name="SliderBlock">
-        <DSignal uname="SliderParameter1">
-          <dname>SliderParameter1</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
     <Subscriptions />
   </Plugin>
-  <Plugin uname="Plugin1">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state1">
-        <value />
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-        <advanced>0</advanced>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <value>Ok</value>
-      </Parameter>
-      <Parameter Name="state2">
-        <value>
+</PaPiConfig>

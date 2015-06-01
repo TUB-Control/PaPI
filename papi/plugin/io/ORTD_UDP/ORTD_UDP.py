@@ -500,7 +500,8 @@ class ORTD_UDP(iop_base):
         self.thread_goOn = False
         self.lock.release()
         self.thread.join()
-        self.sock_parameter.close()
+        if not self.sendOnReceivePort:
+            self.sock_parameter.close()
         print('ORTD-Plugin will quit')
 
     def plugin_meta_updated(self):
