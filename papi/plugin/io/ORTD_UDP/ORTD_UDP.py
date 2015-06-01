@@ -98,7 +98,7 @@ class ORTD_UDP(iop_base):
             },
             'SendOnReceivePort': {
                 'value': '0',
-                'advaned': '1',
+                'advanced': '1',
                 'display_text': 'Use same port for send and receive'
             }
         }
@@ -119,6 +119,8 @@ class ORTD_UDP(iop_base):
         self.PAPI_SIMULINK_BLOCK = False
 
         self.separate = int(config['SeparateSignals']['value'])
+
+        print(self.sendOnReceivePort)
 
         if (not self.sendOnReceivePort):
             # SOCK_DGRAM is the socket type to use for UDP sockets
@@ -297,9 +299,11 @@ class ORTD_UDP(iop_base):
     def request_new_config_from_ORTD(self):
         Counter = 1
         data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if not self.sendOnReceivePort:
+            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        else:
+            self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
 
-        #print("Data send to ", self.HOST, ":", self.OUT_PORT)
 
     def check_and_process_cfg(self, config_file):
         try:

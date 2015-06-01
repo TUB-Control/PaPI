@@ -213,6 +213,11 @@ class OrtdController(vip_base):
                 'value': '20001',
                 'advanced': '1'
             },
+            'SendOnReceivePort': {
+                'value': '0',
+                'advanced': '1',
+                'display_text': 'Use same port for send and receive'
+            },
             'size': {
                 'value': "(150,300)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
@@ -253,6 +258,8 @@ class ControllerOrtdStart(QWizardPage):
         IP =  self.config ['1:address']['value']
         out_port = self.config ['2:source_port']['value']
         in_port  = self.config ['3:out_port']['value']
+        SendOnReceivePort = self.config['SendOnReceivePort']['value']
+
 
         ortd_cfg ={
             'address': {
@@ -266,6 +273,9 @@ class ControllerOrtdStart(QWizardPage):
             'out_port': {
                 'value': in_port,
                 'advanced': '1'
+            },
+            'SendOnReceivePort': {
+                'value': SendOnReceivePort
             }
         }
 
