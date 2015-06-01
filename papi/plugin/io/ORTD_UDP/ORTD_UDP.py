@@ -115,7 +115,7 @@ class ORTD_UDP(iop_base):
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
-        self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == 1 else False
+        self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == '1' else False
         self.PAPI_SIMULINK_BLOCK = False
 
         self.separate = int(config['SeparateSignals']['value'])
