@@ -3,7 +3,7 @@
 // 1: Port FROM ORTD
 // 2: Port TO ORTD
 // 3: Port TO Recv
-// 4: Port FROM Recv
+
 
 
 
@@ -13,7 +13,7 @@ var PORT_toORTD   = parseInt(process.argv[3],10);//20001;
 var PORT_fromORTD = parseInt(process.argv[2],10);//20000;
 
 var PORT_toRecv   = parseInt(process.argv[4],10);//21000;
-var PORT_fromRecv = parseInt(process.argv[5],10);//21001;
+
 
 var RecvAddress   = 0;
 var ORTDAddress   = 'localhost';
