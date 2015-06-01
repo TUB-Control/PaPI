@@ -1,175 +1,18 @@
-<PaPiConfig Date="2015-06-01 12:58:16" PaPI_version="1.1.0">
+<PaPiConfig Date="2015-05-20 15:15:14" PaPI_version="1.1.0">
   <guiConfig>
-    <tabs>
-      <PaPI-Tab>
-        <background>default</background>
-        <position>0</position>
-      </PaPI-Tab>
-    </tabs>
     <size>
-      <y>
-        <value>853</value>
-      </y>
       <x>
         <value>771</value>
       </x>
+      <y>
+        <value>853</value>
+      </y>
     </size>
     <activeTab>
       <active>
-        <value>0</value>
+        <value>-1</value>
       </active>
     </activeTab>
+    <tabs />
   </guiConfig>
-  <Plugin uname="OrtdController">
-    <Identifier>OrtdController</Identifier>
-    <StartConfig>
-      <Parameter Name="ORTD_Plugin_uname">
-        <value>ORTDPlugin1</value>
-        <advanced>0</advanced>
-        <display_text>Uname to use for ortd plugin instance</display_text>
-      </Parameter>
-      <Parameter Name="uname">
-        <value>OrtdController</value>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-        <tooltip>Used for tabs</tooltip>
-      </Parameter>
-      <Parameter Name="3:out_port">
-        <value>20001</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="2:source_port">
-        <value>20000</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(150,300)</value>
-        <advanced>1</advanced>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine size: (height,width)</tooltip>
-      </Parameter>
-      <Parameter Name="name">
-        <value>ORTDController</value>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(0,0)</value>
-        <advanced>1</advanced>
-        <regex>\(([0-9]+),([0-9]+)\)</regex>
-        <tooltip>Determine position: (x,y)</tooltip>
-      </Parameter>
-      <Parameter Name="1:address">
-        <value>127.0.0.1</value>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters />
-    <DBlocks />
-    <Subscriptions>
-      <Subscription>
-        <data_source>ORTDPlugin1</data_source>
-        <block Name="ControllerSignals">
-          <alias />
-          <Signal>ControlSignalReset</Signal>
-          <Signal>ControlSignalCreate</Signal>
-          <Signal>ControlSignalSub</Signal>
-          <Signal>ControllerSignalParameter</Signal>
-          <Signal>ControllerSignalClose</Signal>
-          <Signal>ActiveTab</Signal>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="ORTDPlugin1">
-    <Identifier>ORTD_UDP</Identifier>
-    <StartConfig>
-      <Parameter Name="out_port">
-        <value>20001</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="source_port">
-        <value>20000</value>
-        <advanced>1</advanced>
-      </Parameter>
-      <Parameter Name="address">
-        <value>127.0.0.1</value>
-        <advanced>1</advanced>
-      </Parameter>
-    </StartConfig>
-    <PreviousParameters>
-      <Parameter Name="ok">0.0</Parameter>
-      <Parameter Name="Oscillator input">1.0</Parameter>
-    </PreviousParameters>
-    <DBlocks>
-      <DBlock Name="ControllerSignals">
-        <DSignal uname="ControlSignalReset">
-          <dname>ControlSignalReset</dname>
-        </DSignal>
-        <DSignal uname="ControlSignalCreate">
-          <dname>ControlSignalCreate</dname>
-        </DSignal>
-        <DSignal uname="ControlSignalSub">
-          <dname>ControlSignalSub</dname>
-        </DSignal>
-        <DSignal uname="ControllerSignalParameter">
-          <dname>ControllerSignalParameter</dname>
-        </DSignal>
-        <DSignal uname="ControllerSignalClose">
-          <dname>ControllerSignalClose</dname>
-        </DSignal>
-        <DSignal uname="ActiveTab">
-          <dname>ActiveTab</dname>
-        </DSignal>
-      </DBlock>
-      <DBlock Name="SourceGroup0">
-        <DSignal uname="V">
-          <dname>V</dname>
-        </DSignal>
-        <DSignal uname="X">
-          <dname>X</dname>
-        </DSignal>
-      </DBlock>
-    </DBlocks>
-    <Subscriptions>
-      <Subscription>
-        <data_source>Plugin1</data_source>
-        <block Name="Click_Event">
-          <alias>Oscillator input</alias>
-        </block>
-      </Subscription>
-      <Subscription>
-        <data_source>Plugin2</data_source>
-        <block Name="Click_Event">
-          <alias>ok</alias>
-        </block>
-      </Subscription>
-    </Subscriptions>
-  </Plugin>
-  <Plugin uname="Plugin2">
-    <Identifier>Button</Identifier>
-    <StartConfig>
-      <Parameter Name="state2_text">
-        <value>Leaving</value>
-      </Parameter>
-      <Parameter Name="state1">
-        <value />
-        <advanced>0</advanced>
-        <regex>([-]{0,1}\d+\.\d+)</regex>
-      </Parameter>
-      <Parameter Name="tab">
-        <value>PaPI-Tab</value>
-      </Parameter>
-      <Parameter Name="size">
-        <value>(150,50)</value>
-      </Parameter>
-      <Parameter Name="state1_text">
-        <value>Ok</value>
-      </Parameter>
-      <Parameter Name="name">
-        <value>Leaveergergergergerggegrggregegrgeegg</value>
-      </Parameter>
-      <Parameter Name="position">
-        <value>(600,325)</value>
-      </Parameter>
-      <Parameter Name="state2">
-        <value>
+</PaPiConfig>

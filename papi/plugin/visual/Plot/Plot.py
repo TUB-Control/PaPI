@@ -917,8 +917,8 @@ class Plot(vip_base):
                 else:
                     mi = mi_buf
 
-        ma = str(ma)
-        mi = str(mi)
+        ma = str(float(ma))
+        mi = str(float(mi))
 
         self.yRange_maxEdit.setText(ma)
         self.yRange_minEdit.setText(mi)
