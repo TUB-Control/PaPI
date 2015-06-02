@@ -28,35 +28,66 @@ Contributors:
 
 __author__ = 'Knuth'
 
+import traceback
+import datetime
+import time
+import json
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 import papi.constants as pc
 
-import time
-
 from PyQt5 import QtGui, QtWidgets, QtCore, Qt
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
+
+import xml.etree.cElementTree as ET
 
 class OptionItem():
     def __init__(self):
-        self.attributes = {'1_amplitude' : 0, '2_min' : 0, '3_max': 0, '4_wave_form' : 'Sinus'}
+        self.attributes = {'1_Amplitude': {
+            'value': '0',
+            'min': '0',
+            'max': '1',
+            'display_name' : 'Amplitude',
+            'regex' : pc.REGEX_SIGNED_FLOAT
+        }, '2_Min': {
+            'value': '0',
+            'min': '0',
+            'max': '5',
+            'display_name' : 'Min',
+            'regex' : pc.REGEX_SIGNED_FLOAT
+        }, '3_Max': {
+            'value': '0',
+            'min': '5',
+            'max': '10',
+            'display_name' : 'Max',
+            'regex' : pc.REGEX_SIGNED_FLOAT
+
+        }, '4_WaveForm': {
+            'value': 'sinus',
+            'options': "ramp, sinus, slope",
+            'display_name' : 'WaveForm'
+        }}
 
     def set_attr(self, attr, value):
-        if attr in self.attributes:
-            self.attributes[attr] = value
+        self.attributes[attr] = value
 
-    def get_value(self, attr):
+    def get_attr(self, attr):
         if attr in self.attributes:
             return self.attributes[attr]
 
     def get_attributes(self):
         return self.attributes
 
+    def clear_attribtues(self):
+        self.attributes = {}
+
 #RENAME TO PLUGIN NAME
 class RehaStimGUI(vip_base, object):
 
     def __init__(self):
-
+        self.__VERSION__ = "0.1"
         pass
 
     def initiate_layer_0(self, config=None):
@@ -104,9 +135,7 @@ class RehaStimGUI(vip_base, object):
         # TESTING
         #
 
-        for i in range(9):
-            self.add_ch_clicked()
-            self.add_state_clicked()
+
         return True
 
     def create_widget(self):
@@ -173,11 +202,138 @@ class RehaStimGUI(vip_base, object):
         self.addChButton.clicked.connect(self.add_ch_clicked)
         self.addStateButton.clicked.connect(self.add_state_clicked)
         self.sendConfigButton.clicked.connect(self.send_config_clicked)
+        self.loadConfigButton.clicked.connect(self.load_config_clicked)
+        self.saveConfigButton.clicked.connect(self.save_config_clicked)
 
     def show_context_menu(self, pos):
         gloPos = self.LcdWidget.mapToGlobal(pos)
         self.cmenu = self.create_control_context_menu()
         self.cmenu.exec_(gloPos)
+
+    def load_config_clicked(self):
+        filename = QtWidgets.QFileDialog.getOpenFileName(caption="Open File", filter="Config (*xml)")[0]
+
+        if filename == '':
+            return
+
+        tree = ET.parse(filename)
+
+        root = tree.getroot()
+
+        for tag_xml in root:
+            if tag_xml.tag == "Option":
+                for option_tml in tag_xml:
+                    if option_tml.tag == "ColumnCount":
+                        rowCount = int(option_tml.text)
+
+                        self.tableWidget.setRowCount(rowCount)
+
+                    if option_tml.tag == "RowCount":
+                        columnCount = int(option_tml.text)
+
+                        self.tableWidget.setColumnCount(columnCount)
+
+            if tag_xml.tag == "Cells":
+                for cell_xml in tag_xml:
+                    col = int(cell_xml.get('col'))
+                    row = int(cell_xml.get('row'))
+                    type = cell_xml.get('type')
+
+                    cellWidget = None
+                    if type in ['StateWidget']:
+                        cellWidget = StateWidget()
+
+                        cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
+                        cellWidget.trigger_select_state.connect(self.select_state_widget)
+
+                        self.button_group.addButton(cellWidget.get_radio_button())
+
+                    if type in ['ChannelWidget']:
+                        cellWidget = ChannelWidget()
+                        cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
+
+                    if type == 'OptionWidget':
+                        cellWidget = OptionWidget()
+
+                    cellWidget.readOptionXML(cell_xml)
+
+                    self.tableWidget.setCellWidget(col, row, cellWidget)
+
+        self.adjust()
+
+    def save_config_clicked(self):
+        filename = QtWidgets.QFileDialog.getSaveFileName(caption="Open File", filter="Config (*xml)")[0]
+
+
+        if filename[-4:] != '.xml':
+            filename += '.xml'
+
+        try:
+
+            root = ET.Element("RehaStimGUI_Config")
+            root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            root.set('PaPI_version', pc.CORE_PAPI_VERSION)
+            root.set('plugin_version', self.__VERSION__)
+
+            # -------------------------------
+            # Store options
+            # -------------------------------
+
+            option = ET.SubElement(root, 'Option')
+
+            columnCount = ET.SubElement(option, 'ColumnCount')
+            columnCount.text = str(self.tableWidget.rowCount())
+            rowCount = ET.SubElement(option, 'RowCount')
+            rowCount.text = str(self.tableWidget.columnCount())
+
+            # -------------------------------
+            # Store information about cells
+            # -------------------------------
+
+            cell_widgets = ET.SubElement(root, "Cells")
+
+            for c in range(0, self.tableWidget.rowCount()):
+
+                for r in range(0, self.tableWidget.columnCount()):
+                    celllWidget  = self.tableWidget.cellWidget(c, r)
+
+                    if (r, c) == (0, 0):
+                        continue
+
+                    cell_xml = ET.SubElement(cell_widgets, "Cell")
+
+                    if isinstance(celllWidget, StateWidget):
+                        cell_xml.set('type', 'StateWidget')
+
+                    if isinstance(celllWidget, ChannelWidget):
+                        cell_xml.set('type', 'ChannelWidget')
+
+                    if isinstance(celllWidget, OptionWidget):
+                        cell_xml.set('type', 'OptionWidget')
+
+
+                    celllWidget.fillOptionXML(cell_xml)
+
+                    cell_xml.set('row', str(r))
+                    cell_xml.set('col', str(c))
+
+
+
+            self.indent(root)
+            tree = ET.ElementTree(root)
+            tree.write(filename)
+
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not saveable: " + filename, tb)
+
+    def clear(self):
+        for button in self.button_group.buttons():
+            self.button_group.removeButton(button)
+
+    def adjust(self):
+        self.tableWidget.resizeColumnsToContents()
+        self.tableWidget.resizeRowsToContents()
 
     def add_state_clicked(self, flag=None, option_item = OptionItem()):
         curCount = self.tableWidget.columnCount()
@@ -187,9 +343,11 @@ class RehaStimGUI(vip_base, object):
         self.add_missing_cell_items()
 
         for r in range(1, self.tableWidget.rowCount()):
-            optionWidget = OptionWidget('ROW')
+            optionWidget = OptionWidget()
             optionWidget.set_option_item(option_item)
             self.tableWidget.setCellWidget(r, curCount, optionWidget)
+
+        self.adjust()
 
     def add_ch_clicked(self, flag=None, option_item = OptionItem()):
         rowCount = self.tableWidget.rowCount()
@@ -201,31 +359,32 @@ class RehaStimGUI(vip_base, object):
         # Add missing option widgets
 
         for c in range(1, self.tableWidget.columnCount()):
-            optionWidget = OptionWidget('COl')
+            optionWidget = OptionWidget()
             optionWidget.set_option_item(option_item)
             self.tableWidget.setCellWidget(rowCount, c, optionWidget)
 
         self.select_state_widget(self.current_state)
 
+        self.adjust()
+
     def send_config_clicked(self):
         stateWidget = self.current_state
+
+
 
         if stateWidget is None:
             return
 
-        for c in range(1, self.tableWidget.columnCount()):
-            if stateWidget == self.tableWidget.cellWidget(0, c):
-                self.tableWidget.selectColumn(c)
+        json_config = self.create_json_for_state(stateWidget)
 
-                for r in range(1, self.tableWidget.rowCount()):
-                    cItem = self.tableWidget.cellWidget(r, c)
+        print(json_config)
 
 
     def add_missing_cell_items(self):
 
         for c in range(1, self.tableWidget.columnCount()):
 
-            if not isinstance(self.tableWidget.cellWidget(0, c), CellWidget):
+            if not isinstance(self.tableWidget.cellWidget(0, c), HeaderWidget):
                 cellWidget = StateWidget('State' + str(c))
                 cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
                 cellWidget.trigger_select_state.connect(self.select_state_widget)
@@ -236,7 +395,7 @@ class RehaStimGUI(vip_base, object):
 
         for r in range(1, self.tableWidget.rowCount()):
 
-            if not isinstance(self.tableWidget.cellWidget(r, 0), CellWidget):
+            if not isinstance(self.tableWidget.cellWidget(r, 0), HeaderWidget):
                 cellWidget = ChannelWidget('Ch' + str(r))
                 cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
                 self.tableWidget.setCellWidget(r, 0, cellWidget)
@@ -281,8 +440,27 @@ class RehaStimGUI(vip_base, object):
                         cItem.setBackgroundRole(QtGui.QPalette.NoRole)
                         cItem.setAutoFillBackground(True)
 
+    def create_json_for_state(self, stateWidget):
+
+        json_cfg = {}
+        if isinstance(stateWidget, StateWidget):
+            for c in range(1, self.tableWidget.columnCount()):
+                if stateWidget == self.tableWidget.cellWidget(0, c):
+                    self.tableWidget.selectColumn(c)
+
+                    json_cfg['active_state'] = stateWidget.label.text()
+
+                    for r in range(1, self.tableWidget.rowCount()):
+                        cellWidget = self.tableWidget.cellWidget(r, c)
+
+                        channelWidget = self.tableWidget.cellWidget(r, 0)
+
+                        json_cfg[channelWidget.label.text()] = cellWidget.getCfgAsDict()
 
 
+        json_str = json.dumps(json_cfg)
+
+        return json_str
 
     def select_state_widget(self, stateWidget):
         if stateWidget is None:
@@ -357,90 +535,171 @@ class RehaStimGUI(vip_base, object):
 
         pass
 
+    def indent(self, elem, level=0):
+        """
+        Function which will apply a nice looking indentiation to xml structure before save. Better readability.
+        copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53
+
+        :param elem:
+        :param level:
+        :return:
+        """
+        i = "\n" + level * "  "
+        if len(elem):
+            if not elem.text or not elem.text.strip():
+                elem.text = i + "  "
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+            for elem in elem:
+                self.indent(elem, level + 1)
+            if not elem.tail or not elem.tail.strip():
+                elem.tail = i
+        else:
+            if level and (not elem.tail or not elem.tail.strip()):
+                elem.tail = i
+
 
 class OptionWidget(QtWidgets.QWidget):
-    def __init__(self, text):
+    """
+    This widget is used as a cell widget for the table widget which contains all attributes
+    for a pair of channel and state which can be changed by the user.
+
+    """
+    def __init__(self, option_item = OptionItem()):
         super(OptionWidget, self).__init__()
 
         self.option_item = None
 
-        # Create structure
-
-        self.hLayout = QtWidgets.QHBoxLayout(self)
-        self.hLayout.setContentsMargins(0, 0, 0, 0)
-
-        # Add label for option
-
-        self.label = QtWidgets.QLabel(text)
-
-        self.label.mouseDoubleClickEvent = self.open_option_dialog
-
-        self.hLayout.addWidget(self.label)
-
-        self.option_dialog = OptionDialog()
-
-
-    def open_option_dialog(self, event):
-        if self.option_dialog is not None:
-            self.option_dialog.exec_()
-            self.option_dialog.raise_()
-            self.option_dialog.activateWindow()
-
-    def set_option_item(self, oItem):
-        self.option_item = oItem
-        self.option_dialog.set_option_item(oItem)
-
-
-class OptionDialog(QtWidgets.QDialog):
-    def __init__(self):
-        super(OptionDialog, self).__init__()
-
-        self.setWindowTitle('Option')
-
-        self.vLayout = QtWidgets.QVBoxLayout(self)
-
-        self.saveButton = QtWidgets.QPushButton('Save')
-        self.saveButton.clicked.connect(self.save_button_clicked)
-        self.attributes_widget = QtWidgets.QWidget()
-
-        self.gLayout = QtWidgets.QGridLayout(self.attributes_widget)
-
-        self.vLayout.addWidget(self.attributes_widget)
-        self.vLayout.addWidget(self.saveButton)
-
-
         self.labels = []
-        self.edits = []
+        self.lines = []
+        self.attrs = []
+
+        self.gLayout = QtWidgets.QGridLayout(self)
+        self.gLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.set_option_item(option_item)
+
+    def create_structure(self):
+        """
+        Adds all labels and fields at the grid layout
+
+        :return:
+        """
+        for i in range(len(self.lines)):
+            self.gLayout.addWidget(self.labels[i], i, 0)
+            self.gLayout.addWidget(self.lines[i], i, 1)
+
+        pass
 
     def set_option_item(self, oItem):
+        """
+        Used to set a new option item and triggers a rebuild of the grid layout
+
+        :param oItem:
+        :return:
+        """
+
         self.option_item = oItem
-        count = 0
-        if not isinstance(self.option_item, OptionItem):
-            return
 
-        for attr in sorted(self.option_item.get_attributes()):
-            value = self.option_item.get_value(attr)
+        self.lines.clear()
+        self.labels.clear()
+        self.attrs.clear()
 
-            label = QtWidgets.QLabel(str(attr))
-            edit = QtWidgets.QLineEdit(str(value))
-            self.labels.append(label)
-            self.edits.append(edit)
+        for key in sorted(self.option_item.get_attributes()):
+            attr = self.option_item.get_attr(key)
 
-            self.gLayout.addWidget(label, count, 0)
-            self.gLayout.addWidget(edit, count, 1)
-            count += 1
+            if 'display_name' in attr:
+                self.labels.append(QtWidgets.QLabel(attr['display_name']))
+            else:
+                self.labels.append(QtWidgets.QLabel(key))
 
-    def save_button_clicked(self):
-        print('Save Config !!!')
-        self.close()
+            self.lines.append(RehaStimEditableField(attr))
+
+            self.attrs.append(key)
+
+        self.create_structure()
+
+    def fillOptionXML(self, cell_xml : ET.Element):
+        """
+        Used for saving the current configuration.
+
+        :param cell_xml:
+        :return:
+        """
+        self.updateOptionItem()
+
+        attrs_xml = ET.SubElement(cell_xml, "Attributes")
+
+        for key in sorted(self.option_item.get_attributes()):
+
+            attr = self.option_item.get_attr(key)
+
+            attr_xml = ET.SubElement(attrs_xml, "Attribute")
+            attr_xml.set('name', key)
+
+            for attr_key in attr:
+
+                attr_key_xml = ET.SubElement(attr_xml, attr_key)
+
+                attr_key_xml.text = str(attr[attr_key])
+
+    def updateOptionItem(self):
+        """
+        Updates the interal option item by the current user input.
+
+        :return:
+        """
+        for i in range(len(self.labels)):
+            self.option_item.attributes[self.attrs[i]]['value'] = str(self.lines[i].get_value())
+
+    def getCfgAsDict(self):
+
+        cfg = {}
+        for i in range(len(self.labels)):
+
+            attr_name = self.option_item.attributes[self.attrs[i]]['display_name']
+
+            cfg[attr_name] = str(self.lines[i].get_value())
+
+        return cfg
+
+    def readOptionXML(self, cell_xml : ET.Element):
+        """
+        Used for loading a new configuration
+
+        :param cell_xml:
+        :return:
+        """
+        attrs_xml = cell_xml.find('Attributes')
+
+        new_oItem = OptionItem()
+        new_oItem.clear_attribtues()
+
+        for attr_xml in attrs_xml:
+            attr_name = attr_xml.get('name')
+
+            value = {}
+
+            for attr_key_xml in attr_xml:
+
+                value[attr_key_xml.tag] = attr_key_xml.text
 
 
-class CellWidget(QtWidgets.QWidget):
+            new_oItem.set_attr(attr_name, value)
 
+        self.set_option_item(new_oItem)
+
+
+class HeaderWidget(QtWidgets.QWidget):
+    """
+    This cell widget is used as a cell widget in table view and describe
+    a single horizontal and vertical header.
+
+    """
     trigger_remove_cell = QtCore.pyqtSignal(QtWidgets.QWidget)
 
-    def __init__(self, text):
-        super(CellWidget, self).__init__()
+    def __init__(self, text="Header"):
+        super(HeaderWidget, self).__init__()
         self.cell_name = text
 
         # Create structure
@@ -458,17 +717,17 @@ class CellWidget(QtWidgets.QWidget):
 
         self.bWidget = QtWidgets.QWidget()
 
-        self.vLayout = QtWidgets.QVBoxLayout(self.bWidget)
-        self.vLayout.setContentsMargins(0, 0, 0, 0)
-
+        self.hBLayout = QtWidgets.QHBoxLayout(self.bWidget)
+        self.hBLayout.setContentsMargins(0, 0, 0, 0)
+        self.hBLayout.setAlignment(QtCore.Qt.AlignRight)
         self.delete_button = QtWidgets.QPushButton('X')
         self.select_button = QtWidgets.QRadioButton()
 
         self.delete_button.setFixedSize(20, 20)
         self.select_button.setFixedSize(20, 20)
 
-        self.vLayout.addWidget(self.delete_button)
-        self.vLayout.addWidget(self.select_button)
+        self.hBLayout.addWidget(self.delete_button)
+        self.hBLayout.addWidget(self.select_button)
 
         # Add widgets
 
@@ -480,7 +739,36 @@ class CellWidget(QtWidgets.QWidget):
 
         self.delete_button.clicked.connect(self.remove_cell_widget)
 
+    def fillOptionXML(self, cell_xml : ET.Element):
+        """
+        Used for saving the current configuration.
+
+        :param cell_xml:
+        :return:
+        """
+        name_xml = ET.SubElement(cell_xml, "name")
+        name_xml.text = self.label.text()
+
+    def readOptionXML(self, cell_xml : ET.Element):
+        """
+        Used for loading a new configuration.
+
+        :param cell_xml:
+        :return:
+        """
+
+        name_xml = cell_xml.find('name')
+
+        self.label.setText(name_xml.text)
+        self.line_edit.setText(name_xml.text)
+
     def label_clicked(self, event):
+        """
+
+
+        :param event:
+        :return:
+        """
         print('Clicked on ' + self.cell_name)
 
         self.label.setVisible(False)
@@ -490,23 +778,34 @@ class CellWidget(QtWidgets.QWidget):
         #self.line_edit.setFocus(Qt.Focu)
 
     def line_edited(self):
+        """
 
+
+        :return:
+        """
         self.cell_name = self.line_edit.text()
 
         self.label.setText(self.cell_name)
-
-#        print("NewText: " + self.cell_name)
- #       print(self.label.text())
 
         self.label.setVisible(True)
         self.line_edit.setVisible(False)
 
     def remove_cell_widget(self):
+        """
+        Triggers the event that this column OR row should be removed.
+
+        :return:
+        """
         self.trigger_remove_cell.emit(self)
 
-class StateWidget(CellWidget):
+
+class StateWidget(HeaderWidget):
+    """
+    More specific version of the HeaderWidget to describe the horizontal header.
+
+    """
     trigger_select_state = QtCore.pyqtSignal(QtWidgets.QWidget)
-    def __init__(self, text):
+    def __init__(self, text="State"):
         super(StateWidget, self).__init__(text)
         self.select_button.clicked.connect(self.state_selected)
 
@@ -517,8 +816,56 @@ class StateWidget(CellWidget):
         return self.select_button
 
 
-class ChannelWidget(CellWidget):
+class ChannelWidget(HeaderWidget):
 
-    def __init__(self, text):
+    def __init__(self, text="Channel"):
         super(ChannelWidget, self).__init__(text)
         self.select_button.setVisible(False)
+
+
+class RehaStimEditableField(QtWidgets.QWidget):
+    def __init__(self, attr):
+        super(RehaStimEditableField, self).__init__()
+        self.vLayout = QtWidgets.QVBoxLayout(self)
+        self.vLayout.setContentsMargins(1, 1, 1, 1)
+
+        self.editable_field = None
+
+        if 'options' in attr:
+            box = QtWidgets.QComboBox()
+
+            options = attr['options'].split(',')
+            options = map(str.strip, options)
+
+            box.addItems(options)
+
+            index = box.findText(attr['value'])
+
+            box.setCurrentIndex(index)
+            #box.setMaximumWidth(100)
+            self.vLayout.addWidget(box)
+
+            self.editable_field = box
+
+        else:
+            line = QtWidgets.QLineEdit(attr['value'])
+            if 'regex' in attr:
+                regex = attr['regex']
+                rx = QRegExp(regex)
+                validator = QRegExpValidator(rx, self)
+                line.setValidator(validator)
+
+            self.editable_field = line
+            self.editable_field.setMaximumWidth(70)
+
+            self.vLayout.addWidget(line)
+
+    def get_value(self):
+
+        if isinstance(self.editable_field, QtWidgets.QComboBox):
+            return self.editable_field.currentText()
+
+        if isinstance(self.editable_field, QtWidgets.QLineEdit):
+            return self.editable_field.text()
+
+        return None
