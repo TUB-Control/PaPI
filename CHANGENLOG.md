@@ -4,6 +4,7 @@ Changelog
 v.1.X:
 ---
  * [major-change] Switched from PySide to PyQt and upgraded to use Qt5 (also switched to develop branch of pyqtgraph)
+ * [plugin]: Added a new visual plugin: RehaStimGUI: Used to describe channel attributes for different states
  
 v.1.1: LAST RELEASE WITH PYSIDE
 ---
