@@ -530,15 +530,14 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if dplugin_pcp.type == PLUGIN_PCP_IDENTIFIER:
                 # action = QAction(self.tr(dplugin.uname), self)
                 # sub_menu.addAction(action)
-
-                pcp_menu = QMenu(self.tr(dplugin_pcp.uname))
+                pcp_menu = QMenu(self.tr(dplugin_pcp.uname), sub_menu)
                 sub_menu.addMenu(pcp_menu)
 
                 dblock_pcp_ids = dplugin_pcp.get_dblocks()
 
                 for dblock_pcp_id in dblock_pcp_ids:
                     dblock_pcp = dblock_pcp_ids[dblock_pcp_id]
-                    action = QAction(self.tr(dblock_pcp.name), self)
+                    action = QAction(self.tr(dblock_pcp.name), pcp_menu)
                     pcp_menu.addAction(action)
 
                     action.triggered.connect(lambda ignore, p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
