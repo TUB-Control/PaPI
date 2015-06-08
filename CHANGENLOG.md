@@ -5,6 +5,7 @@ v.1.X:
 ---
  * [major-change] Switched from PySide to PyQt and upgraded to use Qt5 (also switched to develop branch of pyqtgraph)
  * [plugin]: Added a new visual plugin: RehaStimGUI: Used to describe channel attributes for different states
+ * [feature]: Added a simulink block which enables the communication between PaPI and Simulink
  
 v.1.1: LAST RELEASE WITH PYSIDE
 ---
