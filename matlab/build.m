@@ -16,8 +16,6 @@ libPaths = {'/usr/lib/','/usr/lib/x86_64-linux-gnu/'};
 legacy_folder_cpp = 'legacy/';
 
 
-
-
 % Create Struct
 
 defs = [];
@@ -33,8 +31,8 @@ def.StartFcnSpec = 'createPaPIBlock(int32 size(u1,1), int32 size(u2,1), int32 p3
 def.TerminateFcnSpec = 'deletePaPIBlock()';
 def.HeaderFiles = {'PaPIBlock.hpp'};
 def.SourceFiles = {'PaPIBlock.cpp'};
-def.IncPaths = {'hpp'};
-def.SrcPaths = {'cpp'};
+def.IncPaths = {'../hpp'};
+def.SrcPaths = {'../cpp'};
 def.Options.useTlcWithAccel = false;
 def.HostLibFiles = {'libjsoncpp.so.0'};
 def.TargetLibFiles = {'libjsoncpp.so.0'};

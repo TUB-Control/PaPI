@@ -136,12 +136,12 @@ void PaPIBlock::buildConfiguration() {
 
     std::string u_name;
     
-
-    //ssConfig << styledWriter.write(papiConfig);
-
-    //std::string str_papi = ssConfig.str();
-
-    //printf("PaPIConfig: %s \n", str_papi.c_str());
+    /*
+    ssConfig << styledWriter.write(papiConfig);
+    std::string str_papi = ssConfig.str();
+    printf("PaPIConfig: %s \n", str_papi.c_str());
+    ssConfig.clear();    
+    */
     // ---------------------------------
     // Create signals
     // ---------------------------------
@@ -215,9 +215,29 @@ void PaPIBlock::buildConfiguration() {
    */
     // ----------------
 
+
     this->papiJsonConfig["SourcesConfig"] = sourcesConfig;
     this->papiJsonConfig["ParametersConfig"] = parametersConfig;
-    this->papiJsonConfig["PaPIConfig"] = papiConfig;
+
+    if (papiConfig.empty()) {
+        this->papiJsonConfig["PaPIConfig"] = "{}";
+
+/*        papiConfig = Json::Value();
+
+        Json::Value toCreate;
+        Json::Value toSub;
+        Json::Value toControl;
+
+        papiConfig["ToCreate"] = "{}";
+
+        papiConfig["ToSub"]    = "{}";
+        papiConfig["ToControl"] = toControl;
+*/
+    } else {
+        this->papiJsonConfig["PaPIConfig"] = papiConfig;
+
+    }
+
 
     // ----------------
                       
