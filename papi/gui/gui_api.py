@@ -516,7 +516,7 @@ class Gui_api(QtCore.QObject):
                                 alias_xml = block_xml.find('alias')
                                 alias = alias_xml.text
                                 pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                                data_source_new = self.change_uname_to_uniqe(data_source)
+                                data_source_new = data_source #self.change_uname_to_uniqe(data_source)
                                 subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
 
                     # --------------------------------

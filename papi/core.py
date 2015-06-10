@@ -1129,6 +1129,8 @@ class Core:
             self.log.printText(1, 'do_subscribe, sub uname worng')
             return -1
 
+        print("Target name " + event.source_uname)
+
         pl = self.core_data.get_dplugin_by_uname(event.source_uname)
         if pl is not None:
             source_id = pl.id

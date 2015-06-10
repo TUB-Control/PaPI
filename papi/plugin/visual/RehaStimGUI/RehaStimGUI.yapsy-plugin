@@ -1,0 +1,11 @@
+[Core]
+Name = RehaStimGUI
+Module = RehaStimGUI
+
+[Documentation]
+Author = S. Knuth
+Version = 0.1
+Website =
+Description = Used to define states for different channels.
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/
