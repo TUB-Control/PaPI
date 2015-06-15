@@ -30,10 +30,13 @@ __author__ = 'knuths'
 
 from PyQt5.QtGui        import QColor
 from PyQt5.QtWidgets    import QLineEdit, QFileDialog, QColorDialog, QPushButton
+from PyQt5 import QtWidgets
 
-#from PyQt5.QtWidgets import QLineEdit, QFileDialog, QColorDialog, QPushButton, QColor
+from papi.data.DGui import DGui
+
 import os, re
 import papi.helper as ph
+import papi.constants as pc
 
 class FileLineEdit(QLineEdit):
     def __init__(self):
@@ -108,3 +111,132 @@ class ColorLineEdit(QPushButton):
         color_string = '(' + str(color.red()) + ',' + str(color.green()) + ',' + str(color.blue()) + ')'
 
         return color_string
+
+
+class PaPIConfigSaveDialog(QFileDialog):
+    def __init__(self, parent):
+        super(PaPIConfigSaveDialog, self).__init__(parent)
+
+        self.setFileMode(QFileDialog.AnyFile)
+        self.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        self.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
+        self.setWindowTitle("Save Configuration")
+        self.setAcceptMode(QFileDialog.AcceptSave)
+
+        inital_hidden = False
+
+        glayout = self.layout()
+
+        print(glayout.columnCount())
+
+        button = QPushButton('More details ...')
+        button.clicked.connect(self.button_clicked)
+
+        # ------------------
+        # Layout for table
+        # ------------------
+
+        glayout.addWidget(button, 5,0)
+        self.detailed_layout = QtWidgets.QVBoxLayout()
+        self.pluginTable = QtWidgets.QTableWidget()
+        #self.pluginTable.setHeaderLabels(['Plugin', 'Create', 'Subscriptions'])
+        self.detailed_layout.addWidget(self.pluginTable)
+        self.pluginTable.setHidden(inital_hidden)
+
+        glayout.addLayout(self.detailed_layout, 6, 1, 1, 3)
+
+        # --------------------
+        # Buttons for comfort
+        # --------------------
+
+        self.buttons_widget = QtWidgets.QWidget()
+        self.buttons_widget.setHidden(inital_hidden)
+
+        select_all_plugins = QPushButton('All plugins')
+        select_all_subs = QPushButton('All subscriptions')
+
+        unselect_all_plugins = QPushButton('No plugins')
+        unselect_all_subs = QPushButton('No subscriptions')
+
+
+        select_all_plugins.clicked.connect(lambda  ignore, p = 1 : self.select_items(p))
+        select_all_subs.clicked.connect(lambda  ignore, p = 2 : self.select_items(p))
+
+        unselect_all_plugins.clicked.connect(lambda  ignore, p = -1 : self.select_items(p))
+        unselect_all_subs.clicked.connect(lambda  ignore, p = -2 : self.select_items(p))
+
+
+        self.button_vlayout = QtWidgets.QVBoxLayout(self.buttons_widget)
+
+        self.button_vlayout.addWidget(select_all_plugins)
+        self.button_vlayout.addWidget(select_all_subs)
+        self.button_vlayout.addWidget(unselect_all_plugins)
+        self.button_vlayout.addWidget(unselect_all_subs)
+
+ #       glayout.addLayout(self.button_vlayout, 6,0,1,1)
+
+        glayout.addWidget(self.buttons_widget, 6,0,1,1)
+
+    def button_clicked(self):
+        self.pluginTable.setHidden(not self.pluginTable.isHidden())
+
+        self.buttons_widget.setHidden(self.pluginTable.isHidden())
+
+    def select_items(self, flag):
+        for r in range(self.pluginTable.rowCount()):
+
+            if flag in [1, 2]:
+                self.pluginTable.cellWidget(r, flag).setChecked(True)
+
+            if flag in [-1, -2]:
+                self.pluginTable.cellWidget(r, abs(flag)).setChecked(False)
+
+
+    def fill_with(self, data: DGui):
+        print('fill with data')
+
+        print(data.get_all_plugins())
+
+        dplugins = data.get_all_plugins()
+
+        row = 0
+
+        self.pluginTable.setColumnCount(3)
+
+        self.pluginTable.setHorizontalHeaderLabels(["Plugin" , "Create", 'Subscriptions'])
+
+        for dplugin_id in dplugins:
+            dplugin = dplugins[dplugin_id]
+
+            self.pluginTable.setRowCount(row + 1)
+#            qlabel = QtWidgets.QLabel(dplugin.uname)
+
+            self.pluginTable.setCellWidget(row, 0, QtWidgets.QLabel(dplugin.uname))
+
+            check_plugin = QtWidgets.QCheckBox();
+            check_plugin.setChecked(True)
+
+            check_subscription = QtWidgets.QCheckBox();
+            check_subscription.setChecked(True)
+
+            self.pluginTable.setCellWidget(row, 1, check_plugin)
+            self.pluginTable.setCellWidget(row, 2, check_subscription)
+            row += 1
+
+
+    def get_create_lists(self):
+        print('create lists')
+
+        plugin_list = []
+        subscription_list = []
+
+        for r in range(self.pluginTable.rowCount()):
+            qlabel = self.pluginTable.cellWidget(r, 0)
+
+            if self.pluginTable.cellWidget(r, 1).isChecked():
+                plugin_list.append(qlabel.text())
+
+            if self.pluginTable.cellWidget(r, 2).isChecked():
+                subscription_list.append(qlabel.text())
+
+        return plugin_list, subscription_list

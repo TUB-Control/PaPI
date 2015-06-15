@@ -45,7 +45,6 @@ from papi.ui.gui.qt_new.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
-from papi.gui.qt_new.item import PaPIMDISubWindow
 
 from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
@@ -57,6 +56,8 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 from papi.gui.qt_new.PapiTabManger import PapiTabManger
+
+from papi.gui.qt_new.custom import PaPIConfigSaveDialog
 
 from papi.gui.gui_management import GuiManagement
 
@@ -441,17 +442,19 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         fileNames = ''
 
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.AnyFile)
-        dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
-        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
-        dialog.setWindowTitle("Save Configuration")
-        dialog.setAcceptMode(QFileDialog.AcceptSave)
+        dialog = PaPIConfigSaveDialog(self)
+
+        dialog.fill_with(self.gui_management.gui_api.gui_data)
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()
 
+        plugin_list, subscription_list = dialog.get_create_lists()
+
+        print(plugin_list)
+        print(subscription_list)
         if len(fileNames):
+
             if fileNames[0] != '':
                 self.gui_management.gui_api.do_save_xml_config(fileNames[0])
 
