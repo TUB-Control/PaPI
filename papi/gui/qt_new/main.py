@@ -290,27 +290,26 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def get_gui_config(self):
 
         actTab = {}
-        actTab['active'] = {}
-        actTab['active']['value'] = str(self.TabManager.get_currently_active_tab())
+        actTab['Active'] = str(self.TabManager.get_currently_active_tab())
 
         tabs = {}
         tab_dict = self.TabManager.get_tabs_by_uname()
         for tab in tab_dict:
             tabOb = tab_dict[tab]
             tabs[tab]= {}
-            tabs[tab]['background'] = tabOb.background
-            tabs[tab]['position'] = str(self.TabManager.getTabPosition_by_name(tab))
+            tabs[tab]['Background'] = tabOb.background
+            tabs[tab]['Position'] = str(self.TabManager.getTabPosition_by_name(tab))
 
         size = {}
-        size['x'] = {}
-        size['x']['value'] = str(self.size().width())
-        size['y'] = {}
-        size['y']['value'] = str(self.size().height())
+
+        size['X']= str(self.size().width())
+
+        size['Y']= str(self.size().height())
 
         cfg = {}
-        cfg['activeTab'] = actTab
-        cfg['tabs'] = tabs
-        cfg['size'] = size
+        cfg['ActiveTab'] = actTab
+        cfg['Tabs'] = tabs
+        cfg['Size'] = size
 
         return cfg
 
@@ -456,7 +455,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if len(fileNames):
 
             if fileNames[0] != '':
-                self.gui_management.gui_api.do_save_xml_config(fileNames[0])
+                self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0])
 
     def closeEvent(self, *args, **kwargs):
         """

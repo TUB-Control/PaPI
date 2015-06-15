@@ -33,35 +33,20 @@ from PyQt5.QtGui     import QHBoxLayout
 
 import subprocess
 import os
-import papi.pyqtgraph as pq
+from signal import SIGTERM
+
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
 
-import collections
-import re
+import papi.constants as pc
 
 
-#RENAME TO PLUGIN NAME
+
+
 class StartExternalScript(vip_base):
 
 
     def initiate_layer_0(self, config=None):
-
-#        self.config = config
-
-        # ---------------------------
-        # Read configuration
-        # ---------------------------
-        # Note: this cfg items have to exist!
-        # self.show_grid_x = int(self.config['x-grid']['value']) == '1'
-        # self.show_grid_y = int(self.config['y-grid']['value']) == '1'
-        #
-        # int_re = re.compile(r'(\d+)')
-        #
-        # self.colors_selected = int_re.findall(self.config['color']['value']);
-        # self.types_selected = int_re.findall(self.config['style']['value']);
-
 
         # --------------------------------
         # Create Widget
@@ -69,10 +54,9 @@ class StartExternalScript(vip_base):
         # Create Widget needed for this plugin
 
         self.SESWidget = QWidget()
-
-        # This call is important, because the background structure needs to know the used widget!
-        # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.SESWidget )
+
+
         hbox = QHBoxLayout()
         self.SESWidget.setLayout(hbox)
 
@@ -85,30 +69,17 @@ class StartExternalScript(vip_base):
         self.control_button = QPushButton('Start External Script')
         self.control_button.clicked.connect(self.button_click_callback)
 
-
         hbox.addWidget(self.control_button)
 
-        #subprocess.Popen('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh',
-        #            cwd='/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/', bufsize=-1,
-        #            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        #os.system('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh')
-
-        # ---------------------------
-        # Create Parameters
-        # ---------------------------
-        # create a parameter object
-        #   self.para1 = DParameter('ParameterName',default=0)
-        #   self.para2 = DParameter('ParameterName',default=0)
-
-        # build parameter list to send to Core
-        #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
 
         # ---------------------------
         # Create Legend
         # ---------------------------
         self.external_state = 'offline'
+
+        self.path = config['path']['value']
+        file = os.path.basename(self.path)
+        self.dir = self.path[:-len(file)]
 
         return True
 
@@ -117,16 +88,13 @@ class StartExternalScript(vip_base):
             self.external_state = 'online'
             self.control_button.setText('Stop External Script')
             self.status_label.setText('running...')
-            self.c = subprocess.Popen('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh',
-                    cwd='/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/',
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.process = subprocess.Popen(self.path, cwd=self.dir,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False, preexec_fn=os.setsid)
         else:
             self.external_state = 'offline'
             self.control_button.setText('Start External Script')
             self.status_label.setText('offline...')
-            self.c.terminate()
-            self.c.kill()
-
+            os.killpg(self.process.pid, SIGTERM)
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -161,7 +129,9 @@ class StartExternalScript(vip_base):
 
     def quit(self):
         # do something before plugin will close, e.a. close connections ...
-        pass
+        if self.external_state == 'online':
+            os.killpg(self.process.pid, SIGTERM)
+            print('External script was running while plugin was closed! Script was killed.')
 
 
     def get_plugin_configuration(self):
@@ -178,6 +148,12 @@ class StartExternalScript(vip_base):
                 'regex': '\(([0-9]+),([0-9]+)\)',
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
+            },
+            'path': {
+                'value': "~/",
+                'advanced': '0',
+                'type': pc.CFG_TYPE_FILE,
+                'tooltip': 'Path to executable'
             },
         }
         return config
