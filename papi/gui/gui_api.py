@@ -458,7 +458,19 @@ class Gui_api(QtCore.QObject):
         for name in tabNames:
             self.tabManager.add_tab(name)
 
-    def do_load_xml_reloaded(self,path):
+    def do_load_xml(self, path):
+        if path is None or not os.path.isfile(path):
+            return False
+
+        tree = ET.parse(path)
+        root = tree.getroot()
+
+        if root.tag == 'PaPI':
+            self.do_load_xml_reloaded(root)
+        else:
+            self.do_load_xml_v1(root)
+
+    def do_load_xml_reloaded(self,root):
         """
         Function to load a xml config to papi and apply the configuration.
 
@@ -466,11 +478,6 @@ class Gui_api(QtCore.QObject):
         :type path: basestring
         :return:
         """
-        if path is None or not os.path.isfile(path):
-            return False
-
-        tree = ET.parse(path)
-        root = tree.getroot()
 
         gui_config = {}
         plugins_to_start = []
@@ -563,10 +570,6 @@ class Gui_api(QtCore.QObject):
             self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
 
 
-        print(plugins_to_start)
-        print(parameters_to_change)
-        print(signals_to_change)
-        print(subs_to_make)
         # -----------------------------------------------
         # Check: Are there unloadable plugins?
         # -----------------------------------------------
@@ -606,7 +609,6 @@ class Gui_api(QtCore.QObject):
         :return:
         """
         for sub in subs_to_make:
-            #[pl_uname_new, data_source_new, block_name, signals, alias]
             self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
 
         for para in parameters_to_change:
@@ -621,7 +623,7 @@ class Gui_api(QtCore.QObject):
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),{'edit': DSignal(dsignal_uname, dsignal_dname)})
 
 
-    def do_load_xml(self, path):
+    def do_load_xml_v1(self, root):
         """
         Function to load a xml config to papi and apply the configuration.
 
@@ -629,11 +631,6 @@ class Gui_api(QtCore.QObject):
         :type path: basestring
         :return:
         """
-        if path is None or not os.path.isfile(path):
-            return False
-        tree = ET.parse(path)
-
-        root = tree.getroot()
 
         plugins_to_start = []
         subs_to_make = []
