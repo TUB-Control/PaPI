@@ -458,6 +458,169 @@ class Gui_api(QtCore.QObject):
         for name in tabNames:
             self.tabManager.add_tab(name)
 
+    def do_load_xml_reloaded(self,path):
+        """
+        Function to load a xml config to papi and apply the configuration.
+
+        :param path: path to xml file to load.
+        :type path: basestring
+        :return:
+        """
+        if path is None or not os.path.isfile(path):
+            return False
+
+        tree = ET.parse(path)
+        root = tree.getroot()
+
+        gui_config = {}
+        plugins_to_start = []
+        parameters_to_change = []
+        signals_to_change = []
+        subs_to_make = []
+
+        try:
+            for root_element in root:
+                ##########################
+                # Read gui configuration #
+                ##########################
+                if root_element.tag == 'Configuration':
+                    for property in root_element:
+                        gui_config[property.tag] = {}
+                        for attr in property:
+                            if len(attr) == 0:
+                                gui_config[property.tag][attr.tag] = attr.text
+                            else:
+                                gui_config[property.tag][attr.tag] = {}
+                                for val in attr:
+                                   gui_config[property.tag][attr.tag][val.tag] = val.text
+
+                if root_element.tag == 'Plugins':
+                    #############################
+                    # Read plugin configuration #
+                    #############################
+                    for plugin_xml in root_element:
+                        plObj = {}
+                        plObj['uname'] = self.change_uname_to_uniqe(plugin_xml.attrib['uname'])
+                        plObj['identifier'] = plugin_xml.find('Identifier').text
+                        config_xml = plugin_xml.find('StartConfig')
+                        config_hash = {}
+                        for parameter_xml in config_xml.findall('Parameter'):
+                            para_name = parameter_xml.attrib['Name']
+                            config_hash[para_name] = {}
+                            for detail_xml in parameter_xml:
+                                detail_name = detail_xml.tag
+                                config_hash[para_name][detail_name] = detail_xml.text
+
+                        plObj['cfg'] = config_hash
+
+                        plugins_to_start.append(plObj)
+
+                        # --------------------------------
+                        # Load PreviousParameters
+                        # --------------------------------
+
+                        prev_parameters_xml = plugin_xml.find('PreviousParameters')
+                        if prev_parameters_xml is not None:
+                            for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                                para_name = prev_parameter_xml.attrib['Name']
+                                para_value = prev_parameter_xml.text
+                                # pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                                # TODO validate NO FLOAT in parameter
+                                parameters_to_change.append([plObj['uname'], para_name, para_value])
+
+                        # --------------------------------
+                        # Load DBlocks due to signals name
+                        # --------------------------------
+
+                        dblocks_xml = plugin_xml.find('DBlocks')
+                        if dblocks_xml is not None:
+                            for dblock_xml in dblocks_xml:
+                                dblock_name = dblock_xml.attrib['Name']
+                                dsignals_xml = dblock_xml.findall('DSignal')
+                                for dsignal_xml in dsignals_xml:
+                                    dsignal_uname = dsignal_xml.attrib['uname']
+                                    dsignal_dname = dsignal_xml.find('dname').text
+                                    signals_to_change.append([plObj['uname'], dblock_name, dsignal_uname, dsignal_dname])
+
+                if root_element.tag == 'Subscriptions':
+                    for sub_xml in root_element:
+                        dest  = sub_xml.find('Destination').text
+                        for source in sub_xml:
+                            if source.tag == 'Source':
+                                sourceName = source.attrib['uname']
+                                for block_xml in source:
+                                    blockName = block_xml.attrib['name']
+                                    alias = block_xml.find('Alias').text
+                                    signals_xml = block_xml.find('Signals')
+
+                                    signals = []
+                                    for sig_xml in signals_xml:
+                                        signals.append(sig_xml.text)
+
+                                    subs_to_make.append({'dest':dest, 'source':sourceName, 'block':blockName, 'alias':alias, 'signals':signals})
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
+
+
+        print(plugins_to_start)
+        print(parameters_to_change)
+        print(signals_to_change)
+        print(subs_to_make)
+        # -----------------------------------------------
+        # Check: Are there unloadable plugins?
+        # -----------------------------------------------
+
+        unloadable_plugins = []
+        for pl in plugins_to_start:
+            plugin_info = self.pluginManager.getPluginByName(pl['identifier'])
+
+            if plugin_info is None:
+                if pl['identifier'] not in unloadable_plugins:
+                    unloadable_plugins.append(pl['identifier'])
+
+
+
+        if not len(unloadable_plugins):
+            for pl in plugins_to_start:
+                self.do_create_plugin(pl['identifier'], pl['uname'], pl['cfg'])
+
+            self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
+        else:
+            self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
+                                    "\nConfiguration from \n" + path + "\nwill not be used.", None)
+
+
+    def config_loader_subs_reloaded(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
+        """
+        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+
+        :param pl_to_start: list of plugins to start
+        :type pl_to_start: list
+        :param subs_to_make:  list of subscriptions to make
+        :type subs_to_make: list
+        :param parameters_to_change: parameter changes to apply
+        :type parameters_to_change: list
+        :param signals_to_change: signal name changes to apply
+        :type signals_to_change list
+        :return:
+        """
+        for sub in subs_to_make:
+            #[pl_uname_new, data_source_new, block_name, signals, alias]
+            self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
+
+        for para in parameters_to_change:
+            self.do_set_parameter_uname(para[0], para[1], para[2])
+
+        for sig in signals_to_change:
+            plugin_uname = sig[0]
+            dblock_name = sig[1]
+            dsignal_uname = sig[2]
+            dsignal_dname = sig[3]
+
+            self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),{'edit': DSignal(dsignal_uname, dsignal_dname)})
+
+
     def do_load_xml(self, path):
         """
         Function to load a xml config to papi and apply the configuration.
