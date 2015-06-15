@@ -113,9 +113,15 @@ class ColorLineEdit(QPushButton):
         return color_string
 
 
-class PaPIConfigSaveDialog(QFileDialog):
+class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
     def __init__(self, parent):
         super(PaPIConfigSaveDialog, self).__init__(parent)
+
+        inital_hidden = False
+
+
+
+        self.file_dialog = QFileDialog()
 
         self.setFileMode(QFileDialog.AnyFile)
         self.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
@@ -123,27 +129,31 @@ class PaPIConfigSaveDialog(QFileDialog):
         self.setWindowTitle("Save Configuration")
         self.setAcceptMode(QFileDialog.AcceptSave)
 
-        inital_hidden = False
-
-        glayout = self.layout()
-
-        print(glayout.columnCount())
 
         button = QPushButton('More details ...')
         button.clicked.connect(self.button_clicked)
+
+        glayout = self.layout()
+
+
+        self.detailed_widget = QtWidgets.QWidget()
+
 
         # ------------------
         # Layout for table
         # ------------------
 
-        glayout.addWidget(button, 5,0)
+
         self.detailed_layout = QtWidgets.QVBoxLayout()
         self.pluginTable = QtWidgets.QTableWidget()
-        #self.pluginTable.setHeaderLabels(['Plugin', 'Create', 'Subscriptions'])
-        self.detailed_layout.addWidget(self.pluginTable)
+#        self.pluginTable.setHeaderLabels(['Plugin', 'Create', 'Subscriptions'])
         self.pluginTable.setHidden(inital_hidden)
 
-        glayout.addLayout(self.detailed_layout, 6, 1, 1, 3)
+        self.detailed_layout.addWidget(self.pluginTable)
+
+
+        #
+
 
         # --------------------
         # Buttons for comfort
@@ -173,14 +183,20 @@ class PaPIConfigSaveDialog(QFileDialog):
         self.button_vlayout.addWidget(unselect_all_plugins)
         self.button_vlayout.addWidget(unselect_all_subs)
 
- #       glayout.addLayout(self.button_vlayout, 6,0,1,1)
+
+#        self.vlayout.addWidget(self.buttons_widget)
+
+        glayout.addWidget(button, 5,0)
 
         glayout.addWidget(self.buttons_widget, 6,0,1,1)
+        glayout.addLayout(self.detailed_layout, 6, 1, 1, 3)
 
     def button_clicked(self):
+
+
         self.pluginTable.setHidden(not self.pluginTable.isHidden())
 
-        self.buttons_widget.setHidden(self.pluginTable.isHidden())
+        self.buttons_widget.setHidden(not self.buttons_widget.isHidden())
 
     def select_items(self, flag):
         for r in range(self.pluginTable.rowCount()):
@@ -193,6 +209,7 @@ class PaPIConfigSaveDialog(QFileDialog):
 
 
     def fill_with(self, data: DGui):
+
         print('fill with data')
 
         print(data.get_all_plugins())

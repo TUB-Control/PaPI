@@ -450,12 +450,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         plugin_list, subscription_list = dialog.get_create_lists()
 
-        print(plugin_list)
-        print(subscription_list)
         if len(fileNames):
 
             if fileNames[0] != '':
-                self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0])
+                self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
 
     def closeEvent(self, *args, **kwargs):
         """

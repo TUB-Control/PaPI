@@ -636,11 +636,12 @@ class Gui_api(QtCore.QObject):
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
-    def do_save_xml_config_reloaded(self,path):
+    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
+        print('Do Save')
+        print(sToSave)
 
         bl_config = ['type', 'regex', 'display_text','tooltip','advanced' ]
-        plToSave  = ['Plot', 'CPUXLoad']
-        sToSave   = ['Plot', 'CPUXLoad']
+
         subscriptionsToSave =  {}
         # check for xml extension in path, add .xml if missing
         if path[-4:] != '.xml':
@@ -767,8 +768,9 @@ class Gui_api(QtCore.QObject):
                                 signals.append( str(s))
 
                             subsOfPl[sourcePL][block]['signals'] = signals
-                if len(subsOfPl) != 0:
-                    subscriptionsToSave[dplugin.uname] = subsOfPl
+
+                    if len(subsOfPl) != 0:
+                        subscriptionsToSave[dplugin.uname] = subsOfPl
 
             # ---------------------------------------
             # save subs to xml
