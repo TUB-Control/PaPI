@@ -431,7 +431,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if len(fileNames):
             if fileNames[0] != '':
                 self.last_config = fileNames[0]
-                self.gui_management.gui_api.do_load_xml(fileNames[0])
+                self.gui_management.gui_api.do_load_xml_reloaded(fileNames[0])
 
     def save_triggered(self):
         """
