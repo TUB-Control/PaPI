@@ -555,7 +555,7 @@ class Gui_api(QtCore.QObject):
                         dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
                         for source in sub_xml:
                             if source.tag == 'Source':
-                                sourceName = self.change_uname_to_uniqe(source.attrib['uname'])
+                                sourceName =  source.attrib['uname'] #self.change_uname_to_uniqe(source.attrib['uname'])
                                 for block_xml in source:
                                     blockName = block_xml.attrib['name']
                                     alias = block_xml.find('Alias').text
