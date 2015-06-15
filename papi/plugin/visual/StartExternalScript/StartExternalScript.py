@@ -38,7 +38,6 @@ from signal import SIGTERM
 
 from papi.plugin.base_classes.vip_base import vip_base
 
-import re
 import papi.constants as pc
 
 
