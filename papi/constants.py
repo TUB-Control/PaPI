@@ -124,7 +124,7 @@ CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
 CONFIG_ROOT_ELEMENT_NAME_RELOADED = 'PaPI'
 CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
-
+CONFIG_SAVE_CFG_BLACKLIST       = ['type', 'regex', 'display_text','tooltip','advanced' ]
 
 
 

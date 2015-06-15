@@ -37,7 +37,8 @@ import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
+    CONFIG_SAVE_CFG_BLACKLIST
 
 from PyQt5 import QtCore
 
@@ -458,7 +459,19 @@ class Gui_api(QtCore.QObject):
         for name in tabNames:
             self.tabManager.add_tab(name)
 
-    def do_load_xml_reloaded(self,path):
+    def do_load_xml(self, path):
+        if path is None or not os.path.isfile(path):
+            return False
+
+        tree = ET.parse(path)
+        root = tree.getroot()
+
+        if root.tag == 'PaPI':
+            self.do_load_xml_reloaded(root)
+        else:
+            self.do_load_xml_v1(root)
+
+    def do_load_xml_reloaded(self,root):
         """
         Function to load a xml config to papi and apply the configuration.
 
@@ -466,11 +479,6 @@ class Gui_api(QtCore.QObject):
         :type path: basestring
         :return:
         """
-        if path is None or not os.path.isfile(path):
-            return False
-
-        tree = ET.parse(path)
-        root = tree.getroot()
 
         gui_config = {}
         plugins_to_start = []
@@ -544,10 +552,10 @@ class Gui_api(QtCore.QObject):
 
                 if root_element.tag == 'Subscriptions':
                     for sub_xml in root_element:
-                        dest  = sub_xml.find('Destination').text
+                        dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
                         for source in sub_xml:
                             if source.tag == 'Source':
-                                sourceName = source.attrib['uname']
+                                sourceName = self.change_uname_to_uniqe(source.attrib['uname'])
                                 for block_xml in source:
                                     blockName = block_xml.attrib['name']
                                     alias = block_xml.find('Alias').text
@@ -560,13 +568,9 @@ class Gui_api(QtCore.QObject):
                                     subs_to_make.append({'dest':dest, 'source':sourceName, 'block':blockName, 'alias':alias, 'signals':signals})
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
+            self.error_occured.emit("Error: Config Loader", "Not loadable", tb)
 
 
-        print(plugins_to_start)
-        print(parameters_to_change)
-        print(signals_to_change)
-        print(subs_to_make)
         # -----------------------------------------------
         # Check: Are there unloadable plugins?
         # -----------------------------------------------
@@ -588,7 +592,7 @@ class Gui_api(QtCore.QObject):
             self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:
             self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
-                                    "\nConfiguration from \n" + path + "\nwill not be used.", None)
+                                    "\nConfiguration will not be used.", None)
 
 
     def config_loader_subs_reloaded(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
@@ -606,7 +610,6 @@ class Gui_api(QtCore.QObject):
         :return:
         """
         for sub in subs_to_make:
-            #[pl_uname_new, data_source_new, block_name, signals, alias]
             self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
 
         for para in parameters_to_change:
@@ -621,7 +624,7 @@ class Gui_api(QtCore.QObject):
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),{'edit': DSignal(dsignal_uname, dsignal_dname)})
 
 
-    def do_load_xml(self, path):
+    def do_load_xml_v1(self, root):
         """
         Function to load a xml config to papi and apply the configuration.
 
@@ -629,11 +632,6 @@ class Gui_api(QtCore.QObject):
         :type path: basestring
         :return:
         """
-        if path is None or not os.path.isfile(path):
-            return False
-        tree = ET.parse(path)
-
-        root = tree.getroot()
 
         plugins_to_start = []
         subs_to_make = []
@@ -722,7 +720,7 @@ class Gui_api(QtCore.QObject):
                                 signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
+            self.error_occured.emit("Error: Config Loader", "Not loadable", tb)
 
 
         # -----------------------------------------------
@@ -751,7 +749,7 @@ class Gui_api(QtCore.QObject):
             self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:
             self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
-                                    "\nConfiguration from \n" + path + "\nwill not be used.", None)
+                                    "\nConfiguration will not be used.", None)
 
     def change_uname_to_uniqe(self, uname):
         """
@@ -800,10 +798,8 @@ class Gui_api(QtCore.QObject):
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
     def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
-        print('Do Save')
-        print(sToSave)
 
-        bl_config = ['type', 'regex', 'display_text','tooltip','advanced' ]
+
 
         subscriptionsToSave =  {}
         # check for xml extension in path, add .xml if missing
@@ -869,7 +865,7 @@ class Gui_api(QtCore.QObject):
                         para_xml = ET.SubElement(cfg_xml, 'Parameter')
                         para_xml.set('Name', parameter)
                         for detail in dplugin.startup_config[parameter]:
-                            if detail not in bl_config:
+                            if detail not in CONFIG_SAVE_CFG_BLACKLIST:
                                 detail_xml = ET.SubElement(para_xml, detail)
                                 detail_xml.text = dplugin.startup_config[parameter][detail]
 
@@ -939,7 +935,6 @@ class Gui_api(QtCore.QObject):
             # save subs to xml
             #
             # ---------------------------------------
-            print(subscriptionsToSave)
             subs_xml = ET.SubElement(root,'Subscriptions')
             for dest in subscriptionsToSave:
                 sub_xml = ET.SubElement(subs_xml,'Subscription')
