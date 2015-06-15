@@ -30,7 +30,7 @@ __author__ = 'knuths'
 
 from PyQt5.QtGui        import QColor
 from PyQt5.QtWidgets    import QLineEdit, QFileDialog, QColorDialog, QPushButton
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 
 from papi.data.DGui import DGui
 
@@ -117,7 +117,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
     def __init__(self, parent):
         super(PaPIConfigSaveDialog, self).__init__(parent)
 
-        inital_hidden = False
+        inital_hidden = True
 
 
 
@@ -152,7 +152,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         self.detailed_layout.addWidget(self.pluginTable)
 
 
-        #
+        self.pluginTable.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
 
 
         # --------------------
@@ -199,7 +199,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         self.buttons_widget.setHidden(not self.buttons_widget.isHidden())
 
     def select_items(self, flag):
-        for r in range(self.pluginTable.rowCount()):
+        for r in range(self.pluginTable.rowCount()-1):
 
             if flag in [1, 2]:
                 self.pluginTable.cellWidget(r, flag).setChecked(True)
@@ -218,12 +218,17 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
 
         row = 0
 
-        self.pluginTable.setColumnCount(3)
+        self.pluginTable.setColumnCount(4)
 
-        self.pluginTable.setHorizontalHeaderLabels(["Plugin" , "Create", 'Subscriptions'])
+        self.pluginTable.setHorizontalHeaderLabels(["Plugin" , "C", 'S',''])
+
+        vertical_header = []
 
         for dplugin_id in dplugins:
             dplugin = dplugins[dplugin_id]
+
+#            vertical_header.append(str(dplugin.id))
+            vertical_header.append('')
 
             self.pluginTable.setRowCount(row + 1)
 #            qlabel = QtWidgets.QLabel(dplugin.uname)
@@ -241,13 +246,24 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
             row += 1
 
 
+        vertical_header.append('')
+        self.pluginTable.setRowCount(row + 1)
+
+        self.pluginTable.setVerticalHeaderLabels(vertical_header)
+
+        self.pluginTable.resizeColumnToContents(1)
+        self.pluginTable.resizeColumnToContents(2)
+
+        self.pluginTable.horizontalHeader().setStretchLastSection(True)
+        self.pluginTable.verticalHeader().setStretchLastSection(True)
+
     def get_create_lists(self):
         print('create lists')
 
         plugin_list = []
         subscription_list = []
 
-        for r in range(self.pluginTable.rowCount()):
+        for r in range(self.pluginTable.rowCount()-1):
             qlabel = self.pluginTable.cellWidget(r, 0)
 
             if self.pluginTable.cellWidget(r, 1).isChecked():
