@@ -122,6 +122,7 @@ PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
 CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
+CONFIG_ROOT_ELEMENT_NAME_RELOADED = 'PaPI'
 CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
 
 
