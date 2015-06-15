@@ -49,31 +49,15 @@ class StartExternalScript(vip_base):
 
     def initiate_layer_0(self, config=None):
 
-#        self.config = config
-
-        # ---------------------------
-        # Read configuration
-        # ---------------------------
-        # Note: this cfg items have to exist!
-        # self.show_grid_x = int(self.config['x-grid']['value']) == '1'
-        # self.show_grid_y = int(self.config['y-grid']['value']) == '1'
-        #
-        # int_re = re.compile(r'(\d+)')
-        #
-        # self.colors_selected = int_re.findall(self.config['color']['value']);
-        # self.types_selected = int_re.findall(self.config['style']['value']);
-
-
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
 
         self.SESWidget = QWidget()
-
-        # This call is important, because the background structure needs to know the used widget!
-        # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.SESWidget )
+
+
         hbox = QHBoxLayout()
         self.SESWidget.setLayout(hbox)
 
@@ -86,25 +70,8 @@ class StartExternalScript(vip_base):
         self.control_button = QPushButton('Start External Script')
         self.control_button.clicked.connect(self.button_click_callback)
 
-
         hbox.addWidget(self.control_button)
 
-        #subprocess.Popen('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh',
-        #            cwd='/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/', bufsize=-1,
-        #            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-        #os.system('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh')
-
-        # ---------------------------
-        # Create Parameters
-        # ---------------------------
-        # create a parameter object
-        #   self.para1 = DParameter('ParameterName',default=0)
-        #   self.para2 = DParameter('ParameterName',default=0)
-
-        # build parameter list to send to Core
-        #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
 
         # ---------------------------
         # Create Legend
