@@ -432,8 +432,20 @@ class Gui_api(QtCore.QObject):
     def do_close_program(self):
         """
         Tell core to close papi. Core will respond and will close all open plugins.
-
+        GUI will close all PCP and VIP Plugins due to calling their quit function
         """
+
+        plugins = self.gui_data.get_all_plugins()
+        for dplugin_id in plugins:
+            dplugin = plugins[dplugin_id]
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                try:
+                    dplugin.plugin.quit()
+                except Exception as E:
+                    tb = traceback.format_exc()
+                    self.plugin_died.emit(dplugin, E, tb)
+
+
         opt = DOptionalData()
         opt.reason = 'User clicked close Button'
         event = Event.instruction.CloseProgram(self.gui_id, 0, opt)

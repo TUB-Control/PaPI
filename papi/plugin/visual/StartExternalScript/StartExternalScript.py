@@ -33,16 +33,17 @@ from PyQt5.QtGui     import QHBoxLayout
 
 import subprocess
 import os
-import papi.pyqtgraph as pq
+from signal import SIGTERM
+
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
 
-import collections
 import re
+import papi.constants as pc
 
 
-#RENAME TO PLUGIN NAME
+
+
 class StartExternalScript(vip_base):
 
 
@@ -110,6 +111,10 @@ class StartExternalScript(vip_base):
         # ---------------------------
         self.external_state = 'offline'
 
+        self.path = config['path']['value']
+        file = os.path.basename(self.path)
+        self.dir = self.path[:-len(file)]
+
         return True
 
     def button_click_callback(self):
@@ -117,16 +122,13 @@ class StartExternalScript(vip_base):
             self.external_state = 'online'
             self.control_button.setText('Stop External Script')
             self.status_label.setText('running...')
-            self.c = subprocess.Popen('/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/run_switchingPaPiConfig.sh',
-                    cwd='/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceChangingAutoConfigExample/',
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.process = subprocess.Popen(self.path, cwd=self.dir,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=False, preexec_fn=os.setsid)
         else:
             self.external_state = 'offline'
             self.control_button.setText('Start External Script')
             self.status_label.setText('offline...')
-            self.c.terminate()
-            self.c.kill()
-
+            os.killpg(self.process.pid, SIGTERM)
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -161,7 +163,9 @@ class StartExternalScript(vip_base):
 
     def quit(self):
         # do something before plugin will close, e.a. close connections ...
-        pass
+        if self.external_state == 'online':
+            os.killpg(self.process.pid, SIGTERM)
+            print('External script was running while plugin was closed! Script was killed.')
 
 
     def get_plugin_configuration(self):
@@ -178,6 +182,12 @@ class StartExternalScript(vip_base):
                 'regex': '\(([0-9]+),([0-9]+)\)',
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
+            },
+            'path': {
+                'value': "~/",
+                'advanced': '0',
+                'type': pc.CFG_TYPE_FILE,
+                'tooltip': 'Path to executable'
             },
         }
         return config
