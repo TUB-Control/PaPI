@@ -484,17 +484,24 @@ class ORTD_UDP(iop_base):
             Counter = 111
             if value is not None:
                 data = None
+
+                # get values in float from string
                 valueCast = ast.literal_eval(value)
+                # check is it is a list, if not, cast to list
+                if not isinstance(valueCast,list):
+                    valueCast = [valueCast]
 
                 if self.PAPI_SIMULINK_BLOCK:
-                    data = struct.pack('iii', 12, Counter, int(Pid))
+                    data = struct.pack('iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
                 else:
-                    data = struct.pack('<iii', 12, Counter, int(Pid))
+                    data = struct.pack('<iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
 
-                if isinstance(valueCast, list):
-                    data += struct.pack('%sf' % len(valueCast),*valueCast)
-                else:
-                    data +=  struct.pack('d',value)
+                #if isinstance(valueCast, list):
+                    #data += struct.pack('%sd' %len(valueCast),*valueCast)
+                #    for i in range(0,len(valueCast)):
+                #        data += struct.pack('<d',valueCast[i])
+                #else:
+                #    data +=  struct.pack('d',float(value))
 
             if not self.sendOnReceivePort:
                 self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
