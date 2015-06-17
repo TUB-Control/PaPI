@@ -1,9 +1,1 @@
- {
-"SourcesConfig" : {
-    "0" : { "SourceName" : "X" , "NValues_send" : "1", "datatype" : "257"  } ,
-    "1" : { "SourceName" : "V" , "NValues_send" : "1", "datatype" : "257"  } } ,
-"ParametersConfig" : {
-    "0" : { "ParameterName" : "Oscillator input" , "NValues" : "1", "datatype" : "257"  } ,
-    "1" : { "ParameterName" : "A vectorial parameter" , "NValues" : "10", "datatype" : "257"  } ,
-    "2" : { "ParameterName" : "Test" , "NValues" : "2", "datatype" : "257"  } }
-}
+ {"SourcesConfig" : { "0" : { "SourceName" : "X" , "NValues_send" : "1", "datatype" : "257"  } , "1" : { "SourceName" : "V" , "NValues_send" : "1", "datatype" : "257"  } } ,  "ParametersConfig" : { "0" : { "ParameterName" : "Oscillator input" , "NValues" : "1", "datatype" : "257", "initial_value" : 0  } , "1" : { "ParameterName" : "A vectorial parameter" , "NValues" : "10", "datatype" : "257", "initial_value" : [0,0,0,0,0,0,0,0,0,0]  } , "2" : { "ParameterName" : "Test" , "NValues" : "2", "datatype" : "257", "initial_value" : [0,0]  } }, "PaPIConfig" : {"ToCreate":{"Plugin1":{"identifier":{"value":"Slider"},"config":{"name":{"value":"Slider Example"},"size":{"value":"(500,75)"},"position":{"value":"(50,50)"},"tab":{"value":"PaPI-Tab"},"step_count":{"value":"101"},"lower_bound":{"value":"0.0"},"upper_bound":{"value":"1.0"}}},"Plugin2":{"identifier":{"value":"Plot"},"config":{"name":{"value":"Plot XV"},"size":{"value":"(500,500)"},"position":{"value":"(0,0)"},"tab":{"value":"PaPI-Tab"},"yRange":{"value":"[-10.0 10.0]"}}}},"ToControl":{"Plugin1":{"block":"SliderBlock","parameter":"Oscillator input"}},"ToSub":{"Plugin2":{"signals":["X","V"],"block":"SourceGroup0"}}}}
