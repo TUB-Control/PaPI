@@ -58,7 +58,7 @@ import os
 import sys
 
 import socket
-
+import ast
 import struct
 import json
 import time
@@ -484,11 +484,17 @@ class ORTD_UDP(iop_base):
             Counter = 111
             if value is not None:
                 data = None
-                if self.PAPI_SIMULINK_BLOCK:
-                    data = struct.pack('iiid', 12, Counter, int(Pid), float(value))
-                else:
-                    data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
+                valueCast = ast.literal_eval(value)
 
+                if self.PAPI_SIMULINK_BLOCK:
+                    data = struct.pack('iii', 12, Counter, int(Pid))
+                else:
+                    data = struct.pack('<iii', 12, Counter, int(Pid))
+
+                if isinstance(valueCast, list):
+                    data += struct.pack('%sf' % len(valueCast),*valueCast)
+                else:
+                    data +=  struct.pack('d',value)
 
             if not self.sendOnReceivePort:
                 self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
