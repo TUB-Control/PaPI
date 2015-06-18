@@ -40,14 +40,19 @@ Sven Knuth
 
 class PaPIBlock {
 private:
-    //Parameter
-    int max_msg_length;
+
     //Used to remember the amount of elements of the input vector u1
     int amount_input;
     //Used to remember the amount of elements of the input vector y1
     int amount_output;
+    //Amount of different parameters [1,5,4,3] => 4
     int amount_parameter;
-    
+    //Size of the single for the parameter [1,5,4,3] => size(p1)=1, size(p2)=5, size(p3)=4, size(p4)=3
+    int* size_parameter;
+    //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
+    int size_output_parameters;
+
+    int* offset_parameter;
 
     Json::Value papiJsonConfig;
     Json::Value blockJsonConfig;
@@ -56,13 +61,13 @@ private:
     std::string str;
     bool sent;
     int sent_counter;
-    int output_length;
+
     bool config_sent;
     std::string data_to_sent;
     void parseBlockJsonConfig(signed char json_string[]);
     void buildConfiguration();
 public:
-    PaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out, signed char json_string[], int size_json_string);
+    PaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out,signed char json_string[], int size_json_string, int size_output_parameters);
     void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]);
     void setParaOut(int stream_in[], int msg_length, double para_out[]);
 
@@ -75,7 +80,7 @@ public:
 extern PaPIBlock *papiBlockVar;
 
 // Method wrappers
-extern void createPaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out, signed char json_string[], int size_json_string);
+extern void createPaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters);
 extern void deletePaPIBlock();
 extern void outputPaPIBlock(double data_in[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]);
 

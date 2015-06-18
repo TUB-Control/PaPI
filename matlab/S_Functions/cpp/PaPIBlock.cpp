@@ -55,19 +55,51 @@ struct para {
 /**** Class method definitions ****/
 /**********************************/
 
-PaPIBlock::PaPIBlock(int size_data_in,int size_stream_in, int size_stream_out, int size_para_out, signed char json_string[], int size_json_string) {
+PaPIBlock::PaPIBlock(int size_data_in,int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters) {
     printf("Create: PaPIBlock \n");
 
-    this->max_msg_length = size_stream_out;
+    /* ******************************************
+    *    Store information about the parameters
+    ****************************************** */
+    this->amount_parameter = amount_para_out; // size_para_out;
+    this->size_parameter = size_para_out;
+    this->size_output_parameters = size_output_parameters;
 
+    this->offset_parameter = (int*) malloc(sizeof(int) * this->amount_parameter);
+
+    int offset = 0;
+    for (int i=0; i <this->amount_parameter; i++) {
+
+        //printf("Offset parameter[%d] %d \n", i, offset);
+
+        this->offset_parameter[i] = offset;
+        offset += this->size_parameter[i];
+
+    }
+
+    /* ******************************************
+    *    Store information about the data input stream
+    ****************************************** */
     this->amount_input = size_data_in;
-    this->amount_parameter = size_para_out;
+
+    /* ******************************************
+    *   Store information about the data output stream
+    ****************************************** */
     this->amount_output = size_stream_out;
+
     
-    this->output_length = MAX_MESSAGE_LENGTH;
     this->sent_counter = START_MESSAGE_COUNTER;
     this->config_sent = false;
 
+    /*
+    printf("Amount parameter %d \n", amount_para_out);
+
+    printf("Size out parameters %d \n", this->size_output_parameters);
+
+    for (int i=0; i<this->amount_parameter; i++){
+        printf("Size(%d) = %d \n",i, this->size_parameter[i]);
+    }
+    */
 
     this->parseBlockJsonConfig(json_string);
 
@@ -79,7 +111,7 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
     Json::Reader reader;
 
     
-    printf("JSon: String %s \n", json_string);
+    //printf("JSon: String %s \n", json_string);
 
    // const char *c = json_string;
 
@@ -103,7 +135,7 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
 
     json_str = ss.str();
 
-    printf("String Parsed: %s \n", json_str.c_str());
+//    printf("String Parsed: %s \n", json_str.c_str());
 
     
     bool success = reader.parse(json_str, root, false);
@@ -191,7 +223,7 @@ void PaPIBlock::buildConfiguration() {
         }
 
         pi["ParameterName"]   = u_name;
-        pi["NValues"] = "1";
+        pi["NValues"] = this->size_parameter[i];
         pi["datatype"]     = "257";
     
         parametersConfig[i_string] = pi;
@@ -248,7 +280,7 @@ void PaPIBlock::buildConfiguration() {
     std::string config  = ssConfig.str();
 
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
-    //printf("%s", config.c_str());
+    printf("%s", config.c_str());
     this->config = config;
 }
 
@@ -288,6 +320,9 @@ void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double t
 void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     
     struct para* p1 = (struct para*) stream_in;
+    
+    double * dp = &p1->value;
+
 
     /*
     printf("Msg Length %d \n", msg_length);
@@ -295,17 +330,33 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     printf("Constant: %d \n", p1->constant);
     */
 
-    udouble data;
-  
-    data.u = (unsigned long) p1->value;
 
-    /*
+    printf("Size parameters: %d \n", this->size_parameter[p1->pid]);
+
+    printf("Double pointer: %f \n", dp[0]);
+    
     printf("PID: %d \n", p1->pid);
     printf("Counter: %d \n", p1->counter);
     printf("Value: %f \n", p1->value);
+
+
+    /*
+        Check if p1->pid is an valid value
     */
 
-    para_out[p1->pid] = p1->value;
+    if (p1->pid <0 or p1->pid > this->amount_parameter) {
+        return;
+    }
+
+    for (int i=0; i<this->size_parameter[p1->pid];i++) {
+
+        printf("Double value: %f \n", dp[i]);
+
+        para_out[this->offset_parameter[p1->pid] + i] = p1->value;
+    }
+        
+
+//    para_out[p1->pid] = p1->value;
    
 }
 
@@ -422,12 +473,9 @@ void PaPIBlock::sendConfig(int stream_out[]) {
 //**** Wrappers for methods called in Simulink ****
 //*************************************************
 
-void createPaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out, signed char json_string[], int size_json_string) {
-    printf("Size u1=%d \n", size_data_in);
-    printf("Size y1=%d \n", size_stream_out);
-    printf("Size json_size=%d \n", size_json_string);
-
-	papiBlockVar = new PaPIBlock(size_data_in, size_stream_in, size_stream_out, size_para_out, json_string, size_json_string);
+void createPaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters) {
+    
+	papiBlockVar = new PaPIBlock(size_data_in, size_stream_in, size_stream_out, size_para_out, amount_para_out, json_string, size_json_string, size_output_parameters);
 }
 
 void deletePaPIBlock() {
@@ -435,5 +483,8 @@ void deletePaPIBlock() {
 }
 
 void outputPaPIBlock(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]) {
+
     papiBlockVar->setOutput(u1,stream_in,msg_length,time,stream_out, para_out, flag_new_data);
+
+
 }
