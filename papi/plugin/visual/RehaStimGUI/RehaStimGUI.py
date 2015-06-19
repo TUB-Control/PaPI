@@ -35,6 +35,10 @@ import json
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
+from papi.data.DPlugin import DBlock
+from papi.data.DSignal import DSignal
+from papi.plugin.base_classes.pcp_base import pcp_base
+
 import papi.constants as pc
 
 from PyQt5 import QtGui, QtWidgets, QtCore, Qt
@@ -45,30 +49,31 @@ import xml.etree.cElementTree as ET
 
 class OptionItem():
     def __init__(self):
-        self.attributes = {'1_Amplitude': {
+        self.attributes = {'1_Min': {
             'value': '0',
-            'min': '0',
+            'min': '0.9',
             'max': '1',
-            'display_name' : 'Amplitude',
-            'regex' : pc.REGEX_SIGNED_FLOAT
-        }, '2_Min': {
-            'value': '0',
-            'min': '0',
-            'max': '5',
             'display_name' : 'Min',
-            'regex' : pc.REGEX_SIGNED_FLOAT
-        }, '3_Max': {
+            'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
+        }, '2_Max': {
             'value': '0',
-            'min': '5',
-            'max': '10',
+            'min': '0.5',
+            'max': '1',
             'display_name' : 'Max',
-            'regex' : pc.REGEX_SIGNED_FLOAT
+            'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
+        }, '3_Rise': {
+            'value': '5',
+            'min': '0',
+            'max': '100',
+            'display_name' : 'Rise',
+            'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
 
-        }, '4_WaveForm': {
-            'value': 'sinus',
-            'options': "ramp, sinus, slope",
-            'display_name' : 'WaveForm'
+        }, '4_Type': {
+            'value': 'ramp',
+            'options': "ramp, trapez",
+            'display_name' : 'Type'
         }}
+
 
     def set_attr(self, attr, value):
         self.attributes[attr] = value
@@ -84,10 +89,16 @@ class OptionItem():
         self.attributes = {}
 
 #RENAME TO PLUGIN NAME
-class RehaStimGUI(vip_base, object):
+class RehaStimGUI(pcp_base, object):
 
     def __init__(self):
         self.__VERSION__ = "0.1"
+
+#        self.row_offset = 1;
+#        self.col_offset = 1;
+
+        self.signal_next_state = "next_state"
+
         pass
 
     def initiate_layer_0(self, config=None):
@@ -100,9 +111,24 @@ class RehaStimGUI(vip_base, object):
         self.current_state = None
 
         # ---------------------------
+        # Create signals
+        # ---------------------------
+
+        block = DBlock('Stimulator Configuration')
+        signal = DSignal('Array')
+        block.add_signal(signal)
+
+        self.send_new_block_list([block])
+
+        # ---------------------------
         # Create Parameters
         # ---------------------------
         para_list = []
+
+        self.set_curent_state = DParameter('SetState', default=0)
+
+        para_list.append(self.set_curent_state)
+
         self.send_new_parameter_list(para_list)
 
 
@@ -371,13 +397,21 @@ class RehaStimGUI(vip_base, object):
         stateWidget = self.current_state
 
 
+        simulink_cfg = self.create_config_for_simulink_block(current_state=None)
+
+
+        print(len(simulink_cfg))
+
+        self.send_parameter_change(str(simulink_cfg), "Stimulator Configuration")
 
         if stateWidget is None:
             return
 
-        json_config = self.create_json_for_state(stateWidget)
 
-        print(json_config)
+
+#        json_config = self.create_json_for_state(stateWidget)
+
+#        print(json_config)
 
 
     def add_missing_cell_items(self):
@@ -440,6 +474,32 @@ class RehaStimGUI(vip_base, object):
                         cItem.setBackgroundRole(QtGui.QPalette.NoRole)
                         cItem.setAutoFillBackground(True)
 
+    def create_config_for_simulink_block(self, current_state = None):
+
+        simulink_cfg = []
+
+
+        for c in range (1, self.tableWidget.columnCount()):
+            for r in range(0, self.tableWidget.rowCount()):
+
+                cellWidget = self.tableWidget.cellWidget(r, c)
+
+                cfg = cellWidget.getCfgAsArray()
+                if r == 0:
+                    state = c
+
+
+                    next_flag = 0
+
+                    if cellWidget == current_state:
+                        next_flag = 1
+
+                    cfg = [ state, next_flag ] + cfg
+
+                simulink_cfg += cfg
+
+        return simulink_cfg
+
     def create_json_for_state(self, stateWidget):
 
         json_cfg = {}
@@ -466,6 +526,8 @@ class RehaStimGUI(vip_base, object):
         if stateWidget is None:
             return
 
+        old_stateWidget = self.current_state
+
         self.unselect_state_widget(self.current_state)
 
         if isinstance(stateWidget, StateWidget):
@@ -479,6 +541,11 @@ class RehaStimGUI(vip_base, object):
                         cItem.setBackgroundRole(QtGui.QPalette.Highlight)
                         cItem.setAutoFillBackground(True)
 
+        simulink_cfg = self.create_config_for_simulink_block(current_state=old_stateWidget)
+
+        print(len(simulink_cfg))
+
+        self.send_parameter_change(str(simulink_cfg), "Stimulator Configuration")
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -502,6 +569,12 @@ class RehaStimGUI(vip_base, object):
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
+
+        if self. signal_next_state in Data:
+            next_state = Data[self.signal_next_state][0]
+
+            print("Set state to: " + str(next_state))
+
         pass
 
     def set_parameter(self, name, value):
@@ -663,6 +736,29 @@ class OptionWidget(QtWidgets.QWidget):
 
         return cfg
 
+    def getCfgAsArray(self):
+        cfg = []
+
+        for i in range(len(self.labels)):
+
+            value = self.lines[i].get_value()
+
+            attr_name = self.option_item.attributes[self.attrs[i]]['display_name']
+
+            if attr_name == "Type":
+                if value == "ramp":
+                    cfg.append(1)
+                elif value == "trapez":
+                    cfg.append(2)
+                else:
+                    cfg.append(0)
+
+                continue
+
+            cfg.append(float(value))
+
+        return cfg
+
     def readOptionXML(self, cell_xml : ET.Element):
         """
         Used for loading a new configuration
@@ -729,10 +825,19 @@ class HeaderWidget(QtWidgets.QWidget):
         self.hBLayout.addWidget(self.delete_button)
         self.hBLayout.addWidget(self.select_button)
 
+
+        self.duration_edit = QtWidgets.QLineEdit("0")
+        self.duration_edit.setFixedWidth(40)
+
+        rx = QRegExp(pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED)
+        validator = QRegExpValidator(rx, self)
+        self.duration_edit.setValidator(validator)
+
         # Add widgets
 
         self.hLayout.addWidget(self.label)
         self.hLayout.addWidget(self.line_edit)
+        self.hLayout.addWidget(self.duration_edit)
         self.hLayout.addWidget(self.bWidget)
 
         # Actions
@@ -798,7 +903,13 @@ class HeaderWidget(QtWidgets.QWidget):
         """
         self.trigger_remove_cell.emit(self)
 
+    def getCfgAsArray(self):
+        cfg = []
 
+        duration = int(float(self.duration_edit.text()))
+        cfg.append(duration)
+
+        return cfg
 class StateWidget(HeaderWidget):
     """
     More specific version of the HeaderWidget to describe the horizontal header.
@@ -821,6 +932,7 @@ class ChannelWidget(HeaderWidget):
     def __init__(self, text="Channel"):
         super(ChannelWidget, self).__init__(text)
         self.select_button.setVisible(False)
+        self.duration_edit.setVisible(False)
 
 
 class RehaStimEditableField(QtWidgets.QWidget):

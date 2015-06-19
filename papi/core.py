@@ -657,7 +657,10 @@ class Core:
 
                     # this event will be a new parameter value for a plugin, so update dcore data
                     if opt.is_parameter is True:
-                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                        try:
+                            self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                        except:
+                            self.log.printText(2, 'pl not assigned (Use of pcp parameter which isn\'t used)')
                     # process new_data seemed correct
                     return 1
                 else:
