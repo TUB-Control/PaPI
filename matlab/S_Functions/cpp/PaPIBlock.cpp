@@ -352,7 +352,7 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
 
         printf("Double value: %f \n", dp[i]);
 
-        para_out[this->offset_parameter[p1->pid] + i] = p1->value;
+        para_out[this->offset_parameter[p1->pid] + i] = dp[i];
     }
         
 

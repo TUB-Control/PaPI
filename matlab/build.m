@@ -6,6 +6,8 @@ addpath(curPath);
 cd('S_Functions');
 
 addpath('S_Functions');
+addpath('Functions');
+addpath('jsonlab');
 
 addpath('hpp');
 addpath('cpp');
