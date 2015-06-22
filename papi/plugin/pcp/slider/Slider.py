@@ -102,7 +102,7 @@ class Slider(pcp_base):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.send_parameter_change(val, 'SliderBlock')
+        self.send_parameter_change(str(val), 'SliderBlock')
 
     def clicked(self):
         pass
