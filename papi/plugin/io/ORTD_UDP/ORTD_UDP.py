@@ -486,6 +486,7 @@ class ORTD_UDP(iop_base):
                 data = None
 
                 # get values in float from string
+
                 valueCast = ast.literal_eval(value)
                 # check is it is a list, if not, cast to list
                 if not isinstance(valueCast,list):
@@ -503,10 +504,12 @@ class ORTD_UDP(iop_base):
                 #else:
                 #    data +=  struct.pack('d',float(value))
 
-            if not self.sendOnReceivePort:
-                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
-            else:
-                self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+                print(len(data))
+
+                if not self.sendOnReceivePort:
+                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+                else:
+                    self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
 
     def quit(self):
         self.lock.acquire()

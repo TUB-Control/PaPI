@@ -3,15 +3,15 @@ curPath = pwd;
 
 addpath(curPath);
 
+addpath([curPath '/Functions']);
+addpath([curPath '/jsonlab']);
+addpath([curPath '/S_Functions']);
+
 cd('S_Functions');
 
-addpath('S_Functions');
-addpath('Functions');
-addpath('jsonlab');
-
-addpath('hpp');
-addpath('cpp');
-addpath('legacy');
+addpath([pwd '/hpp']);
+addpath([pwd '/cpp']);
+addpath([pwd '/legacy']);
 
 libPaths = {'/usr/lib/','/usr/lib/x86_64-linux-gnu/'};
 
@@ -28,7 +28,7 @@ defs = [];
 
 def = legacy_code('initialize');
 def.SFunctionName = 'papi_simulink_block';
-def.OutputFcnSpec = 'outputPaPIBlock(double u1[], int32 u2[], int32 u3, double u4, int32 y1[p3], double y2[p4], int32 y3[1])';
+def.OutputFcnSpec = 'outputPaPIBlock(double u1[], int32 u2[], int32 u3, double u4, int32 y1[p3], double y2[p4])';
 def.StartFcnSpec = 'createPaPIBlock(int32 size(u1,1), int32 size(u2,1), int32 p3, int32 p1[], int32 size(p1,1), int8 p2[], int32 size(p2,1), int32 p4)';
 def.TerminateFcnSpec = 'deletePaPIBlock()';
 def.HeaderFiles = {'PaPIBlock.hpp'};

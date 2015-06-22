@@ -488,7 +488,6 @@ class RehaStimGUI(pcp_base, object):
                 if r == 0:
                     state = c
 
-
                     next_flag = 0
 
                     if cellWidget == current_state:
@@ -631,6 +630,8 @@ class RehaStimGUI(pcp_base, object):
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
 
+    def new_parameter_info(self, dparameter_object):
+        pass
 
 class OptionWidget(QtWidgets.QWidget):
     """

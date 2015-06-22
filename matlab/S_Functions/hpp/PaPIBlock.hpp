@@ -68,7 +68,7 @@ private:
     void buildConfiguration();
 public:
     PaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out,signed char json_string[], int size_json_string, int size_output_parameters);
-    void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]);
+    void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
     void setParaOut(int stream_in[], int msg_length, double para_out[]);
 
     void sendConfig(int stream_out[]);
@@ -82,6 +82,6 @@ extern PaPIBlock *papiBlockVar;
 // Method wrappers
 extern void createPaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters);
 extern void deletePaPIBlock();
-extern void outputPaPIBlock(double data_in[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]);
+extern void outputPaPIBlock(double data_in[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
 
 #endif /* _PAPI_BLOCK_ */

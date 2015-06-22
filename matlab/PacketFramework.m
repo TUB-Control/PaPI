@@ -1,4 +1,9 @@
-% pf = PacketFramework
+% pf = PacketFramework % just 'PaPIConfig' without Parameters and Sources
+% pf = PacketFramework('SourcesConfig', 'ParametersConfig') % if you want
+% to export a PaPI-ready config without evaluating 'BlockConfig'
+% pf = PacketFramework('BlockConfig') % if you want to give the json-struct
+% to another function which generates the Parameters and Sources by
+% evaluating 'BlockConfig'
 classdef PacketFramework < handle
     properties
         SourceID_counter = 0;
@@ -7,10 +12,23 @@ classdef PacketFramework < handle
         ParameterMemOfs_counter = 1;
         Parameters = {};
         PluginID_counter = 0;
-        config = struct('SourcesConfig', [], 'ParametersConfig', [], 'PaPIConfig', []);
+        config = struct;
     end
     
     methods
+        % pf = PacketFramework
+        % pf = PacketFramework('SourcesConfig', 'ParametersConfig')
+        % pf = PacketFramework('BlockConfig')
+        function obj = PacketFramework(varargin)
+            if (nargin == 0)
+                obj. config = struct('PaPIConfig', []);
+            else
+                for i=1:nargin
+                    obj.config.(varargin{i}) = [];
+                end
+                obj.config.PaPIConfig = [];
+            end
+        end
         % PluginUname = pf.PF_addplugin('Plot', 'XY', '(1,1)', '(0,0)')
         function PluginUname = PF_addplugin(obj, PluginType, PluginName, PluginSize, PluginPos)
             % inc counter
@@ -177,6 +195,26 @@ classdef PacketFramework < handle
             end
             [ParameterID, MemoryOfs] = obj.PF_addparameter(NValues, datatype, ParameterName, optionalInitValue);
             obj.PF_addcontrolbyID(ControlPluginUname, ControlBlock, ParameterID);
+        end
+        
+        % pf.PF_addparametersForBlockConfig('wrWR')
+        % pf.PF_addparametersForBlockConfig({'wrWR', 'erWR'})
+        function PF_addparametersForBlockConfig(obj, ParameterNames)
+            if (isfield(obj.config.BlockConfig, 'ParameterNames'))
+                obj.config.BlockConfig.ParameterNames = [obj.config.BlockConfig.ParameterNames, ParameterNames];
+            else
+                obj.config.BlockConfig.ParameterNames =  ParameterNames;
+            end
+        end
+        
+        % pf.PF_addsignalsForBlockConfig('X')
+        % pf.PF_addsignalsForBlockConfig({'X', 'Y'})
+        function PF_addsignalsForBlockConfig(obj, SignalNames)
+            if (isfield(obj.config.BlockConfig, 'SignalNames'))
+                obj.config.BlockConfig.SignalNames = [obj.config.BlockConfig.SignalNames, SignalNames];
+            else
+                obj.config.BlockConfig.SignalNames =  SignalNames;
+            end
         end
     end
 end

@@ -284,7 +284,7 @@ void PaPIBlock::buildConfiguration() {
     this->config = config;
 }
 
-void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]) {
+void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
     
     
     if (msg_length > 0 ) {
@@ -305,11 +305,11 @@ void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double t
     
     //If still needed or requested, send current configuration
     if (!this->config_sent) {
-        flag_new_data[0] = 0;
+
 
         this->sendConfig(stream_out);
     } else {
-        flag_new_data[0] = 0;
+
 
     //send current input data
         this->clearOutput(stream_out);
@@ -324,8 +324,8 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     double * dp = &p1->value;
 
 
-    /*
     printf("Msg Length %d \n", msg_length);
+    /*
 
     printf("Constant: %d \n", p1->constant);
     */
@@ -350,7 +350,7 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
 
     for (int i=0; i<this->size_parameter[p1->pid];i++) {
 
-        printf("Double value: %f \n", dp[i]);
+        printf("Double [%d] value: %f \n", i, dp[i]);
 
         para_out[this->offset_parameter[p1->pid] + i] = dp[i];
     }
@@ -482,9 +482,8 @@ void deletePaPIBlock() {
     delete papiBlockVar;
 }
 
-void outputPaPIBlock(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[], int flag_new_data[]) {
+void outputPaPIBlock(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
 
-    papiBlockVar->setOutput(u1,stream_in,msg_length,time,stream_out, para_out, flag_new_data);
-
+    papiBlockVar->setOutput(u1,stream_in,msg_length,time,stream_out, para_out);
 
 }
