@@ -1,4 +1,4 @@
-function papi_block_complete_init( gcb, amount_parameters, amount_input)
+function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config)
 %PAPI_BLOCK_COMPLETE_INIT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -190,5 +190,11 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input)
 
     end
 
+    
+    % ------------------------------------------------
+    % Get block names
+    % ------------------------------------------------
+
+    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle)
 end
 
