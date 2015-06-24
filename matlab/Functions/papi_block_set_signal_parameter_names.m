@@ -81,7 +81,8 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
     end
 
     % ---------------------
-    % Set port labels
+    % Set port labels for inport/outport
+    % based on SignalNames and ParameterNames in config.BlockConfig
     % ---------------------
     papi_block_complete_handle = get_param( gcb,'handle');
     papi_block_complete = get_param(papi_block_complete_handle, 'PortHandles');

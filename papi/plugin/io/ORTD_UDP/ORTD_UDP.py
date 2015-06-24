@@ -310,7 +310,7 @@ class ORTD_UDP(iop_base):
             # config completely received
             # extract new configuration
             cfg = json.loads(config_file)
-            
+
             #print(config_file)
 
             ORTDSources, ORTDParameters, plToCreate, \
@@ -370,7 +370,7 @@ class ORTD_UDP(iop_base):
                 else:
                     init_value = 0
 
-                para_object = DParameter(para_name, default=init_value, OptionalObject=opt_object)
+                para_object = DParameter(para_name, default=str(init_value), OptionalObject=opt_object)
                 self.send_new_parameter_list([para_object])
 
 
@@ -504,7 +504,7 @@ class ORTD_UDP(iop_base):
                 #else:
                 #    data +=  struct.pack('d',float(value))
 
-                print(len(data))
+
 
                 if not self.sendOnReceivePort:
                     self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))

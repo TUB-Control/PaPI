@@ -300,7 +300,6 @@ class Plot(vip_base):
         # ----------------------------
 
         self.initiate_update_plot()
-
         return True
 
     def pause(self):

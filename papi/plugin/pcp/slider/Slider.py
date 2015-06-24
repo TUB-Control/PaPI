@@ -152,7 +152,7 @@ class Slider(pcp_base):
 
     def new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = dparameter_object.default
+            value = float(dparameter_object.default)
             self.text_field.setText(str(value))
             init_value = (value - self.value_min)/self.tick_width
             init_value = round(init_value,0)

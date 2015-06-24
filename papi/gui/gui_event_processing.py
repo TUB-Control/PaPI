@@ -390,12 +390,12 @@ class GuiEventProcessing(QtCore.QObject):
             # check if plugin runs in gui to update its copy of meta informations
             if dplugin.own_process is False:
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    try:
+                    # try:
                         dplugin.plugin.update_plugin_meta(dplugin.get_meta())
-                    except Exception as E:
-                        dplugin.state = PLUGIN_STATE_STOPPED
-                        tb = traceback.format_exc()
-                        # self.plugin_died.emit(dplugin, E, tb)
+                    # except Exception as E:
+                    #     dplugin.state = PLUGIN_STATE_STOPPED
+                    #     tb = traceback.format_exc()
+                    #     self.plugin_died.emit(dplugin, E, tb)
 
             self.dgui_changed.emit()
         else:
