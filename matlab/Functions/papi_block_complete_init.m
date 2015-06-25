@@ -133,19 +133,21 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
         
         select_handler = get_param([gcb '/' selector],'handle');
         outport_handler = get_param([gcb '/' output],'handle');
-
+        disp(amount_parameters)
         start_i = sum(amount_parameters(1:n-1)) + 1;
         end_i   = start_i + amount_parameters(n) - 1;
         
         range = ['[' num2str(start_i) ':' num2str(end_i) ']'];
         
-        set_param(select_handler, 'InputPortWidth', num2str(sizeParameters));
-
-        %get(select_handler)
-        
         %disp(range)
         
-        set_param(select_handler, 'IndexParamArray', {range});
+        set_param(select_handler, 'IndexParamArray', {range},'InputPortWidth', num2str(sizeParameters));
+        
+        %get(select_handler)
+        
+        
+        
+        
 
            
         % ---
