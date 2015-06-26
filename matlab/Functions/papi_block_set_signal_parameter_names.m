@@ -1,4 +1,4 @@
-function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_handle)
+function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_handle, init_command, input_offset, output_offset)
 %PAPI_BLOCK_SET_SIGNAL_PARAMETER_NAMES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -34,42 +34,44 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
           parameters = {};
           signals = {};
           
-           for n=1:length(papi_block_complete.Inport)
+           for n=1+input_offset:length(papi_block_complete.Inport)
               port_handler = papi_block_complete.Inport(n);
               port = get(port_handler);
               line_handler = port.Line;
               if ishandle(line_handler)
                   line = get(line_handler);
-                  signals(n) = {line.Name};
+                  %signals(n-input_offset) = {line.Name};
 
                   if length(line.Name)
-                    signals(n) = {line.Name};
+                    signals(n-input_offset) = {line.Name};
                   else
-                    signals(n) = {['s', num2str(n)]}; 
+                    signals(n-input_offset) = {['s', num2str(n-input_offset)]}; 
                   end
                   
               else
-                  signals(n) = {['s', num2str(n)]};
+                  signals(n-input_offset) = {['s', num2str(n-input_offset)]};
               end
               
               set_param(gcb,'MaskDisplay',['port_label(''input'', ' num2str(n) ' ,''channel 1'')']);
               
-           end
-                      
-           for n=1:length(papi_block_complete.Outport)
+           end 
+           
+           for n=1+output_offset:length(papi_block_complete.Outport)
                port_handler = papi_block_complete.Outport(n);
                port = get(port_handler);
                line_handler = port.Line;
+
                if ishandle(line_handler)
                    line = get(line_handler);
-                   parameters(n) = {line.Name};
+                   %parameters(n) = {line.Name};
+                   
                    if length(line.Name)
-                        parameters(n) = {line.Name};
+                        parameters(n-output_offset) = {line.Name};
                    else
-                        parameters(n) = {['p', num2str(n)]}; 
+                        parameters(n-output_offset) = {['p', num2str(n-output_offset)]}; 
                   end
                else
-                   parameters(n) = {['p', num2str(n)]};
+                   parameters(n-output_offset) = {['p', num2str(n-output_offset)]};
                    
                end
                
@@ -87,24 +89,24 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
     papi_block_complete_handle = get_param( gcb,'handle');
     papi_block_complete = get_param(papi_block_complete_handle, 'PortHandles');
     
-    command = '';
+    command = init_command;
     
-    for n=1:length(papi_block_complete.Inport)
+    for n=1+input_offset:length(papi_block_complete.Inport)
         ch_name = '';
-        if (n <= length(config.BlockConfig.SignalNames))
-            ch_name = config.BlockConfig.SignalNames(n);            
+        if (n-input_offset <= length(config.BlockConfig.SignalNames))
+            ch_name = config.BlockConfig.SignalNames(n-input_offset);            
         else
-            ch_name = ['s', num2str(n)]
-        end 
+            ch_name = ['s', num2str(n-input_offset)];
+        end
         command = [command ['port_label(''input'', ' num2str(n) ' ,''' [ch_name] ''');']]; 
     end
 
-    for n=1:length(papi_block_complete.Outport)
+    for n=1+output_offset:length(papi_block_complete.Outport)
         ch_name = '';
-        if (n <= length(config.BlockConfig.ParameterNames))
-            ch_name = config.BlockConfig.ParameterNames(n);            
+        if (n-output_offset <= length(config.BlockConfig.ParameterNames))
+            ch_name = config.BlockConfig.ParameterNames(n-output_offset);            
         else
-            ch_name = ['p', num2str(n)]
+            ch_name = ['p', num2str(n-output_offset)];
         end 
         command = [command ['port_label(''output'', ' num2str(n) ' ,''' [ch_name] ''');']]; 
     end

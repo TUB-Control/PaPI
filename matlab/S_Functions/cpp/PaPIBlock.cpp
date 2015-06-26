@@ -283,7 +283,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     std::string config  = ssConfig.str();
 
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
-    printf("%s", config.c_str());
+    //printf("%s", config.c_str());
     this->config = config;
 }
 
@@ -383,14 +383,14 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     
     double * dp = &p1->value;
 
-
-    printf("Msg Length %d \n", msg_length);
     /*
+    printf("Msg Length %d \n", msg_length);
+    
 
     printf("Constant: %d \n", p1->constant);
     */
 
-
+    /*
     printf("Size parameters: %d \n", this->size_parameter[p1->pid]);
 
     printf("Double pointer: %f \n", dp[0]);
@@ -398,7 +398,7 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     printf("PID: %d \n", p1->pid);
     printf("Counter: %d \n", p1->counter);
     printf("Value: %f \n", p1->value);
-
+    */
 
     /*
         Check if p1->pid is an valid value
@@ -410,7 +410,7 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
 
     for (int i=0; i<this->size_parameter[p1->pid];i++) {
 
-        printf("Double [%d] value: %f \n", i, dp[i]);
+        //printf("Double [%d] value: %f \n", i, dp[i]);
 
         para_out[this->offset_parameter[p1->pid] + i] = dp[i];
     }
@@ -418,6 +418,20 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
 
 //    para_out[p1->pid] = p1->value;
    
+}
+
+void PaPIBlock::reset(double para_out[]) {
+
+    for (int i=0; i<this->size_output_parameters; i++) {
+        para_out[i] = 0;
+    }
+
+
+    this->buildConfiguration(para_out);
+
+
+    this->config_sent = false;
+    this->data_to_sent = this->config.substr(0);
 }
 
 void PaPIBlock::clearOutput(int stream_out[]) {
@@ -548,9 +562,16 @@ void deletePaPIBlock(void **work1) {
     delete madClass;
 }
 
-void outputPaPIBlock(void **work1, double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
+void outputPaPIBlock(void **work1, double u1[], int stream_in[], int msg_length, double time, int reset, int stream_out[], double para_out[]) {
+
+
 
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
+
+    if (reset) {
+        printf("Resent configuration and set output to zero");
+        madClass->reset(para_out);
+    }
     madClass->setOutput(u1,stream_in,msg_length,time,stream_out, para_out);
 
 }
