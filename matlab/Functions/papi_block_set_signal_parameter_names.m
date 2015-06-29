@@ -77,9 +77,12 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
                
            end
            
+           
            config.BlockConfig.ParameterNames = parameters;
            config.BlockConfig.SignalNames = signals;
                   
+           
+           %disp(config.BlockConfig)
     end
 
     % ---------------------

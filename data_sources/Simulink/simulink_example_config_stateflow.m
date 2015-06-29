@@ -12,12 +12,11 @@ function [ json_config ] = simulink_example_config_stateflow( state, compact)
         plot_uname = pf.PF_addplugin('Plot', 'PlotData', '(300,300)', '(0,0)');
  
         signals = {'sine','state'};
-        
+        parameters = {'next_state','p2'};
 
         % Create subscription
         
-        % pf.PF_addsubs(plot_uname, block_name_ortd, {signals(2) });
-        
+        pf.PF_addsubs(plot_uname, block_name_ortd, {signals(2)});
         
         json_config = savejson('', pf.config, 'Compact', compact);
     
@@ -45,9 +44,9 @@ function [ json_config ] = simulink_example_config_stateflow( state, compact)
 
         % Create subscription
         
-       % pf.PF_addsubs(plot_uname, block_name_ortd, signals());
+        pf.PF_addsubs(plot_uname, block_name_ortd, signals );
         
-       % pf.PF_addcontrol(slider_uname, 'SliderBlock', {parameters(2)});
+        pf.PF_addcontrol(slider_uname, 'SliderBlock', parameters(2));
         
         json_config = savejson('', pf.config, 'Compact', compact);
     

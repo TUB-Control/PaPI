@@ -31,9 +31,9 @@ function [ json_config ] = simulink_example_config( state, compact)
 
         % Create subscription
         
-        pf.PF_addsubs(plot_uname, block_name_ortd, {signals(2)});
+        pf.PF_addsubs(plot_uname, block_name_ortd, signals(1:3) );
         
-        pf.PF_addcontrol(slider_uname, 'SliderBlock', parameters(1));
+        pf.PF_addcontrol(slider_uname, 'SliderBlock', {parameters(1)});
         
         json_config = savejson('', pf.config, 'Compact', compact);
     

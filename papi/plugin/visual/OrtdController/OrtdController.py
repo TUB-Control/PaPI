@@ -137,6 +137,10 @@ class OrtdController(vip_base):
                         sig = []
                         if 'signals' in pl_cfg:
                             sig = pl_cfg['signals']
+
+                        if not isinstance(sig, list):
+                            sig = [sig]
+
                         self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
 
             ############################
@@ -150,6 +154,10 @@ class OrtdController(vip_base):
                         para = None
                         if 'parameter' in pl_cfg:
                             para = pl_cfg['parameter']
+
+                        #if not isinstance(para, list):
+                        #    para = [para]
+
                         self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
             ############################
