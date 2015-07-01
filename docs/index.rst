@@ -6,15 +6,22 @@
 Welcome to PaPI's documentation!
 ================================
 
-Contents:
+PaPI Framework:
 
 .. toctree::
    :maxdepth: 3
+   :glob:
 
    papi
 
-   papi.plugin.*
+Plugin documentation:
 
+.. toctree::
+   :maxdepth: 3
+   :glob:
+
+   papi.plugin.doc
+    
 
 
 Indices and tables

@@ -7,22 +7,27 @@ DES_DIR = ./papi/
 
 UI_FILES = quitter.ui
 
-MD_SRC_DIR = ./papi/
-MD_DES_DIR = ./docs/
+MD_SRC_DIR = papi
+MD_DES_DIR = docs
 
 UI_FILES_FOUND = $(shell find $(SRC_DIR) -name '*.ui')
 UI_FILES = $(UI_FILES_FOUND:./%=%)
 PY_FILES = $(addprefix $(DES_DIR),$(UI_FILES:.ui=.py))
 
-MD_FILES_FOUND = $(shell find $(MD_SRC_DIR) -name '*.rst')
+#Find all rst files
+MD_FILES_SRC = $(shell find $(MD_SRC_DIR) -name '*.rst')
+
+#Create target names
+MD_FILES_TAR_TMP := $(subst /,., $(MD_FILES_SRC))
+MD_FILES_TAR_TMP2 := $(subst ..,./, $(MD_FILES_TAR_TMP))
+MD_FILES_TAR := $(MD_FILES_TAR_TMP2:.rst=.rst)
+MD_TAR :=  $(addprefix $(MD_DES_DIR)/,$(MD_FILES_TAR))
 
 MKDIR_P = mkdir -p
 
 AUTHOR = $(shell whoami)
 
-#all: $(UI_FILES)
-
-all:
+.PHONY: md_files create_rst create_ui clean
 
 create_ui: $(PY_FILES)
 
@@ -38,22 +43,27 @@ $(UI_FILES):
 	else echo "__author__ = '$(AUTHOR)'" > $(DES_DIR)$(dir $@)__init__.py  ; \
 	fi 
 
-$(MD_FILES_FOUND):
-	@echo "MD_FILES_FOUND" $@
+md_files: $(MD_TAR)
 
-	$(eval rst_name:= $(subst /,., $@))
+$(MD_DES_DIR)/%.rst: $(MD_FILES_SRC)
+	$(eval rst_name:= $(subst $(MD_DES_DIR),.,$(subst /rst,.rst,$(subst .,/, $@))))
+	@echo "Creating file" $@
+	$(eval arr:= $(shell echo $(subst $(MD_DES_DIR)/,,$(@:.rst=)) | tr "." "\n"))
 
-	@echo "->" $(rst_name)
+	@cp $(rst_name) $@
 
-	cp $@ $(MD_DES_DIR)$(rst_name)
  
-create_rst: $(MD_FILES_FOUND)
+create_rst: $(MD_TAR)
 	sphinx-apidoc -f -o docs papi ./papi/pyqtgraph/ ./papi/yapsy/
-
-
 
 docs: create_rst
 	make -C docs html
 
-html:
+html: create_rst
 	make -C docs html
+
+clean:
+	@rm $(MD_DES_DIR)/papi*rst
+	@rm $(MD_DES_DIR)/plugin*rst
+	@rm $(MD_DES_DIR)/modules.rst
+	make -C docs clean
