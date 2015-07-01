@@ -149,7 +149,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create the Tab Manager and the gui management unit #
         # connect some signals of management to gui          #
         # -------------------------------------------------- #
-        self.TabManager = PapiTabManger(tabWigdet=self.widgetTabs, centralWidget=self.centralwidget)
+        self.TabManager = PapiTabManger(tabWigdet=self.widgetTabs)
 
         self.gui_management = GuiManagement(core_queue_ref,
                                     gui_queue_ref,
