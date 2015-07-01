@@ -134,7 +134,6 @@ REGEX_BOOL_BIN     = '^(1|0)$'
 REGEX_SINGLE_UNSIGNED_FLOAT_FORCED = '(\d+\.\d+)'
 REGEX_SIGNED_FLOAT = r'([-]{0,1}\d+\.\d+)'
 REGEX_SIGNED_FLOAT_OR_INT = r'([-]{0,1}\d+(.\d+)?)'
-REGEX_VALID_URL = r'@^(https?|ftp)://[^\s/$.?#].[^\s]*$@iS'
 
 # CONFIGURATION TYPE Collection
 
