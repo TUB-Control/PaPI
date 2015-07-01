@@ -91,6 +91,11 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.finder = ModuleFinder()
 
     def keyPressEvent(self, event):
+
+        if event.key() in [Qt.Key_Right, Qt.Key_Space]:
+            index = self.pluginTree.currentIndex()
+            self.pluginItemChanged(index)
+
         if event.key() == Qt.Key_Escape:
             self.close()
 
@@ -150,8 +155,12 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
             if not found:
                 self.modulesList.addItem(item)
                 item.setBackground(QColor(255,0,0,50))
-                self.modulesList.setEnabled(True)
-                self.modulesLabel.setEnabled(True)
+
+        if not plugin_info.loadable:
+
+            self.modulesList.setEnabled(True)
+            self.modulesLabel.setEnabled(True)
+
 
 
     def show_create_plugin_dialog(self):
@@ -159,8 +168,9 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         if plugin_info is not None:
-            self.plugin_create_dialog.set_plugin(plugin_info)
-            self.plugin_create_dialog.show()
+            if plugin_info.loadable:
+                self.plugin_create_dialog.set_plugin(plugin_info)
+                self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
 
