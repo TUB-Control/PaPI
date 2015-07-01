@@ -34,7 +34,7 @@ from PyQt5 import QtCore
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-from papi.constants import  REGEX_VALID_URL
+
 
 
 class HTMLViewer(vip_base):
