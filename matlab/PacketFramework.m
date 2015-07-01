@@ -1,7 +1,11 @@
-% pf = PacketFramework % just 'PaPIConfig' without Parameters and Sources
-% pf = PacketFramework('SourcesConfig', 'ParametersConfig') % if you want
-% to export a PaPI-ready config without evaluating 'BlockConfig'
-% pf = PacketFramework('BlockConfig') % if you want to give the json-struct
+% pf = PacketFramework 
+% --> just 'PaPIConfig' without Parameters and Sources
+%
+% pf = PacketFramework('SourcesConfig', 'ParametersConfig') 
+% --> if you want to export a PaPI-ready config without evaluating 'BlockConfig'
+%
+% pf = PacketFramework('BlockConfig')
+% --> if you want to give the json-struct
 % to another function which generates the Parameters and Sources by
 % evaluating 'BlockConfig'
 classdef PacketFramework < handle
@@ -31,6 +35,8 @@ classdef PacketFramework < handle
         end
         % PluginUname = pf.PF_addplugin('Plot', 'XY', '(1,1)', '(0,0)')
         function PluginUname = PF_addplugin(obj, PluginType, PluginName, PluginSize, PluginPos)
+            % 
+            
             % inc counter
             new_PluginID_counter = obj.PluginID_counter + 1;
             
