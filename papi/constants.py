@@ -88,6 +88,7 @@ GUI_DEFAULT_WIDTH               = 771
 GUI_DEFAULT_HEIGHT              = 853
 
 GUI_DEFAULT_TAB                 = 'PaPI-Tab'
+GUI_TABWIDGET_IDENTIFIER        = '__tabWidget'
 
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
