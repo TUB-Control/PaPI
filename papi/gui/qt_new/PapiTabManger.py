@@ -38,7 +38,8 @@ from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiA
 
 
 from papi.gui.qt_new.custom import FileLineEdit
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, \
+                                    GUI_TABWIDGET_IDENTIFIER
 
 
 class PapiTabManger(QObject):
@@ -64,6 +65,8 @@ class PapiTabManger(QObject):
 
         # create dict for saving tabs
         self.tab_dict_uname = {}
+
+        self.windowTabData = {}
 
         self.centralWidget = centralWidget
 
@@ -219,6 +222,11 @@ class PapiTabManger(QObject):
         gloPos = self.tabWidget.mapToGlobal(pos)
         self.cmenu.exec_(gloPos)
 
+    def show_context_menuW(self, pos, window):
+        self.cmenu = self.create_context_menuW(window.tabWidget, window.tabList)
+        gloPos = window.mapToGlobal(pos)
+        self.cmenu.exec_(gloPos)
+
     def create_context_menu(self):
         ctrlMenu = QMenu("")
 
@@ -260,44 +268,72 @@ class PapiTabManger(QObject):
 
         return ctrlMenu
 
+
+    def create_context_menuW(self, tabWidget, tabList):
+        ctrlMenu = QMenu("")
+
+
+        title_action = QAction('Tab menu', tabWidget)
+        title_action.setDisabled(True)
+
+        sep_action = QAction('',tabWidget)
+        sep_action.setSeparator(True)
+
+        new_tab_action = QAction('New Tab',tabWidget)
+        new_tab_action.triggered.connect(self.cmenu_new_tab)
+
+        new_tab_action_cust_name = QAction('New Tab with name',tabWidget)
+        new_tab_action_cust_name.triggered.connect(self.cmenu_new_tab_custom_name)
+
+        close_tab_action = QAction('Close Tab',tabWidget)
+        close_tab_action.triggered.connect(self.cmenu_close_tab)
+
+        rename_tab_action = QAction('Rename Tab',tabWidget)
+        rename_tab_action.triggered.connect(self.cmenu_rename_tab)
+
+        bg_action = QAction('Set background',tabWidget)
+        bg_action.triggered.connect(self.cmenu_set_bg)
+
+        wind_action = QAction('New Window',tabWidget)
+        wind_action.triggered.connect(self.cmenu_new_window)
+
+        ctrlMenu.addAction(title_action)
+        ctrlMenu.addAction(sep_action)
+        ctrlMenu.addAction(sep_action)
+        ctrlMenu.addAction(new_tab_action)
+        ctrlMenu.addAction(wind_action)
+        ctrlMenu.addAction(new_tab_action_cust_name)
+        if len(tabList) > 0:
+            ctrlMenu.addAction(close_tab_action)
+            ctrlMenu.addAction(rename_tab_action)
+            ctrlMenu.addAction(bg_action)
+
+        return ctrlMenu
+
+
+
+
+
     def add_wind(self, name):
-        if name in self.tab_dict_uname:
+        if name in self.windowTabData:
             print('Win with name already exists')
         else:
-            newWin = QMainWindow(self.centralWidget)#TabObject( name)
-            newWin.resize(693, 600)
 
-            widgetTabs = QTabWidget(self.centralWidget)
-            widgetTabs.setContextMenuPolicy(Qt.CustomContextMenu)
-            widgetTabs.customContextMenuRequested.connect(self.show_context_menu)
-            #newArea = QMdiArea(newWin)
-            newWin.setCentralWidget(widgetTabs)
+            # create a new window with name = name
+            newWin = PaPIWindow(name, conextMenu=self.show_context_menuW, parent=self.centralWidget)
 
+            # add new window to data structure
+            self.windowTabData[newWin.windowName] = newWin
 
-
-            #newTab.index = self.tabWidget.addTab(newTab,newTab.name)
-
-            #newLay = QHBoxLayout(newWin)
-
-
-
-            #newLay.addWidget(newArea)
-            #             newWin.setCentralWidget(newArea)
-
-           #mT = TabObject('test')
-           # newArea.addSubWindow(mT)
-            #newArea.showMaximized()
-
-
-            #self.tab_dict_uname[newWin.name] = newWin
-            newWin.show()
             return newWin
+
+
+
 
 
     def cmenu_new_window(self):
         print('test')
         self.add_wind('test')
-
 
     def cmenu_new_tab(self):
         name = 'Tab'
@@ -350,13 +386,44 @@ class PapiTabManger(QObject):
 
 
 
+
+class PaPIWindow(QMainWindow):
+    def __init__(self, windowName, conextMenu=None, parent = None):
+        super(QMainWindow, self).__init__(parent)
+        self.windowName = windowName
+        self.tabList    = {}
+        self.tabWidget = QTabWidget(self)
+        self.setCentralWidget(self.tabWidget)
+
+        self.setWindowTitle(self.windowName)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda pos, wind = self: conextMenu(pos,wind))
+
+        self.resize(693, 600)
+        self.show()
+
+
+
+    def addTabToWindow(self, tabName):
+        if tabName in self.tabList:
+            print('Tab with same name already exists')
+        else:
+            newTab = TabObject(tabName)
+            newTab.index = self.tabWidget.addTab(newTab,newTab.name)
+            newTab.windowName = self.windowName
+            self.tabList[tabName] = newTab
+
+
+
+
 class TabObject(QMdiArea):
-    def __init__(self, name, parent=None):
+    def __init__(self, name, windowName=0, parent=None):
         super(TabObject, self).__init__(parent)
         self.index = None
         self.name = name
         self.background = 'default'
         self.closeIfempty = False
+        self.windowName = windowName
 
     def isEmpty(self):
         return len(self.subWindowList()) == 0
