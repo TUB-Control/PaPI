@@ -33,7 +33,8 @@ from PyQt5.QtCore import Qt, QObject
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, \
-                                QMessageBox, QMenu, QAction, QInputDialog, QFileDialog, QWidget, QMainWindow, QHBoxLayout, QVBoxLayout
+                                QMessageBox, QMenu, QAction, QInputDialog, QFileDialog, QWidget, \
+                                QMainWindow, QHBoxLayout, QVBoxLayout, QTabWidget
 
 
 from papi.gui.qt_new.custom import FileLineEdit
@@ -264,17 +265,30 @@ class PapiTabManger(QObject):
             print('Win with name already exists')
         else:
             newWin = QMainWindow(self.centralWidget)#TabObject( name)
+            newWin.resize(693, 600)
+
+            widgetTabs = QTabWidget(self.centralWidget)
+            widgetTabs.setContextMenuPolicy(Qt.CustomContextMenu)
+            widgetTabs.customContextMenuRequested.connect(self.show_context_menu)
+            #newArea = QMdiArea(newWin)
+            newWin.setCentralWidget(widgetTabs)
+
+
+
             #newTab.index = self.tabWidget.addTab(newTab,newTab.name)
 
-            newLay = QHBoxLayout(newWin)
+            #newLay = QHBoxLayout(newWin)
 
-            newArea = QMdiArea(newWin)
 
-            newLay.addWidget(newArea)
 
-            mT = TabObject('test')
-            newArea.addSubWindow(mT)
-            newArea.showMaximized()
+            #newLay.addWidget(newArea)
+            #             newWin.setCentralWidget(newArea)
+
+           #mT = TabObject('test')
+           # newArea.addSubWindow(mT)
+            #newArea.showMaximized()
+
+
             #self.tab_dict_uname[newWin.name] = newWin
             newWin.show()
             return newWin
