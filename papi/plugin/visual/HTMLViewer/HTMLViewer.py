@@ -31,6 +31,7 @@ __author__ = 'Stefan'
 from PyQt5.QtWebKitWidgets import QWebView
 from PyQt5 import QtCore
 
+
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
@@ -45,16 +46,25 @@ class HTMLViewer(vip_base):
         # Read configuration
         # ---------------------------
         content = config['content']['value']
+        isUrl   = config['isUrl']['value']
+
+
 
         # --------------------------------
         # Create Widget
         # --------------------------------
         self.WebView = QWebView()
 
+
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.WebView )
-        self.WebView.setHtml(content)
+        print(isUrl)
+        if isUrl == '1':
+            url = QtCore.QUrl(content)
+            self.WebView.load(url)
+        else:
+            self.WebView.setHtml(content)
         self.WebView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.WebView.customContextMenuRequested.connect(self.show_context_menu)
 
@@ -116,7 +126,14 @@ class HTMLViewer(vip_base):
                 'display_text' : 'HTML Content',
                 'advanced' : '0',
                 'tooltip' : 'Plain html code to be displayed'
-        }}
+            },
+            "isUrl": {
+                'value': "0",
+                'display_text': "Content==Url?",
+                'tooltip': "Set to 1 if the content is an url that should be loaded",
+                'advanced' : '0'
+            },
+        }
 
         return config
 
