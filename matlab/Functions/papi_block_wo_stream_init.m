@@ -1,8 +1,8 @@
-function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config)
+function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_config)
 %PAPI_BLOCK_COMPLETE_INIT Summary of this function goes here
 %   Detailed explanation goes here
 
-    %disp('Start---------------')
+    %disp('Start-> papi_block_stateflow_init')
     load_system(gcb);
 
     amountIn=amount_input;
@@ -11,7 +11,8 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     sizeParameters = sum(amount_parameters);
 
     name_papi_block = 'PaPI Block';
-
+    
+    
     if amountIn < 0
         amountIn = 0;
     end
@@ -63,11 +64,11 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     lastInput = amountIn;
 
     for n=1:amountIn
-       input = ['In' num2str(n)];
+       input = ['s' num2str(n)];
         block = find_system(gcb,...
           'LookUnderMasks','on',...
           'FollowLinks','on','Name',input);
-
+        
         if isempty(block)
             add_block('built-in/Inport',[gcb, ['/' input]]);
         end
@@ -87,7 +88,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     % ------------------------------------------------
 
     for n=lastInput+1:20
-       input = ['In' num2str(n)];
+       input = ['s' num2str(n)];
 
        block = find_system(gcb,...
               'LookUnderMasks','on',...
@@ -103,11 +104,12 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     % ------------------------------------------------
     % Create missing outputs
     % ------------------------------------------------
-
+    
+    
     lastOutput = amountOut;
 
     for n=1:amountOut
-        output = ['Out' num2str(n)];
+        output = ['p' num2str(n)];
         selector = ['Selector' num2str(n)];
 
         block = find_system(gcb,...
@@ -172,7 +174,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     % ------------------------------------------------
 
     for n=lastOutput+1:20
-       output = ['Out' num2str(n)];
+       output = ['p' num2str(n)];
        selector = ['Selector' num2str(n)];
 
        block = find_system(gcb,...
@@ -196,9 +198,8 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     % ------------------------------------------------
     % Get block names
     % ------------------------------------------------
+    init_command = 'port_label(''input'',  1  ,'' Stream_In '');port_label(''input'',  2  ,'' Stream_length '');port_label(''input'',  3  ,'' Reset '');port_label(''output'',  1  ,'' Stream_out '');';
     
-    init_command = 'port_label(''input'',  1  ,'' Reset '');';
-
-    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,1,0);
+    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,3,1);
 end
 

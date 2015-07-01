@@ -283,7 +283,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     std::string config  = ssConfig.str();
 
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
-    printf("%s", config.c_str());
+    //printf("%s", config.c_str());
     this->config = config;
 }
 
@@ -303,7 +303,6 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
     for (int i=0; i<this->size_parameter[pid];i++) {
 
         someValue = para_out[this->offset_parameter[pid] + i];
-
         if (someValue <  std::numeric_limits<double>::epsilon() && 
             someValue > -std::numeric_limits<double>::epsilon()) {
           someValue = 0.0;
@@ -315,12 +314,7 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
             ss << ",";
         }
 
-
-
-
-        printf("Double [%d] value: %f \n", i, para_out[i]);
-
-
+        //printf("Double [%d] value: %f \n", i, para_out[i]);
     }
 
     if (this->size_parameter[pid] > 1) {
@@ -332,17 +326,10 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
     return init_value_string;
 
-
-    if (pid >= 1)
-        return "[1,2]";
-
-    return "1";
-
-
 }
 
 void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
-    
+
     
     if (msg_length > 0 ) {
                   
@@ -375,6 +362,7 @@ void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double t
         this->clearOutput(stream_out);
         this->sendInput(u1, time, stream_out);
     }
+
 }
 
 void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
@@ -383,35 +371,38 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     
     double * dp = &p1->value;
 
-
-    printf("Msg Length %d \n", msg_length);
     /*
+    printf("Msg Length %d \n", msg_length);
+    
 
     printf("Constant: %d \n", p1->constant);
     */
-
+    /*
+    printf("PID: %d \n", p1->pid);
 
     printf("Size parameters: %d \n", this->size_parameter[p1->pid]);
 
     printf("Double pointer: %f \n", dp[0]);
+    */
+    /*
     
-    printf("PID: %d \n", p1->pid);
     printf("Counter: %d \n", p1->counter);
     printf("Value: %f \n", p1->value);
-
+    */
 
     /*
         Check if p1->pid is an valid value
     */
 
     if (p1->pid <0 or p1->pid > this->amount_parameter) {
+        printf("Return due to error !! \n");
         return;
     }
 
     for (int i=0; i<this->size_parameter[p1->pid];i++) {
 
-        printf("Double [%d] value: %f \n", i, dp[i]);
-
+        //printf("Double [%d] value: %f at offset=%d \n", i, dp[i],this->offset_parameter[p1->pid] + i);
+        
         para_out[this->offset_parameter[p1->pid] + i] = dp[i];
     }
         
@@ -420,7 +411,23 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
    
 }
 
+void PaPIBlock::reset(double para_out[]) {
+
+    for (int i=0; i<this->size_output_parameters; i++) {
+        para_out[i] = 0;
+    }
+
+
+    this->buildConfiguration(para_out);
+
+
+    this->config_sent = false;
+    this->data_to_sent = this->config.substr(0);
+}
+
 void PaPIBlock::clearOutput(int stream_out[]) {
+    //printf("Clear output '\n");
+
     for (int i=0; i<this->amount_output;i++) {
         stream_out[i] = 0;
     }
@@ -548,9 +555,14 @@ void deletePaPIBlock(void **work1) {
     delete madClass;
 }
 
-void outputPaPIBlock(void **work1, double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
+void outputPaPIBlock(void **work1, double u1[], int stream_in[], int msg_length, double time, int reset, int stream_out[], double para_out[]) {
 
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
-    madClass->setOutput(u1,stream_in,msg_length,time,stream_out, para_out);
 
+    if (reset) {
+        printf("Resent configuration and set output to zero");
+        madClass->reset(para_out);
+    }
+    madClass->setOutput(u1,stream_in,msg_length,time,stream_out, para_out);
+    
 }

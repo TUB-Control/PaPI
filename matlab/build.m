@@ -28,7 +28,7 @@ defs = [];
 
 def = legacy_code('initialize');
 def.SFunctionName = 'papi_simulink_block';
-def.OutputFcnSpec = 'outputPaPIBlock(void **work1, double u1[], int32 u2[], int32 u3, double u4, int32 y1[p3], double y2[p4])';
+def.OutputFcnSpec = 'outputPaPIBlock(void **work1, double u1[], int32 u2[], int32 u3, double u4, int32 u5, int32 y1[p3], double y2[p4])';
 def.StartFcnSpec = 'createPaPIBlock(void **work1, int32 size(u1,1), int32 size(u2,1), int32 p3, int32 p1[], int32 size(p1,1), int8 p2[], int32 size(p2,1), int32 p4)';
 def.TerminateFcnSpec = 'deletePaPIBlock(void **work1)';
 def.HeaderFiles = {'PaPIBlock.hpp'};

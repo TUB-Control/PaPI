@@ -69,6 +69,8 @@ private:
 
     std::string getInitialValueForParameter(double para_out[], int p_id);
 
+    
+
 public:
     PaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out,signed char json_string[], int size_json_string, int size_output_parameters);
     void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
@@ -77,6 +79,7 @@ public:
     void sendConfig(int stream_out[]);
     void sendInput(double u1[], double time, int stream_out[]);
     void clearOutput(int stream_out[]);
+    void reset(double para_out[]);
 };
 
 // External declaration for class instance global storage
@@ -85,6 +88,6 @@ extern PaPIBlock *papiBlockVar;
 // Method wrappers
 extern void createPaPIBlock(void **work1, int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters);
 extern void deletePaPIBlock(void **work1);
-extern void outputPaPIBlock(void **work1, double data_in[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
+extern void outputPaPIBlock(void **work1, double data_in[], int stream_in[], int msg_length, double time, int reset_event, int stream_out[], double para_out[]);
 
 #endif /* _PAPI_BLOCK_ */
