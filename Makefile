@@ -5,14 +5,16 @@ SRC_DIR = ./ui/
 
 DES_DIR = ./papi/
 
-#UI_FILES = "$(shell find $(SRC) -regex ".*\.\(ui\)")"
-
 UI_FILES = quitter.ui
+
+MD_SRC_DIR = ./papi/
+MD_DES_DIR = ./docs/
 
 UI_FILES_FOUND = $(shell find $(SRC_DIR) -name '*.ui')
 UI_FILES = $(UI_FILES_FOUND:./%=%)
 PY_FILES = $(addprefix $(DES_DIR),$(UI_FILES:.ui=.py))
 
+MD_FILES_FOUND = $(shell find $(MD_SRC_DIR) -name '*.rst')
 
 MKDIR_P = mkdir -p
 
@@ -36,8 +38,19 @@ $(UI_FILES):
 	else echo "__author__ = '$(AUTHOR)'" > $(DES_DIR)$(dir $@)__init__.py  ; \
 	fi 
 
-create_rst:
+$(MD_FILES_FOUND):
+	@echo "MD_FILES_FOUND" $@
+
+	$(eval rst_name:= $(subst /,., $@))
+
+	@echo "->" $(rst_name)
+
+	cp $@ $(MD_DES_DIR)$(rst_name)
+ 
+create_rst: $(MD_FILES_FOUND)
 	sphinx-apidoc -f -o docs papi ./papi/pyqtgraph/ ./papi/yapsy/
+
+
 
 docs: create_rst
 	make -C docs html

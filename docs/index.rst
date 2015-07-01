@@ -13,6 +13,8 @@ Contents:
 
    papi
 
+   papi.plugin.*
+
 
 
 Indices and tables
