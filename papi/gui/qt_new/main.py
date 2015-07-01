@@ -65,6 +65,8 @@ from papi.gui.qt_new import get32Icon, get16Icon
 
 from multiprocessing import Queue, Process
 from papi.core import run_core_in_own_process
+import signal
+
 
 # Disable antialiasing for prettier plots
 #pg.setConfigOptions(antialias=False)
@@ -147,7 +149,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # Create the Tab Manager and the gui management unit #
         # connect some signals of management to gui          #
         # -------------------------------------------------- #
-        self.TabManager = PapiTabManger(self.widgetTabs)
+        self.TabManager = PapiTabManger(tabWigdet=self.widgetTabs, centralWidget=self.centralwidget)
 
         self.gui_management = GuiManagement(core_queue_ref,
                                     gui_queue_ref,
@@ -169,6 +171,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # initialize the graphic of the gui
         # -------------------------------------------------- #
         self.gui_graphic_init()
+
+        signal.signal(signal.SIGINT, lambda a,b: self.signal_handler(a,b))
+
+
+
+    def signal_handler(self,signal, frame):
+        """
+        This handler will be called, when CTRL+C is used in the console
+        It will react to SIGINT Signal
+        As an reaction it will close the gui by first telling the core to close and then closing the gui
+        :return:
+        """
+        self.gui_management.gui_api.do_close_program()
+        sys.exit(0)
 
 
     def gui_graphic_init(self):

@@ -53,6 +53,7 @@ import papi.error_codes as ERROR
 from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
+import signal
 
 def run_core_in_own_process(gui_queue, core_queue, gui_id):
     core = Core(None,False,False)
@@ -158,6 +159,8 @@ class Core:
 
         self.core_delayed_operation_queue = []
 
+        signal.signal(signal.SIGINT, lambda a,b,c=self: self.signal_handler(a,b,c))
+
     def run(self):
         """
         Main operation function of core.
@@ -202,6 +205,13 @@ class Core:
 
         # core finished operation and did clean shutdown
         self.log.printText(1, CORE_STOP_CONSOLE_MESSAGE)
+
+    def signal_handler(self,signal, frame,core):
+        """
+        This is an empty
+        :return:
+        """
+        pass
 
     def send_alive_check_events(self):
         """
