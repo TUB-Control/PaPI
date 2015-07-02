@@ -55,7 +55,7 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-from papi.gui.qt_new.PapiTabManger import PapiTabManger
+from papi.gui.qt_new.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
 
 from papi.gui.qt_new.custom import PaPIConfigSaveDialog
 
@@ -209,8 +209,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Create callback functions for buttons
         # -------------------------------------
-        self.loadButton.clicked.connect(self.load_triggered)
-        self.saveButton.clicked.connect(self.save_triggered)
+        #self.loadButton.clicked.connect(self.load_triggered)
+        #self.saveButton.clicked.connect(self.save_triggered)
 
         # -------------------------------------
         # Create actions
@@ -245,11 +245,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
-        self.loadButton.setIconSize(QSize(32, 32))
-        self.loadButton.setIcon(load_icon)
+        #self.loadButton.setIconSize(QSize(32, 32))
+        #self.loadButton.setIcon(load_icon)
 
-        self.saveButton.setIconSize(QSize(32, 32))
-        self.saveButton.setIcon(save_icon)
+        #self.saveButton.setIconSize(QSize(32, 32))
+        #self.saveButton.setIcon(save_icon)
 
         # -------------------------------------
         # Create Icons for actions
@@ -552,7 +552,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
                 if tabOb.closeIfempty is True:
                     if len(tabOb.subWindowList()) == 0:
-                        self.TabManager.closeTab_by_name(tabOb.name)
+                        if isinstance(tabOb, TabObject):
+                            self.TabManager.closeTab_by_name(tabOb.name)
+                        else:
+                            self.TabManager.remove_window(tabOb)
 
 
     def changed_dgui(self):
