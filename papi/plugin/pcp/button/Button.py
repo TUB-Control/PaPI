@@ -50,9 +50,7 @@ class Button(pcp_base):
 
         #super(Button, self).start_init(config)
 
-        block = DBlock('Click_Event')
-        signal = DSignal('Parameter')
-        block.add_signal(signal)
+        block = DBlock('Click')
 
         self.name = config['name']['value']
         self.cur_value = 0
@@ -103,7 +101,7 @@ class Button(pcp_base):
             self.button.setText(self.text_up)
             val = self.value_up
 
-        self.send_parameter_change(str(val), 'Click_Event')
+        self.send_parameter_change(str(val), 'Click')
 
 
     def get_plugin_configuration(self):

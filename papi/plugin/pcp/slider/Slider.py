@@ -43,9 +43,7 @@ class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock('SliderBlock')
-        signal = DSignal('SliderParameter1')
-        block.add_signal(signal)
+        block = DBlock('Change')
 
         self.send_new_block_list([block])
         self.set_widget_for_internal_usage(self.create_widget())
@@ -102,7 +100,7 @@ class Slider(pcp_base):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.send_parameter_change(str(val), 'SliderBlock')
+        self.send_parameter_change(str(val), 'Change')
 
     def clicked(self):
         pass
