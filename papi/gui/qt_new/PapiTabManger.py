@@ -245,15 +245,6 @@ class PapiTabManger(QObject):
         gloPos = self.tabWidget.mapToGlobal(pos)
         self.cmenu.exec_(gloPos)
 
-
-
-    def show_context_menuW(self, pos, window):
-        self.cmenu = self.create_context_menuW(window.tabWidget, window)
-        gloPos = window.mapToGlobal(pos)
-        self.cmenu.exec_(gloPos)
-
-
-
     def create_context_menu(self):
         ctrlMenu = QMenu("")
 
@@ -321,9 +312,12 @@ class PapiTabManger(QObject):
 
 
 
+    def show_context_menu_window(self, pos, window):
+        self.cmenu = self.create_context_menu_window(window.tabWidget, window)
+        gloPos = window.mapToGlobal(pos)
+        self.cmenu.exec_(gloPos)
 
-
-    def create_context_menuW(self, tabWidget, window):
+    def create_context_menu_window(self, tabWidget, window):
         ctrlMenu = QMenu("")
 
 
@@ -358,7 +352,7 @@ class PapiTabManger(QObject):
         else:
 
             # create a new window with name = name
-            newWin = PaPIWindow(name, conextMenu=self.show_context_menuW, parent=self.centralWidget)
+            newWin = PaPIWindow(name, conextMenu=self.show_context_menu_window, parent=self.centralWidget)
 
             # connect new close slot:
             newWin.closeEvent = lambda ev, handler= newWin.closeEvent, window=newWin : self.new_wind_close_event(ev,handler, window)
@@ -373,8 +367,6 @@ class PapiTabManger(QObject):
             pass
         else:
             self.redock_window(window)
-
-
 
     def remove_window(self,window, rm_from_data=True):
         if rm_from_data is True:
@@ -458,7 +450,7 @@ class PapiTabManger(QObject):
                 self.set_background_for_tab_with_name(window.windowName, path)
 
     def cmenu_rename_wind(self, window):
-        text, ok = QInputDialog.getText(window, 'Rename a tab','New name for tab: '+ window.windowName,
+        text, ok = QInputDialog.getText(window, 'Rename a window','New name for window: '+ window.windowName,
                                               QLineEdit.Normal,window.windowName)
         if ok:
             if text in self.tab_dict_uname:
