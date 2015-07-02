@@ -20,9 +20,9 @@ Manuals :
    :maxdepth: 2
    :glob:
 
-   papi.plugin.doc
    papi.manual
-    
+   papi.plugin.doc
+
 
 
 Indices and tables

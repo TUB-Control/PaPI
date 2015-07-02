@@ -16,7 +16,7 @@ Configuration
 The plugin uses this specific configuration.
 
 .. list-table:: Plugin configuration
-    :widths: 15 10 30
+    :widths: 10 10 30
     :header-rows: 1
 
     * - Name
@@ -40,7 +40,7 @@ Parameter
 A plugin instance can be manipulated by the following parameter.
 
 .. list-table:: Provided parameter
-    :widths: 15 10 30
+    :widths: 10 10 30
     :header-rows: 1
 
     * - Name
@@ -55,7 +55,7 @@ Events
 A plugin instance provides this events which can be used to manipulated parameters of other plugins.
 
 .. list-table:: Provided events
-    :widths: 15 10 30
+    :widths: 10 10 30
     :header-rows: 1
 
     * - Name
