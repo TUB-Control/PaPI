@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Thu Jul  2 15:33:34 2015
+# Created: Thu Jul  2 15:35:55 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,6 +40,9 @@ class Ui_QtNewMain(object):
         self.statusbar.setObjectName("statusbar")
         QtNewMain.setStatusBar(self.statusbar)
         self.toolBar = QtWidgets.QToolBar(QtNewMain)
+        self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.toolBar.setMovable(False)
+        self.toolBar.setFloatable(False)
         self.toolBar.setObjectName("toolBar")
         QtNewMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionLoad = QtWidgets.QAction(QtNewMain)

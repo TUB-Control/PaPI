@@ -208,6 +208,8 @@ class PapiTabManger(QObject):
                         self.gui_api.do_delete_plugin(dplugin.id)
                 self.remove_tab(tabOb)
 
+
+
     def closeTab_by_name(self,name):
         if name in self.tab_dict_uname:
             tabO = self.tab_dict_uname[name]
@@ -256,11 +258,15 @@ class PapiTabManger(QObject):
         ctrlMenu = QMenu("")
 
 
-        title_action = QAction('Tab menu', self.tabWidget)
+        title_action = QAction('Area menu', self.tabWidget)
         title_action.setDisabled(True)
 
         sep_action = QAction('',self.tabWidget)
         sep_action.setSeparator(True)
+        sep_action2 = QAction('',self.tabWidget)
+        sep_action2.setSeparator(True)
+        sep_action3 = QAction('',self.tabWidget)
+        sep_action3.setSeparator(True)
 
         new_tab_action = QAction('New Tab',self.tabWidget)
         new_tab_action.triggered.connect(self.cmenu_new_tab)
@@ -268,7 +274,7 @@ class PapiTabManger(QObject):
         new_tab_action_cust_name = QAction('New Tab with name',self.tabWidget)
         new_tab_action_cust_name.triggered.connect(self.cmenu_new_tab_custom_name)
 
-        detach_tab_action_cust_name = QAction('Detach tab to window',self.tabWidget)
+        detach_tab_action_cust_name = QAction('Detach > new window',self.tabWidget)
         detach_tab_action_cust_name.triggered.connect(self.detach_tab)
 
         close_tab_action = QAction('Close Tab',self.tabWidget)
@@ -283,18 +289,29 @@ class PapiTabManger(QObject):
         wind_action = QAction('New Window',self.tabWidget)
         wind_action.triggered.connect(self.cmenu_new_window)
 
-        ctrlMenu.addAction(title_action)
-        ctrlMenu.addAction(sep_action)
-        ctrlMenu.addAction(sep_action)
-        ctrlMenu.addAction(new_tab_action)
-        ctrlMenu.addAction(wind_action)
-        ctrlMenu.addAction(new_tab_action_cust_name)
+
         if self.tabWidget.count() > 0:
-            ctrlMenu.addAction(detach_tab_action_cust_name)
+            ctrlMenu.addAction(title_action)
+
+            ctrlMenu.addAction(sep_action)
+            ctrlMenu.addAction(new_tab_action)
+            ctrlMenu.addAction(new_tab_action_cust_name)
+
+            ctrlMenu.addAction(sep_action2)
             ctrlMenu.addAction(close_tab_action)
             ctrlMenu.addAction(rename_tab_action)
             ctrlMenu.addAction(bg_action)
 
+            ctrlMenu.addAction(sep_action3)
+            ctrlMenu.addAction(wind_action)
+            ctrlMenu.addAction(detach_tab_action_cust_name)
+        else:
+            ctrlMenu.addAction(title_action)
+            ctrlMenu.addAction(sep_action)
+            ctrlMenu.addAction(new_tab_action)
+            ctrlMenu.addAction(new_tab_action_cust_name)
+            ctrlMenu.addAction(sep_action2)
+            ctrlMenu.addAction(wind_action)
 
         return ctrlMenu
 
@@ -315,17 +332,23 @@ class PapiTabManger(QObject):
 
         sep_action = QAction('',tabWidget)
         sep_action.setSeparator(True)
+        sep_action2 = QAction('',tabWidget)
+        sep_action2.setSeparator(True)
 
         dock_action = QAction('Dock Window',tabWidget)
         dock_action.triggered.connect(lambda ignore, area=tabWidget, window = window : self.cmenu_dock_window(area,window))
+
+        rename_win_action = QAction('Rename Window',self.tabWidget)
+        rename_win_action.triggered.connect(lambda ignore, window = window : self.cmenu_rename_wind(window))
 
         bg_action = QAction('Set background',tabWidget)
         bg_action.triggered.connect(lambda ignore, wind = window  : self.cmenu_set_bg_window(wind))
 
         ctrlMenu.addAction(title_action)
         ctrlMenu.addAction(sep_action)
-        ctrlMenu.addAction(sep_action)
         ctrlMenu.addAction(dock_action)
+        ctrlMenu.addAction(sep_action2)
+        ctrlMenu.addAction(rename_win_action)
         ctrlMenu.addAction(bg_action)
         return ctrlMenu
 
@@ -364,13 +387,14 @@ class PapiTabManger(QObject):
             window.destroy()
 
     def redock_window(self, window):
-        if not window.tabWidget.isEmpty():
-            if window.windowName in self.tab_dict_uname:
-                # create new Tab with name with affix and prefix
-                winName = window.windowName
-                destTab = self.add_tab('DOCK'+winName+'DOCK')
-                plugins = self.dGui.get_all_plugins()
 
+        if window.windowName in self.tab_dict_uname:
+            winName = window.windowName
+            destTab = self.add_tab('DOCK'+winName+'DOCK')
+
+            if not window.tabWidget.isEmpty():
+                # create new Tab with name with affix and prefix
+                plugins = self.dGui.get_all_plugins()
                 for pl_id in plugins:
 
                     plugin = plugins[pl_id]
@@ -385,10 +409,10 @@ class PapiTabManger(QObject):
 
                             plugin.plugin.config['tab']['value'] = destTab.name
 
-                window.alreadyDocked = True
-                self.remove_window(window)
-                # rename new Tab to real name
-                self.rename_tab(destTab,winName)
+            window.alreadyDocked = True
+            self.remove_window(window)
+            # rename new Tab to real name
+            self.rename_tab(destTab,winName)
 
     def detach_tab(self):
         tabOb = self.tabWidget.currentWidget()
@@ -407,8 +431,8 @@ class PapiTabManger(QObject):
                         self.moveFromTo(tabOb.name,neWin.windowName, subwin,posX=posX,posY=posY)
                         plugin.plugin.config['tab']['value'] = neWin.windowName
 
-            self.remove_tab(tabOb)
-            self.rename_window(neWin,tabName)
+        self.remove_tab(tabOb)
+        self.rename_window(neWin,tabName)
 
     def cmenu_dock_window(self, tabarea, window):
         self.redock_window(window)
@@ -433,6 +457,15 @@ class PapiTabManger(QObject):
                 path = fileNames[0]
                 self.set_background_for_tab_with_name(window.windowName, path)
 
+    def cmenu_rename_wind(self, window):
+        text, ok = QInputDialog.getText(window, 'Rename a tab','New name for tab: '+ window.windowName,
+                                              QLineEdit.Normal,window.windowName)
+        if ok:
+            if text in self.tab_dict_uname:
+
+                pass
+            else:
+                self.rename_window(window,text)
 
 
 
@@ -531,7 +564,22 @@ class PaPIWindow(QMainWindow):
 
     background = property(fget=getBackground, fset=setBackground)
 
+    def subWindowList(self):
+        return self.tabWidget.subWindowList()
 
+
+    def getName(self):
+        return self.windowName
+
+    def setName(self, name):
+        self.windowName = name
+
+    name = property(fget=getName, fset=setName)
+
+
+
+    def isEmpty(self):
+        return self.tabWidget.isEmpty()
 
 
 

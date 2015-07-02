@@ -55,7 +55,7 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-from papi.gui.qt_new.PapiTabManger import PapiTabManger
+from papi.gui.qt_new.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
 
 from papi.gui.qt_new.custom import PaPIConfigSaveDialog
 
@@ -553,7 +553,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
                 if tabOb.closeIfempty is True:
                     if len(tabOb.subWindowList()) == 0:
-                        self.TabManager.closeTab_by_name(tabOb.name)
+                        if isinstance(tabOb, TabObject):
+                            self.TabManager.closeTab_by_name(tabOb.name)
+                        else:
+                            self.TabManager.remove_window(tabOb)
 
 
     def changed_dgui(self):
