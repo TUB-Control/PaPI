@@ -33,40 +33,39 @@ from papi.gui.qt_new.custom import FileLineEdit
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout
+from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QWidget
 
 import threading, time
 
 
-class OrtdController(vip_base):
+class PaPIController(vip_base):
 
     def initiate_layer_0(self, config=None):
-
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.ortd_uname = config['ORTD_Plugin_uname']['value']
+        self.ortd_uname = config['UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-        self.ControllerWidget = QWizard()
-        self.ControllerWidget.setOption(QWizard.NoCancelButton)
-        self.ControllerWidget.setOption(QWizard.NoBackButtonOnLastPage)
-        self.ControllerWidget.setOption(QWizard.NoBackButtonOnStartPage)
-        self.ControllerWidget.setOption(QWizard.DisabledBackButtonOnLastPage)
+
+        self.ControllerWidget = QWidget()
         self.set_widget_for_internal_usage( self.ControllerWidget )
-        self.ControllerWidget.addPage(ControllerOrtdStart(api=self.control_api, uname=self.dplugin_info.uname,ortd_uname=self.ortd_uname, config = self.config))
-        self.ControllerWidget.addPage(ControllerWorking(api=self.control_api, uname=self.dplugin_info.uname))
+        hbox = QHBoxLayout()
+        self.ControllerWidget.setLayout(hbox)
+        self.status_label = QLabel()
+        self.status_label.setText('Controlling...')
+        hbox.addWidget(self.status_label)
 
 
         self.lock = threading.Lock()
-
         self.plugin_started_list = []
-
         self.event_list = []
         self.thread_alive = False
 
+
+        self.start_UDP_plugin()
         return True
 
     def pause(self):
@@ -155,8 +154,15 @@ class OrtdController(vip_base):
                         if 'parameter' in pl_cfg:
                             para = pl_cfg['parameter']
 
-                        #if not isinstance(para, list):
-                        #    para = [para]
+
+                        # Static remapping due to new event names of Slider and Button
+                        # Necessary to keep till ORTD supports the new names
+
+                        if (pl_cfg['block'] == 'Click_Event'):
+                            pl_cfg['block'] = 'Click'
+
+                        if (pl_cfg['block'] == 'SliderBlock'):
+                            pl_cfg['block'] = 'Change'
 
                         self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
@@ -201,13 +207,13 @@ class OrtdController(vip_base):
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
         config = {
-            "ORTD_Plugin_uname": {
-                'value': 'ORTDPlugin1',
-                'display_text': 'Uname to use for ortd plugin instance',
+            "UDP_Plugin_uname": {
+                'value': 'UDPPlugin',
+                'display_text': 'Uname to use for UDP plugin instance',
                 'advanced': "0"
             },
             'name': {
-                'value': 'ORTDController'
+                'value': 'PaPIController'
             },
             '1:address': {
                 'value': '127.0.0.1',
@@ -227,7 +233,7 @@ class OrtdController(vip_base):
                 'display_text': 'Use same port for send and receive'
             },
             'size': {
-                'value': "(150,300)",
+                'value': "(150,75)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
@@ -247,27 +253,11 @@ class OrtdController(vip_base):
 
 
 
-
-class ControllerOrtdStart(QWizardPage):
-    def __init__(self,api = None, uname= None, parent = None, ortd_uname = None, config = None):
-        QWizardPage.__init__(self, parent)
-        self.config = config
-        self.api = api
-        self.ortd_uname = ortd_uname
-        self.uname = uname
-        label = QLabel("Press 'Next' to start ORTD interaction")
-        label.setWordWrap(True)
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        self.setLayout(layout)
-
-    def validatePage(self):
-
+    def start_UDP_plugin(self):
         IP =  self.config ['1:address']['value']
         out_port = self.config ['2:source_port']['value']
         in_port  = self.config ['3:out_port']['value']
         SendOnReceivePort = self.config['SendOnReceivePort']['value']
-
 
         ortd_cfg ={
             'address': {
@@ -288,40 +278,91 @@ class ControllerOrtdStart(QWizardPage):
         }
 
 
-        self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
+        self.control_api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
 
-        self.thread = threading.Thread(target=self.subscribe_control_signal)
-        self.thread.start()
-
-        return True
-
-    def subscribe_control_signal(self):
-
-        self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+        self.control_api.do_subscribe_uname(self.dplugin_info.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',
                                                                                               'ControllerSignalClose',
                                                                                               'ActiveTab'])
-        self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+        self.control_api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
 
 
-class ControllerWorking(QWizardPage):
-    def __init__(self,api = None, uname= None, parent = None):
-        QWizardPage.__init__(self, parent)
-        self. api = api
-
-        self.setTitle("ORTD Controller")
-        label = QLabel("Controller plugin is working")
-        label.setWordWrap(True)
-
-        label2 = QLabel("")
-
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        layout.addWidget(label2)
-
-        self.setLayout(layout)
-
-    def validatePage(self):
-        return False
+# class ControllerOrtdStart(QWizardPage):
+#     def __init__(self,api = None, uname= None, parent = None, ortd_uname = None, config = None):
+#         QWizardPage.__init__(self, parent)
+#         self.config = config
+#         self.api = api
+#         self.ortd_uname = ortd_uname
+#         self.uname = uname
+#         label = QLabel("Press 'Next' to start ORTD interaction")
+#         label.setWordWrap(True)
+#         layout = QVBoxLayout()
+#         layout.addWidget(label)
+#         self.setLayout(layout)
+#
+#     def validatePage(self):
+#
+#         IP =  self.config ['1:address']['value']
+#         out_port = self.config ['2:source_port']['value']
+#         in_port  = self.config ['3:out_port']['value']
+#         SendOnReceivePort = self.config['SendOnReceivePort']['value']
+#
+#
+#         ortd_cfg ={
+#             'address': {
+#                 'value': IP,
+#                 'advanced': '1'
+#             },
+#             'source_port': {
+#                 'value': out_port,
+#                 'advanced': '1'
+#             },
+#             'out_port': {
+#                 'value': in_port,
+#                 'advanced': '1'
+#             },
+#             'SendOnReceivePort': {
+#                 'value': SendOnReceivePort
+#             }
+#         }
+#
+#
+#         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
+#
+#         self.thread = threading.Thread(target=self.subscribe_control_signal)
+#         self.thread.start()
+#
+#         return True
+#
+#     def subscribe_control_signal(self):
+#
+#         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+#                                                                                               'ControlSignalCreate',
+#                                                                                               'ControlSignalSub',
+#                                                                                               'ControllerSignalParameter',
+#                                                                                               'ControllerSignalClose',
+#                                                                                               'ActiveTab'])
+#         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+#
+#
+# class ControllerWorking(QWizardPage):
+#     def __init__(self,api = None, uname= None, parent = None):
+#         QWizardPage.__init__(self, parent)
+#         self. api = api
+#
+#         self.setTitle("ORTD Controller")
+#         label = QLabel("Controller plugin is working")
+#         label.setWordWrap(True)
+#
+#         label2 = QLabel("")
+#
+#         layout = QVBoxLayout()
+#         layout.addWidget(label)
+#         layout.addWidget(label2)
+#
+#         self.setLayout(layout)
+#
+#     def validatePage(self):
+#         return False
