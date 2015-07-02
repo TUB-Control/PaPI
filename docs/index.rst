@@ -14,13 +14,14 @@ PaPI Framework:
 
    papi
 
-Plugin documentation:
+Manuals :
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :glob:
 
    papi.plugin.doc
+   papi.manual
     
 
 
