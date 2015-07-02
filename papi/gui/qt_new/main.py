@@ -210,8 +210,8 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Create callback functions for buttons
         # -------------------------------------
-        self.loadButton.clicked.connect(self.load_triggered)
-        self.saveButton.clicked.connect(self.save_triggered)
+        #self.loadButton.clicked.connect(self.load_triggered)
+        #self.saveButton.clicked.connect(self.save_triggered)
 
         # -------------------------------------
         # Create actions
@@ -246,11 +246,11 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Set Icons for buttons
         # -------------------------------------
-        self.loadButton.setIconSize(QSize(32, 32))
-        self.loadButton.setIcon(load_icon)
+        #self.loadButton.setIconSize(QSize(32, 32))
+        #self.loadButton.setIcon(load_icon)
 
-        self.saveButton.setIconSize(QSize(32, 32))
-        self.saveButton.setIcon(save_icon)
+        #self.saveButton.setIconSize(QSize(32, 32))
+        #self.saveButton.setIcon(save_icon)
 
         # -------------------------------------
         # Create Icons for actions

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Fri Apr 24 15:30:18 2015
+# Created: Thu Jul  2 15:33:34 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,18 +17,6 @@ class Ui_QtNewMain(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.loadButton = QtWidgets.QPushButton(self.centralwidget)
-        self.loadButton.setObjectName("loadButton")
-        self.horizontalLayout.addWidget(self.loadButton)
-        self.saveButton = QtWidgets.QPushButton(self.centralwidget)
-        self.saveButton.setObjectName("saveButton")
-        self.horizontalLayout.addWidget(self.saveButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout_2.addLayout(self.verticalLayout)
         self.widgetTabs = QtWidgets.QTabWidget(self.centralwidget)
         self.widgetTabs.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.widgetTabs.setObjectName("widgetTabs")
@@ -51,6 +39,9 @@ class Ui_QtNewMain(object):
         self.statusbar = QtWidgets.QStatusBar(QtNewMain)
         self.statusbar.setObjectName("statusbar")
         QtNewMain.setStatusBar(self.statusbar)
+        self.toolBar = QtWidgets.QToolBar(QtNewMain)
+        self.toolBar.setObjectName("toolBar")
+        QtNewMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionLoad = QtWidgets.QAction(QtNewMain)
         self.actionLoad.setObjectName("actionLoad")
         self.actionSave = QtWidgets.QAction(QtNewMain)
@@ -101,6 +92,13 @@ class Ui_QtNewMain(object):
         self.menubar.addAction(self.menuPlugin.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.toolBar.addAction(self.actionLoad)
+        self.toolBar.addAction(self.actionSave)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionCreate)
+        self.toolBar.addAction(self.actionOverview)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionResetPaPI)
 
         self.retranslateUi(QtNewMain)
         self.widgetTabs.setCurrentIndex(-1)
@@ -110,12 +108,11 @@ class Ui_QtNewMain(object):
     def retranslateUi(self, QtNewMain):
         _translate = QtCore.QCoreApplication.translate
         QtNewMain.setWindowTitle(_translate("QtNewMain", "MainWindow"))
-        self.loadButton.setText(_translate("QtNewMain", "Load"))
-        self.saveButton.setText(_translate("QtNewMain", "Save"))
         self.menuPaPI.setTitle(_translate("QtNewMain", "PaPI"))
         self.menuPlugin.setTitle(_translate("QtNewMain", "Plugin"))
         self.menuView.setTitle(_translate("QtNewMain", "View"))
         self.menuHelp.setTitle(_translate("QtNewMain", "Help"))
+        self.toolBar.setWindowTitle(_translate("QtNewMain", "toolBar"))
         self.actionLoad.setText(_translate("QtNewMain", "Load"))
         self.actionSave.setText(_translate("QtNewMain", "Save"))
         self.actionOverview.setText(_translate("QtNewMain", "Overview"))

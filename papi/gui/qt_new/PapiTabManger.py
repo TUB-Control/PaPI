@@ -522,6 +522,14 @@ class PaPIWindow(QMainWindow):
         self.setWindowTitle(newName)
         self.windowName = newName
 
+    def getBackground(self):
+        return self.tabWidget.background
+
+    def setBackground(self, bg):
+        self.tabWidget.background = bg
+
+
+    background = property(fget=getBackground, fset=setBackground)
 
 
 
@@ -536,6 +544,10 @@ class TabObject(QMdiArea):
         self.background = 'default'
         self.closeIfempty = False
         self.windowName = windowName
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
 
     def isEmpty(self):
         return len(self.subWindowList()) == 0
