@@ -113,7 +113,6 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.setupUi(self)
 
-
         # Create a data structure for gui if it is missing
         # -------------------------------------------------- #
         if not isinstance(gui_data, DGui):
