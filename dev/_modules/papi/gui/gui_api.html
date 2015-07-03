@@ -1,0 +1,1265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.gui.gui_api &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.gui.gui_api</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+
+<span class="sd">This file is part of PaPI.</span>
+
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">Contributors</span>
+<span class="sd">Stefan Ruppin</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;stefan&#39;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
+
+<span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
+<span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CONFIG_LOADER_SUBSCRIBE_DELAY</span><span class="p">,</span> \
+    <span class="n">CONFIG_ROOT_ELEMENT_NAME</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">CONFIG_ROOT_ELEMENT_NAME_RELOADED</span><span class="p">,</span> \
+    <span class="n">CONFIG_SAVE_CFG_BLACKLIST</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+
+<span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
+
+<span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
+
+<span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="kn">as</span> <span class="nn">ET</span>
+
+
+<div class="viewcode-block" id="Gui_api"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api">[docs]</a><span class="k">class</span> <span class="nc">Gui_api</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
+    <span class="n">error_occured</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_data</span><span class="p">,</span> <span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">get_gui_config_function</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">set_gui_config_function</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">TabManager</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_manager</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span> <span class="o">=</span> <span class="n">gui_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span> <span class="o">=</span> <span class="n">gui_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span> <span class="o">=</span> <span class="n">core_queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span> <span class="o">=</span> <span class="n">get_gui_config_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_gui_config_function</span> <span class="o">=</span> <span class="n">set_gui_config_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabManager</span> <span class="o">=</span> <span class="n">TabManager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginManager</span> <span class="o">=</span> <span class="n">plugin_manager</span>
+
+<div class="viewcode-block" id="Gui_api.do_create_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_create_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">do_create_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_identifier</span><span class="p">,</span> <span class="n">uname</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{},</span> <span class="n">autostart</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.</span>
+
+<span class="sd">        :param plugin_identifier: plugin to create</span>
+<span class="sd">        :type plugin_identifier: basestring</span>
+<span class="sd">        :param uname: uniqe name to set for new plugin</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :param config: additional configuration for creation</span>
+<span class="sd">        :type config:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># create new optional Data for event</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="c"># set important information</span>
+        <span class="c"># plugin to create</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin_identifier</span>
+        <span class="c"># uname to create plugin with</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">plugin_uname</span> <span class="o">=</span> <span class="n">uname</span>
+        <span class="c"># additional config</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">plugin_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">autostart</span> <span class="o">=</span> <span class="n">autostart</span>
+
+        <span class="c"># check if plugin with uname already exists</span>
+        <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">pluginID</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
+            <span class="n">plugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pluginID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">==</span> <span class="n">uname</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="c"># create event object and sent it to core</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">CreatePlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_delete_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_delete_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">do_delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete plugin with given id.</span>
+
+<span class="sd">        :param id: Plugin id to delete</span>
+<span class="sd">        :type id: int</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StopPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_delete_plugin_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_delete_plugin_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_delete_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete plugin with given uname.</span>
+
+<span class="sd">        :param uname: Plugin uname to delete</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span><span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StopPluginByUname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">uname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_edit_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_edit_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">do_edit_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">,</span> <span class="n">eObject</span><span class="p">,</span> <span class="n">changeRequest</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit plugin with given plugin id. Specify attribute of plugin by eObject which should</span>
+<span class="sd">        be edited e.g. DBlock.</span>
+<span class="sd">        Specify action by changeRequest e.g. {&#39;edit&#39; : DSignal}.</span>
+<span class="sd">        Currently only possible to change a DSignal for a given dplugin and dblock.</span>
+
+<span class="sd">        :param pl_id: Plugin id to delete</span>
+<span class="sd">        :type pl_id: int</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">EditDPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">pl_id</span><span class="p">,</span> <span class="n">eObject</span><span class="p">,</span> <span class="n">changeRequest</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_edit_plugin_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_edit_plugin_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_edit_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">,</span> <span class="n">eObject</span><span class="p">,</span> <span class="n">changeRequest</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit plugin with given plugin uname. Specify attribute of plugin by eObject which should</span>
+<span class="sd">        be edited e.g. DBlock.</span>
+<span class="sd">        Specify action by changeRequest e.g. {&#39;edit&#39; : DSignal}.</span>
+<span class="sd">        Currently only possible to change a DSignal for a given dplugin and dblock.</span>
+
+<span class="sd">        :param uname:</span>
+<span class="sd">        :param eObject:</span>
+<span class="sd">        :param changeRequest:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">EditDPluginByUname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">uname</span><span class="p">,</span> <span class="n">eObject</span><span class="p">,</span> <span class="n">changeRequest</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_stopReset_pluign"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_stopReset_pluign">[docs]</a>    <span class="k">def</span> <span class="nf">do_stopReset_pluign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop and reset plugin with given id without deleting it.</span>
+
+<span class="sd">        :param id: Plugin id to stopReset</span>
+<span class="sd">        :type id: int</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StopPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_stopReset_plugin_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_stopReset_plugin_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_stopReset_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stop and reset plugin with given uname without deleting it.</span>
+
+<span class="sd">        :param uname: Plugin uname to stop</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pl_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pl_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_stopReset_pluign</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot; Do stopReset plugin with uname &quot;</span> <span class="o">+</span> <span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; failed&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NOT_EXISTING</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_start_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_start_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">do_start_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start plugin with given id.</span>
+
+<span class="sd">        :param id: Plugin id to start</span>
+<span class="sd">        :type id: int</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">StartPlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_start_plugin_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_start_plugin_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_start_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start plugin with given uname.</span>
+
+<span class="sd">        :param uname: Plugin uname to start</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pl_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pl_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_start_plugin</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot; Do start_plugin with uname &quot;</span> <span class="o">+</span> <span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; failed&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ERROR</span><span class="o">.</span><span class="n">NOT_EXISTING</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_subscribe"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">do_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sub_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        In this case, user wants one plugin to subscribe another</span>
+
+<span class="sd">        :param subscriber_id: Plugin id of plugin which should get the data</span>
+<span class="sd">        :type subscriber_id: int</span>
+<span class="sd">        :param source_id: plugin uname of plugin that should send the data</span>
+<span class="sd">        :type source_id: int</span>
+<span class="sd">        :param block_name: name of block to subscribe</span>
+<span class="sd">        :type block_name: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># build optional data object and add id and block name to it</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span> <span class="o">=</span> <span class="n">source_id</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="n">signals</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">subscription_alias</span> <span class="o">=</span> <span class="n">sub_alias</span>
+        <span class="c"># send event with subscriber id as the origin to CORE</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_subscribe_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_subscribe_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_subscribe_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_uname</span><span class="p">,</span> <span class="n">source_uname</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sub_alias</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        In this case, user wants one plugin to subscribe another</span>
+
+<span class="sd">        :param subscriber_uname:  Plugin uname of plugin which should get the data</span>
+<span class="sd">        :type subscriber_uname: basestring</span>
+<span class="sd">        :param source_uname: plugin uname of plugin that should send the data</span>
+<span class="sd">        :type source_uname: basestring</span>
+<span class="sd">        :param block_name: name of block to subscribe</span>
+<span class="sd">        :type block_name: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SubscribeByUname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">subscriber_uname</span><span class="p">,</span> <span class="n">source_uname</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span>
+                                                   <span class="n">signals</span><span class="o">=</span><span class="n">signals</span><span class="p">,</span> <span class="n">sub_alias</span><span class="o">=</span> <span class="n">sub_alias</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_unsubscribe"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_unsubscribe">[docs]</a>    <span class="k">def</span> <span class="nf">do_unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signal_index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants one plugin to do not get any more data from another plugin</span>
+
+<span class="sd">        :param subscriber_id: plugin id which wants to lose a data source</span>
+<span class="sd">        :type subscriber_id: int</span>
+<span class="sd">        :param source_id: plugin id of data source</span>
+<span class="sd">        :type source_id: int</span>
+<span class="sd">        :param block_name: name of block to unsubscribe</span>
+<span class="sd">        :type block_name: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># create optional data with source id and block_name</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">source_ID</span> <span class="o">=</span> <span class="n">source_id</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="n">signal_index</span>
+        <span class="c"># sent event to Core with origin subscriber_id</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_unsubscribe_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_unsubscribe_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_unsubscribe_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_uname</span><span class="p">,</span> <span class="n">source_uname</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signal_index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants one plugin to do not get any more data from another plugin</span>
+
+<span class="sd">        :param subscriber_uname: plugin uname which wants to lose a data source</span>
+<span class="sd">        :type subscriber_uname: basestring</span>
+<span class="sd">        :param source_uname: plugin uname of data source</span>
+<span class="sd">        :type source_uname: basestring</span>
+<span class="sd">        :param block_name: name of block to unsubscribe</span>
+<span class="sd">        :type block_name: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subscriber_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">subscriber_uname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">subscriber_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># plugin with uname does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;do_unsubscribe, sub uname worng&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">source_uname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># plugin with uname does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;do_unsubscribe, target uname wrong&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c"># call do_subscribe with ids to subscribe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_unsubscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signal_index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to change a parameter of a plugin</span>
+<span class="sd">        :param plugin_id: id of plugin which owns the parameter</span>
+
+<span class="sd">        :type plugin_id: int</span>
+<span class="sd">        :param parameter_name: name of parameter to change</span>
+<span class="sd">        :type parameter_name: basestring</span>
+<span class="sd">        :param value: new parameter value to set</span>
+<span class="sd">        :type value:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># get plugin from DGUI</span>
+        <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span>
+        <span class="c"># check for existance</span>
+        <span class="k">if</span> <span class="n">dplug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># it exists</span>
+            <span class="c"># get its parameter list</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
+            <span class="c"># check if there are any parameter</span>
+            <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c"># there is a parameter list</span>
+                <span class="c"># get the parameter with parameter_name</span>
+                <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
+                    <span class="c"># check if this specific parameter exists</span>
+                    <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="c"># parameter with name parameter_name exists</span>
+
+                        <span class="c"># build an event to send this information to Core</span>
+                        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+                        <span class="n">opt</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+                        <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">parameter_name</span>
+                        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
+                        <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_set_parameter_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to change a parameter of a plugin</span>
+<span class="sd">        :param plugin_uname: name of plugin which owns the parameter</span>
+
+<span class="sd">        :type plugin_uname: basestring</span>
+<span class="sd">        :param parameter_name: name of parameter to change</span>
+<span class="sd">        :type parameter_name: basestring</span>
+<span class="sd">        :param value: new parameter value to set</span>
+<span class="sd">        :type value:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_set_parameter</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_pause_plugin_by_id"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_pause_plugin_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">do_pause_plugin_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to pause a plugin, so this method will send an event to core.</span>
+
+<span class="sd">        :param plugin_id: id of plugin to pause</span>
+<span class="sd">        :type plugin_id: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">PausePlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_pause_plugin_by_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_pause_plugin_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_pause_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to pause a plugin, so this method will send an event to core.</span>
+
+<span class="sd">        :param plugin_uname: uname of plugin to pause</span>
+<span class="sd">        :type plugin_uname: basestring</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plugin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plugin_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_pause_plugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># plugin with uname does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;do_pause, plugin uname worng&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_resume_plugin_by_id"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_resume_plugin_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">do_resume_plugin_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to pause a plugin, so this method will send an event to core.</span>
+
+<span class="sd">        :param plugin_id: id of plugin to pause</span>
+<span class="sd">        :type plugin_id: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">ResumePlugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_resume_plugin_by_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_resume_plugin_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_resume_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to resume a plugin, so this method will send an event to core.</span>
+
+<span class="sd">        :param plugin_uname: uname of plugin to resume</span>
+<span class="sd">        :type plugin_uname: basestring</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plugin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plugin_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_resume_plugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># plugin with uname does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;do_resume, plugin uname worng&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_get_plugin_id_from_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_get_plugin_id_from_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the plugin id of the plugin with unique name uname</span>
+
+<span class="sd">        :param uname: uname of plugin</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :return: None: plugin with uname does not exist, id: id of plugin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span>
+        <span class="c"># check for existance</span>
+        <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># it does exist, so get its id</span>
+            <span class="k">return</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_close_program"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_close_program">[docs]</a>    <span class="k">def</span> <span class="nf">do_close_program</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tell core to close papi. Core will respond and will close all open plugins.</span>
+<span class="sd">        GUI will close all PCP and VIP Plugins due to calling their quit function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+                    <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+
+
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="s">&#39;User clicked close Button&#39;</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">CloseProgram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_set_tab_active_by_name"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_tab_active_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_tab_active_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabName</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabManager</span><span class="o">.</span><span class="n">set_tab_active_by_name</span><span class="p">(</span><span class="n">tabName</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_open_new_tabs_with_names_in_order"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_open_new_tabs_with_names_in_order">[docs]</a>    <span class="k">def</span> <span class="nf">do_open_new_tabs_with_names_in_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabNames</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tabNames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabManager</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_load_xml"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_load_xml">[docs]</a>    <span class="k">def</span> <span class="nf">do_load_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;PaPI&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_load_xml_reloaded</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_load_xml_v1</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_load_xml_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_load_xml_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_load_xml_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to load a xml config to papi and apply the configuration.</span>
+
+<span class="sd">        :param path: path to xml file to load.</span>
+<span class="sd">        :type path: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">gui_config</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">plugins_to_start</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parameters_to_change</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">signals_to_change</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subs_to_make</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">root_element</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+                <span class="c">##########################</span>
+                <span class="c"># Read gui configuration #</span>
+                <span class="c">##########################</span>
+                <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Configuration&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">root_element</span><span class="p">:</span>
+                        <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">property</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">text</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
+                                   <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">val</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">text</span>
+
+                <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Plugins&#39;</span><span class="p">:</span>
+                    <span class="c">#############################</span>
+                    <span class="c"># Read plugin configuration #</span>
+                    <span class="c">#############################</span>
+                    <span class="k">for</span> <span class="n">plugin_xml</span> <span class="ow">in</span> <span class="n">root_element</span><span class="p">:</span>
+                        <span class="n">plObj</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">plObj</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">plugin_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">])</span>
+                        <span class="n">plObj</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Identifier&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                        <span class="n">config_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;StartConfig&#39;</span><span class="p">)</span>
+                        <span class="n">config_hash</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">parameter_xml</span> <span class="ow">in</span> <span class="n">config_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Parameter&#39;</span><span class="p">):</span>
+                            <span class="n">para_name</span> <span class="o">=</span> <span class="n">parameter_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                            <span class="n">config_hash</span><span class="p">[</span><span class="n">para_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="k">for</span> <span class="n">detail_xml</span> <span class="ow">in</span> <span class="n">parameter_xml</span><span class="p">:</span>
+                                <span class="n">detail_name</span> <span class="o">=</span> <span class="n">detail_xml</span><span class="o">.</span><span class="n">tag</span>
+                                <span class="n">config_hash</span><span class="p">[</span><span class="n">para_name</span><span class="p">][</span><span class="n">detail_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">detail_xml</span><span class="o">.</span><span class="n">text</span>
+
+                        <span class="n">plObj</span><span class="p">[</span><span class="s">&#39;cfg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config_hash</span>
+
+                        <span class="n">plugins_to_start</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plObj</span><span class="p">)</span>
+
+                        <span class="c"># --------------------------------</span>
+                        <span class="c"># Load PreviousParameters</span>
+                        <span class="c"># --------------------------------</span>
+
+                        <span class="n">prev_parameters_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;PreviousParameters&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">prev_parameters_xml</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">prev_parameter_xml</span> <span class="ow">in</span> <span class="n">prev_parameters_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Parameter&#39;</span><span class="p">):</span>
+                                <span class="n">para_name</span> <span class="o">=</span> <span class="n">prev_parameter_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                                <span class="n">para_value</span> <span class="o">=</span> <span class="n">prev_parameter_xml</span><span class="o">.</span><span class="n">text</span>
+                                <span class="c"># pl_uname_new = self.change_uname_to_uniqe(pl_uname)</span>
+                                <span class="c"># TODO validate NO FLOAT in parameter</span>
+                                <span class="n">parameters_to_change</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">plObj</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">],</span> <span class="n">para_name</span><span class="p">,</span> <span class="n">para_value</span><span class="p">])</span>
+
+                        <span class="c"># --------------------------------</span>
+                        <span class="c"># Load DBlocks due to signals name</span>
+                        <span class="c"># --------------------------------</span>
+
+                        <span class="n">dblocks_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;DBlocks&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">dblocks_xml</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">dblock_xml</span> <span class="ow">in</span> <span class="n">dblocks_xml</span><span class="p">:</span>
+                                <span class="n">dblock_name</span> <span class="o">=</span> <span class="n">dblock_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                                <span class="n">dsignals_xml</span> <span class="o">=</span> <span class="n">dblock_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">dsignal_xml</span> <span class="ow">in</span> <span class="n">dsignals_xml</span><span class="p">:</span>
+                                    <span class="n">dsignal_uname</span> <span class="o">=</span> <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span>
+                                    <span class="n">dsignal_dname</span> <span class="o">=</span> <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;dname&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                                    <span class="n">signals_to_change</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">plObj</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">],</span> <span class="n">dblock_name</span><span class="p">,</span> <span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Subscriptions&#39;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">sub_xml</span> <span class="ow">in</span> <span class="n">root_element</span><span class="p">:</span>
+                        <span class="n">dest</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">sub_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Destination&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sub_xml</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Source&#39;</span><span class="p">:</span>
+                                <span class="n">sourceName</span> <span class="o">=</span>  <span class="n">source</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span> <span class="c">#self.change_uname_to_uniqe(source.attrib[&#39;uname&#39;])</span>
+                                <span class="k">for</span> <span class="n">block_xml</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+                                    <span class="n">blockName</span> <span class="o">=</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+                                    <span class="n">alias</span> <span class="o">=</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Alias&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                                    <span class="n">signals_xml</span> <span class="o">=</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Signals&#39;</span><span class="p">)</span>
+
+                                    <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+                                    <span class="k">for</span> <span class="n">sig_xml</span> <span class="ow">in</span> <span class="n">signals_xml</span><span class="p">:</span>
+                                        <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+                                    <span class="n">subs_to_make</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;dest&#39;</span><span class="p">:</span><span class="n">dest</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">:</span><span class="n">sourceName</span><span class="p">,</span> <span class="s">&#39;block&#39;</span><span class="p">:</span><span class="n">blockName</span><span class="p">,</span> <span class="s">&#39;alias&#39;</span><span class="p">:</span><span class="n">alias</span><span class="p">,</span> <span class="s">&#39;signals&#39;</span><span class="p">:</span><span class="n">signals</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not loadable&quot;</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+
+
+        <span class="c"># -----------------------------------------------</span>
+        <span class="c"># Check: Are there unloadable plugins?</span>
+        <span class="c"># -----------------------------------------------</span>
+
+        <span class="n">unloadable_plugins</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">plugins_to_start</span><span class="p">:</span>
+            <span class="n">plugin_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginManager</span><span class="o">.</span><span class="n">getPluginByName</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pl</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unloadable_plugins</span><span class="p">:</span>
+                    <span class="n">unloadable_plugins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">])</span>
+
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">unloadable_plugins</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">plugins_to_start</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="s">&#39;cfg&#39;</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_loader_subs_reloaded</span><span class="p">(</span><span class="n">plugins_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Loading Plugins&quot;</span><span class="p">,</span> <span class="s">&quot;Can&#39;t use: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unloadable_plugins</span><span class="p">)</span> <span class="o">+</span>
+                                    <span class="s">&quot;</span><span class="se">\n</span><span class="s">Configuration will not be used.&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Gui_api.config_loader_subs_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+
+<span class="sd">        :param pl_to_start: list of plugins to start</span>
+<span class="sd">        :type pl_to_start: list</span>
+<span class="sd">        :param subs_to_make:  list of subscriptions to make</span>
+<span class="sd">        :type subs_to_make: list</span>
+<span class="sd">        :param parameters_to_change: parameter changes to apply</span>
+<span class="sd">        :type parameters_to_change: list</span>
+<span class="sd">        :param signals_to_change: signal name changes to apply</span>
+<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s">&#39;dest&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;block&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;signals&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">parameters_to_change</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_set_parameter_uname</span><span class="p">(</span><span class="n">para</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">para</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">para</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signals_to_change</span><span class="p">:</span>
+            <span class="n">plugin_uname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dblock_name</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dsignal_uname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">dsignal_dname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_edit_plugin_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">),{</span><span class="s">&#39;edit&#39;</span><span class="p">:</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">)})</span>
+
+</div>
+<div class="viewcode-block" id="Gui_api.do_load_xml_v1"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_load_xml_v1">[docs]</a>    <span class="k">def</span> <span class="nf">do_load_xml_v1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to load a xml config to papi and apply the configuration.</span>
+
+<span class="sd">        :param path: path to xml file to load.</span>
+<span class="sd">        :type path: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plugins_to_start</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subs_to_make</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parameters_to_change</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">signals_to_change</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">plugin_xml</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+                <span class="c">##########################</span>
+                <span class="c"># Read gui configuration #</span>
+                <span class="c">##########################</span>
+                <span class="k">if</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;guiConfig&#39;</span><span class="p">:</span>
+                    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="nb">property</span> <span class="ow">in</span> <span class="n">plugin_xml</span><span class="p">:</span>
+                        <span class="n">cfg</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span>  <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">property</span><span class="p">:</span>
+                            <span class="n">cfg</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
+                                <span class="n">cfg</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">value</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">text</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">set_gui_config_function</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+                <span class="c">#############################</span>
+                <span class="c"># Read plugin configuration #</span>
+                <span class="c">#############################</span>
+                <span class="k">if</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Plugin&#39;</span><span class="p">:</span>
+                    <span class="n">pl_uname</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span>
+                    <span class="n">identifier</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Identifier&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                    <span class="n">config_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;StartConfig&#39;</span><span class="p">)</span>
+                    <span class="n">config_hash</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">parameter_xml</span> <span class="ow">in</span> <span class="n">config_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Parameter&#39;</span><span class="p">):</span>
+                        <span class="n">para_name</span> <span class="o">=</span> <span class="n">parameter_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                        <span class="n">config_hash</span><span class="p">[</span><span class="n">para_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">detail_xml</span> <span class="ow">in</span> <span class="n">parameter_xml</span><span class="p">:</span>
+                            <span class="n">detail_name</span> <span class="o">=</span> <span class="n">detail_xml</span><span class="o">.</span><span class="n">tag</span>
+                            <span class="n">config_hash</span><span class="p">[</span><span class="n">para_name</span><span class="p">][</span><span class="n">detail_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">detail_xml</span><span class="o">.</span><span class="n">text</span>
+
+                    <span class="n">pl_uname_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">pl_uname</span><span class="p">)</span>
+
+                    <span class="n">plugins_to_start</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">identifier</span><span class="p">,</span> <span class="n">pl_uname_new</span><span class="p">,</span> <span class="n">config_hash</span><span class="p">])</span>
+
+                    <span class="c"># --------------------------------</span>
+                    <span class="c"># Load Subscriptions</span>
+                    <span class="c"># --------------------------------</span>
+
+                    <span class="n">subs_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Subscriptions&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">subs_xml</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">sub_xml</span> <span class="ow">in</span> <span class="n">subs_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Subscription&#39;</span><span class="p">):</span>
+                            <span class="n">data_source</span> <span class="o">=</span> <span class="n">sub_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;data_source&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                            <span class="k">for</span> <span class="n">block_xml</span> <span class="ow">in</span> <span class="n">sub_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;block&#39;</span><span class="p">):</span>
+                                <span class="n">block_name</span> <span class="o">=</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                                <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+                                <span class="k">for</span> <span class="n">sig_xml</span> <span class="ow">in</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Signal&#39;</span><span class="p">):</span>
+                                    <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+                                <span class="n">alias_xml</span> <span class="o">=</span> <span class="n">block_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;alias&#39;</span><span class="p">)</span>
+                                <span class="n">alias</span> <span class="o">=</span> <span class="n">alias_xml</span><span class="o">.</span><span class="n">text</span>
+                                <span class="n">pl_uname_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">pl_uname</span><span class="p">)</span>
+                                <span class="n">data_source_new</span> <span class="o">=</span> <span class="n">data_source</span> <span class="c">#self.change_uname_to_uniqe(data_source)</span>
+                                <span class="n">subs_to_make</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pl_uname_new</span><span class="p">,</span> <span class="n">data_source_new</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">alias</span><span class="p">])</span>
+
+                    <span class="c"># --------------------------------</span>
+                    <span class="c"># Load PreviousParameters</span>
+                    <span class="c"># --------------------------------</span>
+
+                    <span class="n">prev_parameters_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;PreviousParameters&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">prev_parameters_xml</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">prev_parameter_xml</span> <span class="ow">in</span> <span class="n">prev_parameters_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;Parameter&#39;</span><span class="p">):</span>
+                            <span class="n">para_name</span> <span class="o">=</span> <span class="n">prev_parameter_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                            <span class="n">para_value</span> <span class="o">=</span> <span class="n">prev_parameter_xml</span><span class="o">.</span><span class="n">text</span>
+                            <span class="n">pl_uname_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">pl_uname</span><span class="p">)</span>
+                            <span class="c"># TODO validate NO FLOAT in parameter</span>
+                            <span class="n">parameters_to_change</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pl_uname_new</span><span class="p">,</span> <span class="n">para_name</span><span class="p">,</span> <span class="n">para_value</span><span class="p">])</span>
+
+                    <span class="c"># --------------------------------</span>
+                    <span class="c"># Load DBlocks due to signals name</span>
+                    <span class="c"># --------------------------------</span>
+
+                    <span class="n">dblocks_xml</span> <span class="o">=</span> <span class="n">plugin_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;DBlocks&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">dblocks_xml</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">dblock_xml</span> <span class="ow">in</span> <span class="n">dblocks_xml</span><span class="p">:</span>
+                            <span class="n">dblock_name</span> <span class="o">=</span> <span class="n">dblock_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+                            <span class="n">dsignals_xml</span> <span class="o">=</span> <span class="n">dblock_xml</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">dsignal_xml</span> <span class="ow">in</span> <span class="n">dsignals_xml</span><span class="p">:</span>
+                                <span class="n">dsignal_uname</span> <span class="o">=</span> <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span>
+                                <span class="n">dsignal_dname</span> <span class="o">=</span> <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;dname&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                                <span class="n">signals_to_change</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pl_uname</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">,</span> <span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not loadable&quot;</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+
+
+        <span class="c"># -----------------------------------------------</span>
+        <span class="c"># Check: Are there unloadable plugins?</span>
+        <span class="c"># -----------------------------------------------</span>
+
+        <span class="n">unloadable_plugins</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">plugins_to_start</span><span class="p">:</span>
+            <span class="n">plugin_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginManager</span><span class="o">.</span><span class="n">getPluginByName</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unloadable_plugins</span><span class="p">:</span>
+                    <span class="n">unloadable_plugins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">unloadable_plugins</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">plugins_to_start</span><span class="p">:</span>
+                <span class="c"># 0: ident, 1: uname, 2: config</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+            <span class="c"># QtCore.QTimer.singleShot(CONFIG_LOADER_SUBSCRIBE_DELAY, \</span>
+            <span class="c">#                         lambda: self.config_loader_subs(plugins_to_start, subs_to_make, \</span>
+            <span class="c">#                                                         parameters_to_change, signals_to_change))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config_loader_subs</span><span class="p">(</span><span class="n">plugins_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Loading Plugins&quot;</span><span class="p">,</span> <span class="s">&quot;Can&#39;t use: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unloadable_plugins</span><span class="p">)</span> <span class="o">+</span>
+                                    <span class="s">&quot;</span><span class="se">\n</span><span class="s">Configuration will not be used.&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.change_uname_to_uniqe"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.change_uname_to_uniqe">[docs]</a>    <span class="k">def</span> <span class="nf">change_uname_to_uniqe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function will search for unames and add an indentifier to it to make it unique in case of existence</span>
+
+<span class="sd">        :param uname: uname to make unique</span>
+<span class="sd">        :type uname: basestring</span>
+<span class="sd">        :return: uname</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span> <span class="o">+</span> <span class="s">&#39;X&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uname</span>
+</div>
+<div class="viewcode-block" id="Gui_api.config_loader_subs"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+
+<span class="sd">        :param pl_to_start: list of plugins to start</span>
+<span class="sd">        :type pl_to_start: list</span>
+<span class="sd">        :param subs_to_make:  list of subscriptions to make</span>
+<span class="sd">        :type subs_to_make: list</span>
+<span class="sd">        :param parameters_to_change: parameter changes to apply</span>
+<span class="sd">        :type parameters_to_change: list</span>
+<span class="sd">        :param signals_to_change: signal name changes to apply</span>
+<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">parameters_to_change</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_set_parameter_uname</span><span class="p">(</span><span class="n">para</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">para</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">para</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signals_to_change</span><span class="p">:</span>
+            <span class="n">plugin_uname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dblock_name</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dsignal_uname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">dsignal_dname</span> <span class="o">=</span> <span class="n">sig</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_edit_plugin_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">),</span>
+                                      <span class="p">{</span><span class="s">&#39;edit&#39;</span><span class="p">:</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">)})</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_save_xml_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[]):</span>
+
+
+
+        <span class="n">subscriptionsToSave</span> <span class="o">=</span>  <span class="p">{}</span>
+        <span class="c"># check for xml extension in path, add .xml if missing</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">!=</span> <span class="s">&#39;.xml&#39;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">+=</span> <span class="s">&#39;.xml&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">CONFIG_ROOT_ELEMENT_NAME_RELOADED</span><span class="p">)</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Date&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">))</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;PaPI_version&#39;</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">)</span>
+
+            <span class="c">##########################</span>
+            <span class="c"># Save gui configuration #</span>
+            <span class="c">##########################</span>
+            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">()</span>
+            <span class="n">gui_cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Configuration&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">cfg_item</span> <span class="ow">in</span> <span class="n">gui_cfg</span><span class="p">:</span>
+                <span class="n">item_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">gui_cfg_xml</span><span class="p">,</span><span class="n">cfg_item</span><span class="p">)</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">gui_cfg</span><span class="p">[</span><span class="n">cfg_item</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="n">attr_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">item_xml</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+                    <span class="n">values</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span>
+
+                    <span class="c"># check if there is another dict level to explore</span>
+                    <span class="c"># if true: exlplore the dict</span>
+                    <span class="c"># if false: save the value of values in the parent xml node</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                            <span class="n">value_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">attr_xml</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                            <span class="n">value_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">attr_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">values</span>
+
+            <span class="c"># ---------------------------------------</span>
+            <span class="c"># save information of plugins</span>
+            <span class="c"># for the next start</span>
+            <span class="c"># ---------------------------------------</span>
+            <span class="n">plugins_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="s">&#39;Plugins&#39;</span><span class="p">)</span>
+
+            <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+                <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
+
+                <span class="c"># check if this plugin should be saved to XML</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">plToSave</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+
+                    <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">plugins_xml</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
+                    <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+                    <span class="n">identifier_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;Identifier&#39;</span><span class="p">)</span>
+                    <span class="n">identifier_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span>
+
+                    <span class="c"># ---------------------------------------</span>
+                    <span class="c"># Save all current config as startup config</span>
+                    <span class="c"># for the next start</span>
+                    <span class="c"># ---------------------------------------</span>
+
+                    <span class="n">cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;StartConfig&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">:</span>
+                        <span class="n">para_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">cfg_xml</span><span class="p">,</span> <span class="s">&#39;Parameter&#39;</span><span class="p">)</span>
+                        <span class="n">para_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">detail</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">parameter</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">detail</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CONFIG_SAVE_CFG_BLACKLIST</span><span class="p">:</span>
+                                <span class="n">detail_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">para_xml</span><span class="p">,</span> <span class="n">detail</span><span class="p">)</span>
+                                <span class="n">detail_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="n">detail</span><span class="p">]</span>
+
+                    <span class="c"># ---------------------------------------</span>
+                    <span class="c"># Save all current values for all</span>
+                    <span class="c"># parameter</span>
+                    <span class="c"># ---------------------------------------</span>
+
+                    <span class="n">last_paras_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;PreviousParameters&#39;</span><span class="p">)</span>
+                    <span class="n">allparas</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">para_key</span> <span class="ow">in</span> <span class="n">allparas</span><span class="p">:</span>
+                        <span class="n">para</span> <span class="o">=</span> <span class="n">allparas</span><span class="p">[</span><span class="n">para_key</span><span class="p">]</span>
+                        <span class="n">last_para_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">last_paras_xml</span><span class="p">,</span> <span class="s">&#39;Parameter&#39;</span><span class="p">)</span>
+                        <span class="n">last_para_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">para_key</span><span class="p">)</span>
+                        <span class="n">last_para_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">para</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+                    <span class="c"># ---------------------------------------</span>
+                    <span class="c"># Save all current values for all</span>
+                    <span class="c"># signals of all dblocks</span>
+                    <span class="c"># ---------------------------------------</span>
+
+                    <span class="n">dblocks_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;DBlocks&#39;</span><span class="p">)</span>
+
+                    <span class="n">alldblock_names</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblocks</span><span class="p">()</span>
+
+                    <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">alldblock_names</span><span class="p">:</span>
+                        <span class="n">dblock</span> <span class="o">=</span> <span class="n">alldblock_names</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
+                        <span class="n">dblock_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblocks_xml</span><span class="p">,</span> <span class="s">&#39;DBlock&#39;</span><span class="p">)</span>
+                        <span class="n">dblock_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                        <span class="n">alldsignals</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()</span>
+
+                        <span class="k">for</span> <span class="n">dsignal</span> <span class="ow">in</span> <span class="n">alldsignals</span><span class="p">:</span>
+                            <span class="n">dsignal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblock_xml</span><span class="p">,</span> <span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
+                            <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+                            <span class="n">dname_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dsignal_xml</span><span class="p">,</span> <span class="s">&#39;dname&#39;</span><span class="p">)</span>
+                            <span class="n">dname_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
+
+                <span class="c"># ---------------------------------------</span>
+                <span class="c"># Build temporary subscription objects</span>
+                <span class="c"># to remember the subs of all plugins</span>
+                <span class="c"># including plugins that are not saved</span>
+                <span class="c"># excluding plugins we do not want the subs saved of</span>
+                <span class="c"># ---------------------------------------</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">sToSave</span><span class="p">:</span>
+                    <span class="n">subsOfPl</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">subs</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
+                        <span class="n">sourcePL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span>
+                        <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">]:</span>
+                            <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="n">dsubscription</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="n">block</span><span class="p">]</span>
+                            <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">][</span><span class="s">&#39;alias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span>
+
+                            <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">():</span>
+                                <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+                            <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">][</span><span class="s">&#39;signals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signals</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsOfPl</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsOfPl</span>
+
+            <span class="c"># ---------------------------------------</span>
+            <span class="c"># save subs to xml</span>
+            <span class="c">#</span>
+            <span class="c"># ---------------------------------------</span>
+            <span class="n">subs_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="s">&#39;Subscriptions&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dest</span> <span class="ow">in</span> <span class="n">subscriptionsToSave</span><span class="p">:</span>
+                <span class="n">sub_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">subs_xml</span><span class="p">,</span><span class="s">&#39;Subscription&#39;</span><span class="p">)</span>
+
+                <span class="c"># Destination of data</span>
+                <span class="n">dest_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">sub_xml</span><span class="p">,</span><span class="s">&#39;Destination&#39;</span><span class="p">)</span>
+                <span class="n">dest_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dest</span>
+
+                <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dest</span><span class="p">]:</span>
+                    <span class="c"># Source of Data</span>
+                    <span class="n">source_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">sub_xml</span><span class="p">,</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
+                    <span class="n">source_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dest</span><span class="p">][</span><span class="n">source</span><span class="p">]:</span>
+                        <span class="n">block_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">source_xml</span><span class="p">,</span><span class="s">&#39;Block&#39;</span><span class="p">)</span>
+                        <span class="n">block_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="n">block</span><span class="p">)</span>
+
+                        <span class="n">alias_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">block_xml</span><span class="p">,</span><span class="s">&#39;Alias&#39;</span><span class="p">)</span>
+                        <span class="n">alias_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dest</span><span class="p">][</span><span class="n">source</span><span class="p">][</span><span class="n">block</span><span class="p">][</span><span class="s">&#39;alias&#39;</span><span class="p">]</span>
+
+                        <span class="n">signal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">block_xml</span><span class="p">,</span><span class="s">&#39;Signals&#39;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dest</span><span class="p">][</span><span class="n">source</span><span class="p">][</span><span class="n">block</span><span class="p">][</span><span class="s">&#39;signals&#39;</span><span class="p">]:</span>
+                            <span class="n">sig_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">signal_xml</span><span class="p">,</span><span class="s">&#39;Signal&#39;</span><span class="p">)</span>
+                            <span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">sig</span>
+
+
+            <span class="c"># do transformation for readability and save xml tree to file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not saveable: &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_save_xml_config"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will save papis current state to a xml file provided by path.</span>
+
+<span class="sd">        :param path: path to save xml to.</span>
+<span class="sd">        :type path: basestring</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">!=</span> <span class="s">&#39;.xml&#39;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">+=</span> <span class="s">&#39;.xml&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">CONFIG_ROOT_ELEMENT_NAME</span><span class="p">)</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Date&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&#39;</span><span class="p">))</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;PaPI_version&#39;</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">)</span>
+
+            <span class="c">##########################</span>
+            <span class="c"># Save gui configuration #</span>
+            <span class="c">##########################</span>
+            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">()</span>
+            <span class="n">gui_cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;guiConfig&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">cfg_item</span> <span class="ow">in</span> <span class="n">gui_cfg</span><span class="p">:</span>
+                <span class="n">item_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">gui_cfg_xml</span><span class="p">,</span><span class="n">cfg_item</span><span class="p">)</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">gui_cfg</span><span class="p">[</span><span class="n">cfg_item</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="n">attr_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">item_xml</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+                    <span class="n">values</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                        <span class="n">value_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">attr_xml</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                        <span class="n">value_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">val</span><span class="p">]</span>
+
+            <span class="c"># ---------------------------------------</span>
+            <span class="c"># save information of plugins</span>
+            <span class="c"># for the next start</span>
+            <span class="c"># ---------------------------------------</span>
+            <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+                <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+
+                <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
+                <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+                <span class="n">identifier_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;Identifier&#39;</span><span class="p">)</span>
+                <span class="n">identifier_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span>
+
+                <span class="c"># ---------------------------------------</span>
+                <span class="c"># Save all current config as startup config</span>
+                <span class="c"># for the next start</span>
+                <span class="c"># ---------------------------------------</span>
+
+                <span class="n">cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;StartConfig&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">:</span>
+                    <span class="n">para_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">cfg_xml</span><span class="p">,</span> <span class="s">&#39;Parameter&#39;</span><span class="p">)</span>
+                    <span class="n">para_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">detail</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">parameter</span><span class="p">]:</span>
+                        <span class="n">detail_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">para_xml</span><span class="p">,</span> <span class="n">detail</span><span class="p">)</span>
+                        <span class="n">detail_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="n">detail</span><span class="p">]</span>
+
+                <span class="c"># ---------------------------------------</span>
+                <span class="c"># Save all current values for all</span>
+                <span class="c"># parameter</span>
+                <span class="c"># ---------------------------------------</span>
+
+                <span class="n">last_paras_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;PreviousParameters&#39;</span><span class="p">)</span>
+                <span class="n">allparas</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">para_key</span> <span class="ow">in</span> <span class="n">allparas</span><span class="p">:</span>
+                    <span class="n">para</span> <span class="o">=</span> <span class="n">allparas</span><span class="p">[</span><span class="n">para_key</span><span class="p">]</span>
+                    <span class="n">last_para_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">last_paras_xml</span><span class="p">,</span> <span class="s">&#39;Parameter&#39;</span><span class="p">)</span>
+                    <span class="n">last_para_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">para_key</span><span class="p">)</span>
+                    <span class="n">last_para_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">para</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+                <span class="c"># ---------------------------------------</span>
+                <span class="c"># Save all current values for all</span>
+                <span class="c"># signals of all dblocks</span>
+                <span class="c"># ---------------------------------------</span>
+
+                <span class="n">dblocks_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;DBlocks&#39;</span><span class="p">)</span>
+
+                <span class="n">alldblock_names</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblocks</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">alldblock_names</span><span class="p">:</span>
+                    <span class="n">dblock</span> <span class="o">=</span> <span class="n">alldblock_names</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
+                    <span class="n">dblock_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblocks_xml</span><span class="p">,</span> <span class="s">&#39;DBlock&#39;</span><span class="p">)</span>
+                    <span class="n">dblock_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                    <span class="n">alldsignals</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()</span>
+
+                    <span class="k">for</span> <span class="n">dsignal</span> <span class="ow">in</span> <span class="n">alldsignals</span><span class="p">:</span>
+                        <span class="n">dsignal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblock_xml</span><span class="p">,</span> <span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
+                        <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+                        <span class="n">dname_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dsignal_xml</span><span class="p">,</span> <span class="s">&#39;dname&#39;</span><span class="p">)</span>
+                        <span class="n">dname_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
+
+                <span class="c"># ---------------------------------------</span>
+                <span class="c"># Save all subscriptions for this plugin</span>
+                <span class="c"># ---------------------------------------</span>
+
+                <span class="n">subs_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">pl_xml</span><span class="p">,</span> <span class="s">&#39;Subscriptions&#39;</span><span class="p">)</span>
+                <span class="n">subs</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
+                    <span class="n">sub_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">subs_xml</span><span class="p">,</span> <span class="s">&#39;Subscription&#39;</span><span class="p">)</span>
+                    <span class="n">source_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">sub_xml</span><span class="p">,</span> <span class="s">&#39;data_source&#39;</span><span class="p">)</span>
+                    <span class="n">source_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span>
+                    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">]:</span>
+                        <span class="n">block_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">sub_xml</span><span class="p">,</span> <span class="s">&#39;block&#39;</span><span class="p">)</span>
+                        <span class="n">block_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+
+                        <span class="n">dsubscription</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="n">block</span><span class="p">]</span>
+
+                        <span class="n">alias_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">block_xml</span><span class="p">,</span> <span class="s">&#39;alias&#39;</span><span class="p">)</span>
+                        <span class="n">alias_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span>
+
+                        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">():</span>
+                            <span class="n">signal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">block_xml</span><span class="p">,</span> <span class="s">&#39;Signal&#39;</span><span class="p">)</span>
+                            <span class="n">signal_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not saveable: &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.indent"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.indent">[docs]</a>    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function which will apply a nice looking indentiation to xml structure before save. Better readability.</span>
+<span class="sd">        copied from http://effbot.org/zone/element-lib.htm#prettyprint 06.10.2014 15:53</span>
+
+<span class="sd">        :param elem:</span>
+<span class="sd">        :param level:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">level</span> <span class="o">*</span> <span class="s">&quot;  &quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="s">&quot;  &quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">level</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">elem</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="n">elem</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">i</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_reset_papi"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_reset_papi">[docs]</a>    <span class="k">def</span> <span class="nf">do_reset_papi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        APi call to reset PaPI.</span>
+<span class="sd">        Reset in this case means to delete all plugins cleanly and keep PaPI running.</span>
+<span class="sd">        Will free all unames.</span>
+<span class="sd">        Is using the do_delete_plugin api call and the delete plugin mechanism</span>
+
+<span class="sd">        :return: ERROR CODE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">all_plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">all_plugins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">plugin_key</span> <span class="ow">in</span> <span class="n">all_plugins</span><span class="p">:</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">all_plugins</span><span class="p">[</span><span class="n">plugin_key</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">do_delete_plugin</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_test_name_to_be_unique"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_test_name_to_be_unique">[docs]</a>    <span class="k">def</span> <span class="nf">do_test_name_to_be_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Will check if a given name would be a valid, unique name for a plugin.</span>
+<span class="sd">        :param name: name to check</span>
+
+<span class="sd">        :type name: basestring</span>
+<span class="sd">        :return: True or False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reg</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="s">&#39;\S[^_][^\W_]+&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reg</span><span class="o">.</span><span class="n">exactMatch</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="Gui_api.do_change_string_to_be_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_change_string_to_be_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_change_string_to_be_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method will take a string and convert him according to some rules to be an uname</span>
+
+<span class="sd">        :param name: name to convert to unmae</span>
+<span class="sd">        :type name: basestring</span>
+<span class="sd">        :return: name converted to uname</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uname</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c"># TODO: get more inteligence here!</span>
+
+        <span class="n">forbidden</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;_&#39;</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="s">&#39;`&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">forbidden</span><span class="p">:</span>
+            <span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s">&#39;X&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uname</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

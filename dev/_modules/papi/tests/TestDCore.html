@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.tests.TestDCore &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.tests.TestDCore</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: latin-1 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+
+<span class="sd">This file is part of PaPI.</span>
+
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">Contributors</span>
+<span class="sd">Sven Knuth</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DCore</span>
+<span class="kn">from</span> <span class="nn">papi.data.DCore</span> <span class="kn">import</span> <span class="n">DPlugin</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
+
+
+<div class="viewcode-block" id="TestDCore"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore">[docs]</a><span class="k">class</span> <span class="nc">TestDCore</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestDCore.setUp"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span> <span class="o">=</span> <span class="n">DCore</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_create_id"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_create_id">[docs]</a>    <span class="k">def</span> <span class="nf">test_create_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">id_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
+        <span class="n">id_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotEqual</span><span class="p">(</span><span class="n">id_1</span><span class="p">,</span> <span class="n">id_2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_add_plugin"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_add_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">pl_id_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
+        <span class="n">pl_id_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">pl_id_1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">pl_id_2</span><span class="p">)</span>
+
+        <span class="n">dp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id_1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dp_1</span><span class="p">,</span> <span class="n">DPlugin</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dp_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pl_id_1</span><span class="p">)</span>
+        <span class="n">dp_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id_2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dp_2</span><span class="p">,</span> <span class="n">DPlugin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dp_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pl_id_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugins_count</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="n">dp_1</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugins_count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_rm_dplugin"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_rm_dplugin">[docs]</a>    <span class="k">def</span> <span class="nf">test_rm_dplugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="c">#create subscribtions</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">]),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">rm_dplugin</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="c">#Check if DPlugin d_pl_1 is missing</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+        <span class="c">#Check if all subscribtions were canceled</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_get_dplugin_by_id"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_get_dplugin_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_dplugin_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_get_dplugin_by_uname"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_get_dplugin_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_dplugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="s">&quot;Test1&quot;</span>
+        <span class="n">d_pl_2</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="s">&quot;Test2&quot;</span>
+        <span class="n">d_pl_3</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="s">&quot;Test3&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;Test1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="s">&quot;Test1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;Test2&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="s">&quot;Test2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;Test3&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="s">&quot;Test3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="s">&quot;Test4&quot;</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_get_all_plugins"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_get_all_plugins">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_all_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_subscribe"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">test_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="TestDCore.test_unsubscribe"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_unsubscribe">[docs]</a>    <span class="k">def</span> <span class="nf">test_unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span><span class="mi">0</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="TestDCore.test_unsubscribe_all"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_unsubscribe_all">[docs]</a>    <span class="k">def</span> <span class="nf">test_unsubscribe_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">unsubscribe_all</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">())</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_rm_all_subscribers"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_rm_all_subscribers">[docs]</a>    <span class="k">def</span> <span class="nf">test_rm_all_subscribers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block_2&#39;</span><span class="p">)</span>
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">rm_all_subscribers</span><span class="p">(</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="TestDCore.test_subscribe_signals"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_subscribe_signals">[docs]</a>    <span class="k">def</span> <span class="nf">test_subscribe_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">9</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">18</span><span class="p">]))</span>
+
+
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">d_pl_3</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">19</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">d_pl_3</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="TestDCore.test_unsubscribe_signals"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDCore.TestDCore.test_unsubscribe_signals">[docs]</a>    <span class="k">def</span> <span class="nf">test_unsubscribe_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Create dplugins</span>
+        <span class="n">d_pl_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+        <span class="n">d_pl_3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">create_id</span><span class="p">())</span>
+
+        <span class="c">#Create dblocks</span>
+        <span class="n">d_bl_1</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block1&#39;</span><span class="p">)</span>
+        <span class="n">d_bl_2</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Block2&#39;</span><span class="p">)</span>
+
+        <span class="c">#assign dblocks to DPlugin d_pl_1</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_1</span><span class="p">)</span>
+        <span class="n">d_pl_1</span><span class="o">.</span><span class="n">add_dblock</span><span class="p">(</span><span class="n">d_bl_2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">9</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">subscribe_signals</span><span class="p">(</span><span class="n">d_pl_3</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_2</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">18</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">unsubscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+
+        <span class="n">subscription</span> <span class="o">=</span> <span class="n">d_pl_2</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dcore</span><span class="o">.</span><span class="n">unsubscribe_signals</span><span class="p">(</span><span class="n">d_pl_2</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_pl_1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">d_bl_1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_bl_1</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">();</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

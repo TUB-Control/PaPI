@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.plugin.base_classes.base_plugin &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.plugin.base_classes.base_plugin</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c">#-*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+<span class="sd"> </span>
+<span class="sd">This file is part of PaPI.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+<span class="sd"> </span>
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="sd"> </span>
+<span class="sd">Contributors:</span>
+<span class="sd">Stefan Ruppin</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
+<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
+<span class="kn">from</span> <span class="nn">papi.exceptions.block_exceptions</span> <span class="kn">import</span> <span class="n">Wrong_type</span><span class="p">,</span> <span class="n">Wrong_length</span>
+<span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
+<span class="kn">from</span> <span class="nn">papi.yapsy.IPlugin</span> <span class="kn">import</span> <span class="n">IPlugin</span>
+
+
+<div class="viewcode-block" id="base_plugin"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin">[docs]</a><span class="k">class</span> <span class="nc">base_plugin</span><span class="p">(</span><span class="n">IPlugin</span><span class="p">):</span>
+
+
+<div class="viewcode-block" id="base_plugin.papi_init"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.papi_init">[docs]</a>    <span class="k">def</span> <span class="nf">papi_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="c">#self.__dplugin_ids__    = {} Not sure where needed TODO</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span>       <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+</div>
+<div class="viewcode-block" id="base_plugin.get_type"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.get_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.execute"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.get_configuration_base"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.get_configuration_base">[docs]</a>    <span class="k">def</span> <span class="nf">get_configuration_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.get_startup_configuration"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.get_startup_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">get_startup_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_configs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_configuration_base</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plugin_configuration</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="base_plugin.get_plugin_configuration"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.get_plugin_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+
+
+
+
+
+    <span class="c"># some control callback functions</span>
+    <span class="c"># ----------------------</span></div>
+<div class="viewcode-block" id="base_plugin.pause"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pause">[docs]</a>    <span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.resume"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.resume">[docs]</a>    <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.quit"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.quit">[docs]</a>    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.set_parameter"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.set_parameter_internal"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.set_parameter_internal">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+    <span class="c"># some api functions</span>
+    <span class="c"># ------------------</span></div>
+<div class="viewcode-block" id="base_plugin.merge_configs"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.merge_configs">[docs]</a>    <span class="k">def</span> <span class="nf">merge_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg1</span><span class="p">,</span> <span class="n">cfg2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cfg1</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">cfg2</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="base_plugin.send_parameter_change"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_parameter_change">[docs]</a>    <span class="k">def</span> <span class="nf">send_parameter_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.create_new_block"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.create_new_block">[docs]</a>    <span class="k">def</span> <span class="nf">create_new_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">signalNames</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">frequency</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signalNames</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Wrong_type</span><span class="p">(</span><span class="s">&#39;signalNames&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Wrong_type</span><span class="p">(</span><span class="s">&#39;types&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signalNames</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">Wrong_length</span><span class="p">(</span><span class="s">&#39;signalNames&#39;</span><span class="p">,</span> <span class="s">&#39;types&#39;</span><span class="p">)</span>
+
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">signalNames</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DBlock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">signal_names_internal</span><span class="o">=</span><span class="n">signalNames</span><span class="p">,</span> <span class="n">signal_types</span><span class="o">=</span><span class="n">types</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_data"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="n">dataHash</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">dataHash</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_line</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span> <span class="o">=</span> <span class="n">dataHash</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_data_old2"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old2">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data_old2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
+        <span class="c"># TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name</span>
+        <span class="n">vec_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vec_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_line</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">vec_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">vec_data</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_data_old1"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old1">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data_old1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_block_list"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_block_list">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_block_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_list</span> <span class="o">=</span> <span class="n">blocks</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewBlock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_parameter_list"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_parameter_list">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_parameter_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="n">parameters</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_delete_block"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_delete_block">[docs]</a>    <span class="k">def</span> <span class="nf">send_delete_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blockname</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DeleteBlock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">blockname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_delete_parameter"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_delete_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">send_delete_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameterName</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DeleteParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">parameterName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.update_plugin_meta"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.update_plugin_meta">[docs]</a>    <span class="k">def</span> <span class="nf">update_plugin_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplug</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span> <span class="o">=</span> <span class="n">dplug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_meta_updated</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="base_plugin.plugin_meta_updated"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.plugin_meta_updated">[docs]</a>    <span class="k">def</span> <span class="nf">plugin_meta_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.demux"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.demux">[docs]</a>    <span class="k">def</span> <span class="nf">demux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+
+        <span class="n">sub_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span><span class="p">[</span><span class="n">source_id</span><span class="p">][</span><span class="n">block_name</span><span class="p">]</span>
+        <span class="n">sub_signals</span> <span class="o">=</span> <span class="n">sub_object</span><span class="o">.</span><span class="n">signals</span>
+        <span class="k">if</span> <span class="s">&#39;t&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sub_signals</span><span class="p">:</span>
+            <span class="n">sub_signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_signals</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.data.DPlugin &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.data.DPlugin</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: latin-1 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+
+<span class="sd">This file is part of PaPI.</span>
+
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">Contributors</span>
+<span class="sd">Sven Knuth</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">papi.data</span> <span class="kn">import</span> <span class="n">DParameter</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
+<span class="kn">from</span> <span class="nn">papi.data.DObject</span> <span class="kn">import</span> <span class="n">DObject</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+
+<div class="viewcode-block" id="DBlock"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock">[docs]</a><span class="k">class</span> <span class="nc">DBlock</span><span class="p">(</span><span class="n">DObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DBlock is used for the internal description of a block.</span>
+<span class="sd">    Contains a bunch of signals of a the same data source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A block is described by name, which has to be unique within the context of the plugin owning this block.</span>
+
+<span class="sd">        :param name: name of the block</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DBlock.add_subscribers"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.add_subscribers">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscribers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add dplugin as subscriber for this dblock.</span>
+
+<span class="sd">        :param dplugin:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DBlock.rm_subscriber"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.rm_subscriber">[docs]</a>    <span class="k">def</span> <span class="nf">rm_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove dplugin as subscriber of this dblock.</span>
+
+<span class="sd">        :param dplugin:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DBlock.add_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.add_signal">[docs]</a>    <span class="k">def</span> <span class="nf">add_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add Signal for this DBlock</span>
+
+<span class="sd">        :param signal:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">signal</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DBlock.rm_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.rm_signal">[docs]</a>    <span class="k">def</span> <span class="nf">rm_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove Signal for this DBlock</span>
+
+<span class="sd">        :param signal:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">signal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DBlock.get_subscribers"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.get_subscribers">[docs]</a>    <span class="k">def</span> <span class="nf">get_subscribers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all subscribers of this plugin. Returns a copy that means</span>
+<span class="sd">        changes have no effect on the PaPI data structure.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype []:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DBlock.get_signal_by_uname"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.get_signal_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">get_signal_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a signal object by a signal&#39;s uname.</span>
+
+<span class="sd">        :param uname:</span>
+<span class="sd">        :return DSignal:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">==</span> <span class="n">uname</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">signal</span>
+
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DBlock.get_signals"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.get_signals">[docs]</a>    <span class="k">def</span> <span class="nf">get_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a copy of the internal signal names</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="DPlugin"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin">[docs]</a><span class="k">class</span> <span class="nc">DPlugin</span><span class="p">(</span><span class="n">DObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DPlugin is used for the internal description of a plugin.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to create the plugin data object.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paused</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">own_process</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c">#self.display_name = None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="DPlugin.subscribe_signals"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.subscribe_signals">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">,</span> <span class="n">signals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is used to subscribe a bunch of signals.</span>
+
+<span class="sd">        :param dblock:</span>
+<span class="sd">        :param signals:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype DSubscription:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]:</span>
+                <span class="n">subscription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
+                    <span class="n">subscription</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">subscription</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DPlugin.unsubscribe_signals"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.unsubscribe_signals">[docs]</a>    <span class="k">def</span> <span class="nf">unsubscribe_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">,</span> <span class="n">signals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is used to unsubscribe a bunch of signals.</span>
+
+<span class="sd">        :param dblock:</span>
+<span class="sd">        :param signals:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype DSubscription:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]:</span>
+                <span class="n">subscription</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
+                    <span class="n">subscription</span><span class="o">.</span><span class="n">rm_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">subscription</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DPlugin.subscribe"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This plugin subscribes a &#39;dblock&#39; by remembering the dblog id.</span>
+
+<span class="sd">        :param dblock: DBlock which should be subscribed</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DPlugin.unsubscribe"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.unsubscribe">[docs]</a>    <span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This plugin unsubscribes a &#39;dblock&#39; by forgetting the dblog id.</span>
+
+<span class="sd">        :param dblock: DBlock which should be unsubscribed</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">])</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_subscribtions"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_subscribtions">[docs]</a>    <span class="k">def</span> <span class="nf">get_subscribtions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a reference to a dictionary of all subcribtions.</span>
+
+<span class="sd">        :return {}{} of DPlugin ids to DBlock names :</span>
+<span class="sd">        :rtype: {}{}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span>
+</div>
+<div class="viewcode-block" id="DPlugin.add_parameter"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.add_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">add_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to add a parameter for this plugin.</span>
+<span class="sd">        Returns true if parameter doesn&#39;t existed and was added,</span>
+<span class="sd">        returns false if parameter already exists.</span>
+
+<span class="sd">        :param parameter:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DPlugin.rm_parameter"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.rm_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">rm_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to remove a parameter for this plugin.</span>
+<span class="sd">        Returns true if parameter existed and was deleted,</span>
+<span class="sd">        returns false if parameter doesn&#39;t exist.</span>
+
+<span class="sd">        :param parameter: Parameter which should be removed.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_parameters"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all parameters.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype {}:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span>
+</div>
+<div class="viewcode-block" id="DPlugin.add_dblock"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.add_dblock">[docs]</a>    <span class="k">def</span> <span class="nf">add_dblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to add a block for this plugin.</span>
+<span class="sd">        Returns true if parameter doesn&#39;t existed and was deleted,</span>
+<span class="sd">        returns false if parameter already exists.</span>
+
+<span class="sd">        :param dblock: Block which should be added.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dblock</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DPlugin.rm_dblock"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.rm_dblock">[docs]</a>    <span class="k">def</span> <span class="nf">rm_dblock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to remove a block for this plugin.</span>
+<span class="sd">        Returns true if block existed and was deleted,</span>
+<span class="sd">        returns false if block doesn&#39;t exist.</span>
+
+<span class="sd">        :param dblock:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype boolean:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="o">+=</span> <span class="s">&quot;_deleted&quot;</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_dblocks"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_dblocks">[docs]</a>    <span class="k">def</span> <span class="nf">get_dblocks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all blocks.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype {}:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_dblock_by_name"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_dblock_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_dblock_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a single block by its unique name of all parameters.</span>
+
+<span class="sd">        :param dblock_name: Uniqueder identifier for this block.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_meta"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_meta">[docs]</a>    <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype DPlugin:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">DPlugin_new</span> <span class="o">=</span> <span class="n">DPlugin</span><span class="p">()</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive_state</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">own_process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">own_process</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uname</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">__parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">)</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">__subscriptions</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">)</span>
+        <span class="n">DPlugin_new</span><span class="o">.</span><span class="n">__blocks</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DPlugin_new</span>
+</div>
+<div class="viewcode-block" id="DPlugin.update_meta"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.update_meta">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param meta: of type DPlugin</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># --------------------------</span>
+        <span class="c"># Update DPlugin Attributes</span>
+        <span class="c"># --------------------------</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">pid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alive_state</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">alive_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">own_process</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">own_process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">uname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">path</span>
+
+        <span class="c"># -----------------------------</span>
+        <span class="c"># Update DParameters of DPlugin</span>
+        <span class="c"># -----------------------------</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span>
+
+        <span class="c"># -----------------------------</span>
+        <span class="c"># Update DSubscriptions of DPlugin</span>
+        <span class="c"># -----------------------------</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__subscriptions</span>
+
+        <span class="c"># -----------------------------</span>
+        <span class="c"># Update DBlocks of DPlugin</span>
+        <span class="c"># -----------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__blocks</span>
+
+</div></div>
+<div class="viewcode-block" id="DSubscription"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription">[docs]</a><span class="k">class</span> <span class="nc">DSubscription</span><span class="p">(</span><span class="n">DObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DSubscription is used for the internal description of a subscription.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span> <span class="o">=</span> <span class="n">dblock</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dblock_name</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DSubscription.add_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.add_signal">[docs]</a>    <span class="k">def</span> <span class="nf">add_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add Signal for this Subscription</span>
+
+<span class="sd">        :param signal:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">signal</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DSubscription.rm_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.rm_signal">[docs]</a>    <span class="k">def</span> <span class="nf">rm_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove Signal for this Subscription</span>
+
+<span class="sd">        :param signal:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">signal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="DSubscription.get_dblock"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.get_dblock">[docs]</a>    <span class="k">def</span> <span class="nf">get_dblock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the block whose signals are subscribed.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype: DBlock</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span>
+</div>
+<div class="viewcode-block" id="DSubscription.get_signals"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.get_signals">[docs]</a>    <span class="k">def</span> <span class="nf">get_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a copy of all signals which are subscribed.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype: []</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DSubscription.attach_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.attach_signal">[docs]</a>    <span class="k">def</span> <span class="nf">attach_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Stop Using this function.&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DSubscription.remove_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.remove_signal">[docs]</a>    <span class="k">def</span> <span class="nf">remove_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Stop Using this function.&quot;</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
