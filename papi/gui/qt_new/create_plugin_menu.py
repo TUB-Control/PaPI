@@ -38,9 +38,10 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
+import papi.constants as pc
 
 from PyQt5.QtCore       import *
-from PyQt5.QtGui        import QColor
+from PyQt5.QtGui        import QColor, QDesktopServices
 from PyQt5.QtWidgets    import QListWidgetItem, QMainWindow
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
@@ -87,8 +88,10 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
-
+        self.helpButton.clicked.connect(self.help_button_triggered)
         self.finder = ModuleFinder()
+
+
 
     def keyPressEvent(self, event):
 
@@ -204,6 +207,17 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.io_root.sortChildren(0)
         self.dpp_root.sortChildren(0)
         self.pcp_root.sortChildren(0)
+
+    def help_button_triggered(self):
+        index = self.pluginTree.currentIndex()
+        plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
+
+        if plugin_info is not None:
+            plugin_type = plugin_info.plugin_object.get_type();
+            path = plugin_info.path
+            suffix = "." + '.'.join(path.split('/')[-2:])
+            target_url = pc.PAPI_DOC_URL + pc.PAPI_DOC_PREFIX_PLUGIN + "." + plugin_type.lower() + suffix + ".html"
+            QDesktopServices.openUrl(QUrl(target_url, QUrl.TolerantMode))
 
     def clear(self):
         self.nameEdit.setText('')

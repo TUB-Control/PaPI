@@ -51,6 +51,7 @@ from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROC
     PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
 from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
+import papi.constants as pc
 
 
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
@@ -664,10 +665,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
     def papi_wiki_triggerd(self):
-        QDesktopServices.openUrl(QUrl("https://github.com/TUB-Control/PaPI/wiki", QUrl.TolerantMode))
+        QDesktopServices.openUrl(QUrl(pc.PAPI_WIKI_URL, QUrl.TolerantMode))
 
     def papi_doc_triggerd(self):
-        QDesktopServices.openUrl(QUrl("http://tub-control.github.io/PaPI/", QUrl.TolerantMode))
+        QDesktopServices.openUrl(QUrl(pc.PAPI_DOC_URL, QUrl.TolerantMode))
 
     def papi_about_triggerd(self):
         QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)

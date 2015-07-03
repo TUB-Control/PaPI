@@ -29,6 +29,8 @@ Stefan Ruppin
 __author__ = 'ruppin'
 
 
+PAPI_DEV_EDITION                = True
+
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
@@ -47,6 +49,8 @@ CORE_ALIVE_MAX_COUNT            = 10
 
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
+
+# PaPI Information constants
 
 PAPI_COPYRIGHT                  = '&copy; 2014-2015'
 PAPI_ABOUT_TITLE                = 'About PaPI'
@@ -68,6 +72,13 @@ PaPI uses:
 </html>
 """
 
+PAPI_WIKI_URL                    = 'https://github.com/TUB-Control/PaPI/wiki'
+PAPI_DOC_URL                     = 'http://tub-control.github.io/PaPI/'
+
+if PAPI_DEV_EDITION:
+    PAPI_DOC_URL += "dev/"
+
+PAPI_DOC_PREFIX_PLUGIN           = 'papi.plugin'
 
 # EVENT CONSTANTS
 # TODO
