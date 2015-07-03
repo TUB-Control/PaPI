@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LCDDisplay &mdash; papi  documentation</title>
+    <title>PaPIController &mdash; papi  documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="papi  documentation" href="index.html" />
     <link rel="up" title="VisualPlugins" href="papi.plugin.visual.html" />
-    <link rel="next" title="PaPIController" href="papi.plugin.visual.PaPIController.PaPIController.html" />
-    <link rel="prev" title="HTMLViewer" href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" /> 
+    <link rel="next" title="Plot" href="papi.plugin.visual.Plot.Plot.html" />
+    <link rel="prev" title="LCDDisplay" href="papi.plugin.visual.LCDDisplay.LCDDisplay.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.PaPIController.PaPIController.html" title="PaPIController"
+          <a href="papi.plugin.visual.Plot.Plot.html" title="Plot"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" title="HTMLViewer"
+          <a href="papi.plugin.visual.LCDDisplay.LCDDisplay.html" title="LCDDisplay"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>
@@ -55,14 +55,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="lcddisplay">
-<h1>LCDDisplay<a class="headerlink" href="#lcddisplay" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="papicontroller">
+<h1>PaPIController<a class="headerlink" href="#papicontroller" title="Permalink to this headline">¶</a></h1>
 <div class="topic">
 <p class="topic-title first">General description</p>
-<p>This plugin is used to display a single number.</p>
-</div>
-<div class="figure">
-<img alt="Picture of the plugin LCDDisplay" src="_images/LCDDisplay.png" />
+<p>This plugin is used as a central instance for other plugins to create/control plugins. Was especially created for the external PaPI interface.</p>
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
@@ -70,36 +67,43 @@
 <table border="1" class="docutils">
 <caption>Plugin configuration</caption>
 <colgroup>
-<col width="27%" />
 <col width="18%" />
-<col width="55%" />
+<col width="12%" />
+<col width="12%" />
+<col width="59%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
 <th class="head">Type</th>
+<th class="head">Example</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>updateFrequency</td>
+<tr class="row-even"><td>UDP_Plugin_uname</td>
+<td>String</td>
+<td>UDPlugin</td>
+<td>Uname to use for UDP plugin instance.</td>
+</tr>
+<tr class="row-odd"><td>1:address</td>
+<td>IP</td>
+<td>127.0.0.1</td>
+<td>Listen IP</td>
+</tr>
+<tr class="row-even"><td>2:source_port</td>
 <td>Int</td>
-<td>Minimal time between updates (in ms)</td>
+<td>20000</td>
+<td>Local port.</td>
 </tr>
-<tr class="row-odd"><td>value_init</td>
-<td>Float</td>
-<td>Used as initial value for the LCD-Display</td>
-</tr>
-<tr class="row-even"><td>value_scale</td>
-<td>Float</td>
-<td>Used to scale displayed value</td>
-</tr>
-<tr class="row-odd"><td>value_offset</td>
+<tr class="row-odd"><td>3:out_port</td>
 <td>Int</td>
-<td>Used to offset displayed value</td>
+<td>20001</td>
+<td>Remote port.</td>
 </tr>
-<tr class="row-even"><td>digit_count</td>
-<td>Int</td>
-<td>Number of digits</td>
+<tr class="row-even"><td>SendOnReceivePort</td>
+<td>Bool</td>
+<td>(0|1)</td>
+<td>Use same port for send and receive.</td>
 </tr>
 </tbody>
 </table>
@@ -110,32 +114,23 @@
 <table border="1" class="docutils">
 <caption>Provided parameter</caption>
 <colgroup>
-<col width="27%" />
 <col width="18%" />
-<col width="55%" />
+<col width="12%" />
+<col width="12%" />
+<col width="59%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
 <th class="head">Type</th>
+<th class="head">Example</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>update_interval</td>
-<td>Int</td>
-<td>Minimal time between updates (in ms)</td>
-</tr>
-<tr class="row-odd"><td>value_scale</td>
-<td>Float</td>
-<td>Used to scale displayed value</td>
-</tr>
-<tr class="row-even"><td>value_offset</td>
-<td>Int</td>
-<td>Used to offset displayed value</td>
-</tr>
-<tr class="row-odd"><td>digit_count</td>
-<td>Int</td>
-<td>Number of digits</td>
+<tr class="row-even"><td>ProgressValue</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
 </tr>
 </tbody>
 </table>
@@ -150,7 +145,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">LCDDisplay</a><ul>
+<li><a class="reference internal" href="#">PaPIController</a><ul>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#parameter">Parameter</a></li>
 </ul>
@@ -158,14 +153,14 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html"
-                        title="previous chapter">HTMLViewer</a></p>
+  <p class="topless"><a href="papi.plugin.visual.LCDDisplay.LCDDisplay.html"
+                        title="previous chapter">LCDDisplay</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="papi.plugin.visual.PaPIController.PaPIController.html"
-                        title="next chapter">PaPIController</a></p>
+  <p class="topless"><a href="papi.plugin.visual.Plot.Plot.html"
+                        title="next chapter">Plot</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/papi.plugin.visual.LCDDisplay.LCDDisplay.txt"
+    <li><a href="_sources/papi.plugin.visual.PaPIController.PaPIController.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -195,10 +190,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.PaPIController.PaPIController.html" title="PaPIController"
+          <a href="papi.plugin.visual.Plot.Plot.html" title="Plot"
              >next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" title="HTMLViewer"
+          <a href="papi.plugin.visual.LCDDisplay.LCDDisplay.html" title="LCDDisplay"
              >previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>

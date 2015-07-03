@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LCDDisplay &mdash; papi  documentation</title>
+    <title>ProgressBar &mdash; papi  documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="papi  documentation" href="index.html" />
     <link rel="up" title="VisualPlugins" href="papi.plugin.visual.html" />
-    <link rel="next" title="PaPIController" href="papi.plugin.visual.PaPIController.PaPIController.html" />
-    <link rel="prev" title="HTMLViewer" href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" /> 
+    <link rel="next" title="DPPlugins" href="papi.plugin.dpp.html" />
+    <link rel="prev" title="Plot" href="papi.plugin.visual.Plot.Plot.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.PaPIController.PaPIController.html" title="PaPIController"
+          <a href="papi.plugin.dpp.html" title="DPPlugins"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" title="HTMLViewer"
+          <a href="papi.plugin.visual.Plot.Plot.html" title="Plot"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>
@@ -55,14 +55,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="lcddisplay">
-<h1>LCDDisplay<a class="headerlink" href="#lcddisplay" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="progressbar">
+<h1>ProgressBar<a class="headerlink" href="#progressbar" title="Permalink to this headline">¶</a></h1>
 <div class="topic">
 <p class="topic-title first">General description</p>
-<p>This plugin is used to display a single number.</p>
+<p>This plugin is used to show a progress</p>
 </div>
 <div class="figure">
-<img alt="Picture of the plugin LCDDisplay" src="_images/LCDDisplay.png" />
+<img alt="Picture of the plugin ProgressBar" src="_images/ProgressBar.png" />
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
@@ -70,36 +70,58 @@
 <table border="1" class="docutils">
 <caption>Plugin configuration</caption>
 <colgroup>
-<col width="27%" />
 <col width="18%" />
-<col width="55%" />
+<col width="12%" />
+<col width="12%" />
+<col width="59%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
 <th class="head">Type</th>
+<th class="head">Example</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>updateFrequency</td>
-<td>Int</td>
-<td>Minimal time between updates (in ms)</td>
+<tr class="row-even"><td>progress_value</td>
+<td>String</td>
+<td>percent</td>
+<td>Name of the signal whose first value is used to set the current value for the progress bar.</td>
 </tr>
-<tr class="row-odd"><td>value_init</td>
+<tr class="row-odd"><td>show_percent</td>
+<td>Bool</td>
+<td>(1|0)</td>
+<td>Show progress in percent over the progress bar.</td>
+</tr>
+<tr class="row-even"><td>show_current_max</td>
+<td>Bool</td>
+<td>(1|0)</td>
+<td>A label over the bar shows the current and max value.</td>
+</tr>
+<tr class="row-odd"><td>min_rage</td>
 <td>Float</td>
-<td>Used as initial value for the LCD-Display</td>
+<td>0</td>
+<td>Set minimum range for the progress bar..</td>
 </tr>
-<tr class="row-even"><td>value_scale</td>
+<tr class="row-even"><td>max_range</td>
 <td>Float</td>
-<td>Used to scale displayed value</td>
+<td>100</td>
+<td>Set maximum range for the progress bar.</td>
 </tr>
-<tr class="row-odd"><td>value_offset</td>
-<td>Int</td>
-<td>Used to offset displayed value</td>
+<tr class="row-odd"><td>trigger_value</td>
+<td>String</td>
+<td>trigger</td>
+<td>Name of the signal which triggers the progress bar to increment by one.</td>
 </tr>
-<tr class="row-even"><td>digit_count</td>
+<tr class="row-even"><td>reset_trigger_value</td>
+<td>String</td>
+<td>reset</td>
+<td>Name of the signal which triggers the progress bar to reset.</td>
+</tr>
+<tr class="row-odd"><td>round_digit</td>
 <td>Int</td>
-<td>Number of digits</td>
+<td>3</td>
+<td>Current value is rounded to ndigits after the decimal point.</td>
 </tr>
 </tbody>
 </table>
@@ -110,32 +132,53 @@
 <table border="1" class="docutils">
 <caption>Provided parameter</caption>
 <colgroup>
-<col width="27%" />
 <col width="18%" />
-<col width="55%" />
+<col width="12%" />
+<col width="12%" />
+<col width="59%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
 <th class="head">Type</th>
+<th class="head">Example</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>update_interval</td>
-<td>Int</td>
-<td>Minimal time between updates (in ms)</td>
+<tr class="row-even"><td>ProgressValue</td>
+<td>String</td>
+<td>percent</td>
+<td>Name of the signal whose first value is used to set the current value for the progress bar.</td>
 </tr>
-<tr class="row-odd"><td>value_scale</td>
+<tr class="row-odd"><td>ShowPercent</td>
+<td>Bool</td>
+<td>(1|0)</td>
+<td>Show progress in percent over the progress bar.</td>
+</tr>
+<tr class="row-even"><td>ShowCurrentMax</td>
+<td>Bool</td>
+<td>(1|0)</td>
+<td>A label over the bar shows the current and max value.</td>
+</tr>
+<tr class="row-odd"><td>MinRange</td>
 <td>Float</td>
-<td>Used to scale displayed value</td>
+<td>0</td>
+<td>Set minimum range for the progress bar..</td>
 </tr>
-<tr class="row-even"><td>value_offset</td>
-<td>Int</td>
-<td>Used to offset displayed value</td>
+<tr class="row-even"><td>MaxRange</td>
+<td>Float</td>
+<td>100</td>
+<td>Set maximum range for the progress bar.</td>
 </tr>
-<tr class="row-odd"><td>digit_count</td>
-<td>Int</td>
-<td>Number of digits</td>
+<tr class="row-odd"><td>TriggerValue</td>
+<td>String</td>
+<td>trigger</td>
+<td>Name of the signal which triggers the progress bar to increment by one.</td>
+</tr>
+<tr class="row-even"><td>ResetValue</td>
+<td>String</td>
+<td>reset</td>
+<td>Name of the signal which triggers the progress bar to reset.</td>
 </tr>
 </tbody>
 </table>
@@ -150,7 +193,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">LCDDisplay</a><ul>
+<li><a class="reference internal" href="#">ProgressBar</a><ul>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#parameter">Parameter</a></li>
 </ul>
@@ -158,14 +201,14 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html"
-                        title="previous chapter">HTMLViewer</a></p>
+  <p class="topless"><a href="papi.plugin.visual.Plot.Plot.html"
+                        title="previous chapter">Plot</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="papi.plugin.visual.PaPIController.PaPIController.html"
-                        title="next chapter">PaPIController</a></p>
+  <p class="topless"><a href="papi.plugin.dpp.html"
+                        title="next chapter">DPPlugins</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/papi.plugin.visual.LCDDisplay.LCDDisplay.txt"
+    <li><a href="_sources/papi.plugin.visual.ProgressBar.ProgressBar.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -195,10 +238,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.PaPIController.PaPIController.html" title="PaPIController"
+          <a href="papi.plugin.dpp.html" title="DPPlugins"
              >next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.visual.HTMLViewer.HTMLViewer.html" title="HTMLViewer"
+          <a href="papi.plugin.visual.Plot.Plot.html" title="Plot"
              >previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>

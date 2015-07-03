@@ -101,6 +101,7 @@
     <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> <span class="n">PAPI_ABOUT_TEXT</span><span class="p">,</span> <span class="n">PAPI_ABOUT_TITLE</span><span class="p">,</span> <span class="n">PAPI_DEFAULT_BG_PATH</span><span class="p">,</span> <span class="n">PAPI_LAST_CFG_PATH</span>
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CONFIG_DEFAULT_FILE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">CONFIG_DEFAULT_DIRECTORY</span>
 
+<span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
 
 
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.create_plugin_menu</span> <span class="kn">import</span> <span class="n">CreatePluginMenu</span>
@@ -714,10 +715,10 @@
 
 </div>
 <div class="viewcode-block" id="GUI.papi_wiki_triggerd"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.GUI.papi_wiki_triggerd">[docs]</a>    <span class="k">def</span> <span class="nf">papi_wiki_triggerd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="s">&quot;https://github.com/TUB-Control/PaPI/wiki&quot;</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
+        <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_WIKI_URL</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="GUI.papi_doc_triggerd"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.GUI.papi_doc_triggerd">[docs]</a>    <span class="k">def</span> <span class="nf">papi_doc_triggerd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="s">&quot;http://tub-control.github.io/PaPI/&quot;</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
+        <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_URL</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="GUI.papi_about_triggerd"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.GUI.papi_about_triggerd">[docs]</a>    <span class="k">def</span> <span class="nf">papi_about_triggerd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">QMessageBox</span><span class="o">.</span><span class="n">about</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">PAPI_ABOUT_TITLE</span><span class="p">,</span> <span class="n">PAPI_ABOUT_TEXT</span><span class="p">)</span>
