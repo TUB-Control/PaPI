@@ -236,7 +236,7 @@ class ProgressBar(vip_base):
             "show_current_max": {
                  'value': '0',
                  'display_text' : 'Show current/max',
-                 'tooltip' : 'A label next to the bar shows the current and max value',
+                 'tooltip' : 'A label over the bar shows the current and max value',
                  'type' : 'bool',
                  'advanced' : '0'
             },

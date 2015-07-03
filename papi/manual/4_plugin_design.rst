@@ -14,15 +14,19 @@ development of an own plugin. The template files can be found in
 -  ``IOP_DPP_template.py`` - template for the development of IO-Plugins
    or Data Processing Plugin.
 -  ``visual_template.py`` - template for the development of visual
-   Plugin.
+   Plugins.
 
 The plugins are written in python 3.4. For the development you can use
-this tools: \* Editor with syntax highlighting \* PyCharm
+this tools:
+
+   - Editor with syntax highlighting
+   - PyCharm
+
 
 ... create a Block
 ~~~~~~~~~~~~~~~~~~
 
-Blocks are use to collect all signals created by the same source. An
+Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
 e.g. a plot.
 
@@ -51,16 +55,16 @@ that the PaPI-backend only knows the last blocks sent by
 ... create Parameter
 ~~~~~~~~~~~~~~~~~~~~
 
-Parameters are used to enable an external control for a plugin.
+Parameters are used to enable an external control of a running plugin.
 
-It is necessary to imports this objects:
+It is necessary to imports this object:
 
 .. code:: python
 
     from papi.data.DParameter import DParameter
 
 At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries for the third parameter a regex
+informed. To limit possible user entries at the frontend for the third parameter a regex
 was defined
 
 .. code:: python
@@ -82,7 +86,7 @@ step.
 
 .. code:: python
 
-    def execute(self, Data=None, block_name = None):
+    def execute(self, Data=None, block_name = None, plugin_uname = None):
        time = Data['t']
 
        for key in Data:
@@ -152,3 +156,101 @@ be modified by the user during the creation process.
           }
        }
        return config
+
+As you can see it is possible to describe a single configuration attribute in a detailed way but only the key ``value`` is mandatory.
+
+The other keys are used to provided a comfortable change of the attribute during the creation process.
+
+.. list-table:: Possible keys for an attribute
+    :widths: 3 10
+    :header-rows: 1
+
+    * - Key
+      - Description
+    * - value
+      - Mandatory key !!
+    * - regex
+      - used to limit the possible user entries in a textfield by the use of a regular expression.
+    * - type
+      - enables additional gui elements in the creation dialog.
+    * - advanced
+      - is used display this attribute on an additional tab in the creation dialog.
+    * - display_text
+      - sets the name of the attribute as it is seen by the user.
+    * - tooltip
+      - used to define a tooltip triggered by a mouse hover.
+
+PaPI supports currently only the following types.
+
+.. list-table:: Supported types
+    :widths: 3 10 3
+    :header-rows: 1
+
+    * - Type
+      - Description
+      - Value
+    * - color
+      - Opens a color picker
+      - (r,g,b)
+    * - file
+      - Opens a file dialog
+      - ~/config/File.xml
+    * - bool
+      - Checkbox
+      - (0|1)
+
+In case of an unknown type or none type was defined a simple textfield is used.
+
+What happens if the user triggers ...
+--------------------------------------
+
+... pause?
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The PaPI framework executes this functions
+
+.. code:: python
+
+    def pause(self):
+        """
+        Function pause
+
+        :return:
+        """
+        pass
+
+This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``execute(Data, block_name, plugin_uname)`` function.
+
+... resume?
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The PaPI framework executes this functions
+
+.. code:: python
+
+    def resume(self):
+        """
+        Function resume
+
+        :return:
+        """
+        pass
+
+This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``execute(Data, block_name, plugin_uname)`` function if necessary.
+
+... quit?
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The PaPI framework executes this functions
+
+.. code:: python
+
+    def quit(self):
+        """
+        Function quit
+
+        :return:
+        """
+        pass
+
+When this function was exectuted PaPI will stop and remove the plugin.

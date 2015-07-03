@@ -13,7 +13,7 @@ Python as programming language leads to a slightly slower execution
 speed, it allows a fast and easy development of new plugins.
 
 Architecture
-----------
+-------------
 
 We divided PaPI in three main parts: \* PaPI Core \* PaPI GUI \* Plugin
 processes
