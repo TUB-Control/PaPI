@@ -6,6 +6,9 @@
 Welcome to PaPI's documentation!
 ================================
 
+README: :doc:`README`
+CHANGELOG: :doc:`CHANGELOG`
+
 PaPI Framework:
 
 .. toctree::

@@ -17,6 +17,9 @@ UI_FILES_FOUND := $(shell find $(SRC_DIR) -name '*.ui')
 UI_FILES := $(UI_FILES_FOUND:./%=%)
 PY_FILES := $(addprefix $(DES_DIR),$(UI_FILES:.ui=.py))
 
+README_RST := README.rst
+CHANGELOG_RST := CHANGELOG.rst
+
 #Find all rst files
 RST_FILES_SRC = $(shell find $(RST_SRC_DIR) -name '*.rst')
 
@@ -79,13 +82,19 @@ create_rst: $(RST_TAR)
 	sphinx-apidoc -f -o docs papi ./papi/pyqtgraph/ ./papi/yapsy/
 
 docs: create_rst
+	cp $(README_RST) $(RST_DES_DIR)/$(README_RST)
+	cp $(CHANGELOG_RST) $(RST_DES_DIR)/$(CHANGELOG_RST)
 	make -C docs html
 
 html: create_rst
+	cp $(README_RST) $(RST_DES_DIR)/$(README_RST)
+	cp $(CHANGELOG_RST) $(RST_DES_DIR)/$(CHANGELOG_RST)
 	make -C docs html
 
 clean:
 	@rm $(RST_DES_DIR)/papi*rst
 	@rm $(RST_DES_DIR)/modules.rst
+	@rm $(RST_DES_DIR)/$(README_RST)
+	@rm $(RST_DES_DIR)/$(CHANGELOG_RST)
 	@rm -R $(RST_STATIC_FOLDER_DES)
 	make -C docs clean

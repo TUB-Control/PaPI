@@ -72,7 +72,7 @@ import signal
 # Disable antialiasing for prettier plots
 #pg.setConfigOptions(antialias=False)
 
-def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
+def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
     """
     Function to call to start gui operation
     :param CoreQueue: link to queue of core
@@ -84,12 +84,18 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id):
     :return:
     """
 
+
     app = QApplication(sys.argv)
 
     gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
     gui.run()
     # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
     gui.show()
+
+    if args:
+        if args.config:
+            gui.load_config(args.config)
+
     app.exec_()
 
 
@@ -447,7 +453,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         if len(fileNames):
             if fileNames[0] != '':
                 self.last_config = fileNames[0]
-                self.gui_management.gui_api.do_load_xml(fileNames[0])
+                self.load_config(fileNames[0])
+
+    def load_config(self, file_name):
+        self.gui_management.gui_api.do_load_xml(file_name)
 
     def save_triggered(self):
         """

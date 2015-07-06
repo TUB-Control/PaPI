@@ -161,7 +161,7 @@ class Core:
 
         signal.signal(signal.SIGINT, lambda a,b,c=self: self.signal_handler(a,b,c))
 
-    def run(self):
+    def run(self,args=None):
         """
         Main operation function of core.
         Event loop is in here.
@@ -176,7 +176,7 @@ class Core:
 
         if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
-                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id))
+                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id, args))
             self.gui_process.start()
 
 
