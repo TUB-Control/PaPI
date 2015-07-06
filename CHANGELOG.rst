@@ -9,6 +9,8 @@ v.1.X:
 -  **plugin**: Added a new visual plugin: RehaStimGUI: Used to describe
    channel attributes for different states
 -  **plugin**: Added a new pcplugin: Textfield
+-  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
+-  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
 -  **feature**: Added a simulink block which enables the communication
    between PaPI and Simulink
 -  **doc**: Added support for plugin documentation based on
