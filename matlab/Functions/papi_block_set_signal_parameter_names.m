@@ -14,16 +14,14 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
     
     if isfield(config, 'BlockConfig')
         
-        % used ParameterNames as described in BlockConfig
-        
+        % used ParameterNames as described in BlockConfig      
         if isfield(config.BlockConfig, 'ParameterNames')
             disp('has ParameterNames config');
         end
         
         % used SignalNames as described in BlockConfig
-
         if isfield(config.BlockConfig, 'SignalNames')
-            disp('has ParameterNames config');
+            disp('has SignalNames config');
         end
 
     else
@@ -33,15 +31,24 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
                     
           parameters = {};
           signals = {};
-          
+          %disp(get(papi_block_complete_handle))
            for n=1+input_offset:length(papi_block_complete.Inport)
               port_handler = papi_block_complete.Inport(n);
               port = get(port_handler);
               line_handler = port.Line;
+              %disp(port);
+              
+              
               if ishandle(line_handler)
                   line = get(line_handler);
                   %signals(n-input_offset) = {line.Name};
-
+                  src_block =get(line.SrcBlockHandle);
+                  disp(line.Name);
+                  %disp(line)
+                  %simulink_example([],[],[],'compile')
+                  
+                  %get_param(src_block,'CompiledPortWidths')
+                  
                   if length(line.Name)
                     signals(n-input_offset) = {line.Name};
                   else
@@ -60,7 +67,7 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
                port_handler = papi_block_complete.Outport(n);
                port = get(port_handler);
                line_handler = port.Line;
-
+               
                if ishandle(line_handler)
                    line = get(line_handler);
                    %parameters(n) = {line.Name};

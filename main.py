@@ -34,13 +34,20 @@ from PyQt5.QtWidgets           import  QApplication
 import platform
 import sys
 
-def start_PaPI():
+import argparse
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-c", "--config", dest = "config", default = "", help="Configuration file loaded after startup.")
+
+args = parser.parse_args()
+
+def start_PaPI(args=None):
     print('Plattform of the system running PaPI: ' + platform.system())
 
     # start on PaPI on system running Linux
     if platform.system() == 'Linux':
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
-        core.run()
+        core.run(args=args)
         return
 
     # start on PaPI on system running Windows
@@ -52,7 +59,7 @@ def start_PaPI():
     # start on PaPI on system running Mac OS X
     if platform.system() == 'Darwin':
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
-        core.run()
+        core.run(args=args)
         return
         # app = QApplication(sys.argv)
         # gui = GUI(is_parent=True)
@@ -64,4 +71,5 @@ def start_PaPI():
     raise Exception('Seems like the os you are using is not supported by PaPI')
 
 if __name__ == '__main__':
-    sys.exit(start_PaPI())
+
+    sys.exit(start_PaPI(args=args))

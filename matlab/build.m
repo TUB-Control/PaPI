@@ -36,8 +36,8 @@ def.SourceFiles = {'PaPIBlock.cpp'};
 def.IncPaths = {'../hpp'};
 def.SrcPaths = {'../cpp'};
 def.Options.useTlcWithAccel = false;
-def.HostLibFiles = {'libjsoncpp.so.0'};
-def.TargetLibFiles = {'libjsoncpp.so.0'};
+def.HostLibFiles = {'libjsoncpp.so'};
+def.TargetLibFiles = {'libjsoncpp.so'};
 def.Options.language = 'C++';
 def.LibPaths = libPaths;
 
