@@ -526,7 +526,7 @@ class PaPIWindow(QMainWindow):
         self.tabList    = {}
         self.tabWidget = TabObject(windowName)
         self.setCentralWidget(self.tabWidget)
-
+        self.closeIfempty = False
         self.alreadyDocked = False
 
         self.setWindowTitle(self.windowName)
