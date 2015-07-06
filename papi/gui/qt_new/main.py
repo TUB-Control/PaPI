@@ -96,6 +96,12 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
         if args.config:
             gui.load_config(args.config)
 
+        try:
+            if args.debug_level:
+                gui.log.lvl = int(args.debug_level)
+        except:
+            pass
+
     app.exec_()
 
 

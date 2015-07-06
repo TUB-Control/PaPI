@@ -39,6 +39,8 @@ from papi.data.DSignal import DSignal
 from papi.ConsoleLog import ConsoleLog
 from papi.data.DOptionalData import DOptionalData
 
+import papi.constants as pc
+
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE, \
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
@@ -69,7 +71,7 @@ class Process_dummy(object):
 
 
 class Core:
-    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None):
+    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None, args=None):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -114,6 +116,8 @@ class Core:
                                           'start_plugin':           self.__process_start_plugin__
         }
 
+        self.args = args
+
         # creating the main core data object DCore and core queue
         self.core_data = DCore()
         self.core_goOn = 1
@@ -129,7 +133,15 @@ class Core:
         self.use_gui = use_gui
 
         # set information for console logging part (debug information)
+
         self.log = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
+
+        try:
+            if args:
+                if args.debug_level:
+                    self.log.lvl = int(args.debug_level)
+        except:
+            pass
 
         # define variables for check alive system, e.a. timer and counts
         self.alive_intervall = CORE_ALIVE_CHECK_INTERVAL
@@ -161,7 +173,7 @@ class Core:
 
         signal.signal(signal.SIGINT, lambda a,b,c=self: self.signal_handler(a,b,c))
 
-    def run(self,args=None):
+    def run(self):
         """
         Main operation function of core.
         Event loop is in here.
@@ -176,10 +188,8 @@ class Core:
 
         if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
-                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id, args))
+                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id, self.args))
             self.gui_process.start()
-
-
 
         # start the check alive timer
         if CORE_ALIVE_CHECK_ENABLED is True:

@@ -31,23 +31,33 @@ __author__ = 'control'
 from papi.core              import Core
 from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
 from PyQt5.QtWidgets           import  QApplication
+
+import papi.constants as pc
+
 import platform
 import sys
 
 import argparse
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-c", "--config", dest = "config", default = "", help="Configuration file loaded after startup.")
+parser.add_argument("-c", "--config",  dest = "config", default = "", help="Configuration file loaded after startup.")
+parser.add_argument("-v", "--version", dest = "version", action="store_true", default=False, help="Prints current PaPI version.")
+parser.add_argument("-d", "--debug_level", dest = "debug_level", default='0', help="Sets debug level.")
 
 args = parser.parse_args()
 
 def start_PaPI(args=None):
     print('Plattform of the system running PaPI: ' + platform.system())
 
+    if args:
+        if args.version:
+            print("Current PaPI version: " + pc.CORE_PAPI_VERSION)
+            return
+
     # start on PaPI on system running Linux
     if platform.system() == 'Linux':
-        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
-        core.run(args=args)
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
+        core.run()
         return
 
     # start on PaPI on system running Windows
@@ -58,8 +68,8 @@ def start_PaPI(args=None):
 
     # start on PaPI on system running Mac OS X
     if platform.system() == 'Darwin':
-        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True)
-        core.run(args=args)
+        core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
+        core.run()
         return
         # app = QApplication(sys.argv)
         # gui = GUI(is_parent=True)
