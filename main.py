@@ -38,7 +38,7 @@ import platform
 import sys
 
 import argparse
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://github.com/TUB-Control/PaPI")
 
 parser.add_argument("-c", "--config",  dest = "config", default = "", help="Configuration file loaded after startup.")
 parser.add_argument("-v", "--version", dest = "version", action="store_true", default=False, help="Prints current PaPI version.")

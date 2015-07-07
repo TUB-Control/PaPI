@@ -210,10 +210,6 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
 
     def fill_with(self, data: DGui):
 
-        print('fill with data')
-
-        print(data.get_all_plugins())
-
         dplugins = data.get_all_plugins()
 
         row = 0

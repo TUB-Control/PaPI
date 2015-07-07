@@ -55,8 +55,8 @@ class Button(pcp_base):
         self.name = config['name']['value']
         self.cur_value = 0
 
-        self.value_up = float(self.config['state1']['value'])
-        self.value_down = float(self.config['state2']['value'])
+        self.value_up = self.config['state1']['value']
+        self.value_down = self.config['state2']['value']
         self.text_up =  (self.config['state1_text']['value'])
         self.text_down = (self.config['state2_text']['value'])
         self.button_state = 'up'

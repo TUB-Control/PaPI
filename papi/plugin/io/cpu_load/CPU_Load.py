@@ -44,7 +44,7 @@ class CPU_Load(iop_base):
     def execute(self, Data=None, block_name = None, plugin_uname = None):
         vec = numpy.zeros((2,1))
 
-        vec[0,0] = self.t
+        vec[0,0] = self.t*10
         vec[1,0] = self.getCpuLoad() * 100
 
         self.t += self.delta_t
