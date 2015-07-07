@@ -122,7 +122,7 @@
 <span class="c"># Disable antialiasing for prettier plots</span>
 <span class="c">#pg.setConfigOptions(antialias=False)</span>
 
-<div class="viewcode-block" id="run_gui_in_own_process"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.run_gui_in_own_process">[docs]</a><span class="k">def</span> <span class="nf">run_gui_in_own_process</span><span class="p">(</span><span class="n">CoreQueue</span><span class="p">,</span> <span class="n">GUIQueue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">):</span>
+<div class="viewcode-block" id="run_gui_in_own_process"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.run_gui_in_own_process">[docs]</a><span class="k">def</span> <span class="nf">run_gui_in_own_process</span><span class="p">(</span><span class="n">CoreQueue</span><span class="p">,</span> <span class="n">GUIQueue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to call to start gui operation</span>
 <span class="sd">    :param CoreQueue: link to queue of core</span>
@@ -134,12 +134,24 @@
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+
     <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
 
     <span class="n">gui</span> <span class="o">=</span> <span class="n">GUI</span><span class="p">(</span><span class="n">core_queue</span><span class="o">=</span><span class="n">CoreQueue</span><span class="p">,</span> <span class="n">gui_queue</span><span class="o">=</span><span class="n">GUIQueue</span><span class="p">,</span> <span class="n">gui_id</span><span class="o">=</span><span class="n">gui_id</span><span class="p">)</span>
     <span class="n">gui</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
     <span class="c"># cProfile.runctx(&#39;gui.run()&#39;, globals(), locals()) # for benchmarks</span>
     <span class="n">gui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">:</span>
+                <span class="n">gui</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
     <span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 
 </div>
@@ -497,7 +509,10 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">last_config</span> <span class="o">=</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_load_xml</span><span class="p">(</span><span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="GUI.load_config"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.GUI.load_config">[docs]</a>    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_load_xml</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.save_triggered"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.main.GUI.save_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">save_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

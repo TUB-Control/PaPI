@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Add &mdash; papi  documentation</title>
+    <title>Textfield &mdash; papi  documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="papi  documentation" href="index.html" />
-    <link rel="up" title="DPPlugins" href="papi.plugin.dpp.html" />
-    <link rel="next" title="ToMAT" href="papi.plugin.dpp.toMAT.ToMAT.html" />
-    <link rel="prev" title="DPPlugins" href="papi.plugin.dpp.html" /> 
+    <link rel="up" title="PCPlugins" href="papi.plugin.pcp.html" />
+    <link rel="next" title="IOPlugins" href="papi.plugin.io.html" />
+    <link rel="prev" title="Slider" href="papi.plugin.pcp.slider.Slider.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,14 +39,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.toMAT.ToMAT.html" title="ToMAT"
+          <a href="papi.plugin.io.html" title="IOPlugins"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.html" title="DPPlugins"
+          <a href="papi.plugin.pcp.slider.Slider.html" title="Slider"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>
-          <li><a href="papi.plugin.dpp.html" accesskey="U">DPPlugins</a> &raquo;</li> 
+          <li><a href="papi.plugin.pcp.html" accesskey="U">PCPlugins</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,11 +55,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="add">
-<h1>Add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="textfield">
+<h1>Textfield<a class="headerlink" href="#textfield" title="Permalink to this headline">¶</a></h1>
 <div class="topic">
 <p class="topic-title first">General description</p>
-<p>This plugin is used to build the sum of all values in a signal.</p>
+<p>The textfield is used to set a parameter. If there exists a regex for the parameter this regex will be used.</p>
+</div>
+<div class="figure">
+<img alt="Picture of the plugin Textfield" src="_images/Textfield.png" />
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
@@ -67,9 +70,33 @@
 <table border="1" class="docutils">
 <caption>Plugin configuration</caption>
 <colgroup>
-<col width="20%" />
-<col width="13%" />
-<col width="67%" />
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>value_init</td>
+<td>Float</td>
+<td>Used to set an initial value.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="parameter">
+<h2>Parameter<a class="headerlink" href="#parameter" title="Permalink to this headline">¶</a></h2>
+<p>A plugin instance can be manipulated by the following parameter.</p>
+<table border="1" class="docutils">
+<caption>Provided parameter</caption>
+<colgroup>
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -85,29 +112,26 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="parameter">
-<h2>Parameter<a class="headerlink" href="#parameter" title="Permalink to this headline">¶</a></h2>
-<p>A plugin instance can be manipulated by the following parameter.</p>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>A plugin instance provides this events which can be used to manipulated parameters of other plugins.</p>
 <table border="1" class="docutils">
-<caption>Provided parameter</caption>
+<caption>Provided events</caption>
 <colgroup>
-<col width="23%" />
-<col width="15%" />
-<col width="15%" />
-<col width="46%" />
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
 <th class="head">Type</th>
-<th class="head">Example</th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>None</td>
-<td>None</td>
-<td>None</td>
-<td>None</td>
+<tr class="row-even"><td>Change</td>
+<td>Float</td>
+<td>Sent when slider was moved.</td>
 </tr>
 </tbody>
 </table>
@@ -122,22 +146,23 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Add</a><ul>
+<li><a class="reference internal" href="#">Textfield</a><ul>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#parameter">Parameter</a></li>
+<li><a class="reference internal" href="#events">Events</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.plugin.dpp.html"
-                        title="previous chapter">DPPlugins</a></p>
+  <p class="topless"><a href="papi.plugin.pcp.slider.Slider.html"
+                        title="previous chapter">Slider</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="papi.plugin.dpp.toMAT.ToMAT.html"
-                        title="next chapter">ToMAT</a></p>
+  <p class="topless"><a href="papi.plugin.io.html"
+                        title="next chapter">IOPlugins</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/papi.plugin.dpp.add.Add.txt"
+    <li><a href="_sources/papi.plugin.pcp.textfield.Textfield.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -167,14 +192,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.toMAT.ToMAT.html" title="ToMAT"
+          <a href="papi.plugin.io.html" title="IOPlugins"
              >next</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.html" title="DPPlugins"
+          <a href="papi.plugin.pcp.slider.Slider.html" title="Slider"
              >previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>
-          <li><a href="papi.plugin.dpp.html" >DPPlugins</a> &raquo;</li> 
+          <li><a href="papi.plugin.pcp.html" >PCPlugins</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

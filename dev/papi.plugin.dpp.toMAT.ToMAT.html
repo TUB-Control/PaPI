@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Add &mdash; papi  documentation</title>
+    <title>ToMAT &mdash; papi  documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,8 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="papi  documentation" href="index.html" />
     <link rel="up" title="DPPlugins" href="papi.plugin.dpp.html" />
-    <link rel="next" title="ToMAT" href="papi.plugin.dpp.toMAT.ToMAT.html" />
-    <link rel="prev" title="DPPlugins" href="papi.plugin.dpp.html" /> 
+    <link rel="prev" title="Add" href="papi.plugin.dpp.add.Add.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.toMAT.ToMAT.html" title="ToMAT"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.dpp.html" title="DPPlugins"
+          <a href="papi.plugin.dpp.add.Add.html" title="Add"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>
@@ -55,11 +51,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="add">
-<h1>Add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tomat">
+<h1>ToMAT<a class="headerlink" href="#tomat" title="Permalink to this headline">¶</a></h1>
 <div class="topic">
 <p class="topic-title first">General description</p>
-<p>This plugin is used to build the sum of all values in a signal.</p>
+<p>This plugin is used save subscribed signals in a matlab file.</p>
 </div>
 <div class="section" id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
@@ -78,9 +74,9 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>None</td>
-<td>None</td>
-<td>None</td>
+<tr class="row-even"><td>file</td>
+<td>String</td>
+<td>Name of the matlab file.</td>
 </tr>
 </tbody>
 </table>
@@ -91,10 +87,10 @@
 <table border="1" class="docutils">
 <caption>Provided parameter</caption>
 <colgroup>
-<col width="23%" />
-<col width="15%" />
-<col width="15%" />
-<col width="46%" />
+<col width="18%" />
+<col width="12%" />
+<col width="12%" />
+<col width="59%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -104,13 +100,27 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>None</td>
-<td>None</td>
-<td>None</td>
-<td>None</td>
+<tr class="row-even"><td>start_saving</td>
+<td>Bool</td>
+<td>(0|1)</td>
+<td>Triggers the save process.</td>
+</tr>
+<tr class="row-odd"><td>save_data_for_x_ms</td>
+<td>Int</td>
+<td>1000</td>
+<td>The plugins saves all incoming data for x ms.</td>
+</tr>
+<tr class="row-even"><td>file</td>
+<td>String</td>
+<td>PaPI.mat</td>
+<td>Used to set the name of the matlab file.</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>An example configuration can be found here: <a class="reference download internal" href="_downloads/example_config.xml"><tt class="xref download docutils literal"><span class="pre">example_config.xml</span></tt></a></p>
 </div>
 </div>
 
@@ -122,22 +132,20 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Add</a><ul>
+<li><a class="reference internal" href="#">ToMAT</a><ul>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#parameter">Parameter</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.plugin.dpp.html"
-                        title="previous chapter">DPPlugins</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="papi.plugin.dpp.toMAT.ToMAT.html"
-                        title="next chapter">ToMAT</a></p>
+  <p class="topless"><a href="papi.plugin.dpp.add.Add.html"
+                        title="previous chapter">Add</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/papi.plugin.dpp.add.Add.txt"
+    <li><a href="_sources/papi.plugin.dpp.toMAT.ToMAT.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -167,10 +175,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="papi.plugin.dpp.toMAT.ToMAT.html" title="ToMAT"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.dpp.html" title="DPPlugins"
+          <a href="papi.plugin.dpp.add.Add.html" title="Add"
              >previous</a> |</li>
         <li><a href="index.html">papi  documentation</a> &raquo;</li>
           <li><a href="papi.plugin.doc.html" >Installed plugins</a> &raquo;</li>

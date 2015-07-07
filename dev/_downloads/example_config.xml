@@ -1,0 +1,199 @@
+<PaPI Date="2015-07-07 16:46:24" PaPI_version="1.1.0">
+  <Configuration>
+    <Tabs>
+      <PaPI-Tab>
+        <Background>default</Background>
+        <Position>0</Position>
+      </PaPI-Tab>
+    </Tabs>
+    <Size>
+      <X>771</X>
+      <Y>853</Y>
+    </Size>
+    <ActiveTab>
+      <Active>0</Active>
+    </ActiveTab>
+  </Configuration>
+  <Plugins>
+    <Plugin uname="MATButton">
+      <Identifier>Button</Identifier>
+      <StartConfig>
+        <Parameter Name="name">
+          <value>TriggerSave</value>
+        </Parameter>
+        <Parameter Name="state2">
+          <value>1</value>
+        </Parameter>
+        <Parameter Name="state1">
+          <value>0</value>
+        </Parameter>
+        <Parameter Name="state1_text">
+          <value>Trigger save process</value>
+        </Parameter>
+        <Parameter Name="position">
+          <value>(0,0)</value>
+        </Parameter>
+        <Parameter Name="size">
+          <value>(280,59)</value>
+        </Parameter>
+        <Parameter Name="tab">
+          <value>PaPI-Tab</value>
+        </Parameter>
+        <Parameter Name="uname">
+          <value>MATButton</value>
+        </Parameter>
+        <Parameter Name="state2_text">
+          <value>Save process was triggered.</value>
+        </Parameter>
+      </StartConfig>
+      <PreviousParameters />
+      <DBlocks>
+        <DBlock Name="Click" />
+      </DBlocks>
+    </Plugin>
+    <Plugin uname="SaveDataForTextfield">
+      <Identifier>Textfield</Identifier>
+      <StartConfig>
+        <Parameter Name="name">
+          <value>Save data for x ms</value>
+        </Parameter>
+        <Parameter Name="position">
+          <value>(-2,58)</value>
+        </Parameter>
+        <Parameter Name="size">
+          <value>(291,55)</value>
+        </Parameter>
+        <Parameter Name="tab">
+          <value>PaPI-Tab</value>
+        </Parameter>
+        <Parameter Name="uname">
+          <value>SaveDataForTextfield</value>
+        </Parameter>
+        <Parameter Name="value_init">
+          <value>1500</value>
+        </Parameter>
+      </StartConfig>
+      <PreviousParameters />
+      <DBlocks>
+        <DBlock Name="Change" />
+      </DBlocks>
+    </Plugin>
+    <Plugin uname="NameMATFileTextfield">
+      <Identifier>Textfield</Identifier>
+      <StartConfig>
+        <Parameter Name="name">
+          <value>Name of the matlab file</value>
+        </Parameter>
+        <Parameter Name="position">
+          <value>(0,112)</value>
+        </Parameter>
+        <Parameter Name="size">
+          <value>(295,55)</value>
+        </Parameter>
+        <Parameter Name="tab">
+          <value>PaPI-Tab</value>
+        </Parameter>
+        <Parameter Name="uname">
+          <value>NameMATFileTextfield</value>
+        </Parameter>
+        <Parameter Name="value_init">
+          <value>Data.mat</value>
+        </Parameter>
+      </StartConfig>
+      <PreviousParameters />
+      <DBlocks>
+        <DBlock Name="Change" />
+      </DBlocks>
+    </Plugin>
+    <Plugin uname="ToMAT">
+      <Identifier>ToMAT</Identifier>
+      <StartConfig>
+        <Parameter Name="file">
+          <value>log.mat</value>
+        </Parameter>
+        <Parameter Name="uname">
+          <value>ToMAT</value>
+        </Parameter>
+      </StartConfig>
+      <PreviousParameters>
+        <Parameter Name="save_data_for_x_ms">1500</Parameter>
+        <Parameter Name="file">PaPI.mat</Parameter>
+        <Parameter Name="start_saving">0</Parameter>
+      </PreviousParameters>
+      <DBlocks />
+    </Plugin>
+    <Plugin uname="Sinus">
+      <Identifier>Sinus</Identifier>
+      <StartConfig>
+        <Parameter Name="uname">
+          <value>Sinus</value>
+        </Parameter>
+        <Parameter Name="amax">
+          <value>3</value>
+        </Parameter>
+        <Parameter Name="f">
+          <value>1</value>
+        </Parameter>
+      </StartConfig>
+      <PreviousParameters>
+        <Parameter Name="Frequenz Block SinMit_f3">0.3</Parameter>
+      </PreviousParameters>
+      <DBlocks>
+        <DBlock Name="SinMit_f3">
+          <DSignal uname="f3_1">
+            <dname>f3_1</dname>
+          </DSignal>
+          <DSignal uname="f3_2">
+            <dname>f3_2</dname>
+          </DSignal>
+          <DSignal uname="f3_scalar">
+            <dname>f3_scalar</dname>
+          </DSignal>
+        </DBlock>
+        <DBlock Name="SinMit_f1">
+          <DSignal uname="f1_1">
+            <dname>f1_f1DNAME</dname>
+          </DSignal>
+        </DBlock>
+        <DBlock Name="SinMit_f2">
+          <DSignal uname="f2_1">
+            <dname>f2_1</dname>
+          </DSignal>
+        </DBlock>
+      </DBlocks>
+    </Plugin>
+  </Plugins>
+  <Subscriptions>
+    <Subscription>
+      <Destination>ToMAT</Destination>
+      <Source uname="SaveDataForTextfield">
+        <Block name="Change">
+          <Alias>save_data_for_x_ms</Alias>
+          <Signals />
+        </Block>
+      </Source>
+      <Source uname="NameMATFileTextfield">
+        <Block name="Change">
+          <Alias>file</Alias>
+          <Signals />
+        </Block>
+      </Source>
+      <Source uname="MATButton">
+        <Block name="Click">
+          <Alias>start_saving</Alias>
+          <Signals />
+        </Block>
+      </Source>
+      <Source uname="Sinus">
+        <Block name="SinMit_f3">
+          <Alias />
+          <Signals>
+            <Signal>f3_1</Signal>
+            <Signal>f3_2</Signal>
+            <Signal>f3_scalar</Signal>
+          </Signals>
+        </Block>
+      </Source>
+    </Subscription>
+  </Subscriptions>
+</PaPI>

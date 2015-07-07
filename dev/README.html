@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PaPI v. 1.x &mdash; papi  documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi  documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">papi  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="papi-v-1-x">
+<h1>PaPI v. 1.x<a class="headerlink" href="#papi-v-1-x" title="Permalink to this headline">¶</a></h1>
+<p>Plugin based Process Interaction</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>PaPI is a tool to interact with data generating processes. It can be
+used to get data stream of experiments or devices like oscilloscopes.</p>
+<p>PaPI is based on a strong plugin architecture. Therefore it is easy to
+expand to new environments.</p>
+<p>PaPi will make heavily use of multi-core systems.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Basic installation on Ubuntu 14.04 64Bit, using python 3.4</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">git</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3.4</span> <span class="pre">python3-numpy</span> <span class="pre">python3-pip</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-pyqt5</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-pyqt5.qtwebkit</span></tt> (just needed for the
+HTMLViewer plugin) [optional]</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">installl</span> <span class="pre">python3-pyqt5.qtsvg</span></tt> (just needed for the
+export feature of the Plot plugin) [optional]</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">tornado</span></tt> (just needed for the Human plugin)
+[optional]</p>
+<p><tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/TUB-Control/PaPI.git</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">python3.4</span> <span class="pre">main.py</span></tt></p>
+<p>Tip: If python3.4 interpreter cannot find or locate the installed
+packages (PyQt5 or numpy), please make sure that the right python
+interpreter is called (in case there are multiple installed).</p>
+</div>
+<div class="section" id="contribution">
+<h2>Contribution<a class="headerlink" href="#contribution" title="Permalink to this headline">¶</a></h2>
+<p>To get started, sign the Contributor License Agreement.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Sphinx doc on GitHub: <a class="reference external" href="https://tub-control.github.io/PaPI/">https://tub-control.github.io/PaPI/</a></p>
+<p>PaPI wiki on GitHub: <a class="reference external" href="https://github.com/TUB-Control/PaPI/wiki">https://github.com/TUB-Control/PaPI/wiki</a></p>
+</div>
+<div class="section" id="embedded-packages">
+<h2>Embedded Packages<a class="headerlink" href="#embedded-packages" title="Permalink to this headline">¶</a></h2>
+<p>Yapsy 1.10.423 published under BSD-License,
+<a class="reference external" href="http://yapsy.sourceforge.net/#license">http://yapsy.sourceforge.net/#license</a></p>
+<p>pyqtgraph-0.9.11 [unreleased] published under MIT-License</p>
+</div>
+<div class="section" id="used-icon-set">
+<h2>Used icon-set<a class="headerlink" href="#used-icon-set" title="Permalink to this headline">¶</a></h2>
+<p>fatcow-hosting-icons-3.9.2, License:
+<a class="reference external" href="http://creativecommons.org/licenses/by/3.0/us/">http://creativecommons.org/licenses/by/3.0/us/</a>, Provided by:
+<a class="reference external" href="http://www.fatcow.com/">http://www.fatcow.com/</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PaPI v. 1.x</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#contribution">Contribution</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#embedded-packages">Embedded Packages</a></li>
+<li><a class="reference internal" href="#used-icon-set">Used icon-set</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/README.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">papi  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
