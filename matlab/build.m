@@ -1,3 +1,6 @@
+[pathstr,name,ext] = fileparts(mfilename('fullpath'));
+
+oldDir = pathstr;
 
 curPath = pwd;
 
@@ -45,15 +48,16 @@ defs = [defs; def];
 
 
 cd(legacy_folder_cpp);
-
-legacy_code('generate_for_sim', defs);
-
-legacy_code('sfcn_tlc_generate', defs);
-legacy_code('rtwmakecfg_generate', defs);
-
-addpath(pwd);
-
-cd('..');
+try
+    legacy_code('generate_for_sim', defs);
+    legacy_code('sfcn_tlc_generate', defs);
+    legacy_code('rtwmakecfg_generate', defs);
+    addpath(pwd);
+catch
+    warning('ERROR WHILE COMPLIATION');
+    cd(oldDir);
+    return;
+end
 
 addpath(pwd);
 

@@ -67,6 +67,7 @@
      <string>View</string>
     </property>
     <addaction name="actionRunMode"/>
+    <addaction name="actionToolbar"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -85,6 +86,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
+   <property name="acceptDrops">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -110,6 +114,7 @@
    <addaction name="actionOverview"/>
    <addaction name="separator"/>
    <addaction name="actionResetPaPI"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionLoad">
    <property name="text">
@@ -184,6 +189,17 @@
   <action name="actionReload_Plugin_DB">
    <property name="text">
     <string>Reload DB</string>
+   </property>
+  </action>
+  <action name="actionToolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Toolbar</string>
    </property>
   </action>
  </widget>

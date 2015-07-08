@@ -34,8 +34,8 @@ import traceback
 import re
 
 
-from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox
-from PyQt5.QtGui               import QIcon, QDesktopServices
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox, QTreeView, QAction
+from PyQt5.QtGui               import QIcon, QDesktopServices, QDropEvent, QDragEnterEvent, QPixmap
 from PyQt5.QtCore              import QSize, Qt, QUrl
 from PyQt5 import QtCore, QtGui
 
@@ -53,12 +53,13 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 import papi.constants as pc
 
-
+from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
 from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
 from papi.gui.qt_new.overview_menu import OverviewPluginMenu
 from papi.gui.qt_new.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
 
 from papi.gui.qt_new.custom import PaPIConfigSaveDialog
+from papi.gui.qt_new.item import PaPITreeModel
 
 from papi.gui.gui_management import GuiManagement
 
@@ -214,11 +215,20 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.in_run_mode = False
 
+
         # -------------------------------------
         # Create placeholder
         # -------------------------------------
         self.overview_menu = None
         self.create_plugin_menu = None
+        self.plugin_create_dialog = None
+
+        # -------------------------------------
+        # Create menues
+        # -------------------------------------
+        self.plugin_create_dialog = CreatePluginDialog(self.gui_management.gui_api, self.TabManager)
+
+
         # -------------------------------------
         # Create callback functions for buttons
         # -------------------------------------
@@ -228,26 +238,52 @@ class GUI(QMainWindow, Ui_QtNewMain):
         # -------------------------------------
         # Create actions
         # -------------------------------------
-        self.actionLoad.triggered.connect(self.load_triggered)
-        self.actionSave.triggered.connect(self.save_triggered)
+        self.actionLoad.triggered.connect(self.triggered_load)
+        self.actionSave.triggered.connect(self.triggered_save)
 
-        self.actionOverview.triggered.connect(self.show_overview_menu)
-        self.actionCreate.triggered.connect(self.show_create_plugin_menu)
+        self.actionOverview.triggered.connect(self.triggered_show_overview_menu)
+        self.actionCreate.triggered.connect(self.triggered_show_create_plugin_menu)
 
-        self.actionResetPaPI.triggered.connect(self.reset_papi)
-        self.actionReloadConfig.triggered.connect(self.reload_config)
+        self.actionResetPaPI.triggered.connect(self.triggered_reset_papi)
+        self.actionReloadConfig.triggered.connect(self.triggered_reload_config)
 
         self.actionRunMode.triggered.connect(self.toggle_run_mode)
 
-        self.actionReload_Plugin_DB.triggered.connect(self.reload_plugin_db)
+        self.actionReload_Plugin_DB.triggered.connect(self.triggered_reload_plugin_db)
 
-        self.actionPaPI_Wiki.triggered.connect(self.papi_wiki_triggerd)
+        self.actionPaPI_Wiki.triggered.connect(self.triggered_papi_wiki)
 
-        self.actionPaPI_Doc.triggered.connect(self.papi_doc_triggerd)
-        self.actionAbout.triggered.connect(self.papi_about_triggerd)
-        self.actionAbout_Qt.triggered.connect(self.papi_about_qt_triggerd)
+        self.actionPaPI_Doc.triggered.connect(self.triggered_papi_doc)
+        self.actionAbout.triggered.connect(self.triggered_papi_about)
+        self.actionAbout_Qt.triggered.connect(self.triggered_papi_about_qt)
+
+        self.actionToolbar.triggered.connect(self.triggered_show_toolbar)
+
+        self.toolBar.dragEnterEvent = self.toolbarDragEnterEvent
+        self.toolBar.dropEvent = self.toolbarDropEvent
 
         self.set_icons()
+
+        # --------------------------------------
+        # Add favourite plugins
+        # --------------------------------------
+        plugin_manager = self.gui_management.plugin_manager;
+
+        plugin_manager.locatePlugins()
+        candidates = plugin_manager.getPluginCandidates()
+        all_pluginfo = {c[2].path:c[2] for c in candidates}
+        loadable_pluginfo = {p.path:p for p in plugin_manager.getAllPlugins()}
+
+        for plugin_info in all_pluginfo.values():
+            if plugin_info.name == "PaPIController":
+
+                if plugin_info.path in loadable_pluginfo.keys():
+                    plugin_info = loadable_pluginfo[plugin_info.path]
+                    plugin_info.loadable = True
+                else:
+                    plugin_info.loadable = False
+
+                self.toolbarAddFavPlugin(plugin_info)
 
     def set_icons(self):
         # -------------------------------------
@@ -394,7 +430,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             h = int(cfg['size']['y']['value'])
             self.resize_gui_window(w,h)
 
-    def reload_plugin_db(self):
+    def triggered_reload_plugin_db(self):
         """
         This Callback function will reload the plugin list of the plugin manager
 
@@ -418,7 +454,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
 
-    def show_create_plugin_menu(self):
+    def triggered_show_create_plugin_menu(self):
         """
 
 
@@ -430,7 +466,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.create_plugin_menu.show()
 
-    def show_overview_menu(self):
+    def triggered_show_overview_menu(self):
         """
         Used to show the overview menu.
 
@@ -439,7 +475,17 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api)
         self.overview_menu.show()
 
-    def load_triggered(self):
+    def triggered_show_toolbar(self):
+        """
+        Used to hide and unhide the toolbar
+        :return:
+        """
+
+        self.toolBar.setHidden(not self.toolBar.isHidden())
+
+        self.actionToolbar.setChecked(not self.toolBar.isHidden())
+
+    def triggered_load(self):
         """
         Used to start the 'load config' dialog.
 
@@ -464,7 +510,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
     def load_config(self, file_name):
         self.gui_management.gui_api.do_load_xml(file_name)
 
-    def save_triggered(self):
+    def triggered_save(self):
         """
         Used to start the 'save config' dialog.
 
@@ -654,16 +700,16 @@ class GUI(QMainWindow, Ui_QtNewMain):
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
 
 
-    def reload_config(self):
+    def triggered_reload_config(self):
         """
         This function is used to reset PaPI and to reload the last loaded configuration file.
         :return:
         """
         if self.last_config is not None:
-            self.reset_papi()
+            self.triggered_reset_papi()
             QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
 
-    def reset_papi(self):
+    def triggered_reset_papi(self):
         """
         This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
         :return:
@@ -679,20 +725,60 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
 
-    def papi_wiki_triggerd(self):
+    def triggered_papi_wiki(self):
         QDesktopServices.openUrl(QUrl(pc.PAPI_WIKI_URL, QUrl.TolerantMode))
 
-    def papi_doc_triggerd(self):
+    def triggered_papi_doc(self):
         QDesktopServices.openUrl(QUrl(pc.PAPI_DOC_URL, QUrl.TolerantMode))
 
-    def papi_about_triggerd(self):
+    def triggered_papi_about(self):
         QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
 
-    def papi_about_qt_triggerd(self):
+    def triggered_papi_about_qt(self):
         QMessageBox.aboutQt(self)
 
+    def toolbarDropEvent(self, event:QDropEvent):
 
+        source = event.source()
+        if isinstance(source, QTreeView):
+            if isinstance(source.model(), PaPITreeModel):
+                for index in source.selectedIndexes():
+                    plugin_info = source.model().data(index, Qt.UserRole)
+                    self.toolbarAddFavPlugin(plugin_info)
 
+    def toolbarDragEnterEvent(self, event: QDragEnterEvent):
+
+        source = event.source()
+        if isinstance(source, QTreeView):
+
+            if isinstance(source.model(), PaPITreeModel):
+                event.acceptProposedAction()
+
+    def toolbarAddFavPlugin(self, plugin_info):
+
+        l = len(plugin_info.name)
+        path = plugin_info.path[:-l]
+        path += 'box.png'
+        px = QPixmap(path)
+
+        icon = QIcon(px)
+
+        for action in self.toolBar.actions():
+            if action.text() == plugin_info.name:
+                return
+
+        plugin_action = QAction(icon, plugin_info.name, self)
+        plugin_action.triggered.connect(lambda ignore, p1=plugin_info : self.show_create_plugin_dialog(p1))
+        self.toolBar.addAction(plugin_action)
+
+    def show_create_plugin_dialog(self, plugin_info):
+        if plugin_info is not None:
+            if plugin_info.loadable:
+                self.plugin_create_dialog.set_plugin(plugin_info)
+                self.plugin_create_dialog.show()
+
+    def dropEvent(self, event:QDropEvent):
+        source = event.source()
 
 def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     """

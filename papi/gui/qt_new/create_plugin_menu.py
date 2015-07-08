@@ -60,6 +60,9 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.plugin_manager = plugin_manager
 
+        self.pluginTree.setDragEnabled(True)
+        self.pluginTree.setDropIndicatorShown(True)
+
         # self.plugin_manager.setPluginPlaces(
         #     PLUGIN_ROOT_FOLDER_LIST
         # )
@@ -87,6 +90,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
+
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
         self.helpButton.clicked.connect(self.help_button_triggered)
         self.finder = ModuleFinder()
@@ -124,7 +128,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pathEdit.setText(plugin_info.path)
 
         self.createButton.setEnabled(plugin_info.loadable)
-
 
         lines = None
         with open(plugin_info.path + '.py') as f:
@@ -180,9 +183,7 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
         self.plugin_manager.locatePlugins()
         candidates = self.plugin_manager.getPluginCandidates()
-
         all_pluginfo = {c[2].path:c[2] for c in candidates}
-
         loadable_pluginfo = {p.path:p for p in self.plugin_manager.getAllPlugins()}
 
         for pluginfo in all_pluginfo.values():
@@ -230,4 +231,3 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()
-

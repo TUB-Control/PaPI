@@ -148,7 +148,7 @@ class PaPITreeModel(QStandardItemModel):
         if not parent.isValid():
             return Qt.ItemIsEnabled
 
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled
 
 # ------------------------------------
 # Item Custom

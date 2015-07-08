@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
 #
-# Created: Fri Jul  3 13:10:18 2015
+# Created: Wed Jul  8 13:46:44 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,6 +40,7 @@ class Ui_QtNewMain(object):
         self.statusbar.setObjectName("statusbar")
         QtNewMain.setStatusBar(self.statusbar)
         self.toolBar = QtWidgets.QToolBar(QtNewMain)
+        self.toolBar.setAcceptDrops(True)
         self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.toolBar.setMovable(False)
         self.toolBar.setFloatable(False)
@@ -75,6 +76,10 @@ class Ui_QtNewMain(object):
         self.actionAbout_PySide.setObjectName("actionAbout_PySide")
         self.actionReload_Plugin_DB = QtWidgets.QAction(QtNewMain)
         self.actionReload_Plugin_DB.setObjectName("actionReload_Plugin_DB")
+        self.actionToolbar = QtWidgets.QAction(QtNewMain)
+        self.actionToolbar.setCheckable(True)
+        self.actionToolbar.setChecked(True)
+        self.actionToolbar.setObjectName("actionToolbar")
         self.menuPaPI.addAction(self.actionLoad)
         self.menuPaPI.addAction(self.actionSave)
         self.menuPaPI.addAction(self.actionReloadConfig)
@@ -86,6 +91,7 @@ class Ui_QtNewMain(object):
         self.menuPlugin.addSeparator()
         self.menuPlugin.addAction(self.actionReload_Plugin_DB)
         self.menuView.addAction(self.actionRunMode)
+        self.menuView.addAction(self.actionToolbar)
         self.menuHelp.addAction(self.actionPaPI_Wiki)
         self.menuHelp.addAction(self.actionPaPI_Doc)
         self.menuHelp.addSeparator()
@@ -102,6 +108,7 @@ class Ui_QtNewMain(object):
         self.toolBar.addAction(self.actionOverview)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionResetPaPI)
+        self.toolBar.addSeparator()
 
         self.retranslateUi(QtNewMain)
         self.widgetTabs.setCurrentIndex(-1)
@@ -131,4 +138,5 @@ class Ui_QtNewMain(object):
         self.actionAbout_Qt.setText(_translate("QtNewMain", "About Qt"))
         self.actionAbout_PySide.setText(_translate("QtNewMain", "About PySide"))
         self.actionReload_Plugin_DB.setText(_translate("QtNewMain", "Reload DB"))
+        self.actionToolbar.setText(_translate("QtNewMain", "Toolbar"))
 
