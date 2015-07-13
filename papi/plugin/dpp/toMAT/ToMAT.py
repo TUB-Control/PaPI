@@ -127,6 +127,8 @@ class ToMAT(dpp_base):
         print("ToMAT: Saved data in " + self.name_mat_file)
         sio.savemat(self.name_mat_file, {'PaPI' : self.data_to_save})
 
+        self.data_to_save = {}
+
     def get_plugin_configuration(self):
         config = {
              "file": {

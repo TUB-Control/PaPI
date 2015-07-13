@@ -31,7 +31,7 @@ Sven Knuth
 
 #include <string>
 #include <iostream>
-#include <sstream> 
+#include <sstream>
 #include <cstdio>
 #include <algorithm>
 
@@ -42,13 +42,15 @@ class PaPIBlock {
 private:
 
     //Used to remember the amount of elements of the input vector u1
-    int amount_input;
+    int size_u1_vector;
     //Used to remember the amount of elements of the input vector y1
     int amount_output;
     //Amount of different parameters [1,5,4,3] => 4
     int amount_parameter;
     //Size of the single for the parameter [1,5,4,3] => size(p1)=1, size(p2)=5, size(p3)=4, size(p4)=3
-    int* size_parameter;
+    int* dimension_parameters;
+    int* dimension_inputs;
+    int* split_signals;
     //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
     int size_output_parameters;
 
@@ -69,10 +71,14 @@ private:
 
     std::string getInitialValueForParameter(double para_out[], int p_id);
 
-    
+
 
 public:
-    PaPIBlock(int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out,signed char json_string[], int size_json_string, int size_output_parameters);
+    PaPIBlock(
+        int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+        int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
+        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
+    );
     void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
     void setParaOut(int stream_in[], int msg_length, double para_out[]);
 
@@ -84,10 +90,22 @@ public:
 
 // External declaration for class instance global storage
 extern PaPIBlock *papiBlockVar;
+// amount_parameters, [unicode2native(json_string, 'ISO-8859-1') 0], output_size, sum(amount_parameters), define_inputs, sum(define_inputs)
 
 // Method wrappers
-extern void createPaPIBlock(void **work1, int size_data_in, int size_stream_in, int size_stream_out, int size_para_out[], int amount_para_out, signed char json_string[], int size_json_string, int size_output_parameters);
+extern void createPaPIBlock(
+    void **work1, //Working vector
+    int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
+);
+
 extern void deletePaPIBlock(void **work1);
-extern void outputPaPIBlock(void **work1, double data_in[], int stream_in[], int msg_length, double time, int reset_event, int stream_out[], double para_out[]);
+
+extern void outputPaPIBlock(
+    void **work1, double u1_data_in[], int u2_stream_in[],
+    int u3_msg_length, double u4_time, int u5_reset_event, int y1_stream_out[],
+    double y2_para_out[]
+);
 
 #endif /* _PAPI_BLOCK_ */
