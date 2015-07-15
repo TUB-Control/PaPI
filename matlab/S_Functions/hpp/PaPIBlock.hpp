@@ -51,11 +51,13 @@ private:
     int* dimension_parameters;
     int* dimension_inputs;
     int* split_signals;
+    int amount_inputs;
+
     //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
     int size_output_parameters;
 
     int* offset_parameter;
-
+    int* offset_input;
     Json::Value papiJsonConfig;
     Json::Value blockJsonConfig;
 
@@ -75,7 +77,7 @@ private:
 
 public:
     PaPIBlock(
-        int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+        int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
         int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
         int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
     );
@@ -95,7 +97,7 @@ extern PaPIBlock *papiBlockVar;
 // Method wrappers
 extern void createPaPIBlock(
     void **work1, //Working vector
-    int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+    int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
 );

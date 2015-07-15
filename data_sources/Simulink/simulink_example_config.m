@@ -6,9 +6,10 @@ function [ json_config ] = simulink_example_config( state, compact)
 
         
     if state == 1
-                             
-        signals = {'sine_1','sine_multiplier', 'sine_3', 'noise', 'pulse','sine','new_sine'};
-        parameters = {'multiplier'};
+                                     
+        signals = {'sine(1)','sine(2)','sine(3)','noise','sine_multiplier'};
+        
+        parameters = {'multiplier','p2'};
                        
         pf = PacketFramework('PaPIConfig');
 
@@ -41,8 +42,17 @@ function [ json_config ] = simulink_example_config( state, compact)
     
     if state == 2
 
-        pf = PacketFramework('PaPIConfig');
+        pf = PacketFramework('BlockConfig');
 
+        
+        signals = {'sine_1','sine_2','sine_3','noise3Size','sine_multiplier'};
+        
+        parameters = {'multiplier','p2'};
+
+        
+        pf.PF_addsignalsForBlockConfig(signals);
+        pf.PF_addparametersForBlockConfig(parameters);
+        
         plot_uname = pf.PF_addplugin('Plot', 'PlotData', '(300,300)', '(0,0)');
         slider_uname = pf.PF_addplugin('Slider', 'Multiplier', '(150,75)', '(300,0)');
  
@@ -54,8 +64,6 @@ function [ json_config ] = simulink_example_config( state, compact)
         )
         
 
-        signals = {'sine_1','sine_multiplier', 'sine_3', 'noise', 'pulse','sine','new_sine'};
-        parameters = {'multiplier'};
 
         % Create subscription
         
