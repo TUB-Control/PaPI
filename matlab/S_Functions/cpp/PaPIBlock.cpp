@@ -24,7 +24,10 @@ Sven Knuth
 */
 
 #include "PaPIBlock.hpp"
+#include "UDPHandle.hpp"
+
 #include <limits>
+
 
 #define MAX_MESSAGE_LENGTH 50
 #define START_MESSAGE_COUNTER 1
@@ -52,6 +55,7 @@ struct para {
     double value;
 };
 
+
 /**********************************/
 /**** Class method definitions ****/
 /**********************************/
@@ -73,11 +77,15 @@ PaPIBlock::PaPIBlock(
 
     this->offset_parameter = (int*) malloc(sizeof(int) * this->amount_parameter);
 
+    printf("Create: PaPIBlock 1 \n");
+
     int offset = 0;
     for (int i=0; i <this->amount_parameter; i++) {
         this->offset_parameter[i] = offset;
         offset += this->dimension_parameters[i];
     }
+
+    printf("Create: PaPIBlock 2 \n");
 
     /* ******************************************
     *    Store information about the data input stream
@@ -100,6 +108,8 @@ PaPIBlock::PaPIBlock(
             this->split_signals[i] = 1;
         }
     }
+
+    printf("Create: PaPIBlock 3 \n");
 
 
     this->offset_input = (int*) malloc(sizeof(int) * this->amount_inputs);
@@ -131,6 +141,20 @@ PaPIBlock::PaPIBlock(
 
     this->parseBlockJsonConfig(p2_json_config);
 
+
+    /* ******************************************
+    *    Start thread: UDP
+    ****************************************** */
+
+    this->udphandle = new UDPHandle();
+
+    this->udphandle->otherHandler = boost::bind(&PaPIBlock::handleStream, this, _1, _2);
+
+/*    this->udphandle->otherHandler = std::bind1st(
+                                        std::mem_fun(&PaPIBlock::handleStream),
+                                        this);
+*/    this->udphandle->run();
+
     //this->buildConfiguration();
 }
 
@@ -141,20 +165,13 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
 
     //printf("JSon: String %s \n", json_string);
 
-   // const char *c = json_string;
 
     std::string json_str;
     std::stringstream ss;
-   // signed char c;
-    //const char c1 = '{';
-    //json_str.append(json_string[0]);
 
     for(int i=0;;i++) {
 
-        //const char c = (const char) json_string[i];
-
         ss << json_string[i];
-   //     printf("Stream %s " , ss.str().c_str());
         if (json_string[i] == '\0') {
             break;
         }
@@ -177,6 +194,8 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
 
     this->blockJsonConfig = root;
 
+    printf("Created: PaPIBlock END \n");
+
 }
 
 void PaPIBlock::buildConfiguration(double para_out[]) {
@@ -188,7 +207,6 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
 
     Json::Value papiConfig    =    this->blockJsonConfig["PaPIConfig"];
 
-    /* Create Inputs */
     Json::Value sourcesConfig;
     Json::Value parametersConfig;
 
@@ -222,23 +240,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
         std::string d_string;
         std::string c_string;
 
-        // if (i < this->size_u1) {
-        //
-        //     if (i < signalNames.size()) {
-        //         u_name = signalNames[i].asString();
-        //
-        //     } else {
-        //         u_name = "u" + i_string;
-        //     }
-        //     ui["SourceName"]   = u_name;
-        // } else {
-        //     ui["SourceName"]   = "time";
-        // }
-
-
         if (i < this->amount_inputs ) {
-
-//            printf("Dimension: ( %d )\n", this->dimension_inputs[i] );
 
             if ( this->split_signals[i] ) {
 
@@ -453,6 +455,8 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
 void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
 
+    //TODO: Temporary solution
+    this->y2_para_out = para_out;
 
     if (msg_length > 0 ) {
 
@@ -661,6 +665,33 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
     //At last, set time
 
+}
+
+void PaPIBlock::handleStream(std::size_t msg_length, boost::array<int, 8192> buffer) {
+    printf("PaPIBlock::handleStream[msg_length=%zu]\n", msg_length);
+
+    int* stream_in = buffer.data();
+
+    if (msg_length > 0 ) {
+
+        if (msg_length >= 1) {
+            // Request for current configuration
+            if (stream_in[2] == -3) {
+
+                if (this->config_sent) {
+                    this->buildConfiguration(this->y2_para_out);
+                }
+
+                this->config_sent = false;
+                this->data_to_sent = this->config.substr(0);
+            }
+
+            if (buffer[0] == 12) {
+                this->setParaOut(stream_in, msg_length, this->y2_para_out);
+            }
+        }
+
+    }
 }
 
 void PaPIBlock::sendConfig(int stream_out[]) {

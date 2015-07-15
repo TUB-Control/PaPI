@@ -35,12 +35,21 @@ Sven Knuth
 #include <cstdio>
 #include <algorithm>
 
+#include <boost/array.hpp>
+
 #include <jsoncpp/json/json.h>
 
+#include "UDPHandle.hpp"
 
 class PaPIBlock {
 private:
+    //--------------------------
+    // Important pointer
+    double* y2_para_out;
 
+    // -------------------------
+    // Important variables
+    // -------------------------
     //Used to remember the amount of elements of the input vector u1
     int size_u1_vector;
     //Used to remember the amount of elements of the input vector y1
@@ -52,7 +61,6 @@ private:
     int* dimension_inputs;
     int* split_signals;
     int amount_inputs;
-
     //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
     int size_output_parameters;
 
@@ -72,6 +80,9 @@ private:
     void buildConfiguration(double para_out[]);
 
     std::string getInitialValueForParameter(double para_out[], int p_id);
+
+    UDPHandle* udphandle;
+    void handleStream(std::size_t msg_length, boost::array<int, 8192> buffer);
 
 
 

@@ -42,13 +42,13 @@ def.OutputFcnSpec = 'outputPaPIBlock(void **work1, double u1[], int32 u2[], int3
 def.StartFcnSpec = 'createPaPIBlock(void **work1, int32 size(u1,1), int32 size(u2,1), int32 size(p1,1), int32 size(p2,1), int32 size(p5,1), int32 size(p6,1),  int32 p1[], int8 p2[], int32 p3 , int32 p4, int32 p5[], int32 p6[])';
 
 def.TerminateFcnSpec = 'deletePaPIBlock(void **work1)';
-def.HeaderFiles = {'PaPIBlock.hpp'};
-def.SourceFiles = {'PaPIBlock.cpp'};
+def.HeaderFiles = {'PaPIBlock.hpp','UDPHandle.hpp'};
+def.SourceFiles = {'PaPIBlock.cpp','UDPHandle.cpp'};
 def.IncPaths = {'../hpp'};
 def.SrcPaths = {'../cpp'};
 def.Options.useTlcWithAccel = false;
-def.HostLibFiles = {'libjsoncpp.so'};
-def.TargetLibFiles = {'libjsoncpp.so'};
+def.HostLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so'};
+def.TargetLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so'};
 def.Options.language = 'C++';
 def.LibPaths = libPaths;
 
