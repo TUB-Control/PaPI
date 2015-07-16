@@ -27,25 +27,28 @@ Sven Knuth
 
 using boost::asio::ip::udp;
 
-UDPHandle::UDPHandle() {
-    this->msg_length = 0;
+UDPHandle::UDPHandle(int local_port, int remote_port) {
+    this->local_port = local_port;
+    this->remote_port = remote_port;
+    this->remote_host = "127.0.0.1";
 }
 
 void UDPHandle::openUDPServer() {
-    printf("%s\n", "UDPHandle::openUDPServer" );
     this->io_service = new boost::asio::io_service();
-
-    this->udp_endpoint = new udp::endpoint(udp::v4(), 1999);
+    this->udp_endpoint = new udp::endpoint(udp::v4(), this->local_port);
     this->udp_socket = new udp::socket(*io_service, *this->udp_endpoint);
 
-    this->startRecieve();
+    this->udp_endpoint_destination = new udp::endpoint(
+        boost::asio::ip::address::from_string(this->remote_host), this->remote_port);
+
 
     this->io_service->run();
+
+    this->startRecieve();
 
 }
 
 void UDPHandle::startRecieve() {
-    printf("%s\n", "UDPHandle::startRecieve");
     this->udp_socket->async_receive_from(
             boost::asio::buffer(recv_buffer_), *this->udp_endpoint,
             boost::bind(&UDPHandle::handleRecieve, this,
@@ -53,16 +56,29 @@ void UDPHandle::startRecieve() {
                 boost::asio::placeholders::bytes_transferred));
 }
 
+void UDPHandle::startSend(int* stream, int msg_length) {
+    // printf("UDPHandle::startSend [msg_length]=%d \n", msg_length);
+    //
+    // for(int i=0; i<27;i++) {
+    //     printf("Stream[%d]=%d\n",i, stream[i] );
+    // }
+
+    this->udp_socket->async_send_to(
+        boost::asio::buffer(stream, msg_length), *this->udp_endpoint_destination,
+        boost::bind(&UDPHandle::handleSend, this,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
+}
+
 
 void UDPHandle::handleRecieve(const boost::system::error_code& error, std::size_t msg_length/*bytes_transferred*/) {
-    printf("UDPHandle::handleRecieve (msg_length=%zu)\n", msg_length);
-
 
     if (!error)
     {
-        this->otherHandler(msg_length, this->recv_buffer_);
+        if(this->otherHandleRecieve) {
+            this->otherHandleRecieve(msg_length, this->recv_buffer_);
+        }
 
-        this->msg_length = msg_length;
         this->startRecieve();
     }
 
@@ -72,12 +88,23 @@ void UDPHandle::handleRecieve(const boost::system::error_code& error, std::size_
     }
 }
 
+void UDPHandle::handleSend(const boost::system::error_code& error, std::size_t)
+  {
+    //   if(error) {
+    //       printf("%s\n", "Message could not be sent.");
+    //   } else {
+    //       printf("%s\n", "Message could be sent.");
+    //   }
+  }
+
 void UDPHandle::run() {
     printf("%s\n", "UDPHandle::run()" );
     this->thread = new boost::thread(boost::bind(&UDPHandle::openUDPServer, this));
 }
 
-
-void UDPHandle::setBindHandleRecieve(void* member_function, void* object) {
-    printf("%s\n", "UDPHandle::setBindHandleRecieve");
+void UDPHandle::stop() {
+    if (this->thread->joinable()) {
+        this->io_service->stop();
+        this->thread->join();
+    }
 }

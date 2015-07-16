@@ -21,6 +21,8 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 Sven Knuth
+
+Source: http://www.boost.org/doc/libs/1_35_0/doc/html/boost_asio/tutorial/tutdaytime6/src.html, 16. Juli 2015
 */
 
 #ifndef _UDP_HANDLE_
@@ -39,30 +41,34 @@ Sven Knuth
 class UDPHandle {
 private:
 
-    boost::thread* thread;
+    boost::thread* thread;    
     boost::asio::ip::udp::socket* udp_socket;
     boost::asio::ip::udp::endpoint* udp_endpoint;
+
+    boost::asio::ip::udp::endpoint* udp_endpoint_destination;
+
+
     boost::array<int, 8192> recv_buffer_;
     boost::asio::io_service* io_service;
 
-
-
-
-    std::size_t msg_length;
-
-    void *member_function;
-    void *object;
+    int local_port;
+    int remote_port;
+    std::string remote_host;
 
     void openUDPServer();
     void startRecieve();
     void handleRecieve(const boost::system::error_code& error, std::size_t);
-
+    void handleSend( const boost::system::error_code&,
+                     std::size_t );
 public:
-    UDPHandle();
-    void run();
-    void setBindHandleRecieve(void* member_function, void* object);
+    UDPHandle(int local_port, int remote_port);
 
-    boost::function<void(std::size_t, boost::array<int, 8192>)> otherHandler;
+    boost::function<void(std::size_t, boost::array<int, 8192>)> otherHandleRecieve;
+
+    void run();
+    void stop();
+
+    void startSend(int*, int);
 
 };
 
