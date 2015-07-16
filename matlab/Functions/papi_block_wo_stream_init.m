@@ -1,17 +1,16 @@
-function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_config, define_inputs)
+function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_config, define_inputs, split_inputs)
 %PAPI_BLOCK_COMPLETE_INIT Summary of this function goes here
 %   Detailed explanation goes here
-
-    %disp('Start-> papi_block_stateflow_init')
+ 
+    %disp('Start---------------')
     load_system(gcb);
 
-    amountIn=amount_input;
+    amountIn=size(define_inputs,2);
     amountOut=size(amount_parameters,2);
 
     sizeParameters = sum(amount_parameters);
 
     name_papi_block = 'PaPI Block';
-
 
     if amountIn < 0
         amountIn = 0;
@@ -64,7 +63,9 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
     lastInput = amountIn;
 
     for n=1:amountIn
-       input = ['s' num2str(n)];
+        input = ['In' num2str(n)];
+
+
         block = find_system(gcb,...
           'LookUnderMasks','on',...
           'FollowLinks','on','Name',input);
@@ -73,10 +74,16 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
             add_block('built-in/Inport',[gcb, ['/' input]]);
         end
 
-        src_handler = get_param([gcb '/' input],'handle');
-        dest_handler = inmux_handle;
 
+        set_param([gcb '/' input],'PortDimensions', num2str(define_inputs(n)));
+
+        %Connect input with signal spect
+
+        src_handler = get_param([gcb '/' input],'handle');
+
+        dest_handler = inmux_handle;
         papi_connect_two_blocks(gcb, src_handler, 1, dest_handler, n)
+
 
         lastInput=n;
     end
@@ -88,7 +95,7 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
     % ------------------------------------------------
 
     for n=lastInput+1:20
-       input = ['s' num2str(n)];
+       input = ['In' num2str(n)];
 
        block = find_system(gcb,...
               'LookUnderMasks','on',...
@@ -105,11 +112,10 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
     % Create missing outputs
     % ------------------------------------------------
 
-
     lastOutput = amountOut;
 
     for n=1:amountOut
-        output = ['p' num2str(n)];
+        output = ['Out' num2str(n)];
         selector = ['Selector' num2str(n)];
 
         block = find_system(gcb,...
@@ -174,7 +180,7 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
     % ------------------------------------------------
 
     for n=lastOutput+1:20
-       output = ['p' num2str(n)];
+       output = ['Out' num2str(n)];
        selector = ['Selector' num2str(n)];
 
        block = find_system(gcb,...
@@ -195,10 +201,11 @@ function papi_block_wo_stream_init( gcb, amount_parameters, amount_input, json_c
     end
 
 
+
     % ------------------------------------------------
     % Get block names
     % ------------------------------------------------
     init_command = 'port_label(''input'',  1  ,'' Stream_In '');port_label(''input'',  2  ,'' Stream_length '');port_label(''input'',  3  ,'' Reset '');port_label(''output'',  1  ,'' Stream_out '');';
 
-    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,3,1);
+    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,3,1,  define_inputs, split_inputs);
 end

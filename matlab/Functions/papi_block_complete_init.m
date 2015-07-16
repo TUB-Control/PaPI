@@ -1,4 +1,4 @@
-function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config, define_inputs)
+function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config, define_inputs, split_inputs)
 %PAPI_BLOCK_COMPLETE_INIT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -64,9 +64,8 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     for n=1:amountIn
         input = ['In' num2str(n)];
-        
-        sigSpec = ['InSpec' num2str(n)];
-        
+
+
         block = find_system(gcb,...
           'LookUnderMasks','on',...
           'FollowLinks','on','Name',input);
@@ -75,31 +74,17 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
             add_block('built-in/Inport',[gcb, ['/' input]]);
         end
 
-        block = find_system(gcb,...
-          'LookUnderMasks','on',...
-          'FollowLinks','on','Name',sigSpec);
 
-        if isempty(block)
-           add_block('built-in/SignalSpecification',[gcb, ['/' sigSpec]]);
-        end
+        set_param([gcb '/' input],'PortDimensions', num2str(define_inputs(n)));
 
-        
-        set_param([gcb '/' sigSpec],'Dimensions', num2str(define_inputs(n)));
-        
         %Connect input with signal spect
-        
+
         src_handler = get_param([gcb '/' input],'handle');
-        dest_handler = get_param([gcb '/' sigSpec], 'handle');
 
-        papi_connect_two_blocks(gcb, src_handler, 1, dest_handler, 1)
-
-
-        %Connect signal spec with mux
-        src_handler  = dest_handler;
         dest_handler = inmux_handle;
         papi_connect_two_blocks(gcb, src_handler, 1, dest_handler, n)
 
-        
+
         lastInput=n;
     end
 
@@ -111,9 +96,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     for n=lastInput+1:20
        input = ['In' num2str(n)];
-       sigSpec = ['InSpec' num2str(n)];
-       
-       
+
        block = find_system(gcb,...
               'LookUnderMasks','on',...
               'FollowLinks','on','Name',input);
@@ -122,16 +105,6 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
            block_handler = get_param([gcb '/' input],'handle');
            papi_remove_block(block_handler,0)
        end
-       
-       block = find_system(gcb,...
-          'LookUnderMasks','on',...
-          'FollowLinks','on','Name',sigSpec);
-
-        if ~isempty(block)
-            block_handler = get_param([gcb '/' sigSpec],'handle');
-            papi_remove_block(block_handler,0)
-   
-        end
 
     end
 
@@ -234,5 +207,5 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     init_command = 'port_label(''input'',  1  ,'' Reset '');';
 
-    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,1,0);
+    papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,1,0, define_inputs, split_inputs);
 end

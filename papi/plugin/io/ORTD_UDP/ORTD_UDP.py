@@ -408,19 +408,54 @@ class ORTD_UDP(iop_base):
 
         timestamp = None
 
-        for i in range(len(self.Sources)):    
+        offset = 4*4
+        for i in range(len(self.Sources)):
 
             try:
                 val = []
-                offset = 4*4 + i * (4+4+4)
+#                offset += i*(4+4+4)
 
-                signal_id,data = struct.unpack_from('<id', rev, offset)
+                # Get current signal ID:
 
-                val.append(data);
+#                signal_id,data = struct.unpack_from('<id', rev, offset)
+                signal_id, data = struct.unpack_from('<id', rev, offset)
 
+                # print('Offset=' + str(offset))
+                #
+                # print('SignalID: ' + str(signal_id))
+#                print('Data: ' + str(data))
                 if str(signal_id) in self.Sources:
+
+                    Source = self.Sources[str(signal_id)]
+                    NValues = int(Source['NValues_send'])
+
+                    # print("NValues : " +  str(NValues))
+
+                    #print("Offset:" + str(offset))
+
+                    offset += 4
+                    for n in range(NValues):
+                        # print('#Value=' + str(n))
+                        # print('Offset=' + str(offset))
+                        try:
+                            data = struct.unpack_from('<d', rev, offset)[0]
+                            # print('Data=' + str(data))
+
+                            val.append(data)
+                        except struct.error:
+                            # print(sys.exc_info()[0])
+                            # print('!!!! except !!!!')
+                            val.append(0)
+
+                        offset += 8
+
+                    # print('Data: ' + str(val))
+
+                    # if NValues > 1:
+                    #     signal_id,data = struct.unpack_from('<id%sd' %NValues, rev, offset)
+                    #     offset += (NValues-1)*(4+4)
                     if self.Sources[str(signal_id)]["SourceName"] == "time":
-                        timestamp = data
+                            timestamp = val[0]
 
                     self.signal_values[signal_id] = val
                                 
@@ -428,7 +463,6 @@ class ORTD_UDP(iop_base):
             except struct.error:
                 print(sys.exc_info()[0])
                 print("Can't unpack.")
-
         self.process_finished_action(-1,None, timestamp)
     
 

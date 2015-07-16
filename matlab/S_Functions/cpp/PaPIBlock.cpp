@@ -24,7 +24,10 @@ Sven Knuth
 */
 
 #include "PaPIBlock.hpp"
+#include "UDPHandle.hpp"
+
 #include <limits>
+
 
 #define MAX_MESSAGE_LENGTH 50
 #define START_MESSAGE_COUNTER 1
@@ -52,12 +55,13 @@ struct para {
     double value;
 };
 
+
 /**********************************/
 /**** Class method definitions ****/
 /**********************************/
 
 PaPIBlock::PaPIBlock(
-    int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+    int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
     )
@@ -73,22 +77,49 @@ PaPIBlock::PaPIBlock(
 
     this->offset_parameter = (int*) malloc(sizeof(int) * this->amount_parameter);
 
+    printf("Create: PaPIBlock 1 \n");
+
     int offset = 0;
     for (int i=0; i <this->amount_parameter; i++) {
-
-        //printf("Offset parameter[%d] %d \n", i, offset);
-
         this->offset_parameter[i] = offset;
         offset += this->dimension_parameters[i];
-
     }
+
+    printf("Create: PaPIBlock 2 \n");
 
     /* ******************************************
     *    Store information about the data input stream
     ****************************************** */
+
+
     this->size_u1_vector = size_u1;
     this->dimension_inputs = p5_dimension_input_signals;
-    this->split_signals = p6_split_signals;
+
+
+    this->split_signals = (int*) malloc(sizeof(int) * this->amount_inputs);
+
+    this->amount_inputs = size_p5;
+
+    for (int i=0; i <this->amount_inputs; i++)
+    {
+        if ( i < size_p6 ) {
+            this->split_signals[i] = p6_split_signals[i];
+        } else {
+            this->split_signals[i] = 1;
+        }
+    }
+
+    printf("Create: PaPIBlock 3 \n");
+
+
+    this->offset_input = (int*) malloc(sizeof(int) * this->amount_inputs);
+    offset = 0;
+
+    for (int i=0; i <this->amount_inputs; i++)
+    {
+        this->offset_input[i] = offset;
+        offset += this->dimension_inputs[i];
+    }
 
     /* ******************************************
     *   Store information about the data output stream
@@ -110,6 +141,20 @@ PaPIBlock::PaPIBlock(
 
     this->parseBlockJsonConfig(p2_json_config);
 
+
+    /* ******************************************
+    *    Start thread: UDP
+    ****************************************** */
+
+    this->udphandle = new UDPHandle();
+
+    this->udphandle->otherHandler = boost::bind(&PaPIBlock::handleStream, this, _1, _2);
+
+/*    this->udphandle->otherHandler = std::bind1st(
+                                        std::mem_fun(&PaPIBlock::handleStream),
+                                        this);
+*/    this->udphandle->run();
+
     //this->buildConfiguration();
 }
 
@@ -120,20 +165,13 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
 
     //printf("JSon: String %s \n", json_string);
 
-   // const char *c = json_string;
 
     std::string json_str;
     std::stringstream ss;
-   // signed char c;
-    //const char c1 = '{';
-    //json_str.append(json_string[0]);
 
     for(int i=0;;i++) {
 
-        //const char c = (const char) json_string[i];
-
         ss << json_string[i];
-   //     printf("Stream %s " , ss.str().c_str());
         if (json_string[i] == '\0') {
             break;
         }
@@ -156,9 +194,12 @@ void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
 
     this->blockJsonConfig = root;
 
+    printf("Created: PaPIBlock END \n");
+
 }
 
 void PaPIBlock::buildConfiguration(double para_out[]) {
+    printf("Build configuration\n");
     Json::Value blockConfig = this->blockJsonConfig["BlockConfig"];
 
     Json::Value parameterNames = blockConfig["ParameterNames"];
@@ -166,7 +207,6 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
 
     Json::Value papiConfig    =    this->blockJsonConfig["PaPIConfig"];
 
-    /* Create Inputs */
     Json::Value sourcesConfig;
     Json::Value parametersConfig;
 
@@ -181,35 +221,113 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     printf("PaPIConfig: %s \n", str_papi.c_str());
     ssConfig.clear();
     */
-    
+
     // ---------------------------------
     // Create signals
     // ---------------------------------
-
-    for (int i=0; i<this->size_u1_vector+1; i++) {
+    int signal_count  = 0;
+    for (int i=0; i<this->amount_inputs+1; i++) {
 
         Json::Value ui;
 
         std::stringstream ss;
+        std::stringstream ssd;
+        std::stringstream ssc;
+
         ss << i;
+
         std::string i_string =  ss.str();
+        std::string d_string;
+        std::string c_string;
 
-        if (i < this->size_u1_vector) {
+        if (i < this->amount_inputs ) {
 
-            if (i < signalNames.size()) {
-                u_name = signalNames[i].asString();
+            if ( this->split_signals[i] ) {
 
+                // -----------------------------------------------
+                // Split current signal into d signals:
+                // -----------------------------------------------
+                int offset = i;
+
+                // Create a single signal for each dimension
+                for( int d=0; d<this->dimension_inputs[i]; d++ ) {
+                    //Convert current string into a string
+                    ssd << d;
+                    d_string = ssd.str();
+
+                    //Check if a name exists for this signal
+                    if ( signal_count < signalNames.size() ) {
+                        u_name = signalNames[signal_count].asString();
+                    } else {
+                        u_name = "s" + i_string + "(" +d_string + ")";
+                    }
+
+                    //Add signal to configuration
+                    ui["SourceName"] = u_name;
+                    ui["NValues_send"] = "1";
+                    ui["datatype"]     = "257";
+
+                    ssd.str("");
+                    ssd.clear();
+
+                    //Take signal_count as unique identifier
+                    ssc << signal_count;
+                    c_string = ssc.str();
+
+                    sourcesConfig[c_string] = ui;
+                    ssc.str("");
+                    ssc.clear();
+                    signal_count++;
+                }
             } else {
-                u_name = "u" + i_string;
-            }
-            ui["SourceName"]   = u_name;
-        } else {
-            ui["SourceName"]   = "time";
-        }
-        ui["NValues_send"] = "1";
-        ui["datatype"]     = "257";
+                // -----------------------------------------------
+                // Add current signal as multi dimensional vector:
+                // -----------------------------------------------
 
-        sourcesConfig[i_string] = ui;
+                printf("Send as vector : \n" );
+                //This signal shoud be send as vector of size d
+                int vector_size = this->dimension_inputs[i];
+                ssd << vector_size;
+                d_string = ssd.str();
+
+                if ( signal_count < signalNames.size() ) {
+                    u_name = signalNames[signal_count].asString();
+                } else {
+                    u_name = "s" + i_string + "(" +d_string + ")";
+                }
+
+                ui["SourceName"] = u_name;
+                ui["NValues_send"] = d_string;
+                ui["datatype"]     = "257";
+
+                ssc << signal_count;
+                c_string = ssc.str();
+
+                sourcesConfig[c_string] = ui;
+                ssc.str("");
+                ssc.clear();
+
+                signal_count++;
+
+                printf(" -----> %s\n", u_name.c_str() );
+            }
+
+        } else {
+            //Add signal for time
+
+            ssc << signal_count;
+            c_string = ssc.str();
+
+            ui["SourceName"] = "time";
+            ui["NValues_send"] = "1";
+            ui["datatype"]     = "257";
+
+            sourcesConfig[c_string] = ui;
+            ssc.str("");
+            ssc.clear();
+        }
+        //this->define_inputs[i]
+
     }
 
     // ---------------------------------
@@ -337,6 +455,8 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
 void PaPIBlock::setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]) {
 
+    //TODO: Temporary solution
+    this->y2_para_out = para_out;
 
     if (msg_length > 0 ) {
 
@@ -402,7 +522,6 @@ void PaPIBlock::setParaOut(int stream_in[], int msg_length, double para_out[]) {
     */
 
     if (p1->pid <0 or p1->pid > this->amount_parameter) {
-        printf("Return due to error !! \n");
         return;
     }
 
@@ -443,21 +562,88 @@ void PaPIBlock::clearOutput(int stream_out[]) {
 
 void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
+
     //Mark as PaPI Data package
     stream_out[0] = 0;
     stream_out[1] = 0;
     stream_out[2] = -100;
     stream_out[3] = 0;
 
-    int offset = 0;
+    int ui_offset = 0;
+    int stream_offset = 4;
+
+    int signal_count = 0;
 
     udouble data;
 
+    // -----------------------------------------
+    // Send current input vector
+    // -----------------------------------------
+    for (int i=0; i<this->amount_inputs;i++) {
+        ui_offset = this->offset_input[i];
+
+        // Send all splitted signals as a single signal
+        if (1 == this->split_signals[i]) {
+            for (int d=0; d<this->dimension_inputs[i];d++) {
+
+                data.d = u1[ui_offset+d];
+
+                stream_out[  stream_offset] = signal_count;
+                stream_out[++stream_offset] = data.u;
+                stream_out[++stream_offset] = data.u >> 32;
+
+                stream_offset += 1;
+                signal_count++;
+            }
+        } else {
+
+            ui_offset = this->offset_input[i];
+
+            stream_out[stream_offset+0] = signal_count;
+
+            for (int d=0; d<this->dimension_inputs[i];d++) {
+
+
+                data.d = u1[ui_offset+d];
+
+//                printf("-> stream_out[%d]\n", stream_offset);
+
+                stream_out[++stream_offset] = data.u;
+                stream_out[++stream_offset] = data.u >> 32;
+
+//                stream_offset += 2;
+
+            }
+            stream_offset += 1;
+
+            signal_count++;
+        }
+    }
+
+
+    // -----------------------------------------
+    // Send current timestamp
+    // -----------------------------------------
+    data.d = sim_time;
+
+    stream_out[stream_offset+0] = signal_count;
+    stream_out[stream_offset+1] = data.u;
+    stream_out[stream_offset+2] = data.u >> 32;
+
+    // for (int i=0; i<26;++i) {
+    //     printf("stream_out[%d]=%d\n", i, stream_out[i] );
+    // }
+    //
+    //
+    // printf("size(stream_out)=%d, stream_offset=%d\n", this->amount_output, stream_offset );
+
+    return;
+
     for (int i=0; i<this->size_u1_vector+1;i++) {
 
-        offset = 3*i+3+1;
+        stream_offset = 3*i+3+1;
 
-        if (offset+3 >= this->amount_output) {
+        if (stream_offset+3 >= this->amount_output) {
             printf("Can't sent next input due to limitation of the output length. \n");
         }
 
@@ -469,9 +655,9 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
             data.d = sim_time;
         }
 
-        stream_out[offset+0] = i;
-        stream_out[offset+1] = data.u;
-        stream_out[offset+2] = data.u >> 32;
+        stream_out[stream_offset+0] = i;
+        stream_out[stream_offset+1] = data.u;
+        stream_out[stream_offset+2] = data.u >> 32;
 
         //printf("i=%d, %f offset=%d \n", i, data.d, offset);
 
@@ -479,6 +665,33 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
     //At last, set time
 
+}
+
+void PaPIBlock::handleStream(std::size_t msg_length, boost::array<int, 8192> buffer) {
+    printf("PaPIBlock::handleStream[msg_length=%zu]\n", msg_length);
+
+    int* stream_in = buffer.data();
+
+    if (msg_length > 0 ) {
+
+        if (msg_length >= 1) {
+            // Request for current configuration
+            if (stream_in[2] == -3) {
+
+                if (this->config_sent) {
+                    this->buildConfiguration(this->y2_para_out);
+                }
+
+                this->config_sent = false;
+                this->data_to_sent = this->config.substr(0);
+            }
+
+            if (buffer[0] == 12) {
+                this->setParaOut(stream_in, msg_length, this->y2_para_out);
+            }
+        }
+
+    }
 }
 
 void PaPIBlock::sendConfig(int stream_out[]) {
@@ -541,6 +754,17 @@ void PaPIBlock::sendConfig(int stream_out[]) {
     }
 }
 
+//*************************************************
+//**** Helper functions
+//*************************************************
+
+std::string intToString(int i) {
+    std::stringstream ss;
+    ss << i;
+    std::string i_string = ss.str();
+
+    return i_string;
+}
 
 
 //*************************************************
@@ -549,14 +773,14 @@ void PaPIBlock::sendConfig(int stream_out[]) {
 
 void createPaPIBlock(
     void **work1, //Working vector
-    int size_u1, int size_u2, int size_p1, int size_p2,  // Sizes determined by size() in the build script
+    int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
 )
     {
 
     *work1 = (void *) new PaPIBlock(
-        size_u1, size_u2, size_p1, size_p2,
+        size_u1, size_u2, size_p1, size_p2, size_p5, size_p6,
         p1_dimension_parameters, p2_json_config, p3_size_data_out,
         p4_amount_para_out, p5_dimension_input_signals, p6_split_signals
         );
