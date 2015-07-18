@@ -28,41 +28,42 @@ Source: http://www.boost.org/doc/libs/1_35_0/doc/html/boost_asio/tutorial/tutday
 #ifndef _UDP_HANDLE_
 #define _UDP_HANDLE_
 
-#include <iostream>
-#include <sstream>
+#ifndef _UDP_HANDLE_DEBUG_
+    #define _UDP_HANDLE_DEBUG_ 0
+#endif
+
 #include <cstdio>
-#include <stdexcept>
 
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/signals2.hpp>
 
-
 class UDPHandle {
 private:
 
+    //Thread
     boost::thread* thread;
     bool threadInitialized;
-    boost::signals2::signal<void ()> sigSendData;
 
+    //Buffer and buffer information
     std::size_t send_msg_length_;
-
     boost::array<char, 8192> recv_buffer_;
     int* send_buffer_;
     boost::mutex mutex_send_buffer_;
 
+    //Internal communcication
+    boost::signals2::signal<void ()> sigSendData;
+
+    //Network stuff
     boost::asio::ip::udp::socket* udp_socket;
     boost::asio::ip::udp::endpoint* udp_endpoint;
     boost::asio::ip::udp::endpoint* udp_endpoint_destination;
-
-    boost::asio::ip::udp::socket* udp_socket_destination;
-
     boost::asio::io_service* io_service;
-
     int local_port;
     int remote_port;
     std::string remote_host;
+    std::string local_host;
 
     void openUDPServer();
     void startRecieve();
@@ -70,19 +71,15 @@ private:
     void handleSend(const boost::system::error_code& error, std::size_t);
     void startSend();
 
-    void handleNewData();
-
 public:
     UDPHandle(int local_port, int remote_port, std::string local_host, std::string remote_host);
 
+    //other handle called when defined
     boost::function<void(std::size_t, boost::array<char, 8192>)> otherHandleRecieve;
 
     void run();
     void stop();
-
     void sendData(int*, std::size_t);
-
-
 
 };
 

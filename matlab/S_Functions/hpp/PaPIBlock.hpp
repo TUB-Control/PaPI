@@ -45,10 +45,6 @@ Sven Knuth
 
 class PaPIBlock {
 private:
-    //--------------------------
-    // Important pointer
-    double* y2_para_out;
-
     // -------------------------
     // Important variables
     // -------------------------

@@ -49,7 +49,6 @@ typedef struct __attribute__((packed)) para {
     double value;
 };
 
-
 /**********************************/
 /**** Class method definitions ****/
 /**********************************/
@@ -127,13 +126,10 @@ PaPIBlock::PaPIBlock(
 
     this->parseBlockJsonConfig(p2_json_config);
 
-
-
     /* ******************************************
     *    Start thread: UDP
     ****************************************** */
-
-    this->udphandle = new UDPHandle(this->local_port, this->remote_port, "127.0.0.1", "127.0.0.1");
+    this->udphandle = new UDPHandle(this->local_port, this->remote_port, "0.0.0.0", "0.0.0.0");
     this->udphandle->otherHandleRecieve = boost::bind(&PaPIBlock::handleStream, this, _1, _2);
     this->udphandle->run();
 
@@ -187,13 +183,6 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     std::stringstream ssConfig;
 
     std::string u_name;
-
-    /*
-    ssConfig << styledWriter.write(papiConfig);
-    std::string str_papi = ssConfig.str();
-    printf("PaPIConfig: %s \n", str_papi.c_str());
-    ssConfig.clear();
-    */
 
     // ---------------------------------
     // Create signals
@@ -259,7 +248,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
                 // Add current signal as multi dimensional vector:
                 // -----------------------------------------------
 
-                printf("Send as vector : \n" );
+
                 //This signal shoud be send as vector of size d
                 int vector_size = this->dimension_inputs[i];
                 ssd << vector_size;
@@ -286,7 +275,6 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
 
                 signal_count++;
 
-                printf(" -----> %s\n", u_name.c_str() );
             }
 
         } else {
@@ -337,52 +325,17 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     // Create PaPI Config
     // ---------------------------------
 
-/*
-    Json::Value papiConfig;
-    Json::Value toCreate;
-    Json::Value toSub;
-    Json::Value toControl;
-
-
-    papiConfig["ToCreate"] = toCreate;
-
-    papiConfig["ToSub"]    = toSub;
-    papiConfig["ToControl"] = toControl;
-   */
-    // ----------------
-
-
     this->papiJsonConfig["SourcesConfig"] = sourcesConfig;
     this->papiJsonConfig["ParametersConfig"] = parametersConfig;
 
     if (papiConfig.empty()) {
         this->papiJsonConfig["PaPIConfig"] = "{}";
-
-/*        papiConfig = Json::Value();
-
-        Json::Value toCreate;
-        Json::Value toSub;
-        Json::Value toControl;
-
-        papiConfig["ToCreate"] = "{}";
-
-        papiConfig["ToSub"]    = "{}";
-        papiConfig["ToControl"] = toControl;
-*/
     } else {
         this->papiJsonConfig["PaPIConfig"] = papiConfig;
-
     }
 
-
-    // ----------------
-
-    //Json::StyledWriter styledWriter;
-    //std::stringstream ssConfig;
     ssConfig << styledWriter.write(this->papiJsonConfig);
-
     std::string config  = ssConfig.str();
-
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
     //printf("%s", config.c_str());
 
@@ -392,7 +345,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
 
 std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
-    if (pid <0 or pid > this->amount_parameter) {
+    if (pid < 0 or pid > this->amount_parameter) {
         return "0";
     }
 
@@ -416,14 +369,11 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
         if (i < this->dimension_parameters[pid]-1) {
             ss << ",";
         }
-
-        //printf("Double [%d] value: %f \n", i, para_out[i]);
     }
 
     if (this->dimension_parameters[pid] > 1) {
         ss << "]";
     }
-
 
     std::string init_value_string = ss.str().c_str();
 
@@ -431,10 +381,7 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
 }
 
-void PaPIBlock::setOutput(double u1[], double time, double para_out[]) {
-
-    //TODO: Temporary solution
-    this->y2_para_out = para_out;
+void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
 
     this->mutex_stream_in.lock();
     if (this->stream_in_length > 0 ) {
@@ -445,13 +392,13 @@ void PaPIBlock::setOutput(double u1[], double time, double para_out[]) {
             if (this->stream_in[2] == -3) {
 
                 if (this->config_sent) {
-                    this->buildConfiguration(this->y2_para_out);
+                    this->buildConfiguration(y1_para_out);
                 }
                 this->config_sent = false;
                 this->data_to_sent = this->config.substr(0);
             }
             if (this->stream_in[0] == 12) {
-                this->setParaOut(this->stream_in, this->stream_in_length, this->y2_para_out);
+                this->setParaOut(this->stream_in, this->stream_in_length, y1_para_out);
             }
         }
         this->stream_in_length = 0;
@@ -482,21 +429,9 @@ void PaPIBlock::setParaOut(int stream_in[], std::size_t msg_length, double para_
 
     double * dp = &p1->value;
 
-    /*
-    printf("Msg Length %d \n", msg_length);
-
-
-
-    */
-
     // printf("Constant: %d \n", p1->constant);
     // printf("Counter: %d \n", p1->counter);
     // printf("PID: %d \n", p1->pid);
-    //
-    // printf("Size parameters: %d \n", this->dimension_parameters[p1->pid]);
-    // printf("Double value: %f \n", p1->value);
-    //
-    // printf("Counter: %d \n", p1->counter);
     // printf("Value: %f \n", p1->value);
 
 
@@ -528,15 +463,18 @@ void PaPIBlock::reset(double para_out[]) {
 }
 
 void PaPIBlock::clearOutput(int stream_out[]) {
-    //printf("Clear output '\n");
-
     for (int i=0; i<this->amount_output;i++) {
         stream_out[i] = 0;
     }
-
 }
 
 void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
+
+    int ui_offset = 0;
+    int stream_offset = 4;
+    int signal_count = 0;
+
+    udouble data;
 
     //Mark as PaPI Data package
     stream_out[0] = 0;
@@ -544,12 +482,6 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
     stream_out[2] = -100;
     stream_out[3] = 0;
 
-    int ui_offset = 0;
-    int stream_offset = 4;
-
-    int signal_count = 0;
-
-    udouble data;
 
     // -----------------------------------------
     // Send current input vector
@@ -580,13 +512,8 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
 
                 data.d = u1[ui_offset+d];
-
-//                printf("-> stream_out[%d]\n", stream_offset);
-
                 stream_out[++stream_offset] = data.u;
                 stream_out[++stream_offset] = data.u >> 32;
-
-//                stream_offset += 2;
 
             }
             stream_offset += 1;
@@ -598,47 +525,13 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
     // -----------------------------------------
     // Send current timestamp
+    // as an extra signal
     // -----------------------------------------
     data.d = sim_time;
 
     stream_out[stream_offset+0] = signal_count;
     stream_out[stream_offset+1] = data.u;
     stream_out[stream_offset+2] = data.u >> 32;
-
-    // for (int i=0; i<26;++i) {
-    //     printf("stream_out[%d]=%d\n", i, stream_out[i] );
-    // }
-    //
-    //
-    // printf("size(stream_out)=%d, stream_offset=%d\n", this->amount_output, stream_offset );
-
-    return;
-
-    for (int i=0; i<this->size_u1_vector+1;i++) {
-
-        stream_offset = 3*i+3+1;
-
-        if (stream_offset+3 >= this->amount_output) {
-            printf("Can't sent next input due to limitation of the output length. \n");
-        }
-
-        //printf("Input[%d]=%f \n", i, u1[i]);
-
-        if (i<this->size_u1_vector) {
-            data.d = u1[i];
-        }   else {
-            data.d = sim_time;
-        }
-
-        stream_out[stream_offset+0] = i;
-        stream_out[stream_offset+1] = data.u;
-        stream_out[stream_offset+2] = data.u >> 32;
-
-        //printf("i=%d, %f offset=%d \n", i, data.d, offset);
-
-    }
-
-    //At last, set time
 
 }
 
@@ -658,8 +551,6 @@ void PaPIBlock::handleStream(std::size_t bytes_transferred /*in bytes_transferre
 
 void PaPIBlock::sendConfig(int stream_out[]) {
 
-
-    //Set current output to zero
     this->size_config = 4;
 
     for (int i=0; i<this->amount_output;i++) {
