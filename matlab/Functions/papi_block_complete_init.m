@@ -20,7 +20,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     papi_block = get_param(papi_block_handle, 'PortHandles');
 
-    port_handler = papi_block.Outport(2);
+    port_handler = papi_block.Outport(1);
     papi_parameter_port = get(port_handler);
 
     % ------------------------------------------------
@@ -170,7 +170,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
         % ---
         src_handler = papi_block_handle;
         dest_handler = select_handler;
-        papi_connect_two_blocks(gcb, src_handler, 2, dest_handler, 1)
+        papi_connect_two_blocks(gcb, src_handler, 1, dest_handler, 1)
 
         lastOutput=n;
     end

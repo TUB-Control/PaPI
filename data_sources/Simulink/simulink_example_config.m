@@ -7,9 +7,9 @@ function [ json_config ] = simulink_example_config( state, compact)
         
     if state == 1
                                      
-        signals = {'sine(1)','sine(2)','sine(3)','noise','sine_multiplier'};
+        signals = {'sine(1)','sine(2)','sine(3)','noise(1)','noise(2)','noise(3)','sine_multiplier','super_noise'};
         
-        parameters = {'multiplier','p2'};
+        parameters = {'multiplier'};
                        
         pf = PacketFramework('PaPIConfig');
 
@@ -32,7 +32,7 @@ function [ json_config ] = simulink_example_config( state, compact)
 
         % Create subscription
         
-        pf.PF_addsubs(plot_uname, block_name_ortd, signals(1:3) );
+        pf.PF_addsubs(plot_uname, block_name_ortd, signals([1:3 7]) );
         
         pf.PF_addcontrol(slider_uname, 'SliderBlock', {parameters(1)});
         

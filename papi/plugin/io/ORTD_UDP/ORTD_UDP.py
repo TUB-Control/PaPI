@@ -254,6 +254,7 @@ class ORTD_UDP(iop_base):
             counters.sort()
             i = 1
             config_file = ''
+
             self.config_complete = True
             for c in counters:
                 if i == c:
@@ -262,7 +263,6 @@ class ORTD_UDP(iop_base):
                 else:
                     self.config_complete = False
                     break
-            
 
             if self.config_complete:
                 if not self.check_and_process_cfg(config_file):
@@ -310,9 +310,6 @@ class ORTD_UDP(iop_base):
             # config completely received
             # extract new configuration
             cfg = json.loads(config_file)
-
-            #print(config_file)
-
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
 
@@ -322,11 +319,12 @@ class ORTD_UDP(iop_base):
             self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
 
             return True
-        except ValueError:
+        except ValueError as e:
             return False
 
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
+
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
                                                               'ControlSignalSub':None,
@@ -527,7 +525,7 @@ class ORTD_UDP(iop_base):
                     valueCast = [valueCast]
 
                 if self.PAPI_SIMULINK_BLOCK:
-                    data = struct.pack('iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
+                    data = struct.pack('<iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
                 else:
                     data = struct.pack('<iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
 

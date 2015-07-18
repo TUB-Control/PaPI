@@ -34,6 +34,8 @@ Sven Knuth
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
+#include <signal.h>
+#include <stdlib.h>
 
 #include <boost/array.hpp>
 
@@ -64,61 +66,71 @@ private:
     //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
     int size_output_parameters;
 
+    int* stream_in;
+    std::size_t stream_in_length;
+    int* stream_out;
+    int stream_out_size;
+
+    boost::mutex mutex_stream_in;
+
     int* offset_parameter;
     int* offset_input;
     Json::Value papiJsonConfig;
     Json::Value blockJsonConfig;
 
+    int size_config;
     std::string config;
     std::string str;
     bool sent;
     int sent_counter;
-
     bool config_sent;
     std::string data_to_sent;
+
     void parseBlockJsonConfig(signed char json_string[]);
     void buildConfiguration(double para_out[]);
 
     std::string getInitialValueForParameter(double para_out[], int p_id);
 
     UDPHandle* udphandle;
-    void handleStream(std::size_t msg_length, boost::array<int, 8192> buffer);
-
+    void handleStream(std::size_t msg_length, boost::array<char, 8192> buffer);
+    int local_port;
+    int remote_port;
 
 
 public:
     PaPIBlock(
-        int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
+        int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
         int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
+        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
+        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
     );
-    void setOutput(double u1[], int stream_in[], int msg_length, double time, int stream_out[], double para_out[]);
-    void setParaOut(int stream_in[], int msg_length, double para_out[]);
+
+    ~PaPIBlock();
+
+    void setOutput(double u1[], double time, double para_out[]);
+    void setParaOut(int stream_in[], std::size_t msg_length, double para_out[]);
 
     void sendConfig(int stream_out[]);
     void sendInput(double u1[], double time, int stream_out[]);
     void clearOutput(int stream_out[]);
     void reset(double para_out[]);
-};
 
-// External declaration for class instance global storage
-extern PaPIBlock *papiBlockVar;
-// amount_parameters, [unicode2native(json_string, 'ISO-8859-1') 0], output_size, sum(amount_parameters), define_inputs, sum(define_inputs)
+};
 
 // Method wrappers
 extern void createPaPIBlock(
     void **work1, //Working vector
-    int size_u1, int size_u2, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
+    int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[]   // Parameters: p4 - p5
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
 );
 
 extern void deletePaPIBlock(void **work1);
 
 extern void outputPaPIBlock(
-    void **work1, double u1_data_in[], int u2_stream_in[],
-    int u3_msg_length, double u4_time, int u5_reset_event, int y1_stream_out[],
-    double y2_para_out[]
+    void **work1, double u1_data_in[], double u2_time, int u3_reset_event,
+    double y1_para_out[]
 );
 
 #endif /* _PAPI_BLOCK_ */
