@@ -77,3 +77,55 @@ The settings for `Code Generation/Custom Code` must be edited as following:
     libboost_thread.so
     libboost_signals.so
 
+Block Configuration
+===================
+Tab 1
+------
+.. figure:: _static/matlab/Tab_1.png
+   :alt: 
+   :figwidth: 40%
+
+This tab is used to describe the signals and parameters as they appear in PaPI.
+
+Parameters
+~~~~~~~~~~
+The parameters are described by an array. 
+
+The array [1,2,3,4] leads to 4 different parameters, the parameter dimension is defined by the corresponding array index. 
+Therefore, the first parameter has a size of 1, the second a size of 2, the third a size of 3 and the fourth a size of 4.
+
+Is is also possible to name the parameters by giving the signal in simulink a name.
+
+.. figure:: _static/matlab/Parameter_Example_1.png
+   :figwidth: 40%
+   :alt:
+
+   **Signals of the parameters were named in simulink.**
+
+.. figure:: _static/matlab/Parameter_Example_2.png
+   :figwidth: 40%
+   :alt:
+
+   **As the parameters will appear in PaPI.**
+
+Signals
+~~~~~~~
+
+Naming
+~~~~~~
+
+
+Tab 2
+~~~~~~
+.. figure:: _static/matlab/Tab_2.png
+   :alt: 
+   :align: left
+   :figwidth: 40%
+
+Tab 3
+~~~~~~
+.. figure:: _static/matlab/Tab_3.png
+   :alt: 
+   :align: left
+   :figwidth: 40%
+

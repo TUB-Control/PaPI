@@ -73,9 +73,9 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *    Store information about the parameters
     ****************************************** */
-    this->amount_parameter = p4_amount_para_out; // size_para_out;
+    this->amount_parameter = size_p1; // size_para_out;
     this->dimension_parameters = p1_dimension_parameters;
-    this->size_output_parameters = size_p1;
+    this->size_output_parameters = p4_amount_para_out;
 
     this->offset_parameter = (int*) malloc(sizeof(int) * this->amount_parameter);
 
@@ -295,7 +295,6 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     // ---------------------------------
     // Create parameters
     // ---------------------------------
-
     for (int i=0; i<this->amount_parameter; i++) {
 
         Json::Value pi;
@@ -303,21 +302,18 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
         std::stringstream ss;
         ss << i;
         std::string i_string = ss.str();
-
-        if (i < parameterNames.size()) {
+        if (i < parameterNames.size()+1) {
             u_name = parameterNames[i].asString();
         } else if (!parameterNames.empty()) {
             u_name = parameterNames.asString();
         }   else {
             u_name = "p" + ss.str();
         }
-
         pi["ParameterName"]   = u_name;
         pi["NValues"] = this->dimension_parameters[i];
         pi["datatype"]     = "257";
 
         pi["initial_value"]     = getInitialValueForParameter(para_out, i);
-
         parametersConfig[i_string] = pi;
     }
 
@@ -647,14 +643,14 @@ void deletePaPIBlock(void **work1)
 }
 
 void outputPaPIBlock(
-    void **work1, double u1_data_in[], double u2_time, int u3_reset_event,
+    void **work1, double u1_data_in[], double u2_time, int u3_control,
     double y1_para_out[]
     )
     {
 
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 
-    if (u3_reset_event) {
+    if (-1 == u3_control) {
         printf("Resent configuration and set output to zero");
         madClass->reset(y1_para_out);
     }

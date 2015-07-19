@@ -9,7 +9,7 @@ function [ json_config ] = simulink_example_config( state, compact)
                                      
         signals = {'sine(1)','sine(2)','sine(3)','noise(1)','noise(2)','noise(3)','sine_multiplier','super_noise'};
         
-        parameters = {'multiplier'};
+        parameters = {'multiplier','limit'};
                        
         pf = PacketFramework('PaPIConfig');
 

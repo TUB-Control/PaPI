@@ -125,7 +125,7 @@ extern void createPaPIBlock(
 extern void deletePaPIBlock(void **work1);
 
 extern void outputPaPIBlock(
-    void **work1, double u1_data_in[], double u2_time, int u3_reset_event,
+    void **work1, double u1_data_in[], double u2_time, int u3_control,
     double y1_para_out[]
 );
 

@@ -205,7 +205,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     % Get block names
     % ------------------------------------------------
 
-    init_command = 'port_label(''input'',  1  ,'' Reset '');';
+    init_command = 'port_label(''input'',  1  ,'' Control '');';
 
     papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,1,0, define_inputs, split_inputs);
 end
