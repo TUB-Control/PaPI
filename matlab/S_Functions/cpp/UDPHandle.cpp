@@ -56,6 +56,9 @@ UDPHandle::UDPHandle(int local_port, int remote_port, std::string local_host, st
     Should be opened in an extra thread.
 */
 void UDPHandle::openUDPServer() {
+
+    //boost::lock_guard<boost::mutex> lock(this->mutex_starting_thread);
+
     this->io_service = new boost::asio::io_service();
     this->udp_endpoint = new udp::endpoint(
         udp::v4(),
@@ -78,10 +81,14 @@ void UDPHandle::openUDPServer() {
 
         this->threadInitialized = true;
 
+        printf("Thread notify_all \n");
+        this->cond_started_thread.notify_all();
+
         this->io_service->run();
     } catch (...) {
         printf("Address already in USE! [%s:%d] \n", this->local_host.c_str(), this->local_port);
         this->threadInitialized = false;
+
 
         // delete this->io_service;
         // delete this->udp_endpoint;
@@ -90,6 +97,9 @@ void UDPHandle::openUDPServer() {
         // delete this->udp_socket;
 
     }
+
+    this->cond_started_thread.notify_all();
+
 }
 
 /**
@@ -111,7 +121,6 @@ void UDPHandle::startRecieve() {
     Callback function which gets called if new data were written to the internal send_buffer_.
 */
 void UDPHandle::startSend() {
-
     int msg_length = this->send_msg_length_;
 
     if (!this->threadInitialized) {
@@ -184,18 +193,29 @@ void UDPHandle::handleSend(const boost::system::error_code& error, std::size_t m
     which will handle all recieved packages.
 */
 void UDPHandle::run() {
-    this->thread = new boost::thread(boost::bind(&UDPHandle::openUDPServer, this));
 
-    //TODO: Add root detection
-    
-    if (false) {
-        #if defined(BOOST_THREAD_PLATFORM_WIN32)
-            // ... window version
-        #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
-            displayAndChange(*this->thread, _UDP_HANDLE_DEBUG_);
-        #else
-            #error "Boost threads unavailable on this platform"
-        #endif
+    if (!this->threadInitialized) {
+
+        boost::unique_lock<boost::mutex> lock(this->mutex_starting_thread);
+
+        this->thread = new boost::thread(boost::bind(&UDPHandle::openUDPServer, this));
+
+        //TODO: Add root detection
+
+        if (false) {
+            #if defined(BOOST_THREAD_PLATFORM_WIN32)
+                // ... window version
+            #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
+                displayAndChange(*this->thread, _UDP_HANDLE_DEBUG_);
+            #else
+                #error "Boost threads unavailable on this platform"
+            #endif
+        }
+
+        if ( !this->threadInitialized ) {
+            printf("Wait for thread to finish \n");
+            this->cond_started_thread.wait(lock);
+        }
     }
 
 }
@@ -203,11 +223,13 @@ void UDPHandle::run() {
     This function must be called to stop the udp server and join the started thread.
 */
 void UDPHandle::stop() {
-    if (this->thread->joinable()) {
-        this->io_service->stop();
-        this->thread->join();
-        this->udp_socket->close();
-        this->threadInitialized = false;
+    if (this->threadInitialized) {
+        if (this->thread->joinable()) {
+            this->io_service->stop();
+            this->thread->join();
+            this->udp_socket->close();
+            this->threadInitialized = false;
+        }
     }
 }
 

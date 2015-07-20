@@ -1,5 +1,5 @@
 Matlab
-============
+======
 
 Dependencies
 ------------
@@ -78,17 +78,18 @@ The settings for `Code Generation/Custom Code` must be edited as following:
     libboost_signals.so
 
 Block Configuration
-===================
+-------------------
 Tab 1
-------
+^^^^^
 .. figure:: _static/matlab/Tab_1.png
-   :alt: 
    :figwidth: 40%
+   :alt:
 
-This tab is used to describe the signals and parameters as they appear in PaPI.
+   **This tab is used to describe the signals and parameters as they appear in PaPI.**
+
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
 The parameters are described by an array. 
 
 The array [1,2,3,4] leads to 4 different parameters, the parameter dimension is defined by the corresponding array index. 
@@ -109,23 +110,24 @@ Is is also possible to name the parameters by giving the signal in simulink a na
    **As the parameters will appear in PaPI.**
 
 Signals
-~~~~~~~
+^^^^^^^
 
 Naming
-~~~~~~
+^^^^^^
 
 
 Tab 2
-~~~~~~
+^^^^^
 .. figure:: _static/matlab/Tab_2.png
-   :alt: 
-   :align: left
    :figwidth: 40%
+   :alt:
+
+   **This tab is used set the needed information for the udp communication.**
 
 Tab 3
-~~~~~~
+^^^^^
 .. figure:: _static/matlab/Tab_3.png
-   :alt: 
-   :align: left
    :figwidth: 40%
+   :alt:
 
+   **This tab provides the ability to set a sampling rate for the underlying blocks.**

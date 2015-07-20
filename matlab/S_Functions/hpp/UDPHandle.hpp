@@ -52,6 +52,10 @@ private:
     int* send_buffer_;
     boost::mutex mutex_send_buffer_;
 
+
+    boost::mutex mutex_starting_thread;
+    boost::condition_variable cond_started_thread;
+
     //Internal communcication
     boost::signals2::signal<void ()> sigSendData;
 

@@ -103,7 +103,6 @@ PaPIBlock::PaPIBlock(
             this->split_signals[i] = 1;
         }
     }
-
     this->offset_input = (int*) malloc(sizeof(int) * this->amount_inputs);
     offset = 0;
 
@@ -129,15 +128,29 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *    Start thread: UDP
     ****************************************** */
-    this->udphandle = new UDPHandle(this->local_port, this->remote_port, "0.0.0.0", "0.0.0.0");
-    this->udphandle->otherHandleRecieve = boost::bind(&PaPIBlock::handleStream, this, _1, _2);
-    this->udphandle->run();
-
+    this->createUDPServer();
+    this->startUDPServer();
 }
 
 PaPIBlock::~PaPIBlock() {
     this->udphandle->stop();
 }
+
+void PaPIBlock::createUDPServer() {
+    this->udphandle = new UDPHandle(this->local_port, this->remote_port, "0.0.0.0", "0.0.0.0");
+    this->udphandle->otherHandleRecieve = boost::bind(&PaPIBlock::handleStream, this, _1, _2);
+}
+
+void PaPIBlock::startUDPServer() {
+
+    this->udphandle->run();
+
+}
+
+void PaPIBlock::stopUDPServer() {
+    this->udphandle->stop();
+}
+
 
 void PaPIBlock::parseBlockJsonConfig(signed char json_string[]) {
     Json::Value root;
@@ -302,7 +315,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
         std::stringstream ss;
         ss << i;
         std::string i_string = ss.str();
-        if (i < parameterNames.size()+1) {
+        if (i < parameterNames.size()) {
             u_name = parameterNames[i].asString();
         } else if (!parameterNames.empty()) {
             u_name = parameterNames.asString();
@@ -457,6 +470,22 @@ void PaPIBlock::reset(double para_out[]) {
     this->config_sent = false;
     this->data_to_sent = this->config.substr(0);
 }
+
+void PaPIBlock::control(int control, double para_out[]){
+    if (control == 1) {
+        printf("PaPIBlock::control::startUDPServer\n");
+
+        this->startUDPServer();
+        this->reset(para_out);
+    }
+
+    if (control == 2) {
+        printf("PaPIBlock::control::stopUDPServer\n");
+        this->stopUDPServer();
+    }
+
+}
+
 
 void PaPIBlock::clearOutput(int stream_out[]) {
     for (int i=0; i<this->amount_output;i++) {
@@ -650,9 +679,9 @@ void outputPaPIBlock(
 
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 
-    if (-1 == u3_control) {
-        printf("Resent configuration and set output to zero");
-        madClass->reset(y1_para_out);
+    if (0 < u3_control) {
+        madClass->control(u3_control, y1_para_out);
     }
+
     madClass->setOutput(u1_data_in, u2_time, y1_para_out);
 }

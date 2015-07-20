@@ -92,6 +92,9 @@ private:
     int local_port;
     int remote_port;
 
+    void createUDPServer();
+    void startUDPServer();
+    void stopUDPServer();
 
 public:
     PaPIBlock(
@@ -111,6 +114,7 @@ public:
     void clearOutput(int stream_out[]);
     void reset(double para_out[]);
 
+    void control(int control, double para_out[]);
 };
 
 // Method wrappers
