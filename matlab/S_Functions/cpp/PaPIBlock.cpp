@@ -128,8 +128,10 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *    Start thread: UDP
     ****************************************** */
-    this->createUDPServer();
-    this->startUDPServer();
+    #ifdef WITH_HW
+        this->createUDPServer();
+        this->startUDPServer();
+    #endif
 }
 
 PaPIBlock::~PaPIBlock() {

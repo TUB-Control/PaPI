@@ -55,6 +55,14 @@ Code generation
 
 By using the ert_linux it is also possible to build (code generation) a simulink model but it is needed to modify some model settings.
 
+The settings for `Code Generation` must be edited as following:
+
+.. code-block:: matlab
+
+    Make command:
+
+    make_rtw OPTS="-DWITH_HW=1"
+
 The settings for `Code Generation/Custom Code` must be edited as following:
 
 .. code-block:: matlab
@@ -76,6 +84,8 @@ The settings for `Code Generation/Custom Code` must be edited as following:
     libboost_system.so
     libboost_thread.so
     libboost_signals.so
+
+
 
 Block Configuration
 -------------------

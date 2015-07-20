@@ -202,15 +202,13 @@ void UDPHandle::run() {
 
         //TODO: Add root detection
 
-        if (false) {
-            #if defined(BOOST_THREAD_PLATFORM_WIN32)
-                // ... window version
-            #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
-                displayAndChange(*this->thread, _UDP_HANDLE_DEBUG_);
-            #else
-                #error "Boost threads unavailable on this platform"
-            #endif
-        }
+        #if defined(BOOST_THREAD_PLATFORM_WIN32)
+            // ... window version
+        #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
+            displayAndChange(*this->thread, _UDP_HANDLE_DEBUG_);
+        #else
+            #error "Boost threads unavailable on this platform"
+        #endif
 
         if ( !this->threadInitialized ) {
             printf("Wait for thread to finish \n");
