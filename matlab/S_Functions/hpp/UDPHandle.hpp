@@ -28,10 +28,6 @@ Source: http://www.boost.org/doc/libs/1_35_0/doc/html/boost_asio/tutorial/tutday
 #ifndef _UDP_HANDLE_
 #define _UDP_HANDLE_
 
-#ifndef _UDP_HANDLE_DEBUG_
-    #define _UDP_HANDLE_DEBUG_ 0
-#endif
-
 #include <cstdio>
 
 #include <boost/thread.hpp>

@@ -28,7 +28,7 @@ Sven Knuth
 
 using boost::asio::ip::udp;
 
-void displayAndChange(boost::thread& daThread, int);
+void displayAndChange(boost::thread& daThread);
 
 /**
     This class is used to create a socket for a given local port.
@@ -56,9 +56,6 @@ UDPHandle::UDPHandle(int local_port, int remote_port, std::string local_host, st
     Should be opened in an extra thread.
 */
 void UDPHandle::openUDPServer() {
-
-    //boost::lock_guard<boost::mutex> lock(this->mutex_starting_thread);
-
     this->io_service = new boost::asio::io_service();
     this->udp_endpoint = new udp::endpoint(
         udp::v4(),
@@ -68,10 +65,10 @@ void UDPHandle::openUDPServer() {
         boost::asio::ip::address::from_string(this->remote_host),
         this->remote_port);
 
-    if (_UDP_HANDLE_DEBUG_) {
+    #ifdef _UDP_HANDLE_DEBUG_
         printf("Local  address:[%s:%d] \n", this->local_host.c_str(), this->local_port);
         printf("Remote address:[%s:%d] \n", this->remote_host.c_str(), this->remote_port);
-    }
+    #endif
 
     try {
         this->udp_socket = new udp::socket(*this->io_service, *this->udp_endpoint);
@@ -80,8 +77,6 @@ void UDPHandle::openUDPServer() {
         this->startRecieve();
 
         this->threadInitialized = true;
-
-        printf("Thread notify_all \n");
         this->cond_started_thread.notify_all();
 
         this->io_service->run();
@@ -205,13 +200,15 @@ void UDPHandle::run() {
         #if defined(BOOST_THREAD_PLATFORM_WIN32)
             // ... window version
         #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)
-            displayAndChange(*this->thread, _UDP_HANDLE_DEBUG_);
+            displayAndChange(*this->thread);
         #else
             #error "Boost threads unavailable on this platform"
         #endif
 
         if ( !this->threadInitialized ) {
-            printf("Wait for thread to finish \n");
+            #ifdef _UDP_HANDLE_DEBUG_
+                printf("Wait for thread to finish \n");
+            #endif
             this->cond_started_thread.wait(lock);
         }
     }
@@ -243,7 +240,7 @@ void UDPHandle::stop() {
     @param daThread boost::thread which should be manipulated
     @param display Flag which can be set to 'ne 0' to display some thread information
 */
-void displayAndChange(boost::thread& daThread, int display)
+void displayAndChange(boost::thread& daThread)
 {
 
     int retcode;
@@ -260,14 +257,14 @@ void displayAndChange(boost::thread& daThread, int display)
         exit(EXIT_FAILURE);
     }
 
-    if (display) {
-        std::cout << "INHERITED: ";
-        std::cout << "policy=" << ((policy == SCHED_FIFO)  ? "SCHED_FIFO" :
-                                   (policy == SCHED_RR)    ? "SCHED_RR" :
-                                   (policy == SCHED_OTHER) ? "SCHED_OTHER" :
-                                                             "???")
-                  << ", priority=" << param.sched_priority << std::endl;
-    }
+    #ifdef _UDP_HANDLE_DEBUG_
+            std::cout << "INHERITED: ";
+            std::cout << "policy=" << ((policy == SCHED_FIFO)  ? "SCHED_FIFO" :
+                                       (policy == SCHED_RR)    ? "SCHED_RR" :
+                                       (policy == SCHED_OTHER) ? "SCHED_OTHER" :
+                                                                 "???")
+                      << ", priority=" << param.sched_priority << std::endl;
+    #endif
 
     policy = SCHED_FIFO;
     param.sched_priority = sched_get_priority_max(SCHED_FIFO);
@@ -279,12 +276,12 @@ void displayAndChange(boost::thread& daThread, int display)
         exit(EXIT_FAILURE);
     }
 
-    if (display) {
+    #ifdef _UDP_HANDLE_DEBUG_
         std::cout << "  CHANGED: ";
         std::cout << "policy=" << ((policy == SCHED_FIFO)  ? "SCHED_FIFO" :
                                    (policy == SCHED_RR)    ? "SCHED_RR" :
                                    (policy == SCHED_OTHER) ? "SCHED_OTHER" :
                                                               "???")
                   << ", priority=" << param.sched_priority << std::endl;
-     }
+    #endif
 }

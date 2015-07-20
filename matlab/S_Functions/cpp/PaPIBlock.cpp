@@ -475,14 +475,18 @@ void PaPIBlock::reset(double para_out[]) {
 
 void PaPIBlock::control(int control, double para_out[]){
     if (control == 1) {
-        printf("PaPIBlock::control::startUDPServer\n");
 
+        #ifdef _PAPI_BLOCK_DEBUG_
+            printf("PaPIBlock::control::startUDPServer\n");
+        #endif
         this->startUDPServer();
         this->reset(para_out);
     }
 
     if (control == 2) {
-        printf("PaPIBlock::control::stopUDPServer\n");
+        #ifdef _PAPI_BLOCK_DEBUG_
+            printf("PaPIBlock::control::stopUDPServer\n");
+        #endif
         this->stopUDPServer();
     }
 
