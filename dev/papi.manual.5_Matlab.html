@@ -111,6 +111,12 @@ The build script can be found in <cite>&lt;/path/to/papi&gt;/PaPI/matlab/</cite>
 <div class="section" id="code-generation">
 <h2>Code generation<a class="headerlink" href="#code-generation" title="Permalink to this headline">¶</a></h2>
 <p>By using the ert_linux it is also possible to build (code generation) a simulink model but it is needed to modify some model settings.</p>
+<p>The settings for <cite>Code Generation</cite> must be edited as following:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">Make</span> <span class="n">command</span><span class="p">:</span>
+
+<span class="n">make_rtw</span> <span class="n">OPTS</span><span class="p">=</span>&quot;<span class="o">-</span><span class="n">DWITH_HW</span><span class="p">=</span><span class="mi">1</span>&quot;
+</pre></div>
+</div>
 <p>The settings for <cite>Code Generation/Custom Code</cite> must be edited as following:</p>
 <div class="highlight-matlab"><div class="highlight"><pre><span class="n">Include</span> <span class="n">directories</span><span class="p">:</span>
 
