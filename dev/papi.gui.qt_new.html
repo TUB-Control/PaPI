@@ -879,6 +879,11 @@ Closes all opened windows.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.dropEvent">
+<tt class="descname">dropEvent</tt><big>(</big><em>event: PyQt5.QtGui.QDropEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.dropEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.dropEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.qt_new.main.GUI.error_occured">
 <tt class="descname">error_occured</tt><big>(</big><em>title</em>, <em>msg</em>, <em>detailed_msg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.error_occured"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.error_occured" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -904,64 +909,9 @@ Closes all opened windows.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.load_triggered">
-<tt class="descname">load_triggered</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.load_triggered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.load_triggered" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to start the &#8216;load config&#8217; dialog.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.papi_about_qt_triggerd">
-<tt class="descname">papi_about_qt_triggerd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.papi_about_qt_triggerd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.papi_about_qt_triggerd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.papi_about_triggerd">
-<tt class="descname">papi_about_triggerd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.papi_about_triggerd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.papi_about_triggerd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.papi_doc_triggerd">
-<tt class="descname">papi_doc_triggerd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.papi_doc_triggerd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.papi_doc_triggerd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.papi_wiki_triggerd">
-<tt class="descname">papi_wiki_triggerd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.papi_wiki_triggerd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.papi_wiki_triggerd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="papi.gui.qt_new.main.GUI.plugin_died">
 <tt class="descname">plugin_died</tt><big>(</big><em>dplugin</em>, <em>e</em>, <em>msg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.plugin_died"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.plugin_died" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.reload_config">
-<tt class="descname">reload_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.reload_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.reload_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used to reset PaPI and to reload the last loaded configuration file.
-:return:</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.reload_plugin_db">
-<tt class="descname">reload_plugin_db</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.reload_plugin_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.reload_plugin_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>This Callback function will reload the plugin list of the plugin manager</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.qt_new.main.GUI.remove_dplugin">
@@ -978,13 +928,6 @@ Used to removed a DPlugin SubWindow from the GUI if possible.</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.reset_papi">
-<tt class="descname">reset_papi</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.reset_papi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.reset_papi" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
-:return:</p>
 </dd></dl>
 
 <dl class="method">
@@ -1006,20 +949,6 @@ Used to removed a DPlugin SubWindow from the GUI if possible.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.save_triggered">
-<tt class="descname">save_triggered</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.save_triggered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.save_triggered" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to start the &#8216;save config&#8217; dialog.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="papi.gui.qt_new.main.GUI.set_gui_config">
 <tt class="descname">set_gui_config</tt><big>(</big><em>cfg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.set_gui_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.set_gui_config" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1030,31 +959,9 @@ Used to removed a DPlugin SubWindow from the GUI if possible.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.show_create_plugin_menu">
-<tt class="descname">show_create_plugin_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.show_create_plugin_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.show_create_plugin_menu" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.qt_new.main.GUI.show_overview_menu">
-<tt class="descname">show_overview_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.show_overview_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.show_overview_menu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to show the overview menu.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dt id="papi.gui.qt_new.main.GUI.show_create_plugin_dialog">
+<tt class="descname">show_create_plugin_dialog</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.show_create_plugin_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.show_create_plugin_dialog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.qt_new.main.GUI.signal_handler">
@@ -1074,6 +981,131 @@ As an reaction it will close the gui by first telling the core to close and then
 <dt id="papi.gui.qt_new.main.GUI.toogle_lock">
 <tt class="descname">toogle_lock</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.toogle_lock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.toogle_lock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.toolbarAddFavPlugin">
+<tt class="descname">toolbarAddFavPlugin</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.toolbarAddFavPlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.toolbarAddFavPlugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.toolbarDragEnterEvent">
+<tt class="descname">toolbarDragEnterEvent</tt><big>(</big><em>event: PyQt5.QtGui.QDragEnterEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.toolbarDragEnterEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.toolbarDragEnterEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.toolbarDropEvent">
+<tt class="descname">toolbarDropEvent</tt><big>(</big><em>event: PyQt5.QtGui.QDropEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.toolbarDropEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.toolbarDropEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_load">
+<tt class="descname">triggered_load</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to start the &#8216;load config&#8217; dialog.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_papi_about">
+<tt class="descname">triggered_papi_about</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_papi_about"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_papi_about" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_papi_about_qt">
+<tt class="descname">triggered_papi_about_qt</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_papi_about_qt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_papi_about_qt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_papi_doc">
+<tt class="descname">triggered_papi_doc</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_papi_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_papi_doc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_papi_wiki">
+<tt class="descname">triggered_papi_wiki</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_papi_wiki"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_papi_wiki" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_reload_config">
+<tt class="descname">triggered_reload_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_reload_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_reload_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to reset PaPI and to reload the last loaded configuration file.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_reload_plugin_db">
+<tt class="descname">triggered_reload_plugin_db</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_reload_plugin_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_reload_plugin_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This Callback function will reload the plugin list of the plugin manager</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_reset_papi">
+<tt class="descname">triggered_reset_papi</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_reset_papi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_reset_papi" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_save">
+<tt class="descname">triggered_save</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to start the &#8216;save config&#8217; dialog.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_show_create_plugin_menu">
+<tt class="descname">triggered_show_create_plugin_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_show_create_plugin_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_show_create_plugin_menu" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_show_overview_menu">
+<tt class="descname">triggered_show_overview_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_show_overview_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_show_overview_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to show the overview menu.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.qt_new.main.GUI.triggered_show_toolbar">
+<tt class="descname">triggered_show_toolbar</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/qt_new/main.html#GUI.triggered_show_toolbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.qt_new.main.GUI.triggered_show_toolbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to hide and unhide the toolbar
+:return:</p>
+</dd></dl>
 
 </dd></dl>
 

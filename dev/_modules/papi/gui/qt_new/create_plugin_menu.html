@@ -110,6 +110,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span> <span class="o">=</span> <span class="n">plugin_manager</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDropIndicatorShown</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
         <span class="c"># self.plugin_manager.setPluginPlaces(</span>
         <span class="c">#     PLUGIN_ROOT_FOLDER_LIST</span>
         <span class="c"># )</span>
@@ -137,6 +140,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginItemChanged</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span> <span class="o">=</span> <span class="n">CreatePluginDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help_button_triggered</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finder</span> <span class="o">=</span> <span class="n">ModuleFinder</span><span class="p">()</span>
@@ -174,7 +178,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pathEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span><span class="p">)</span>
-
 
         <span class="n">lines</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -230,9 +233,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">locatePlugins</span><span class="p">()</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginCandidates</span><span class="p">()</span>
-
         <span class="n">all_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
-
         <span class="n">loadable_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getAllPlugins</span><span class="p">()}</span>
 
         <span class="k">for</span> <span class="n">pluginfo</span> <span class="ow">in</span> <span class="n">all_pluginfo</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -279,8 +280,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modulesLabel</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.closeEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
 
           </div>
         </div>
