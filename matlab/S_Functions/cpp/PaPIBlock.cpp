@@ -88,7 +88,6 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *    Store information about the data input stream
     ****************************************** */
-
     this->size_u1_vector = size_u1;
     this->dimension_inputs = p5_dimension_input_signals;
 
@@ -103,6 +102,7 @@ PaPIBlock::PaPIBlock(
             this->split_signals[i] = 1;
         }
     }
+
     this->offset_input = (int*) malloc(sizeof(int) * this->amount_inputs);
     offset = 0;
 
@@ -117,12 +117,10 @@ PaPIBlock::PaPIBlock(
     ****************************************** */
     this->stream_out_size = 650;
     this->stream_out = new int[this->stream_out_size];
-
     this->amount_output = this->stream_out_size;
 
     this->sent_counter = START_MESSAGE_COUNTER;
     this->config_sent = false;
-
     this->parseBlockJsonConfig(p2_json_config);
 
     /* ******************************************
@@ -135,7 +133,9 @@ PaPIBlock::PaPIBlock(
 }
 
 PaPIBlock::~PaPIBlock() {
-    this->udphandle->stop();
+    #ifdef WITH_HW
+        this->udphandle->stop();
+    #endif
 }
 
 void PaPIBlock::createUDPServer() {
