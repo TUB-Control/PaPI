@@ -92,15 +92,23 @@
 </div>
 <div class="section" id="library">
 <h2>Library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
-<p>The library is made out of two blocks.</p>
-<p>The <cite>PaPI Block</cite> is the core block which calls the underlying S_Function to provide a communicaion with PaPI. This block <cite>SHOULD NOT</cite> be used.</p>
-<div class="figure">
-<img alt="" src="_images/PaPI_Block.png" />
-</div>
-<p>The <cite>PaPI Block Complete</cite> made of sub system which contains the <cite>PaPI Block</cite>. This blocks contains an easy configurable interface to the core block. This block <cite>SHOULD</cite> be used.</p>
-<div class="figure">
-<img alt="" src="_images/PaPI_Block_Complete.png" />
-</div>
+<p>The library is made out of two blocks:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="_images/PaPI_Block.png"><img alt="PaPI_Block_img" src="_images/PaPI_Block.png" style="height: 250px;" /></a></td>
+<td><a class="reference internal" href="_images/PaPI_Block_Complete.png"><img alt="PaPI_Block_Complete_img" src="_images/PaPI_Block_Complete.png" style="height: 250px;" /></a></td>
+</tr>
+<tr class="row-even"><td>The <cite>PaPI Block</cite> is the core block which calls the underlying S_Function to provide a communicaion with PaPI.
+This block <cite>SHOULD NOT</cite> be used.</td>
+<td>The <cite>PaPI Block Complete</cite> made of sub system which contains the <cite>PaPI Block</cite>.
+This blocks contains an easy configurable interface to the core block. This block <cite>SHOULD</cite> be used.</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="build">
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
@@ -145,27 +153,58 @@ The build script can be found in <cite>&lt;/path/to/papi&gt;/PaPI/matlab/</cite>
 <img alt="" src="_images/Tab_1.png" />
 <p class="caption"><strong>This tab is used to describe the signals and parameters as they appear in PaPI.</strong></p>
 </div>
-</div>
+<p>The array [1,2,3,4] given in &#8216;Amount parameters&#8217; leads to 4 different parameters, the parameter dimension is defined by the corresponding array index.
+Therefore, the first parameter has a size of 1, the second a size of 2, the third a size of 3 and the fourth a size of 4. Is is also possible to name the parameters by setting a signal name in simulink.</p>
+<p>The array [1,1,1,1] given in &#8216;Define input signals&#8217; leads to 4 different signals, the signal dimension is defined by the corresponding array index. Therefore, all signals have a size of one.
+It is also possible to describe if the signal should be splitted, which is the default case. Having a signal of dimension 4 which should be splitted leads to four different signals in PaPI, if not only one signal with the size four appears in PaPI.</p>
+<p>The field &#8216;Json config&#8217; can be used to provide a configuration which is sent to PaPI. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).</p>
 <div class="section" id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
-<p>The parameters are described by an array.</p>
-<p>The array [1,2,3,4] leads to 4 different parameters, the parameter dimension is defined by the corresponding array index.
-Therefore, the first parameter has a size of 1, the second a size of 2, the third a size of 3 and the fourth a size of 4.</p>
-<p>Is is also possible to name the parameters by giving the signal in simulink a name.</p>
-<div class="figure" style="width: 40%">
-<img alt="" src="_images/Parameter_Example_1.png" />
-<p class="caption"><strong>Signals of the parameters were named in simulink.</strong></p>
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h4>
+<hr class="docutils" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="12%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first"><a class="reference internal" href="_images/Parameter_Example_1.png"><img alt="" src="_images/Parameter_Example_1.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>Signals of the parameters were named in simulink.</strong></p>
+</td>
+<td>&nbsp;</td>
+<td><p class="first"><a class="reference internal" href="_images/Parameter_Example_2.png"><img alt="" src="_images/Parameter_Example_2.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>As the parameters will appear in PaPI.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="figure" style="width: 40%">
-<img alt="" src="_images/Parameter_Example_2.png" />
-<p class="caption"><strong>As the parameters will appear in PaPI.</strong></p>
-</div>
-</div>
+<hr class="docutils" />
 <div class="section" id="signals">
-<h3>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h3>
+<h4>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h4>
+<hr class="docutils" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="12%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first"><a class="reference internal" href="_images/Signal_Example_1.png"><img alt="" src="_images/Signal_Example_1.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>Signals were named in simulink.</strong></p>
+</td>
+<td>&nbsp;</td>
+<td><p class="first"><a class="reference internal" href="_images/Signal_Example_2.png"><img alt="" src="_images/Signal_Example_2.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>As the signals will appear in PaPI.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
+<hr class="docutils" />
 <div class="section" id="naming">
-<h3>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h3>
+<h4>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h4>
+</div>
 </div>
 <div class="section" id="tab-2">
 <h3>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h3>
@@ -180,6 +219,18 @@ Therefore, the first parameter has a size of 1, the second a size of 2, the thir
 <img alt="" src="_images/Tab_3.png" />
 <p class="caption"><strong>This tab provides the ability to set a sampling rate for the underlying blocks.</strong></p>
 </div>
+</div>
+</div>
+<div class="section" id="example-stateflow">
+<h2>Example: Stateflow<a class="headerlink" href="#example-stateflow" title="Permalink to this headline">¶</a></h2>
+<p>For stateflow it is neccessary to create a simulink function which contains the simulink blocks.</p>
+<p>The following picture was taken from the example <cite>simulink_example_stateflow</cite> which can be found in <cite>data_sources/Simulink</cite>.</p>
+<p>The second input was mapped to the input <cite>control</cite> of the underlying PaPI Block.
+At entry the control input is set to one for starting the internal UDPServer of the current PaPI Block. The UDPServer is stopped by setting the control input to two.
+This must be done when different PaPI Blocks if not a single block is gonna occupy the used udp port forever .</p>
+<div class="figure" style="width: 40%">
+<img alt="" src="_images/example_stateflow.png" />
+<p class="caption"><strong>Exemplary use in a state.</strong></p>
 </div>
 </div>
 </div>
@@ -198,14 +249,17 @@ Therefore, the first parameter has a size of 1, the second a size of 2, the thir
 <li><a class="reference internal" href="#build">Build</a></li>
 <li><a class="reference internal" href="#code-generation">Code generation</a></li>
 <li><a class="reference internal" href="#block-configuration">Block Configuration</a><ul>
-<li><a class="reference internal" href="#tab-1">Tab 1</a></li>
+<li><a class="reference internal" href="#tab-1">Tab 1</a><ul>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
 <li><a class="reference internal" href="#signals">Signals</a></li>
 <li><a class="reference internal" href="#naming">Naming</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#tab-2">Tab 2</a></li>
 <li><a class="reference internal" href="#tab-3">Tab 3</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#example-stateflow">Example: Stateflow</a></li>
 </ul>
 </li>
 </ul>
