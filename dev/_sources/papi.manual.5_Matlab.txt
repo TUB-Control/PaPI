@@ -73,7 +73,7 @@ The settings for `Code Generation` must be edited as following:
 
     Make command:
 
-    make_rtw OPTS="-DWITH_HW=1"
+    make_rtw OPTS="-DWITH_HW"
 
 The settings for `Code Generation/Custom Code` must be edited as following:
 
