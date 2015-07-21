@@ -79,6 +79,7 @@ class GuiEventProcessing(QtCore.QObject):
         self.gui_id = gui_id
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
         self.plugin_manager = plugin_manager
+        self.log.lvl = 0
 
         self.gui_queue = gui_queue
         self.TabManger = TabManager

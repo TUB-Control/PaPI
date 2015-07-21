@@ -89,9 +89,6 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
     app = QApplication(sys.argv)
 
     gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
-    gui.run()
-    # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
-    gui.show()
 
     if args:
         if args.config:
@@ -100,8 +97,14 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
         try:
             if args.debug_level:
                 gui.log.lvl = int(args.debug_level)
+                gui.gui_management.gui_api.log.lvl = int(args.debug_level)
+                gui.gui_management.gui_event_processing.log.lvl = int(args.debug_level)
         except:
             pass
+
+    gui.run()
+    # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
+    gui.show()
 
     app.exec_()
 
@@ -274,8 +277,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         all_pluginfo = {c[2].path:c[2] for c in candidates}
         loadable_pluginfo = {p.path:p for p in plugin_manager.getAllPlugins()}
 
+        fav_plugins = ["PaPIController","RehaStimGUI"];
+
         for plugin_info in all_pluginfo.values():
-            if plugin_info.name == "PaPIController":
+            if plugin_info.name in fav_plugins:
 
                 if plugin_info.path in loadable_pluginfo.keys():
                     plugin_info = loadable_pluginfo[plugin_info.path]

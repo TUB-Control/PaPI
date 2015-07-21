@@ -135,6 +135,7 @@ class Core:
         # set information for console logging part (debug information)
 
         self.log = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
+        self.log.lvl = pc.CORE_CONSOLE_LOG_LEVEL
 
         try:
             if args:
@@ -1151,8 +1152,6 @@ class Core:
             # plugin with uname does not exist
             self.log.printText(1, 'do_subscribe, sub uname worng')
             return -1
-
-        print("Target name " + event.source_uname)
 
         pl = self.core_data.get_dplugin_by_uname(event.source_uname)
         if pl is not None:
