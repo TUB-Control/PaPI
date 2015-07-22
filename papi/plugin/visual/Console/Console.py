@@ -160,6 +160,13 @@ class PaPIConsoleWidget(QWidget):
         self.ui.input.setContentsMargins(0,0,0,0)
         self.ui.output.setContentsMargins(0,0,0,0)
 
+        font = QtGui.QFont("Monospace");
+        font.setStyleHint(QtGui.QFont.TypeWriter);
+
+        self.ui.output.setFont(font)
+
+        self.ui.input.setFont(font)
+
         scrollbar = self.ui.output.verticalScrollBar()
         scrollbar.setStyleSheet("background-color: green")
 
@@ -172,6 +179,7 @@ class PaPIConsoleWidget(QWidget):
         plaintextmenu = self.ui.output.createStandardContextMenu()
         papimenu = self.plugin.create_control_context_menu()
 
+        plaintextmenu.setStyleSheet("background-color: black; color: green")
         plaintextmenu.setTitle('Actions')
         papimenu.setTitle('Control')
 
@@ -179,8 +187,9 @@ class PaPIConsoleWidget(QWidget):
         menu.addMenu(papimenu)
         menu.addMenu(plaintextmenu)
 
-        menu.setStyleSheet("background-color: black")
-        papimenu.setStyleSheet("background-color: black")
+        menu.setStyleSheet("background-color: black; color: green")
+        papimenu.setStyleSheet("background-color: black; color: green")
+
 
         gloPos = self.mapToGlobal(pos)
 
