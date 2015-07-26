@@ -1,7 +1,78 @@
 #!/usr/bin/env node
 
+// http://localhost:8091/index.html
+
 var ipc=require('node-ipc');
 var cldprocess = require('child_process');
+
+
+
+
+http = require('http');
+url = require("url"),
+path = require("path"),
+fs = require("fs")
+
+var fs = require('fs');
+
+
+//
+// Webinterface
+//
+
+// http-server config
+var HTTPPORT = 8091;
+
+
+
+// http-server
+
+// got from stackoverflow: 
+// http://stackoverflow.com/questions/6084360/node-js-as-a-simple-web-server
+var httpserver = http.createServer(function(request, response) {
+
+  var uri = url.parse(request.url).pathname
+    , filename = path.join(process.cwd(), 'html', uri);
+
+   fs.stat(filename, function(err, stat) {
+      if(err != null) {
+     //if(!exists) {
+       response.writeHead(404, {"Content-Type": "text/plain"});
+       response.write("404 Not Found\n");
+       response.end();
+       return;
+     }
+
+    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+    fs.readFile(filename, "binary", function(err, file) {
+      if(err) {        
+        response.writeHead(500, {"Content-Type": "text/plain"});
+        response.write(err + "\n");
+        response.end();
+        return;
+      }
+
+      console.log(filename);
+      if (filename.split('.').pop() == 'js') {
+  console.log('sending javascipt');
+         response.writeHead(200, {"Content-Type": "text/javascript"});  
+//         response.writeHead(200);
+      } else {
+        response.writeHead(200);
+      }
+      response.write(file, "binary");
+      response.end();
+    });
+  });
+}).listen(HTTPPORT);
+
+// set-up socket.io
+var io = require('socket.io').listen(httpserver);
+io.set('log level', 1); // reduce logging
+
+
+// try { io.sockets.emit('SCISTOUT', {  "Data" : line } ); } catch(err) { }
 
 
 
@@ -79,6 +150,10 @@ ipc.serve(
                     ScilabProc.stdout.on('data', function (data) {
 //                      console.log('stdout: ' + data);
                       process.stdout.write('FROM S> ' + data);
+
+                      //try { 
+                        io.sockets.emit('SCISTOUT', {  ConsoleId : 1 , Data : ''+data } ); 
+                        //} catch(err) { }
 
 
                       ipc.server.emit(
@@ -184,6 +259,23 @@ clientRecv.on('message', function(message, rinfo) {
     clientRecv.send(message,0,message.length, PORT_toORTD, ORTDAddress);
     
 });
+
+
+
+
+//
+// Socket io
+//
+io.on('connection', function(socket){
+
+  // forwards commands comming from Web/PaPi to Scilab
+  socket.on('ConsoleCommand', function(msg){
+    console.log(msg);
+    ScilabProc.stdin.write( msg.Data + '\n' );
+  });
+});
+
+
 
 
 
