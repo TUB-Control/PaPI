@@ -65,6 +65,8 @@ import time
 import pickle
 
 from threading import Timer
+from socketIO_client import SocketIO, LoggingNamespace
+
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
@@ -120,8 +122,6 @@ class ORTD_UDP(iop_base):
 
         self.separate = int(config['SeparateSignals']['value'])
 
-        print(self.sendOnReceivePort)
-
         if (not self.sendOnReceivePort):
             # SOCK_DGRAM is the socket type to use for UDP sockets
             self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -153,6 +153,11 @@ class ORTD_UDP(iop_base):
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
+
+        self.thread_socket_goOn = True
+        self.thread_socketio = threading.Thread(target=self.thread_socketio_execute)
+
+
         self.blocks = {}
         self.Sources = {}
 
@@ -168,7 +173,32 @@ class ORTD_UDP(iop_base):
         self.timer = Timer(3,self.callback_timeout_timer)
         self.timer_active = False
 
+        self.sio = SocketIO('localhost', 8091, LoggingNamespace)
+        self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+        self.sio_count = 0
+        #sio.wait(seconds=3)
+
+        self.ConsoleBlock = DBlock('ConsoleSignals')
+        self.ConsoleBlock.add_signal(DSignal('MainSignal'))
+        self.send_new_block_list([self.ConsoleBlock])
+
+        self.consoleIn      = DParameter('consoleIn',default='')
+        self.send_new_parameter_list([self.consoleIn])
+
+        self.thread_socketio.start()
         return True
+
+    def callback_SCISTOUT(self, data):
+        self.sio_count += 1
+
+        self.send_new_data(self.ConsoleBlock.name, [self.sio_count], {'MainSignal':data['Data']})
+
+
+    def thread_socketio_execute(self):
+        while self.thread_socket_goOn:
+            self.sio.wait(seconds=1)
+
+
 
     def pause(self):
         self.lock.acquire()
@@ -542,6 +572,10 @@ class ORTD_UDP(iop_base):
                     self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
                 else:
                     self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+        else:
+            if name == 'consoleIn':
+                self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
+
 
     def quit(self):
         self.lock.acquire()

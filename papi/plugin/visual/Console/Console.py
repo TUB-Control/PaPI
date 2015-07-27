@@ -34,14 +34,14 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-
-from papi.plugin.base_classes.vip_base import vip_base
+from papi.plugin.base_classes.pcp_base import pcp_base
 from papi.data.DParameter import DParameter
+from papi.data.DPlugin import DBlock
 
 from papi.plugin.visual.Console.CmdInput import CmdInput
 
 
-class Console(vip_base):
+class Console(pcp_base):
 
 
     def initiate_layer_0(self, config=None):
@@ -64,6 +64,10 @@ class Console(vip_base):
 
         self.ConsoleW.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.ConsoleW.customContextMenuRequested.connect(self.show_context_menu)
+
+        block = DBlock('Command')
+
+        self.send_new_block_list([block])
 
         return True
 
@@ -94,8 +98,8 @@ class Console(vip_base):
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
-
-        pass
+        out = Data['MainSignal']
+        self.ConsoleW.write("<font color='green'>->%s</font><br>\n"%out, html=True)
 
     def set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
@@ -137,7 +141,8 @@ class Console(vip_base):
         pass
 
 
-
+    def new_parameter_info(self, dparameter_object):
+        pass
 
 
 class PaPIConsoleWidget(QWidget):
@@ -199,6 +204,7 @@ class PaPIConsoleWidget(QWidget):
         self.write("<font color='green'>%s</font><br>\n"%cmd, html=True)
         sb = self.ui.output.verticalScrollBar()
         sb.setValue(sb.maximum())
+        self.plugin.send_parameter_change(cmd,'Command')
 
     def write(self, strn, html=False):
         self.ui.output.moveCursor(QtGui.QTextCursor.End)
