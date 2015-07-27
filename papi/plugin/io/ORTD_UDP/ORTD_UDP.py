@@ -173,10 +173,7 @@ class ORTD_UDP(iop_base):
         self.timer = Timer(3,self.callback_timeout_timer)
         self.timer_active = False
 
-        self.sio = SocketIO('localhost', 8091, LoggingNamespace)
-        self.sio.on('SCISTOUT',self.callback_SCISTOUT)
-        self.sio_count = 0
-        #sio.wait(seconds=3)
+
 
         self.ConsoleBlock = DBlock('ConsoleSignals')
         self.ConsoleBlock.add_signal(DSignal('MainSignal'))
@@ -195,8 +192,15 @@ class ORTD_UDP(iop_base):
 
 
     def thread_socketio_execute(self):
-        while self.thread_socket_goOn:
-            self.sio.wait(seconds=1)
+        #self.sio = SocketIO('localhost', 8091, LoggingNamespace)
+        #self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+
+        with SocketIO(self.HOST, 8091, LoggingNamespace) as self.sio:
+            self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+
+            self.sio_count = 0
+            while self.thread_socket_goOn:
+                self.sio.wait(seconds=1)
 
 
 
