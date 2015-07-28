@@ -24,7 +24,8 @@ The depencies can be easily fulfilled by installing the following packages:
 
 .. code:: bash
 
-    sudo apt-get install libjsoncpp-dev libboost1.55-dev libboost-thread1.55-dev libboost-signals1.55-dev
+    sudo apt-get install libjsoncpp-dev libboost1.55-dev
+    sudo apt-get install libboost-thread1.55-dev libboost-signals1.55-dev
 
 
 Library
@@ -73,7 +74,7 @@ The settings for `Code Generation` must be edited as following:
 
     Make command:
 
-    make_rtw OPTS="-DWITH_HW=1"
+    make_rtw OPTS="-DWITH_HW"
 
 The settings for `Code Generation/Custom Code` must be edited as following:
 

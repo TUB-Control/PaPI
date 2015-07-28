@@ -25,7 +25,6 @@ Sven Knuth
 
 #include "UDPHandle.hpp"
 
-
 using boost::asio::ip::udp;
 
 void displayAndChange(boost::thread& daThread);
@@ -49,6 +48,8 @@ UDPHandle::UDPHandle(int local_port, int remote_port, std::string local_host, st
 
     this->threadInitialized = false;
 
+    this->send_msg_length_ = 0;
+
 }
 
 /**
@@ -71,12 +72,21 @@ void UDPHandle::openUDPServer() {
     #endif
 
     try {
+        #ifdef _UDP_HANDLE_DEBUG_
+            printf("%s\n", "Configure Thread");
+        #endif
+
         this->udp_socket = new udp::socket(*this->io_service, *this->udp_endpoint);
 
         this->sigSendData.connect(boost::bind(&UDPHandle::startSend, this));
         this->startRecieve();
 
         this->threadInitialized = true;
+
+        #ifdef _UDP_HANDLE_DEBUG_
+            printf("%s\n", "notify_all waiting threads");
+        #endif
+
         this->cond_started_thread.notify_all();
 
         this->io_service->run();
@@ -145,10 +155,13 @@ void UDPHandle::startSend() {
     @param msg_length Defines the amount of elements in the data stream
 */
 void UDPHandle::sendData(int* stream, std::size_t msg_length) {
-    this->send_msg_length_ = msg_length;
-    this->send_buffer_ = new int[msg_length];
-    std::memcpy(&this->send_buffer_[0], stream, sizeof(int)*msg_length);
-    this->sigSendData();
+
+    if (this->threadInitialized) {
+        this->send_msg_length_ = msg_length;
+        this->send_buffer_ = new int[msg_length];
+        std::memcpy(&this->send_buffer_[0], stream, sizeof(int)*msg_length);
+        this->sigSendData();
+    }
 }
 /**
     Callback function which is triggered by an incoming package.
@@ -188,6 +201,9 @@ void UDPHandle::handleSend(const boost::system::error_code& error, std::size_t m
     which will handle all recieved packages.
 */
 void UDPHandle::run() {
+    #ifdef _UDP_HANDLE_DEBUG_
+        printf("UDPHandle::run()\n");
+    #endif
 
     if (!this->threadInitialized) {
 
@@ -196,7 +212,6 @@ void UDPHandle::run() {
         this->thread = new boost::thread(boost::bind(&UDPHandle::openUDPServer, this));
 
         //TODO: Add root detection
-
         #if defined(BOOST_THREAD_PLATFORM_WIN32)
             // ... window version
         #elif defined(BOOST_THREAD_PLATFORM_PTHREAD)

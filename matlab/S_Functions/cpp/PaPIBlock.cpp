@@ -28,7 +28,6 @@ Sven Knuth
 
 #include <limits>
 
-
 #define START_MESSAGE_COUNTER 1
 
 using namespace std;
@@ -60,9 +59,18 @@ PaPIBlock::PaPIBlock(
     int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                    // Parameters: p7 - p9
     )
     {
-    printf("Create: PaPIBlock \n");
+
+    #ifdef WITH_HW
+        printf("Create: PaPIBlock (Embedded Coder)\n");
+    #endif
+
+    #ifndef WITH_HW
+        printf("Create: PaPIBlock (Simulation)\n");
+    #endif
+
 
     this->size_config = 0;
+    this->stream_in_length = 0;
 
     /* ******************************************
     *    Store information about UDP
@@ -396,12 +404,9 @@ void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
 
     this->mutex_stream_in.lock();
     if (this->stream_in_length > 0 ) {
-
         if (this->stream_in_length >= 1) {
             // Request for current configuration
-
             if (this->stream_in[2] == -3) {
-
                 if (this->config_sent) {
                     this->buildConfiguration(y1_para_out);
                 }
@@ -420,7 +425,7 @@ void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
     //If still needed or requested, send current configuration
     if (!this->config_sent) {
         this->sendConfig(this->stream_out);
-        this->udphandle->sendData(this->stream_out, this->size_config);
+        this->udphandle->sendData(this->stream_out, (std::size_t) this->size_config);
 
     } else {
 
@@ -575,7 +580,6 @@ void PaPIBlock::handleStream(std::size_t bytes_transferred /*in bytes_transferre
     this->stream_in_length = (int) bytes_transferred / 4;
 
     std::memcpy(this->stream_in, buffer.begin(), bytes_transferred);
-
     this->mutex_stream_in.unlock();
 
 }
@@ -626,7 +630,6 @@ void PaPIBlock::sendConfig(int stream_out[]) {
         if (this->data_to_sent.empty()) {
                 this->config_sent = true;
                 this->sent_counter = START_MESSAGE_COUNTER;
-
         } else {
             this->sent_counter ++;
             //printf("Still missing: %s \n", this->data_to_sent.c_str());

@@ -54,17 +54,20 @@ class OptionItem():
             'min': '0.9',
             'max': '1',
             'display_name' : 'Min',
+            'type' : 'slider',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
         }, '2_Max': {
             'value': '0',
             'min': '0.5',
             'max': '1',
+            'type' : 'slider',
             'display_name' : 'Max',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
         }, '3_Rise': {
             'value': '5',
             'min': '0',
             'max': '100',
+            'type' : 'slider',
             'display_name' : 'Rise',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
 
@@ -92,7 +95,9 @@ class OptionItem():
 class RehaStimGUI(pcp_base, object):
 
     def __init__(self):
-        self.__VERSION__ = "0.1"
+        super(RehaStimGUI, self).__init__()
+
+        self.__VERSION__ = "0.2"
 
 #        self.row_offset = 1;
 #        self.col_offset = 1;
@@ -114,11 +119,18 @@ class RehaStimGUI(pcp_base, object):
         # Create signals
         # ---------------------------
 
-        block = DBlock('Stimulator Configuration')
-        signal = DSignal('Array')
-        block.add_signal(signal)
+        self.block_config    = DBlock('Stimulator Configuration')
+        self.block_heartbeat = DBlock('Heartbeat')
+        self.block_notaus    = DBlock('NotAus')
+        self.block_maxima_slider = DBlock('MaximaSlider')
+        self.block_control_stim = DBlock('ControlStim')
 
-        self.send_new_block_list([block])
+
+        # signal = DSignal('Array')
+        # block.add_signal(signal)
+
+        self.send_new_block_list([self.block_config, self.block_heartbeat, self.block_notaus,
+                                  self.block_maxima_slider, self.block_control_stim])
 
         # ---------------------------
         # Create Parameters
@@ -143,7 +155,19 @@ class RehaStimGUI(pcp_base, object):
 
         self.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
 
+        self.tableWidget.verticalHeader().hide()
+        self.tableWidget.horizontalHeader().hide()
+
+        self.gridLayout = QtWidgets.QGridLayout()
+
+        self.gridWidget.setLayout(self.gridLayout)
+
+        self.tableRowCount = 0
+        self.tableColCount = 0
+
+
         self.button_group = QtWidgets.QButtonGroup()
+
 
         # -----------------------
         # Custom configuration
@@ -155,12 +179,26 @@ class RehaStimGUI(pcp_base, object):
         #self.pal_cell_selected.setColor(QtGui.QPalette.Base, QtGui.QColor(0, 0, 100))
         #self.pal_cell_selected.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 0, 100))
 
-        # -
+        # -----------------------
+        # Load configuration
+        # -----------------------
 
-        #
-        # TESTING
-        #
+        #TODO: Check if file exists
 
+        filename = self.config['config']['value'];
+
+        self.load_config(filename)
+
+        # --------------------
+        # Create timer for heartbeat
+        # --------------------
+
+        self.timer = QtCore.QTimer()
+
+        self.timer.timeout.connect(self.send_heartbeat)
+        self.timer.start(1000)
+
+        self.heartbeat = 0
 
         return True
 
@@ -181,6 +219,11 @@ class RehaStimGUI(pcp_base, object):
 
         #self.tableWidget = QtWidgets.QWidget()
         self.tableWidget = QtWidgets.QTableWidget()
+
+        self.gridWidget = QtWidgets.QWidget()
+
+        self.verticalLayout.addWidget(self.gridWidget)
+
         self.verticalLayout.addWidget(self.tableWidget)
 #        self.tableWidget.horizontalHeader().setStretchLastSection(True)
 #        self.tableWidget.verticalHeader().setStretchLastSection(True)
@@ -242,6 +285,10 @@ class RehaStimGUI(pcp_base, object):
         if filename == '':
             return
 
+        self.load_config(filename)
+
+    def load_config(self, filename):
+
         tree = ET.parse(filename)
 
         root = tree.getroot()
@@ -252,10 +299,12 @@ class RehaStimGUI(pcp_base, object):
                     if option_tml.tag == "ColumnCount":
                         rowCount = int(option_tml.text)
 
+                        self.tableRowCount = rowCount
                         self.tableWidget.setRowCount(rowCount)
 
                     if option_tml.tag == "RowCount":
                         columnCount = int(option_tml.text)
+                        self.tableColCount = columnCount
 
                         self.tableWidget.setColumnCount(columnCount)
 
@@ -282,6 +331,10 @@ class RehaStimGUI(pcp_base, object):
                         cellWidget = OptionWidget()
 
                     cellWidget.readOptionXML(cell_xml)
+
+                    #self.gridLayout.addWidget(cellWidget, row, col)
+                    # cellWidget = QtWidgets.QSlider()
+                    # cellWidget.setOrientation(QtCore.Qt.Horizontal)
 
                     self.tableWidget.setCellWidget(col, row, cellWidget)
 
@@ -400,9 +453,9 @@ class RehaStimGUI(pcp_base, object):
         simulink_cfg = self.create_config_for_simulink_block(current_state=None)
 
 
-        print(len(simulink_cfg))
+        print("Length of config " + str(len(simulink_cfg)))
 
-        self.send_parameter_change(str(simulink_cfg), "Stimulator Configuration")
+        self.send_parameter_change(str(simulink_cfg), self.block_config.name)
 
         if stateWidget is None:
             return
@@ -544,7 +597,7 @@ class RehaStimGUI(pcp_base, object):
 
         print(len(simulink_cfg))
 
-        self.send_parameter_change(str(simulink_cfg), "Stimulator Configuration")
+        self.send_parameter_change(str(simulink_cfg), self.block_config.name)
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -569,12 +622,21 @@ class RehaStimGUI(pcp_base, object):
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
-        if self. signal_next_state in Data:
+        if self.signal_next_state in Data:
             next_state = Data[self.signal_next_state][0]
 
             print("Set state to: " + str(next_state))
 
         pass
+
+    def send_heartbeat(self):
+
+        self.heartbeat = self.heartbeat % 2
+
+        self.heartbeat += 1
+
+        self.send_parameter_change(str(self.heartbeat), self.block_heartbeat.name)
+
 
     def set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
@@ -595,7 +657,12 @@ class RehaStimGUI(pcp_base, object):
         # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
-        config = {}
+        config = {
+            'config' : {
+                'value' : 'config.xml'
+            }
+
+        }
         return config
 
     def plugin_meta_updated(self):
@@ -662,6 +729,7 @@ class OptionWidget(QtWidgets.QWidget):
         for i in range(len(self.lines)):
             self.gLayout.addWidget(self.labels[i], i, 0)
             self.gLayout.addWidget(self.lines[i], i, 1)
+            #Due to gui bug: Slider/Label aren't correctly updated
 
         pass
 
@@ -674,6 +742,9 @@ class OptionWidget(QtWidgets.QWidget):
         """
 
         self.option_item = oItem
+
+        for i in range(len(self.lines)):
+            self.gLayout.removeWidget(self.lines[i])
 
         self.lines.clear()
         self.labels.clear()
@@ -738,6 +809,7 @@ class OptionWidget(QtWidgets.QWidget):
         return cfg
 
     def getCfgAsArray(self):
+
         cfg = []
 
         for i in range(len(self.labels)):
@@ -745,7 +817,6 @@ class OptionWidget(QtWidgets.QWidget):
             value = self.lines[i].get_value()
 
             attr_name = self.option_item.attributes[self.attrs[i]]['display_name']
-
             if attr_name == "Type":
                 if value == "ramp":
                     cfg.append(1)
@@ -785,7 +856,6 @@ class OptionWidget(QtWidgets.QWidget):
             new_oItem.set_attr(attr_name, value)
 
         self.set_option_item(new_oItem)
-
 
 class HeaderWidget(QtWidgets.QWidget):
     """
@@ -834,8 +904,15 @@ class HeaderWidget(QtWidgets.QWidget):
         validator = QRegExpValidator(rx, self)
         self.duration_edit.setValidator(validator)
 
-        # Add widgets
+        # Slider: Used for channel
 
+        self.slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        self.slider_value = QtWidgets.QLabel()
+        self.slider_value.setText('0')
+
+        # Add widgets
+        self.hLayout.addWidget(self.slider)
+        self.hLayout.addWidget(self.slider_value)
         self.hLayout.addWidget(self.label)
         self.hLayout.addWidget(self.line_edit)
         self.hLayout.addWidget(self.duration_edit)
@@ -855,6 +932,14 @@ class HeaderWidget(QtWidgets.QWidget):
         name_xml = ET.SubElement(cell_xml, "name")
         name_xml.text = self.label.text()
 
+        if isinstance(self, ChannelWidget):
+            slider_value = str(self.slider.value())
+            name_xml.set('slider', slider_value)
+
+        if isinstance(self, StateWidget):
+            duration =str(self.duration_edit.text())
+            name_xml.set('duration', duration)
+
     def readOptionXML(self, cell_xml : ET.Element):
         """
         Used for loading a new configuration.
@@ -867,6 +952,19 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.label.setText(name_xml.text)
         self.line_edit.setText(name_xml.text)
+
+
+        if isinstance(self, ChannelWidget):
+            if 'slider' in name_xml.keys():
+                slider_value = name_xml.get('slider')
+
+                self.slider.setValue(int(slider_value))
+                self.slider_value.setText(slider_value)
+
+        if isinstance(self, StateWidget):
+            if 'duration' in name_xml.keys():
+                duration = name_xml.get('duration')
+                self.duration_edit.setText(duration)
 
     def label_clicked(self, event):
         """
@@ -906,7 +1004,6 @@ class HeaderWidget(QtWidgets.QWidget):
 
     def getCfgAsArray(self):
         cfg = []
-
         duration = int(float(self.duration_edit.text()))
         cfg.append(duration)
 
@@ -917,9 +1014,13 @@ class StateWidget(HeaderWidget):
 
     """
     trigger_select_state = QtCore.pyqtSignal(QtWidgets.QWidget)
+
     def __init__(self, text="State"):
         super(StateWidget, self).__init__(text)
         self.select_button.clicked.connect(self.state_selected)
+
+        self.slider.hide()
+        self.slider_value.hide()
 
     def state_selected(self):
         self.trigger_select_state.emit(self)
@@ -934,15 +1035,20 @@ class ChannelWidget(HeaderWidget):
         super(ChannelWidget, self).__init__(text)
         self.select_button.setVisible(False)
         self.duration_edit.setVisible(False)
+        self.slider.valueChanged.connect(self.value_changed)
 
+    def value_changed(self, change):
+        self.slider_value.setText(str(change))
 
 class RehaStimEditableField(QtWidgets.QWidget):
     def __init__(self, attr):
         super(RehaStimEditableField, self).__init__()
-        self.vLayout = QtWidgets.QVBoxLayout(self)
-        self.vLayout.setContentsMargins(1, 1, 1, 1)
+        self.vLayout = QtWidgets.QGridLayout(self)
+        #self.vLayout.setContentsMargins(1, 1, 1, 1)
 
         self.editable_field = None
+        self.start_value = attr['value'];
+        self.slider = None
 
         if 'options' in attr:
             box = QtWidgets.QComboBox()
@@ -956,9 +1062,32 @@ class RehaStimEditableField(QtWidgets.QWidget):
 
             box.setCurrentIndex(index)
             #box.setMaximumWidth(100)
-            self.vLayout.addWidget(box)
+            self.vLayout.addWidget(box, 0, 0)
 
             self.editable_field = box
+
+        elif 'type' in attr:
+
+            if 'slider' == attr['type']:
+
+                self.slider = QtWidgets.QSlider();
+                self.editable_field = self.slider
+
+                self.vLayout.addWidget(self.slider, 0, 0)
+
+                self.slider.setOrientation(QtCore.Qt.Horizontal)
+                self.slider.setTickInterval(101)
+                self.slider.setMaximum(100)
+                self.slider.setMinimum(0)
+
+                self.slider.setValue(int(attr['value']))
+                self.text_field = QtWidgets.QLabel()
+                self.text_field.setMinimumWidth(25)
+                self.text_field.setText(attr['value'])
+
+                self.vLayout.addWidget(self.text_field, 0, 1)
+
+                self.slider.valueChanged.connect(self.value_changed)
 
         else:
             line = QtWidgets.QLineEdit(attr['value'])
@@ -971,7 +1100,7 @@ class RehaStimEditableField(QtWidgets.QWidget):
             self.editable_field = line
             self.editable_field.setMaximumWidth(70)
 
-            self.vLayout.addWidget(line)
+            self.vLayout.addWidget(line, 0, 0)
 
     def get_value(self):
 
@@ -981,4 +1110,11 @@ class RehaStimEditableField(QtWidgets.QWidget):
         if isinstance(self.editable_field, QtWidgets.QLineEdit):
             return self.editable_field.text()
 
+        if isinstance(self.editable_field, QtWidgets.QSlider):
+            return self.editable_field.value()
+
         return None
+
+    def value_changed(self, change):
+        self.text_field.setText(str(change))
+        self.text_field.repaint()
