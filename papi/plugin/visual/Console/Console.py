@@ -99,7 +99,13 @@ class Console(pcp_base):
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
         out = Data['MainSignal']
-        self.ConsoleW.write("<font color='green'>->%s</font><br>\n"%out, html=True)
+        out.replace('\n \n', '\n')
+
+        out = out.splitlines()
+        for line in out:
+          self.ConsoleW.write("<font color='green'>&nbsp;&nbsp;%s</font><br>\n"%line, html=True)
+
+
 
     def set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
