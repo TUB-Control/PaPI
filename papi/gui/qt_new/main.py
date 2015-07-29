@@ -588,7 +588,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
             area.addSubWindow(sub_window)
 
-            sub_window.show()
+            isMaximized = config['maximized']['value'] == '1'
+
+            if not isMaximized:
+                sub_window.show()
+            else:
+                sub_window.showMaximized()
 
             size_re = re.compile(r'([0-9]+)')
 

@@ -87,7 +87,15 @@ class base_visual(base_plugin):
             'tab': {
                 'value': 'Tab',
                 'tooltip': 'Used for tabs'
-            }}
+            },
+            'maximized' : {
+                'value' : '0',
+                'type' : 'bool',
+                'advanced' : '1',
+                'tooltip' : 'Set true to start plugin maximized',
+                'display_text' : 'Start maximized'
+            }
+        }
         return config
 
 
@@ -119,9 +127,18 @@ class base_visual(base_plugin):
 
 
     def window_resize(self, event):
+
         size = event.size()
         w = size.width()
         h = size.height()
+
+        isMaximized = self.get_sub_window().isMaximized()
+
+        if isMaximized:
+            self.config['maximized']['value'] = '1'
+        else:
+            self.config['maximized']['value'] = '0'
+
         self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
