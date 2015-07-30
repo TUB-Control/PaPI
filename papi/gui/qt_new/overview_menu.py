@@ -633,8 +633,8 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.clear()
             else:
                 self.tabWidget.setEnabled(True)
-                self.pluginTree.clicked.emit(index)
-
+                #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
+                #self.pluginTree.clicked.emit(index)
 
         # -----------------------------------------
         # case: remove already deleted plugins
@@ -665,9 +665,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 if not self.pcp_root.hasItem(new_dplugin):
                     self.pcp_root.appendRow(plugin_item)
 
-        index = self.pluginTree.currentIndex()
-        if index.isValid():
-            self.pluginTree.clicked.emit(index)
+
+        #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
+        # index = self.pluginTree.currentIndex()
+        # if index.isValid():
+        #     self.pluginTree.clicked.emit(index)
 
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):

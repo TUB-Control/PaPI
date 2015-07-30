@@ -15,6 +15,7 @@ addpath(curPath);
 addpath([curPath '/Functions']);
 addpath([curPath '/jsonlab']);
 addpath([curPath '/S_Functions']);
+addpath([curPath '/ert_linux']);
 
 cd('S_Functions');
 

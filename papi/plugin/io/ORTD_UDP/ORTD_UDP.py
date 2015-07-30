@@ -102,6 +102,12 @@ class ORTD_UDP(iop_base):
                 'value': '0',
                 'advanced': '1',
                 'display_text': 'Use same port for send and receive'
+            },
+            "UseSocketIO" : {
+                'value' : '0',
+                'advanced' : '1',
+                'tooltip' : 'Use the Socket IO',
+                'type' : 'bool'
             }
         }
 
@@ -182,7 +188,8 @@ class ORTD_UDP(iop_base):
         self.consoleIn      = DParameter('consoleIn',default='')
         self.send_new_parameter_list([self.consoleIn])
 
-        self.thread_socketio.start()
+        if config['UseSocketIO']['value'] == '1':
+            self.thread_socketio.start()
         return True
 
     def callback_SCISTOUT(self, data):

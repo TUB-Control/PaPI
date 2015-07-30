@@ -119,8 +119,8 @@ classdef PacketFramework < handle
         
         % pf.PF_addcontrol('Plugin1', 'SliderBlock', 'sliderVal')
         function PF_addcontrol(obj, ControlPluginUname, ControlBlock, ControlParam)
-            obj.config.PaPIConfig.ToControl.(ControlPluginUname).block =  ControlBlock;
-            obj.config.PaPIConfig.ToControl.(ControlPluginUname).parameter =  ControlParam;
+            % obj.config.PaPIConfig.ToControl.(ControlPluginUname).block =  ControlBlock;
+            obj.config.PaPIConfig.ToControl.(ControlPluginUname).(ControlBlock).parameter =  ControlParam;
         end
         
         % pf.PF_addcontrolbyID('Plugin1', 'Click_Event', 0)

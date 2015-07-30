@@ -154,17 +154,23 @@ class PaPIController(vip_base):
                         if 'parameter' in pl_cfg:
                             para = pl_cfg['parameter']
 
+                        if 'block' in pl_cfg:
+                            # Static remapping due to new event names of Slider and Button
+                            # Necessary to keep till ORTD supports the new names
 
-                        # Static remapping due to new event names of Slider and Button
-                        # Necessary to keep till ORTD supports the new names
+                            if (pl_cfg['block'] == 'Click_Event'):
+                                pl_cfg['block'] = 'Click'
 
-                        if (pl_cfg['block'] == 'Click_Event'):
-                            pl_cfg['block'] = 'Click'
+                            if (pl_cfg['block'] == 'SliderBlock'):
+                                pl_cfg['block'] = 'Change'
 
-                        if (pl_cfg['block'] == 'SliderBlock'):
-                            pl_cfg['block'] = 'Change'
+                            self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
-                        self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+                        else:
+                            for block in pl_cfg:
+                                para = pl_cfg[block]['parameter']
+                                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, block, signals=[], sub_alias= para)
+
 
             ############################
             #    Close plugin          #

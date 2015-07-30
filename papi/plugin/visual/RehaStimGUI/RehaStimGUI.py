@@ -41,6 +41,8 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 
 import papi.constants as pc
 
+from papi.gui.qt_new import get32Icon
+
 from PyQt5 import QtGui, QtWidgets, QtCore, Qt
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
@@ -116,20 +118,21 @@ class RehaStimGUI(pcp_base, object):
         self.current_state = None
 
         # ---------------------------
+        # Read configuration
+        # ---------------------------
+
+        self.signal_next_state = config['signal_next_state']['value']
+
+        # ---------------------------
         # Create signals
         # ---------------------------
 
-        self.block_config    = DBlock('Stimulator Configuration')
+        self.block_config    = DBlock('StimulatorConfiguration')
         self.block_heartbeat = DBlock('Heartbeat')
-        self.block_notaus    = DBlock('NotAus')
         self.block_maxima_slider = DBlock('MaximaSlider')
         self.block_control_stim = DBlock('ControlStim')
 
-
-        # signal = DSignal('Array')
-        # block.add_signal(signal)
-
-        self.send_new_block_list([self.block_config, self.block_heartbeat, self.block_notaus,
+        self.send_new_block_list([self.block_config, self.block_heartbeat,
                                   self.block_maxima_slider, self.block_control_stim])
 
         # ---------------------------
@@ -195,7 +198,7 @@ class RehaStimGUI(pcp_base, object):
 
         self.timer = QtCore.QTimer()
 
-        self.timer.timeout.connect(self.send_heartbeat)
+        self.timer.timeout.connect(self.timeout_send_heartbeat)
         self.timer.start(1000)
 
         self.heartbeat = 0
@@ -231,23 +234,56 @@ class RehaStimGUI(pcp_base, object):
 #        self.tableWidget.horizontalHeader().setVisible(False)
 #        self.tableWidget.verticalHeader().setVisible(False)
 
+        self.horizonLayoutButtons = QtWidgets.QHBoxLayout()
+        self.allButons = QtWidgets.QWidget()
+        self.allButons.setLayout(self.horizonLayoutButtons)
+
+        self.verticalLayout.addWidget(self.allButons)
+
         # -------------------
-        # Add Buttons: Config
+        # Add Buttons: LoadSave
+        # -------------------
+
+        self.loadsaveButtonsWidget = QtWidgets.QWidget()
+
+        self.loadsaveButtonVLayout = QtWidgets.QVBoxLayout(self.loadsaveButtonsWidget)
+
+        self.saveConfigButton = QtWidgets.QPushButton("Speicher")
+        self.saveConfigButton.setToolTip("Aktuelle Konfiguration speichern.")
+        self.loadConfigButton = QtWidgets.QPushButton("Laden")
+        self.loadConfigButton.setToolTip("Neue Konfiguration laden.")
+
+        load_icon = get32Icon('folder')
+        save_icon = get32Icon('file_save_as')
+
+        self.saveConfigButton.setIcon(save_icon)
+        self.loadConfigButton.setIcon(load_icon)
+
+        self.loadsaveButtonVLayout.addWidget(self.saveConfigButton)
+        self.loadsaveButtonVLayout.addWidget(self.loadConfigButton)
+
+        self.horizonLayoutButtons.addWidget(self.loadsaveButtonsWidget)
+
+        # -------------------
+        # Add Buttons: Start/Stop configButtonsWidget
         # -------------------
 
         self.configButtonsWidget = QtWidgets.QWidget()
+        self.configButtonVLayout = QtWidgets.QVBoxLayout(self.configButtonsWidget)
 
-        self.configButtonHLayout = QtWidgets.QHBoxLayout(self.configButtonsWidget)
+        self.sendConfigButton = QtWidgets.QPushButton()
+        self.stopButton = QtWidgets.QPushButton()
+        self.stopButton.hide()
+        stop_icon = get32Icon('delete')
+        start_icon = get32Icon('control_play_blue')
 
-        self.saveConfigButton = QtWidgets.QPushButton("Save")
-        self.loadConfigButton = QtWidgets.QPushButton("Load")
-        self.sendConfigButton = QtWidgets.QPushButton("Send")
+        self.stopButton.setIcon(stop_icon)
+        self.sendConfigButton.setIcon(start_icon)
+        self.configButtonVLayout.addWidget(self.sendConfigButton)
+        self.configButtonVLayout.addWidget(self.stopButton)
 
-        self.configButtonHLayout.addWidget(self.saveConfigButton)
-        self.configButtonHLayout.addWidget(self.loadConfigButton)
-        self.configButtonHLayout.addWidget(self.sendConfigButton)
 
-        self.verticalLayout.addWidget(self.configButtonsWidget)
+        self.horizonLayoutButtons.addWidget(self.configButtonsWidget)
 
         # -------------------
         # Add Buttons: State/Channels
@@ -255,31 +291,36 @@ class RehaStimGUI(pcp_base, object):
 
         self.tableButtonsWidget = QtWidgets.QWidget()
 
-        self.tableButtonHLayout = QtWidgets.QHBoxLayout(self.tableButtonsWidget)
+        self.tableButtonVLayout = QtWidgets.QVBoxLayout(self.tableButtonsWidget)
 
-        self.addStateButton = QtWidgets.QPushButton("Add State")
-        self.addChButton = QtWidgets.QPushButton("Add Ch")
+        self.addStateButton = QtWidgets.QPushButton("Neuen Zustand erzeugen")
+        self.addChButton = QtWidgets.QPushButton("Neuen Kanal anlegen")
 
-        self.tableButtonHLayout.addWidget(self.addStateButton)
-        self.tableButtonHLayout.addWidget(self.addChButton)
+        self.tableButtonVLayout.addWidget(self.addStateButton)
+        self.tableButtonVLayout.addWidget(self.addChButton)
 
-        self.verticalLayout.addWidget(self.tableButtonsWidget)
+        self.horizonLayoutButtons.addWidget(self.tableButtonsWidget)
 
         return self.centralwidget
 
     def create_actions(self):
         self.addChButton.clicked.connect(self.add_ch_clicked)
         self.addStateButton.clicked.connect(self.add_state_clicked)
-        self.sendConfigButton.clicked.connect(self.send_config_clicked)
-        self.loadConfigButton.clicked.connect(self.load_config_clicked)
-        self.saveConfigButton.clicked.connect(self.save_config_clicked)
+
+#        self.sendConfigButton.clicked.connect(self.clicked_send_config)
+
+        self.loadConfigButton.clicked.connect(self.clicked_load_config)
+        self.saveConfigButton.clicked.connect(self.clicked_save_config)
+
+        self.stopButton.clicked.connect(self.clicked_stop_button)
+        self.sendConfigButton.clicked.connect(self.clicked_start_button)
 
     def show_context_menu(self, pos):
         gloPos = self.LcdWidget.mapToGlobal(pos)
         self.cmenu = self.create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
-    def load_config_clicked(self):
+    def clicked_load_config(self):
         filename = QtWidgets.QFileDialog.getOpenFileName(caption="Open File", filter="Config (*xml)")[0]
 
         if filename == '':
@@ -325,6 +366,7 @@ class RehaStimGUI(pcp_base, object):
 
                     if type in ['ChannelWidget']:
                         cellWidget = ChannelWidget()
+                        cellWidget.changed_slider.connect(self.changed_max_sliders)
                         cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
 
                     if type == 'OptionWidget':
@@ -340,7 +382,7 @@ class RehaStimGUI(pcp_base, object):
 
         self.adjust()
 
-    def save_config_clicked(self):
+    def clicked_save_config(self):
         filename = QtWidgets.QFileDialog.getSaveFileName(caption="Open File", filter="Config (*xml)")[0]
 
 
@@ -446,27 +488,54 @@ class RehaStimGUI(pcp_base, object):
 
         self.adjust()
 
-    def send_config_clicked(self):
-        stateWidget = self.current_state
+    def clicked_send_config(self):
+        pass
+        # stateWidget = self.current_state
+        #
+        #
+        # simulink_cfg = self.create_config_for_simulink_block(current_state=None)
+        #
+        #
+        # print("Length of config " + str(len(simulink_cfg)))
+        #
+        # self.send_parameter_change(str(simulink_cfg), self.block_config.name)
+        #
+        # if stateWidget is None:
+        #     return
+
+    def clicked_start_button(self):
+
+        self.send_parameter_change('1', self.block_control_stim.name)
+        self.sendConfigButton.hide()
+        self.stopButton.show()
 
 
-        simulink_cfg = self.create_config_for_simulink_block(current_state=None)
+    def clicked_stop_button(self):
 
-
-        print("Length of config " + str(len(simulink_cfg)))
-
-        self.send_parameter_change(str(simulink_cfg), self.block_config.name)
-
-        if stateWidget is None:
-            return
-
-
+        self.send_parameter_change('0', self.block_control_stim.name)
+        self.sendConfigButton.show()
+        self.stopButton.hide()
 
 #        json_config = self.create_json_for_state(stateWidget)
 
 #        print(json_config)
 
+    def changed_max_sliders(self):
 
+        all_values = []
+
+        for r in range(1, self.tableWidget.rowCount()):
+            channelWidget = self.tableWidget.cellWidget(r, 0)
+            if channelWidget is not None:
+
+                slider_value = channelWidget.slider_value.text()
+                all_values.append(int(slider_value))
+
+
+        self.send_parameter_change(str(all_values), self.block_maxima_slider)
+
+
+        print(all_values)
     def add_missing_cell_items(self):
 
         for c in range(1, self.tableWidget.columnCount()):
@@ -490,13 +559,13 @@ class RehaStimGUI(pcp_base, object):
         self.tableWidget.resizeColumnsToContents()
         self.tableWidget.resizeRowsToContents()
 
-    def get_channel_widget(self, text):
-        ch_widget = QtWidgets.QLineEdit(text)
-        return ch_widget
-
-    def get_state_widget(self, text):
-        st_widget = QtWidgets.QLineEdit(text)
-        return st_widget
+    # def get_channel_widget(self, text):
+    #     ch_widget = QtWidgets.QLineEdit(text)
+    #     return ch_widget
+    #
+    # def get_state_widget(self, text):
+    #     st_widget = QtWidgets.QLineEdit(text)
+    #     return st_widget
 
     def remove_cell_widget(self, cellWidget):
 
@@ -574,7 +643,7 @@ class RehaStimGUI(pcp_base, object):
 
         return json_str
 
-    def select_state_widget(self, stateWidget):
+    def select_state_widget(self, stateWidget, send_config=True):
         if stateWidget is None:
             return
 
@@ -595,9 +664,8 @@ class RehaStimGUI(pcp_base, object):
 
         simulink_cfg = self.create_config_for_simulink_block(current_state=old_stateWidget)
 
-        print(len(simulink_cfg))
-
-        self.send_parameter_change(str(simulink_cfg), self.block_config.name)
+        if send_config:
+            self.send_parameter_change(str(simulink_cfg), self.block_config.name)
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -612,24 +680,25 @@ class RehaStimGUI(pcp_base, object):
         pass
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
-        # Do main work here!
-        # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
-        # If this plugin is a DPP, then it will get Data with data
-
-        # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
-        # hash signal_name: value
-
-        # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         if self.signal_next_state in Data:
-            next_state = Data[self.signal_next_state][0]
+            next_state_nr = int(Data[self.signal_next_state][0])
 
-            print("Set state to: " + str(next_state))
+            if self.current_state is not None:
+                for c in range(1, self.tableWidget.columnCount()):
+                    if self.current_state == self.tableWidget.cellWidget(0, c):
 
-        pass
+                        if c+1 == next_state_nr:
+                            # The next state must exists
+                            if next_state_nr < self.tableWidget.columnCount():
+                                next_state = self.tableWidget.cellWidget(0,next_state_nr)
+                                self.select_state_widget(next_state, send_config=False)
 
-    def send_heartbeat(self):
+                        if c == self.tableWidget.columnCount()-1 and next_state_nr == 1:
+                            next_state = self.tableWidget.cellWidget(0, next_state_nr)
+                            self.select_state_widget(next_state, send_config=False)
+
+    def timeout_send_heartbeat(self):
 
         self.heartbeat = self.heartbeat % 2
 
@@ -660,8 +729,17 @@ class RehaStimGUI(pcp_base, object):
         config = {
             'config' : {
                 'value' : 'config.xml'
+            },'maximized' : {
+                'value' : '1',
+                'type' : 'bool',
+                'advanced' : '1',
+                'tooltip' : 'Set true to start plugin maximized',
+                'display_text' : 'Start maximized'
+            },'signal_next_state' : {
+                'value' : 'next_state',
+                'tooltip' : 'Signal which contains the next state which should be choosen in the gui.',
+                'display_text' : 'Signal: NextState'
             }
-
         }
         return config
 
@@ -1031,6 +1109,8 @@ class StateWidget(HeaderWidget):
 
 class ChannelWidget(HeaderWidget):
 
+    changed_slider = QtCore.pyqtSignal(QtWidgets.QWidget)
+
     def __init__(self, text="Channel"):
         super(ChannelWidget, self).__init__(text)
         self.select_button.setVisible(False)
@@ -1039,6 +1119,7 @@ class ChannelWidget(HeaderWidget):
 
     def value_changed(self, change):
         self.slider_value.setText(str(change))
+        self.changed_slider.emit(self)
 
 class RehaStimEditableField(QtWidgets.QWidget):
     def __init__(self, attr):
@@ -1051,20 +1132,46 @@ class RehaStimEditableField(QtWidgets.QWidget):
         self.slider = None
 
         if 'options' in attr:
-            box = QtWidgets.QComboBox()
+            # box = QtWidgets.QComboBox()
+            # options = attr['options'].split(',')
+            # options = map(str.strip, options)
+            # box.addItems(options)
+            # index = box.findText(attr['value'])
+            # box.setCurrentIndex(index)
+            # #box.setMaximumWidth(100)
+            # self.vLayout.addWidget(box, 0, 0)
+            # self.editable_field = box
 
-            options = attr['options'].split(',')
-            options = map(str.strip, options)
+            non_stripped_options = attr['options'].split(',')
 
-            box.addItems(options)
+            options = list(map(str.strip, non_stripped_options))
+            self.button_group = QtWidgets.QButtonGroup()
 
-            index = box.findText(attr['value'])
+            check_box1 = QtWidgets.QRadioButton()
+            check_box1.setText(options[0])
 
-            box.setCurrentIndex(index)
-            #box.setMaximumWidth(100)
-            self.vLayout.addWidget(box, 0, 0)
 
-            self.editable_field = box
+            check_box2 = QtWidgets.QRadioButton()
+            check_box2.setText(options[1])
+
+            if attr['value'] == options[0]:
+                check_box1.setChecked(True)
+            elif attr['value'] == options[1]:
+                check_box2.setChecked(True)
+
+            self.button_group.addButton(check_box1)
+            self.button_group.addButton(check_box2)
+
+            check_widget = QtWidgets.QWidget()
+            check_h_layout = QtWidgets.QHBoxLayout()
+            check_widget.setLayout(check_h_layout)
+            check_h_layout.addWidget(check_box1)
+            check_h_layout.addWidget(check_box2)
+
+            self.editable_field = check_widget
+
+            self.vLayout.addWidget(check_widget, 0, 0)
+
 
         elif 'type' in attr:
 
@@ -1082,8 +1189,10 @@ class RehaStimEditableField(QtWidgets.QWidget):
 
                 self.slider.setValue(int(attr['value']))
                 self.text_field = QtWidgets.QLabel()
-                self.text_field.setMinimumWidth(25)
-                self.text_field.setText(attr['value'])
+                self.text_field.setMinimumWidth(50)
+                self.text_field.setText(attr['value']  + "%")
+
+                self.slider.setFixedWidth(70)
 
                 self.vLayout.addWidget(self.text_field, 0, 1)
 
@@ -1113,8 +1222,14 @@ class RehaStimEditableField(QtWidgets.QWidget):
         if isinstance(self.editable_field, QtWidgets.QSlider):
             return self.editable_field.value()
 
+        if isinstance(self.editable_field, QtWidgets.QWidget):
+            cb = self.button_group.checkedButton()
+            if  cb is not None:
+                return cb.text()
+            else:
+                return ''
+
         return None
 
     def value_changed(self, change):
-        self.text_field.setText(str(change))
-        self.text_field.repaint()
+        self.text_field.setText(str(change) + "%")

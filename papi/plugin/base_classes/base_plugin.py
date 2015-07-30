@@ -87,10 +87,17 @@ class base_plugin(IPlugin):
 
 
     def send_parameter_change(self, data, block_name):
+
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.is_parameter = True
-        opt.block_name = block_name
+
+        if isinstance(block_name, DBlock):
+            opt.block_name = block_name.name
+
+        if isinstance(block_name, str):
+            opt.block_name = block_name
+
         event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 

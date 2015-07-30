@@ -590,16 +590,17 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
             isMaximized = config['maximized']['value'] == '1'
 
-            if not isMaximized:
-                sub_window.show()
-            else:
-                sub_window.showMaximized()
 
             size_re = re.compile(r'([0-9]+)')
 
             pos = config['position']['value']
             window_pos = size_re.findall(pos)
             sub_window.move(int(window_pos[0]), int(window_pos[1]))
+
+            if not isMaximized:
+                sub_window.show()
+            else:
+                sub_window.showMaximized()
 
             # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
 
