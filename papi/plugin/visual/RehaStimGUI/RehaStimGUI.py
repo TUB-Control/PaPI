@@ -528,8 +528,8 @@ class RehaStimGUI(pcp_base, object):
             channelWidget = self.tableWidget.cellWidget(r, 0)
             if channelWidget is not None:
 
-                slider_value = channelWidget.slider_value.text()
-                all_values.append(int(slider_value))
+                slider_value = channelWidget.slider.value()
+                all_values.append(float(slider_value)/100)
 
 
         self.send_parameter_change(str(all_values), self.block_maxima_slider)
@@ -904,6 +904,10 @@ class OptionWidget(QtWidgets.QWidget):
                     cfg.append(0)
 
                 continue
+            if attr_name in ["Min", "Max"]:
+
+                cfg.append(float(value)/100)
+                continue
 
             cfg.append(float(value))
 
@@ -1118,7 +1122,7 @@ class ChannelWidget(HeaderWidget):
         self.slider.valueChanged.connect(self.value_changed)
 
     def value_changed(self, change):
-        self.slider_value.setText(str(change))
+        self.slider_value.setText(str(change) + "%")
         self.changed_slider.emit(self)
 
 class RehaStimEditableField(QtWidgets.QWidget):
