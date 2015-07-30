@@ -1,0 +1,323 @@
+<RehaStimGUI_Config Date="2015-07-29 17:13:54" PaPI_version="1.1.0" plugin_version="0.2">
+  <Option>
+    <ColumnCount>4</ColumnCount>
+    <RowCount>4</RowCount>
+  </Option>
+  <Cells>
+    <Cell col="0" row="1" type="StateWidget">
+      <name duration="5">Nach oben</name>
+    </Cell>
+    <Cell col="0" row="2" type="StateWidget">
+      <name duration="12">Nach links</name>
+    </Cell>
+    <Cell col="0" row="3" type="StateWidget">
+      <name duration="0">Nach rechts</name>
+    </Cell>
+    <Cell col="1" row="0" type="ChannelWidget">
+      <name slider="40">Biceps</name>
+    </Cell>
+    <Cell col="1" row="1" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>48</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>67</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>44</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>trapez</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="1" row="2" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>39</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>70</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>56</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="1" row="3" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>50</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>67</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>35</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="2" row="0" type="ChannelWidget">
+      <name slider="53">Triceps</name>
+    </Cell>
+    <Cell col="2" row="1" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>39</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>67</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>43</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>trapez</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="2" row="2" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>54</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>57</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>43</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="2" row="3" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>50</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>70</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>67</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="3" row="0" type="ChannelWidget">
+      <name slider="50">Ch3</name>
+    </Cell>
+    <Cell col="3" row="1" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>70</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>61</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>67</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>trapez</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="3" row="2" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>57</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>50</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>30</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+    <Cell col="3" row="3" type="OptionWidget">
+      <Attributes>
+        <Attribute name="1_Min">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.9</min>
+          <value>44</value>
+          <display_name>Min</display_name>
+        </Attribute>
+        <Attribute name="2_Max">
+          <max>1</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0.5</min>
+          <value>61</value>
+          <display_name>Max</display_name>
+        </Attribute>
+        <Attribute name="3_Rise">
+          <max>100</max>
+          <type>slider</type>
+          <regex>(\d+\.\d+)</regex>
+          <min>0</min>
+          <value>50</value>
+          <display_name>Rise</display_name>
+        </Attribute>
+        <Attribute name="4_Type">
+          <options>ramp, trapez</options>
+          <display_name>Type</display_name>
+          <value>ramp</value>
+        </Attribute>
+      </Attributes>
+    </Cell>
+  </Cells>
+</RehaStimGUI_Config>
