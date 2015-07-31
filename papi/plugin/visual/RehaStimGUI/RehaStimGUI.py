@@ -32,6 +32,7 @@ import traceback
 import datetime
 import time
 import json
+import os.path
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
@@ -99,7 +100,7 @@ class RehaStimGUI(pcp_base, object):
     def __init__(self):
         super(RehaStimGUI, self).__init__()
 
-        self.__VERSION__ = "0.2"
+        self.__VERSION__ = "0.8"
 
 #        self.row_offset = 1;
 #        self.col_offset = 1;
@@ -186,11 +187,10 @@ class RehaStimGUI(pcp_base, object):
         # Load configuration
         # -----------------------
 
-        #TODO: Check if file exists
-
         filename = self.config['config']['value'];
 
-        self.load_config(filename)
+        if os.path.isfile(filename):
+            self.load_config(filename)
 
         # --------------------
         # Create timer for heartbeat
@@ -1054,7 +1054,7 @@ class HeaderWidget(QtWidgets.QWidget):
                 slider_active = name_xml.get('sliderActive')
 
                 self.slider.setValue(int(slider_value))
-                self.slider_value.setText(slider_value)
+                self.slider_value.setText(slider_value + "%")
 
                 self.check_slider.setChecked(slider_active == "True")
 
@@ -1131,16 +1131,22 @@ class ChannelWidget(HeaderWidget):
 
     changed_slider = QtCore.pyqtSignal(QtWidgets.QWidget)
 
+
     def __init__(self, text="Channel"):
         super(ChannelWidget, self).__init__(text)
         self.select_button.setVisible(False)
         self.duration_edit.setVisible(False)
         self.slider.valueChanged.connect(self.value_changed)
 
+        self.check_slider.stateChanged.connect(self.checkbox_checked)
+
         self.slider.wheelEvent = self.sliderMousePressEvent
 
     def value_changed(self, change):
         self.slider_value.setText(str(change) + "%")
+        self.changed_slider.emit(self)
+
+    def checkbox_checked(self, state):
         self.changed_slider.emit(self)
 
     def sliderMousePressEvent(self, event):
