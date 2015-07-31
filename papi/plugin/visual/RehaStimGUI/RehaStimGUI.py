@@ -531,6 +531,11 @@ class RehaStimGUI(pcp_base, object):
                 slider_value = channelWidget.slider.value()
                 all_values.append(float(slider_value)/100)
 
+                if channelWidget.check_slider.isChecked():
+                    all_values.append(1)
+                else:
+                    all_values.append(0)
+
 
         self.send_parameter_change(str(all_values), self.block_maxima_slider)
 
@@ -992,9 +997,14 @@ class HeaderWidget(QtWidgets.QWidget):
         self.slider_value = QtWidgets.QLabel()
         self.slider_value.setText('0')
 
+        self.check_slider= QtWidgets.QCheckBox()
+
+
         # Add widgets
+
         self.hLayout.addWidget(self.slider)
         self.hLayout.addWidget(self.slider_value)
+        self.hLayout.addWidget(self.check_slider)
         self.hLayout.addWidget(self.label)
         self.hLayout.addWidget(self.line_edit)
         self.hLayout.addWidget(self.duration_edit)
@@ -1016,7 +1026,9 @@ class HeaderWidget(QtWidgets.QWidget):
 
         if isinstance(self, ChannelWidget):
             slider_value = str(self.slider.value())
+            slider_active = str(self.check_slider.isChecked())
             name_xml.set('slider', slider_value)
+            name_xml.set('sliderActive', slider_active)
 
         if isinstance(self, StateWidget):
             duration =str(self.duration_edit.text())
@@ -1039,9 +1051,12 @@ class HeaderWidget(QtWidgets.QWidget):
         if isinstance(self, ChannelWidget):
             if 'slider' in name_xml.keys():
                 slider_value = name_xml.get('slider')
+                slider_active = name_xml.get('sliderActive')
 
                 self.slider.setValue(int(slider_value))
                 self.slider_value.setText(slider_value)
+
+                self.check_slider.setChecked(slider_active == "True")
 
         if isinstance(self, StateWidget):
             if 'duration' in name_xml.keys():
@@ -1103,6 +1118,7 @@ class StateWidget(HeaderWidget):
 
         self.slider.hide()
         self.slider_value.hide()
+        self.check_slider.hide()
 
     def state_selected(self):
         self.trigger_select_state.emit(self)
@@ -1121,9 +1137,14 @@ class ChannelWidget(HeaderWidget):
         self.duration_edit.setVisible(False)
         self.slider.valueChanged.connect(self.value_changed)
 
+        self.slider.wheelEvent = self.sliderMousePressEvent
+
     def value_changed(self, change):
         self.slider_value.setText(str(change) + "%")
         self.changed_slider.emit(self)
+
+    def sliderMousePressEvent(self, event):
+        return
 
 class RehaStimEditableField(QtWidgets.QWidget):
     def __init__(self, attr):
