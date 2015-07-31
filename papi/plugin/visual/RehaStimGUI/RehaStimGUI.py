@@ -799,7 +799,7 @@ class OptionWidget(QtWidgets.QWidget):
         self.attrs = []
 
         self.gLayout = QtWidgets.QGridLayout(self)
-        self.gLayout.setContentsMargins(0, 0, 0, 0)
+        self.gLayout.setContentsMargins(1, 1, 1, 1)
 
         self.set_option_item(option_item)
 
@@ -956,10 +956,23 @@ class HeaderWidget(QtWidgets.QWidget):
         super(HeaderWidget, self).__init__()
         self.cell_name = text
 
+        self.vLayout = QtWidgets.QVBoxLayout(self)
+        self.vLayout.setContentsMargins(0, 0, 0, 0)
+        self.vLayout.setAlignment(QtCore.Qt.AlignTop)
+
+        self.topWidget = QtWidgets.QWidget()
+        self.topPart = QtWidgets.QHBoxLayout(self.topWidget)
+        #self.topPart.setContentsMargins(0, 0, 0, 0)
+
+        self.bottomWidget = QtWidgets.QWidget()
+        self.bottomPart = QtWidgets.QHBoxLayout(self.bottomWidget)
+        #self.bottomPart.setContentsMargins(0, 0, 0, 0)
+
+        self.vLayout.addWidget(self.topWidget)
+        self.vLayout.addWidget(self.bottomWidget)
+
         # Create structure
 
-        self.hLayout = QtWidgets.QHBoxLayout(self)
-        self.hLayout.setContentsMargins(0, 0, 0, 0)
 
         self.label = QtWidgets.QLabel(self.cell_name)
         self.label.mouseDoubleClickEvent = self.label_clicked
@@ -967,6 +980,7 @@ class HeaderWidget(QtWidgets.QWidget):
         self.line_edit = QtWidgets.QLineEdit(self.cell_name)
         self.line_edit.setVisible(False)
         self.line_edit.editingFinished.connect(self.line_edited)
+
         # Widget for the buttons
 
         self.bWidget = QtWidgets.QWidget()
@@ -1002,13 +1016,14 @@ class HeaderWidget(QtWidgets.QWidget):
 
         # Add widgets
 
-        self.hLayout.addWidget(self.slider)
-        self.hLayout.addWidget(self.slider_value)
-        self.hLayout.addWidget(self.check_slider)
-        self.hLayout.addWidget(self.label)
-        self.hLayout.addWidget(self.line_edit)
-        self.hLayout.addWidget(self.duration_edit)
-        self.hLayout.addWidget(self.bWidget)
+        self.bottomPart.addWidget(self.slider)
+        self.bottomPart.addWidget(self.slider_value)
+        self.bottomPart.addWidget(self.check_slider)
+
+        self.topPart.addWidget(self.label)
+        self.topPart.addWidget(self.line_edit)
+        self.topPart.addWidget(self.duration_edit)
+        self.topPart.addWidget(self.bWidget)
 
         # Actions
 
