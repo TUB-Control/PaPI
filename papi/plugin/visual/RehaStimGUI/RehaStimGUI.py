@@ -273,12 +273,16 @@ class RehaStimGUI(pcp_base, object):
 
         self.sendConfigButton = QtWidgets.QPushButton()
         self.stopButton = QtWidgets.QPushButton()
+        self.finishedCalibrationButton = QtWidgets.QPushButton("Beende Kalibrierung")
+
+
         self.stopButton.hide()
         stop_icon = get32Icon('delete')
         start_icon = get32Icon('control_play_blue')
 
         self.stopButton.setIcon(stop_icon)
         self.sendConfigButton.setIcon(start_icon)
+        self.configButtonVLayout.addWidget(self.finishedCalibrationButton)
         self.configButtonVLayout.addWidget(self.sendConfigButton)
         self.configButtonVLayout.addWidget(self.stopButton)
 
@@ -314,6 +318,8 @@ class RehaStimGUI(pcp_base, object):
 
         self.stopButton.clicked.connect(self.clicked_stop_button)
         self.sendConfigButton.clicked.connect(self.clicked_start_button)
+
+        self.finishedCalibrationButton.clicked.connect(self.clicked_finished_button)
 
     def show_context_menu(self, pos):
         gloPos = self.LcdWidget.mapToGlobal(pos)
@@ -515,6 +521,9 @@ class RehaStimGUI(pcp_base, object):
         self.send_parameter_change('0', self.block_control_stim.name)
         self.sendConfigButton.show()
         self.stopButton.hide()
+
+    def clicked_finished_button(self):
+        self.send_parameter_change('2', self.block_control_stim)
 
 #        json_config = self.create_json_for_state(stateWidget)
 
