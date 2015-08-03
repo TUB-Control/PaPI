@@ -33,6 +33,7 @@ from PyQt5.QtCore       import Qt, QRegExp
 from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
+from papi.gui.qt_new import get16Pixmap
 
 
 
@@ -207,9 +208,25 @@ class DBlockTreeItem(PaPITreeItem):
         self.dblock = dblock
         self.setSelectable(False)
         self.setEditable(False)
+
         self.tool_tip = "DBlock: " + dblock.name
 
+        if isinstance(dblock, DEvent):
+            brush = QBrush()
+            brush.setColor(Qt.magenta)
+            self.tool_tip = "DEvent: " + dblock.name
+            self.setForeground(brush)
+            self.setSelectable(True)
+
+
     def get_decoration(self):
+
+        if isinstance(self.object, DEvent):
+            return get16Pixmap("events.png")
+
+        if isinstance(self.object, DBlock):
+            return get16Pixmap("transmit.png")
+
         return None
 
 
@@ -396,10 +413,12 @@ class DBlockTreeModel(PaPITreeModel):
         parent = index.parent()
         flags = parent.flags()
 
+
         if not parent.isValid():
             flags ^= Qt.ItemIsSelectable
             flags ^= Qt.ItemIsEditable
             return flags
+
 
 
         if parent.isValid():

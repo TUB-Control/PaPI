@@ -228,7 +228,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.stopButton.setText('STOP')
 
         # ---------------------------
-        # Add DBlocks
+        # Add DBlocks(Also DEvent)
         # ---------------------------
 
         dblock_ids = dplugin.get_dblocks()

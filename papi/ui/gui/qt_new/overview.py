@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/qt_new/overview.ui'
 #
-# Created: Wed Jul  8 13:46:44 2015
+# Created: Mon Aug  3 13:26:32 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -149,7 +149,7 @@ class Ui_Overview(object):
         self.alivestateLabel.setText(_translate("Overview", "Alive state"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.parameterTab), _translate("Overview", "Parameters"))
         self.showInternalNameCheckBox.setText(_translate("Overview", "Show internal signal names"))
-        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), _translate("Overview", "Blocks"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), _translate("Overview", "Blocks/Events"))
         self.pauseButton.setText(_translate("Overview", "PAUSE"))
         self.stopButton.setText(_translate("Overview", "STOP"))
         self.playButton.setText(_translate("Overview", "PLAY"))

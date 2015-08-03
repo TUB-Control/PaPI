@@ -110,7 +110,7 @@
             </widget>
             <widget class="QWidget" name="blockTab">
              <attribute name="title">
-              <string>Blocks</string>
+              <string>Blocks/Events</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
