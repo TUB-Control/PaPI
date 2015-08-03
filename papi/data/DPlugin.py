@@ -141,6 +141,9 @@ class DBlock(DObject):
         return copy.deepcopy(self.signals)
 
 
+class DEvent(DBlock):
+    pass
+
 class DPlugin(DObject):
     """
     DPlugin is used for the internal description of a plugin.

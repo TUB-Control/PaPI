@@ -36,7 +36,7 @@ import os.path
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-from papi.data.DPlugin import DBlock
+from papi.data.DPlugin import DBlock, DEvent
 from papi.data.DSignal import DSignal
 from papi.plugin.base_classes.pcp_base import pcp_base
 
@@ -132,11 +132,11 @@ class RehaStimGUI(pcp_base, object):
         # Create signals
         # ---------------------------
 
-        self.block_config        = DBlock('StimulatorConfiguration')
-        self.block_heartbeat     = DBlock('Heartbeat')
-        self.block_maxima_slider = DBlock('MaximaSlider')
-        self.block_control_stim  = DBlock('ControlStim')
-        self.block_start         = DBlock('Start')
+        self.block_config        = DEvent('StimulatorConfiguration')
+        self.block_heartbeat     = DEvent('Heartbeat')
+        self.block_maxima_slider = DEvent('MaximaSlider')
+        self.block_control_stim  = DEvent('ControlStim')
+        self.block_start         = DEvent('Start')
 
         self.send_new_block_list([self.block_config, self.block_heartbeat,
                                   self.block_maxima_slider, self.block_control_stim, self.block_start])
