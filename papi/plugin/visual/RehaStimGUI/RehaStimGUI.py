@@ -52,19 +52,19 @@ import xml.etree.cElementTree as ET
 
 class OptionItem():
     def __init__(self):
-        self.attributes = {'1_Min': {
+        self.attributes = {'1_Start': {
             'value': '0',
             'min': '0.9',
             'max': '1',
-            'display_name' : 'Min',
+            'display_name' : 'Start',
             'type' : 'slider',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
-        }, '2_Max': {
+        }, '2_End': {
             'value': '0',
             'min': '0.5',
             'max': '1',
             'type' : 'slider',
-            'display_name' : 'Max',
+            'display_name' : 'End',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
         }, '3_Rise': {
             'value': '5',
@@ -73,7 +73,6 @@ class OptionItem():
             'type' : 'slider',
             'display_name' : 'Rise',
             'regex' : pc.REGEX_SINGLE_UNSIGNED_FLOAT_FORCED
-
         }, '4_Type': {
             'value': 'ramp',
             'options': "ramp, trapez",
@@ -81,8 +80,10 @@ class OptionItem():
         }}
 
 
-    def set_attr(self, attr, value):
-        self.attributes[attr] = value
+    def set_attr(self, attr, key, value):
+        if attr in self.attributes:
+            if key in self.attributes[attr]:
+                self.attributes[attr][key] = value
 
     def get_attr(self, attr):
         if attr in self.attributes:
@@ -94,7 +95,6 @@ class OptionItem():
     def clear_attribtues(self):
         self.attributes = {}
 
-#RENAME TO PLUGIN NAME
 class RehaStimGUI(pcp_base, object):
 
     def __init__(self):
@@ -102,48 +102,51 @@ class RehaStimGUI(pcp_base, object):
 
         self.__VERSION__ = "0.8"
 
-#        self.row_offset = 1;
-#        self.col_offset = 1;
-
         self.signal_next_state = "next_state"
+
+
 
         pass
 
     def initiate_layer_0(self, config=None):
 
-        self.widget = self.create_widget()
-        self.create_actions()
-
-        self.set_widget_for_internal_usage( self.widget )
-
-        self.current_state = None
 
         # ---------------------------
         # Read configuration
         # ---------------------------
 
         self.signal_next_state = config['signal_next_state']['value']
+        self.readOnly = config['readonly']['value'] == '1'
+
+        # ---------------------------
+        # Create Widget
+        # ---------------------------
+
+        self.widget = self.create_widget()
+        self.create_actions()
+        self.set_widget_for_internal_usage( self.widget )
+        self.current_state = None
+
 
         # ---------------------------
         # Create signals
         # ---------------------------
 
-        self.block_config    = DBlock('StimulatorConfiguration')
-        self.block_heartbeat = DBlock('Heartbeat')
+        self.block_config        = DBlock('StimulatorConfiguration')
+        self.block_heartbeat     = DBlock('Heartbeat')
         self.block_maxima_slider = DBlock('MaximaSlider')
-        self.block_control_stim = DBlock('ControlStim')
+        self.block_control_stim  = DBlock('ControlStim')
+        self.block_start         = DBlock('Start')
 
         self.send_new_block_list([self.block_config, self.block_heartbeat,
-                                  self.block_maxima_slider, self.block_control_stim])
+                                  self.block_maxima_slider, self.block_control_stim, self.block_start])
 
         # ---------------------------
         # Create Parameters
         # ---------------------------
         para_list = []
 
-        self.set_curent_state = DParameter('SetState', default=0)
 
-        para_list.append(self.set_curent_state)
 
         self.send_new_parameter_list(para_list)
 
@@ -248,7 +251,7 @@ class RehaStimGUI(pcp_base, object):
 
         self.loadsaveButtonVLayout = QtWidgets.QVBoxLayout(self.loadsaveButtonsWidget)
 
-        self.saveConfigButton = QtWidgets.QPushButton("Speicher")
+        self.saveConfigButton = QtWidgets.QPushButton("Speichern")
         self.saveConfigButton.setToolTip("Aktuelle Konfiguration speichern.")
         self.loadConfigButton = QtWidgets.QPushButton("Laden")
         self.loadConfigButton.setToolTip("Neue Konfiguration laden.")
@@ -302,10 +305,12 @@ class RehaStimGUI(pcp_base, object):
         self.addStateButton = QtWidgets.QPushButton("Neuen Zustand erzeugen")
         self.addChButton = QtWidgets.QPushButton("Neuen Kanal anlegen")
 
-        self.tableButtonVLayout.addWidget(self.addStateButton)
-        self.tableButtonVLayout.addWidget(self.addChButton)
+        if not self.readOnly:
 
-        self.horizonLayoutButtons.addWidget(self.tableButtonsWidget)
+            self.tableButtonVLayout.addWidget(self.addStateButton)
+            self.tableButtonVLayout.addWidget(self.addChButton)
+
+            self.horizonLayoutButtons.addWidget(self.tableButtonsWidget)
 
         return self.centralwidget
 
@@ -366,7 +371,7 @@ class RehaStimGUI(pcp_base, object):
 
                     cellWidget = None
                     if type in ['StateWidget']:
-                        cellWidget = StateWidget()
+                        cellWidget = StateWidget(readOnly=self.readOnly)
 
                         cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
                         cellWidget.trigger_select_state.connect(self.select_state_widget)
@@ -374,7 +379,7 @@ class RehaStimGUI(pcp_base, object):
                         self.button_group.addButton(cellWidget.get_radio_button())
 
                     if type in ['ChannelWidget']:
-                        cellWidget = ChannelWidget()
+                        cellWidget = ChannelWidget(readOnly=self.readOnly)
                         cellWidget.changed_slider.connect(self.changed_max_sliders)
                         cellWidget.trigger_remove_cell.connect(self.remove_cell_widget)
 
@@ -514,14 +519,14 @@ class RehaStimGUI(pcp_base, object):
 
     def clicked_start_button(self):
 
-        self.send_parameter_change('1', self.block_control_stim.name)
+        self.send_parameter_change('1', self.block_start)
         self.sendConfigButton.hide()
         self.stopButton.show()
 
 
     def clicked_stop_button(self):
 
-        self.send_parameter_change('0', self.block_control_stim.name)
+        self.send_parameter_change('0', self.block_start)
         self.sendConfigButton.show()
         self.stopButton.hide()
 
@@ -529,6 +534,15 @@ class RehaStimGUI(pcp_base, object):
         self.finishedCalibrationButton.hide()
         self.reCalibrationButton.show()
         self.send_parameter_change('2', self.block_control_stim)
+
+        if self.current_state is None:
+            first_state = self.tableWidget.cellWidget(0, 1)
+            if isinstance(first_state, StateWidget):
+                self.current_state = self.tableWidget.cellWidget(1,0)
+                self.select_state_widget(first_state, True)
+        else:
+            self.select_state_widget(self.current_state, True)
+
 
     def clicked_re_calibrate_button(self):
         self.finishedCalibrationButton.show()
@@ -558,8 +572,6 @@ class RehaStimGUI(pcp_base, object):
 
         self.send_parameter_change(str(all_values), self.block_maxima_slider)
 
-
-        print(all_values)
     def add_missing_cell_items(self):
 
         for c in range(1, self.tableWidget.columnCount()):
@@ -761,8 +773,13 @@ class RehaStimGUI(pcp_base, object):
                 'display_text' : 'Start maximized'
             },'signal_next_state' : {
                 'value' : 'next_state',
-                'tooltip' : 'Signal which contains the next state which should be choosen in the gui.',
+                'tooltip' : 'Signal which contains the next state which should be chosen in the gui.',
                 'display_text' : 'Signal: NextState'
+            }, 'readonly' : {
+                'value' : '0',
+                'tooltip' : 'Removes the ability to add/remove channels/states when enabled.',
+                'display_text' : 'Read-Only',
+                'type' : 'bool'
             }
         }
         return config
@@ -847,6 +864,7 @@ class OptionWidget(QtWidgets.QWidget):
 
         for i in range(len(self.lines)):
             self.gLayout.removeWidget(self.lines[i])
+            self.gLayout.removeWidget(self.labels[i])
 
         self.lines.clear()
         self.labels.clear()
@@ -886,6 +904,8 @@ class OptionWidget(QtWidgets.QWidget):
 
             for attr_key in attr:
 
+                if attr_key not in ["value"]:
+                    continue
                 attr_key_xml = ET.SubElement(attr_xml, attr_key)
 
                 attr_key_xml.text = str(attr[attr_key])
@@ -928,7 +948,7 @@ class OptionWidget(QtWidgets.QWidget):
                     cfg.append(0)
 
                 continue
-            if attr_name in ["Min", "Max"]:
+            if attr_name in ["Start", "End"]:
 
                 cfg.append(float(value)/100)
                 continue
@@ -946,8 +966,8 @@ class OptionWidget(QtWidgets.QWidget):
         """
         attrs_xml = cell_xml.find('Attributes')
 
-        new_oItem = OptionItem()
-        new_oItem.clear_attribtues()
+#        new_oItem = OptionItem()
+#        new_oItem.clear_attribtues()
 
         for attr_xml in attrs_xml:
             attr_name = attr_xml.get('name')
@@ -956,12 +976,10 @@ class OptionWidget(QtWidgets.QWidget):
 
             for attr_key_xml in attr_xml:
 
-                value[attr_key_xml.tag] = attr_key_xml.text
+                self.option_item.set_attr(attr_name, attr_key_xml.tag, attr_key_xml.text)
 
 
-            new_oItem.set_attr(attr_name, value)
-
-        self.set_option_item(new_oItem)
+        self.set_option_item(self.option_item)
 
 class HeaderWidget(QtWidgets.QWidget):
     """
@@ -971,10 +989,10 @@ class HeaderWidget(QtWidgets.QWidget):
     """
     trigger_remove_cell = QtCore.pyqtSignal(QtWidgets.QWidget)
 
-    def __init__(self, text="Header"):
+    def __init__(self, text="Header", readOnly=False):
         super(HeaderWidget, self).__init__()
         self.cell_name = text
-
+        self.readOnly = readOnly
         self.vLayout = QtWidgets.QVBoxLayout(self)
         self.vLayout.setContentsMargins(0, 0, 0, 0)
         self.vLayout.setAlignment(QtCore.Qt.AlignTop)
@@ -1013,7 +1031,9 @@ class HeaderWidget(QtWidgets.QWidget):
         self.delete_button.setFixedSize(20, 20)
         self.select_button.setFixedSize(20, 20)
 
-        self.hBLayout.addWidget(self.delete_button)
+        if not self.readOnly:
+            self.hBLayout.addWidget(self.delete_button)
+
         self.hBLayout.addWidget(self.select_button)
 
 
@@ -1029,6 +1049,9 @@ class HeaderWidget(QtWidgets.QWidget):
         self.slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
         self.slider_value = QtWidgets.QLabel()
         self.slider_value.setText('0')
+        self.slider_value.setFixedWidth(40)
+
+        self.slider.setMaximum(100)
 
         self.check_slider= QtWidgets.QCheckBox()
 
@@ -1108,7 +1131,7 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.label.setVisible(False)
         self.line_edit.setVisible(True)
-
+        self.line_edit.setFocus()
 
         #self.line_edit.setFocus(Qt.Focu)
 
@@ -1139,6 +1162,7 @@ class HeaderWidget(QtWidgets.QWidget):
         cfg.append(duration)
 
         return cfg
+
 class StateWidget(HeaderWidget):
     """
     More specific version of the HeaderWidget to describe the horizontal header.
@@ -1146,8 +1170,8 @@ class StateWidget(HeaderWidget):
     """
     trigger_select_state = QtCore.pyqtSignal(QtWidgets.QWidget)
 
-    def __init__(self, text="State"):
-        super(StateWidget, self).__init__(text)
+    def __init__(self, text="State", readOnly=False):
+        super(StateWidget, self).__init__(text, readOnly)
         self.select_button.clicked.connect(self.state_selected)
 
         self.slider.hide()
@@ -1160,14 +1184,13 @@ class StateWidget(HeaderWidget):
     def get_radio_button(self):
         return self.select_button
 
-
 class ChannelWidget(HeaderWidget):
 
     changed_slider = QtCore.pyqtSignal(QtWidgets.QWidget)
 
 
-    def __init__(self, text="Channel"):
-        super(ChannelWidget, self).__init__(text)
+    def __init__(self, text="Channel", readOnly=False):
+        super(ChannelWidget, self).__init__(text, readOnly)
         self.select_button.setVisible(False)
         self.duration_edit.setVisible(False)
         self.slider.valueChanged.connect(self.value_changed)
@@ -1175,6 +1198,7 @@ class ChannelWidget(HeaderWidget):
         self.check_slider.stateChanged.connect(self.checkbox_checked)
 
         self.slider.wheelEvent = self.sliderMousePressEvent
+        self.slider.setOrientation(QtCore.Qt.Vertical)
 
     def value_changed(self, change):
         self.slider_value.setText(str(change) + "%")
