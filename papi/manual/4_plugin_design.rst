@@ -23,7 +23,7 @@ The plugins are written in python 3.4. For the development we recommend to use o
 
 
 ... create Blocks
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
@@ -52,7 +52,7 @@ that the PaPI-backend only knows the last blocks sent by
        self.send_new_block_list([block])
 
 ... create Parameters
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Parameters are used to enable an external control of a running plugin.
 
@@ -232,10 +232,10 @@ PaPI supports currently only the following types.
 In case of an unknown type or none type was defined a simple textfield is used.
 
 What happens if the user triggers ...
---------------------------------------
+-------------------------------------
 
 ... pause?
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 The PaPI framework executes this functions
 
@@ -252,7 +252,7 @@ The PaPI framework executes this functions
 This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``execute(Data, block_name, plugin_uname)`` function.
 
 ... resume?
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 The PaPI framework executes this functions
 
@@ -269,7 +269,7 @@ The PaPI framework executes this functions
 This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``execute(Data, block_name, plugin_uname)`` function if necessary.
 
 ... quit?
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
 
 The PaPI framework executes this functions
 
