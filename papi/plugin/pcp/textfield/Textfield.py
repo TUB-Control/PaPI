@@ -33,7 +33,7 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
-from papi.data.DPlugin import DBlock
+from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 
 
@@ -41,9 +41,9 @@ class Textfield(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock('Change')
+        self.event_change = DEvent('Change')
 
-        self.send_new_block_list([block])
+        self.send_new_event_list([self.event_change])
         self.set_widget_for_internal_usage(self.create_widget())
 
         return True
@@ -68,7 +68,7 @@ class Textfield(pcp_base):
         self.cmenu.exec_(gloPos)
 
     def value_changed(self, change):
-        self.send_parameter_change(str(change), 'Change')
+        self.emit_event(str(change), self.event_change)
 
     def clicked(self):
         pass
@@ -99,7 +99,7 @@ class Textfield(pcp_base):
 
     def value_changed(self):
         change = self.lineedit.text()
-        self.send_parameter_change(change, 'Change')
+        self.emit_event(str(change), self.event_change)
 
     def new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):

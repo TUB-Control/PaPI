@@ -32,8 +32,7 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
-from papi.data.DPlugin import DBlock
-from papi.data.DSignal import DSignal
+from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 
 import papi.constants as pc
@@ -43,9 +42,9 @@ class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock('Change')
+        self.event_change = DEvent('Change')
 
-        self.send_new_block_list([block])
+        self.send_new_event_list([self.event_change])
         self.set_widget_for_internal_usage(self.create_widget())
 
         return True
@@ -56,8 +55,6 @@ class Slider(pcp_base):
         self.slider = QSlider()
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
-
-
 
         self.value_max = float(self.config['upper_bound']['value'])
         self.value_min = float(self.config['lower_bound']['value'])
@@ -100,7 +97,7 @@ class Slider(pcp_base):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.send_parameter_change(str(val), 'Change')
+        self.emit_event(str(val), self.event_change)
 
     def clicked(self):
         pass

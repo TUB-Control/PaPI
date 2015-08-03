@@ -129,17 +129,17 @@ class RehaStimGUI(pcp_base, object):
 
 
         # ---------------------------
-        # Create signals
+        # Create events
         # ---------------------------
 
-        self.block_config        = DEvent('StimulatorConfiguration')
-        self.block_heartbeat     = DEvent('Heartbeat')
-        self.block_maxima_slider = DEvent('MaximaSlider')
-        self.block_control_stim  = DEvent('ControlStim')
-        self.block_start         = DEvent('Start')
+        self.event_new_config        = DEvent('StimulatorConfiguration')
+        self.event_heartbeat     = DEvent('Heartbeat')
+        self.event_maxima_slider = DEvent('MaximaSlider')
+        self.event_control_stim  = DEvent('ControlStim')
+        self.event_start         = DEvent('Start')
 
-        self.send_new_block_list([self.block_config, self.block_heartbeat,
-                                  self.block_maxima_slider, self.block_control_stim, self.block_start])
+        self.send_new_event_list([self.event_new_config, self.event_heartbeat,
+                                  self.event_maxima_slider, self.event_control_stim, self.event_start])
 
         # ---------------------------
         # Create Parameters
@@ -512,28 +512,27 @@ class RehaStimGUI(pcp_base, object):
         #
         # print("Length of config " + str(len(simulink_cfg)))
         #
-        # self.send_parameter_change(str(simulink_cfg), self.block_config.name)
+        # self.emit_event(str(simulink_cfg), self.block_config.name)
         #
         # if stateWidget is None:
         #     return
 
     def clicked_start_button(self):
-
-        self.send_parameter_change('1', self.block_start)
+        self.emit_event('1', self.event_start)
         self.sendConfigButton.hide()
         self.stopButton.show()
 
 
     def clicked_stop_button(self):
 
-        self.send_parameter_change('0', self.block_start)
+        self.emit_event('0', self.event_start)
         self.sendConfigButton.show()
         self.stopButton.hide()
 
     def clicked_finished_button(self):
         self.finishedCalibrationButton.hide()
         self.reCalibrationButton.show()
-        self.send_parameter_change('2', self.block_control_stim)
+        self.emit_event('2', self.event_control_stim)
 
         if self.current_state is None:
             first_state = self.tableWidget.cellWidget(0, 1)
@@ -547,7 +546,7 @@ class RehaStimGUI(pcp_base, object):
     def clicked_re_calibrate_button(self):
         self.finishedCalibrationButton.show()
         self.reCalibrationButton.hide()
-        self.send_parameter_change('3', self.block_control_stim)
+        self.emit_event('3', self.event_control_stim)
 
 #        json_config = self.create_json_for_state(stateWidget)
 
@@ -570,7 +569,7 @@ class RehaStimGUI(pcp_base, object):
                     all_values.append(0)
 
 
-        self.send_parameter_change(str(all_values), self.block_maxima_slider)
+        self.emit_event(str(all_values), self.event_maxima_slider)
 
     def add_missing_cell_items(self):
 
@@ -701,7 +700,7 @@ class RehaStimGUI(pcp_base, object):
         simulink_cfg = self.create_config_for_simulink_block(current_state=old_stateWidget)
 
         if send_config:
-            self.send_parameter_change(str(simulink_cfg), self.block_config.name)
+            self.emit_event(str(simulink_cfg), self.event_new_config.name)
 
     def pause(self):
         # will be called, when plugin gets paused
@@ -740,7 +739,7 @@ class RehaStimGUI(pcp_base, object):
 
         self.heartbeat += 1
 
-        self.send_parameter_change(str(self.heartbeat), self.block_heartbeat.name)
+        self.emit_event(str(self.heartbeat), self.event_heartbeat.name)
 
 
     def set_parameter(self, name, value):

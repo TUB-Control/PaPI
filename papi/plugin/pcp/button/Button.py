@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui    import QIcon
 from PyQt5 import QtGui, QtCore
 
-from papi.data.DPlugin import DBlock
+from papi.data.DPlugin import DEvent
 from papi.data.DSignal import DSignal
 from papi.plugin.base_classes.pcp_base import pcp_base
 from papi.constants import REGEX_SIGNED_FLOAT
@@ -50,7 +50,7 @@ class Button(pcp_base):
 
         #super(Button, self).start_init(config)
 
-        block = DBlock('Click')
+        self.event_click = DEvent('Click')
 
         self.name = config['name']['value']
         self.cur_value = 0
@@ -61,7 +61,7 @@ class Button(pcp_base):
         self.text_down = (self.config['state2_text']['value'])
         self.button_state = 'up'
 
-        self.send_new_block_list([block])
+        self.send_new_event_list([self.event_click])
 
         self.button = self.create_widget()
         self.set_widget_for_internal_usage(self.button)
@@ -101,7 +101,7 @@ class Button(pcp_base):
             self.button.setText(self.text_up)
             val = self.value_up
 
-        self.send_parameter_change(str(val), 'Click')
+        self.emit_event(str(val), self.event_click)
 
 
     def get_plugin_configuration(self):

@@ -85,6 +85,8 @@ class base_plugin(IPlugin):
     def merge_configs(self, cfg1, cfg2):
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
+    def emit_event(self, data, event):
+        self.send_parameter_change(data, event)
 
     def send_parameter_change(self, data, block_name):
 
@@ -148,6 +150,9 @@ class base_plugin(IPlugin):
 
         event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
+
+    def send_new_event_list(self, events):
+        self.send_new_block_list(events)
 
     def send_new_block_list(self, blocks):
         opt = DOptionalData()

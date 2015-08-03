@@ -42,7 +42,7 @@ the next step a signal named ``Step`` is created and added to the
 previous created Block. At the end the PaPI-backend will be informed and
 the Block can be used by other plugins. It is **very important** to know
 that the PaPI-backend only knows the last blocks sent by
-``send_new_block_list``. Previous sent block will be deleted.
+``send_new_block_list``. Previous sent blocks will be deleted.
 
 .. code:: python
 
@@ -70,10 +70,41 @@ was defined
 .. code:: python
 
     def start_init(self, config=None):
-       self.para1 = DParameter('ParameterName1',default=0)
-       self.para2 = DParameter('ParameterName2',default=0)
-       self.para3 = DParameter('ParameterName3',default=0, Regex='^(1|0){1}$')
-       self.send_new_parameter_list([self.para1, self.para2, self.para2])
+
+       self.block = DBlock('Source')
+       signal = DSignal('Step')
+       self.block.add_signal(signal)
+       self.send_new_block_list([block])
+
+... create Events
+~~~~~~~~~~~~~~~~~
+
+Events are used to change parameters of other plugin.
+
+It is necessary to imports this object:
+
+.. code:: python
+
+    from papi.data.DSignal import DEvent
+
+A new event is define by the following code. At the end the PaPI-backend will be informed and
+the Event can be used to change parameters of other plugins. It is **very important** to know
+that the PaPI-backend only knows the last events sent by
+``send_new_event_list``. Previous sent events will be deleted.
+
+.. code:: python
+
+    def start_init(self, config=None):
+
+       self.event_start         = DEvent('Start')
+       self.send_new_event_list([self.event_start])
+
+An event can be emitted as following e.g. as the result of clicking a button in the GUI.
+
+.. code:: python
+    
+    def clicked_start_button(self):
+        self.emit_event('1', self.event_start)
 
 ... process new data
 ~~~~~~~~~~~~~~~~~~~~

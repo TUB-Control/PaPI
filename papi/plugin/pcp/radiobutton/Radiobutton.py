@@ -33,7 +33,7 @@ __author__ = 'knuths'
 from PyQt5.QtWidgets import QSlider,QVBoxLayout, QWidget, QLabel, QRadioButton
 from PyQt5 import QtCore
 
-from papi.data.DPlugin import DBlock
+from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 from papi.plugin.base_classes.pcp_base import pcp_base
 import papi.constants as pc
@@ -41,9 +41,9 @@ import papi.constants as pc
 class Radiobutton(pcp_base):
     def initiate_layer_0(self, config):
 
-        self.block = DBlock('Choice')
+        self.event_choice = DEvent('Choice')
 
-        self.send_new_block_list([self.block])
+        self.send_new_event_list([self.event_choice])
 
 
         para_list = []
@@ -128,9 +128,9 @@ class Radiobutton(pcp_base):
             if self.buttons[i].isChecked():
                 self.config['selected_index']['value'] = str(i)
                 if len(self.option_values) == len(self.option_texts):
-                    self.send_parameter_change(self.option_values[i], self.block.name)
+                    self.emit_event(self.option_values[i], self.event_choice)
                 else:
-                    self.send_parameter_change(self.option_texts[i], self.block.name)
+                    self.emit_event(self.option_texts[i], self.event_choice)
 
     def set_parameter(self, parameter_name, parameter_value):
 
