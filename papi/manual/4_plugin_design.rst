@@ -16,14 +16,13 @@ development of an own plugin. The template files can be found in
 -  ``visual_template.py`` - template for the development of visual
    Plugins.
 
-The plugins are written in python 3.4. For the development you can use
-this tools:
+The plugins are written in python 3.4. For the development we recommend to use on these tools:
 
-   - Editor with syntax highlighting
+   - Any editor with syntax highlighting (e.g. gedit, atom)
    - PyCharm
 
 
-... create a Block
+... create Blocks
 ~~~~~~~~~~~~~~~~~~
 
 Blocks are used to collect all signals created by the same source. An
@@ -52,7 +51,7 @@ that the PaPI-backend only knows the last blocks sent by
        self.block.add_signal(signal)
        self.send_new_block_list([block])
 
-... create Parameter
+... create Parameters
 ~~~~~~~~~~~~~~~~~~~~
 
 Parameters are used to enable an external control of a running plugin.
@@ -79,7 +78,7 @@ was defined
 ... create Events
 ~~~~~~~~~~~~~~~~~
 
-Events are used to change parameters of other plugin.
+Events are used to change parameters of other plugins.
 
 It is necessary to imports this object:
 
@@ -88,7 +87,7 @@ It is necessary to imports this object:
     from papi.data.DSignal import DEvent
 
 A new event is define by the following code. At the end the PaPI-backend will be informed and
-the Event can be used to change parameters of other plugins. It is **very important** to know
+the event can be used to change parameters of other plugins. It is **very important** to know
 that the PaPI-backend only knows the last events sent by
 ``send_new_event_list``. Previous sent events will be deleted.
 
