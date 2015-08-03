@@ -78,7 +78,7 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QPixmap</span>
 
 <div class="viewcode-block" id="get32Icon"><a class="viewcode-back" href="../../../papi.gui.qt_new.html#papi.gui.qt_new.get32Icon">[docs]</a><span class="k">def</span> <span class="nf">get32Icon</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;./papi/gui/qt_new/images/32/&#39;</span> <span class="o">+</span> <span class="nb">file</span><span class="p">)</span>
@@ -86,7 +86,15 @@
 </div>
 <div class="viewcode-block" id="get16Icon"><a class="viewcode-back" href="../../../papi.gui.qt_new.html#papi.gui.qt_new.get16Icon">[docs]</a><span class="k">def</span> <span class="nf">get16Icon</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;./papi/gui/qt_new/images/16/&#39;</span> <span class="o">+</span> <span class="nb">file</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="get32Pixmap"><a class="viewcode-back" href="../../../papi.gui.qt_new.html#papi.gui.qt_new.get32Pixmap">[docs]</a><span class="k">def</span> <span class="nf">get32Pixmap</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;./papi/gui/qt_new/images/32/&#39;</span> <span class="o">+</span> <span class="nb">file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="get16Pixmap"><a class="viewcode-back" href="../../../papi.gui.qt_new.html#papi.gui.qt_new.get16Pixmap">[docs]</a><span class="k">def</span> <span class="nf">get16Pixmap</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s">&#39;./papi/gui/qt_new/images/16/&#39;</span> <span class="o">+</span> <span class="nb">file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

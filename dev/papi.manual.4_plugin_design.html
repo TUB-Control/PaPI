@@ -69,11 +69,10 @@ or Data Processing Plugin.</li>
 <li><tt class="docutils literal"><span class="pre">visual_template.py</span></tt> - template for the development of visual
 Plugins.</li>
 </ul>
-<p>The plugins are written in python 3.4. For the development you can use
-this tools:</p>
+<p>The plugins are written in python 3.4. For the development we recommend to use on these tools:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Editor with syntax highlighting</li>
+<li>Any editor with syntax highlighting (e.g. gedit, atom)</li>
 <li>PyCharm</li>
 </ul>
 </div></blockquote>
@@ -93,7 +92,7 @@ the next step a signal named <tt class="docutils literal"><span class="pre">Step
 previous created Block. At the end the PaPI-backend will be informed and
 the Block can be used by other plugins. It is <strong>very important</strong> to know
 that the PaPI-backend only knows the last blocks sent by
-<tt class="docutils literal"><span class="pre">send_new_block_list</span></tt>. Previous sent block will be deleted.</p>
+<tt class="docutils literal"><span class="pre">send_new_block_list</span></tt>. Previous sent blocks will be deleted.</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
    <span class="n">signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
@@ -113,10 +112,34 @@ that the PaPI-backend only knows the last blocks sent by
 informed. To limit possible user entries at the frontend for the third parameter a regex
 was defined</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">para1</span> <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;ParameterName1&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">para2</span> <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;ParameterName2&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">para3</span> <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;ParameterName3&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Regex</span><span class="o">=</span><span class="s">&#39;^(1|0){1}$&#39;</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_parameter_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">para1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">para2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">para2</span><span class="p">])</span>
+
+   <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
+   <span class="n">signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">([</span><span class="n">block</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-events">
+<h3>... create Events<a class="headerlink" href="#create-events" title="Permalink to this headline">¶</a></h3>
+<p>Events are used to change parameters of other plugins.</p>
+<p>It is necessary to imports this object:</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DEvent</span>
+</pre></div>
+</div>
+<p>A new event is define by the following code. At the end the PaPI-backend will be informed and
+the event can be used to change parameters of other plugins. It is <strong>very important</strong> to know
+that the PaPI-backend only knows the last events sent by
+<tt class="docutils literal"><span class="pre">send_new_event_list</span></tt>. Previous sent events will be deleted.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+   <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span>         <span class="o">=</span> <span class="n">DEvent</span><span class="p">(</span><span class="s">&#39;Start&#39;</span><span class="p">)</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_event_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>An event can be emitted as following e.g. as the result of clicking a button in the GUI.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emit_event</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -321,6 +344,7 @@ be modified by the user during the creation process.</p>
 <li><a class="reference internal" href="#start">... start</a></li>
 <li><a class="reference internal" href="#create-a-block">... create a Block</a></li>
 <li><a class="reference internal" href="#create-parameter">... create Parameter</a></li>
+<li><a class="reference internal" href="#create-events">... create Events</a></li>
 <li><a class="reference internal" href="#process-new-data">... process new data</a></li>
 <li><a class="reference internal" href="#to-react-to-parameter-changes">... to react to parameter changes</a></li>
 <li><a class="reference internal" href="#to-create-a-configuration">...to create a configuration</a></li>

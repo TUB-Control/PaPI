@@ -133,13 +133,22 @@
     <span class="c"># ------------------</span></div>
 <div class="viewcode-block" id="base_plugin.merge_configs"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.merge_configs">[docs]</a>    <span class="k">def</span> <span class="nf">merge_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg1</span><span class="p">,</span> <span class="n">cfg2</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cfg1</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">cfg2</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="p">)</span>
-
+</div>
+<div class="viewcode-block" id="base_plugin.emit_event"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.emit_event">[docs]</a>    <span class="k">def</span> <span class="nf">emit_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_parameter_change</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_plugin.send_parameter_change"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_parameter_change">[docs]</a>    <span class="k">def</span> <span class="nf">send_parameter_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
+
         <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_name</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
+
         <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
@@ -190,6 +199,9 @@
 
         <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.send_new_event_list"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_event_list">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_event_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_plugin.send_new_block_list"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_block_list">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_block_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="p">):</span>
         <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>

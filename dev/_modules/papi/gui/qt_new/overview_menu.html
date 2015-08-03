@@ -278,7 +278,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">stopButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;STOP&#39;</span><span class="p">)</span>
 
         <span class="c"># ---------------------------</span>
-        <span class="c"># Add DBlocks</span>
+        <span class="c"># Add DBlocks(Also DEvent)</span>
         <span class="c"># ---------------------------</span>
 
         <span class="n">dblock_ids</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblocks</span><span class="p">()</span>
@@ -683,8 +683,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
+                <span class="c">#TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters</span>
+                <span class="c">#self.pluginTree.clicked.emit(index)</span>
 
         <span class="c"># -----------------------------------------</span>
         <span class="c"># case: remove already deleted plugins</span>
@@ -715,9 +715,11 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
 
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="c">#TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters</span>
+        <span class="c"># index = self.pluginTree.currentIndex()</span>
+        <span class="c"># if index.isValid():</span>
+        <span class="c">#     self.pluginTree.clicked.emit(index)</span>
 
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.cancel_subscription_action"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.overview_menu.OverviewPluginMenu.cancel_subscription_action">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_subscription_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">dblock</span><span class="p">:</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">signals</span><span class="p">:</span> <span class="p">[]):</span>

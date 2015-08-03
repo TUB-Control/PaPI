@@ -83,6 +83,7 @@
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QStandardItemModel</span><span class="p">,</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QBrush</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
+<span class="kn">from</span> <span class="nn">papi.gui.qt_new</span> <span class="kn">import</span> <span class="n">get16Pixmap</span>
 
 
 
@@ -257,9 +258,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span> <span class="o">=</span> <span class="n">dblock</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;DBlock: &quot;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dblock</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
+            <span class="n">brush</span> <span class="o">=</span> <span class="n">QBrush</span><span class="p">()</span>
+            <span class="n">brush</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">magenta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;DEvent: &quot;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setForeground</span><span class="p">(</span><span class="n">brush</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="DBlockTreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">get16Pixmap</span><span class="p">(</span><span class="s">&quot;events.png&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">get16Pixmap</span><span class="p">(</span><span class="s">&quot;transmit.png&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">None</span>
 
 </div></div>
@@ -446,10 +463,12 @@
         <span class="n">parent</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
         <span class="n">flags</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span>
 
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="n">flags</span> <span class="o">^=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
             <span class="n">flags</span> <span class="o">^=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
             <span class="k">return</span> <span class="n">flags</span>
+
 
 
         <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>

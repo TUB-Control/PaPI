@@ -638,13 +638,19 @@
 
             <span class="n">area</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="n">sub_window</span><span class="p">)</span>
 
-            <span class="n">sub_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">isMaximized</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;maximized&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span>
+
 
             <span class="n">size_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;([0-9]+)&#39;</span><span class="p">)</span>
 
             <span class="n">pos</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;position&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
             <span class="n">window_pos</span> <span class="o">=</span> <span class="n">size_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
             <span class="n">sub_window</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">window_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">window_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isMaximized</span><span class="p">:</span>
+                <span class="n">sub_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sub_window</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
 
             <span class="c"># see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum</span>
 
