@@ -536,8 +536,9 @@ class ORTD_UDP(iop_base):
 
             signals_to_send = {}
             for key in keys:
-                sig_name = self.Sources[str(key)]['SourceName']
-                signals_to_send[sig_name] = self.signal_values[key]
+                if str(key) in self.Sources:
+                    sig_name = self.Sources[str(key)]['SourceName']
+                    signals_to_send[sig_name] = self.signal_values[key]
 
             if len( list(self.blocks.keys()) ) >0:
                 block = list(self.blocks.keys())[0]

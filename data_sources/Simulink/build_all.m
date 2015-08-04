@@ -1,8 +1,5 @@
 curDir = pwd;
 
-addpath([curDir '/ert_linux/']);
-
-
 cd('../../matlab');
 
 build

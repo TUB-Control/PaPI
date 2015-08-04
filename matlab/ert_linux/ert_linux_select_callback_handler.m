@@ -77,5 +77,5 @@ function ert_linux_select_callback_handler(varargin)
     slConfigUISetEnabled(hDlg, hSrc, 'ERTCustomFileTemplate',false);
     slConfigUISetVal(hDlg, hSrc, 'GenerateSampleERTMain', 'off');
     slConfigUISetEnabled(hDlg, hSrc, 'GenerateSampleERTMain',false);
-
+    slConfigUISetVal(hDlg, hSrc, 'TargetLang', 'C++');
     % ----- other -------------------------------------------------------------

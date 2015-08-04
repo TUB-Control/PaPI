@@ -29,12 +29,20 @@
   #include <semaphore.h>                 /* Semaphores library header file */
   #include <time.h>
   #include <stdlib.h>
+  #include <stdbool.h>
   #include <unistd.h>
+  #include <sys/mman.h>                  /* For mlockall() */
+  #include <signal.h>
   #include "%<modelName>.h"              /* Model's header file */
   #include "rtwtypes.h"                  /* MathWorks types */
   %if extMode == 1
     #include "ext_work.h"                  /* External mode header file */
   %endif
+
+  #ifndef TRUE
+  #define TRUE true
+  #define FALSE false
+  #endif
 
   /*==================*
    * Required defines *
@@ -62,6 +70,12 @@
    * Maximal priority used by base rate thread.
    */
   #define MAX_PRIO (sched_get_priority_min(SCHED_FIFO) + %<numSampleTimes>)
+
+  // Signal handler for ABORT during simulation
+  void abortHandler(int sig) {
+    fprintf(stderr, "Simulation aborted by pressing CTRL+C\n");
+    rtmSetStopRequested(%<modelName>_M, 1);
+  }
   
   /**
    * Thread handle of the base rate thread.
@@ -115,6 +129,7 @@
 	%<modelName>_step%<i>();
 	sem_wait(&sub_rate[%<i>].sem);    /* sem_val = 0 */
       }
+      return NULL;
     }
   %endforeach
 %endfunction
@@ -128,7 +143,11 @@
    * This is the thread function of the base rate loop.
    * Fundamental sample time = %<fundamentalStepSize>s
    */
-  void * base_rate(void* argA)
+#ifdef __cplusplus
+  void * base_rate(void *)
+#else
+  void * base_rate()
+#endif
   {
     %assign  sec = FEVAL("uint32", fundamentalStepSize)
     %assign nsec = FEVAL("uint32", (fundamentalStepSize - FEVAL("floor", fundamentalStepSize))*1000000000)
@@ -150,24 +169,30 @@
     /* Main loop, running until all the threads are terminated */
     while(rtmGetErrorStatus(%<modelName>_M) == NULL && !rtmGetStopRequested(%<modelName>_M)) {
       %<printfunc()>
-      /* Check subrate overrun, set rates that need to run this time step*/
-      if (taskCounter[0] == 0) {
-        if (eventFlags[1]) {
-          OverrunFlags[0] = false;
-          OverrunFlags[1] = true;
-
-          // Sampling too fast
-          rtmSetErrorStatus(%<modelName>_M, "Overrun");
-          return NULL;
-        }
-
-        eventFlags[1] = true;
-      }
-
-      taskCounter[0]++;
-      if (taskCounter[0] == 2) {
-        taskCounter[0]= 0;
-      }
+      // Check subrate overrun, set rates that need to run this time step
+          %foreach i = numSampleTimes
+        %if i == 0 || i == 1 && tid01Eq
+          %continue
+        %endif
+           
+            if (taskCounter[%<i>] == 0) {
+              if (eventFlags[%<i>]) {
+                OverrunFlags[0] = false;
+                OverrunFlags[%<i>] = true;
+ 
+                // Sampling too fast
+                rtmSetErrorStatus(%<modelName>_M, "Overrun");
+                return 0;
+              }
+ 
+              eventFlags[%<i>] = true;
+            }
+            %assign T = FEVAL("int32", FEVAL("floor", sampleTime%<i> / fundamentalStepSize))
+            taskCounter[%<i>]++;
+            if (taskCounter[%<i>] == %<T>) {
+              taskCounter[%<i>]= 0;
+            }
+        %endforeach
 
       /* Trigger sub-rate threads */
       %foreach i = numSampleTimes
@@ -178,7 +203,7 @@
 	%assign o = offset%<i>
 	/* Sampling rate %<i>, sample time = %<s>, offset = %<o> */
 	if (eventFlags[%<i>]) {
-	  eventFlags[%<i>] = false;
+	  eventFlags[%<i>] = FALSE;
 	  sem_getvalue(&sub_rate[%<i>].sem, &step_sem_value);
 	  if (step_sem_value) {
 	    rtmSetErrorStatus(%<modelName>_M, "Overrun");
@@ -215,7 +240,11 @@
 	  fprintf(stderr, "Base rate (%<fundamentalStepSize>s) overrun by %d us\n", usec);
 	  next = now;
 	  continue;
-	}
+	} 
+    //else {
+    //    uint32_T usec = (now.tv_sec - next.tv_sec) * 1000000 + (now.tv_nsec - next.tv_nsec)/1000;
+	//    fprintf(stderr, "Base rate (%<fundamentalStepSize>s) overrun by %d us\n", usec);
+    //}
       }	while (0);
       clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next, NULL);
 
@@ -227,6 +256,7 @@
       sem_post(&sub_rate[i].sem);
       sem_post(&sub_rate[i].sem);
     }
+    return 0;
   }
 
   /**
@@ -249,6 +279,8 @@
       (void)(argc);
       (void *)(argv);
     %endif
+
+    CHECKE(mlockall(MCL_FUTURE));
 
     /* Initialize model */
     %<modelName>_initialize();
@@ -285,6 +317,9 @@
     %if extMode == 1
       /* External mode */
       CHECKE(sem_wait(&ext_mode_ready));
+
+      signal(SIGINT, abortHandler); // important for letting the destructor be called.
+
       while(rtmGetErrorStatus(%<modelName>_M) == NULL && !rtmGetStopRequested(%<modelName>_M)) {
         rtExtModeOneStep(rtmGetRTWExtModeInfo(RT_MDL), NUMST, (boolean_T *)&rtmGetStopRequested(RT_MDL));
 	usleep(%<FEVAL("uint32", fundamentalStepSize * 1000000)>);

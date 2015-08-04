@@ -277,7 +277,11 @@ endif
 
 #-------------------------- Additional Libraries ------------------------------
 
-SYSLIBS = $(EXT_LIB) -lrt -lpthread
+ifeq ($(TGT_FCN_LIB), None)
+SYSLIBS = $(EXT_LIB) -lpthread
+else
+SYSLIBS = $(EXT_LIB) -lpthread $(TGT_FCN_LIB)
+endif
 ifeq ($(SFCN),0)
 SYSLIBS += -lm
 endif
