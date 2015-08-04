@@ -108,6 +108,11 @@ class ORTD_UDP(iop_base):
                 'advanced' : '1',
                 'tooltip' : 'Use the Socket IO',
                 'type' : 'bool'
+            },
+            "OnlyInitialConfig" : {
+                'value' :'0',
+                'tooltip' : 'Use only first configuration, ignore further configurations.',
+                'type' : 'bool'
             }
         }
 
@@ -127,6 +132,9 @@ class ORTD_UDP(iop_base):
         self.PAPI_SIMULINK_BLOCK = False
 
         self.separate = int(config['SeparateSignals']['value'])
+
+        self.onlyInitialConfig = config['OnlyInitialConfig']['value'] == '1'
+        self.hasInitialConfig = False
 
         if (not self.sendOnReceivePort):
             # SOCK_DGRAM is the socket type to use for UDP sockets
@@ -353,6 +361,12 @@ class ORTD_UDP(iop_base):
             cfg = json.loads(config_file)
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
+
+
+            if self.hasInitialConfig and self.onlyInitialConfig:
+                return True
+
+            self.hasInitialConfig = True
 
             self.update_block_list(ORTDSources)
             self.update_parameter_list(ORTDParameters)

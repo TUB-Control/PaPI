@@ -98,6 +98,7 @@ The settings for `Code Generation/Custom Code` must be edited as following:
     libboost_thread.so
     libboost_signals.so
 
+Due to a new version of ert_linux, it is needed to use **C89/C90 (ANSI)** as default math library. This option can be found in `Code Generation/Interface`.
 
 
 Block Configuration

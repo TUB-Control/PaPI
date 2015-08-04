@@ -39,6 +39,14 @@ The plugin uses this specific configuration.
       - Bool
       - (0|1)
       - Use same port for send and receive.
+    * - UseSocketIO
+      - Bool
+      - (0|1)
+      - Use the Socket IO
+    * - OnlyInitialConfig
+      - Bool
+      - (0|1)
+      - Use only first configuration, ignore further configurations.
 
 Parameter
 ----------------------

@@ -244,6 +244,17 @@ class PaPIController(vip_base):
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
             },
+            "UseSocketIO" : {
+                'value' : '0',
+                'advanced' : '1',
+                'tooltip' : 'Use the Socket IO',
+                'type' : 'bool'
+            },
+            "OnlyInitialConfig" : {
+                'value' :'0',
+                'tooltip' : 'Use only first configuration, ignore further configurations.',
+                'type' : 'bool'
+            }
         }
         return config
 
@@ -264,6 +275,8 @@ class PaPIController(vip_base):
         out_port = self.config ['2:source_port']['value']
         in_port  = self.config ['3:out_port']['value']
         SendOnReceivePort = self.config['SendOnReceivePort']['value']
+        UseSocketIO = self.config['UseSocketIO']['value']
+        OnlyInitialConfig = self.config['OnlyInitialConfig']['value']
 
         ortd_cfg ={
             'address': {
@@ -280,6 +293,12 @@ class PaPIController(vip_base):
             },
             'SendOnReceivePort': {
                 'value': SendOnReceivePort
+            },
+            "UseSocketIO" : {
+                'value' : UseSocketIO,
+            },
+            "OnlyInitialConfig" : {
+                'value' :OnlyInitialConfig,
             }
         }
 
