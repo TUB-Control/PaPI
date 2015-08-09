@@ -314,9 +314,10 @@ function [sim, outlist] = AutoConfigExample(sim, Signal)
 
   // Please note ident_str must be unique.
   userdata = [];
-  [sim, finished, outlist, userdata] = ld_AutoOnlineExch_dev(sim, 0, inlist=list(Signal), ...
+  param.scilab_path = "BUILDIN_PATH";  
+  [sim, finished, outlist, userdata] = ld_AutoOnlineExch_dev2(sim, 0, inlist=list(Signal), ...
                                                              insizes, outsizes, intypes, outtypes, ... 
-                                                             ThreadPrioStruct, CallbackFns, ident_str="AutoConfigDemo", userdata);
+                                                             ThreadPrioStruct, CallbackFns, ident_str="AutoConfigDemo", userdata, param);
 
   PacketFramework = userdata(1);
 //   [sim] = ld_printf(sim, 0, finished, "State ", 1);
