@@ -9,7 +9,7 @@ function [ json_config ] = simulink_example_config( state, compact)
                                      
         signals = {'sine(1)','sine(2)','sine(3)','noise(1)','noise(2)','noise(3)','sine_multiplier','super_noise'};
         
-        parameters = {'multiplier','limit'};
+        parameters = {'multiplier','offset'};
                        
         pf = PacketFramework('PaPIConfig');
 
@@ -22,7 +22,15 @@ function [ json_config ] = simulink_example_config( state, compact)
                 {'step_count', '101'} ...
             } ...
         )
-        
+    
+        slider_uname_2 = pf.PF_addplugin('Slider', 'Offset', '(150,75)', '(300,75)');
+        pf.PF_changePluginConfig(slider_uname_2, { ...
+                {'upper_bound', '10'}, ...
+                {'lower_bound', '0'}, ...
+                {'step_count', '101'} ...
+            } ...
+        )        
+    
         %pf.PF_addparametersForBlockConfig({'Multiplier'});
         %pf.PF_addparametersForBlockConfig({'Parameter(105)'});
 
@@ -34,7 +42,8 @@ function [ json_config ] = simulink_example_config( state, compact)
         
         pf.PF_addsubs(plot_uname, block_name_ortd, signals([1:3 7]) );
         
-        pf.PF_addcontrol(slider_uname, 'SliderBlock', {parameters(1)});
+        pf.PF_addcontrol(slider_uname, 'Change', {parameters(1)});
+        pf.PF_addcontrol(slider_uname_2, 'Change', {parameters(2)});
         
         json_config = savejson('', pf.config, 'Compact', compact);
     

@@ -48,7 +48,8 @@ Sven Knuth
 class PaPIBlock {
 private:
     // -------------------------
-    // Important variables
+    // Variables with information
+    // about the connection
     // -------------------------
     //Used to remember the amount of elements of the input vector u1
     int size_u1_vector;
@@ -56,15 +57,32 @@ private:
     int amount_output;
     //Amount of different parameters [1,5,4,3] => 4
     int amount_parameter;
-    //Size of the single for the parameter [1,5,4,3] => size(p1)=1, size(p2)=5, size(p3)=4, size(p4)=3
+    //Contains the dimensions of every parameter [1,5,4,3] => size(p1)=1, size(p2)=5, size(p3)=4, size(p4)=3
     int* dimension_parameters;
+    //Contains the dimensions of every input [1,5,4,3] => size(u1)=1, size(u2)=5, size(u3)=4, size(u4)=3
     int* dimension_inputs;
+    //Contains the 'to be splitted' information for every signal
     int* split_signals;
+    //Amount of different inputs [1,5,4,3] => 4
     int amount_inputs;
     //Size of output vector for the parameter [1,5,4,3] => sum([1,5,4,3]) = 13
     int size_output_parameters;
 
-    int* stream_in;
+    // -------------------------------
+    // Output vector
+    // -------------------------------
+    bool para_out_was_set;
+    double* para_out;
+
+    // -------------------------------
+    // Internal variables
+    // -------------------------------
+
+    bool output_was_init_with_zero;
+
+    //int* stream_in;
+    boost::array<int, 8192> stream_in;
+
     std::size_t stream_in_length;
     int* stream_out;
     int stream_out_size;
@@ -89,10 +107,18 @@ private:
 
     std::string getInitialValueForParameter(double para_out[], int p_id);
 
+    void initOutputWithZero(double para_out[], int amount_output);
+
+    // --------------------------
+    // UDP functions/variables
+    // --------------------------
+
     UDPHandle* udphandle;
     void handleStream(std::size_t msg_length, boost::array<char, 8192> buffer);
     int local_port;
     int remote_port;
+    std::string local_ip;
+    std::string remote_ip;
 
     void createUDPServer();
     void startUDPServer();
@@ -109,7 +135,7 @@ public:
     ~PaPIBlock();
 
     void setOutput(double u1[], double time, double para_out[]);
-    void setParaOut(int stream_in[], std::size_t msg_length, double para_out[]);
+    void setParaOut(double para_out[]);
 
     void sendConfig(int stream_out[]);
     void sendInput(double u1[], double time, int stream_out[]);

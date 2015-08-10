@@ -155,11 +155,11 @@ void UDPHandle::startSend() {
     @param msg_length Defines the amount of elements in the data stream
 */
 void UDPHandle::sendData(int* stream, std::size_t msg_length) {
-
     if (this->threadInitialized) {
         this->send_msg_length_ = msg_length;
-        this->send_buffer_ = new int[msg_length];
-        std::memcpy(&this->send_buffer_[0], stream, sizeof(int)*msg_length);
+//        this->send_buffer_ = new int[msg_length];
+
+        std::memcpy(this->send_buffer_.begin(), stream, sizeof(int)*msg_length);
         this->sigSendData();
     }
 }
