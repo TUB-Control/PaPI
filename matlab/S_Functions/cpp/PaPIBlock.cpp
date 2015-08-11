@@ -77,8 +77,8 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *    Store information about UDP
     ******************************************* */
-    this->local_port = 20001;
-    this->remote_port = 20000;
+    this->local_port = p7_local_port;
+    this->remote_port = p8_remote_port;
 
     /* ******************************************
     *    Store information about the parameters

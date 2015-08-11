@@ -48,7 +48,6 @@ private:
     std::size_t send_msg_length_;
     boost::array<char, 8192> recv_buffer_;
     boost::array<char, 8192> send_buffer_;
-    //int* send_buffer_;
     boost::mutex mutex_send_buffer_;
 
 
