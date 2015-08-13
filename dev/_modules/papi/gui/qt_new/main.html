@@ -327,7 +327,7 @@
         <span class="n">all_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
         <span class="n">loadable_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plugin_manager</span><span class="o">.</span><span class="n">getAllPlugins</span><span class="p">()}</span>
 
-        <span class="n">fav_plugins</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;PaPIController&quot;</span><span class="p">,</span><span class="s">&quot;RehaStimGUI&quot;</span><span class="p">];</span>
+        <span class="n">fav_plugins</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;PaPIController&quot;</span><span class="p">];</span>
 
         <span class="k">for</span> <span class="n">plugin_info</span> <span class="ow">in</span> <span class="n">all_pluginfo</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">fav_plugins</span><span class="p">:</span>

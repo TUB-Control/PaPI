@@ -59,14 +59,14 @@
 <span class="sd">This file is part of PaPI.</span>
 <span class="sd"> </span>
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 <span class="sd"> </span>
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 <span class="sd"> </span>
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -82,7 +82,10 @@
 <span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 
 <div class="viewcode-block" id="ownProcess_base"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base">[docs]</a><span class="k">class</span> <span class="nc">ownProcess_base</span><span class="p">(</span><span class="n">base_plugin</span><span class="p">):</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This plugin base should be used by a plugin if should run in an own process.</span>
+<span class="sd">    It is not possible to create a widget which is displayed in the graphical interface of PaPI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="ownProcess_base.work_process"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.ownProcess_base.ownProcess_base.work_process">[docs]</a>    <span class="k">def</span> <span class="nf">work_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">CoreQueue</span><span class="p">,</span> <span class="n">pluginQueue</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">defaultEventTriggered</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">autostart</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="c"># set queues and id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span> <span class="o">=</span> <span class="n">CoreQueue</span>

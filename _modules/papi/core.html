@@ -59,14 +59,14 @@
 <span class="sd">This file is part of PaPI.</span>
 
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -88,6 +88,8 @@
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
 <span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
 
+<span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
+
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PAPI_CONSOLE_START_MESSAGE</span><span class="p">,</span> \
     <span class="n">CORE_CORE_CONSOLE_START_MESSAGE</span><span class="p">,</span> <span class="n">CORE_ALIVE_CHECK_ENABLED</span><span class="p">,</span> \
     <span class="n">CORE_STOP_CONSOLE_MESSAGE</span><span class="p">,</span> <span class="n">CORE_ALIVE_CHECK_INTERVAL</span><span class="p">,</span> <span class="n">CORE_ALIVE_MAX_COUNT</span>
@@ -102,6 +104,7 @@
 <span class="kn">from</span> <span class="nn">papi.event.event_base</span> <span class="kn">import</span> <span class="n">PapiEventBase</span>
 <span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 
+<span class="kn">import</span> <span class="nn">signal</span>
 
 <div class="viewcode-block" id="run_core_in_own_process"><a class="viewcode-back" href="../../papi.html#papi.core.run_core_in_own_process">[docs]</a><span class="k">def</span> <span class="nf">run_core_in_own_process</span><span class="p">(</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">):</span>
     <span class="n">core</span> <span class="o">=</span> <span class="n">Core</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="bp">False</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
@@ -117,7 +120,7 @@
 
 </div>
 <div class="viewcode-block" id="Core"><a class="viewcode-back" href="../../papi.html#papi.core.Core">[docs]</a><span class="k">class</span> <span class="nc">Core</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_start_function</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">use_gui</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">is_parent</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">gui_process_pid</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_start_function</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">use_gui</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">is_parent</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">gui_process_pid</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init funciton of core.</span>
 <span class="sd">        Will create all data needed to use core and core.run() function</span>
@@ -162,6 +165,8 @@
                                           <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span>           <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_plugin__</span>
         <span class="p">}</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
         <span class="c"># creating the main core data object DCore and core queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span> <span class="o">=</span> <span class="n">DCore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_goOn</span> <span class="o">=</span> <span class="mi">1</span>
@@ -177,7 +182,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">use_gui</span> <span class="o">=</span> <span class="n">use_gui</span>
 
         <span class="c"># set information for console logging part (debug information)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">CORE_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CORE_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">CORE_CONSOLE_LOG_LEVEL</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="c"># define variables for check alive system, e.a. timer and counts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alive_intervall</span> <span class="o">=</span> <span class="n">CORE_ALIVE_CHECK_INTERVAL</span>
@@ -207,6 +221,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">core_delayed_operation_queue</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_handler</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">))</span>
+
 <div class="viewcode-block" id="Core.run"><a class="viewcode-back" href="../../papi.html#papi.core.Core.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main operation function of core.</span>
@@ -222,10 +238,8 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_gui</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_parent</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_start_function</span><span class="p">,</span>
-                                       <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">))</span>
+                                       <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-
 
         <span class="c"># start the check alive timer</span>
         <span class="k">if</span> <span class="n">CORE_ALIVE_CHECK_ENABLED</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
@@ -251,6 +265,13 @@
 
         <span class="c"># core finished operation and did clean shutdown</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">CORE_STOP_CONSOLE_MESSAGE</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Core.signal_handler"><a class="viewcode-back" href="../../papi.html#papi.core.Core.signal_handler">[docs]</a>    <span class="k">def</span> <span class="nf">signal_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">signal</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span><span class="n">core</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is an empty</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="Core.send_alive_check_events"><a class="viewcode-back" href="../../papi.html#papi.core.Core.send_alive_check_events">[docs]</a>    <span class="k">def</span> <span class="nf">send_alive_check_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -706,7 +727,10 @@
 
                     <span class="c"># this event will be a new parameter value for a plugin, so update dcore data</span>
                     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">handle_parameter_change</span><span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">handle_parameter_change</span><span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;pl not assigned (Use of pcp parameter which isn</span><span class="se">\&#39;</span><span class="s">t used)&#39;</span><span class="p">)</span>
                     <span class="c"># process new_data seemed correct</span>
                     <span class="k">return</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>

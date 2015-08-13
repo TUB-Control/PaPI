@@ -86,7 +86,7 @@ Stefan Ruppin</p>
 <dl class="class">
 <dt id="papi.gui.gui_api.Gui_api">
 <em class="property">class </em><tt class="descclassname">papi.gui.gui_api.</tt><tt class="descname">Gui_api</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>get_gui_config_function=None</em>, <em>set_gui_config_function=None</em>, <em>TabManager=None</em>, <em>plugin_manager=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QObject</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.change_uname_to_uniqe">
 <tt class="descname">change_uname_to_uniqe</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.change_uname_to_uniqe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.change_uname_to_uniqe" title="Permalink to this definition">¶</a></dt>
@@ -126,6 +126,28 @@ Stefan Ruppin</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.config_loader_subs_reloaded">
+<tt class="descname">config_loader_subs_reloaded</tt><big>(</big><em>pl_to_start</em>, <em>subs_to_make</em>, <em>parameters_to_change</em>, <em>signals_to_change</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.config_loader_subs_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.config_loader_subs_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for callback when timer finished to apply subscriptions and parameter changed of config.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pl_to_start</strong> (<em>list</em>) &#8211; list of plugins to start</li>
+<li><strong>subs_to_make</strong> (<em>list</em>) &#8211; list of subscriptions to make</li>
+<li><strong>parameters_to_change</strong> (<em>list</em>) &#8211; parameter changes to apply</li>
+<li><strong>signals_to_change</strong> &#8211; signal name changes to apply</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:type signals_to_change list
+:return:</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_change_string_to_be_uname">
 <tt class="descname">do_change_string_to_be_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_change_string_to_be_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_change_string_to_be_uname" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method will take a string and convert him according to some rules to be an uname</p>
@@ -144,7 +166,8 @@ Stefan Ruppin</p>
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_close_program">
 <tt class="descname">do_close_program</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_close_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_close_program" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tell core to close papi. Core will respond and will close all open plugins.</p>
+<dd><p>Tell core to close papi. Core will respond and will close all open plugins.
+GUI will close all PCP and VIP Plugins due to calling their quit function</p>
 </dd></dl>
 
 <dl class="method">
@@ -264,6 +287,27 @@ Currently only possible to change a DSignal for a given dplugin and dblock.</p>
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_load_xml">
 <tt class="descname">do_load_xml</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_load_xml_reloaded">
+<tt class="descname">do_load_xml_reloaded</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to load a xml config to papi and apply the configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>basestring</em>) &#8211; path to xml file to load.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_load_xml_v1">
+<tt class="descname">do_load_xml_v1</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml_v1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to load a xml config to papi and apply the configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -374,6 +418,11 @@ User wants to resume a plugin, so this method will send an event to core.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">
+<tt class="descname">do_save_xml_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_set_parameter">
@@ -593,7 +642,7 @@ User wants one plugin to do not get any more data from another plugin</p>
 
 <dl class="attribute">
 <dt id="papi.gui.gui_api.Gui_api.error_occured">
-<tt class="descname">error_occured</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43ee2600&gt;</em><a class="headerlink" href="#papi.gui.gui_api.Gui_api.error_occured" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">error_occured</tt><a class="headerlink" href="#papi.gui.gui_api.Gui_api.error_occured" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -618,11 +667,6 @@ copied from <a class="reference external" href="http://effbot.org/zone/element-l
 </table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="papi.gui.gui_api.Gui_api.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43ee266c&gt;</em><a class="headerlink" href="#papi.gui.gui_api.Gui_api.staticMetaObject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -633,18 +677,18 @@ copied from <a class="reference external" href="http://effbot.org/zone/element-l
 <dl class="class">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing">
 <em class="property">class </em><tt class="descclassname">papi.gui.gui_event_processing.</tt><tt class="descname">GuiEventProcessing</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>gui_queue</em>, <em>TabManager</em>, <em>plugin_manager</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QObject</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
 <p>This class will do all the event handling for a GUI process. It should be created and initialized with database and
 queues.
 To get all the functionality, one should link the callback functions (slots) for the needed signals.</p>
 <dl class="attribute">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.added_dplugin">
-<tt class="descname">added_dplugin</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43e9c120&gt;</em><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.added_dplugin" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">added_dplugin</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.added_dplugin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.dgui_changed">
-<tt class="descname">dgui_changed</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43e9c9e0&gt;</em><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.dgui_changed" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">dgui_changed</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.dgui_changed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -663,7 +707,7 @@ Procedure was built this way, so that the processing of an event is not covered 
 
 <dl class="attribute">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.plugin_died">
-<tt class="descname">plugin_died</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43e9cc00&gt;</em><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.plugin_died" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">plugin_died</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.plugin_died" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -858,12 +902,7 @@ Quit plugin, emit DPlugin was removed -&gt; necessary signal for the GUI.</p>
 
 <dl class="attribute">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin">
-<tt class="descname">removed_dplugin</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43e9cbc0&gt;</em><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="papi.gui.gui_event_processing.GuiEventProcessing.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43e9bdac&gt;</em><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">removed_dplugin</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -887,7 +926,7 @@ Stefan Ruppin</p>
 <dl class="class">
 <dt id="papi.gui.plugin_api.Plugin_api">
 <em class="property">class </em><tt class="descclassname">papi.gui.plugin_api.</tt><tt class="descname">Plugin_api</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>PLUGIN_API_IDENTIFIER</em>, <em>tabManager=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PySide.QtCore.QObject</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
 <dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.do_create_plugin">
 <tt class="descname">do_create_plugin</tt><big>(</big><em>plugin_identifier</em>, <em>uname</em>, <em>config={}</em>, <em>autostart=True</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_create_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_create_plugin" title="Permalink to this definition">¶</a></dt>
@@ -1037,16 +1076,6 @@ In this case, user wants one plugin to subscribe another</p>
 <dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.get_dplugin_by_uname">
 <tt class="descname">get_dplugin_by_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_dplugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_dplugin_by_uname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="papi.gui.plugin_api.Plugin_api.resize_gui">
-<tt class="descname">resize_gui</tt><em class="property"> = &lt;PySide.QtCore.Signal object at 0x43e9b440&gt;</em><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.resize_gui" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="papi.gui.plugin_api.Plugin_api.staticMetaObject">
-<tt class="descname">staticMetaObject</tt><em class="property"> = &lt;PySide.QtCore.QMetaObject object at 0x43e9bf8c&gt;</em><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

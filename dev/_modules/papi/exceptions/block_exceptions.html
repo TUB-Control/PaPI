@@ -80,11 +80,15 @@
 
 <div class="viewcode-block" id="Wrong_type"><a class="viewcode-back" href="../../../papi.exceptions.html#papi.exceptions.block_exceptions.Wrong_type">[docs]</a><span class="k">class</span> <span class="nc">Wrong_type</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">Parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;Wrong type for argument &#39;</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;Wrong type for argument &#39;</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;Wrong type for argument &#39;</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="s">&#39;, expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="Wrong_length"><a class="viewcode-back" href="../../../papi.exceptions.html#papi.exceptions.block_exceptions.Wrong_length">[docs]</a><span class="k">class</span> <span class="nc">Wrong_length</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>

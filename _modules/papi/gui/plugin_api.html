@@ -59,14 +59,14 @@
 <span class="sd">This file is part of PaPI.</span>
 
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -84,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_API_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_API_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CONFIG_LOADER_SUBSCRIBE_DELAY</span><span class="p">,</span> \
     <span class="n">CONFIG_ROOT_ELEMENT_NAME</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span>
 
-<span class="kn">from</span> <span class="nn">papi.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
 <span class="kn">from</span> <span class="nn">papi.gui.gui_api</span> <span class="kn">import</span> <span class="n">Gui_api</span>
 
 <span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
@@ -96,7 +96,7 @@
 
 <div class="viewcode-block" id="Plugin_api"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api">[docs]</a><span class="k">class</span> <span class="nc">Plugin_api</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
 
-    <span class="n">resize_gui</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="c">#    resize_gui = QtCore.Signal(int, int)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_data</span><span class="p">,</span> <span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">PLUGIN_API_IDENTIFIER</span><span class="p">,</span> <span class="n">tabManager</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Plugin_api</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>

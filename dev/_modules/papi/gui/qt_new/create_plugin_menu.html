@@ -265,6 +265,14 @@
 
         <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">plugin_type</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;iop&#39;</span><span class="p">:</span>
+                <span class="n">plugin_type</span> <span class="o">=</span> <span class="s">&#39;io&#39;</span>
+
+            <span class="k">if</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;vip&#39;</span><span class="p">:</span>
+                <span class="n">plugin_type</span> <span class="o">=</span> <span class="s">&#39;visual&#39;</span>
+
+
             <span class="n">path</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span>
             <span class="n">suffix</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
             <span class="n">target_url</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_URL</span> <span class="o">+</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_PREFIX_PLUGIN</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">suffix</span> <span class="o">+</span> <span class="s">&quot;.html&quot;</span>

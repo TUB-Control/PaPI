@@ -60,14 +60,14 @@
 <span class="sd">This file is part of PaPI.</span>
 
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -88,12 +88,11 @@
 
 <span class="kn">from</span> <span class="nn">papi.ui.gui.qt_new.create</span> <span class="kn">import</span> <span class="n">Ui_Create</span>
 <span class="kn">from</span> <span class="nn">papi.gui.qt_new.create_plugin_dialog</span> <span class="kn">import</span> <span class="n">CreatePluginDialog</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QListWidgetItem</span><span class="p">,</span> <span class="n">QColor</span>
+<span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
 
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_ROOT_FOLDER_LIST</span>
-<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
-
-
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span>       <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QDesktopServices</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QListWidgetItem</span><span class="p">,</span> <span class="n">QMainWindow</span>
 
 <div class="viewcode-block" id="CreatePluginMenu"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu">[docs]</a><span class="k">class</span> <span class="nc">CreatePluginMenu</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_Create</span><span class="p">):</span>
 
@@ -110,6 +109,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">blockName</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span> <span class="o">=</span> <span class="n">plugin_manager</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDropIndicatorShown</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
         <span class="c"># self.plugin_manager.setPluginPlaces(</span>
         <span class="c">#     PLUGIN_ROOT_FOLDER_LIST</span>
@@ -138,11 +140,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginItemChanged</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span> <span class="o">=</span> <span class="n">CreatePluginDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help_button_triggered</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finder</span> <span class="o">=</span> <span class="n">ModuleFinder</span><span class="p">()</span>
 
+
+
 <div class="viewcode-block" id="CreatePluginMenu.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Right</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Space</span><span class="p">]:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginItemChanged</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -168,7 +178,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pathEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span><span class="p">)</span>
-
 
         <span class="n">lines</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -202,8 +211,12 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">modulesList</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">modulesList</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">modulesLabel</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">modulesList</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modulesLabel</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
 
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.show_create_plugin_dialog"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.show_create_plugin_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">show_create_plugin_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -211,17 +224,16 @@
         <span class="n">plugin_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">set_plugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">set_plugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.showEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">locatePlugins</span><span class="p">()</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginCandidates</span><span class="p">()</span>
-
         <span class="n">all_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
-
         <span class="n">loadable_pluginfo</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">path</span><span class="p">:</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getAllPlugins</span><span class="p">()}</span>
 
         <span class="k">for</span> <span class="n">pluginfo</span> <span class="ow">in</span> <span class="n">all_pluginfo</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -247,6 +259,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </div>
+<div class="viewcode-block" id="CreatePluginMenu.help_button_triggered"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.help_button_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">help_button_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">plugin_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">plugin_type</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;iop&#39;</span><span class="p">:</span>
+                <span class="n">plugin_type</span> <span class="o">=</span> <span class="s">&#39;io&#39;</span>
+
+            <span class="k">if</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;vip&#39;</span><span class="p">:</span>
+                <span class="n">plugin_type</span> <span class="o">=</span> <span class="s">&#39;visual&#39;</span>
+
+
+            <span class="n">path</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="n">target_url</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_URL</span> <span class="o">+</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_PREFIX_PLUGIN</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">suffix</span> <span class="o">+</span> <span class="s">&quot;.html&quot;</span>
+            <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">target_url</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
+</div>
 <div class="viewcode-block" id="CreatePluginMenu.clear"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nameEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">authorEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
@@ -257,8 +288,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modulesLabel</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.closeEvent"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.create_plugin_menu.CreatePluginMenu.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
 
           </div>
         </div>

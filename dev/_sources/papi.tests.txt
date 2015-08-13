@@ -4,6 +4,14 @@ papi.tests package
 Submodules
 ----------
 
+papi.tests.TestBasePlugin module
+--------------------------------
+
+.. automodule:: papi.tests.TestBasePlugin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.tests.TestCoreMock module
 ------------------------------
 

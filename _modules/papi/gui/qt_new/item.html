@@ -60,14 +60,14 @@
 <span class="sd">This file is part of PaPI.</span>
 
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -78,10 +78,12 @@
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
-<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QMdiSubWindow</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span>       <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRegExp</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QStandardItemModel</span><span class="p">,</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QBrush</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QIcon</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
+<span class="kn">from</span> <span class="nn">papi.gui.qt_new</span> <span class="kn">import</span> <span class="n">get16Pixmap</span>
 
 
 
@@ -197,7 +199,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span>
 
-        <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span>
+        <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span>
 
 <span class="c"># ------------------------------------</span>
 <span class="c"># Item Custom</span>
@@ -256,9 +258,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span> <span class="o">=</span> <span class="n">dblock</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;DBlock: &quot;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dblock</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
+            <span class="n">brush</span> <span class="o">=</span> <span class="n">QBrush</span><span class="p">()</span>
+            <span class="n">brush</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">magenta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tool_tip</span> <span class="o">=</span> <span class="s">&quot;DEvent: &quot;</span> <span class="o">+</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setForeground</span><span class="p">(</span><span class="n">brush</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="DBlockTreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">get16Pixmap</span><span class="p">(</span><span class="s">&quot;events.png&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">get16Pixmap</span><span class="p">(</span><span class="s">&quot;transmit.png&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">None</span>
 
 </div></div>
@@ -419,10 +437,10 @@
                     <span class="n">rx</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="n">dparameter</span><span class="o">.</span><span class="n">regex</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">rx</span><span class="o">.</span><span class="n">exactMatch</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                         <span class="n">dparameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index_sibling</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index_sibling</span><span class="p">,</span> <span class="n">index_sibling</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">dparameter</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index_sibling</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index_sibling</span><span class="p">,</span> <span class="n">index_sibling</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="bp">True</span>
 
@@ -442,20 +460,26 @@
 <span class="sd">        :param index:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span>
-
         <span class="n">parent</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span>
+
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="k">return</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+            <span class="n">flags</span> <span class="o">^=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
+            <span class="n">flags</span> <span class="o">^=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+            <span class="k">return</span> <span class="n">flags</span>
+
+
 
         <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-                <span class="k">return</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+                <span class="n">flags</span> <span class="o">^=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+                <span class="k">return</span> <span class="n">flags</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+                <span class="n">flags</span> <span class="o">|=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
+                <span class="n">flags</span> <span class="o">|=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span>
+                <span class="n">flags</span> <span class="o">|=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+                <span class="k">return</span> <span class="n">flags</span>
 
 </div>
 <div class="viewcode-block" id="DBlockTreeModel.setData"><a class="viewcode-back" href="../../../../papi.gui.qt_new.html#papi.gui.qt_new.item.DBlockTreeModel.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
@@ -480,7 +504,7 @@
 
                 <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span><span class="p">:</span>
                     <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">value</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="bp">True</span>
 

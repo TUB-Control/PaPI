@@ -59,14 +59,14 @@
 <span class="sd">This file is part of PaPI.</span>
 <span class="sd"> </span>
 <span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
-<span class="sd">it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
 <span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
 <span class="sd">(at your option) any later version.</span>
 <span class="sd"> </span>
 <span class="sd">PaPI is distributed in the hope that it will be useful,</span>
 <span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="sd">GNU Lesser General Public License for more details.</span>
+<span class="sd">GNU General Public License for more details.</span>
 <span class="sd"> </span>
 <span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
@@ -91,7 +91,7 @@
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
 <span class="kn">from</span> <span class="nn">papi.yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
-<span class="kn">from</span> <span class="nn">papi.pyqtgraph</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Stefan&#39;</span>
 
@@ -103,10 +103,10 @@
 <span class="sd">    To get all the functionality, one should link the callback functions (slots) for the needed signals.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">added_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
-    <span class="n">removed_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
-    <span class="n">dgui_changed</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
-    <span class="n">plugin_died</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">added_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
+    <span class="n">removed_dplugin</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">)</span>
+    <span class="n">dgui_changed</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">plugin_died</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="n">DPlugin</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui_data</span><span class="p">,</span> <span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">gui_queue</span><span class="p">,</span> <span class="n">TabManager</span><span class="p">,</span> <span class="n">plugin_manager</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -128,6 +128,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span> <span class="o">=</span> <span class="n">gui_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span> <span class="o">=</span> <span class="n">plugin_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span> <span class="o">=</span> <span class="n">gui_queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TabManger</span> <span class="o">=</span> <span class="n">TabManager</span>
@@ -439,12 +440,12 @@
             <span class="c"># check if plugin runs in gui to update its copy of meta informations</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">PLUGIN_STATE_STOPPED</span><span class="p">]:</span>
-                    <span class="k">try</span><span class="p">:</span>
+                    <span class="c"># try:</span>
                         <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
-                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
-                        <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
-                        <span class="c"># self.plugin_died.emit(dplugin, E, tb)</span>
+                    <span class="c"># except Exception as E:</span>
+                    <span class="c">#     dplugin.state = PLUGIN_STATE_STOPPED</span>
+                    <span class="c">#     tb = traceback.format_exc()</span>
+                    <span class="c">#     self.plugin_died.emit(dplugin, E, tb)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>

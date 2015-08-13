@@ -6,12 +6,25 @@
 Welcome to PaPI's documentation!
 ================================
 
-Contents:
+README: :doc:`README`
+CHANGELOG: :doc:`CHANGELOG`
+
+PaPI Framework:
 
 .. toctree::
    :maxdepth: 3
+   :glob:
 
    papi
+
+Manuals :
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+
+   papi.manual
+   papi.plugin.doc
 
 
 
