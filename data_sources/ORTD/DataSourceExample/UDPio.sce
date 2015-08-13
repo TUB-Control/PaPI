@@ -79,7 +79,12 @@ function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
    [sim, PacketFramework] = ld_PF_InitInstance(sim, InstanceName="TrockenofenRemoteControl", Configuration)
 
    // Add a parameter for controlling the oscillator
-   [sim, PacketFramework, Input]=ld_PF_Parameter(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input");
+//   [sim, PacketFramework, Input]=ld_PF_Parameter(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input");
+//
+          // Add a slider
+          [PacketFramework, Slider] = ld_PF_addpluginAdvanced(PacketFramework, "Slider", "Slider Example", "(500,75)", "(50,50)", "PaPI-Tab", list(["step_count","101"], ["lower_bound","0.0"], ["upper_bound","1.0"]));
+          [sim, PacketFramework, Input]=ld_PF_ParameterInclControl(sim, PacketFramework, NValues=1, datatype=ORTD.DATATYPE_FLOAT, ParameterName="Oscillator input", Slider, 'SliderBlock');
+
 
    // some some more parameters
    [sim, PacketFramework, AParVector]=ld_PF_Parameter(sim, PacketFramework, NValues=10, datatype=ORTD.DATATYPE_FLOAT, ParameterName="A vectorial parameter");
@@ -96,8 +101,14 @@ function [sim, outlist, userdata] = Thread_MainRT(sim, inlist, userdata)
   T_a = 0.1; [sim, x,v] = damped_oscillator(sim, Input);
 
   // Stream the data of the oscillator
-  [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X")
-  [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V")
+//  [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X")
+//  [sim, PacketFramework]=ld_SendPacket(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V")
+//  
+  
+            // Stream the data of the oscillator
+          [PacketFramework, PlotXY] = ld_PF_addpluginAdvanced(PacketFramework, "Plot", "Plot XV", "(500,500)", "(0,0)", "PaPI-Tab", list(["yRange","[-10.0 10.0]"]));
+          [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=x, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="X", PlotXY, 'SourceGroup0');
+            [sim, PacketFramework]=ld_SendPacketInclSub(sim, PacketFramework, Signal=v, NValues_send=1, datatype=ORTD.DATATYPE_FLOAT, SourceName="V", PlotXY, 'SourceGroup0');
   
   // finalise the communication interface
   [sim,PacketFramework] = ld_PF_Finalise(sim,PacketFramework);
@@ -148,11 +159,6 @@ thispath = get_absolute_file_path(ProgramName+'.sce');
 cd(thispath);
 z = poly(0,'z');
 
-
-// The following code is integrated into ORTD since rev 494.
-// Thus the following line is commented.
-
-exec('webinterface/PacketFramework.sce');
 
 
 

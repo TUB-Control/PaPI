@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.b
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -55,15 +55,18 @@ import numpy as np
 import threading
 
 import os
+import sys
 
 import socket
-
+import ast
 import struct
 import json
 import time
 import pickle
 
 from threading import Timer
+from socketIO_client import SocketIO, LoggingNamespace
+
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
@@ -94,6 +97,22 @@ class ORTD_UDP(iop_base):
             'SeparateSignals': {
                 'value': '0',
                 'advanced': '1'
+            },
+            'SendOnReceivePort': {
+                'value': '0',
+                'advanced': '1',
+                'display_text': 'Use same port for send and receive'
+            },
+            "UseSocketIO" : {
+                'value' : '0',
+                'advanced' : '1',
+                'tooltip' : 'Use the Socket IO',
+                'type' : 'bool'
+            },
+            "OnlyInitialConfig" : {
+                'value' :'0',
+                'tooltip' : 'Use only first configuration, ignore further configurations.',
+                'type' : 'bool'
             }
         }
 
@@ -109,11 +128,18 @@ class ORTD_UDP(iop_base):
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
+        self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == '1' else False
+        self.PAPI_SIMULINK_BLOCK = False
+
         self.separate = int(config['SeparateSignals']['value'])
 
-        # SOCK_DGRAM is the socket type to use for UDP sockets
-        self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_parameter.setblocking(1)
+        self.onlyInitialConfig = config['OnlyInitialConfig']['value'] == '1'
+        self.hasInitialConfig = False
+
+        if (not self.sendOnReceivePort):
+            # SOCK_DGRAM is the socket type to use for UDP sockets
+            self.sock_parameter = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.sock_parameter.setblocking(1)
 
 
 
@@ -141,6 +167,11 @@ class ORTD_UDP(iop_base):
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
+
+        self.thread_socket_goOn = True
+        self.thread_socketio = threading.Thread(target=self.thread_socketio_execute)
+
+
         self.blocks = {}
         self.Sources = {}
 
@@ -156,7 +187,37 @@ class ORTD_UDP(iop_base):
         self.timer = Timer(3,self.callback_timeout_timer)
         self.timer_active = False
 
+
+
+        self.ConsoleBlock = DBlock('ConsoleSignals')
+        self.ConsoleBlock.add_signal(DSignal('MainSignal'))
+        self.send_new_block_list([self.ConsoleBlock])
+
+        self.consoleIn      = DParameter('consoleIn',default='')
+        self.send_new_parameter_list([self.consoleIn])
+
+        if config['UseSocketIO']['value'] == '1':
+            self.thread_socketio.start()
         return True
+
+    def callback_SCISTOUT(self, data):
+        self.sio_count += 1
+
+        self.send_new_data(self.ConsoleBlock.name, [self.sio_count], {'MainSignal':data['Data']})
+
+
+    def thread_socketio_execute(self):
+        #self.sio = SocketIO('localhost', 8091, LoggingNamespace)
+        #self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+
+        with SocketIO(self.HOST, 8091, LoggingNamespace) as self.sio:
+            self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+
+            self.sio_count = 0
+            while self.thread_socket_goOn:
+                self.sio.wait(seconds=1)
+
+
 
     def pause(self):
         self.lock.acquire()
@@ -217,8 +278,15 @@ class ORTD_UDP(iop_base):
             self.config_complete = False
             self.config_buffer = {}
 
+        if SourceId == -100:
+            self.PAPI_SIMULINK_BLOCK = True
+            # got data stream from the PaPI-Simulink Block
+            self.process_papi_data_stream(rev)
+    
         if SourceId == -4:
+            self.PAPI_SIMULINK_BLOCK = False
             # new configItem
+            # print("Part of a new configuration");
             # receive new config item and execute cfg in PaPI
 
             # unpack package
@@ -235,6 +303,7 @@ class ORTD_UDP(iop_base):
             counters.sort()
             i = 1
             config_file = ''
+
             self.config_complete = True
             for c in counters:
                 if i == c:
@@ -243,7 +312,6 @@ class ORTD_UDP(iop_base):
                 else:
                     self.config_complete = False
                     break
-
 
             if self.config_complete:
                 if not self.check_and_process_cfg(config_file):
@@ -280,20 +348,25 @@ class ORTD_UDP(iop_base):
     def request_new_config_from_ORTD(self):
         Counter = 1
         data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        if not self.sendOnReceivePort:
+            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+        else:
+            self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
 
-        #print("Data send to ", self.HOST, ":", self.OUT_PORT)
 
     def check_and_process_cfg(self, config_file):
         try:
             # config completely received
             # extract new configuration
             cfg = json.loads(config_file)
-            
-            print(config_file)
-
             ORTDSources, ORTDParameters, plToCreate, \
             plToClose, subscriptions, paraConnections, activeTab = self.extract_config_elements(cfg)
+
+
+            if self.hasInitialConfig and self.onlyInitialConfig:
+                return True
+
+            self.hasInitialConfig = True
 
             self.update_block_list(ORTDSources)
             self.update_parameter_list(ORTDParameters)
@@ -301,11 +374,12 @@ class ORTD_UDP(iop_base):
             self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
 
             return True
-        except ValueError:
+        except ValueError as e:
             return False
 
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
+
         self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
                                                               'ControlSignalSub':None,
@@ -349,7 +423,7 @@ class ORTD_UDP(iop_base):
                 else:
                     init_value = 0
 
-                para_object = DParameter(para_name, default=init_value, OptionalObject=opt_object)
+                para_object = DParameter(para_name, default=str(init_value), OptionalObject=opt_object)
                 self.send_new_parameter_list([para_object])
 
 
@@ -383,6 +457,68 @@ class ORTD_UDP(iop_base):
         #if 'SourceGroup'+str(self.block_id-1) in self.blocks:
             #self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
 
+    def process_papi_data_stream(self, rev):
+
+        timestamp = None
+
+        offset = 4*4
+        for i in range(len(self.Sources)):
+
+            try:
+                val = []
+#                offset += i*(4+4+4)
+
+                # Get current signal ID:
+
+#                signal_id,data = struct.unpack_from('<id', rev, offset)
+                signal_id, data = struct.unpack_from('<id', rev, offset)
+
+                # print('Offset=' + str(offset))
+                #
+                # print('SignalID: ' + str(signal_id))
+#                print('Data: ' + str(data))
+                if str(signal_id) in self.Sources:
+
+                    Source = self.Sources[str(signal_id)]
+                    NValues = int(Source['NValues_send'])
+
+                    # print("NValues : " +  str(NValues))
+
+                    #print("Offset:" + str(offset))
+
+                    offset += 4
+                    for n in range(NValues):
+                        # print('#Value=' + str(n))
+                        # print('Offset=' + str(offset))
+                        try:
+                            data = struct.unpack_from('<d', rev, offset)[0]
+                            # print('Data=' + str(data))
+
+                            val.append(data)
+                        except struct.error:
+                            # print(sys.exc_info()[0])
+                            # print('!!!! except !!!!')
+                            val.append(0)
+
+                        offset += 8
+
+                    # print('Data: ' + str(val))
+
+                    # if NValues > 1:
+                    #     signal_id,data = struct.unpack_from('<id%sd' %NValues, rev, offset)
+                    #     offset += (NValues-1)*(4+4)
+                    if self.Sources[str(signal_id)]["SourceName"] == "time":
+                            timestamp = val[0]
+
+                    self.signal_values[signal_id] = val
+                                
+                #print("Signal: " + str(signal_id) + " Data: " + str(data)  );
+            except struct.error:
+                print(sys.exc_info()[0])
+                print("Can't unpack.")
+        self.process_finished_action(-1,None, timestamp)
+    
+
     def process_data_stream(self, SourceId, rev):
         # Received a data packet
         # Lookup the Source behind the given SourceId
@@ -403,7 +539,7 @@ class ORTD_UDP(iop_base):
         else:
             print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
 
-    def process_finished_action(self, SourceId, rev):
+    def process_finished_action(self, SourceId, rev, timestamp=None):
         if SourceId == -1:
             # unpack group ID
             # GroupId = struct.unpack_from('<i', rev, 3 * 4)[0]
@@ -414,13 +550,17 @@ class ORTD_UDP(iop_base):
 
             signals_to_send = {}
             for key in keys:
-                sig_name = self.Sources[str(key)]['SourceName']
-                signals_to_send[sig_name] = self.signal_values[key]
+                if str(key) in self.Sources:
+                    sig_name = self.Sources[str(key)]['SourceName']
+                    signals_to_send[sig_name] = self.signal_values[key]
 
             if len( list(self.blocks.keys()) ) >0:
                 block = list(self.blocks.keys())[0]
                 if len(self.blocks[block].signals) == len(signals_to_send):
-                    self.send_new_data(block, [self.t], signals_to_send )
+                    if timestamp is None:
+                        self.send_new_data(block, [self.t], signals_to_send )
+                    else:
+                        self.send_new_data(block, [timestamp], signals_to_send )
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
@@ -430,15 +570,46 @@ class ORTD_UDP(iop_base):
             parameter = self.parameters[name]
             Pid = parameter.OptionalObject.ORTD_par_id
             Counter = 111
-            data = struct.pack('<iiid', 12, Counter, int(Pid), float(value))
-            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            if value is not None:
+                data = None
+
+                # get values in float from string
+
+                valueCast = ast.literal_eval(value)
+                # check is it is a list, if not, cast to list
+                if not isinstance(valueCast,list):
+                    valueCast = [valueCast]
+
+                if self.PAPI_SIMULINK_BLOCK:
+                    data = struct.pack('<iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
+                else:
+                    data = struct.pack('<iii%sd' %len(valueCast), 12, Counter, int(Pid),*valueCast)
+
+                #if isinstance(valueCast, list):
+                    #data += struct.pack('%sd' %len(valueCast),*valueCast)
+                #    for i in range(0,len(valueCast)):
+                #        data += struct.pack('<d',valueCast[i])
+                #else:
+                #    data +=  struct.pack('d',float(value))
+
+
+
+                if not self.sendOnReceivePort:
+                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+                else:
+                    self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+        else:
+            if name == 'consoleIn':
+                self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
+
 
     def quit(self):
         self.lock.acquire()
         self.thread_goOn = False
         self.lock.release()
         self.thread.join()
-        self.sock_parameter.close()
+        if not self.sendOnReceivePort:
+            self.sock_parameter.close()
         print('ORTD-Plugin will quit')
 
     def plugin_meta_updated(self):
@@ -492,5 +663,4 @@ class ORTD_UDP(iop_base):
             ORTDParameters = configuration['ParametersConfig']
 
         return ORTDSources, ORTDParameters, plToCreate, plToClose, subscriptions, paraConnections, activeTab
-
 

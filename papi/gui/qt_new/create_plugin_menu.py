@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -38,12 +38,11 @@ __author__ = 'knuths'
 
 from papi.ui.gui.qt_new.create import Ui_Create
 from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from PySide.QtGui import QMainWindow, QListWidgetItem, QColor
+import papi.constants as pc
 
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST
-from PySide.QtCore import *
-
-
+from PyQt5.QtCore       import *
+from PyQt5.QtGui        import QColor, QDesktopServices
+from PyQt5.QtWidgets    import QListWidgetItem, QMainWindow
 
 class CreatePluginMenu(QMainWindow, Ui_Create):
 
@@ -60,6 +59,9 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.blockName = None
 
         self.plugin_manager = plugin_manager
+
+        self.pluginTree.setDragEnabled(True)
+        self.pluginTree.setDropIndicatorShown(True)
 
         # self.plugin_manager.setPluginPlaces(
         #     PLUGIN_ROOT_FOLDER_LIST
@@ -88,11 +90,19 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pluginTree.clicked.connect(self.pluginItemChanged)
 
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
-        self.createButton.clicked.connect(self.show_create_plugin_dialog)
 
+        self.createButton.clicked.connect(self.show_create_plugin_dialog)
+        self.helpButton.clicked.connect(self.help_button_triggered)
         self.finder = ModuleFinder()
 
+
+
     def keyPressEvent(self, event):
+
+        if event.key() in [Qt.Key_Right, Qt.Key_Space]:
+            index = self.pluginTree.currentIndex()
+            self.pluginItemChanged(index)
+
         if event.key() == Qt.Key_Escape:
             self.close()
 
@@ -118,7 +128,6 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.pathEdit.setText(plugin_info.path)
 
         self.createButton.setEnabled(plugin_info.loadable)
-
 
         lines = None
         with open(plugin_info.path + '.py') as f:
@@ -152,8 +161,12 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
             if not found:
                 self.modulesList.addItem(item)
                 item.setBackground(QColor(255,0,0,50))
-                self.modulesList.setEnabled(True)
-                self.modulesLabel.setEnabled(True)
+
+        if not plugin_info.loadable:
+
+            self.modulesList.setEnabled(True)
+            self.modulesLabel.setEnabled(True)
+
 
 
     def show_create_plugin_dialog(self):
@@ -161,17 +174,16 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         if plugin_info is not None:
-            self.plugin_create_dialog.set_plugin(plugin_info)
-            self.plugin_create_dialog.show()
+            if plugin_info.loadable:
+                self.plugin_create_dialog.set_plugin(plugin_info)
+                self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
 
 
         self.plugin_manager.locatePlugins()
         candidates = self.plugin_manager.getPluginCandidates()
-
         all_pluginfo = {c[2].path:c[2] for c in candidates}
-
         loadable_pluginfo = {p.path:p for p in self.plugin_manager.getAllPlugins()}
 
         for pluginfo in all_pluginfo.values():
@@ -197,6 +209,25 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
         self.dpp_root.sortChildren(0)
         self.pcp_root.sortChildren(0)
 
+    def help_button_triggered(self):
+        index = self.pluginTree.currentIndex()
+        plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
+
+        if plugin_info is not None:
+            plugin_type = plugin_info.plugin_object.get_type();
+
+            if plugin_type.lower() == 'iop':
+                plugin_type = 'io'
+
+            if plugin_type.lower() == 'vip':
+                plugin_type = 'visual'
+
+
+            path = plugin_info.path
+            suffix = "." + '.'.join(path.split('/')[-2:])
+            target_url = pc.PAPI_DOC_URL + pc.PAPI_DOC_PREFIX_PLUGIN + "." + plugin_type.lower() + suffix + ".html"
+            QDesktopServices.openUrl(QUrl(target_url, QUrl.TolerantMode))
+
     def clear(self):
         self.nameEdit.setText('')
         self.authorEdit.setText('')
@@ -208,4 +239,3 @@ class CreatePluginMenu(QMainWindow, Ui_Create):
 
     def closeEvent(self, *args, **kwargs):
         self.plugin_create_dialog.close()
-

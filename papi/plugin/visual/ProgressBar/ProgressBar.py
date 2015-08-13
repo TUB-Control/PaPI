@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,17 +28,14 @@ Contributors:
 
 __author__ = 'knuths'
 
-from PySide.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
+from PyQt5.QtWidgets import QMdiSubWindow, QProgressBar
+from PyQt5 import  QtCore
 
 import papi.constants as pc
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
-
-import time
-
 import papi.helper as ph
-from papi.pyqtgraph.Qt import QtGui, QtCore
+import time
 
 
 #RENAME TO PLUGIN NAME
@@ -64,7 +61,7 @@ class ProgressBar(vip_base):
         # --------------------------------
         # Create Widget needed for this plugin
 
-        self.progressbar = QtGui.QProgressBar()
+        self.progressbar = QProgressBar()
         self.progressbar.setRange(0, 100)
         self.progressbar.setTextVisible(True)
         self.progressbar.setValue(0)
@@ -239,7 +236,7 @@ class ProgressBar(vip_base):
             "show_current_max": {
                  'value': '0',
                  'display_text' : 'Show current/max',
-                 'tooltip' : 'A label next to the bar shows the current and max value',
+                 'tooltip' : 'A label over the bar shows the current and max value',
                  'type' : 'bool',
                  'advanced' : '0'
             },

@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,10 +28,12 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtWidgets    import QMdiSubWindow
+from PyQt5.QtCore       import Qt, QRegExp
+from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
+from papi.gui.qt_new import get16Pixmap
 
 
 
@@ -147,7 +149,7 @@ class PaPITreeModel(QStandardItemModel):
         if not parent.isValid():
             return Qt.ItemIsEnabled
 
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled
 
 # ------------------------------------
 # Item Custom
@@ -206,9 +208,25 @@ class DBlockTreeItem(PaPITreeItem):
         self.dblock = dblock
         self.setSelectable(False)
         self.setEditable(False)
+
         self.tool_tip = "DBlock: " + dblock.name
 
+        if isinstance(dblock, DEvent):
+            brush = QBrush()
+            brush.setColor(Qt.magenta)
+            self.tool_tip = "DEvent: " + dblock.name
+            self.setForeground(brush)
+            self.setSelectable(True)
+
+
     def get_decoration(self):
+
+        if isinstance(self.object, DEvent):
+            return get16Pixmap("events.png")
+
+        if isinstance(self.object, DBlock):
+            return get16Pixmap("transmit.png")
+
         return None
 
 
@@ -369,10 +387,10 @@ class DParameterTreeModel(PaPITreeModel):
                     rx = QRegExp(dparameter.regex)
                     if rx.exactMatch(value):
                         dparameter.value = value
-                        self.dataChanged.emit(index_sibling, None)
+                        self.dataChanged.emit(index_sibling, index_sibling)
                 else:
                     dparameter.value = value
-                    self.dataChanged.emit(index_sibling, None)
+                    self.dataChanged.emit(index_sibling, index_sibling)
 
                 return True
 
@@ -392,20 +410,26 @@ class DBlockTreeModel(PaPITreeModel):
         :param index:
         :return:
         """
-        row = index.row()
-        col = index.column()
-
         parent = index.parent()
+        flags = parent.flags()
+
 
         if not parent.isValid():
-            return ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable
+            flags ^= Qt.ItemIsSelectable
+            flags ^= Qt.ItemIsEditable
+            return flags
+
+
 
         if parent.isValid():
-
             if self.check_box.isChecked():
-                return ~Qt.ItemIsEditable
+                flags ^= Qt.ItemIsEditable
+                return flags
             else:
-                return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable
+                flags |= Qt.ItemIsSelectable
+                flags |= Qt.ItemIsEnabled
+                flags |= Qt.ItemIsEditable
+                return flags
 
 
     def setData(self, index, value, role):
@@ -430,7 +454,7 @@ class DBlockTreeModel(PaPITreeModel):
 
                 if value != dsignal.dname:
                     dsignal.dname = value
-                    self.dataChanged.emit(index, None)
+                    self.dataChanged.emit(index, index)
 
                 return True
 

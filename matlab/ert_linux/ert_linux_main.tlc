@@ -1,0 +1,360 @@
+%%
+%%
+%% description:
+%%  This TLC script generates ert_main.c
+%%  case.
+%%
+%% authors: Michal Sojka <sojkam1@fel.cvut.cz>
+%%          Lukas Hamacek <hamacl1@fel.cvut.cz>
+%%
+%% Department of Control Engineering
+%% Faculty of Electrical Engineering
+%% Czech Technical University in Prague
+%%
+
+%% GENERATEDECLARATIONS
+%%  This function generates main function declarations.
+%%
+
+%assign ::tid01Eq = LibGetTID01EQ()
+
+%function generateDeclarations() Output
+
+  /* Multirate - Multitasking case main file */
+  #define _BSD_SOURCE		         /* For usleep() */
+  #define _POSIX_C_SOURCE 200112L        /* For clock_gettime() & clock_nanosleep() */
+  #include <stdio.h>                     /* This ert_main.c example uses printf/fflush */
+  #include <pthread.h>                   /* Thread library header file */
+  #include <sched.h>                     /* OS scheduler header file */
+  #include <semaphore.h>                 /* Semaphores library header file */
+  #include <time.h>
+  #include <stdlib.h>
+  #include <stdbool.h>
+  #include <unistd.h>
+  #include <sys/mman.h>                  /* For mlockall() */
+  #include <signal.h>
+  #include "%<modelName>.h"              /* Model's header file */
+  #include "rtwtypes.h"                  /* MathWorks types */
+  %if extMode == 1
+    #include "ext_work.h"                  /* External mode header file */
+  %endif
+
+  #ifndef TRUE
+  #define TRUE true
+  #define FALSE false
+  #endif
+
+  /*==================*
+   * Required defines *
+   *==================*/
+
+  #ifndef MODEL
+  # error Must specify a model name.  Define MODEL=name.
+  #else
+  /* create generic macros that work with any model */
+  # define EXPAND_CONCAT(name1,name2) name1 ## name2
+  # define CONCAT(name1,name2) EXPAND_CONCAT(name1,name2)
+  # define MODEL_INITIALIZE CONCAT(MODEL,_initialize)
+  # define MODEL_STEP       CONCAT(MODEL,_step)
+  # define MODEL_TERMINATE  CONCAT(MODEL,_terminate)
+  # define RT_MDL           CONCAT(MODEL,_M)
+  #endif
+
+  /* Error checking */
+  #define STRINGIZE(num) #num
+  #define POS(line) __FILE__ ":" STRINGIZE(line)
+  #define CHECK0(expr) do { int __err = (expr); if (__err) { fprintf(stderr, "Error: %s returned '%s' at " POS(__LINE__) "\n", #expr, strerror(__err)); exit(1); } } while (0);
+  #define CHECKE(expr) do { if ((expr) == -1) { perror(#expr " at " POS(__LINE__)); exit(1); } } while (0);
+
+  /**
+   * Maximal priority used by base rate thread.
+   */
+  #define MAX_PRIO (sched_get_priority_min(SCHED_FIFO) + %<numSampleTimes>)
+
+  // Signal handler for ABORT during simulation
+  void abortHandler(int sig) {
+    fprintf(stderr, "Simulation aborted by pressing CTRL+C\n");
+    rtmSetStopRequested(%<modelName>_M, 1);
+  }
+  
+  /**
+   * Thread handle of the base rate thread.
+   * Fundamental sample time = %<fundamentalStepSize>s
+   */
+  pthread_t base_rate_thread;
+
+  /**
+   * Thread handles of and semaphores for sub rate threads. The array
+   * is indexed by TID, i.e. the first one or two elements are unused.
+  %foreach i = numSampleTimes
+      %if i == 0 || i == 1 && tid01Eq
+      %continue
+    %endif
+    %assign s = sampleTime%<i>
+    %assign o = offset%<i>
+   * TID%<i>: sample time = %<s>s, offset = %<o>s
+  %endforeach
+   */
+  struct sub_rate {
+  pthread_t thread;
+  sem_t     sem;
+  } sub_rate[%<numSampleTimes>];
+
+  /**
+   * Flag if the simulation has been terminated.
+   */
+  int simulationFinished = 0;
+
+  %if extMode == 1
+    /* Indication that the base rate thread has started */
+    sem_t ext_mode_ready;
+  %endif
+%endfunction
+
+%function printfunc() Output
+  /% printf("%s\n", __func__); %/
+%endfunction
+
+%function generateRtOneStep() Output
+  %foreach j = numSampleTimes - 1
+    %assign i = j + 1
+    %if i == 1 && tid01Eq
+      %continue
+    %endif
+    void *sub_rate%<i>(void *arg)
+    {
+      while(!simulationFinished) {
+	sem_wait(&sub_rate[%<i>].sem);    /* sem_val = 1 */
+	%<printfunc()>
+	%<modelName>_step%<i>();
+	sem_wait(&sub_rate[%<i>].sem);    /* sem_val = 0 */
+      }
+      return NULL;
+    }
+  %endforeach
+%endfunction
+
+
+%% GENERATEMAIN
+%%  This function generates code of the main function function.
+%%
+%function generateMain() Output
+  /**
+   * This is the thread function of the base rate loop.
+   * Fundamental sample time = %<fundamentalStepSize>s
+   */
+#ifdef __cplusplus
+  void * base_rate(void *)
+#else
+  void * base_rate()
+#endif
+  {
+    %assign  sec = FEVAL("uint32", fundamentalStepSize)
+    %assign nsec = FEVAL("uint32", (fundamentalStepSize - FEVAL("floor", fundamentalStepSize))*1000000000)
+    struct timespec now, next;
+    struct timespec period = { %<sec>, %<nsec> }; /* %<fundamentalStepSize> seconds */
+    boolean_T eventFlags[%<numSampleTimes>];             /* Model has %<numSampleTimes> rates */
+    int_T taskCounter[%<numSampleTimes>] = %<FcnInitializeTaskCounter()>;
+    int_T OverrunFlags[%<numSampleTimes>];
+    int step_sem_value;
+    int_T i;
+
+    %if extMode == 1
+      %<SLibGenERTExtModeInit()>
+      CHECKE(sem_post(&ext_mode_ready));
+    %endif
+
+    clock_gettime(CLOCK_MONOTONIC, &next);
+
+    /* Main loop, running until all the threads are terminated */
+    while(rtmGetErrorStatus(%<modelName>_M) == NULL && !rtmGetStopRequested(%<modelName>_M)) {
+      %<printfunc()>
+      // Check subrate overrun, set rates that need to run this time step
+          %foreach i = numSampleTimes
+        %if i == 0 || i == 1 && tid01Eq
+          %continue
+        %endif
+           
+            if (taskCounter[%<i>] == 0) {
+              if (eventFlags[%<i>]) {
+                OverrunFlags[0] = false;
+                OverrunFlags[%<i>] = true;
+ 
+                // Sampling too fast
+                rtmSetErrorStatus(%<modelName>_M, "Overrun");
+                return 0;
+              }
+ 
+              eventFlags[%<i>] = true;
+            }
+            %assign T = FEVAL("int32", FEVAL("floor", sampleTime%<i> / fundamentalStepSize))
+            taskCounter[%<i>]++;
+            if (taskCounter[%<i>] == %<T>) {
+              taskCounter[%<i>]= 0;
+            }
+        %endforeach
+
+      /* Trigger sub-rate threads */
+      %foreach i = numSampleTimes
+	%if i == 0 || i == 1 && tid01Eq
+	  %continue
+	%endif
+	%assign s = sampleTime%<i>
+	%assign o = offset%<i>
+	/* Sampling rate %<i>, sample time = %<s>, offset = %<o> */
+	if (eventFlags[%<i>]) {
+	  eventFlags[%<i>] = FALSE;
+	  sem_getvalue(&sub_rate[%<i>].sem, &step_sem_value);
+	  if (step_sem_value) {
+	    rtmSetErrorStatus(%<modelName>_M, "Overrun");
+	    printf("Sub rate %<i> overrun, sample time=%<s>s, offset=%<o>s is too fast\n");
+	    break;
+	  }
+	  sem_post(&sub_rate[%<i>].sem);
+	  sem_post(&sub_rate[%<i>].sem);
+	}
+      %endforeach
+
+      /* Execute base rate step */
+      %if solverMode == "SingleTasking"
+	%<modelName>_step();
+      %else
+	%<modelName>_step0();
+      %endif
+
+      %if extMode == 1
+	rtExtModeCheckEndTrigger();
+      %endif
+
+      do {
+	next.tv_sec += period.tv_sec;
+	next.tv_nsec += period.tv_nsec;
+	if (next.tv_nsec >= 1000000000) {
+	  next.tv_sec++;
+	  next.tv_nsec -= 1000000000;
+	}
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	if (now.tv_sec > next.tv_sec ||
+	    (now.tv_sec == next.tv_sec && now.tv_nsec > next.tv_nsec)) {
+	  uint32_T usec = (now.tv_sec - next.tv_sec) * 1000000 + (now.tv_nsec - next.tv_nsec)/1000;
+	  fprintf(stderr, "Base rate (%<fundamentalStepSize>s) overrun by %d us\n", usec);
+	  next = now;
+	  continue;
+	} 
+    //else {
+    //    uint32_T usec = (now.tv_sec - next.tv_sec) * 1000000 + (now.tv_nsec - next.tv_nsec)/1000;
+	//    fprintf(stderr, "Base rate (%<fundamentalStepSize>s) overrun by %d us\n", usec);
+    //}
+      }	while (0);
+      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next, NULL);
+
+    }
+
+    simulationFinished = 1;
+    /* Final step */
+    for (i = %<1 + tid01Eq>; i < %<numSampleTimes>; i++) {
+      sem_post(&sub_rate[i].sem);
+      sem_post(&sub_rate[i].sem);
+    }
+    return 0;
+  }
+
+  /**
+   * This is the main function of the model.
+   * Multirate - Multitasking case main file
+   */
+  int_T main(int_T argc, const char_T *argv[])
+  {
+    const char_T *errStatus;
+    int_T i;
+    pthread_attr_t attr;
+    struct sched_param sched_param;
+
+    %if extMode == 1
+      /* External mode */
+      /* rtERTExtModeParseArgs(argc, argv); */
+      rtExtModeParseArgs(argc, argv, NULL);
+      CHECKE(sem_init(&ext_mode_ready, 0, 0));
+    %else
+      (void)(argc);
+      (void *)(argv);
+    %endif
+
+    CHECKE(mlockall(MCL_FUTURE));
+
+    /* Initialize model */
+    %<modelName>_initialize();
+    simulationFinished = 0;
+
+    /* Prepare task attributes */
+    CHECK0(pthread_attr_init(&attr));
+    CHECK0(pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED));
+    CHECK0(pthread_attr_setschedpolicy(&attr, SCHED_FIFO));
+
+    %foreach i = numSampleTimes
+      %if i == 0 || i == 1 && tid01Eq
+	%continue
+      %endif
+      %assign s = sampleTime%<i>
+      %assign o = offset%<i>
+
+      /* Initializing the step semaphore of the loop %<i> */
+      CHECKE(sem_init(&sub_rate[%<i>].sem, 0, 0));
+
+      /* Starting loop %<i> thread for sample time = %<s>s, offset = %<o>s. */
+      sched_param.sched_priority = MAX_PRIO - %<i>;
+      CHECK0(pthread_attr_setschedparam(&attr, &sched_param));
+      CHECK0(pthread_create(&sub_rate[%<i>].thread, &attr, sub_rate%<i>, (void*)%<i>));
+
+    %endforeach
+
+    /* Starting the base rate thread */
+    sched_param.sched_priority = MAX_PRIO;
+    CHECK0(pthread_attr_setschedparam(&attr, &sched_param));
+    CHECK0(pthread_create(&base_rate_thread, &attr, base_rate, NULL));
+    CHECK0(pthread_attr_destroy(&attr));
+
+    %if extMode == 1
+      /* External mode */
+      CHECKE(sem_wait(&ext_mode_ready));
+
+      signal(SIGINT, abortHandler); // important for letting the destructor be called.
+
+      while(rtmGetErrorStatus(%<modelName>_M) == NULL && !rtmGetStopRequested(%<modelName>_M)) {
+        rtExtModeOneStep(rtmGetRTWExtModeInfo(RT_MDL), NUMST, (boolean_T *)&rtmGetStopRequested(RT_MDL));
+	usleep(%<FEVAL("uint32", fundamentalStepSize * 1000000)>);
+      }
+    %endif
+
+    /* Wait for threads to finish */
+    pthread_join(base_rate_thread, NULL);
+    %foreach i = numSampleTimes
+      %if i == 0 || i == 1 && tid01Eq
+	%continue
+      %endif
+      pthread_join(sub_rate[%<i>].thread, NULL);
+    %endforeach
+
+    %if extMode == 1
+      rtExtModeShutdown(%<numSampleTimes>);
+    %endif
+
+    /* Terminate model */
+    %<modelName>_terminate();
+
+    errStatus = rtmGetErrorStatus(%<modelName>_M);
+    if(errStatus != NULL && strcmp(errStatus, "Simulation finished")) {
+      %%printf("%s\n", rtmGetErrorStatus(%<modelName>_M));
+      if(!strcmp(errStatus, "Overrun")) {
+	printf("ISR overrun - sampling rate too fast\n");
+      }
+      return(1);
+    }
+    return 0;
+  }
+
+/* Local Variables: */
+/* compile-command: "make -f %<modelName>.mk" */
+/* End: */
+
+%endfunction

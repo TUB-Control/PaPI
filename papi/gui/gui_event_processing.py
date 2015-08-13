@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -42,7 +42,7 @@ from papi.event.event_base import PapiEventBase
 from papi.ConsoleLog import ConsoleLog
 from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 
 __author__ = 'Stefan'
 
@@ -54,10 +54,10 @@ class GuiEventProcessing(QtCore.QObject):
     To get all the functionality, one should link the callback functions (slots) for the needed signals.
 
     """
-    added_dplugin = QtCore.Signal(DPlugin)
-    removed_dplugin = QtCore.Signal(DPlugin)
-    dgui_changed = QtCore.Signal()
-    plugin_died = QtCore.Signal(DPlugin, Exception, str)
+    added_dplugin = QtCore.pyqtSignal(DPlugin)
+    removed_dplugin = QtCore.pyqtSignal(DPlugin)
+    dgui_changed = QtCore.pyqtSignal()
+    plugin_died = QtCore.pyqtSignal(DPlugin, Exception, str)
 
     def __init__(self, gui_data, core_queue, gui_id, gui_queue, TabManager, plugin_manager):
         """
@@ -79,6 +79,7 @@ class GuiEventProcessing(QtCore.QObject):
         self.gui_id = gui_id
         self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
         self.plugin_manager = plugin_manager
+        self.log.lvl = 0
 
         self.gui_queue = gui_queue
         self.TabManger = TabManager
@@ -390,12 +391,12 @@ class GuiEventProcessing(QtCore.QObject):
             # check if plugin runs in gui to update its copy of meta informations
             if dplugin.own_process is False:
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    try:
+                    # try:
                         dplugin.plugin.update_plugin_meta(dplugin.get_meta())
-                    except Exception as E:
-                        dplugin.state = PLUGIN_STATE_STOPPED
-                        tb = traceback.format_exc()
-                        # self.plugin_died.emit(dplugin, E, tb)
+                    # except Exception as E:
+                    #     dplugin.state = PLUGIN_STATE_STOPPED
+                    #     tb = traceback.format_exc()
+                    #     self.plugin_died.emit(dplugin, E, tb)
 
             self.dgui_changed.emit()
         else:

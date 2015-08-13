@@ -63,10 +63,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -156,7 +153,7 @@
     <Subscriptions>
       <Subscription>
         <data_source>ButtonX3</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>trigger</alias>
         </block>
       </Subscription>
@@ -226,10 +223,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -264,19 +258,19 @@
     <Subscriptions>
       <Subscription>
         <data_source>ButtonReset</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>Choose</alias>
         </block>
       </Subscription>
       <Subscription>
         <data_source>ButtonX5</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>Choose</alias>
         </block>
       </Subscription>
       <Subscription>
         <data_source>ButtonX6</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>Choose</alias>
         </block>
       </Subscription>
@@ -331,10 +325,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -388,10 +379,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -445,10 +433,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -553,7 +538,7 @@
       </Subscription>
       <Subscription>
         <data_source>Button</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>trigger</alias>
         </block>
       </Subscription>
@@ -608,10 +593,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />
@@ -716,7 +698,7 @@
       </Subscription>
       <Subscription>
         <data_source>ButtonX2</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>trigger</alias>
         </block>
       </Subscription>

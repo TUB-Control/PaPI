@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -39,6 +39,8 @@ from papi.data.DSignal import DSignal
 from papi.ConsoleLog import ConsoleLog
 from papi.data.DOptionalData import DOptionalData
 
+import papi.constants as pc
+
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE, \
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
@@ -53,6 +55,7 @@ import papi.error_codes as ERROR
 from papi.event.event_base import PapiEventBase
 import papi.event as Event
 
+import signal
 
 def run_core_in_own_process(gui_queue, core_queue, gui_id):
     core = Core(None,False,False)
@@ -68,7 +71,7 @@ class Process_dummy(object):
 
 
 class Core:
-    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None):
+    def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None, args=None):
         """
         Init funciton of core.
         Will create all data needed to use core and core.run() function
@@ -113,6 +116,8 @@ class Core:
                                           'start_plugin':           self.__process_start_plugin__
         }
 
+        self.args = args
+
         # creating the main core data object DCore and core queue
         self.core_data = DCore()
         self.core_goOn = 1
@@ -128,7 +133,16 @@ class Core:
         self.use_gui = use_gui
 
         # set information for console logging part (debug information)
+
         self.log = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
+        self.log.lvl = pc.CORE_CONSOLE_LOG_LEVEL
+
+        try:
+            if args:
+                if args.debug_level:
+                    self.log.lvl = int(args.debug_level)
+        except:
+            pass
 
         # define variables for check alive system, e.a. timer and counts
         self.alive_intervall = CORE_ALIVE_CHECK_INTERVAL
@@ -158,6 +172,8 @@ class Core:
 
         self.core_delayed_operation_queue = []
 
+        signal.signal(signal.SIGINT, lambda a,b,c=self: self.signal_handler(a,b,c))
+
     def run(self):
         """
         Main operation function of core.
@@ -173,10 +189,8 @@ class Core:
 
         if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
-                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id))
+                                       args=(self.core_event_queue, self.gui_event_queue, self.gui_id, self.args))
             self.gui_process.start()
-
-
 
         # start the check alive timer
         if CORE_ALIVE_CHECK_ENABLED is True:
@@ -202,6 +216,13 @@ class Core:
 
         # core finished operation and did clean shutdown
         self.log.printText(1, CORE_STOP_CONSOLE_MESSAGE)
+
+    def signal_handler(self,signal, frame,core):
+        """
+        This is an empty
+        :return:
+        """
+        pass
 
     def send_alive_check_events(self):
         """
@@ -657,7 +678,10 @@ class Core:
 
                     # this event will be a new parameter value for a plugin, so update dcore data
                     if opt.is_parameter is True:
-                        self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                        try:
+                            self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
+                        except:
+                            self.log.printText(2, 'pl not assigned (Use of pcp parameter which isn\'t used)')
                     # process new_data seemed correct
                     return 1
                 else:

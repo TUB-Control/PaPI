@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,14 +28,13 @@ Contributors:
 
 __author__ = 'Stefan'
 
-from PySide.QtWebKit import QWebView
-import papi.pyqtgraph as pq
+from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5 import QtCore
+
 
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-
-from papi.pyqtgraph.Qt import QtCore
 
 
 class HTMLViewer(vip_base):
@@ -47,16 +46,25 @@ class HTMLViewer(vip_base):
         # Read configuration
         # ---------------------------
         content = config['content']['value']
+        isUrl   = config['isUrl']['value']
+
+
 
         # --------------------------------
         # Create Widget
         # --------------------------------
         self.WebView = QWebView()
 
+
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
         self.set_widget_for_internal_usage( self.WebView )
-        self.WebView.setHtml(content)
+        print(isUrl)
+        if isUrl == '1':
+            url = QtCore.QUrl(content)
+            self.WebView.load(url)
+        else:
+            self.WebView.setHtml(content)
         self.WebView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.WebView.customContextMenuRequested.connect(self.show_context_menu)
 
@@ -118,7 +126,14 @@ class HTMLViewer(vip_base):
                 'display_text' : 'HTML Content',
                 'advanced' : '0',
                 'tooltip' : 'Plain html code to be displayed'
-        }}
+            },
+            "isUrl": {
+                'value': "0",
+                'display_text': "Content==Url?",
+                'tooltip': "Set to 1 if the content is an url that should be loaded",
+                'advanced' : '0'
+            },
+        }
 
         return config
 

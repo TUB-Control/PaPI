@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,19 +28,21 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.gui.qt_new.item import PaPITreeItem, PaPIRootItem, PaPITreeModel
+from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
 from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
 from papi.ui.gui.qt_new.overview import Ui_Overview
 
-from PySide.QtGui import QMainWindow, QStandardItem, QMenu, QAbstractItemView, QAction, QStandardItemModel
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
-    PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL
 
-import copy
-from PySide.QtCore import *
-from PySide.QtGui import QLineEdit
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
+    PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
+    PLUGIN_STATE_DELETE
+
+from PyQt5.QtGui        import QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
+from PyQt5.QtCore import Qt
+
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
 
@@ -226,7 +228,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.stopButton.setText('STOP')
 
         # ---------------------------
-        # Add DBlocks
+        # Add DBlocks(Also DEvent)
         # ---------------------------
 
         dblock_ids = dplugin.get_dblocks()
@@ -329,6 +331,9 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         """
         index = self.pluginTree.indexAt(position)
 
+        if index.parent().isValid() is False:
+            return None
+
         if index.isValid() is False:
             return None
 
@@ -344,7 +349,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove DPlugin', self)
         submenu.addAction(action)
 
-        action.triggered.connect(lambda p=dplugin.id: self.gui_api.do_delete_plugin(p))
+        action.triggered.connect(lambda ignore, p=dplugin.id: self.gui_api.do_delete_plugin(p))
 
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
@@ -384,7 +389,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 if dplugin_sel.id != dplugin_id:
                     action = QAction(self.tr(dplugin.uname), self)
                     sub_menu.addAction(action)
-                    action.triggered.connect(lambda p=dplugin.uname: self.add_subscription_action(p))
+                    action.triggered.connect(lambda ignore, p=dplugin.uname: self.add_subscription_action(p))
 
             menu = QMenu()
             menu.addMenu(sub_menu)
@@ -418,7 +423,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         action = QAction('Remove Subscriber', self)
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
+        action.triggered.connect(lambda ignore, p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
 
         menu.exec_(self.subscribersTree.viewport().mapToGlobal(position))
 
@@ -471,7 +476,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         if not isSignal:
             dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
             dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            action = QAction('Remove Subscriber', self)
+            action = QAction('Remove Subscription', self)
         else:
             signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
             dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
@@ -487,7 +492,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         menu = QMenu()
         menu.addAction(action)
 
-        action.triggered.connect(lambda p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
+        action.triggered.connect(lambda ignore, p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
 
         menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
 
@@ -525,18 +530,17 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if dplugin_pcp.type == PLUGIN_PCP_IDENTIFIER:
                 # action = QAction(self.tr(dplugin.uname), self)
                 # sub_menu.addAction(action)
-
-                pcp_menu = QMenu(self.tr(dplugin_pcp.uname))
+                pcp_menu = QMenu(self.tr(dplugin_pcp.uname), sub_menu)
                 sub_menu.addMenu(pcp_menu)
 
                 dblock_pcp_ids = dplugin_pcp.get_dblocks()
 
                 for dblock_pcp_id in dblock_pcp_ids:
                     dblock_pcp = dblock_pcp_ids[dblock_pcp_id]
-                    action = QAction(self.tr(dblock_pcp.name), self)
+                    action = QAction(self.tr(dblock_pcp.name), pcp_menu)
                     pcp_menu.addAction(action)
 
-                    action.triggered.connect(lambda p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
+                    action.triggered.connect(lambda ignore, p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
                                              self.add_pcp_subscription_action(p1, p2, p3, p4))
 
         menu = QMenu()
@@ -619,7 +623,18 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
         # -----------------------------------------
 
         index = self.pluginTree.currentIndex()
-        self.pluginTree.clicked.emit(index)
+
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
+
+        if dplugin is not None:
+
+            if dplugin.state == PLUGIN_STATE_DELETE:
+                self.tabWidget.setDisabled(True)
+                self.clear()
+            else:
+                self.tabWidget.setEnabled(True)
+                #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
+                #self.pluginTree.clicked.emit(index)
 
         # -----------------------------------------
         # case: remove already deleted plugins
@@ -649,6 +664,13 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
                 if not self.pcp_root.hasItem(new_dplugin):
                     self.pcp_root.appendRow(plugin_item)
+
+
+        #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
+        # index = self.pluginTree.currentIndex()
+        # if index.isValid():
+        #     self.pluginTree.clicked.emit(index)
+
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
         """

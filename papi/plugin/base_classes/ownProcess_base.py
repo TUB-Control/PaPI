@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -33,7 +33,10 @@ from papi.plugin.base_classes.base_plugin import base_plugin
 import papi.event as Event
 
 class ownProcess_base(base_plugin):
-
+    """
+    This plugin base should be used by a plugin if should run in an own process.
+    It is not possible to create a widget which is displayed in the graphical interface of PaPI.
+    """
     def work_process(self, CoreQueue, pluginQueue, id, defaultEventTriggered=False, config=None, autostart=True):
         # set queues and id
         self._Core_event_queue__ = CoreQueue

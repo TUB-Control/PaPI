@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -31,11 +31,15 @@ __author__ = 'control'
 
 class Wrong_type(Exception):
 
-    def __init__(self, Parameter):
+    def __init__(self, Parameter, type=None):
         self.parameter = Parameter
+        self.type = type
 
     def __str__(self):
-        return 'Wrong type for argument '+ self.parameter
+        if self.type is None:
+            return 'Wrong type for argument '+ self.parameter
+        else:
+            return 'Wrong type for argument '+ self.parameter + ', expected ' + str(self.type)
 
 
 class Wrong_length(Exception):

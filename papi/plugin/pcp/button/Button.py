@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,12 +28,14 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QPushButton, QIcon
-from papi.data.DPlugin import DBlock
-from papi.data.DSignal import DSignal
-from papi.pyqtgraph.Qt import QtGui, QtCore
 
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtGui    import QIcon
+from PyQt5 import QtGui, QtCore
+
+from papi.data.DPlugin import DEvent
+from papi.data.DSignal import DSignal
+from papi.plugin.base_classes.pcp_base import pcp_base
 from papi.constants import REGEX_SIGNED_FLOAT
 
 class Button(pcp_base):
@@ -48,20 +50,18 @@ class Button(pcp_base):
 
         #super(Button, self).start_init(config)
 
-        block = DBlock('Click_Event')
-        signal = DSignal('Parameter')
-        block.add_signal(signal)
+        self.event_click = DEvent('Click')
 
         self.name = config['name']['value']
         self.cur_value = 0
 
-        self.value_up = float(self.config['state1']['value'])
-        self.value_down = float(self.config['state2']['value'])
+        self.value_up = self.config['state1']['value']
+        self.value_down = self.config['state2']['value']
         self.text_up =  (self.config['state1_text']['value'])
         self.text_down = (self.config['state2_text']['value'])
         self.button_state = 'up'
 
-        self.send_new_block_list([block])
+        self.send_new_event_list([self.event_click])
 
         self.button = self.create_widget()
         self.set_widget_for_internal_usage(self.button)
@@ -101,7 +101,7 @@ class Button(pcp_base):
             self.button.setText(self.text_up)
             val = self.value_up
 
-        self.send_parameter_change(str(val), 'Click_Event')
+        self.emit_event(str(val), self.event_click)
 
 
     def get_plugin_configuration(self):

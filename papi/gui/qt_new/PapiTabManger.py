@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,16 +28,23 @@ Contributors:
 
 __author__ = 'control'
 
-from PySide.QtGui import QDialog, QLineEdit, QRegExpValidator, QCheckBox , QTabWidget
-from PySide.QtCore import *
-from papi.pyqtgraph import QtCore, QtGui
+
+from PyQt5.QtCore import Qt, QObject
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui        import QRegExpValidator
+from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiArea, \
+                                QMessageBox, QMenu, QAction, QInputDialog, QFileDialog, QWidget, \
+                                QMainWindow, QHBoxLayout, QVBoxLayout, QTabWidget
+
+
 from papi.gui.qt_new.custom import FileLineEdit
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER
+from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, \
+                                    GUI_TABWIDGET_IDENTIFIER
 
 
 class PapiTabManger(QObject):
 
-    def __init__(self, tabWigdet = None, dgui = None,gui_api = None, parent=None):
+    def __init__(self, tabWigdet = None, dgui = None,gui_api = None, parent=None, centralWidget=None):
         super(PapiTabManger, self).__init__(parent)
 
         self.tabWidget = tabWigdet
@@ -48,8 +55,8 @@ class PapiTabManger(QObject):
 
         self.tabWidget.tabCloseRequested.connect(self.closeTab_by_ind)
 
-        self.tabWidget.setTabShape(QtGui.QTabWidget.Triangular)
-        self.tabWidget.setTabPosition(QtGui.QTabWidget.North)
+        #self.tabWidget.setTabShape(QtGui.QTabWidget.Triangular)
+        #self.tabWidget.setTabPosition(QtGui.QTabWidget.North)
 
         self.dGui = dgui
         # make tabs movable
@@ -58,6 +65,10 @@ class PapiTabManger(QObject):
 
         # create dict for saving tabs
         self.tab_dict_uname = {}
+
+        self.windowTabData = {}
+
+        self.centralWidget = centralWidget
 
     def get_tabs_by_uname(self):
         return self.tab_dict_uname
@@ -90,6 +101,23 @@ class PapiTabManger(QObject):
 
             ind = self.tabWidget.indexOf(tabObject)
             self.tabWidget.setTabText(ind,tabObject.name)
+
+            allPlugins = self.dGui.get_all_plugins()
+            for pluign_ind in allPlugins:
+                dplugin = allPlugins[pluign_ind]
+                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER or dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+                    tabOfPlugin = dplugin.plugin.config['tab']['value']
+                    if tabOfPlugin == old_name:
+                        dplugin.plugin.config['tab']['value'] = new_name
+
+    def rename_window(self, window, new_name):
+        if new_name not in self.tab_dict_uname:
+            # rename it
+            old_name = window.windowName
+            self.tab_dict_uname.pop(old_name)
+
+            window.setNewWindowName(new_name)
+            self.tab_dict_uname[new_name] = window
 
             allPlugins = self.dGui.get_all_plugins()
             for pluign_ind in allPlugins:
@@ -134,11 +162,19 @@ class PapiTabManger(QObject):
             return False
 
     def set_background_for_tab_with_name(self, name, bg):
+        print(name)
         if bg is not None:
             if name in self.tab_dict_uname:
                 pixmap  = QtGui.QPixmap(bg)
-                widgetArea = self.tab_dict_uname[name]
-                widgetArea.setBackground(pixmap)
+
+                if isinstance(self.tab_dict_uname[name], TabObject):
+                    widgetArea = self.tab_dict_uname[name]
+                elif isinstance(self.tab_dict_uname[name], PaPIWindow):
+                    widgetArea = self.tab_dict_uname[name].tabWidget
+
+                qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
+
+                widgetArea.setBackground(qbrush_bg)
                 widgetArea.background = bg
 
     def set_all_tabs_to_close_when_empty(self, state):
@@ -172,6 +208,8 @@ class PapiTabManger(QObject):
                         self.gui_api.do_delete_plugin(dplugin.id)
                 self.remove_tab(tabOb)
 
+
+
     def closeTab_by_name(self,name):
         if name in self.tab_dict_uname:
             tabO = self.tab_dict_uname[name]
@@ -202,48 +240,229 @@ class PapiTabManger(QObject):
         if isinstance(close,bool):
             self.tabWidget.setTabsClosable(close)
 
-
     def show_context_menu(self, pos):
         self.cmenu = self.create_context_menu()
         gloPos = self.tabWidget.mapToGlobal(pos)
         self.cmenu.exec_(gloPos)
 
     def create_context_menu(self):
-        ctrlMenu = QtGui.QMenu("")
+        ctrlMenu = QMenu("")
 
 
-        title_action = QtGui.QAction('Tab menu', self.tabWidget)
+        title_action = QAction('Area menu', self.tabWidget)
         title_action.setDisabled(True)
 
-        sep_action = QtGui.QAction('',self.tabWidget)
+        sep_action = QAction('',self.tabWidget)
         sep_action.setSeparator(True)
+        sep_action2 = QAction('',self.tabWidget)
+        sep_action2.setSeparator(True)
+        sep_action3 = QAction('',self.tabWidget)
+        sep_action3.setSeparator(True)
 
-        new_tab_action = QtGui.QAction('New Tab',self.tabWidget)
+        new_tab_action = QAction('New Tab',self.tabWidget)
         new_tab_action.triggered.connect(self.cmenu_new_tab)
 
-        new_tab_action_cust_name = QtGui.QAction('New Tab with name',self.tabWidget)
+        new_tab_action_cust_name = QAction('New Tab with name',self.tabWidget)
         new_tab_action_cust_name.triggered.connect(self.cmenu_new_tab_custom_name)
 
-        close_tab_action = QtGui.QAction('Close Tab',self.tabWidget)
+        detach_tab_action_cust_name = QAction('Detach > new window',self.tabWidget)
+        detach_tab_action_cust_name.triggered.connect(self.detach_tab)
+
+        close_tab_action = QAction('Close Tab',self.tabWidget)
         close_tab_action.triggered.connect(self.cmenu_close_tab)
 
-        rename_tab_action = QtGui.QAction('Rename Tab',self.tabWidget)
+        rename_tab_action = QAction('Rename Tab',self.tabWidget)
         rename_tab_action.triggered.connect(self.cmenu_rename_tab)
 
-        bg_action = QtGui.QAction('Set background',self.tabWidget)
+        bg_action = QAction('Set background',self.tabWidget)
         bg_action.triggered.connect(self.cmenu_set_bg)
 
-        ctrlMenu.addAction(title_action)
-        ctrlMenu.addAction(sep_action)
-        ctrlMenu.addAction(sep_action)
-        ctrlMenu.addAction(new_tab_action)
-        ctrlMenu.addAction(new_tab_action_cust_name)
+        wind_action = QAction('New Window',self.tabWidget)
+        wind_action.triggered.connect(self.cmenu_new_window)
+
+
         if self.tabWidget.count() > 0:
+            ctrlMenu.addAction(title_action)
+
+            ctrlMenu.addAction(sep_action)
+            ctrlMenu.addAction(new_tab_action)
+            ctrlMenu.addAction(new_tab_action_cust_name)
+
+            ctrlMenu.addAction(sep_action2)
             ctrlMenu.addAction(close_tab_action)
             ctrlMenu.addAction(rename_tab_action)
             ctrlMenu.addAction(bg_action)
 
+            ctrlMenu.addAction(sep_action3)
+            ctrlMenu.addAction(wind_action)
+            ctrlMenu.addAction(detach_tab_action_cust_name)
+        else:
+            ctrlMenu.addAction(title_action)
+            ctrlMenu.addAction(sep_action)
+            ctrlMenu.addAction(new_tab_action)
+            ctrlMenu.addAction(new_tab_action_cust_name)
+            ctrlMenu.addAction(sep_action2)
+            ctrlMenu.addAction(wind_action)
+
         return ctrlMenu
+
+
+
+
+
+
+
+    def show_context_menu_window(self, pos, window):
+        self.cmenu = self.create_context_menu_window(window.tabWidget, window)
+        gloPos = window.mapToGlobal(pos)
+        self.cmenu.exec_(gloPos)
+
+    def create_context_menu_window(self, tabWidget, window):
+        ctrlMenu = QMenu("")
+
+
+        title_action = QAction('Window menu', tabWidget)
+        title_action.setDisabled(True)
+
+        sep_action = QAction('',tabWidget)
+        sep_action.setSeparator(True)
+        sep_action2 = QAction('',tabWidget)
+        sep_action2.setSeparator(True)
+
+        dock_action = QAction('Dock Window',tabWidget)
+        dock_action.triggered.connect(lambda ignore, area=tabWidget, window = window : self.cmenu_dock_window(area,window))
+
+        rename_win_action = QAction('Rename Window',self.tabWidget)
+        rename_win_action.triggered.connect(lambda ignore, window = window : self.cmenu_rename_wind(window))
+
+        bg_action = QAction('Set background',tabWidget)
+        bg_action.triggered.connect(lambda ignore, wind = window  : self.cmenu_set_bg_window(wind))
+
+        ctrlMenu.addAction(title_action)
+        ctrlMenu.addAction(sep_action)
+        ctrlMenu.addAction(dock_action)
+        ctrlMenu.addAction(sep_action2)
+        ctrlMenu.addAction(rename_win_action)
+        ctrlMenu.addAction(bg_action)
+        return ctrlMenu
+
+    def add_wind(self, name):
+        if name in self.tab_dict_uname:
+            print('Tab with name already exists')
+        else:
+
+            # create a new window with name = name
+            newWin = PaPIWindow(name, conextMenu=self.show_context_menu_window, parent=self.centralWidget)
+
+            # connect new close slot:
+            newWin.closeEvent = lambda ev, handler= newWin.closeEvent, window=newWin : self.new_wind_close_event(ev,handler, window)
+
+            # add new window to data structure
+            self.tab_dict_uname[newWin.windowName] = newWin
+
+            return newWin
+
+    def new_wind_close_event(self, event, handler, window):
+        if window.alreadyDocked is True:
+            pass
+        else:
+            self.redock_window(window)
+
+    def remove_window(self,window, rm_from_data=True):
+        if rm_from_data is True:
+            if window.windowName in self.tab_dict_uname:
+                self.tab_dict_uname.pop(window.windowName)
+                window.close()
+                window.destroy()
+        else:
+            window.close()
+            window.destroy()
+
+    def redock_window(self, window):
+
+        if window.windowName in self.tab_dict_uname:
+            winName = window.windowName
+            destTab = self.add_tab('DOCK'+winName+'DOCK')
+
+            if not window.tabWidget.isEmpty():
+                # create new Tab with name with affix and prefix
+                plugins = self.dGui.get_all_plugins()
+                for pl_id in plugins:
+
+                    plugin = plugins[pl_id]
+                    if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+
+                        if plugin.plugin.config['tab']['value'] == window.windowName:
+
+                            subwin = plugin.plugin.get_sub_window()
+                            posX = subwin.pos().x()
+                            posY = subwin.pos().y()
+                            self.moveFromTo(window.windowName,destTab.name, subwin,posX=posX,posY=posY)
+
+                            plugin.plugin.config['tab']['value'] = destTab.name
+
+            window.alreadyDocked = True
+            self.remove_window(window)
+            # rename new Tab to real name
+            self.rename_tab(destTab,winName)
+
+    def detach_tab(self):
+        tabOb = self.tabWidget.currentWidget()
+        tabName = tabOb.name
+        neWin = self.add_wind('DETACH'+tabName + 'DETACH')
+
+        if  len(tabOb.subWindowList()) > 0:
+            plugins = self.dGui.get_all_plugins()
+            for pl_id in plugins:
+                plugin = plugins[pl_id]
+                if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                    if plugin.plugin.config['tab']['value'] == tabOb.name:
+                        subwin = plugin.plugin.get_sub_window()
+                        posX = subwin.pos().x()
+                        posY = subwin.pos().y()
+                        self.moveFromTo(tabOb.name,neWin.windowName, subwin,posX=posX,posY=posY)
+                        plugin.plugin.config['tab']['value'] = neWin.windowName
+
+        self.remove_tab(tabOb)
+        self.rename_window(neWin,tabName)
+
+    def cmenu_dock_window(self, tabarea, window):
+        self.redock_window(window)
+
+    def cmenu_new_window(self):
+        name = 'Win'
+        while name in self.tab_dict_uname:
+            name = name + 'X'
+        self.add_wind(name)
+
+    def cmenu_set_bg_window(self, window):
+        fileNames = ''
+
+        dialog = QFileDialog(window)
+        dialog.setFileMode(QFileDialog.AnyFile)
+
+        if dialog.exec_():
+            fileNames = dialog.selectedFiles()
+
+        if len(fileNames):
+            if fileNames[0] != '':
+                path = fileNames[0]
+                self.set_background_for_tab_with_name(window.windowName, path)
+
+    def cmenu_rename_wind(self, window):
+        text, ok = QInputDialog.getText(window, 'Rename a window','New name for window: '+ window.windowName,
+                                              QLineEdit.Normal,window.windowName)
+        if ok:
+            if text in self.tab_dict_uname:
+
+                pass
+            else:
+                self.rename_window(window,text)
+
+
+
+
+
 
     def cmenu_new_tab(self):
         name = 'Tab'
@@ -255,7 +474,7 @@ class PapiTabManger(QObject):
         name = 'Tab'
         while name in self.tab_dict_uname:
             name = name + 'X'
-        text, ok = QtGui.QInputDialog.getText(self.tabWidget, 'Tab name',' Name of new tab', QtGui.QLineEdit.Normal,name)
+        text, ok = QInputDialog.getText(self.tabWidget, 'Tab name',' Name of new tab', QLineEdit.Normal,name)
 
         if ok:
             if text in self.tab_dict_uname:
@@ -266,8 +485,8 @@ class PapiTabManger(QObject):
     def cmenu_set_bg(self):
         fileNames = ''
 
-        dialog = QtGui.QFileDialog(self.tabWidget)
-        dialog.setFileMode(QtGui.QFileDialog.AnyFile)
+        dialog = QFileDialog(self.tabWidget)
+        dialog.setFileMode(QFileDialog.AnyFile)
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()
@@ -284,8 +503,8 @@ class PapiTabManger(QObject):
     def cmenu_rename_tab(self):
         tabOb = self.tabWidget.currentWidget()
 
-        text, ok = QtGui.QInputDialog.getText(self.tabWidget, 'Rename a tab','New name for tab: '+ tabOb.name,
-                                              QtGui.QLineEdit.Normal,tabOb.name)
+        text, ok = QInputDialog.getText(self.tabWidget, 'Rename a tab','New name for tab: '+ tabOb.name,
+                                              QLineEdit.Normal,tabOb.name)
 
         if ok:
             if text in self.tab_dict_uname:
@@ -296,19 +515,85 @@ class PapiTabManger(QObject):
 
 
 
-class TabObject(QtGui.QMdiArea):
-    def __init__(self, name, parent=None):
+
+
+
+
+class PaPIWindow(QMainWindow):
+    def __init__(self, windowName, conextMenu=None, parent = None):
+        super(QMainWindow, self).__init__(parent)
+        self.windowName = windowName
+        self.tabList    = {}
+        self.tabWidget = TabObject(windowName)
+        self.setCentralWidget(self.tabWidget)
+        self.closeIfempty = False
+        self.alreadyDocked = False
+
+        self.setWindowTitle(self.windowName)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda pos, wind = self: conextMenu(pos,wind))
+
+        self.resize(693, 600)
+        self.show()
+
+    def addSubWindow(self, subwindow):
+        self.tabWidget.addSubWindow(subwindow)
+
+    def removeSubWindow(self, subwindow):
+        if subwindow in self.tabWidget.subWindowList():
+            self.tabWidget.removeSubWindow(subwindow)
+
+    def setNewWindowName(self, newName):
+        self.setWindowTitle(newName)
+        self.windowName = newName
+
+    def getBackground(self):
+        return self.tabWidget.background
+
+    def setBackground(self, bg):
+        self.tabWidget.background = bg
+
+
+    background = property(fget=getBackground, fset=setBackground)
+
+    def subWindowList(self):
+        return self.tabWidget.subWindowList()
+
+
+    def getName(self):
+        return self.windowName
+
+    def setName(self, name):
+        self.windowName = name
+
+    name = property(fget=getName, fset=setName)
+
+
+
+    def isEmpty(self):
+        return self.tabWidget.isEmpty()
+
+
+
+
+class TabObject(QMdiArea):
+    def __init__(self, name, windowName=0, parent=None):
         super(TabObject, self).__init__(parent)
         self.index = None
         self.name = name
         self.background = 'default'
         self.closeIfempty = False
+        self.windowName = windowName
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+
 
     def isEmpty(self):
         return len(self.subWindowList()) == 0
 
 
-class DefaultCloseBox(QtGui.QMessageBox):
+class DefaultCloseBox(QMessageBox):
 
     def __init__(self, parent=None):
         super(DefaultCloseBox, self).__init__(parent)

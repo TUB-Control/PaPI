@@ -1,0 +1,83 @@
+<html>
+<head>
+
+<!-- 
+
+
+
+ -->
+
+
+
+
+<!-- Load libraries -->
+    <script src = "/socket.io/socket.io.js" > </script>
+    <script type=text/javascript src="/lib/jquery-1.11.3.min.js"></script>
+
+
+
+     <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+</head> 
+ 
+
+
+<body>
+    <strong>GUI-interface to ORTD-simulation</strong>
+
+  <br><br>
+
+  
+  <strong>Displays:</strong> <div id="Console">0</div>
+
+
+
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+
+
+
+    <script defer="defer">
+
+
+
+        var socket = io.connect();
+       
+        
+  // wait for new signal-samples
+  socket.on('SCISTOUT', function (data) {
+      console.log('Got from ConsoleID ' +  data.ConsoleId + ' -->' +  data);
+
+      document.getElementById('Console').innerHTML += data.Data + '|';
+
+
+      
+  });
+
+
+  $('form').submit(function(){
+    console.log( $('#m').val() );
+    socket.emit('ConsoleCommand', { ConsoleId : 1 ,  Data : $('#m').val()  }  );
+    $('#m').val('');
+    return false;
+  });
+
+
+
+    </script>
+
+
+
+</body>
+</html>

@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -37,9 +37,10 @@ import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
+    CONFIG_SAVE_CFG_BLACKLIST
 
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 
 from papi.data.DSignal import DSignal
 from papi.data.DPlugin import DBlock
@@ -50,7 +51,7 @@ import xml.etree.cElementTree as ET
 
 
 class Gui_api(QtCore.QObject):
-    error_occured = QtCore.Signal(str, str, str)
+    error_occured = QtCore.pyqtSignal(str, str, str)
 
     def __init__(self, gui_data, core_queue, gui_id, get_gui_config_function = None, set_gui_config_function = None, TabManager = None, plugin_manager = None):
         super(Gui_api, self).__init__()
@@ -432,8 +433,20 @@ class Gui_api(QtCore.QObject):
     def do_close_program(self):
         """
         Tell core to close papi. Core will respond and will close all open plugins.
-
+        GUI will close all PCP and VIP Plugins due to calling their quit function
         """
+
+        plugins = self.gui_data.get_all_plugins()
+        for dplugin_id in plugins:
+            dplugin = plugins[dplugin_id]
+            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                try:
+                    dplugin.plugin.quit()
+                except Exception as E:
+                    tb = traceback.format_exc()
+                    self.plugin_died.emit(dplugin, E, tb)
+
+
         opt = DOptionalData()
         opt.reason = 'User clicked close Button'
         event = Event.instruction.CloseProgram(self.gui_id, 0, opt)
@@ -447,6 +460,18 @@ class Gui_api(QtCore.QObject):
             self.tabManager.add_tab(name)
 
     def do_load_xml(self, path):
+        if path is None or not os.path.isfile(path):
+            return False
+
+        tree = ET.parse(path)
+        root = tree.getroot()
+
+        if root.tag == 'PaPI':
+            self.do_load_xml_reloaded(root)
+        else:
+            self.do_load_xml_v1(root)
+
+    def do_load_xml_reloaded(self,root):
         """
         Function to load a xml config to papi and apply the configuration.
 
@@ -454,11 +479,159 @@ class Gui_api(QtCore.QObject):
         :type path: basestring
         :return:
         """
-        if path is None or not os.path.isfile(path):
-            return False
-        tree = ET.parse(path)
 
-        root = tree.getroot()
+        gui_config = {}
+        plugins_to_start = []
+        parameters_to_change = []
+        signals_to_change = []
+        subs_to_make = []
+
+        try:
+            for root_element in root:
+                ##########################
+                # Read gui configuration #
+                ##########################
+                if root_element.tag == 'Configuration':
+                    for property in root_element:
+                        gui_config[property.tag] = {}
+                        for attr in property:
+                            if len(attr) == 0:
+                                gui_config[property.tag][attr.tag] = attr.text
+                            else:
+                                gui_config[property.tag][attr.tag] = {}
+                                for val in attr:
+                                   gui_config[property.tag][attr.tag][val.tag] = val.text
+
+                if root_element.tag == 'Plugins':
+                    #############################
+                    # Read plugin configuration #
+                    #############################
+                    for plugin_xml in root_element:
+                        plObj = {}
+                        plObj['uname'] = self.change_uname_to_uniqe(plugin_xml.attrib['uname'])
+                        plObj['identifier'] = plugin_xml.find('Identifier').text
+                        config_xml = plugin_xml.find('StartConfig')
+                        config_hash = {}
+                        for parameter_xml in config_xml.findall('Parameter'):
+                            para_name = parameter_xml.attrib['Name']
+                            config_hash[para_name] = {}
+                            for detail_xml in parameter_xml:
+                                detail_name = detail_xml.tag
+                                config_hash[para_name][detail_name] = detail_xml.text
+
+                        plObj['cfg'] = config_hash
+
+                        plugins_to_start.append(plObj)
+
+                        # --------------------------------
+                        # Load PreviousParameters
+                        # --------------------------------
+
+                        prev_parameters_xml = plugin_xml.find('PreviousParameters')
+                        if prev_parameters_xml is not None:
+                            for prev_parameter_xml in prev_parameters_xml.findall('Parameter'):
+                                para_name = prev_parameter_xml.attrib['Name']
+                                para_value = prev_parameter_xml.text
+                                # pl_uname_new = self.change_uname_to_uniqe(pl_uname)
+                                # TODO validate NO FLOAT in parameter
+                                parameters_to_change.append([plObj['uname'], para_name, para_value])
+
+                        # --------------------------------
+                        # Load DBlocks due to signals name
+                        # --------------------------------
+
+                        dblocks_xml = plugin_xml.find('DBlocks')
+                        if dblocks_xml is not None:
+                            for dblock_xml in dblocks_xml:
+                                dblock_name = dblock_xml.attrib['Name']
+                                dsignals_xml = dblock_xml.findall('DSignal')
+                                for dsignal_xml in dsignals_xml:
+                                    dsignal_uname = dsignal_xml.attrib['uname']
+                                    dsignal_dname = dsignal_xml.find('dname').text
+                                    signals_to_change.append([plObj['uname'], dblock_name, dsignal_uname, dsignal_dname])
+
+                if root_element.tag == 'Subscriptions':
+                    for sub_xml in root_element:
+                        dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
+                        for source in sub_xml:
+                            if source.tag == 'Source':
+                                sourceName =  source.attrib['uname'] #self.change_uname_to_uniqe(source.attrib['uname'])
+                                for block_xml in source:
+                                    blockName = block_xml.attrib['name']
+                                    alias = block_xml.find('Alias').text
+                                    signals_xml = block_xml.find('Signals')
+
+                                    signals = []
+                                    for sig_xml in signals_xml:
+                                        signals.append(sig_xml.text)
+
+                                    subs_to_make.append({'dest':dest, 'source':sourceName, 'block':blockName, 'alias':alias, 'signals':signals})
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not loadable", tb)
+
+
+        # -----------------------------------------------
+        # Check: Are there unloadable plugins?
+        # -----------------------------------------------
+
+        unloadable_plugins = []
+        for pl in plugins_to_start:
+            plugin_info = self.pluginManager.getPluginByName(pl['identifier'])
+
+            if plugin_info is None:
+                if pl['identifier'] not in unloadable_plugins:
+                    unloadable_plugins.append(pl['identifier'])
+
+
+
+        if not len(unloadable_plugins):
+            for pl in plugins_to_start:
+                self.do_create_plugin(pl['identifier'], pl['uname'], pl['cfg'])
+
+            self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
+        else:
+            self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
+                                    "\nConfiguration will not be used.", None)
+
+
+    def config_loader_subs_reloaded(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
+        """
+        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+
+        :param pl_to_start: list of plugins to start
+        :type pl_to_start: list
+        :param subs_to_make:  list of subscriptions to make
+        :type subs_to_make: list
+        :param parameters_to_change: parameter changes to apply
+        :type parameters_to_change: list
+        :param signals_to_change: signal name changes to apply
+        :type signals_to_change list
+        :return:
+        """
+        for sub in subs_to_make:
+            self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
+
+        for para in parameters_to_change:
+            self.do_set_parameter_uname(para[0], para[1], para[2])
+
+        for sig in signals_to_change:
+            plugin_uname = sig[0]
+            dblock_name = sig[1]
+            dsignal_uname = sig[2]
+            dsignal_dname = sig[3]
+
+            self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),{'edit': DSignal(dsignal_uname, dsignal_dname)})
+
+
+    def do_load_xml_v1(self, root):
+        """
+        Function to load a xml config to papi and apply the configuration.
+
+        :param path: path to xml file to load.
+        :type path: basestring
+        :return:
+        """
 
         plugins_to_start = []
         subs_to_make = []
@@ -516,7 +689,7 @@ class Gui_api(QtCore.QObject):
                                 alias_xml = block_xml.find('alias')
                                 alias = alias_xml.text
                                 pl_uname_new = self.change_uname_to_uniqe(pl_uname)
-                                data_source_new = self.change_uname_to_uniqe(data_source)
+                                data_source_new = data_source #self.change_uname_to_uniqe(data_source)
                                 subs_to_make.append([pl_uname_new, data_source_new, block_name, signals, alias])
 
                     # --------------------------------
@@ -547,7 +720,7 @@ class Gui_api(QtCore.QObject):
                                 signals_to_change.append([pl_uname, dblock_name, dsignal_uname, dsignal_dname])
         except Exception as E:
             tb = traceback.format_exc()
-            self.error_occured.emit("Error: Config Loader", "Not loadable: " + path, tb)
+            self.error_occured.emit("Error: Config Loader", "Not loadable", tb)
 
 
         # -----------------------------------------------
@@ -576,7 +749,7 @@ class Gui_api(QtCore.QObject):
             self.config_loader_subs(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:
             self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
-                                    "\nConfiguration from \n" + path + "\nwill not be used.", None)
+                                    "\nConfiguration will not be used.", None)
 
     def change_uname_to_uniqe(self, uname):
         """
@@ -623,6 +796,179 @@ class Gui_api(QtCore.QObject):
 
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
+
+    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
+
+
+
+        subscriptionsToSave =  {}
+        # check for xml extension in path, add .xml if missing
+        if path[-4:] != '.xml':
+            path += '.xml'
+
+        try:
+            root = ET.Element(CONFIG_ROOT_ELEMENT_NAME_RELOADED)
+            root.set('Date', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            root.set('PaPI_version', CORE_PAPI_VERSION)
+
+            ##########################
+            # Save gui configuration #
+            ##########################
+            gui_cfg = self.get_gui_config_function()
+            gui_cfg_xml = ET.SubElement(root, 'Configuration')
+
+            for cfg_item in gui_cfg:
+                item_xml = ET.SubElement(gui_cfg_xml,cfg_item)
+                item = gui_cfg[cfg_item]
+                for attr_name in item:
+                    attr_xml = ET.SubElement(item_xml, attr_name)
+                    values = item[attr_name]
+
+                    # check if there is another dict level to explore
+                    # if true: exlplore the dict
+                    # if false: save the value of values in the parent xml node
+                    if isinstance(values,dict):
+                        for val in values:
+                            value_xml = ET.SubElement(attr_xml, val)
+                            value_xml.text = values[val]
+                    else:
+                        attr_xml.text = values
+
+            # ---------------------------------------
+            # save information of plugins
+            # for the next start
+            # ---------------------------------------
+            plugins_xml = ET.SubElement(root,'Plugins')
+
+            plugins = self.gui_data.get_all_plugins()
+            for dplugin_id in plugins:
+                dplugin = plugins[dplugin_id]
+
+                # check if this plugin should be saved to XML
+                if dplugin.uname in plToSave:
+                    if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                        dplugin.startup_config = dplugin.plugin.get_current_config()
+
+                    pl_xml = ET.SubElement(plugins_xml, 'Plugin')
+                    pl_xml.set('uname', dplugin.uname)
+
+                    identifier_xml = ET.SubElement(pl_xml, 'Identifier')
+                    identifier_xml.text = dplugin.plugin_identifier
+
+                    # ---------------------------------------
+                    # Save all current config as startup config
+                    # for the next start
+                    # ---------------------------------------
+
+                    cfg_xml = ET.SubElement(pl_xml, 'StartConfig')
+                    for parameter in dplugin.startup_config:
+                        para_xml = ET.SubElement(cfg_xml, 'Parameter')
+                        para_xml.set('Name', parameter)
+                        for detail in dplugin.startup_config[parameter]:
+                            if detail not in CONFIG_SAVE_CFG_BLACKLIST:
+                                detail_xml = ET.SubElement(para_xml, detail)
+                                detail_xml.text = dplugin.startup_config[parameter][detail]
+
+                    # ---------------------------------------
+                    # Save all current values for all
+                    # parameter
+                    # ---------------------------------------
+
+                    last_paras_xml = ET.SubElement(pl_xml, 'PreviousParameters')
+                    allparas = dplugin.get_parameters()
+                    for para_key in allparas:
+                        para = allparas[para_key]
+                        last_para_xml = ET.SubElement(last_paras_xml, 'Parameter')
+                        last_para_xml.set('Name', para_key)
+                        last_para_xml.text = str(para.value)
+
+                    # ---------------------------------------
+                    # Save all current values for all
+                    # signals of all dblocks
+                    # ---------------------------------------
+
+                    dblocks_xml = ET.SubElement(pl_xml, 'DBlocks')
+
+                    alldblock_names = dplugin.get_dblocks()
+
+                    for dblock_name in alldblock_names:
+                        dblock = alldblock_names[dblock_name]
+                        dblock_xml = ET.SubElement(dblocks_xml, 'DBlock')
+                        dblock_xml.set('Name', dblock.name)
+
+                        alldsignals = dblock.get_signals()
+
+                        for dsignal in alldsignals:
+                            dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
+                            dsignal_xml.set('uname', dsignal.uname)
+
+                            dname_xml = ET.SubElement(dsignal_xml, 'dname')
+                            dname_xml.text = dsignal.dname
+
+                # ---------------------------------------
+                # Build temporary subscription objects
+                # to remember the subs of all plugins
+                # including plugins that are not saved
+                # excluding plugins we do not want the subs saved of
+                # ---------------------------------------
+                if dplugin.uname in sToSave:
+                    subsOfPl = {}
+                    subs = dplugin.get_subscribtions()
+                    for sub in subs:
+                        sourcePL = self.gui_data.get_dplugin_by_id(sub).uname
+                        subsOfPl[sourcePL] = {}
+                        for block in subs[sub]:
+                            subsOfPl[sourcePL][block] = {}
+                            dsubscription = subs[sub][block]
+                            subsOfPl[sourcePL][block]['alias'] = dsubscription.alias
+
+                            signals = []
+                            for s in dsubscription.get_signals():
+                                signals.append( str(s))
+
+                            subsOfPl[sourcePL][block]['signals'] = signals
+
+                    if len(subsOfPl) != 0:
+                        subscriptionsToSave[dplugin.uname] = subsOfPl
+
+            # ---------------------------------------
+            # save subs to xml
+            #
+            # ---------------------------------------
+            subs_xml = ET.SubElement(root,'Subscriptions')
+            for dest in subscriptionsToSave:
+                sub_xml = ET.SubElement(subs_xml,'Subscription')
+
+                # Destination of data
+                dest_xml = ET.SubElement(sub_xml,'Destination')
+                dest_xml.text = dest
+
+                for source in subscriptionsToSave[dest]:
+                    # Source of Data
+                    source_xml = ET.SubElement(sub_xml,'Source')
+                    source_xml.set('uname',source)
+
+                    for block in subscriptionsToSave[dest][source]:
+                        block_xml = ET.SubElement(source_xml,'Block')
+                        block_xml.set('name',block)
+
+                        alias_xml = ET.SubElement(block_xml,'Alias')
+                        alias_xml.text = subscriptionsToSave[dest][source][block]['alias']
+
+                        signal_xml = ET.SubElement(block_xml,'Signals')
+                        for sig in subscriptionsToSave[dest][source][block]['signals']:
+                            sig_xml = ET.SubElement(signal_xml,'Signal')
+                            sig_xml.text = sig
+
+
+            # do transformation for readability and save xml tree to file
+            self.indent(root)
+            tree = ET.ElementTree(root)
+            tree.write(path)
+
+        except Exception as E:
+            tb = traceback.format_exc()
+            self.error_occured.emit("Error: Config Loader", "Not saveable: " + path, tb)
 
     def do_save_xml_config(self, path):
         """

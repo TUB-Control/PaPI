@@ -1,0 +1,11 @@
+[Core]
+Name = PaPIController
+Module = PaPIController
+
+[Documentation]
+Author = S.R.
+Version = 0.1
+Website =
+Description = Plugin to setup a source and controll plugin creation from a source.
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

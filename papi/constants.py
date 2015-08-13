@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -29,13 +29,15 @@ Stefan Ruppin
 __author__ = 'ruppin'
 
 
+PAPI_DEV_EDITION                = False
+
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = '1.1.0' # no spaces allowed
-CORE_CORE_VERSION               = '1.1.0' # no spaces allowed
+CORE_PAPI_VERSION               = '1.2.0' # no spaces allowed
+CORE_CORE_VERSION               = '1.2.0' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -47,6 +49,8 @@ CORE_ALIVE_MAX_COUNT            = 10
 
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
+
+# PaPI Information constants
 
 PAPI_COPYRIGHT                  = '&copy; 2014-2015'
 PAPI_ABOUT_TITLE                = 'About PaPI'
@@ -68,6 +72,13 @@ PaPI uses:
 </html>
 """
 
+PAPI_WIKI_URL                    = 'https://github.com/TUB-Control/PaPI/wiki'
+PAPI_DOC_URL                     = 'http://tub-control.github.io/PaPI/'
+
+if PAPI_DEV_EDITION:
+    PAPI_DOC_URL += "dev/"
+
+PAPI_DOC_PREFIX_PLUGIN           = 'papi.plugin'
 
 # EVENT CONSTANTS
 # TODO
@@ -77,7 +88,7 @@ PaPI uses:
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_1.1.0'
+GUI_VERSION                      = 'v_1.2.0'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
@@ -88,6 +99,7 @@ GUI_DEFAULT_WIDTH               = 771
 GUI_DEFAULT_HEIGHT              = 853
 
 GUI_DEFAULT_TAB                 = 'PaPI-Tab'
+GUI_TABWIDGET_IDENTIFIER        = '__tabWidget'
 
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
@@ -111,6 +123,7 @@ PLUGIN_STATE_ALIVE              = 'alive'
 PLUGIN_STATE_DEAD               = 'dead'
 PLUGIN_STATE_ADDED              = 'added'
 PLUGIN_STATE_STOPPED            = 'stopped'
+PLUGIN_STATE_DELETE             = 'deleted'
 
 #
 PLUGIN_API_CONSOLE_IDENTIFIER  = 'Plugin  API: '
@@ -121,8 +134,9 @@ PLUGIN_API_CONSOLE_LOG_LEVEL   = 1
 CONFIG_DEFAULT_DIRECTORY        = 'cfg_collection/'
 CONFIG_DEFAULT_FILE             = 'cfg_collection/testcfg.xml'
 CONFIG_ROOT_ELEMENT_NAME        = 'PaPiConfig'   # for xml save
+CONFIG_ROOT_ELEMENT_NAME_RELOADED = 'PaPI'
 CONFIG_LOADER_SUBSCRIBE_DELAY    = 1000 # ms
-
+CONFIG_SAVE_CFG_BLACKLIST       = ['type', 'regex', 'display_text','tooltip','advanced' ]
 
 
 

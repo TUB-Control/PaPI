@@ -696,7 +696,7 @@
     <Subscriptions>
       <Subscription>
         <data_source>Button</data_source>
-        <block Name="Click_Event">
+        <block Name="Click">
           <alias>Oscillator input</alias>
         </block>
       </Subscription>
@@ -821,10 +821,7 @@
     </StartConfig>
     <PreviousParameters />
     <DBlocks>
-      <DBlock Name="Click_Event">
-        <DSignal uname="Parameter">
-          <dname>Parameter</dname>
-        </DSignal>
+      <DBlock Name="Click">
       </DBlock>
     </DBlocks>
     <Subscriptions />

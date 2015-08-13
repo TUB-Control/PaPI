@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -30,12 +30,31 @@ __author__ = 'stefan'
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re
-from PySide.QtGui import QMdiSubWindow
-from papi.pyqtgraph.Qt import QtGui
+from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
+
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
 class base_visual(base_plugin):
+    """
+    This class is used by all plugins which are not running in an own process.
+    They are all executed the gui process.
+
+    """
+    def __init__(self):
+        super(base_visual, self).__init__()
+
     def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
+        """
+        Internal initialize function called by the PaPI framework;
+
+        :param CoreQueue: Queue used to send messages to the Core.
+        :param pluginQueue: Queue which is used by the PaPI framework to send messages to this plugins.
+        :param id: The internal plugin ID.
+        :param control_api: Access to the control_api provided by the PaPI framework.
+        :param dpluginInfo: Meta information about this plugin.
+        :param TabManger: The tab mananger.
+        :return:
+        """
         super(base_visual, self).papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
@@ -46,6 +65,12 @@ class base_visual(base_plugin):
         self.movable = True
 
     def start_init(self, config=None):
+        """
+        Internal start function called by the PaPI framework;
+
+        :param config:
+        :return:
+        """
         self.config = config
         # --------------------------------
 
@@ -60,13 +85,30 @@ class base_visual(base_plugin):
         return self.initiate_layer_1(self.config)
 
     def get_current_config(self):
+        """
+        Used to get the current configuration.
+
+        :return:
+        """
         return self.config
 
     def initiate_layer_1(self, config):
+        """
+        This function is called when the PaPI framework has called all internal function which are
+        needed to initialize the plugin. This function should be filled by the plugin developer.
+
+
+        :param config: Startup configuration
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
-
     def get_configuration_base(self):
+        """
+        Returns the basic configuration for this plugin base.
+
+        :return:
+        """
         config = {
             'size': {
                 'value': "(300,300)",
@@ -87,7 +129,15 @@ class base_visual(base_plugin):
             'tab': {
                 'value': 'Tab',
                 'tooltip': 'Used for tabs'
-            }}
+            },
+            'maximized' : {
+                'value' : '0',
+                'type' : 'bool',
+                'advanced' : '1',
+                'tooltip' : 'Set true to start plugin maximized',
+                'display_text' : 'Start maximized'
+            }
+        }
         return config
 
 
@@ -119,9 +169,18 @@ class base_visual(base_plugin):
 
 
     def window_resize(self, event):
+
         size = event.size()
         w = size.width()
         h = size.height()
+
+        isMaximized = self.get_sub_window().isMaximized()
+
+        if isMaximized:
+            self.config['maximized']['value'] = '1'
+        else:
+            self.config['maximized']['value'] = '0'
+
         self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
@@ -136,37 +195,35 @@ class base_visual(base_plugin):
         return self.widget
 
     def create_control_context_menu(self):
-        ctrlMenu = QtGui.QMenu("Control")
+        ctrlMenu = QMenu("Control")
 
-        del_action = QtGui.QAction('Close plugin',self.widget)
+        del_action = QAction('Close plugin',self.widget)
         del_action.triggered.connect(self.ctlrMenu_exit)
 
-        pause_action = QtGui.QAction('Pause plugin',self.widget)
+        pause_action = QAction('Pause plugin',self.widget)
         pause_action.triggered.connect(self.ctlrMenu_pause)
 
-        resume_action = QtGui.QAction('Resume plugin',self.widget)
+        resume_action = QAction('Resume plugin',self.widget)
         resume_action.triggered.connect(self.ctlrMenu_resume)
 
-        subMenu_action = QtGui.QAction('Open Signal Manager',self.widget)
+        subMenu_action = QAction('Open Signal Manager',self.widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
-
-        tabMenu = QtGui.QMenu('Move to')
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
-        tab_entrys = []
-        for t in tabs:
-            if t != self.config['tab']['value']:
-                entry = QtGui.QAction(t, self.widget)
-                entry.triggered.connect(lambda p=t: self.tabMenu_triggered(p))
-                tab_entrys.append(entry)
-                tabMenu.addAction(entry)
+        if len(tabs) > 1:
+            tabMenu = ctrlMenu.addMenu('Move to tab')
+            tab_entrys = []
+            for t in tabs:
+                if t != self.config['tab']['value']:
+                    entry = QAction(t, self.widget)
+                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
+                    tab_entrys.append(entry)
+                    tabMenu.addAction(entry)
 
-
-        ctrlMenu.addMenu(tabMenu)
         ctrlMenu.addAction(subMenu_action)
         if self.get_type() == PLUGIN_VIP_IDENTIFIER:
-            ctrlMenu.addAction(resume_action)
-            ctrlMenu.addAction(pause_action)
+           ctrlMenu.addAction(resume_action)
+           ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
         return ctrlMenu
 
@@ -181,8 +238,6 @@ class base_visual(base_plugin):
     def ctlrMenu_exit(self):
         self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
         print(self.config['tab']['value'])
-
-
 
     def ctlrMenu_pause(self):
         self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)

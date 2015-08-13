@@ -1,0 +1,67 @@
+Modified ert_linux_main.tlc
+============================================
+The file ert_linux_main.tlc was patched by
+
+    Technische Universität Berlin
+    Fakultät IV - Elektrotechnik und Informatik
+    Fachgebiet Regelungssysteme
+    Sekretariat EN 11
+    Einsteinufer 17
+    D-10587 Berlin
+    Germany
+
+to implement an improvement support for cpp.
+Here we are using the ert_linux version provided
+by the package ert_linux-141020.tar.gz
+
+Mimimalistic Simulink Coder Target for Linux
+============================================
+Authors: Michal Sojka <sojkam1@fel.cvut.cz>
+         Lukas Hamacek <hamacl1@fel.cvut.cz>
+
+Copyright (C) 2009 - 2014
+         Department of Control Engineering
+         Faculty of Electrical Engineering
+         Czech Technical University in Prague
+
+The aim of this target is to allow Simulink to generate code that
+runs in real-time on Linux. This target tries to be minimalist in
+the sense that it reuses as much as possible from Simulink built-in
+targets.
+
+
+Installation
+------------
+
+In Matlab prompt execute:
+
+  cd <root>/ert_linux/ert_linux
+  ert_linux_setup
+
+From now on, Code Generation pane of Simulink Model Configuration
+Parameters should offer ert_linux.tlc as System Target File (after
+pressing "Browse...." button).
+
+Documentation
+-------------
+
+Pinters to more ERT Linux target documentation can be found
+at the project SourceForge page
+
+  http://lintarget.sourceforge.net/
+
+The Michal Sojka blogpost about update of actual version
+can be found at
+
+  http://rtime.felk.cvut.cz/~sojka/blog/on-generating-linux-applications-from-simulink/
+
+Development sources repository
+------------------------------
+
+  http://rtime.felk.cvut.cz/gitweb/ert_linux.git
+
+  git clone git://rtime.felk.cvut.cz/ert_linux.git
+
+Note: This target was tested with Matlab R2012b and R2013a
+      and Humusoft MF624 cards with Linux kernels up to 3.12 RT
+      on 64-bit Debian GNU/Linux system.

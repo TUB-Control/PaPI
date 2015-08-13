@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -35,7 +35,7 @@ from papi.ConsoleLog import ConsoleLog
 from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
 
-from papi.pyqtgraph import QtCore
+from PyQt5 import QtCore
 from papi.gui.gui_api import Gui_api
 
 import papi.error_codes as ERROR
@@ -47,7 +47,7 @@ import xml.etree.cElementTree as ET
 
 class Plugin_api(QtCore.QObject):
 
-    resize_gui = QtCore.Signal(int, int)
+#    resize_gui = QtCore.Signal(int, int)
 
     def __init__(self, gui_data, core_queue, gui_id, PLUGIN_API_IDENTIFIER, tabManager = None):
         super(Plugin_api, self).__init__()

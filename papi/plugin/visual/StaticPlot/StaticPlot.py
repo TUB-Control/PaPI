@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
  
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
  
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -28,7 +28,12 @@ Contributors:
 
 __author__ = 'Stefan'
 
-import papi.pyqtgraph as pq
+import sys, traceback
+
+from PyQt5.QtWidgets import QMenu, QCheckBox, QWidgetAction, QGraphicsItem, QGraphicsPathItem
+from PyQt5 import QtCore
+
+import papi.pyqtgraph as pg
 
 import numpy as np
 import re
@@ -37,11 +42,8 @@ import json
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 
-import papi.pyqtgraph as pg
+
 import papi.constants as pc
-
-
-from papi.pyqtgraph.Qt import QtCore, QtGui
 
 
 class StaticPlot(vip_base):
@@ -150,7 +152,7 @@ class StaticPlot(vip_base):
         # Create Legend
         # ---------------------------
         if self.config['show_legend']['value']=='1':
-            self.__legend__ = pq.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
+            self.__legend__ = pg.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
             self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
 
         self.setup_context_menu()
@@ -322,7 +324,7 @@ class StaticPlot(vip_base):
         else:
             color = self.colors[0]
 
-        return pq.mkPen(color=color, style=style)
+        return pg.mkPen(color=color, style=style)
 
     def use_range_for_x(self, value):
         """
@@ -354,17 +356,17 @@ class StaticPlot(vip_base):
         :return:
         """
 
-        self.custMenu = QtGui.QMenu("Options")
-        self.gridMenu = QtGui.QMenu('Grid')
+        self.custMenu = QMenu("Options")
+        self.gridMenu = QMenu('Grid')
 
 
         # Grid Menu:
         # -----------------------------------------------------------
         # Y-Grid checkbox
-        self.xGrid_Checkbox = QtGui.QCheckBox()
+        self.xGrid_Checkbox = QCheckBox()
         self.xGrid_Checkbox.stateChanged.connect(self.contextMenu_xGrid_toogle)
         self.xGrid_Checkbox.setText('X-Grid')
-        self.xGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.xGrid_Action = QWidgetAction(self.__plotWidget__)
         self.xGrid_Action.setDefaultWidget(self.xGrid_Checkbox)
         self.gridMenu.addAction(self.xGrid_Action)
         # Check config for startup  state
@@ -372,10 +374,10 @@ class StaticPlot(vip_base):
             self.xGrid_Checkbox.setChecked(True)
 
         # X-Grid checkbox
-        self.yGrid_Checkbox = QtGui.QCheckBox()
+        self.yGrid_Checkbox = QCheckBox()
         self.yGrid_Checkbox.stateChanged.connect(self.contextMenu_yGrid_toogle)
         self.yGrid_Checkbox.setText('Y-Grid')
-        self.yGrid_Action = QtGui.QWidgetAction(self.__plotWidget__)
+        self.yGrid_Action = QWidgetAction(self.__plotWidget__)
         self.yGrid_Action.setDefaultWidget(self.yGrid_Checkbox)
         self.gridMenu.addAction(self.yGrid_Action)
         # Check config for startup  state
@@ -472,7 +474,8 @@ class StaticPlot(vip_base):
         """
         self.__plotWidget__.clear()
 
-class GraphicItem(pg.QtGui.QGraphicsPathItem):
+
+class GraphicItem(QGraphicsPathItem):
     """
     Represents a single object which is drawn by a plot.
     """
@@ -490,8 +493,8 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         connect = np.ones(x.shape, dtype=bool)
         connect[:,-1] = 0 # don't draw the segment between each trace
         self.path = pg.arrayToQPath(x.flatten(), y.flatten(), connect.flatten())
-        pg.QtGui.QGraphicsPathItem.__init__(self, self.path)
-        self.setCacheMode(pg.QtGui.QGraphicsItem.NoCache)
+        QGraphicsPathItem.__init__(self, self.path)
+        self.setCacheMode(QGraphicsItem.NoCache)
         self.setPen(pen)
         self.not_drawn = True
         self.counter = counter
@@ -500,7 +503,7 @@ class GraphicItem(pg.QtGui.QGraphicsPathItem):
         self.last_y = y[-1]
 
     def shape(self): # override because QGraphicsPathItem.shape is too expensive.
-        return pg.QtGui.QGraphicsItem.shape(self)
+        return QGraphicsItem.shape(self)
 
     def length(self):
         return self.counter

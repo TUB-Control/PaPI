@@ -10,14 +10,14 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
@@ -29,11 +29,10 @@ Sven Knuth
 __author__ = 'knuths'
 
 from papi.plugin.base_classes.pcp_base import pcp_base
-from PySide.QtGui import QSlider, QHBoxLayout, QWidget, QLabel
-from PySide import QtCore
-from PySide.QtCore import Qt
-from papi.data.DPlugin import DBlock
-from papi.data.DSignal import DSignal
+from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
+from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 
 import papi.constants as pc
@@ -43,11 +42,9 @@ class Slider(pcp_base):
 
     def initiate_layer_0(self, config):
 
-        block = DBlock('SliderBlock')
-        signal = DSignal('SliderParameter1')
-        block.add_signal(signal)
+        self.event_change = DEvent('Change')
 
-        self.send_new_block_list([block])
+        self.send_new_event_list([self.event_change])
         self.set_widget_for_internal_usage(self.create_widget())
 
         return True
@@ -58,8 +55,6 @@ class Slider(pcp_base):
         self.slider = QSlider()
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
-
-
 
         self.value_max = float(self.config['upper_bound']['value'])
         self.value_min = float(self.config['lower_bound']['value'])
@@ -102,7 +97,7 @@ class Slider(pcp_base):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.send_parameter_change(val, 'SliderBlock')
+        self.emit_event(str(val), self.event_change)
 
     def clicked(self):
         pass
@@ -129,7 +124,7 @@ class Slider(pcp_base):
                 'tooltip': 'Determine size: (height,width)'
                 },
             'value_init': {
-                    'value': 0,
+                    'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
                     'tooltip': 'Used as initial value for the Slider'
             },
@@ -152,7 +147,7 @@ class Slider(pcp_base):
 
     def new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = dparameter_object.default
+            value = float(dparameter_object.default)
             self.text_field.setText(str(value))
             init_value = (value - self.value_min)/self.tick_width
             init_value = round(init_value,0)
