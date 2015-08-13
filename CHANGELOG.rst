@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v.1.x:
+------
+
+-  **feature**: Added ability to define favourite plugins
+
 v.1.2:
 ------
 
