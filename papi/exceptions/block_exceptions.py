@@ -31,11 +31,15 @@ __author__ = 'control'
 
 class Wrong_type(Exception):
 
-    def __init__(self, Parameter):
+    def __init__(self, Parameter, type=None):
         self.parameter = Parameter
+        self.type = type
 
     def __str__(self):
-        return 'Wrong type for argument '+ self.parameter
+        if self.type is None:
+            return 'Wrong type for argument '+ self.parameter
+        else:
+            return 'Wrong type for argument '+ self.parameter + ', expected ' + str(self.type)
 
 
 class Wrong_length(Exception):

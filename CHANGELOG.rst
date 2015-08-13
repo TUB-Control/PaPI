@@ -12,9 +12,11 @@ v.1.X:
 -  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
 -  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
 -  **feature**: Added a simulink block which enables the communication
-   between PaPI and Simulink
+   between PaPI and simulink
+-  **feature**: Added commandline options
 -  **doc**: Added support for plugin documentation based on
    ReStructuredText.
+-  **doc**: Moved from github-wiki to ReStructedText
 
 v.1.1: LAST RELEASE WITH PYSIDE
 -------------------------------

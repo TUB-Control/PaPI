@@ -24,100 +24,211 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
 Stefan Ruppin
+Sven Knuth
 """
 
-from papi.data.DPlugin import DBlock
+from papi.data.DPlugin import DBlock, DEvent
+from papi.data.DParameter import DParameter
 import papi.event as Event
-from papi.exceptions.block_exceptions import Wrong_type, Wrong_length
 from papi.data.DOptionalData import DOptionalData
 from papi.yapsy.IPlugin import IPlugin
 
 
 class base_plugin(IPlugin):
+    """
+    This class is used as basis class for all other plugin bases
 
+    """
+
+    def __init__(self):
+        super(base_plugin, self).__init__()
+        self.__id__ = -1
+        self.dplugin_info = None
+        self.__subscription_for_demux = None
 
     def papi_init(self, ):
+        """
+        Used to initialized this class in the context of PaPI
+
+        :return:
+        """
         #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
         self.__subscription_for_demux = None
 
-
-
     def get_type(self):
+        """
+        Returns the type of the plugin. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
+        """
+        Called by the PaPI framework when new date can be processed.  Must be implemented !
+
+        :param Data: Contains a hash with an array for every key.
+        :param block_name: Block of the plugin to which the signal belongs
+        :param plugin_uname: Plugin which sent this data.
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def get_configuration_base(self):
+        """
+        Returns the base configuration. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def get_startup_configuration(self):
+        """
+        Creates the startup configuration which is created by merging the configuration provided by the plugin base
+        and the plugin configuration.
+
+        :return:
+        """
         return self.merge_configs(self.get_configuration_base(), self.get_plugin_configuration())
 
     def get_plugin_configuration(self):
+        """
+        Returns the plugin specific configuration. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
-
-
-
-
 
     # some control callback functions
     # ----------------------
     def pause(self):
+        """
+        Called when the plugin should pause. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def resume(self):
+        """
+        Called when the plugin should resume. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def quit(self):
+        """
+        Called when the plugin should quit. Must be implemented !
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def set_parameter(self, parameter_name, parameter_value):
+        """
+        Called when a parameter was changed.
+        This function is called with the parameter name and its current value. Must be implemented !
+
+        :param parameter_name: Name of parameter
+        :param parameter_value: New value of the parameter
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def set_parameter_internal(self, name, value):
+        """
+        Internal function used to set parameters.
+
+        :param name:
+        :param value:
+        :return:
+        """
         self.set_parameter(name, value)
 
 
     # some api functions
     # ------------------
     def merge_configs(self, cfg1, cfg2):
+        """
+        This function is used to merge two functions.
+
+        :param cfg1:
+        :param cfg2:
+        :return:
+        """
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
     def emit_event(self, data, event):
+        """
+        This function is used by pcp plugins to emit a specific event.
+
+        :param data: New value provided by the DEvent
+        :param event: DEvent which should be emitted.
+        :return:
+        """
+        if isinstance(event, DEvent) == False and isinstance(event, str) == False:
+            raise ValueError("Attribute event: Not of type DEvent or str")
+
         self.send_parameter_change(data, event)
 
-    def send_parameter_change(self, data, block_name):
+    def send_parameter_change(self, data, block):
+        """
+        Internal function, should be not directly used anymore.
 
+        :param data:
+        :param block:
+        :return:
+        """
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.is_parameter = True
 
-        if isinstance(block_name, DBlock):
-            opt.block_name = block_name.name
+        if isinstance(block, DBlock) == False and isinstance(block, str) == False:
+            raise ValueError("Attribute block: Not of type DBlock or str")
 
-        if isinstance(block_name, str):
-            opt.block_name = block_name
+        if isinstance(block, DBlock):
+            opt.block_name = block.name
+
+        if isinstance(block, str):
+            opt.block_name = block
 
         event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
     def create_new_block(self, name, signalNames, types, frequency):
-        if isinstance(signalNames, list) is not True:
-            raise Wrong_type('signalNames')
-
-        if isinstance(types, list) is not True:
-            raise Wrong_type('types')
-
-        if len(signalNames) != len(types):
-            raise Wrong_length('signalNames', 'types')
-
-        count = len(signalNames)
-
-        return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
+        raise NotImplementedError('Create_new_block')
+        #
+        # if not isinstance(name, str):
+        #     raise Wrong_type('name', str)
+        #
+        # if not isinstance(signalNames, list):
+        #     raise Wrong_type('signalNames')
+        #
+        # for signalName in signalNames:
+        #     if not isinstance(signalName, str):
+        #         raise Wrong_type('signalName (' + str(signalName)+')', str)
+        #
+        # if not isinstance(types, list):
+        #     raise Wrong_type('types')
+        #
+        # if len(signalNames) != len(types):
+        #     raise Wrong_length('signalNames', 'types')
+        #
+        # count = len(signalNames)
+        #
+        # return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
 
     def send_new_data(self, block_name, time_line, data):
+        """
+        This function is called by plugins to send new data for a single block.
+
+        :param block_name: Name of the block
+        :param time_line: A time vector
+        :param data: Data containing the values in a hash array of signal names as key.
+        :return:
+        """
 
         dataHash = data
         dataHash['t'] = time_line
@@ -130,6 +241,7 @@ class base_plugin(IPlugin):
 
 
     def send_new_data_old2(self, time_line, data, block_name):
+        raise NotImplementedError('send_new_data_old2')
         # TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name
         vec_data = []
         vec_data.append(time_line)
@@ -144,6 +256,8 @@ class base_plugin(IPlugin):
         self._Core_event_queue__.put(event)
 
     def send_new_data_old1(self, data, block_name):
+        raise NotImplementedError('send_new_data_old1')
+
         opt = DOptionalData(DATA=data)
         opt.data_source_id = self.__id__
         opt.block_name = block_name
@@ -152,38 +266,148 @@ class base_plugin(IPlugin):
         self._Core_event_queue__.put(event)
 
     def send_new_event_list(self, events):
+        """
+        Used to inform the PaPI framework about all DEvents provided by this plugins.
+
+        :param events: List of DEvents
+        :return:
+        """
+
+        if not isinstance(events, list):
+            raise ValueError('Attribute events: Expected ' + str(list))
+
+        if len(events) == 0:
+            raise ValueError('Attribute events: Contains no elements ')
+
+        for i in range(len(events)):
+            event = events[i]
+            if not isinstance(event, DEvent):
+                raise ValueError('Attribute events['+str(i)+']: Expected ' + str(DEvent) )
+
         self.send_new_block_list(events)
 
     def send_new_block_list(self, blocks):
+        """
+        Used to inform the PaPI framework about all DBlocks provided by this plugins.
+
+        :param blocks: List of DBlocks
+        :return:
+        """
+
+        if not isinstance(blocks, list):
+            raise ValueError('Attribute blocks: Expected ' + str(list))
+
+        if len(blocks) == 0:
+            raise ValueError('Attribute events: Contains no elements ')
+
+        for i in range(len(blocks)):
+            block = blocks[i]
+            if not isinstance(block, DBlock):
+                raise ValueError('Attribute blocks['+str(i)+']: Expected ' + str(DBlock) )
+
         opt = DOptionalData()
         opt.block_list = blocks
         event = Event.data.NewBlock(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def send_new_parameter_list(self, parameters):
+        """
+        Used to inform the PaPI framework about all DParameters provided by this plugins.
+
+        :param parameters: List of DParameters
+        :return:
+        """
+
+        if not isinstance(parameters, list):
+            raise ValueError('Attribute parameters: Expected ' + str(list))
+
+        if len(parameters) == 0:
+            raise ValueError('Attribute parameters: Contains no elements ')
+
+        for i in range(len(parameters)):
+            parameter = parameters[i]
+            if not isinstance(parameter, DParameter):
+                raise ValueError('Attribute parameters['+str(i)+']: Expected ' + str(DParameter) )
+
+
         opt = DOptionalData()
         opt.parameter_list = parameters
 
         event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
-    def send_delete_block(self, blockname):
-        event = Event.data.DeleteBlock(self.__id__, 0, blockname)
+    def send_delete_block(self, block):
+        """
+        Used to inform the PaPI framework that a single DBlock was deleted.
+
+        :param block: Block which should be deleted.
+        :return:
+        """
+        block_name = None
+
+        if isinstance(block, DBlock) == False and isinstance(block, str) == False:
+            raise ValueError('Attribute parameters: Expected ' + str(DBlock) + ' or ' + str(str))
+
+        if isinstance(block, DBlock):
+            block_name = block.name
+
+        if isinstance(block, str):
+            block_name = block
+
+        event = Event.data.DeleteBlock(self.__id__, 0, block_name)
         self._Core_event_queue__.put(event)
 
-    def send_delete_parameter(self, parameterName):
-        event = Event.data.DeleteParameter(self.__id__, 0, parameterName)
+    def send_delete_parameter(self, parameter):
+        """
+        Used to inform the PaPI framework that a single DParameter was deleted.
+
+        :param parameter: DParameter which should be deleted.
+        :return:
+        """
+
+        parameter_name = None
+
+        if isinstance(parameter, DParameter) == False and isinstance(parameter, str) == False:
+            raise ValueError('Attribute parameters: Expected ' + str(DParameter) + ' or ' + str(str))
+
+        if isinstance(parameter, DParameter):
+            parameter_name = parameter.name
+
+        if isinstance(parameter, str):
+            parameter_name = parameter
+
+        event = Event.data.DeleteParameter(self.__id__, 0, parameter_name)
         self._Core_event_queue__.put(event)
 
     def update_plugin_meta(self, dplug):
+        """
+        Function which is used to update all meta information which are known by the PaPI framework.
+
+        :param dplug: DPlugin object containg all known information
+        :return:
+        """
+
         self.dplugin_info = dplug
         self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
         self.plugin_meta_updated()
 
     def plugin_meta_updated(self):
+        """
+        Function which is called when ever the meta information were updated.
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def demux(self, source_id, block_name, data):
+        """
+        Internal function which is called to demux all signals.
+
+        :param source_id:
+        :param block_name:
+        :param data:
+        :return:
+        """
         if self.__subscription_for_demux is None:
            self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
 
