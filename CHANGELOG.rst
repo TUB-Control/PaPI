@@ -1,20 +1,32 @@
 Changelog
 ---------
 
-v.1.X:
+v.1.2:
 ------
 
 -  **major-change** Switched from PySide to PyQt and upgraded to use Qt5
    (also switched to develop branch of pyqtgraph)
+-  **minor-change** GUI: Removed buttons, added toolbar, icons to distinguish between Events and Blocks.
 -  **plugin**: Added a new visual plugin: RehaStimGUI: Used to describe
    channel attributes for different states
 -  **plugin**: Added a new pcplugin: Textfield
 -  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
 -  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
+-  **plugin**: A visual plugin can now open maximized.
+-  **plugin**: Added a new visual plugin: Console. Mainly used to control scilab in connection with ORTD.
 -  **feature**: Added a simulink block which enables the communication
-   between PaPI and Simulink
+   between PaPI and simulink
+-  **feature**: Added commandline options
+-  **feature**: Added ability to stop PaPI in the right manner by use of CTRL+C
+-  **feature**: Added DEvent as a new object to provide the ability to change parameters.
+-  **feature**: A single tab can be opened in an extra window.
+-  **feature**: Added 'help' button in the create plugin menu which opens the documentation for this plugin.
 -  **doc**: Added support for plugin documentation based on
    ReStructuredText.
+-  **doc**: Moved from github-wiki to ReStructedText
+-  **doc**: Improved documentation.
+-  **fix**: Fixed change of yRange by context menu (#38)
+-  **fix**: An error occurred if the slider was changed without controlling a parameter (#43)
 
 v.1.1: LAST RELEASE WITH PYSIDE
 -------------------------------

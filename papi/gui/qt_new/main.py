@@ -277,7 +277,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         all_pluginfo = {c[2].path:c[2] for c in candidates}
         loadable_pluginfo = {p.path:p for p in plugin_manager.getAllPlugins()}
 
-        fav_plugins = ["PaPIController","RehaStimGUI"];
+        fav_plugins = ["PaPIController"];
 
         for plugin_info in all_pluginfo.values():
             if plugin_info.name in fav_plugins:

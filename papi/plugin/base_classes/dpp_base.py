@@ -33,7 +33,9 @@ from papi.plugin.base_classes.ownProcess_base import ownProcess_base
 from papi.constants import PLUGIN_DPP_IDENTIFIER
 
 class dpp_base(ownProcess_base):
-
+    """
+    This kind of plugin is to process data provided by other plugins.
+    """
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")
 

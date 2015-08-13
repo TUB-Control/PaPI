@@ -35,7 +35,26 @@ from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
 class base_visual(base_plugin):
+    """
+    This class is used by all plugins which are not running in an own process.
+    They are all executed the gui process.
+
+    """
+    def __init__(self):
+        super(base_visual, self).__init__()
+
     def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
+        """
+        Internal initialize function called by the PaPI framework;
+
+        :param CoreQueue: Queue used to send messages to the Core.
+        :param pluginQueue: Queue which is used by the PaPI framework to send messages to this plugins.
+        :param id: The internal plugin ID.
+        :param control_api: Access to the control_api provided by the PaPI framework.
+        :param dpluginInfo: Meta information about this plugin.
+        :param TabManger: The tab mananger.
+        :return:
+        """
         super(base_visual, self).papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
@@ -46,6 +65,12 @@ class base_visual(base_plugin):
         self.movable = True
 
     def start_init(self, config=None):
+        """
+        Internal start function called by the PaPI framework;
+
+        :param config:
+        :return:
+        """
         self.config = config
         # --------------------------------
 
@@ -60,13 +85,30 @@ class base_visual(base_plugin):
         return self.initiate_layer_1(self.config)
 
     def get_current_config(self):
+        """
+        Used to get the current configuration.
+
+        :return:
+        """
         return self.config
 
     def initiate_layer_1(self, config):
+        """
+        This function is called when the PaPI framework has called all internal function which are
+        needed to initialize the plugin. This function should be filled by the plugin developer.
+
+
+        :param config: Startup configuration
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
-
     def get_configuration_base(self):
+        """
+        Returns the basic configuration for this plugin base.
+
+        :return:
+        """
         config = {
             'size': {
                 'value': "(300,300)",
@@ -196,8 +238,6 @@ class base_visual(base_plugin):
     def ctlrMenu_exit(self):
         self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
         print(self.config['tab']['value'])
-
-
 
     def ctlrMenu_pause(self):
         self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
