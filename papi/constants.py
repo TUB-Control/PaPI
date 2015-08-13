@@ -29,7 +29,7 @@ Stefan Ruppin
 __author__ = 'ruppin'
 
 
-PAPI_DEV_EDITION                = False
+PAPI_DEV_EDITION                = True
 
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
