@@ -28,6 +28,8 @@ Stefan Ruppin
 
 __author__ = 'ruppin'
 
+import platform
+from os.path import expanduser
 
 PAPI_DEV_EDITION                = True
 
@@ -48,6 +50,15 @@ CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 10
 
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
+PAPI_USER_CFG                   = ''
+
+if platform.system() == 'Linux':
+    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
+
+if platform.system() == 'Darwin':
+    PAPI_USER_CFG =  expanduser("~") + '.papi/config.xml'
+
+
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
 
 # PaPI Information constants

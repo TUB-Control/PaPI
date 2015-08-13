@@ -85,7 +85,7 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="PaPIToolbar" name="toolBar">
    <property name="acceptDrops">
     <bool>true</bool>
    </property>
@@ -203,6 +203,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PaPIToolbar</class>
+   <extends>QToolBar</extends>
+   <header>papi.gui.default.item.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

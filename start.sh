@@ -2,10 +2,21 @@
 
 PYTHON=python3.4
 
+mkdir -p ~/.papi/
+
+
+UCFG=~/.papi/config.xml
+
+ARGS=
+
 if [ ! -z "$1" ]
-    then
-        $PYTHON main.py -c $1
-    else
-        $PYTHON main.py
+then
+   ARGS="$ARGS -c $1"
 fi
 
+if [ ! -z "$UCFG" ] 
+then
+   ARGS="$ARGS -u $UCFG"
+fi
+
+$PYTHON main.py $ARGS

@@ -144,12 +144,6 @@ class RehaStimGUI(pcp_base, object):
         # ---------------------------
         # Create Parameters
         # ---------------------------
-        para_list = []
-
-
-
-        self.send_new_parameter_list(para_list)
-
 
         # ---------------------------
         # Create default structure

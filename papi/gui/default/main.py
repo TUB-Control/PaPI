@@ -33,23 +33,21 @@ import os
 import traceback
 import re
 
-
-from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox, QTreeView, QAction
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox, QTreeView
 from PyQt5.QtGui               import QIcon, QDesktopServices, QDropEvent, QDragEnterEvent, QPixmap
-from PyQt5.QtCore              import QSize, Qt, QUrl
+from PyQt5.QtCore              import Qt, QUrl
 from PyQt5 import QtCore, QtGui
 
-import papi.pyqtgraph
-
-from papi.ui.gui.default.main           import Ui_QtNewMain
+from papi.ui.gui.default.main   import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
+from papi.gui.default.item      import PaPIFavAction
 
 
-from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-    GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
-    PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
-from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
+# from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
+#     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
+#     PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
+# from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
 
 import papi.constants as pc
 
@@ -91,8 +89,13 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
     gui = GUI(core_queue=CoreQueue, gui_queue=GUIQueue, gui_id=gui_id)
 
     if args:
+        if args.user_config:
+            gui.load_config(args.user_config)
+
         if args.config:
             gui.load_config(args.config)
+        else:
+            gui.load_config(pc.PAPI_USER_CFG)
 
         try:
             if args.debug_level:
@@ -101,6 +104,10 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
                 gui.gui_management.gui_event_processing.log.lvl = int(args.debug_level)
         except:
             pass
+    else:
+        gui.load_config(pc.PAPI_USER_CFG)
+
+
 
     gui.run()
     # cProfile.runctx('gui.run()', globals(), locals()) # for benchmarks
@@ -204,17 +211,17 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
 
     def gui_graphic_init(self):
-        self.setWindowTitle(GUI_PAPI_WINDOW_TITLE)
+        self.setWindowTitle(pc.GUI_PAPI_WINDOW_TITLE)
         # set GUI size
-        self.setGeometry(self.geometry().x(),self.geometry().y(),GUI_DEFAULT_WIDTH,GUI_DEFAULT_HEIGHT)
+        self.setGeometry(self.geometry().x(),self.geometry().y(), pc.GUI_DEFAULT_WIDTH, pc.GUI_DEFAULT_HEIGHT)
 
         self.count = 0
 
-        self.log = ConsoleLog(GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER)
+        self.log = ConsoleLog(pc.GUI_PROCESS_CONSOLE_LOG_LEVEL, pc.GUI_PROCESS_CONSOLE_IDENTIFIER)
 
-        self.log.printText(1,GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
+        self.log.printText(1,pc.GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
-        self.last_config = PAPI_LAST_CFG_PATH
+        self.last_config = pc.PAPI_LAST_CFG_PATH
 
         self.in_run_mode = False
 
@@ -262,25 +269,25 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         self.actionToolbar.triggered.connect(self.triggered_show_toolbar)
 
-        self.toolBar.dragEnterEvent = self.toolbarDragEnterEvent
-        self.toolBar.dropEvent = self.toolbarDropEvent
+        #self.toolBar.dragEnterEvent = self.toolbarDragEnterEvent
+        #self.toolBar.dropEvent = self.toolbarDropEvent
+
+        self.toolBar.clickedFavouritePlugin.connect(self.toolbarAddFavPlugin)
+        self.toolBar.removedFavouritePlugin.connect(self.favPluginWasRemoved)
 
         self.set_icons()
 
-        # --------------------------------------
-        # Add favourite plugins
-        # --------------------------------------
+    def addFavPlugin(self, fav_plugin):
         plugin_manager = self.gui_management.plugin_manager;
 
         plugin_manager.locatePlugins()
+
         candidates = plugin_manager.getPluginCandidates()
         all_pluginfo = {c[2].path:c[2] for c in candidates}
         loadable_pluginfo = {p.path:p for p in plugin_manager.getAllPlugins()}
 
-        fav_plugins = ["PaPIController"];
-
         for plugin_info in all_pluginfo.values():
-            if plugin_info.name in fav_plugins:
+            if plugin_info.name == fav_plugin:
 
                 if plugin_info.path in loadable_pluginfo.keys():
                     plugin_info = loadable_pluginfo[plugin_info.path]
@@ -289,6 +296,9 @@ class GUI(QMainWindow, Ui_QtNewMain):
                     plugin_info.loadable = False
 
                 self.toolbarAddFavPlugin(plugin_info)
+
+    def favPluginWasRemoved(self):
+        self.gui_management.gui_api.do_save_xml_config_reloaded(pc.PAPI_USER_CFG, plToSave=[], sToSave=[])
 
     def set_icons(self):
         # -------------------------------------
@@ -375,65 +385,93 @@ class GUI(QMainWindow, Ui_QtNewMain):
 
         size['Y']= str(self.size().height())
 
+
+        # ----------------------
+        # Set favourite plugins
+        # ----------------------
+        favourites = {}
+        actions = self.toolBar.actions()
+        for i in range(len(actions)):
+            action = actions[i]
+            if isinstance(action, PaPIFavAction):
+                favourites[action.text()] = {}
+                favourites[action.text()]['position'] = str(i)
+
         cfg = {}
         cfg['ActiveTab'] = actTab
         cfg['Tabs'] = tabs
         cfg['Size'] = size
+        cfg['Favourites'] = favourites
 
         return cfg
 
     def set_gui_config(self, cfg):
-        #################
-        # Cfgs for Tabs #
-        #################
-        if 'tabs' in cfg:
-            tabList = {}
-            for tab in cfg['tabs']:
-                # Tab Name
-                name = tab
+        #print(cfg)
+        # #################
+        # # Cfgs for Tabs #
+        # #################
+        # if 'tabs' in cfg:
+        #     tabList = {}
+        #     for tab in cfg['tabs']:
+        #         # Tab Name
+        #         name = tab
+        #
+        #         # Tab details
+        #         tabDetails = cfg['tabs'][tab]
+        #
+        #         # check for background
+        #         if 'background' in tabDetails:
+        #             bg = tabDetails['background']
+        #             if bg != 'default':
+        #                 self.TabManager.set_background_for_tab_with_name(name,bg)
+        #         else:
+        #             bg = None
+        #
+        #         # check for position
+        #         if 'position' in tabDetails:
+        #             pos = int(tabDetails['position'])
+        #         else:
+        #             if len(list(tabList.keys())) > 1:
+        #                 pos = max(list(tabList.keys()))+1
+        #             else:
+        #                 pos = 0
+        #
+        #         tabList[pos] = [name, bg]
+        #
+        #     # sort tabs acoriding to positions
+        #     keys = list(tabList.keys())
+        #     keys.sort()
+        #     for position in keys:
+        #         name = tabList[position][0]
+        #         bg = tabList[position][1]
+        #         tabOb = self.TabManager.add_tab(name)
+        #         self.TabManager.set_background_for_tab_with_name(name,bg)
+        #
+        # if 'activeTab' in cfg:
+        #     if 'value' in cfg['activeTab']['active']:
+        #         self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
+        #
+        # #################
+        # # windows size: #
+        # #################
+        # if 'size' in cfg:
+        #     w = int(cfg['size']['x']['value'])
+        #     h = int(cfg['size']['y']['value'])
+        #     self.resize_gui_window(w,h)
 
-                # Tab details
-                tabDetails = cfg['tabs'][tab]
+        # ------------------------
+        # Restore favourite icons
+        # ------------------------
 
-                # check for background
-                if 'background' in tabDetails:
-                    bg = tabDetails['background']
-                    if bg != 'default':
-                        self.TabManager.set_background_for_tab_with_name(name,bg)
-                else:
-                    bg = None
+        if 'Favourites' in cfg:
+            sorted_positions = {}
 
-                # check for position
-                if 'position' in tabDetails:
-                    pos = int(tabDetails['position'])
-                else:
-                    if len(list(tabList.keys())) > 1:
-                        pos = max(list(tabList.keys()))+1
-                    else:
-                        pos = 0
+            for plugin in cfg['Favourites']:
+                sorted_positions[int(cfg['Favourites'][plugin]['position'])] = plugin
 
-                tabList[pos] = [name, bg]
-
-            # sort tabs acoriding to positions
-            keys = list(tabList.keys())
-            keys.sort()
-            for position in keys:
-                name = tabList[position][0]
-                bg = tabList[position][1]
-                tabOb = self.TabManager.add_tab(name)
-                self.TabManager.set_background_for_tab_with_name(name,bg)
-
-        if 'activeTab' in cfg:
-            if 'value' in cfg['activeTab']['active']:
-                self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
-
-        #################
-        # windows size: #
-        #################
-        if 'size' in cfg:
-            w = int(cfg['size']['x']['value'])
-            h = int(cfg['size']['y']['value'])
-            self.resize_gui_window(w,h)
+            for position in sorted(sorted_positions.keys()):
+                plugin = sorted_positions[position]
+                self.addFavPlugin(plugin)
 
     def triggered_reload_plugin_db(self):
         """
@@ -454,7 +492,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
         self.workingTimer = QtCore.QTimer(self)
         self.workingTimer.timeout.connect(lambda: self.gui_management.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
-        self.workingTimer.start(GUI_WOKRING_INTERVAL)
+        self.workingTimer.start(pc.GUI_WOKRING_INTERVAL)
 
 
 
@@ -501,7 +539,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
-        dialog.setDirectory(CONFIG_DEFAULT_DIRECTORY)
+        dialog.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
         dialog.setWindowTitle("Load Configuration")
 
         if dialog.exec_():
@@ -569,7 +607,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :param dplugin:
         :return:
         """
-        if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER or dplugin.type == pc.PLUGIN_PCP_IDENTIFIER:
 
             # sub_window_ori = dplugin.plugin.get_sub_window()
             #
@@ -617,7 +655,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
         :param dplugin:
         :return:
         """
-        if dplugin.type == PLUGIN_VIP_IDENTIFIER or dplugin.type == PLUGIN_PCP_IDENTIFIER:
+        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER or dplugin.type == pc.PLUGIN_PCP_IDENTIFIER:
             config = dplugin.plugin.config
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():
@@ -636,7 +674,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
             self.overview_menu.refresh_action()
 
     def plugin_died(self, dplugin, e, msg):
-        dplugin.state = PLUGIN_STATE_STOPPED
+        dplugin.state = pc.PLUGIN_STATE_STOPPED
 
         self.gui_management.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
@@ -718,15 +756,15 @@ class GUI(QMainWindow, Ui_QtNewMain):
         """
         if self.last_config is not None:
             self.triggered_reset_papi()
-            QtCore.QTimer.singleShot(GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
+            QtCore.QTimer.singleShot(pc.GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
 
     def triggered_reset_papi(self):
         """
         This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
         :return:
         """
-        h = GUI_DEFAULT_HEIGHT
-        w = GUI_DEFAULT_WIDTH
+        h = pc.GUI_DEFAULT_HEIGHT
+        w = pc.GUI_DEFAULT_WIDTH
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
 
         self.TabManager.set_all_tabs_to_close_when_empty(True)
@@ -743,27 +781,10 @@ class GUI(QMainWindow, Ui_QtNewMain):
         QDesktopServices.openUrl(QUrl(pc.PAPI_DOC_URL, QUrl.TolerantMode))
 
     def triggered_papi_about(self):
-        QMessageBox.about(self,PAPI_ABOUT_TITLE, PAPI_ABOUT_TEXT)
+        QMessageBox.about(self, pc.PAPI_ABOUT_TITLE, pc.PAPI_ABOUT_TEXT)
 
     def triggered_papi_about_qt(self):
         QMessageBox.aboutQt(self)
-
-    def toolbarDropEvent(self, event:QDropEvent):
-
-        source = event.source()
-        if isinstance(source, QTreeView):
-            if isinstance(source.model(), PaPITreeModel):
-                for index in source.selectedIndexes():
-                    plugin_info = source.model().data(index, Qt.UserRole)
-                    self.toolbarAddFavPlugin(plugin_info)
-
-    def toolbarDragEnterEvent(self, event: QDragEnterEvent):
-
-        source = event.source()
-        if isinstance(source, QTreeView):
-
-            if isinstance(source.model(), PaPITreeModel):
-                event.acceptProposedAction()
 
     def toolbarAddFavPlugin(self, plugin_info):
 
@@ -778,9 +799,12 @@ class GUI(QMainWindow, Ui_QtNewMain):
             if action.text() == plugin_info.name:
                 return
 
-        plugin_action = QAction(icon, plugin_info.name, self)
+        plugin_action = PaPIFavAction(icon, plugin_info.name, self)
         plugin_action.triggered.connect(lambda ignore, p1=plugin_info : self.show_create_plugin_dialog(p1))
+
         self.toolBar.addAction(plugin_action)
+
+        self.gui_management.gui_api.do_save_xml_config_reloaded(pc.PAPI_USER_CFG, plToSave=[], sToSave=[])
 
     def show_create_plugin_dialog(self, plugin_info):
         if plugin_info is not None:

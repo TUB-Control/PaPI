@@ -30,17 +30,17 @@ __author__ = 'control'
 
 from papi.core              import Core
 from papi.gui.default.main   import GUI, run_gui_in_own_process
-from PyQt5.QtWidgets           import  QApplication
 
 import papi.constants as pc
 
 import platform
 import sys
-
+import os
 import argparse
 parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://github.com/TUB-Control/PaPI")
 
 parser.add_argument("-c", "--config",  dest = "config", default = "", help="Configuration file loaded after startup.")
+parser.add_argument("-u", "--user_config", dest = "user_config", default='0', help="Loads a user specific configuration")
 parser.add_argument("-v", "--version", dest = "version", action="store_true", default=False, help="Prints current PaPI version.")
 parser.add_argument("-d", "--debug_level", dest = "debug_level", default='0', help="Sets debug level.")
 
@@ -56,6 +56,10 @@ def start_PaPI(args=None):
 
     # start on PaPI on system running Linux
     if platform.system() == 'Linux':
+        path = os.path.dirname(pc.PAPI_USER_CFG)
+        if not os.path.exists(path):
+            os.mkdir(path)
+
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
         core.run()
         return
@@ -68,6 +72,9 @@ def start_PaPI(args=None):
 
     # start on PaPI on system running Mac OS X
     if platform.system() == 'Darwin':
+        path = os.path.dirname(pc.PAPI_USER_CFG)
+        if not os.path.exists(path):
+            os.mkdir(path)
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
         core.run()
         return
