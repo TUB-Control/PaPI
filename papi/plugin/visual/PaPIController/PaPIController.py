@@ -247,8 +247,12 @@ class PaPIController(vip_base):
             "UseSocketIO" : {
                 'value' : '0',
                 'advanced' : '1',
-                'tooltip' : 'Use the Socket IO',
+                'tooltip' : 'Use socket.io connection to node.js target-server',
                 'type' : 'bool'
+            },
+            'socketio_port': {
+                'value': '8091',
+                'advanced': '1'
             },
             "OnlyInitialConfig" : {
                 'value' :'0',
@@ -276,6 +280,7 @@ class PaPIController(vip_base):
         in_port  = self.config ['3:out_port']['value']
         SendOnReceivePort = self.config['SendOnReceivePort']['value']
         UseSocketIO = self.config['UseSocketIO']['value']
+        socketio_port = self.config['socketio_port']['value']
         OnlyInitialConfig = self.config['OnlyInitialConfig']['value']
 
         ortd_cfg ={
@@ -296,6 +301,9 @@ class PaPIController(vip_base):
             },
             "UseSocketIO" : {
                 'value' : UseSocketIO,
+            },
+            "socketio_port" : {
+                'value' : socketio_port,
             },
             "OnlyInitialConfig" : {
                 'value' :OnlyInitialConfig,

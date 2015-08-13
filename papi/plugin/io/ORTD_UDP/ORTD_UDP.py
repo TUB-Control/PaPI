@@ -63,15 +63,21 @@ import struct
 import json
 import time
 import pickle
+import base64
 
 from threading import Timer
 from socketIO_client import SocketIO, LoggingNamespace
+
+
 
 
 class OptionalObject(object):
     def __init__(self, ORTD_par_id, nvalues):
         self.ORTD_par_id = ORTD_par_id
         self.nvalues = nvalues
+        self.sendOnReceivePort = True
+        self.UseSocketIO = True
+
 
 
 class ORTD_UDP(iop_base):
@@ -99,15 +105,19 @@ class ORTD_UDP(iop_base):
                 'advanced': '1'
             },
             'SendOnReceivePort': {
-                'value': '0',
+                'value': '0',    # NOTE: chnage back to 0
                 'advanced': '1',
                 'display_text': 'Use same port for send and receive'
             },
             "UseSocketIO" : {
-                'value' : '0',
+                'value' : '0',   # NOTE: change back to 0 !!
                 'advanced' : '1',
-                'tooltip' : 'Use the Socket IO',
+                'tooltip' : 'Use socket.io connection to node.js target-server',
                 'type' : 'bool'
+            },
+            'socketio_port': {
+                'value': '8091',
+                'advanced': '1'
             },
             "OnlyInitialConfig" : {
                 'value' :'0',
@@ -128,7 +138,22 @@ class ORTD_UDP(iop_base):
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
+
+
         self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == '1' else False
+        self.UseSocketIO = True if config['UseSocketIO']['value'] == '1' else False
+
+        if self.UseSocketIO:
+            self.SocketIOPort = int(config['socketio_port']['value'])
+
+
+        #self.sendOnReceivePort = True  # NOTE: remove this
+        #self.UseSocketIO = True  # NOTE: remove this
+
+
+        print ("SendOnReceivePort = ", self.sendOnReceivePort)
+        print ("UseSocketIO = ", self.UseSocketIO)
+
         self.PAPI_SIMULINK_BLOCK = False
 
         self.separate = int(config['SeparateSignals']['value'])
@@ -158,8 +183,14 @@ class ORTD_UDP(iop_base):
         self.set_event_trigger_mode(True)
 
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
-        print("ORTD listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+
+        if (not self.sendOnReceivePort):
+            self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+            print("ORTD_UDP-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+        else:
+            print ("---- Using client UDP mode (not binding to a port) ----")
+
+
         self.sock_recv.settimeout(1)
 
         self.thread_goOn = True
@@ -167,10 +198,11 @@ class ORTD_UDP(iop_base):
         self.thread = threading.Thread(target=self.thread_execute)
         self.thread.start()
 
+        if self.UseSocketIO:
+            print ("Using socket.io connection on port", self.SocketIOPort)
 
-        self.thread_socket_goOn = True
-        self.thread_socketio = threading.Thread(target=self.thread_socketio_execute)
-
+            self.thread_socket_goOn = True
+            self.thread_socketio = threading.Thread(target=self.thread_socketio_execute)
 
         self.blocks = {}
         self.Sources = {}
@@ -196,22 +228,48 @@ class ORTD_UDP(iop_base):
         self.consoleIn      = DParameter('consoleIn',default='')
         self.send_new_parameter_list([self.consoleIn])
 
-        if config['UseSocketIO']['value'] == '1':
+        if self.UseSocketIO:
             self.thread_socketio.start()
+
         return True
 
-    def callback_SCISTOUT(self, data):
+    def SIO_callback_SCISTOUT(self, data):
+        # Got a chunk of data from a console interface in the target server
         self.sio_count += 1
 
         self.send_new_data(self.ConsoleBlock.name, [self.sio_count], {'MainSignal':data['Data']})
+
+    def SIO_callback_PAPICONFIG(self, data):
+        # Got a new PaPI plugin configuration in JSON-format via socket.io connection
+        # currently the config is transmitted via ORTD packets that may also be encapsulated into socket.io
+        # added 12.8.15, CK
+
+        print ("Got a new config in JSON/socket.io format")
+        print (data)
+
+        self.check_and_process_cfg(data)
+
+        # TODO: Test this
+
+    def SIO_callback_ORTDPACKET(self, data):
+        # Got an encapsulated packet from ORTD, not transfered via UDP but encapsulated within the socket.io connection
+        #print ("Got data packet from ORTD via socket.io")
+        #print (data)
+        self.process_received_package(base64.b64decode(data))  # data must be a binary blob
+
+
+
+
 
 
     def thread_socketio_execute(self):
         #self.sio = SocketIO('localhost', 8091, LoggingNamespace)
         #self.sio.on('SCISTOUT',self.callback_SCISTOUT)
 
-        with SocketIO(self.HOST, 8091, LoggingNamespace) as self.sio:
-            self.sio.on('SCISTOUT',self.callback_SCISTOUT)
+        with SocketIO(self.HOST, self.SocketIOPort, LoggingNamespace) as self.sio:
+            self.sio.on('SCISTOUT',self.SIO_callback_SCISTOUT)
+            self.sio.on('PAPICONFIG',self.SIO_callback_PAPICONFIG)
+            self.sio.on('ORTDPACKET',self.SIO_callback_ORTDPACKET)
 
             self.sio_count = 0
             while self.thread_socket_goOn:
@@ -239,7 +297,14 @@ class ORTD_UDP(iop_base):
         signal_values = {}
         while goOn:
             try:
-                rev = self.sock_recv.recv(20000) # not feasible for network connection other than loopback
+                if not self.sendOnReceivePort:
+                    rev = self.sock_recv.recv(20000)  # not feasible for network connection other than loopback
+                else:
+                    #print ("---- Waiting for data ----")
+                    rev, server = self.sock_recv.recvfrom(20000)  # not feasible for network connection other than loopback
+                    #print ("---- got ----")
+                    #print (rev)
+
             except socket.timeout:
                 # print('timeout')
                 newData = False
@@ -339,7 +404,7 @@ class ORTD_UDP(iop_base):
             self.timer_active = False
 
     def callback_timeout_timer(self):
-        print('ORTD_PLUGIN: Config timeout appeard, requesting a new config')
+        print('ORTD_PLUGIN: Config timeout, requesting a new config')
         self.timer_active = False
 
         self.config_buffer = {}
@@ -348,10 +413,20 @@ class ORTD_UDP(iop_base):
     def request_new_config_from_ORTD(self):
         Counter = 1
         data = struct.pack('<iiid', 12, Counter, int(-3), float(0))
-        if not self.sendOnReceivePort:
-            self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+
+        if self.UseSocketIO:
+            print ("Requesting config via socket.io")
+
+            self.sio.emit('ORTDPACKET', base64.b64encode(data).decode('ascii') )
+            # TODO test this
+
         else:
-            self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+
+            if not self.sendOnReceivePort:
+                self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+            else:
+                self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+
 
 
     def check_and_process_cfg(self, config_file):
@@ -593,11 +668,18 @@ class ORTD_UDP(iop_base):
                 #    data +=  struct.pack('d',float(value))
 
 
+                if self.UseSocketIO:
+                    print ("Setting parameter via socket.io")
 
-                if not self.sendOnReceivePort:
-                    self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+                    self.sio.emit('ORTDPACKET', base64.b64encode(data).decode('ascii') )
+                    # TODO test this
+
                 else:
-                    self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
+
+                    if not self.sendOnReceivePort:
+                        self.sock_parameter.sendto(data, (self.HOST, self.OUT_PORT))
+                    else:
+                        self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
         else:
             if name == 'consoleIn':
                 self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
