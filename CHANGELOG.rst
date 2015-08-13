@@ -11,12 +11,20 @@ v.1.X:
 -  **plugin**: Added a new pcplugin: Textfield
 -  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
 -  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
+-  **plugin**: A visual plugin can now open maximized.
+-  **plugin**: Added a new visual plugin: Console. Mainly used to control scilab in connection with ORTD.
 -  **feature**: Added a simulink block which enables the communication
    between PaPI and simulink
 -  **feature**: Added commandline options
+-  **feature**: Added ability to stop PaPI in the right manner by use of CTRL+C
+-  **feature**: Added DEvent as a new object to provide the ability to change parameters.
+-  **feature**: A single tab can be opened in an extra window.
 -  **doc**: Added support for plugin documentation based on
    ReStructuredText.
 -  **doc**: Moved from github-wiki to ReStructedText
+-  **doc**: Improved documentation.
+-  **fix**: Fixed change of yRange by context menu (#38)
+-  **fix**: An error occurred if the slider was changed without controlling a parameter (#43)
 
 v.1.1: LAST RELEASE WITH PYSIDE
 -------------------------------
