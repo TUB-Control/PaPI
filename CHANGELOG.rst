@@ -1,11 +1,12 @@
 Changelog
 ---------
 
-v.1.X:
+v.1.2:
 ------
 
 -  **major-change** Switched from PySide to PyQt and upgraded to use Qt5
    (also switched to develop branch of pyqtgraph)
+-  **minor-change** GUI: Removed buttons, added toolbar, icons to distinguish between Events and Blocks.
 -  **plugin**: Added a new visual plugin: RehaStimGUI: Used to describe
    channel attributes for different states
 -  **plugin**: Added a new pcplugin: Textfield
@@ -19,6 +20,7 @@ v.1.X:
 -  **feature**: Added ability to stop PaPI in the right manner by use of CTRL+C
 -  **feature**: Added DEvent as a new object to provide the ability to change parameters.
 -  **feature**: A single tab can be opened in an extra window.
+-  **feature**: Added 'help' button in the create plugin menu which opens the documentation for this plugin.
 -  **doc**: Added support for plugin documentation based on
    ReStructuredText.
 -  **doc**: Moved from github-wiki to ReStructedText
