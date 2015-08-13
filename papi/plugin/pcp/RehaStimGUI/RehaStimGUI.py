@@ -42,7 +42,7 @@ from papi.plugin.base_classes.pcp_base import pcp_base
 
 import papi.constants as pc
 
-from papi.gui.qt_new import get32Icon
+from papi.gui.default import get32Icon
 
 from PyQt5 import QtGui, QtWidgets, QtCore, Qt
 from PyQt5.QtCore import QRegExp

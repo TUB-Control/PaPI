@@ -29,7 +29,7 @@ Sven Knuth
 __author__ = 'control'
 
 from papi.core              import Core
-from papi.gui.qt_new.main   import GUI, run_gui_in_own_process
+from papi.gui.default.main   import GUI, run_gui_in_own_process
 from PyQt5.QtWidgets           import  QApplication
 
 import papi.constants as pc

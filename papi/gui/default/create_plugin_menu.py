@@ -30,14 +30,14 @@ from modulefinder import ModuleFinder
 import importlib
 import re
 
-from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
-from papi.gui.qt_new.item import PluginTreeItem
+from papi.gui.default.item import PaPIRootItem, PaPITreeModel
+from papi.gui.default.item import PluginTreeItem
 from papi.yapsy.PluginManager import PluginManager
 
 __author__ = 'knuths'
 
-from papi.ui.gui.qt_new.create import Ui_Create
-from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
+from papi.ui.gui.default.create import Ui_Create
+from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 import papi.constants as pc
 
 from PyQt5.QtCore       import *

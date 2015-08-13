@@ -28,10 +28,10 @@ Sven Knuth
 
 
 
-from papi.ui.gui.qt_new.CreateRecording import Ui_CreateRecording
+from papi.ui.gui.default.CreateRecording import Ui_CreateRecording
 from PyQt5.QtWidgets import QMainWindow
 
-from papi.gui.qt_new.item import CustomFieldModel, CustomFieldItem, StructTreeModel, StructTreeNode, StructRootNode
+from papi.gui.default.item import CustomFieldModel, CustomFieldItem, StructTreeModel, StructTreeNode, StructRootNode
 
 class CreateRecordingConfig(QMainWindow, Ui_CreateRecording):
     def __init__(self, gui_api):

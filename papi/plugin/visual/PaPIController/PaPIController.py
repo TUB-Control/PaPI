@@ -29,7 +29,7 @@ Contributors:
 __author__ = 'Stefan'
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.gui.qt_new.custom import FileLineEdit
+from papi.gui.default.custom import FileLineEdit
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator

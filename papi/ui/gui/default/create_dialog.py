@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/gui/qt_new/create_dialog.ui'
+# Form implementation generated from reading ui file 'ui/gui/default/create_dialog.ui'
 #
 # Created: Mon Aug  3 13:26:32 2015
 #      by: PyQt5 UI code generator 5.2.1

@@ -33,7 +33,7 @@ from PyQt5.QtCore       import Qt, QRegExp
 from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
-from papi.gui.qt_new import get16Pixmap
+from papi.gui.default import get16Pixmap
 
 
 

@@ -41,7 +41,7 @@ from PyQt5 import QtCore, QtGui
 
 import papi.pyqtgraph
 
-from papi.ui.gui.qt_new.main           import Ui_QtNewMain
+from papi.ui.gui.default.main           import Ui_QtNewMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 
@@ -53,17 +53,17 @@ from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PC
 
 import papi.constants as pc
 
-from papi.gui.qt_new.create_plugin_dialog import CreatePluginDialog
-from papi.gui.qt_new.create_plugin_menu import CreatePluginMenu
-from papi.gui.qt_new.overview_menu import OverviewPluginMenu
-from papi.gui.qt_new.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
+from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+from papi.gui.default.create_plugin_menu import CreatePluginMenu
+from papi.gui.default.overview_menu import OverviewPluginMenu
+from papi.gui.default.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
 
-from papi.gui.qt_new.custom import PaPIConfigSaveDialog
-from papi.gui.qt_new.item import PaPITreeModel
+from papi.gui.default.custom import PaPIConfigSaveDialog
+from papi.gui.default.item import PaPITreeModel
 
 from papi.gui.gui_management import GuiManagement
 
-from papi.gui.qt_new import get32Icon, get16Icon
+from papi.gui.default import get32Icon, get16Icon
 
 from multiprocessing import Queue, Process
 from papi.core import run_core_in_own_process

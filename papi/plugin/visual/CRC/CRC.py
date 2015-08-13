@@ -31,12 +31,12 @@ __author__ = 'Knuths'
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from papi.ui.gui.qt_new.CreateRecording import Ui_CreateRecording
+from papi.ui.gui.default.CreateRecording import Ui_CreateRecording
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QComboBox, QStyleOptionButton,\
      QStyledItemDelegate, QStyle, QApplication
 
 
-from papi.gui.qt_new.item import PaPITreeModel
+from papi.gui.default.item import PaPITreeModel
 
 from papi.plugin.base_classes.vip_base import vip_base
 
