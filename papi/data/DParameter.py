@@ -55,3 +55,9 @@ class DParameter(DObject):
         self.plugin_identifier = None
         self.regex = Regex
         self.OptionalObject = OptionalObject
+
+    def update_meta(self, parameter):
+        self.value = parameter.value
+
+        if self.id != parameter.id:
+            raise ValueError('DParameter ID: ' +self.id + ' != ' + parameter.id)

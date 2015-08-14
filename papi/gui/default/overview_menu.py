@@ -306,7 +306,6 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
             dparameter = dparameter_names[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)
             self.dparameterModel.appendRow(dparameter_item)
-
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
 
@@ -319,6 +318,15 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
         # Sort Models
         self.bModel.sort(0)
+
+    def plugin_item_refresh(self, index):
+        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
+
+        self.parameterTree.viewport().update()
+        self.blockTree.viewport().update()
+        self.subscribersTree.viewport().update()
+        self.subscriptionsTree.viewport().update()
+
 
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
@@ -635,6 +643,7 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
                 self.tabWidget.setEnabled(True)
                 #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
                 #self.pluginTree.clicked.emit(index)
+                self.plugin_item_refresh(index)
 
         # -----------------------------------------
         # case: remove already deleted plugins
@@ -667,9 +676,11 @@ class OverviewPluginMenu(QMainWindow, Ui_Overview):
 
 
         #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
-        # index = self.pluginTree.currentIndex()
-        # if index.isValid():
-        #     self.pluginTree.clicked.emit(index)
+        #index = self.pluginTree.currentIndex()
+        #if index.isValid():
+        #    self.plugin_item_refresh(index)
+
+            #self.pluginTree.clicked.emit(index)
 
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):

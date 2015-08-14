@@ -161,7 +161,7 @@ class GUI(QMainWindow, Ui_QtNewMain):
                 raise Exception('Gui started with wrong arguments')
             if gui_queue is None:
                 raise Exception('Gui started with wrong arguments')
-            if not isinstance(gui_id, int):
+            if not isinstance(gui_id, str):
                 raise Exception('Gui started with wrong arguments')
 
             core_queue_ref = core_queue

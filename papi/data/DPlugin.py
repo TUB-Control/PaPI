@@ -103,6 +103,7 @@ class DBlock(DObject):
         if signal in self.signals:
             signal.uname = signal.uname + "_deleted"
             signal.dname = signal.dname + "_deleted"
+            signal.deleted = True
             self.signals.remove(signal)
 
             return True
@@ -343,6 +344,7 @@ class DPlugin(DObject):
         if dblock.name in self.__blocks:
             del self.__blocks[dblock.name]
             dblock.name += "_deleted"
+            dblock.deleted = True
             return True
         else:
             return False
@@ -416,7 +418,16 @@ class DPlugin(DObject):
         # Update DParameters of DPlugin
         # -----------------------------
 
-        self.__parameters = meta.__parameters
+        for parameter_name in meta.__parameters:
+            if parameter_name in self.__parameters:
+                self.__parameters[parameter_name].update_meta(meta.__parameters[parameter_name])
+
+            if parameter_name not in self.__parameters:
+                self.add_parameter(meta.__parameters[parameter_name])
+
+        for parameter_name in self.__parameters:
+            if parameter_name not in meta.__parameters:
+                self.rm_parameter(self.__parameters[parameter_name])
 
         # -----------------------------
         # Update DSubscriptions of DPlugin

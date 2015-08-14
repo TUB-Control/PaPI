@@ -28,8 +28,12 @@ Sven Knuth
 
 __author__ = 'knuths'
 
+import os
 
 class DObject():
+
+    __id__ = 0;
+
     """
     Base class for all PaPI-objects
     """
@@ -39,4 +43,11 @@ class DObject():
 
         :return:
         """
-        self.id = 0
+        self.id = DObject.get_id()
+        self.deleted = False
+
+    @staticmethod
+    def get_id():
+        pid = os.getpid()
+        DObject.__id__ += 1
+        return str(pid) + "_" + str(DObject.__id__)
