@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/gui/qt_new/main.ui'
+# Form implementation generated from reading ui file 'ui/gui/default/main.ui'
 #
-# Created: Mon Aug  3 13:26:32 2015
+# Created: Thu Aug 13 18:34:29 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,7 +39,7 @@ class Ui_QtNewMain(object):
         self.statusbar = QtWidgets.QStatusBar(QtNewMain)
         self.statusbar.setObjectName("statusbar")
         QtNewMain.setStatusBar(self.statusbar)
-        self.toolBar = QtWidgets.QToolBar(QtNewMain)
+        self.toolBar = PaPIToolbar(QtNewMain)
         self.toolBar.setAcceptDrops(True)
         self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.toolBar.setMovable(False)
@@ -140,3 +140,4 @@ class Ui_QtNewMain(object):
         self.actionReload_Plugin_DB.setText(_translate("QtNewMain", "Reload DB"))
         self.actionToolbar.setText(_translate("QtNewMain", "Toolbar"))
 
+from papi.gui.default.item import PaPIToolbar

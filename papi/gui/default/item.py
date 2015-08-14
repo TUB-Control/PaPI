@@ -28,13 +28,13 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from PyQt5.QtWidgets    import QMdiSubWindow
-from PyQt5.QtCore       import Qt, QRegExp
-from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon
+from PyQt5.QtWidgets    import QMdiSubWindow, QAction, QToolBar,QTreeView, QMenu
+from PyQt5.QtCore       import Qt, QRegExp, pyqtSignal
+from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon, QDragEnterEvent, QDropEvent
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
-from papi.gui.qt_new import get16Pixmap
-
+from papi.gui.default import get16Pixmap
+from papi.yapsy.PluginInfo import PluginInfo
 
 
 # ------------------------------------
@@ -725,3 +725,57 @@ class PaPIMDISubWindow(QMdiSubWindow):
 
     def set_movable(self, flag):
         self.movable = flag
+
+class PaPIFavAction(QAction):
+
+    def __init__(self, *args, **kwargs):
+        super(PaPIFavAction, self).__init__(*args, **kwargs)
+
+class PaPIToolbar(QToolBar):
+    clickedFavouritePlugin = pyqtSignal(PluginInfo)
+    removedFavouritePlugin = pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super(PaPIToolbar, self).__init__(*args, **kwargs)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.customMenu)
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        source = event.source()
+        if isinstance(source, QTreeView):
+            if isinstance(source.model(), PaPITreeModel):
+                event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        source = event.source()
+        if isinstance(source, QTreeView):
+            if isinstance(source.model(), PaPITreeModel):
+                for index in source.selectedIndexes():
+                    plugin_info = source.model().data(index, Qt.UserRole)
+                    self.clickedFavouritePlugin.emit(plugin_info)
+
+    def customMenu(self, position):
+        menu = QMenu('Menu')
+        fav_menu = QMenu('Favourites')
+        px = get16Pixmap('star.png')
+        hasFavourites = False
+
+        fav_menu.setIcon(QIcon(px))
+
+        for action in self.actions():
+            if isinstance(action, PaPIFavAction):
+                fav_action = QAction(action.text(), self)
+                px = get16Pixmap('delete.png')
+                fav_action.setIcon(QIcon(px))
+                fav_action.triggered.connect(lambda ignore, p=action: self.removeFavouritePlugin(p))
+
+                fav_menu.addAction(fav_action)
+                hasFavourites = True
+
+        menu.addMenu(fav_menu)
+
+        if hasFavourites:
+            menu.exec_(self.mapToGlobal(position))
+
+    def removeFavouritePlugin(self, action : PaPIFavAction):
+        self.removeAction(action)
+        self.removedFavouritePlugin.emit()

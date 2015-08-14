@@ -28,11 +28,11 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.gui.qt_new.item import PaPIRootItem, PaPITreeModel
-from papi.gui.qt_new.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
-from papi.gui.qt_new.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
+from papi.gui.default.item import PaPIRootItem, PaPITreeModel
+from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
+from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
-from papi.ui.gui.qt_new.overview import Ui_Overview
+from papi.ui.gui.default.overview import Ui_Overview
 
 
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \

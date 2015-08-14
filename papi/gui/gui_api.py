@@ -502,6 +502,8 @@ class Gui_api(QtCore.QObject):
                                 for val in attr:
                                    gui_config[property.tag][attr.tag][val.tag] = val.text
 
+
+
                 if root_element.tag == 'Plugins':
                     #############################
                     # Read plugin configuration #
@@ -566,6 +568,9 @@ class Gui_api(QtCore.QObject):
                                         signals.append(sig_xml.text)
 
                                     subs_to_make.append({'dest':dest, 'source':sourceName, 'block':blockName, 'alias':alias, 'signals':signals})
+
+            self.set_gui_config_function(gui_config)
+
         except Exception as E:
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not loadable", tb)

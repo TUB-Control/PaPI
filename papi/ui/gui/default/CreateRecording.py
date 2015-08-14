@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/gui/qt_new/CreateRecording.ui'
+# Form implementation generated from reading ui file 'ui/gui/default/CreateRecording.ui'
 #
-# Created: Mon Aug  3 13:26:32 2015
+# Created: Thu Aug 13 18:34:29 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!

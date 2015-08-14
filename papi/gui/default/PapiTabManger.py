@@ -37,7 +37,7 @@ from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiA
                                 QMainWindow, QHBoxLayout, QVBoxLayout, QTabWidget
 
 
-from papi.gui.qt_new.custom import FileLineEdit
+from papi.gui.default.custom import FileLineEdit
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, \
                                     GUI_TABWIDGET_IDENTIFIER
 
