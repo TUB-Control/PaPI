@@ -266,14 +266,24 @@ class ORTD_UDP(iop_base):
         #self.sio = SocketIO('localhost', 8091, LoggingNamespace)
         #self.sio.on('SCISTOUT',self.callback_SCISTOUT)
 
-        with SocketIO(self.HOST, self.SocketIOPort, LoggingNamespace) as self.sio:
-            self.sio.on('SCISTOUT',self.SIO_callback_SCISTOUT)
-            self.sio.on('PAPICONFIG',self.SIO_callback_PAPICONFIG)
-            self.sio.on('ORTDPACKET',self.SIO_callback_ORTDPACKET)
+        while True:
 
-            self.sio_count = 0
-            while self.thread_socket_goOn:
-                self.sio.wait(seconds=1)
+            try:
+
+                with SocketIO(self.HOST, self.SocketIOPort, LoggingNamespace) as self.sio:
+                    self.sio.on('SCISTOUT',self.SIO_callback_SCISTOUT)
+                    self.sio.on('PAPICONFIG',self.SIO_callback_PAPICONFIG)
+                    self.sio.on('ORTDPACKET',self.SIO_callback_ORTDPACKET)
+
+                    self.request_new_config_from_ORTD()
+
+                    self.sio_count = 0
+                    while self.thread_socket_goOn:
+                        self.sio.wait(seconds=1)
+
+            except:
+                print("Something failed within socket.io")
+
 
 
 
@@ -289,8 +299,12 @@ class ORTD_UDP(iop_base):
         self.thread.start()
 
     def thread_execute(self):
-        time.sleep(1)
-        self.request_new_config_from_ORTD()
+        time.sleep(2)                       # TODO: Grrr. do not use sleep for thread sync...
+        #try:
+
+        if not self.UseSocketIO:
+            self.request_new_config_from_ORTD()
+
 
         goOn = True
         newData = False
