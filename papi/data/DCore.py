@@ -26,6 +26,7 @@ Contributors
 Sven Knuth
 """
 from papi.data.DPlugin import DPlugin
+from papi.data.DObject import DObject
 from papi.ConsoleLog import ConsoleLog
 import copy
 import papi.error_codes as ERROR
@@ -55,7 +56,8 @@ class DCore():
         :returns: unique ID
         :rtype: int
         """
-        self.__newid += 1
+        #self.__newid += 1
+        self.__newid = DObject.get_id()
         return self.__newid
 #        return uuid.uuid4().int >> 64
 
