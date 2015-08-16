@@ -5,6 +5,7 @@ v.1.x:
 ------
 
 -  **feature**: Added ability to define favourite plugins
+-  **doc**: Added documentation for the main window
 
 v.1.2:
 ------
