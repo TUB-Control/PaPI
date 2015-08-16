@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    papi.gui.qt_new
+    papi.gui.default
 
 Submodules
 ----------

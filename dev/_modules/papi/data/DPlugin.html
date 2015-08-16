@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.data.DPlugin &mdash; papi  documentation</title>
+    <title>papi.data.DPlugin &mdash; papi 1.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="top" title="papi 1.2.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -152,6 +152,7 @@
         <span class="k">if</span> <span class="n">signal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="bp">True</span>
@@ -392,6 +393,7 @@
         <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="o">+=</span> <span class="s">&quot;_deleted&quot;</span>
+            <span class="n">dblock</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
@@ -465,7 +467,16 @@
         <span class="c"># Update DParameters of DPlugin</span>
         <span class="c"># -----------------------------</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span>
+        <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">update_meta</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rm_parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
 
         <span class="c"># -----------------------------</span>
         <span class="c"># Update DSubscriptions of DPlugin</span>
@@ -571,7 +582,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.gui.gui_api &mdash; papi  documentation</title>
+    <title>papi.gui.gui_api &mdash; papi 1.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="top" title="papi 1.2.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -551,6 +551,8 @@
                                 <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
                                    <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">val</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">text</span>
 
+
+
                 <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Plugins&#39;</span><span class="p">:</span>
                     <span class="c">#############################</span>
                     <span class="c"># Read plugin configuration #</span>
@@ -615,6 +617,9 @@
                                         <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
                                     <span class="n">subs_to_make</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;dest&#39;</span><span class="p">:</span><span class="n">dest</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">:</span><span class="n">sourceName</span><span class="p">,</span> <span class="s">&#39;block&#39;</span><span class="p">:</span><span class="n">blockName</span><span class="p">,</span> <span class="s">&#39;alias&#39;</span><span class="p">:</span><span class="n">alias</span><span class="p">,</span> <span class="s">&#39;signals&#39;</span><span class="p">:</span><span class="n">signals</span><span class="p">})</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_gui_config_function</span><span class="p">(</span><span class="n">gui_config</span><span class="p">)</span>
+
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
             <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not loadable&quot;</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
@@ -1253,7 +1258,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.data.DCore &mdash; papi  documentation</title>
+    <title>papi.data.DCore &mdash; papi 1.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="top" title="papi 1.2.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -75,6 +75,7 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
+<span class="kn">from</span> <span class="nn">papi.data.DObject</span> <span class="kn">import</span> <span class="n">DObject</span>
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
@@ -104,7 +105,8 @@
 <span class="sd">        :returns: unique ID</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c">#self.__newid += 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">=</span> <span class="n">DObject</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span>
 <span class="c">#        return uuid.uuid4().int &gt;&gt; 64</span>
 </div>
@@ -477,7 +479,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

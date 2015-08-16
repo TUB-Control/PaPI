@@ -15,7 +15,11 @@ speed, it allows a fast and easy development of new plugins.
 Architecture
 -------------
 
-We divided PaPI in three main parts: \* PaPI Core \* PaPI GUI \* Plugin
+We divided PaPI in three main parts:
+    - PaPI Core
+    - PaPI GUI
+    - Plugin
+
 processes
 
 .. figure:: _static/manual/introduction/PaPIStructureWithArrows.png
@@ -43,20 +47,12 @@ PaPI Plugins
 Types
 -----
 
-PaPI divided the plugin structure in 4 types of plugins: \* IO
-Plugin(IOP): Input-Output Plugins, runs in separate process, generates
-new data for PaPI, e.g. UDP Receiver, ORTD
+PaPI divided the plugin structure in 4 types of plugins:
 
--  DP Plugin(DPP): Data Processing Plugins, runs in separate process,
-   process data in PaPI, get data from PapI, generate new data for PaPI,
-   e.g. adding signals
-
--  VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display
-   data, e.g. Plot
-
--  PC Plugin(PCP): Parameter Control Plugin, runs in GUI process, used
-   to be a control element for setting paramter of other plugins, e.g.
-   Slider
+    - IO Plugin(IOP): Input-Output Plugins, runs in separate process, generates new data for PaPI, e.g. UDP Receiver, ORTD
+    - DP Plugin(DPP): Data Processing Plugins, runs in separate process, process data in PaPI, get data from PapI, generate new data for PaPI, e.g. adding signals
+    - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot
+    - PC Plugin(PCP): Parameter Control Plugin, runs in GUI process, used to be a control element for setting paramter of other plugins, e.g. Slider
 
 Signal, Blocks and Parameters
 -----------------------------
@@ -84,10 +80,11 @@ functions. These callback functions will be called by PaPI to use the
 plugin. There are some functions that must be implemented and some
 functions that are optional.
 
-Mandatory to implement are: \* ``start_init(self, config=None)`` [for
-IOP/DPP], ``initiate_layer_0(self, config=None)`` [for VIP/PCP] \*
-``execute(self, Data=None, block_name = None, plugin_uname = None)`` \*
-``quit(self)``
+Mandatory to implement are:
+    - ``start_init(self, config=None)`` [for IOP/DPP],
+    - ``initiate_layer_0(self, config=None)`` [for VIP/PCP]
+    - ``execute(self, Data=None, block_name = None, plugin_uname = None)``
+    - ``quit(self)``
 
 These three functions defines the core functionality of a plugin. To see
 more detailed information on how to create a plugin, refer to: `Design
@@ -128,3 +125,85 @@ Additional functions
 
 For additional functions and deeper understanding or programming
 examples, please take a look at `Design guide plugin <DesignPlugin>`__
+
+Graphical User Interface
+------------------------
+
+Main Window
+~~~~~~~~~~~
+
+The main window of PaPI will look like this:
+
+.. figure:: _static/manual/introduction/GUI_StartScreen.png
+   :alt:
+
+   **PaPI main window**
+
+The main window of PaPI contains the following elements.
+
+1. Toolbar : Contains all actions sorted by different topics.
+2. Common actions were displayed here:
+    - Load configuration
+    - Save configuration
+    - Open: Create Plugin Menu
+    - Open: Show Plugin Menu
+    - Reset PaPI
+3. Favourite plugins were displayed here.
+4. Area which contains all started visual plugins.
+
+PaPI menu
+~~~~~~~~~
+
+.. figure:: _static/manual/introduction/GUI_Toolbar_PaPI.png
+   :alt:
+
+   **Toolbar: PaPI**
+
+The `PaPI menu` contains the following actions:
+
+1. Load: Load a new configuration
+2. Save: Save the current configuration.
+3. ReloadConfig: Reset PaPI and reload the last loaded configuration.
+4. ResetPaPI: Remove all plugins and subscriptions.
+5. Exit: Quit PaPI
+
+Plugin menu
+~~~~~~~~~~~
+
+.. figure:: _static/manual/introduction/GUI_Toolbar_Plugin.png
+   :alt:
+
+   **Toolbar: Plugin**
+
+The `Plugin menu` contains the following actions:
+
+1. Overview: Opens a menu which
+    - displays all known information about all running plugins.
+    - is used to create subscriptions.
+2. Create: Opens a menu which is used to create new plugins.
+3. Reload DB: Reloads the internal database containing information about all available plugins.
+
+View menu
+~~~~~~~~~
+
+.. figure:: _static/manual/introduction/GUI_Toolbar_View.png
+   :alt:
+
+   **Toolbar: View**
+
+1. RunMode: Enables a less customizable view.
+    - STILL IN DEVELOPMENT
+2. Toolbar: Hide and show the toolbar
+
+Help menu
+~~~~~~~~~
+
+.. figure:: _static/manual/introduction/GUI_Toolbar_Help.png
+   :alt:
+
+   **Toolbar: Help**
+
+1. PaPI Wiki: Opens the wiki hosted on Github in the default web browser.
+2. PaPI Doc: Opens the offical documentation for the current PaPI version in the default web browser.
+3. About: Displays information about the current PaPI version.
+4. About Qt: Displays information about the current Qt version.

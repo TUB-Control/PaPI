@@ -60,6 +60,7 @@ Build
 
 All needed functions are compiled and added to the Matlab search path when the build was executed.
 The build script can be found in `</path/to/papi>/PaPI/matlab/`
+A template `template.slx` can also be found in the same directory it contains already all necessary changes described in the next section.
 
 After execution the new library `PaPI` will appear in the simulink library.
 
@@ -99,7 +100,6 @@ The settings for `Code Generation/Custom Code` must be edited as following:
     libboost_signals.so
 
 Due to a new version of ert_linux, it is needed to use **C89/C90 (ANSI)** as default math library. This option can be found in `Code Generation/Interface`.
-
 
 Block Configuration
 -------------------
@@ -199,13 +199,13 @@ Tab 3
 Example: Stateflow
 ------------------
 
-For stateflow it is neccessary to create a simulink function which contains the simulink blocks.
+For stateflow it is necessary to create a simulink function which contains the simulink blocks.
 
 The following picture was taken from the example `simulink_example_stateflow` which can be found in `data_sources/Simulink`.
 
 The second input was mapped to the input `control` of the underlying PaPI Block.
 At entry the control input is set to one for starting the internal UDPServer of the current PaPI Block. The UDPServer is stopped by setting the control input to two.
-This must be done when different PaPI Blocks if not a single block is gonna occupy the used udp port forever .
+This must be done when different PaPI Blocks were used because this prevent a single block to occupy the used udp ports forever .
 
 .. figure:: _static/manual/matlab/example_stateflow.png
    :figwidth: 40%

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Matlab &mdash; papi  documentation</title>
+    <title>Matlab &mdash; papi 1.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="index.html" />
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
     <link rel="up" title="PaPI Manual" href="papi.manual.html" />
     <link rel="next" title="Installed plugins" href="papi.plugin.doc.html" />
     <link rel="prev" title="Design Guide Plugin development" href="papi.manual.4_plugin_design.html" /> 
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="papi.manual.4_plugin_design.html" title="Design Guide Plugin development"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="papi.manual.html" accesskey="U">PaPI Manual</a> &raquo;</li> 
       </ul>
     </div>  
@@ -114,7 +114,8 @@ This blocks contains an easy configurable interface to the core block. This bloc
 <div class="section" id="build">
 <h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
 <p>All needed functions are compiled and added to the Matlab search path when the build was executed.
-The build script can be found in <cite>&lt;/path/to/papi&gt;/PaPI/matlab/</cite></p>
+The build script can be found in <cite>&lt;/path/to/papi&gt;/PaPI/matlab/</cite>
+A template <cite>template.slx</cite> can also be found in the same directory it contains already all necessary changes described in the next section.</p>
 <p>After execution the new library <cite>PaPI</cite> will appear in the simulink library.</p>
 </div>
 <div class="section" id="code-generation">
@@ -225,11 +226,11 @@ It is also possible to describe if the signal should be splitted, which is the d
 </div>
 <div class="section" id="example-stateflow">
 <h2>Example: Stateflow<a class="headerlink" href="#example-stateflow" title="Permalink to this headline">¶</a></h2>
-<p>For stateflow it is neccessary to create a simulink function which contains the simulink blocks.</p>
+<p>For stateflow it is necessary to create a simulink function which contains the simulink blocks.</p>
 <p>The following picture was taken from the example <cite>simulink_example_stateflow</cite> which can be found in <cite>data_sources/Simulink</cite>.</p>
 <p>The second input was mapped to the input <cite>control</cite> of the underlying PaPI Block.
 At entry the control input is set to one for starting the internal UDPServer of the current PaPI Block. The UDPServer is stopped by setting the control input to two.
-This must be done when different PaPI Blocks if not a single block is gonna occupy the used udp port forever .</p>
+This must be done when different PaPI Blocks were used because this prevent a single block to occupy the used udp ports forever .</p>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/example_stateflow.png" />
 <p class="caption"><strong>Exemplary use in a state.</strong></p>
@@ -309,7 +310,7 @@ This must be done when different PaPI Blocks if not a single block is gonna occu
         <li class="right" >
           <a href="papi.manual.4_plugin_design.html" title="Design Guide Plugin development"
              >previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="papi.manual.html" >PaPI Manual</a> &raquo;</li> 
       </ul>
     </div>

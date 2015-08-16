@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.data.DParameter &mdash; papi  documentation</title>
+    <title>papi.data.DParameter &mdash; papi 1.2.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="top" title="papi 1.2.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -103,7 +103,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_id</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">Regex</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">OptionalObject</span> <span class="o">=</span> <span class="n">OptionalObject</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OptionalObject</span> <span class="o">=</span> <span class="n">OptionalObject</span>
+
+<div class="viewcode-block" id="DParameter.update_meta"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DParameter.DParameter.update_meta">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;DParameter ID: &#39;</span> <span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s">&#39; != &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -137,7 +143,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

@@ -16,7 +16,7 @@ development of an own plugin. The template files can be found in
 -  ``visual_template.py`` - template for the development of visual
    Plugins.
 
-The plugins are written in python 3.4. For the development we recommend to use on these tools:
+The plugins are written in python 3.4. For the development we recommend to use one of these tools:
 
    - Any editor with syntax highlighting (e.g. gedit, atom)
    - PyCharm

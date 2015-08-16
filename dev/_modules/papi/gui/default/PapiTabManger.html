@@ -1,0 +1,696 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.gui.default.PapiTabManger &mdash; papi 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="papi 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="papi.gui.default" href="../default.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../default.html" accesskey="U">papi.gui.default</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.gui.default.PapiTabManger</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+<span class="sd"> </span>
+<span class="sd">This file is part of PaPI.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+<span class="sd"> </span>
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+<span class="sd"> </span>
+<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="sd"> </span>
+<span class="sd">Contributors:</span>
+<span class="sd">&lt;Stefan Ruppin</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;control&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QObject</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QRegExpValidator</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QCheckBox</span> <span class="p">,</span> <span class="n">QTabWidget</span><span class="p">,</span> <span class="n">QMdiArea</span><span class="p">,</span> \
+                                <span class="n">QMessageBox</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QInputDialog</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> \
+                                <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QTabWidget</span>
+
+
+<span class="kn">from</span> <span class="nn">papi.gui.default.custom</span> <span class="kn">import</span> <span class="n">FileLineEdit</span>
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">,</span> \
+                                    <span class="n">GUI_TABWIDGET_IDENTIFIER</span>
+
+
+<div class="viewcode-block" id="PapiTabManger"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger">[docs]</a><span class="k">class</span> <span class="nc">PapiTabManger</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabWigdet</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">dgui</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span><span class="n">gui_api</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">centralWidget</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PapiTabManger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span> <span class="o">=</span> <span class="n">tabWigdet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span> <span class="o">=</span> <span class="n">gui_api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_context_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_context_menu</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">tabCloseRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closeTab_by_ind</span><span class="p">)</span>
+
+        <span class="c">#self.tabWidget.setTabShape(QtGui.QTabWidget.Triangular)</span>
+        <span class="c">#self.tabWidget.setTabPosition(QtGui.QTabWidget.North)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span> <span class="o">=</span> <span class="n">dgui</span>
+        <span class="c"># make tabs movable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabsClosable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="c"># create dict for saving tabs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowTabData</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span> <span class="o">=</span> <span class="n">centralWidget</span>
+
+<div class="viewcode-block" id="PapiTabManger.get_tabs_by_uname"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.get_tabs_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">get_tabs_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.add_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.add_tab">[docs]</a>    <span class="k">def</span> <span class="nf">add_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Tab with name already exists&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newTab</span> <span class="o">=</span> <span class="n">TabObject</span><span class="p">(</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">newTab</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">newTab</span><span class="p">,</span><span class="n">newTab</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">newTab</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">newTab</span>
+
+            <span class="k">return</span> <span class="n">newTab</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.remove_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.remove_tab">[docs]</a>    <span class="k">def</span> <span class="nf">remove_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tabObject</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">tabObject</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">tabObject</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">removeTab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="n">tabObject</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.rename_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.rename_tab">[docs]</a>    <span class="k">def</span> <span class="nf">rename_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabObject</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="c"># rename it</span>
+            <span class="n">old_name</span> <span class="o">=</span> <span class="n">tabObject</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">tabObject</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">tabObject</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabObject</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tabObject</span>
+
+            <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">tabObject</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabText</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span><span class="n">tabObject</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">pluign_ind</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
+                <span class="n">dplugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pluign_ind</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="n">tabOfPlugin</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">tabOfPlugin</span> <span class="o">==</span> <span class="n">old_name</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.rename_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.rename_window">[docs]</a>    <span class="k">def</span> <span class="nf">rename_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">new_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="c"># rename it</span>
+            <span class="n">old_name</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old_name</span><span class="p">)</span>
+
+            <span class="n">window</span><span class="o">.</span><span class="n">setNewWindowName</span><span class="p">(</span><span class="n">new_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">new_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">window</span>
+
+            <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">pluign_ind</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
+                <span class="n">dplugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pluign_ind</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="n">tabOfPlugin</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">tabOfPlugin</span> <span class="o">==</span> <span class="n">old_name</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.get_default_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.get_default_tab">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NotThisIndex</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">NotThisIndex</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+           <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;no tab open&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.get_currently_active_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.get_currently_active_tab">[docs]</a>    <span class="k">def</span> <span class="nf">get_currently_active_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.set_tab_active_by_index"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_tab_active_by_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_tab_active_by_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.set_tab_active_by_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_tab_active_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_tab_active_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabName</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">tabObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">tabObj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_tab_active_by_index</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.moveFromTo"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.moveFromTo">[docs]</a>    <span class="k">def</span> <span class="nf">moveFromTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">subWindow</span><span class="p">,</span> <span class="n">posX</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">posY</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span> <span class="ow">and</span> <span class="n">dest</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">startTab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">start</span><span class="p">]</span>
+            <span class="n">destTab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">dest</span><span class="p">]</span>
+            <span class="n">startTab</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="n">subWindow</span><span class="p">)</span>
+            <span class="n">destTab</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="n">subWindow</span><span class="p">)</span>
+            <span class="n">subWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">subWindow</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">posX</span><span class="p">,</span> <span class="n">posY</span><span class="p">)</span>
+            <span class="n">subWindow</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.set_background_for_tab_with_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_background_for_tab_with_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_background_for_tab_with_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bg</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="n">pixmap</span>  <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="n">bg</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">TabObject</span><span class="p">):</span>
+                    <span class="n">widgetArea</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">PaPIWindow</span><span class="p">):</span>
+                    <span class="n">widgetArea</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">tabWidget</span>
+
+                <span class="n">qbrush_bg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">()</span> <span class="p">,</span><span class="n">pixmap</span><span class="p">)</span>
+
+                <span class="n">widgetArea</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">qbrush_bg</span><span class="p">)</span>
+                <span class="n">widgetArea</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">bg</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.set_all_tabs_to_close_when_empty"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_all_tabs_to_close_when_empty">[docs]</a>    <span class="k">def</span> <span class="nf">set_all_tabs_to_close_when_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">tabO</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>
+            <span class="n">tabO</span><span class="o">.</span><span class="n">closeIfempty</span> <span class="o">=</span> <span class="n">state</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.closeTab_by_ind"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.closeTab_by_ind">[docs]</a>    <span class="k">def</span> <span class="nf">closeTab_by_ind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+        <span class="n">tabOb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="n">tab_name</span> <span class="o">=</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c">#tab_name != &#39;Default&#39;:</span>
+            <span class="c"># not the default tab, just close and move plugins to default tab</span>
+            <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">pl_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tab_name</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">tab_name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get_default_tab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">())</span>
+                        <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_tab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_tab</span><span class="p">(</span><span class="n">tabOb</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># default tab: ask if really want to close</span>
+            <span class="n">diag</span> <span class="o">=</span> <span class="n">DefaultCloseBox</span><span class="p">()</span><span class="c">#QtGui.QDialog()</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">diag</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">:</span>
+                <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">pl_id</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
+                    <span class="n">dplugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_delete_plugin</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_tab</span><span class="p">(</span><span class="n">tabOb</span><span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="PapiTabManger.closeTab_by_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.closeTab_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">closeTab_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">tabO</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">tabO</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closeTab_by_ind</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.close_all_empty_tabs"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.close_all_empty_tabs">[docs]</a>    <span class="k">def</span> <span class="nf">close_all_empty_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span>
+        <span class="n">tabs_to_close</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">tabs</span><span class="p">:</span>
+            <span class="n">tabO</span> <span class="o">=</span> <span class="n">tabs</span><span class="p">[</span><span class="n">tab</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tabO</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+                <span class="n">tabs_to_close</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">tabs_to_close</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closeTab_by_name</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.getTabPosition_by_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.getTabPosition_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">getTabPosition_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabName</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">tabObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">tabObj</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ind</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.setTabs_movable_closable"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.setTabs_movable_closable">[docs]</a>    <span class="k">def</span> <span class="nf">setTabs_movable_closable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">move</span><span class="p">,</span> <span class="n">close</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">move</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setMovable</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">close</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabsClosable</span><span class="p">(</span><span class="n">close</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.show_context_menu"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.show_context_menu">[docs]</a>    <span class="k">def</span> <span class="nf">show_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_context_menu</span><span class="p">()</span>
+        <span class="n">gloPos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">gloPos</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.create_context_menu"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.create_context_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ctrlMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+
+        <span class="n">title_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Area menu&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">title_action</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">sep_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">sep_action</span><span class="o">.</span><span class="n">setSeparator</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">sep_action2</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">sep_action2</span><span class="o">.</span><span class="n">setSeparator</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">sep_action3</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">sep_action3</span><span class="o">.</span><span class="n">setSeparator</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">new_tab_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;New Tab&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">new_tab_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_new_tab</span><span class="p">)</span>
+
+        <span class="n">new_tab_action_cust_name</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;New Tab with name&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">new_tab_action_cust_name</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_new_tab_custom_name</span><span class="p">)</span>
+
+        <span class="n">detach_tab_action_cust_name</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Detach &gt; new window&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">detach_tab_action_cust_name</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detach_tab</span><span class="p">)</span>
+
+        <span class="n">close_tab_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Close Tab&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">close_tab_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_close_tab</span><span class="p">)</span>
+
+        <span class="n">rename_tab_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Rename Tab&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">rename_tab_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_rename_tab</span><span class="p">)</span>
+
+        <span class="n">bg_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Set background&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">bg_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_set_bg</span><span class="p">)</span>
+
+        <span class="n">wind_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;New Window&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">wind_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmenu_new_window</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">title_action</span><span class="p">)</span>
+
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">new_tab_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">new_tab_action_cust_name</span><span class="p">)</span>
+
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action2</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">close_tab_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">rename_tab_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">bg_action</span><span class="p">)</span>
+
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action3</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">wind_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">detach_tab_action_cust_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">title_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">new_tab_action</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">new_tab_action_cust_name</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action2</span><span class="p">)</span>
+            <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">wind_action</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ctrlMenu</span>
+
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="PapiTabManger.show_context_menu_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.show_context_menu_window">[docs]</a>    <span class="k">def</span> <span class="nf">show_context_menu_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_context_menu_window</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+        <span class="n">gloPos</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">gloPos</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.create_context_menu_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.create_context_menu_window">[docs]</a>    <span class="k">def</span> <span class="nf">create_context_menu_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabWidget</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="n">ctrlMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+
+        <span class="n">title_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Window menu&#39;</span><span class="p">,</span> <span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">title_action</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">sep_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">sep_action</span><span class="o">.</span><span class="n">setSeparator</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">sep_action2</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">sep_action2</span><span class="o">.</span><span class="n">setSeparator</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">dock_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Dock Window&#39;</span><span class="p">,</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">dock_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">tabWidget</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="n">window</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmenu_dock_window</span><span class="p">(</span><span class="n">area</span><span class="p">,</span><span class="n">window</span><span class="p">))</span>
+
+        <span class="n">rename_win_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Rename Window&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">rename_win_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="n">window</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmenu_rename_wind</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
+
+        <span class="n">bg_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Set background&#39;</span><span class="p">,</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">bg_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">wind</span> <span class="o">=</span> <span class="n">window</span>  <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmenu_set_bg_window</span><span class="p">(</span><span class="n">wind</span><span class="p">))</span>
+
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">title_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">dock_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">sep_action2</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">rename_win_action</span><span class="p">)</span>
+        <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">bg_action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctrlMenu</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.add_wind"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.add_wind">[docs]</a>    <span class="k">def</span> <span class="nf">add_wind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Tab with name already exists&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c"># create a new window with name = name</span>
+            <span class="n">newWin</span> <span class="o">=</span> <span class="n">PaPIWindow</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">conextMenu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">show_context_menu_window</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+
+            <span class="c"># connect new close slot:</span>
+            <span class="n">newWin</span><span class="o">.</span><span class="n">closeEvent</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ev</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span> <span class="n">newWin</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">newWin</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_wind_close_event</span><span class="p">(</span><span class="n">ev</span><span class="p">,</span><span class="n">handler</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+
+            <span class="c"># add new window to data structure</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">newWin</span><span class="o">.</span><span class="n">windowName</span><span class="p">]</span> <span class="o">=</span> <span class="n">newWin</span>
+
+            <span class="k">return</span> <span class="n">newWin</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.new_wind_close_event"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.new_wind_close_event">[docs]</a>    <span class="k">def</span> <span class="nf">new_wind_close_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">alreadyDocked</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redock_window</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.remove_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.remove_window">[docs]</a>    <span class="k">def</span> <span class="nf">remove_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="p">,</span> <span class="n">rm_from_data</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rm_from_data</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">)</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">window</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.redock_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.redock_window">[docs]</a>    <span class="k">def</span> <span class="nf">redock_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">winName</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span>
+            <span class="n">destTab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="s">&#39;DOCK&#39;</span><span class="o">+</span><span class="n">winName</span><span class="o">+</span><span class="s">&#39;DOCK&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">window</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+                <span class="c"># create new Tab with name with affix and prefix</span>
+                <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">pl_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+
+                    <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+
+                        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">:</span>
+
+                            <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">()</span>
+                            <span class="n">posX</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+                            <span class="n">posY</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span><span class="n">destTab</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">subwin</span><span class="p">,</span><span class="n">posX</span><span class="o">=</span><span class="n">posX</span><span class="p">,</span><span class="n">posY</span><span class="o">=</span><span class="n">posY</span><span class="p">)</span>
+
+                            <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">destTab</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="n">window</span><span class="o">.</span><span class="n">alreadyDocked</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_window</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+            <span class="c"># rename new Tab to real name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rename_tab</span><span class="p">(</span><span class="n">destTab</span><span class="p">,</span><span class="n">winName</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.detach_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.detach_tab">[docs]</a>    <span class="k">def</span> <span class="nf">detach_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tabOb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span>
+        <span class="n">tabName</span> <span class="o">=</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">neWin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_wind</span><span class="p">(</span><span class="s">&#39;DETACH&#39;</span><span class="o">+</span><span class="n">tabName</span> <span class="o">+</span> <span class="s">&#39;DETACH&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span>  <span class="nb">len</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">pl_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                        <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">()</span>
+                        <span class="n">posX</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+                        <span class="n">posY</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">neWin</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span> <span class="n">subwin</span><span class="p">,</span><span class="n">posX</span><span class="o">=</span><span class="n">posX</span><span class="p">,</span><span class="n">posY</span><span class="o">=</span><span class="n">posY</span><span class="p">)</span>
+                        <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">neWin</span><span class="o">.</span><span class="n">windowName</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_tab</span><span class="p">(</span><span class="n">tabOb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rename_window</span><span class="p">(</span><span class="n">neWin</span><span class="p">,</span><span class="n">tabName</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_dock_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_dock_window">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_dock_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabarea</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redock_window</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_new_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_new_window">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_new_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Win&#39;</span>
+        <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;X&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_wind</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_set_bg_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_set_bg_window">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_set_bg_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="n">fileNames</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setFileMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">AnyFile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
+            <span class="n">fileNames</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_background_for_tab_with_name</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_rename_wind"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_rename_wind">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_rename_wind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="s">&#39;Rename a window&#39;</span><span class="p">,</span><span class="s">&#39;New name for window: &#39;</span><span class="o">+</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span>
+                                              <span class="n">QLineEdit</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span><span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rename_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+
+
+
+
+
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_new_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_new_tab">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_new_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Tab&#39;</span>
+        <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;X&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_new_tab_custom_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_new_tab_custom_name">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_new_tab_custom_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Tab&#39;</span>
+        <span class="k">while</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;X&#39;</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">,</span> <span class="s">&#39;Tab name&#39;</span><span class="p">,</span><span class="s">&#39; Name of new tab&#39;</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;Tab name already exists&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_set_bg"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_set_bg">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_set_bg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fileNames</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setFileMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">AnyFile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
+            <span class="n">fileNames</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_background_for_tab_with_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_close_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_close_tab">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_close_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeTab_by_ind</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.cmenu_rename_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.cmenu_rename_tab">[docs]</a>    <span class="k">def</span> <span class="nf">cmenu_rename_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tabOb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span>
+
+        <span class="n">text</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">,</span> <span class="s">&#39;Rename a tab&#39;</span><span class="p">,</span><span class="s">&#39;New name for tab: &#39;</span><span class="o">+</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                              <span class="n">QLineEdit</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span><span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="c">#print(&#39;Tab name already exists&#39;)</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rename_tab</span><span class="p">(</span><span class="n">tabOb</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+
+
+
+
+
+
+</div></div>
+<div class="viewcode-block" id="PaPIWindow"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow">[docs]</a><span class="k">class</span> <span class="nc">PaPIWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowName</span><span class="p">,</span> <span class="n">conextMenu</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span> <span class="o">=</span> <span class="n">windowName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabList</span>    <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span> <span class="o">=</span> <span class="n">TabObject</span><span class="p">(</span><span class="n">windowName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeIfempty</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alreadyDocked</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pos</span><span class="p">,</span> <span class="n">wind</span> <span class="o">=</span> <span class="bp">self</span><span class="p">:</span> <span class="n">conextMenu</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">wind</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">693</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PaPIWindow.addSubWindow"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.addSubWindow">[docs]</a>    <span class="k">def</span> <span class="nf">addSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subwindow</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="n">subwindow</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PaPIWindow.removeSubWindow"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.removeSubWindow">[docs]</a>    <span class="k">def</span> <span class="nf">removeSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subwindow</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">subwindow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="n">subwindow</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PaPIWindow.setNewWindowName"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.setNewWindowName">[docs]</a>    <span class="k">def</span> <span class="nf">setNewWindowName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newName</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">newName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span> <span class="o">=</span> <span class="n">newName</span>
+</div>
+<div class="viewcode-block" id="PaPIWindow.getBackground"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.getBackground">[docs]</a>    <span class="k">def</span> <span class="nf">getBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">background</span>
+</div>
+<div class="viewcode-block" id="PaPIWindow.setBackground"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.setBackground">[docs]</a>    <span class="k">def</span> <span class="nf">setBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">bg</span>
+
+</div>
+    <span class="n">background</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">getBackground</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">setBackground</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PaPIWindow.subWindowList"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.subWindowList">[docs]</a>    <span class="k">def</span> <span class="nf">subWindowList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="PaPIWindow.getName"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.getName">[docs]</a>    <span class="k">def</span> <span class="nf">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span>
+</div>
+<div class="viewcode-block" id="PaPIWindow.setName"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.setName">[docs]</a>    <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span> <span class="o">=</span> <span class="n">name</span>
+</div>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">getName</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">setName</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="PaPIWindow.isEmpty"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PaPIWindow.isEmpty">[docs]</a>    <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">()</span>
+
+
+
+</div></div>
+<div class="viewcode-block" id="TabObject"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.TabObject">[docs]</a><span class="k">class</span> <span class="nc">TabObject</span><span class="p">(</span><span class="n">QMdiArea</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">windowName</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TabObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="s">&#39;default&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeIfempty</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowName</span> <span class="o">=</span> <span class="n">windowName</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TabObject.isEmpty"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.TabObject.isEmpty">[docs]</a>    <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+
+</div></div>
+<div class="viewcode-block" id="DefaultCloseBox"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.DefaultCloseBox">[docs]</a><span class="k">class</span> <span class="nc">DefaultCloseBox</span><span class="p">(</span><span class="n">QMessageBox</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DefaultCloseBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&#39;Close last tab?&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;All plugins in this tab will be closed. Are you sure?&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span> <span class="o">|</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../default.html" >papi.gui.default</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
