@@ -56,7 +56,7 @@ if platform.system() == 'Linux':
     PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
 
 if platform.system() == 'Darwin':
-    PAPI_USER_CFG =  expanduser("~") + '.papi/config.xml'
+    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
 
 
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
