@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/gui/default/overview.ui'
+# Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Thu Aug 13 18:34:29 2015
+# Created: Sun Aug 16 14:31:49 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Overview(object):
-    def setupUi(self, Overview):
-        Overview.setObjectName("Overview")
-        Overview.resize(803, 614)
-        self.centralwidget = QtWidgets.QWidget(Overview)
+class Ui_PluginOverviewMenu(object):
+    def setupUi(self, PluginOverviewMenu):
+        PluginOverviewMenu.setObjectName("PluginOverviewMenu")
+        PluginOverviewMenu.resize(803, 614)
+        self.centralwidget = QtWidgets.QWidget(PluginOverviewMenu)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -119,42 +119,42 @@ class Ui_Overview(object):
         self.tabWidget.addTab(self.connectionTab, "")
         self.horizontalLayout.addWidget(self.tabWidget)
         self.horizontalLayout_3.addLayout(self.horizontalLayout)
-        Overview.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(Overview)
+        PluginOverviewMenu.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(PluginOverviewMenu)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
         self.menubar.setObjectName("menubar")
         self.menuAction = QtWidgets.QMenu(self.menubar)
         self.menuAction.setObjectName("menuAction")
-        Overview.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(Overview)
+        PluginOverviewMenu.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(PluginOverviewMenu)
         self.statusbar.setObjectName("statusbar")
-        Overview.setStatusBar(self.statusbar)
-        self.actionRefresh = QtWidgets.QAction(Overview)
+        PluginOverviewMenu.setStatusBar(self.statusbar)
+        self.actionRefresh = QtWidgets.QAction(PluginOverviewMenu)
         self.actionRefresh.setObjectName("actionRefresh")
         self.menuAction.addAction(self.actionRefresh)
         self.menubar.addAction(self.menuAction.menuAction())
 
-        self.retranslateUi(Overview)
+        self.retranslateUi(PluginOverviewMenu)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(1)
-        QtCore.QMetaObject.connectSlotsByName(Overview)
+        QtCore.QMetaObject.connectSlotsByName(PluginOverviewMenu)
 
-    def retranslateUi(self, Overview):
+    def retranslateUi(self, PluginOverviewMenu):
         _translate = QtCore.QCoreApplication.translate
-        Overview.setWindowTitle(_translate("Overview", "MainWindow"))
-        self.unameLabel.setText(_translate("Overview", "Unique name"))
-        self.usedpluginLabel.setText(_translate("Overview", "Used plugin"))
-        self.stateLabel.setText(_translate("Overview", "State"))
-        self.typeLabel.setText(_translate("Overview", "Type"))
-        self.alivestateLabel.setText(_translate("Overview", "Alive state"))
-        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.parameterTab), _translate("Overview", "Parameters"))
-        self.showInternalNameCheckBox.setText(_translate("Overview", "Show internal signal names"))
-        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), _translate("Overview", "Blocks/Events"))
-        self.pauseButton.setText(_translate("Overview", "PAUSE"))
-        self.stopButton.setText(_translate("Overview", "STOP"))
-        self.playButton.setText(_translate("Overview", "PLAY"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.pluginTab), _translate("Overview", "Plugin"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.connectionTab), _translate("Overview", "Connections"))
-        self.menuAction.setTitle(_translate("Overview", "Actions"))
-        self.actionRefresh.setText(_translate("Overview", "Refresh"))
+        PluginOverviewMenu.setWindowTitle(_translate("PluginOverviewMenu", "MainWindow"))
+        self.unameLabel.setText(_translate("PluginOverviewMenu", "Unique name"))
+        self.usedpluginLabel.setText(_translate("PluginOverviewMenu", "Used plugin"))
+        self.stateLabel.setText(_translate("PluginOverviewMenu", "State"))
+        self.typeLabel.setText(_translate("PluginOverviewMenu", "Type"))
+        self.alivestateLabel.setText(_translate("PluginOverviewMenu", "Alive state"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.parameterTab), _translate("PluginOverviewMenu", "Parameters"))
+        self.showInternalNameCheckBox.setText(_translate("PluginOverviewMenu", "Show internal signal names"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), _translate("PluginOverviewMenu", "Blocks/Events"))
+        self.pauseButton.setText(_translate("PluginOverviewMenu", "PAUSE"))
+        self.stopButton.setText(_translate("PluginOverviewMenu", "STOP"))
+        self.playButton.setText(_translate("PluginOverviewMenu", "PLAY"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.pluginTab), _translate("PluginOverviewMenu", "Plugin"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.connectionTab), _translate("PluginOverviewMenu", "Connections"))
+        self.menuAction.setTitle(_translate("PluginOverviewMenu", "Actions"))
+        self.actionRefresh.setText(_translate("PluginOverviewMenu", "Refresh"))
 

@@ -32,7 +32,7 @@ from papi.gui.default.item import PaPIRootItem, PaPITreeModel
 from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
-from papi.ui.gui.default.overview import Ui_Overview
+from papi.ui.gui.default.PluginOverviewMenu import Ui_PluginOverviewMenu
 
 
 from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
@@ -47,7 +47,7 @@ from PyQt5.QtCore import Qt
 from papi.data.DPlugin import DPlugin, DBlock, DParameter
 
 
-class OverviewPluginMenu(QMainWindow, Ui_Overview):
+class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     """
     This class is used to create an extra window which is used to display all created plugins.
     The information are taken by the corresponding DPlugin-Object of a plugin. By this window a user is able to

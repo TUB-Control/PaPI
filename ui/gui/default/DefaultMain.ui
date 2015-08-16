@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QtNewMain</class>
- <widget class="QMainWindow" name="QtNewMain">
+ <class>DefaultMain</class>
+ <widget class="QMainWindow" name="DefaultMain">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -215,7 +215,7 @@
   <connection>
    <sender>actionExit</sender>
    <signal>triggered()</signal>
-   <receiver>QtNewMain</receiver>
+   <receiver>DefaultMain</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

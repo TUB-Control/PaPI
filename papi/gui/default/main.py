@@ -38,7 +38,7 @@ from PyQt5.QtGui               import QIcon, QDesktopServices, QDropEvent, QDrag
 from PyQt5.QtCore              import Qt, QUrl
 from PyQt5 import QtCore, QtGui
 
-from papi.ui.gui.default.main   import Ui_QtNewMain
+from papi.ui.gui.default.DefaultMain   import Ui_DefaultMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 from papi.gui.default.item      import PaPIFavAction
@@ -116,7 +116,7 @@ def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
     app.exec_()
 
 
-class GUI(QMainWindow, Ui_QtNewMain):
+class GUI(QMainWindow, Ui_DefaultMain):
     """
     Used to create the qt based PaPI gui.
 

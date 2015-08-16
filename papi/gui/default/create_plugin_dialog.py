@@ -34,7 +34,7 @@ from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox, QComboBox
 from PyQt5.QtCore       import *
 
-from papi.ui.gui.default.create_dialog import Ui_CreatePluginDialog
+from papi.ui.gui.default.PluginCreateDialog import Ui_CreatePluginDialog
 from papi.gui.default.custom import FileLineEdit, ColorLineEdit
 
 from papi.constants import GUI_DEFAULT_TAB

@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/gui/default/create.ui'
+# Form implementation generated from reading ui file 'ui/gui/default/PluginCreateMenu.ui'
 #
-# Created: Thu Aug 13 18:34:29 2015
+# Created: Sun Aug 16 14:31:49 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Create(object):
-    def setupUi(self, Create):
-        Create.setObjectName("Create")
-        Create.resize(742, 629)
-        self.centralwidget = QtWidgets.QWidget(Create)
+class Ui_PluginCreateMenu(object):
+    def setupUi(self, PluginCreateMenu):
+        PluginCreateMenu.setObjectName("PluginCreateMenu")
+        PluginCreateMenu.resize(742, 629)
+        self.centralwidget = QtWidgets.QWidget(PluginCreateMenu)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -29,7 +29,7 @@ class Ui_Create(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 360, 585))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 367, 585))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -75,23 +75,23 @@ class Ui_Create(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout.addWidget(self.scrollArea)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
-        Create.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(Create)
+        PluginCreateMenu.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(PluginCreateMenu)
         self.statusbar.setObjectName("statusbar")
-        Create.setStatusBar(self.statusbar)
+        PluginCreateMenu.setStatusBar(self.statusbar)
 
-        self.retranslateUi(Create)
-        QtCore.QMetaObject.connectSlotsByName(Create)
+        self.retranslateUi(PluginCreateMenu)
+        QtCore.QMetaObject.connectSlotsByName(PluginCreateMenu)
 
-    def retranslateUi(self, Create):
+    def retranslateUi(self, PluginCreateMenu):
         _translate = QtCore.QCoreApplication.translate
-        Create.setWindowTitle(_translate("Create", "MainWindow"))
-        self.pathLabel.setText(_translate("Create", "Path"))
-        self.modulesLabel.setText(_translate("Create", "Missing\n"
+        PluginCreateMenu.setWindowTitle(_translate("PluginCreateMenu", "MainWindow"))
+        self.pathLabel.setText(_translate("PluginCreateMenu", "Path"))
+        self.modulesLabel.setText(_translate("PluginCreateMenu", "Missing\n"
 "Modules"))
-        self.descriptionLabel.setText(_translate("Create", "Description"))
-        self.authorLabel.setText(_translate("Create", "Author"))
-        self.nameLabel.setText(_translate("Create", "Name"))
-        self.createButton.setText(_translate("Create", "Create Plugin"))
-        self.helpButton.setText(_translate("Create", "Help"))
+        self.descriptionLabel.setText(_translate("PluginCreateMenu", "Description"))
+        self.authorLabel.setText(_translate("PluginCreateMenu", "Author"))
+        self.nameLabel.setText(_translate("PluginCreateMenu", "Name"))
+        self.createButton.setText(_translate("PluginCreateMenu", "Create Plugin"))
+        self.helpButton.setText(_translate("PluginCreateMenu", "Help"))
 

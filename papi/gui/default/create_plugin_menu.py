@@ -36,7 +36,8 @@ from papi.yapsy.PluginManager import PluginManager
 
 __author__ = 'knuths'
 
-from papi.ui.gui.default.create import Ui_Create
+from papi.ui.gui.default.PluginCreateMenu import Ui_PluginCreateMenu
+
 from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 import papi.constants as pc
 
@@ -44,7 +45,7 @@ from PyQt5.QtCore       import *
 from PyQt5.QtGui        import QColor, QDesktopServices
 from PyQt5.QtWidgets    import QListWidgetItem, QMainWindow
 
-class CreatePluginMenu(QMainWindow, Ui_Create):
+class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
 
     def __init__(self, gui_api, TabManger, plugin_manager, parent=None):
         super(CreatePluginMenu, self).__init__(parent)
