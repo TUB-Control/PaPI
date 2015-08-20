@@ -46,6 +46,9 @@ class DObject():
         self.id = DObject.get_id()
         self.deleted = False
 
+    def remove(self):
+        self.deleted = True
+
     @staticmethod
     def get_id():
         pid = os.getpid()

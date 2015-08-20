@@ -103,7 +103,7 @@ class DBlock(DObject):
         if signal in self.signals:
             signal.uname = signal.uname + "_deleted"
             signal.dname = signal.dname + "_deleted"
-            signal.deleted = True
+            signal.remove()
             self.signals.remove(signal)
 
             return True
@@ -265,7 +265,7 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a reference to a dictionary of all subcribtions.
+        Returns a reference to a dictionary of all subscribtions.
 
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
@@ -300,6 +300,7 @@ class DPlugin(DObject):
         """
 
         if parameter.name in self.__parameters:
+            self.__parameters[parameter.name].remove()
             del self.__parameters[parameter.name]
             return True
         else:
@@ -344,7 +345,7 @@ class DPlugin(DObject):
         if dblock.name in self.__blocks:
             del self.__blocks[dblock.name]
             dblock.name += "_deleted"
-            dblock.deleted = True
+            dblock.remove()
             return True
         else:
             return False
@@ -418,14 +419,16 @@ class DPlugin(DObject):
         # Update DParameters of DPlugin
         # -----------------------------
 
+        copy_parameters = copy.deepcopy(self.__parameters)
+
         for parameter_name in meta.__parameters:
             if parameter_name in self.__parameters:
                 self.__parameters[parameter_name].update_meta(meta.__parameters[parameter_name])
 
-            if parameter_name not in self.__parameters:
+            if parameter_name not in copy_parameters:
                 self.add_parameter(meta.__parameters[parameter_name])
 
-        for parameter_name in self.__parameters:
+        for parameter_name in copy_parameters:
             if parameter_name not in meta.__parameters:
                 self.rm_parameter(self.__parameters[parameter_name])
 
@@ -433,7 +436,53 @@ class DPlugin(DObject):
         # Update DSubscriptions of DPlugin
         # -----------------------------
 
-        self.__subscriptions = meta.__subscriptions
+        copy_subscriptions = copy.deepcopy(self.__subscriptions)
+        meta_subscriptions = meta.__subscriptions
+
+        #self.__subscriptions = meta_subscriptions
+
+        # ---------------------------------------
+        # Create missing subscriptions
+        # Update existing subscriptions
+        # ---------------------------------------
+
+        for dplugin_uname in meta_subscriptions:
+
+            if dplugin_uname in copy_subscriptions:
+
+                for dblock_name in meta_subscriptions[dplugin_uname]:
+
+                    if dblock_name in copy_subscriptions[dplugin_uname]:
+                        self.__subscriptions[dplugin_uname][dblock_name].update_meta(copy_subscriptions[dplugin_uname][dblock_name])
+                    else:
+                        self.__subscriptions[dplugin_uname][dblock_name] = {}
+                        self.__subscriptions[dplugin_uname][dblock_name] = meta_subscriptions[dplugin_uname][dblock_name]
+            else:
+                self.__subscriptions[dplugin_uname] = meta_subscriptions[dplugin_uname]
+
+        # -----------------------------------------
+        # Remove no more needed subscriptions
+        # -----------------------------------------
+
+        for dplugin_uname in copy_subscriptions:
+
+            if dplugin_uname in meta_subscriptions:
+
+                for dblock_name in copy_subscriptions[dplugin_uname]:
+
+                    if dblock_name not in meta_subscriptions[dplugin_uname]:
+                        # Remove old subscription for dblock_name of dplugin_name
+                        self.__subscriptions[dplugin_uname][dblock_name].remove()
+                        del self.__subscriptions[dplugin_uname][dblock_name]
+
+            else:
+                for dblock_name in copy_subscriptions[dplugin_uname]:
+                    # Remove old subscritions for dplugin_uname
+                    self.__subscriptions[dplugin_uname][dblock_name].remove()
+                    del self.__subscriptions[dplugin_uname][dblock_name]
+
+                del self.__subscriptions[dplugin_uname]
+
 
         # -----------------------------
         # Update DBlocks of DPlugin
@@ -449,6 +498,8 @@ class DSubscription(DObject):
     def __init__(self, dblock):
         self.dblock = dblock
         self.dblock_name = dblock.name
+        self.dplugin_id = dblock.dplugin_id
+
         self.alias = None
         self.signals = []
 
@@ -494,6 +545,9 @@ class DSubscription(DObject):
         :rtype: []
         """
         return copy.copy(self.signals)
+
+    def update_meta(self, subscription):
+        print('update_meta')
 
     def attach_signal(self, signal):
         raise NotImplementedError("Stop Using this function.")
