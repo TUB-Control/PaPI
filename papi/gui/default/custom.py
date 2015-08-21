@@ -124,7 +124,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         self.file_dialog = QFileDialog()
 
         self.setFileMode(QFileDialog.AnyFile)
-        self.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
+        self.setNameFilters( [ self.tr("PaPI-Cfg (*.xml)"), self.tr("PaPI-Cfg (*.json)") ])
         self.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
         self.setWindowTitle("Save Configuration")
         self.setAcceptMode(QFileDialog.AcceptSave)

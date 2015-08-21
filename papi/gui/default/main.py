@@ -572,8 +572,14 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         if len(fileNames):
 
+
+
             if fileNames[0] != '':
-                self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
+                if "json" in dialog.selectedNameFilter():
+                    self.gui_management.gui_api.do_save_json_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
+
+                if "xml" in dialog.selectedNameFilter():
+                    self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
 
     def closeEvent(self, *args, **kwargs):
         """

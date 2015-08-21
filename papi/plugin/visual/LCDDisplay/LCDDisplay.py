@@ -51,7 +51,11 @@ class LCDDisplay(vip_base):
         self.value_scale    = float(self.config['value_scale']['value'])
         self.value_offset   = float(self.config['value_offset']['value'])
         self.digit_count    = int(self.config['digit_count']['value'])
-        self.init_value     = float(self.config['value_init']['value'])
+
+        self.init_value = 0
+        if self.config['value_init']['value'] is not None:
+            self.init_value     = float(self.config['value_init']['value'])
+
 
         # --------------------------------
         # Create Widget

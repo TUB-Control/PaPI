@@ -31,6 +31,7 @@ import datetime
 import time
 import traceback
 import os
+import json
 
 import papi.event as Event
 
@@ -554,7 +555,11 @@ class Gui_api(QtCore.QObject):
 
                 if root_element.tag == 'Subscriptions':
                     for sub_xml in root_element:
-                        dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
+
+                        #TODO: Ask stefan: Why this line?
+                        #dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
+
+                        dest  = sub_xml.find('Destination').text
                         for source in sub_xml:
                             if source.tag == 'Source':
                                 sourceName =  source.attrib['uname'] #self.change_uname_to_uniqe(source.attrib['uname'])
@@ -593,6 +598,8 @@ class Gui_api(QtCore.QObject):
         if not len(unloadable_plugins):
             for pl in plugins_to_start:
                 self.do_create_plugin(pl['identifier'], pl['uname'], pl['cfg'])
+
+            print(subs_to_make)
 
             self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:
@@ -803,8 +810,13 @@ class Gui_api(QtCore.QObject):
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
     def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
+        """
 
-
+        :param path:
+        :param plToSave:
+        :param sToSave:
+        :return:
+        """
 
         subscriptionsToSave =  {}
         # check for xml extension in path, add .xml if missing
@@ -1103,6 +1115,82 @@ class Gui_api(QtCore.QObject):
         except Exception as E:
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not saveable: " + path, tb)
+
+    def do_save_json_config_reloaded(self, path, plToSave=[], sToSave=[]):
+        if path[-5:] != '.json':
+            path += '.json'
+
+        json_config = {}
+        to_create = {}
+        to_control = {}
+        to_sub = {}
+        plugins = self.gui_data.get_all_plugins()
+
+        for dplugin_id in plugins:
+            dplugin = plugins[dplugin_id]
+
+            # check if this plugin should be saved to XML
+            if dplugin.uname in plToSave:
+                if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                    dplugin.startup_config = dplugin.plugin.get_current_config()
+
+                to_create[dplugin.uname] = {}
+
+                to_create[dplugin.uname]["identifier"] = {'value' : dplugin.plugin_identifier}
+                plugin_config = {}
+
+                for config in dplugin.startup_config:
+                    for value in dplugin.startup_config[config]:
+
+                        plugin_config[config] = {'value' : dplugin.startup_config[config][value]}
+
+                to_create[dplugin.uname]["config"] = plugin_config
+
+
+            if dplugin.uname in sToSave:
+                subsOfPl = {}
+                subs = dplugin.get_subscribtions()
+                for sub in subs:
+                    sourcePL = self.gui_data.get_dplugin_by_id(sub).uname
+
+                    subsOfPl[sourcePL] = {}
+                    for block in subs[sub]:
+
+                        subsOfPl[sourcePL][block] = {}
+                        dsubscription = subs[sub][block]
+                        subsOfPl[sourcePL]['alias'] = dsubscription.alias
+
+                        if dsubscription.alias is not None:
+                            to_control[sourcePL] = {}
+                            to_control[sourcePL][block] = {'parameter' : dsubscription.alias}
+                        else:
+
+                            signals = []
+                            for s in dsubscription.get_signals():
+                                signals.append( str(s))
+
+                            to_sub[dplugin.uname] = {}
+                            to_sub[dplugin.uname]['signals'] = signals
+                            to_sub[dplugin.uname]['block']   = block
+                            to_sub[dplugin.uname]['plugin']  = sourcePL
+
+        json_config["ToCreate"] = to_create;
+        json_config["ToControl"] = to_control
+        json_config["ToSub"] = to_sub
+
+        papi_config = {"PaPIConfig" : json_config}
+
+
+        print(json.dumps(papi_config))
+
+        try:
+            with open(path, 'w') as outfile:
+                json.dump(papi_config, outfile)
+
+        except:
+            pass
+
+
 
     def indent(self, elem, level=0):
         """
