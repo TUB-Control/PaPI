@@ -547,7 +547,7 @@ class DSubscription(DObject):
         return copy.copy(self.signals)
 
     def update_meta(self, subscription):
-        print('update_meta')
+        pass
 
     def attach_signal(self, signal):
         raise NotImplementedError("Stop Using this function.")

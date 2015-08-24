@@ -62,6 +62,8 @@ class Radiobutton(pcp_base):
         self.option_values = []
         self.pre_selected_index = None
 
+
+        print(self.config)
         if isinstance(self.config['selected_index']['value'], str):
             if self.config['selected_index']['value'] != '':
                 self.pre_selected_index = int(self.config['selected_index']['value'])

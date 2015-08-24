@@ -1138,11 +1138,12 @@ class Gui_api(QtCore.QObject):
 
                 to_create[dplugin.uname]["identifier"] = {'value' : dplugin.plugin_identifier}
                 plugin_config = {}
-
+                print(dplugin.startup_config)
                 for config in dplugin.startup_config:
+                    print(config)
                     for value in dplugin.startup_config[config]:
-
-                        plugin_config[config] = {'value' : dplugin.startup_config[config][value]}
+                        if value == 'value':
+                            plugin_config[config] = {'value' : dplugin.startup_config[config][value]}
 
                 to_create[dplugin.uname]["config"] = plugin_config
 
@@ -1174,9 +1175,12 @@ class Gui_api(QtCore.QObject):
                             to_sub[dplugin.uname]['block']   = block
                             to_sub[dplugin.uname]['plugin']  = sourcePL
 
-        json_config["ToCreate"] = to_create;
-        json_config["ToControl"] = to_control
-        json_config["ToSub"] = to_sub
+        if len(to_create):
+            json_config["ToCreate"] = to_create;
+        if len(to_control):
+            json_config["ToControl"] = to_control
+        if len(to_sub):
+            json_config["ToSub"] = to_sub
 
         papi_config = {"PaPIConfig" : json_config}
 

@@ -752,6 +752,8 @@ class ORTD_UDP(iop_base):
             if 'ActiveTab' in configuration['PaPIConfig']:
                 activeTab = configuration['PaPIConfig']['tab']
 
+        print(plToCreate)
+
         if 'SourcesConfig' in configuration:
             ORTDSources = configuration['SourcesConfig']
 
