@@ -6,6 +6,9 @@ v.1.x:
 
 -  **feature**: Added ability to define favourite plugins
 -  **doc**: Added documentation for the main window
+-  **simulink**: Control input of the PaPI Simulink block have always be set to one to keep the internal UDP Socket alive
+-  **gui**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
+- **fix**: The connection between a PCP and a parameter will now be correctly restored.
 
 v.1.2:
 ------
