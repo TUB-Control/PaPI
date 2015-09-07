@@ -40,7 +40,7 @@ def = legacy_code('initialize');
 def.SFunctionName = 'papi_simulink_block';
 def.OutputFcnSpec = 'outputPaPIBlock(void **work1, double u1[], double u2, int32 u3, double y1[p4])';
 
-def.StartFcnSpec = 'createPaPIBlock(void **work1, int32 size(u1,1), int32 size(p1,1), int32 size(p2,1), int32 size(p5,1), int32 size(p6,1),  int32 p1[], int8 p2[], int32 p3 , int32 p4, int32 p5[], int32 p6[], int32 p7, int32 p8, int8 p9[])';
+def.StartFcnSpec = 'createPaPIBlock(void **work1, int32 size(u1,1), int32 size(p1,1), int32 size(p2,1), int32 size(p5,1), int32 size(p6,1),  int32 p1[], int8 p2[], int32 p3 , int32 p4, int32 p5[], int32 p6[], int32 p7, int32 p8, int8 p9[], int32 p10)';
 
 def.TerminateFcnSpec = 'deletePaPIBlock(void **work1)';
 def.HeaderFiles = {'PaPIBlock.hpp','UDPHandle.hpp'};

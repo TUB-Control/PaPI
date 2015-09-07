@@ -168,6 +168,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         unselect_all_plugins = QPushButton('No plugins')
         unselect_all_subs = QPushButton('No subscriptions')
 
+        select_for_simulink_ortd = QPushButton('Select for Simulink/ORTD')
 
         select_all_plugins.clicked.connect(lambda  ignore, p = 1 : self.select_items(p))
         select_all_subs.clicked.connect(lambda  ignore, p = 2 : self.select_items(p))
@@ -182,7 +183,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         self.button_vlayout.addWidget(select_all_subs)
         self.button_vlayout.addWidget(unselect_all_plugins)
         self.button_vlayout.addWidget(unselect_all_subs)
-
+        self.button_vlayout.addWidget(select_for_simulink_ortd)
 
 #        self.vlayout.addWidget(self.buttons_widget)
 
@@ -207,6 +208,9 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
             if flag in [-1, -2]:
                 self.pluginTable.cellWidget(r, abs(flag)).setChecked(False)
 
+    def select_simulink_ortd(self):
+        for r in range(self.pluginTable.rowCount()-1):
+            pass
 
     def fill_with(self, data: DGui):
 

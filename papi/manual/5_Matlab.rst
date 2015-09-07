@@ -54,6 +54,32 @@ The library is made out of two blocks:
 | |PaPI_Block_img_desc|     | |PaPI_Block_Complete_img_desc|   |
 +---------------------------+----------------------------------+
 
+PaPI_Block
+~~~~~~~~~~
+
+Should not be used ! No further description.
+
+PaPI_Block_Complete
+~~~~~~~~~~~~~~~~~~~
+
+Input Signals
+^^^^^^^^^^^^^
+
+The `control` is used to control the internal behaviour of the block
+
+.. list-table:: Possible values control signal
+    :widths: 15 10 10 30
+    :header-rows: 1
+
+    * - Value
+      - Description
+    * - 1
+      - Starts the internal UDPHandle and resets the output signals.
+    * - 2
+      - Stops the internal UDPHandle.
+    * - else
+      - Doesn't affect the internal behaviour.
+
 
 Build
 -----

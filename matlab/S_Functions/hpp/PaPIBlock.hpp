@@ -127,9 +127,9 @@ private:
 public:
     PaPIBlock(
         int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
-        int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+        int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     );
 
     ~PaPIBlock();
@@ -149,9 +149,9 @@ public:
 extern void createPaPIBlock(
     void **work1, //Working vector
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
 );
 
 extern void deletePaPIBlock(void **work1);

@@ -54,9 +54,9 @@ typedef struct __attribute__((packed)) para {
 
 PaPIBlock::PaPIBlock(
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                    // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     )
     {
 
@@ -151,7 +151,9 @@ PaPIBlock::PaPIBlock(
 
     #ifdef WITH_HW
         this->createUDPServer();
-        this->startUDPServer();
+        if (p10_start_udp) {
+            this->startUDPServer();
+        }
     #endif
 
 }
@@ -698,9 +700,9 @@ std::string intToString(int i) {
 void createPaPIBlock(
     void **work1, //Working vector
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     )
     {
 
@@ -708,7 +710,7 @@ void createPaPIBlock(
         size_u1, size_p1, size_p2, size_p5, size_p6,
         p1_dimension_parameters, p2_json_config, p3_size_data_out,
         p4_amount_para_out, p5_dimension_input_signals, p6_split_signals,
-        p7_local_port, p8_remote_port, p9_remote_ip
+        p7_local_port, p8_remote_port, p9_remote_ip, p10_start_udp
         );
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 }
