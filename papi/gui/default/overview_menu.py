@@ -474,7 +474,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         # Open no context menu for signals
         # ----------------------------------
 
-        if not index.child(0, 0).isValid():
+        if not isinstance(self.subscriptionsTree.model().data(index, Qt.UserRole), DBlock):
             isSignal = True
 
         # ----------------------------------
