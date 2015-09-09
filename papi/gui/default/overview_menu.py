@@ -35,7 +35,7 @@ from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTre
 from papi.ui.gui.default.PluginOverviewMenu import Ui_PluginOverviewMenu
 
 
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
+from papi.constants import PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
     PLUGIN_STATE_DELETE
 
@@ -219,7 +219,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.typeEdit.setText(dplugin.type)
         self.alivestateEdit.setText(dplugin.alive_state)
 
-        if dplugin.type != PLUGIN_PCP_IDENTIFIER:
+        # if dplugin.type != PLUGIN_PCP_IDENTIFIER:
+        if 0:
             self.pauseButton.setDisabled(False)
             self.playButton.setDisabled(False)
             self.stopButton.setDisabled(False)
@@ -553,7 +554,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         for dplugin_id in dplugin_ids:
             dplugin_pcp = dplugin_ids[dplugin_id]
 
-            if dplugin_pcp.type == PLUGIN_PCP_IDENTIFIER:
+            if len(dplugin_pcp.get_devent()) > 0:
                 # action = QAction(self.tr(dplugin.uname), self)
                 # sub_menu.addAction(action)
                 pcp_menu = QMenu(self.tr(dplugin_pcp.uname), sub_menu)
@@ -563,7 +564,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
                 for dblock_pcp_id in dblock_pcp_ids:
                     dblock_pcp = dblock_pcp_ids[dblock_pcp_id]
-                    action = QAction(self.tr(dblock_pcp.name), pcp_menu)
+
+                    count = len(dblock_pcp.get_subscribers())
+
+                    action = QAction(self.tr(dblock_pcp.name)+' ('+str(count)+')', pcp_menu)
                     pcp_menu.addAction(action)
 
                     action.triggered.connect(lambda ignore, p1=dplugin, p2=dparameter, p3=dplugin_pcp, p4=dblock_pcp:
@@ -695,9 +699,9 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
                 if not self.dpp_root.hasItem(new_dplugin):
                     self.dpp_root.appendRow(plugin_item)
-            if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
-                if not self.pcp_root.hasItem(new_dplugin):
-                    self.pcp_root.appendRow(plugin_item)
+            # if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
+            #     if not self.pcp_root.hasItem(new_dplugin):
+            #         self.pcp_root.appendRow(plugin_item)
 
 
                     #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
@@ -743,8 +747,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                 self.io_root.appendRow(plugin_item)
             if dplugin.type == PLUGIN_DPP_IDENTIFIER:
                 self.dpp_root.appendRow(plugin_item)
-            if dplugin.type == PLUGIN_PCP_IDENTIFIER:
-                self.pcp_root.appendRow(plugin_item)
+            # if dplugin.type == PLUGIN_PCP_IDENTIFIER:
+            #     self.pcp_root.appendRow(plugin_item)
 
     def play_button_callback(self):
         """

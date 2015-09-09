@@ -34,14 +34,14 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DBlock
 
 from papi.plugin.visual.Console.CmdInput import CmdInput
 
 
-class Console(pcp_base):
+class Console(vip_base):
 
 
     def initiate_layer_0(self, config=None):
@@ -94,7 +94,7 @@ class Console(pcp_base):
         # If this plugin is a DPP, then it will get Data with data
 
         # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []

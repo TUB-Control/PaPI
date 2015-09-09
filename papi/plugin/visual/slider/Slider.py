@@ -28,7 +28,8 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
+
+from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
@@ -38,7 +39,7 @@ from papi.data.DParameter import DParameter
 import papi.constants as pc
 
 
-class Slider(pcp_base):
+class Slider(vip_base):
 
     def initiate_layer_0(self, config):
 

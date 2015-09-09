@@ -27,6 +27,8 @@ Sven Knuth
 """
 
 from papi.data import DParameter
+from papi.constants import CORE_TIME_SIGNAL
+
 
 __author__ = 'knuths'
 
@@ -53,7 +55,7 @@ class DBlock(DObject):
         self.dplugin_id = None
         self.name = name
         self.signals = []
-        self.add_signal(DSignal('t'))
+        self.add_signal(DSignal(CORE_TIME_SIGNAL))
 
     def add_subscribers(self, dplugin):
         """
@@ -145,7 +147,9 @@ class DBlock(DObject):
 
 
 class DEvent(DBlock):
-    pass
+    def __init__(self, name):
+        super(DEvent, self).__init__(name)
+
 
 class DPlugin(DObject):
     """
@@ -365,6 +369,16 @@ class DPlugin(DObject):
         """
         return self.__blocks
 
+    def get_devent(self):
+        devent_dict = {}
+        for dblock_name in self.__blocks:
+            block = self.__blocks[dblock_name]
+            if isinstance(block, DEvent):
+                devent_dict[dblock_name] = block
+
+        return devent_dict
+
+
     def get_dblock_by_name(self, dblock_name):
         """
         Returns a single block by its unique name of all parameters.
@@ -508,7 +522,7 @@ class DSubscription(DObject):
 
         self.alias = None
         self.signals = []
-        self.add_signal('t')
+        self.add_signal(CORE_TIME_SIGNAL)
 
     def add_signal(self, signal):
         """

@@ -28,8 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
-
+from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
@@ -37,7 +36,7 @@ from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 
 
-class Textfield(pcp_base):
+class Textfield(vip_base):
 
     def initiate_layer_0(self, config):
 

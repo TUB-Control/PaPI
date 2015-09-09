@@ -35,6 +35,7 @@ sys.path.insert(0,os.path.abspath('../../../../'))
 
 print(sys.path)
 import papi.pyqtgraph as pg
+from papi.constants import CORE_TIME_SIGNAL
 
 from PyQt5.QtGui import QApplication, QLabel
 from PyQt5 import QtCore
@@ -49,7 +50,7 @@ def do_fctn(plugin):
     now = pg.ptime.time()
 
     for i in range(10):
-        data['t'] = [t]
+        data[CORE_TIME_SIGNAL] = [t]
         t += 0.0025
         data['signal_1'] = [random.randint(0, 5)]
         data['signal_2'] = [random.randint(10, 15)]

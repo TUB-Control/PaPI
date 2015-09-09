@@ -49,6 +49,8 @@ CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 10
 
+CORE_TIME_SIGNAL                = 'papi_time_signal'
+
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
 PAPI_USER_CFG                   = ''
 
@@ -122,7 +124,6 @@ PLUGIN_PCP_FOLDER               = ''
 # PLUGIN TYPE IDENTIFIER
 PLUGIN_IOP_IDENTIFIER           = 'IOP'
 PLUGIN_VIP_IDENTIFIER           = 'ViP'
-PLUGIN_PCP_IDENTIFIER           = 'PCP'
 PLUGIN_DPP_IDENTIFIER           = 'DPP'
 
 # PLUGIN STATE IDENTIFIER
