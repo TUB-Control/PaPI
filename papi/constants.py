@@ -72,9 +72,9 @@ Version """ + CORE_PAPI_VERSION + """
 <br/>
 <br/>
 Copyright """ + PAPI_COPYRIGHT + """ <a href="http://www.control.tu-berlin.de/">Control Systems Group</a>, TU-Berlin.<br/>
-Published under <a href="https://www.gnu.org/licenses/lgpl.html">LGPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
+Published under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
 <br/><br/>
-PaPI uses:
+PaPI is embedding:
 <ul>
 <li>Yapsy 1.10.423 published under BSD-License, <a href="http://yapsy.sourceforge.net/#license">License</a></li>
 <li>pyqtgraph-0.9.10 published under MIT-License, <a href="http://www.opensource.org/licenses/mit-license.php">License</a></li>
