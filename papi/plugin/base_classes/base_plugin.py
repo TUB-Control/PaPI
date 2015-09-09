@@ -413,7 +413,5 @@ class base_plugin(IPlugin):
 
         sub_object = self.__subscription_for_demux[source_id][block_name]
         sub_signals = sub_object.signals
-        if 't' not in sub_signals:
-            sub_signals.append('t')
 
         return dict([(i, data[i]) for i in sub_signals if i in data])

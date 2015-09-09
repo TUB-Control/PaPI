@@ -31,6 +31,7 @@ from papi.data import DParameter
 __author__ = 'knuths'
 
 from papi.data.DObject import DObject
+from papi.data.DSignal import DSignal
 import copy
 
 
@@ -52,6 +53,7 @@ class DBlock(DObject):
         self.dplugin_id = None
         self.name = name
         self.signals = []
+        self.add_signal(DSignal('t'))
 
     def add_subscribers(self, dplugin):
         """
@@ -224,7 +226,7 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock):
         """
-        This plugin subscribes a 'dblock' by remembering the dblog id.
+        This plugin subscribes a 'dblock' by remembering the dblock id.
 
         :param dblock: DBlock which should be subscribed
         :return:
@@ -506,6 +508,7 @@ class DSubscription(DObject):
 
         self.alias = None
         self.signals = []
+        self.add_signal('t')
 
     def add_signal(self, signal):
         """
