@@ -39,12 +39,11 @@ from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, PLUGIN_
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
     PLUGIN_STATE_DELETE
 
-from PyQt5.QtGui        import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
 from PyQt5.QtCore import Qt
 
 
-from papi.data.DPlugin import DPlugin, DBlock, DParameter
+from papi.data.DPlugin import DPlugin, DBlock, DParameter, DSubscription
 
 
 class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
@@ -267,17 +266,32 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             for subscriber_id in subscriber_ids:
                 # Other plugin
                 subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
+                print(subscriber.get_subscribtions())
+                print(dplugin.uname)
+                print(dplugin.id)
 
-                print(subscriber)
+                if dplugin.id in subscriber.get_subscribtions():
 
-                subscriber_item = DPluginTreeItem(subscriber)
+                    for dblock_sub_id in subscriber.get_subscribtions()[dplugin.id]:
 
-                block_item = DBlockTreeItem(dblock)
 
-                subscriber_item.appendRow(block_item)
+                        subscriber_item = DPluginTreeItem(subscriber)
+        #                self.subscriberModel.appendRow(subscriber_item)
+                        self.subscribers_root.appendRow(subscriber_item)
 
-#                self.subscriberModel.appendRow(subscriber_item)
-                self.subscribers_root.appendRow(subscriber_item)
+                        subscription = subscriber.get_subscribtions()[dplugin.id][dblock_sub_id]
+
+                        block_item = DBlockTreeItem(dblock)
+
+                        subscriber_item.appendRow(block_item)
+
+                        subscription_item = PaPITreeItem(subscription, "Signals")
+                        block_item.appendRow(subscription_item)
+                        for signal_uname in sorted(subscription.get_signals()):
+
+                            signal_item = PaPITreeItem(signal_uname, signal_uname)
+
+                            subscription_item.appendRow(signal_item)
 
 
         # -------------------------
@@ -311,7 +325,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
                 for signal_uname in sorted(subscription.get_signals()):
 
-                    signal_item = QStandardItem(signal_uname)
+                    signal_item = PaPITreeItem(signal_uname, signal_uname)
 
                     subscription_item.appendRow(signal_item)
 
@@ -441,6 +455,16 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         if self.subscribersTree.isIndexHidden(index):
             return
 
+        if isinstance(self.subscribersTree.model().data(index, Qt.UserRole), DSubscription):
+            return
+
+        # ----------------------------------
+        # Open no context menu for signals
+        # ----------------------------------
+
+        if not isinstance(self.subscribersTree.model().data(index, Qt.UserRole), DBlock):
+            isSignal = True
+
         dblock = self.subscribersTree.model().data(index, Qt.UserRole)
         dplugin = self.subscribersTree.model().data(index.parent(), Qt.UserRole)
 
@@ -488,6 +512,14 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         if self.subscriptionsTree.isIndexHidden(index):
             return None
 
+
+        # ----------------------------------
+        # Open no context menu for dsubscriptions
+        # ----------------------------------
+
+        if isinstance(self.subscriptionsTree.model().data(index, Qt.UserRole), DSubscription):
+            return None
+
         # ----------------------------------
         # Open no context menu for signals
         # ----------------------------------
@@ -505,8 +537,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             action = QAction('Remove Subscription', self)
         else:
             signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
-            dblock = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            dplugin = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
+            dblock = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
+            dplugin = self.subscriptionsTree.model().data(index.parent().parent().parent(), Qt.UserRole)
 
             action = QAction('Remove Signal -> ' + signal_uname, self)
             signals.append(signal_uname)
@@ -676,8 +708,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.io_root.clean()
         self.pcp_root.clean()
 
-        self.subscriptions_root.clean()
+        print('Clean Subscribers')
         self.subscribers_root.clean()
+        print('Clean Subscriptions')
+        self.subscriptions_root.clean()
 
 #        self.subscribersTree
 

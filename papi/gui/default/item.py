@@ -80,20 +80,27 @@ class PaPITreeItem(QStandardItem):
 
         :return: True if items were removed and has no more children
         """
+
         for row in range(self.rowCount()):
             treeItem = self.child(row)
+            print(treeItem)
             if treeItem is not None:
                 item = treeItem.data(Qt.UserRole)
-                canBeRemoved = False
-                print(item)
 
-                if hasattr(treeItem, 'clean()'):
-                    canBeRemoved = treeItem.clean()
+                canBeRemoved = treeItem.clean()
 
                 if hasattr(item, 'state'):
-                    if item.state == 'deleted' or item.deleted or canBeRemoved:
+                    if item.state == 'deleted':
                         self.removeRow(row)
                         return not self.hasChildren()
+                if hasattr(item, 'deleted'):
+                    if item.deleted:
+                        self.removeRow(row)
+                        return not self.hasChildren()
+
+                if canBeRemoved:
+                    self.removeRow(row)
+                    return True
 
             return False
 

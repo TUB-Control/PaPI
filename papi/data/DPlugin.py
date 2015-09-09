@@ -212,7 +212,10 @@ class DPlugin(DObject):
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
                     subscription.rm_signal(signal)
-
+                if 0 == len(subscription.get_signals()):
+                    subscription.remove()
+                    del self.__subscriptions[dblock.dplugin_id][dblock.name]
+                    return None
                 return subscription
             else:
                 return None
@@ -254,6 +257,7 @@ class DPlugin(DObject):
         else:
 
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
+                self.__subscriptions[dblock.dplugin_id][dblock.name].remove()
                 del self.__subscriptions[dblock.dplugin_id][dblock.name]
 
                 if len(self.__subscriptions[dblock.dplugin_id]) is 0:

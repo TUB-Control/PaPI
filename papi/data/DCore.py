@@ -57,7 +57,7 @@ class DCore():
         :rtype: int
         """
         #self.__newid += 1
-        self.__newid = DObject.get_id()
+        self.__newid = DObject.create_unique_id()
         return self.__newid
 #        return uuid.uuid4().int >> 64
 

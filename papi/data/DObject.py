@@ -43,14 +43,17 @@ class DObject():
 
         :return:
         """
-        self.id = DObject.get_id()
+        self.id = DObject.create_unique_id()
         self.deleted = False
 
     def remove(self):
         self.deleted = True
 
+    def get_id(self):
+        return self.id
+
     @staticmethod
-    def get_id():
+    def create_unique_id():
         pid = os.getpid()
         DObject.__id__ += 1
         return str(pid) + "_" + str(DObject.__id__)
