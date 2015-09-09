@@ -73,10 +73,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.pluginTree.setModel(self.dpluginModel)
         self.pluginTree.setUniformRowHeights(True)
 
-        self.visual_root = PaPIRootItem('ViP')
-        self.io_root = PaPIRootItem('IOP')
-        self.dpp_root = PaPIRootItem('DPP')
-        self.pcp_root = PaPIRootItem('PCP')
+        self.visual_root = PaPIRootItem('Visualization      ')
+        self.io_root = PaPIRootItem('Input/Output     ')
+        self.dpp_root = PaPIRootItem('Data Processing')
+        self.pcp_root = PaPIRootItem('Plugin Control    ')
 
         self.dpluginModel.appendRow(self.visual_root)
         self.dpluginModel.appendRow(self.io_root)
