@@ -171,7 +171,7 @@ class DCore():
         :return:
         """
 
-        #Get Susbcriber DPlugin
+        #Get Subscriber DPlugin
         subscriber = self.get_dplugin_by_id(subscriber_id)
 
         if subscriber is None:

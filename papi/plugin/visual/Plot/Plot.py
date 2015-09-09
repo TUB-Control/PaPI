@@ -628,10 +628,11 @@ class Plot(vip_base):
         # Add new subscribed signals
         # ----------------------------
         for signal_name in sorted(current_signals.keys()):
-            if signal_name not in self.signals:
-                signal = current_signals[signal_name]['signal']
-                self.add_plot_item(signal, current_signals[signal_name]['index'])
-                changes = True
+            if signal_name != 't':
+                if signal_name not in self.signals:
+                    signal = current_signals[signal_name]['signal']
+                    self.add_plot_item(signal, current_signals[signal_name]['index'])
+                    changes = True
 
         # -------------------------------
         # Remove unsubscribed signals
@@ -963,9 +964,10 @@ class Plot(vip_base):
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
                 for signal_name in subscription.get_signals():
-                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+                    if signal_name != 't':
+                        signal = subscription.get_dblock().get_signal_by_uname(signal_name)
 
-                    self.signals[signal_name].update_signal(signal)
+                        self.signals[signal_name].update_signal(signal)
 
     def update_legend(self):
         """

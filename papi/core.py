@@ -429,15 +429,15 @@ class Core:
         if already_sub is False:
             dsubscription = self.core_data.subscribe(subscriber_id, source_id, block_name)
             if dsubscription is None:
-                # subscribtion failed
-                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+                # subscription failed
+                self.log.printText(1, 'subscribe, something failed in subscription process with subscriber id: ' + str(
                     subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name))
                 return -1
             else:
-                # subscribtion correct
+                # subscription correct
                 # set alias for parameter control (can be none if no parameter)
                 dsubscription.alias = sub_alias
-                # send event to plugin which will controll this parameter with information of parameter
+                # send event to plugin which will control this parameter with information of parameter
                 if sub_alias is not None:
                     sub_pl = self.core_data.get_dplugin_by_id(subscriber_id)
                     if sub_pl is not None:
@@ -449,7 +449,7 @@ class Core:
 
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
-                # subscribtion failed
+                # subscription failed
                 self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
                     subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name)
                                    + '. A Problem with signals')
