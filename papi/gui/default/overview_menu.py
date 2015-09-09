@@ -106,27 +106,38 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.showInternalNameCheckBox.clicked.connect(self.show_internal_name_callback)
 
         # -----------------------------------
-        # Build structure of subscriber tree
+        # Build structure of connection tree
         # -----------------------------------
 
-        self.subscriberModel = PaPITreeModel()
-        self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
-        self.subscribersTree.setModel(self.subscriberModel)
-        self.subscribersTree.setUniformRowHeights(True)
+        self.connectionModel = PaPITreeModel()
+        self.connectionModel.setHorizontalHeaderLabels([''])
+        self.connectionTree.setModel(self.connectionModel)
+        self.connectionTree.setUniformRowHeights(True)
 
         self.subscribers_root = PaPIRootItem('Subscribers')
-        self.subscriberModel.appendRow(self.subscribers_root)
-        # -----------------------------------
-        # Build structure of subscriptions tree
-        # -----------------------------------
-
-        self.subscriptionModel = PaPITreeModel()
-        self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
-        self.subscriptionsTree.setModel(self.subscriptionModel)
-        self.subscriptionsTree.setUniformRowHeights(True)
+        self.connectionModel.appendRow(self.subscribers_root)
 
         self.subscriptions_root = PaPIRootItem('Subscriptions')
-        self.subscriptionModel.appendRow(self.subscriptions_root)
+        self.connectionModel.appendRow(self.subscriptions_root)
+
+        # # -----------------------------------
+        # # Build structure of subscriber tree
+        # # -----------------------------------
+        #
+        # self.subscriberModel = PaPITreeModel()
+        # self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
+        # self.subscribersTree.setModel(self.subscriberModel)
+        # self.subscribersTree.setUniformRowHeights(True)
+        #
+        # # -----------------------------------
+        # # Build structure of subscriptions tree
+        # # -----------------------------------
+        #
+        # self.subscriptionModel = PaPITreeModel()
+        # self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
+        # self.subscriptionsTree.setModel(self.subscriptionModel)
+        # self.subscriptionsTree.setUniformRowHeights(True)
+
 
 
         # -----------------------------------
@@ -149,11 +160,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.parameterTree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.parameterTree.customContextMenuRequested.connect(self.open_context_menu_parameter_tree)
 
-        self.subscribersTree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.subscribersTree.customContextMenuRequested.connect(self.open_context_menu_subscriber_tree)
-
-        self.subscriptionsTree.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.subscriptionsTree.customContextMenuRequested.connect(self.open_context_menu_subscription_tree)
+        self.connectionTree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.connectionTree.customContextMenuRequested.connect(self.open_context_menu_connection_tree)
 
         # ----------------------------------
         # Add Actions
@@ -182,8 +190,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         self.bModel.setHorizontalHeaderLabels(['Name'])
         self.dparameterModel.setHorizontalHeaderLabels(['Name', 'Value'])
-        self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
-        self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
+        self.connectionModel.setHorizontalHeaderLabels([''])
 
     def plugin_item_changed(self, index):
         """
@@ -198,9 +205,9 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.clear()
 
         if dplugin is None:
-            self.tabWidget.setDisabled(True)
+            self.pluginWidget.setDisabled(True)
             return
-        self.tabWidget.setDisabled(False)
+        self.pluginWidget.setDisabled(False)
 
         # ------------------------------------
         # Get all needed dplugin information
@@ -266,9 +273,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             for subscriber_id in subscriber_ids:
                 # Other plugin
                 subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
-                print(subscriber.get_subscribtions())
-                print(dplugin.uname)
-                print(dplugin.id)
 
                 if dplugin.id in subscriber.get_subscribtions():
 
@@ -276,7 +280,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
 
                         subscriber_item = DPluginTreeItem(subscriber)
-        #                self.subscriberModel.appendRow(subscriber_item)
+                        #                self.subscriberModel.appendRow(subscriber_item)
                         self.subscribers_root.appendRow(subscriber_item)
 
                         subscription = subscriber.get_subscribtions()[dplugin.id][dblock_sub_id]
@@ -352,13 +356,9 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.bModel.sort(0)
 
     def plugin_item_refresh(self, index):
-        dplugin = self.pluginTree.model().data(index, Qt.UserRole)
-
         self.parameterTree.viewport().update()
         self.blockTree.viewport().update()
-        self.subscribersTree.viewport().update()
-        self.subscriptionsTree.viewport().update()
-
+        self.connectionTree.viewport().update()
 
     # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
@@ -436,7 +436,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
             menu.exec_(self.blockTree.viewport().mapToGlobal(position))
 
-    def open_context_menu_subscriber_tree(self, position):
+    def open_context_menu_connection_tree(self, position):
         """
         This callback function is called to create a context menu
         for the subscriper tree
@@ -444,115 +444,83 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         :param position:
         :return:
         """
-        index = self.subscribersTree.indexAt(position)
+        index = self.connectionTree.indexAt(position)
 
         if index.isValid() is False:
+            return None
+
+        if self.connectionTree.isIndexHidden(index):
             return None
 
         if index.parent().isValid() is False:
             return None
 
-        if self.subscribersTree.isIndexHidden(index):
+        parIndex = index
+        subscriberPart = False
+        subscriptionPart = False
+        signals = []
+        isSignal = False
+
+        while True:
+            object = self.connectionTree.model().data(parIndex, Qt.DisplayRole)
+
+            if "Subscribers" in object:
+                subscriberPart = True
+            if "Subscriptions" in object:
+                subscriptionPart = True
+
+            if ( subscriptionPart or subscriberPart ):
+                break
+
+            parIndex = parIndex.parent()
+
+            if parIndex.isValid() is False:
+                return
+
+        if not (subscriptionPart or subscriberPart):
+            return None
+
+        if isinstance(self.connectionTree.model().data(index, Qt.UserRole), DSubscription):
             return
 
-        if isinstance(self.subscribersTree.model().data(index, Qt.UserRole), DSubscription):
+        if isinstance(self.connectionTree.model().data(index, Qt.UserRole), DPlugin):
             return
 
         # ----------------------------------
         # Open no context menu for signals
         # ----------------------------------
 
-        if not isinstance(self.subscribersTree.model().data(index, Qt.UserRole), DBlock):
+        if isinstance(self.connectionTree.model().data(index, Qt.UserRole), str):
             isSignal = True
+        else:
+            isSignal = False
 
-        dblock = self.subscribersTree.model().data(index, Qt.UserRole)
-        dplugin = self.subscribersTree.model().data(index.parent(), Qt.UserRole)
+
+
+        # ----------------------------------
+        # Get necessary objects for this subscription/subscriber
+        # ----------------------------------
+
+        if isSignal:
+            dblock = self.connectionTree.model().data(index.parent().parent(), Qt.UserRole)
+            dplugin = self.connectionTree.model().data(index.parent().parent().parent(), Qt.UserRole)
+            signal_uname = self.connectionTree.model().data(index, Qt.UserRole)
+            signals.append(signal_uname)
+        else:
+            dblock = self.connectionTree.model().data(index, Qt.UserRole)
+            dplugin = self.connectionTree.model().data(index.parent(), Qt.UserRole)
+
+        if subscriberPart:
+            action = QAction('Remove Subscriber', self)
+            action.triggered.connect(lambda ignore, p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
+
+        if subscriptionPart:
+            action = QAction('Remove Subscription', self)
+            action.triggered.connect(lambda ignore, p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
 
         menu = QMenu('Remove')
-
-        action = QAction('Remove Subscriber', self)
         menu.addAction(action)
-
-        action.triggered.connect(lambda ignore, p=dblock, m=dplugin: self.remove_subscriber_action(m, p))
-
-        menu.exec_(self.subscribersTree.viewport().mapToGlobal(position))
-
-    def open_context_menu_subscription_tree(self, position):
-        """
-        This callback function is called to create a context menu
-        for the subscription tree
-
-        :param position:
-        :return:
-        """
-        index = self.subscriptionsTree.indexAt(position)
-        isSignal = False
-        menu = None
-        action = None
-        signals = []
-
-        # ----------------------------------
-        # Open no context menu if invalid
-        # ----------------------------------
-
-        if index.isValid() is False:
-            return None
-
-        # ----------------------------------
-        # Open no context menu for parent
-        # ----------------------------------
-
-        if index.parent().isValid() is False:
-            return None
-
-        # ----------------------------------
-        # Open no context menu for hidden objects
-        # ----------------------------------
-
-        if self.subscriptionsTree.isIndexHidden(index):
-            return None
-
-
-        # ----------------------------------
-        # Open no context menu for dsubscriptions
-        # ----------------------------------
-
-        if isinstance(self.subscriptionsTree.model().data(index, Qt.UserRole), DSubscription):
-            return None
-
-        # ----------------------------------
-        # Open no context menu for signals
-        # ----------------------------------
-
-        if not isinstance(self.subscriptionsTree.model().data(index, Qt.UserRole), DBlock):
-            isSignal = True
-
-        # ----------------------------------
-        # Get necessary objects for this subscription
-        # ----------------------------------
-
-        if not isSignal:
-            dblock = self.subscriptionsTree.model().data(index, Qt.UserRole)
-            dplugin = self.subscriptionsTree.model().data(index.parent(), Qt.UserRole)
-            action = QAction('Remove Subscription', self)
-        else:
-            signal_uname = self.subscriptionsTree.model().data(index, Qt.DisplayRole)
-            dblock = self.subscriptionsTree.model().data(index.parent().parent(), Qt.UserRole)
-            dplugin = self.subscriptionsTree.model().data(index.parent().parent().parent(), Qt.UserRole)
-
-            action = QAction('Remove Signal -> ' + signal_uname, self)
-            signals.append(signal_uname)
-
-        # ----------------------------------
-        # Create context menu
-        # ----------------------------------
-
-        menu = QMenu()
-        menu.addAction(action)
-
-        action.triggered.connect(lambda ignore, p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
-
-        menu.exec_(self.subscriptionsTree.viewport().mapToGlobal(position))
+        menu.exec_(self.connectionTree.viewport().mapToGlobal(position))
 
     def open_context_menu_parameter_tree(self, position):
         """
@@ -662,9 +630,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         :return:
         """
         index = self.pluginTree.currentIndex()
-
         source = self.pluginTree.model().data(index, Qt.UserRole)
-
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, [])
 
     def refresh_action(self, new_dplugin: DPlugin=None):
@@ -691,10 +657,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         if dplugin is not None:
 
             if dplugin.state == PLUGIN_STATE_DELETE:
-                self.tabWidget.setDisabled(True)
+                self.pluginWidget.setDisabled(True)
                 self.clear()
             else:
-                self.tabWidget.setEnabled(True)
+                self.pluginWidget.setEnabled(True)
                 #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
                 #self.pluginTree.clicked.emit(index)
                 self.plugin_item_refresh(index)
@@ -708,12 +674,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.io_root.clean()
         self.pcp_root.clean()
 
-        print('Clean Subscribers')
         self.subscribers_root.clean()
-        print('Clean Subscriptions')
         self.subscriptions_root.clean()
 
-#        self.subscribersTree
+        #        self.subscribersTree
 
         # -----------------------------------------
         # case: a DPlugin was added
@@ -726,7 +690,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                     self.visual_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_IOP_IDENTIFIER:
                 if not self.io_root.hasItem(new_dplugin):
-#                plugin_item = DPluginTreeItem(new_dplugin)
+                    #                plugin_item = DPluginTreeItem(new_dplugin)
                     self.io_root.appendRow(plugin_item)
             if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
                 if not self.dpp_root.hasItem(new_dplugin):
@@ -736,12 +700,12 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                     self.pcp_root.appendRow(plugin_item)
 
 
-        #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
-        #index = self.pluginTree.currentIndex()
-        #if index.isValid():
-        #    self.plugin_item_refresh(index)
+                    #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
+                    #index = self.pluginTree.currentIndex()
+                    #if index.isValid():
+                    #    self.plugin_item_refresh(index)
 
-            #self.pluginTree.clicked.emit(index)
+                    #self.pluginTree.clicked.emit(index)
 
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
@@ -754,7 +718,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         """
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
-
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, signals)
 
     def showEvent(self, *args, **kwargs):
@@ -884,5 +847,5 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             self.close()
 
         if self.pluginTree.hasFocus() and \
-                event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
+                        event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
             self.plugin_item_changed(self.pluginTree.currentIndex())

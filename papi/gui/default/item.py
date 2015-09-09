@@ -83,7 +83,6 @@ class PaPITreeItem(QStandardItem):
 
         for row in range(self.rowCount()):
             treeItem = self.child(row)
-            print(treeItem)
             if treeItem is not None:
                 item = treeItem.data(Qt.UserRole)
 
