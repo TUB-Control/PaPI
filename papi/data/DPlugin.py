@@ -568,10 +568,8 @@ class DSubscription(DObject):
         return self.signals
 
     def update_meta(self, subscription):
-        print('MetaUpdate')
         self.alias = subscription.alias
         self.signals = subscription.signals
-        print(self.signals)
 
     def attach_signal(self, signal):
         raise NotImplementedError("Stop Using this function.")
