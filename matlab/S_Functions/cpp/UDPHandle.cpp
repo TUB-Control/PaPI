@@ -138,7 +138,7 @@ void UDPHandle::startSend() {
         boost::system::error_code ignored_error;
 
         this->udp_socket->send_to(
-            boost::asio::buffer(this->send_buffer_, sizeof(int)*this->send_msg_length_) ,
+            boost::asio::buffer(this->send_buffer_, sizeof(char)*this->send_msg_length_) ,
             *this->udp_endpoint_destination, 0, ignored_error
         );
 
@@ -154,15 +154,23 @@ void UDPHandle::startSend() {
     @param stream Data stream which should be sent.
     @param msg_length Defines the amount of elements in the data stream
 */
-void UDPHandle::sendData(int* stream, std::size_t msg_length) {
+void UDPHandle::sendData(const char* stream, std::size_t msg_length) {
     if (this->threadInitialized) {
         this->send_msg_length_ = msg_length;
-//        this->send_buffer_ = new int[msg_length];
 
+        std::memcpy(this->send_buffer_.begin(), stream, sizeof(char)*msg_length);
+        this->sigSendData();
+    }
+}
+
+void UDPHandle::sendData(int* stream, std::size_t msg_length) {
+    if (this->threadInitialized) {
+        this->send_msg_length_ = msg_length*4;
         std::memcpy(this->send_buffer_.begin(), stream, sizeof(int)*msg_length);
         this->sigSendData();
     }
 }
+
 /**
     Callback function which is triggered by an incoming package.
     Will also call the this->otherHandleRecieve if defined.

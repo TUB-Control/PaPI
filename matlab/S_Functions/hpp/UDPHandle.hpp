@@ -81,6 +81,7 @@ public:
 
     void run();
     void stop();
+    void sendData(const char*, std::size_t);
     void sendData(int*, std::size_t);
 
 };
