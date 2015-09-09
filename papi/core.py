@@ -667,7 +667,7 @@ class Core:
                             self.log.printText(1, 'new_data, subscriber plugin with id ' + str(
                                 sub_id) + ' does not exists')
                             return -1
-                    # check if our list with id is greater than 1, which will indicate that there is at least one ViP
+                    # check if our list with id is longer than 0, which will indicate that there is at least one ViP
                     # which will need to get this new data event
                     if len(id_list) > 0:
                         # send new_data event to GUI with id_list of destinations
