@@ -76,10 +76,10 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginTree.setUniformRowHeights(True)
         self.pluginTree.setSortingEnabled(True)
 
-        self.visual_root = PaPIRootItem('ViP')
-        self.io_root = PaPIRootItem('IOP')
-        self.dpp_root = PaPIRootItem('DPP')
-        self.pcp_root = PaPIRootItem('PCP')
+        self.visual_root = PaPIRootItem('Visualization      ')
+        self.io_root = PaPIRootItem('Input/Output     ')
+        self.dpp_root = PaPIRootItem('Data Processing')
+        self.pcp_root = PaPIRootItem('Plugin Control    ')
 
         model.appendRow(self.visual_root)
         model.appendRow(self.io_root)

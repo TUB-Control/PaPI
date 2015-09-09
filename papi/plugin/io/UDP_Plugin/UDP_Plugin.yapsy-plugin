@@ -1,11 +1,11 @@
 [Core]
-Name = ORTD_UDP
-Module = ORTD_UDP
+Name = UDP_Plugin
+Module = UDP_Plugin
 
 [Documentation]
 Author = Christian Klauer, Stefan Ruppin
-Version = 0.1
-Website = openrtdynamics.sf.net
-Description = openrtdynamics interface
+Version = 1.0
+Website =
+Description =
 
 Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/
