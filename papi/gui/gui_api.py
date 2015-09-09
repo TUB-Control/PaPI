@@ -599,7 +599,6 @@ class Gui_api(QtCore.QObject):
             for pl in plugins_to_start:
                 self.do_create_plugin(pl['identifier'], pl['uname'], pl['cfg'])
 
-            print(subs_to_make)
 
             self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:

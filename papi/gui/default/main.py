@@ -451,13 +451,13 @@ class GUI(QMainWindow, Ui_DefaultMain):
         #     if 'value' in cfg['activeTab']['active']:
         #         self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
         #
-        # #################
-        # # windows size: #
-        # #################
-        # if 'size' in cfg:
-        #     w = int(cfg['size']['x']['value'])
-        #     h = int(cfg['size']['y']['value'])
-        #     self.resize_gui_window(w,h)
+        #################
+        # windows size: #
+        #################
+        if 'Size' in cfg:
+            w = int(cfg['Size']['X'])
+            h = int(cfg['Size']['Y'])
+            self.resize_gui_window(w,h)
 
         # ------------------------
         # Restore favourite icons
