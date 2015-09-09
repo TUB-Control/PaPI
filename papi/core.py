@@ -43,7 +43,7 @@ import papi.constants as pc
 
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE, \
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
-    CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
+    CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT, CORE_TIME_SIGNAL
 
 from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, \
     PLUGIN_DPP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
@@ -730,7 +730,7 @@ class Core:
                             subcribtions = pl.get_subscribtions()
                             sub_object = subcribtions[oID][opt.block_name]
                             sub_signals = sub_object.signals
-                            sub_signals.append('t')
+                            sub_signals.append(CORE_TIME_SIGNAL)
                             opt.data = dict([(i, Data[i]) for i in sub_signals if i in Data])
 
                             # plugin exists, check whether it is a ViP

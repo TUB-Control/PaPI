@@ -39,7 +39,7 @@ from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
     CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
-    CONFIG_SAVE_CFG_BLACKLIST
+    CONFIG_SAVE_CFG_BLACKLIST, CORE_TIME_SIGNAL
 
 from PyQt5 import QtCore
 
@@ -915,11 +915,12 @@ class Gui_api(QtCore.QObject):
                         alldsignals = dblock.get_signals()
 
                         for dsignal in alldsignals:
-                            dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
-                            dsignal_xml.set('uname', dsignal.uname)
+                            if dsignal.uname != CORE_TIME_SIGNAL:
+                                dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
+                                dsignal_xml.set('uname', dsignal.uname)
 
-                            dname_xml = ET.SubElement(dsignal_xml, 'dname')
-                            dname_xml.text = dsignal.dname
+                                dname_xml = ET.SubElement(dsignal_xml, 'dname')
+                                dname_xml.text = dsignal.dname
 
                 # ---------------------------------------
                 # Build temporary subscription objects
@@ -973,8 +974,9 @@ class Gui_api(QtCore.QObject):
 
                         signal_xml = ET.SubElement(block_xml,'Signals')
                         for sig in subscriptionsToSave[dest][source][block]['signals']:
-                            sig_xml = ET.SubElement(signal_xml,'Signal')
-                            sig_xml.text = sig
+                            if sig != CORE_TIME_SIGNAL:
+                                sig_xml = ET.SubElement(signal_xml,'Signal')
+                                sig_xml.text = sig
 
 
             # do transformation for readability and save xml tree to file

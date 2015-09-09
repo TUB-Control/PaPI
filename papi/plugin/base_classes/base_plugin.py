@@ -32,6 +32,7 @@ from papi.data.DParameter import DParameter
 import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.yapsy.IPlugin import IPlugin
+from papi.constants import CORE_TIME_SIGNAL
 
 
 class base_plugin(IPlugin):
@@ -231,7 +232,7 @@ class base_plugin(IPlugin):
         """
 
         dataHash = data
-        dataHash['t'] = time_line
+        dataHash[CORE_TIME_SIGNAL] = time_line
         opt = DOptionalData(DATA = dataHash)
         opt.data_source_id = self.__id__
         opt.block_name = block_name

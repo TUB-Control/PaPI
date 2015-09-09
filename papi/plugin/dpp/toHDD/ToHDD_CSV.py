@@ -27,6 +27,8 @@ Stefan Ruppin
 """
 
 from papi.plugin.base_classes.dpp_base import dpp_base
+from papi.constants import CORE_TIME_SIGNAL
+
 
 import csv
 
@@ -64,7 +66,7 @@ class ToHDD_CSV(dpp_base):
         pass
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
-        t = Data['t']
+        t = Data[CORE_TIME_SIGNAL]
 
         if block_name not in self.known_blocks.keys():
             self.known_blocks[block_name] = {}
@@ -78,7 +80,7 @@ class ToHDD_CSV(dpp_base):
                 row = []
                 row.append(t[i])
                 for k in Data:
-                    if k != 't':
+                    if k != CORE_TIME_SIGNAL:
                         vals = Data[k][i]
                         row.append(vals)
                 rows.append(row)

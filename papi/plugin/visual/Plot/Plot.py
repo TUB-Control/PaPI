@@ -32,6 +32,7 @@ __author__ = 'Stefan'
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 from papi.data.DSignal import DSignal
+from papi.constants import CORE_TIME_SIGNAL
 import numpy as np
 import collections
 import re
@@ -327,7 +328,7 @@ class Plot(vip_base):
         :return:
         """
 
-        t = Data['t']
+        t = Data[CORE_TIME_SIGNAL]
 
         self.__input_size__ = len(t)
 
@@ -336,7 +337,7 @@ class Plot(vip_base):
         now = pg.ptime.time()
 
         for key in Data:
-            if key != 't':
+            if key != CORE_TIME_SIGNAL:
                 y = Data[key]
                 if key in self.signals:
                     if self.__downsampling_rate_start__ < len(y):
@@ -545,7 +546,7 @@ class Plot(vip_base):
         cur_min_y = 1000
 
         for signal_name in data:
-            if signal_name != 't':
+            if signal_name != CORE_TIME_SIGNAL:
                 signal_data = data[signal_name]
                 if signal_name in self.signals:
 
@@ -571,7 +572,7 @@ class Plot(vip_base):
 
         self.__plotWidget__.getPlotItem().getViewBox().setXRange(self.__stp_min_x, self.__stp_max_x)
 
-        self.time_label.setNum(data['t'][0])
+        self.time_label.setNum(data[CORE_TIME_SIGNAL][0])
 
     def update_buffer_size(self, new_size):
         """
@@ -628,7 +629,7 @@ class Plot(vip_base):
         # Add new subscribed signals
         # ----------------------------
         for signal_name in sorted(current_signals.keys()):
-            if signal_name != 't':
+            if signal_name != CORE_TIME_SIGNAL:
                 if signal_name not in self.signals:
                     signal = current_signals[signal_name]['signal']
                     self.add_plot_item(signal, current_signals[signal_name]['index'])
@@ -964,7 +965,7 @@ class Plot(vip_base):
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
                 for signal_name in subscription.get_signals():
-                    if signal_name != 't':
+                    if signal_name != CORE_TIME_SIGNAL:
                         signal = subscription.get_dblock().get_signal_by_uname(signal_name)
 
                         self.signals[signal_name].update_signal(signal)

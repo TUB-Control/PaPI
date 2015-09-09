@@ -32,6 +32,7 @@ __author__ = 'Stefan'
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 import papi.constants as pc
+from papi.constants import CORE_TIME_SIGNAL
 
 import time
 
@@ -121,7 +122,7 @@ class LCDDisplay(vip_base):
         # If this plugin is a DPP, then it will get Data with data
 
         # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
@@ -129,10 +130,10 @@ class LCDDisplay(vip_base):
         cur_time = int(round(time.time() * 1000))
         if cur_time - self.last_time > self.time_treshold:
             self.last_time = cur_time
-            t = Data['t']
+            t = Data[CORE_TIME_SIGNAL]
             keys = list(Data.keys())
             keys.sort()
-            if Data[keys[0]] != 't':
+            if Data[keys[0]] != CORE_TIME_SIGNAL:
                 y = Data[keys[0]][-1]
             else:
                 if len(keys) > 1:

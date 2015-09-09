@@ -27,6 +27,7 @@ Sven Knuth
 """
 
 from papi.plugin.base_classes.dpp_base import dpp_base
+from papi.constants import CORE_TIME_SIGNAL
 
 from papi.data.DParameter import DParameter
 import papi.constants as pc
@@ -82,7 +83,7 @@ class ToMAT(dpp_base):
     def execute(self, Data=None, block_name = None, plugin_uname = None):
 
         if self.saving:
-            t = Data['t']
+            t = Data[CORE_TIME_SIGNAL]
 
 
             to_save = {plugin_uname : {block_name : Data }}

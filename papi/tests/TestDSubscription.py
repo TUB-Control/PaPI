@@ -33,7 +33,7 @@ import unittest
 from papi.data.DPlugin import DPlugin, DBlock, DSubscription
 from papi.data.DSignal import DSignal
 from papi.data.DParameter import DParameter
-
+from papi.constants import CORE_TIME_SIGNAL
 
 class TestDSusbcription(unittest.TestCase):
 
@@ -42,7 +42,7 @@ class TestDSusbcription(unittest.TestCase):
 
     def test_attach_signal(self):
         dblock = DBlock('SinMit_f1')
-        ds_1 = DSignal('t')
+        ds_1 = DSignal(CORE_TIME_SIGNAL)
         ds_2 = DSignal('f1_1')
         dblock.add_signal(ds_1)
         dblock.add_signal(ds_2)
@@ -57,7 +57,7 @@ class TestDSusbcription(unittest.TestCase):
 
     def test_remove_signal(self):
         dblock = DBlock('SinMit_f1')
-        ds_1 = DSignal('t')
+        ds_1 = DSignal(CORE_TIME_SIGNAL)
         dblock.add_signal(ds_1)
 
         subscription = DSubscription(dblock)

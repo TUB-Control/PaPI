@@ -34,6 +34,7 @@ from PyQt5.QtWidgets import QMenu, QCheckBox, QWidgetAction, QGraphicsItem, QGra
 from PyQt5 import QtCore
 
 import papi.pyqtgraph as pg
+from papi.constants import CORE_TIME_SIGNAL
 
 import numpy as np
 import re
@@ -435,7 +436,7 @@ class StaticPlot(vip_base):
                 'tooltip' : 'Used as data source. Format: { "time" : [...], "y1" : [...], "y2" : [...]}'
             },
             'axis_identifier' : {
-                'value' :  't',
+                'value' :  CORE_TIME_SIGNAL,
                 'tooltip' : 'Used to specify the identifier for the X-Axis e.g. time in json_data'
             },
             'show_legend' : {

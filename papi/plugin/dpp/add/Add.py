@@ -33,6 +33,7 @@ from papi.plugin.base_classes.dpp_base import dpp_base
 from papi.data.DPlugin import DBlock
 from papi.data.DParameter import DParameter
 from papi.data.DSignal import DSignal
+from papi.constants import CORE_TIME_SIGNAL
 
 import time
 import math
@@ -49,8 +50,6 @@ class Add(dpp_base):
         self.fac= 1
         self.amax = 20
         self.approx = self.approx_max*self.fac
-
-        self.vec = numpy.zeros((2, self.amax))
 
 
         self.block1 = DBlock('AddOut1')
@@ -84,7 +83,7 @@ class Add(dpp_base):
 
         # Get Time Vector
 
-#        vec[0, :] = Data['t']
+#        vec[0, :] = Data[CORE_TIME_SIGNAL]
 
         # n_rows = Data.shape[0]
         # n_cols = Data.shape[1]
@@ -92,7 +91,7 @@ class Add(dpp_base):
         first_element = True
 
         for signal_name in Data:
-            if signal_name is not 't':
+            if signal_name is not CORE_TIME_SIGNAL:
                 signal = Data[signal_name]
 
                 if first_element is True:
@@ -103,12 +102,7 @@ class Add(dpp_base):
                     result = numpy.add(result, signal)
 
 
-        vec = numpy.zeros((2, len(result)))
-
-        vec[0,:] = Data['t']
-        vec[1,:] = result
-
-        self.send_new_data('AddOut1', Data['t'], {'Sum':result})
+        self.send_new_data('AddOut1', Data[CORE_TIME_SIGNAL], {'Sum':result})
 
 
 

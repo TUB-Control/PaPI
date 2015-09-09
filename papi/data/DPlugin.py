@@ -27,6 +27,8 @@ Sven Knuth
 """
 
 from papi.data import DParameter
+from papi.constants import CORE_TIME_SIGNAL
+
 
 __author__ = 'knuths'
 
@@ -53,7 +55,7 @@ class DBlock(DObject):
         self.dplugin_id = None
         self.name = name
         self.signals = []
-        self.add_signal(DSignal('t'))
+        self.add_signal(DSignal(CORE_TIME_SIGNAL))
 
     def add_subscribers(self, dplugin):
         """
@@ -516,7 +518,7 @@ class DSubscription(DObject):
 
         self.alias = None
         self.signals = []
-        self.add_signal('t')
+        self.add_signal(CORE_TIME_SIGNAL)
 
     def add_signal(self, signal):
         """
