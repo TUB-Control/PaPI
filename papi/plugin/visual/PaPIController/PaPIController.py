@@ -44,7 +44,7 @@ class PaPIController(vip_base):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.ortd_uname = config['UDP_Plugin_uname']['value']
+        self.udp_plugin_uname = config['UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
         # --------------------------------
@@ -140,7 +140,7 @@ class PaPIController(vip_base):
                         if not isinstance(sig, list):
                             sig = [sig]
 
-                        self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
+                        self.control_api.do_subscribe_uname(pl_uname,self.udp_plugin_uname, pl_cfg['block'], signals=sig, sub_alias= None)
 
             ############################
             #    Set parameter links   #
@@ -164,12 +164,12 @@ class PaPIController(vip_base):
                             if (pl_cfg['block'] == 'SliderBlock'):
                                 pl_cfg['block'] = 'Change'
 
-                            self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+                            self.control_api.do_subscribe_uname(self.udp_plugin_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
                         else:
                             for block in pl_cfg:
                                 para = pl_cfg[block]['parameter']
-                                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, block, signals=[], sub_alias= para)
+                                self.control_api.do_subscribe_uname(self.udp_plugin_uname,pl_uname, block, signals=[], sub_alias= para)
 
 
             ############################
@@ -311,23 +311,23 @@ class PaPIController(vip_base):
         }
 
 
-        self.control_api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
+        self.control_api.do_create_plugin('UDP_Plugin', self.udp_plugin_uname, ortd_cfg, True)
 
-        self.control_api.do_subscribe_uname(self.dplugin_info.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+        self.control_api.do_subscribe_uname(self.dplugin_info.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',
                                                                                               'ControllerSignalClose',
                                                                                               'ActiveTab'])
-        self.control_api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+        self.control_api.do_set_parameter_uname(self.udp_plugin_uname, 'triggerConfiguration', '1')
 
 
 # class ControllerOrtdStart(QWizardPage):
-#     def __init__(self,api = None, uname= None, parent = None, ortd_uname = None, config = None):
+#     def __init__(self,api = None, uname= None, parent = None, udp_plugin_uname = None, config = None):
 #         QWizardPage.__init__(self, parent)
 #         self.config = config
 #         self.api = api
-#         self.ortd_uname = ortd_uname
+#         self.udp_plugin_uname = udp_plugin_uname
 #         self.uname = uname
 #         label = QLabel("Press 'Next' to start ORTD interaction")
 #         label.setWordWrap(True)
@@ -362,7 +362,7 @@ class PaPIController(vip_base):
 #         }
 #
 #
-#         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
+#         self.api.do_create_plugin('UDP_Plugin', self.udp_plugin_uname, ortd_cfg, True)
 #
 #         self.thread = threading.Thread(target=self.subscribe_control_signal)
 #         self.thread.start()
@@ -371,13 +371,13 @@ class PaPIController(vip_base):
 #
 #     def subscribe_control_signal(self):
 #
-#         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+#         self.api.do_subscribe_uname(self.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
 #                                                                                               'ControlSignalCreate',
 #                                                                                               'ControlSignalSub',
 #                                                                                               'ControllerSignalParameter',
 #                                                                                               'ControllerSignalClose',
 #                                                                                               'ActiveTab'])
-#         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+#         self.api.do_set_parameter_uname(self.udp_plugin_uname, 'triggerConfiguration', '1')
 #
 #
 # class ControllerWorking(QWizardPage):

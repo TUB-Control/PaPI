@@ -80,7 +80,7 @@ class OptionalObject(object):
 
 
 
-class ORTD_UDP(iop_base):
+class UDP_Plugin(iop_base):
     def get_plugin_configuration(self):
         config = {
             'address': {
@@ -186,7 +186,7 @@ class ORTD_UDP(iop_base):
 
         if (not self.sendOnReceivePort):
             self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
-            print("ORTD_UDP-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+            print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
         else:
             print ("---- Using client UDP mode (not binding to a port) ----")
 
