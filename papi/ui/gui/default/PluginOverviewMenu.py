@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Sun Aug 16 14:31:49 2015
+# Created: Wed Sep  9 15:39:32 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,8 +15,8 @@ class Ui_PluginOverviewMenu(object):
         PluginOverviewMenu.resize(803, 614)
         self.centralwidget = QtWidgets.QWidget(PluginOverviewMenu)
         self.centralwidget.setObjectName("centralwidget")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.pluginTree = QtWidgets.QTreeView(self.centralwidget)
@@ -85,6 +85,15 @@ class Ui_PluginOverviewMenu(object):
         self.blockTree.setObjectName("blockTree")
         self.verticalLayout_5.addWidget(self.blockTree)
         self.tabWidget_2.addTab(self.blockTab, "")
+        self.connectionTab_2 = QtWidgets.QWidget()
+        self.connectionTab_2.setObjectName("connectionTab_2")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.connectionTab_2)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.connectionTree = QtWidgets.QTreeWidget(self.connectionTab_2)
+        self.connectionTree.setObjectName("connectionTree")
+        self.connectionTree.headerItem().setText(0, "1")
+        self.verticalLayout_7.addWidget(self.connectionTree)
+        self.tabWidget_2.addTab(self.connectionTab_2, "")
         self.verticalLayout_2.addWidget(self.tabWidget_2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -118,7 +127,7 @@ class Ui_PluginOverviewMenu(object):
         self.verticalLayout_3.addLayout(self.verticalLayout)
         self.tabWidget.addTab(self.connectionTab, "")
         self.horizontalLayout.addWidget(self.tabWidget)
-        self.horizontalLayout_3.addLayout(self.horizontalLayout)
+        self.verticalLayout_6.addLayout(self.horizontalLayout)
         PluginOverviewMenu.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(PluginOverviewMenu)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 803, 25))
@@ -136,7 +145,7 @@ class Ui_PluginOverviewMenu(object):
 
         self.retranslateUi(PluginOverviewMenu)
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(1)
+        self.tabWidget_2.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(PluginOverviewMenu)
 
     def retranslateUi(self, PluginOverviewMenu):
@@ -150,6 +159,7 @@ class Ui_PluginOverviewMenu(object):
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.parameterTab), _translate("PluginOverviewMenu", "Parameters"))
         self.showInternalNameCheckBox.setText(_translate("PluginOverviewMenu", "Show internal signal names"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.blockTab), _translate("PluginOverviewMenu", "Blocks/Events"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.connectionTab_2), _translate("PluginOverviewMenu", "Connections"))
         self.pauseButton.setText(_translate("PluginOverviewMenu", "PAUSE"))
         self.stopButton.setText(_translate("PluginOverviewMenu", "STOP"))
         self.playButton.setText(_translate("PluginOverviewMenu", "PLAY"))
