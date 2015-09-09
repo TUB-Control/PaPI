@@ -117,7 +117,7 @@ class DBlock(DObject):
         :return:
         :rtype []:
         """
-        return copy.deepcopy(self.subscribers)
+        return self.subscribers
 
     def get_signal_by_uname(self, uname):
         """

@@ -293,8 +293,9 @@ class DCore():
 
             dblock = dplugin.get_dblock_by_name(dblock_name)
 
-            dplugin_ids = dblock.get_subscribers()
-            for dplugin_id in dplugin_ids:
+            copy_dplugin_ids = copy.deepcopy(dblock.get_subscribers())
+
+            for dplugin_id in copy_dplugin_ids:
 
                 subscriber = self.get_dplugin_by_id(dplugin_id)
 

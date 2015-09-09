@@ -73,10 +73,35 @@ class PaPITreeItem(QStandardItem):
     def get_decoration(self):
         return None
 
+    def clean(self):
+        """
+        This function is called to remove all rows which contain an item marked as 'deleted'.
+        This only works with items having an state-attribute e.g. DPlugin.
 
-class PaPIRootItem(QStandardItem):
+        :return: True if items were removed and has no more children
+        """
+        for row in range(self.rowCount()):
+            treeItem = self.child(row)
+            if treeItem is not None:
+                item = treeItem.data(Qt.UserRole)
+                canBeRemoved = False
+                print(item)
+
+                if hasattr(treeItem, 'clean()'):
+                    canBeRemoved = treeItem.clean()
+
+                if hasattr(item, 'state'):
+                    if item.state == 'deleted' or item.deleted or canBeRemoved:
+                        self.removeRow(row)
+                        return not self.hasChildren()
+
+            return False
+
+
+
+class PaPIRootItem(PaPITreeItem):
     def __init__(self, name):
-        super(PaPIRootItem, self).__init__(name)
+        super(PaPIRootItem, self).__init__(name, name)
         self.setEditable(False)
         self.setSelectable(False)
         self.name = name
@@ -102,20 +127,7 @@ class PaPIRootItem(QStandardItem):
 
         return None
 
-    def clean(self):
-        """
-        This function is called to remove all rows which contain an item marked as 'deleted'.
-        This only works with items having an state-attribute e.g. DPlugin.
 
-        :return:
-        """
-        for row in range(self.rowCount()):
-            treeItem = self.child(row)
-            if treeItem is not None:
-                item = treeItem.data(Qt.UserRole)
-                if hasattr(item, 'state'):
-                    if item.state == 'deleted':
-                        self.removeRow(row)
 
     def hasItem(self, sItem):
         """

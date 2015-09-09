@@ -28,7 +28,7 @@ Sven Knuth
 
 __author__ = 'knuths'
 
-from papi.gui.default.item import PaPIRootItem, PaPITreeModel
+from papi.gui.default.item import PaPIRootItem, PaPITreeModel, PaPITreeItem
 from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
@@ -115,6 +115,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.subscribersTree.setModel(self.subscriberModel)
         self.subscribersTree.setUniformRowHeights(True)
 
+        self.subscribers_root = PaPIRootItem('Subscribers')
+        self.subscriberModel.appendRow(self.subscribers_root)
         # -----------------------------------
         # Build structure of subscriptions tree
         # -----------------------------------
@@ -123,6 +125,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
         self.subscriptionsTree.setModel(self.subscriptionModel)
         self.subscriptionsTree.setUniformRowHeights(True)
+
+        self.subscriptions_root = PaPIRootItem('Subscriptions')
+        self.subscriptionModel.appendRow(self.subscriptions_root)
+
 
         # -----------------------------------
         # signal/slots
@@ -165,8 +171,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         """
         self.bModel.clear()
         self.dparameterModel.clear()
-        self.subscriberModel.clear()
-        self.subscriptionModel.clear()
+
+        self.subscribers_root.setRowCount(0)
+        self.subscriptions_root.setRowCount(0)
+
         self.unameEdit.setText('')
         self.usedpluginEdit.setText('')
         self.stateEdit.setText('')
@@ -257,14 +265,19 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             subscriber_ids = dblock.get_subscribers()
 
             for subscriber_id in subscriber_ids:
+                # Other plugin
                 subscriber = self.dgui.get_dplugin_by_id(subscriber_id)
+
+                print(subscriber)
+
                 subscriber_item = DPluginTreeItem(subscriber)
 
                 block_item = DBlockTreeItem(dblock)
 
                 subscriber_item.appendRow(block_item)
 
-                self.subscriberModel.appendRow(subscriber_item)
+#                self.subscriberModel.appendRow(subscriber_item)
+                self.subscribers_root.appendRow(subscriber_item)
 
 
         # -------------------------
@@ -281,7 +294,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
             dplugin_sub = self.gui_api.gui_data.get_dplugin_by_id(dplugin_sub_id)
             dplugin_sub_item = DPluginTreeItem(dplugin_sub)
-            self.subscriptionModel.appendRow(dplugin_sub_item)
+            #self.subscriptionModel.appendRow(dplugin_sub_item)
+            self.subscriptions_root.appendRow(dplugin_sub_item)
 
             for dblock_name in dblock_names:
 
@@ -291,11 +305,15 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
                 subscription = dblock_names[dblock_name]
 
+                subscription_item = PaPITreeItem(subscription, "Signals")
+
+                dblock_sub_item.appendRow(subscription_item)
+
                 for signal_uname in sorted(subscription.get_signals()):
 
                     signal_item = QStandardItem(signal_uname)
 
-                    dblock_sub_item.appendRow(signal_item)
+                    subscription_item.appendRow(signal_item)
 
         # --------------------------
         # Add DParameters
@@ -625,6 +643,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         :return:
         """
 
+        print(
+            'Refreshed'
+        )
+
         # -----------------------------------------
         # case: no DPlugin was added or removed
         #       e.g. parameter was changed
@@ -653,6 +675,11 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.dpp_root.clean()
         self.io_root.clean()
         self.pcp_root.clean()
+
+        self.subscriptions_root.clean()
+        self.subscribers_root.clean()
+
+#        self.subscribersTree
 
         # -----------------------------------------
         # case: a DPlugin was added
