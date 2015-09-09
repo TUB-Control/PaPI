@@ -473,7 +473,7 @@ class DPlugin(DObject):
                 for dblock_name in meta_subscriptions[dplugin_uname]:
 
                     if dblock_name in copy_subscriptions[dplugin_uname]:
-                        self.__subscriptions[dplugin_uname][dblock_name].update_meta(copy_subscriptions[dplugin_uname][dblock_name])
+                        self.__subscriptions[dplugin_uname][dblock_name].update_meta(meta_subscriptions[dplugin_uname][dblock_name])
                     else:
                         self.__subscriptions[dplugin_uname][dblock_name] = {}
                         self.__subscriptions[dplugin_uname][dblock_name] = meta_subscriptions[dplugin_uname][dblock_name]
@@ -565,10 +565,13 @@ class DSubscription(DObject):
         :return:
         :rtype: []
         """
-        return copy.copy(self.signals)
+        return self.signals
 
     def update_meta(self, subscription):
-        pass
+        print('MetaUpdate')
+        self.alias = subscription.alias
+        self.signals = subscription.signals
+        print(self.signals)
 
     def attach_signal(self, signal):
         raise NotImplementedError("Stop Using this function.")

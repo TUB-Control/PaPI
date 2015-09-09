@@ -39,6 +39,8 @@ from papi.constants import PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
     PLUGIN_STATE_DELETE
 
+import papi.constants as pc
+
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
 from PyQt5.QtCore import Qt
 
@@ -259,9 +261,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             # -------------------------
 
             for signal in dblock.get_signals():
-                signal_item = DSignalTreeItem(signal, self.showInternalNameCheckBox)
+                if signal.uname not in [pc.CORE_TIME_SIGNAL]:
+                    signal_item = DSignalTreeItem(signal, self.showInternalNameCheckBox)
 
-                block_item.appendRow(signal_item)
+                    block_item.appendRow(signal_item)
 
             block_item.sortChildren(0)
 
@@ -293,10 +296,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                         subscription_item = PaPITreeItem(subscription, "Signals")
                         block_item.appendRow(subscription_item)
                         for signal_uname in sorted(subscription.get_signals()):
+                            if signal_uname not in [pc.CORE_TIME_SIGNAL]:
+                                signal_item = PaPITreeItem(signal_uname, signal_uname)
 
-                            signal_item = PaPITreeItem(signal_uname, signal_uname)
-
-                            subscription_item.appendRow(signal_item)
+                                subscription_item.appendRow(signal_item)
 
 
         # -------------------------
@@ -329,10 +332,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                 dblock_sub_item.appendRow(subscription_item)
 
                 for signal_uname in sorted(subscription.get_signals()):
+                    if signal_uname not in [pc.CORE_TIME_SIGNAL]:
+                        signal_item = PaPITreeItem(signal_uname, signal_uname)
 
-                    signal_item = PaPITreeItem(signal_uname, signal_uname)
-
-                    subscription_item.appendRow(signal_item)
+                        subscription_item.appendRow(signal_item)
 
         # --------------------------
         # Add DParameters
@@ -645,10 +648,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         :return:
         """
 
-        print(
-            'Refreshed'
-        )
-
         # -----------------------------------------
         # case: no DPlugin was added or removed
         #       e.g. parameter was changed
@@ -722,6 +721,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         """
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
+        print(signals)
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, signals)
 
     def showEvent(self, *args, **kwargs):
