@@ -145,7 +145,9 @@ class DBlock(DObject):
 
 
 class DEvent(DBlock):
-    pass
+    def __init__(self, name):
+        super(DEvent, self).__init__(name)
+
 
 class DPlugin(DObject):
     """
@@ -360,6 +362,16 @@ class DPlugin(DObject):
         :rtype {}:
         """
         return self.__blocks
+
+    def get_devent(self):
+        devent_dict = {}
+        for dblock_name in self.__blocks:
+            block = self.__blocks[dblock_name]
+            if isinstance(block, DEvent):
+                devent_dict[dblock_name] = block
+
+        return devent_dict
+
 
     def get_dblock_by_name(self, dblock_name):
         """

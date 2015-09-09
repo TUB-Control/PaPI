@@ -38,7 +38,7 @@ from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DBlock, DEvent
 from papi.data.DSignal import DSignal
-from papi.plugin.base_classes.pcp_base import pcp_base
+
 
 import papi.constants as pc
 
@@ -95,7 +95,7 @@ class OptionItem():
     def clear_attribtues(self):
         self.attributes = {}
 
-class RehaStimGUI(pcp_base, object):
+class RehaStimGUI(vip_base, object):
 
     def __init__(self):
         super(RehaStimGUI, self).__init__()

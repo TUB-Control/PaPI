@@ -38,7 +38,7 @@ import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
     CONFIG_SAVE_CFG_BLACKLIST
 
 from PyQt5 import QtCore
@@ -434,13 +434,13 @@ class Gui_api(QtCore.QObject):
     def do_close_program(self):
         """
         Tell core to close papi. Core will respond and will close all open plugins.
-        GUI will close all PCP and VIP Plugins due to calling their quit function
+        GUI will close all VIP Plugins due to calling their quit function
         """
 
         plugins = self.gui_data.get_all_plugins()
         for dplugin_id in plugins:
             dplugin = plugins[dplugin_id]
-            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+            if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 try:
                     dplugin.plugin.quit()
                 except Exception as E:
@@ -862,7 +862,7 @@ class Gui_api(QtCore.QObject):
 
                 # check if this plugin should be saved to XML
                 if dplugin.uname in plToSave:
-                    if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                    if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                         dplugin.startup_config = dplugin.plugin.get_current_config()
 
                     pl_xml = ET.SubElement(plugins_xml, 'Plugin')
@@ -1026,7 +1026,7 @@ class Gui_api(QtCore.QObject):
             for dplugin_id in plugins:
                 dplugin = plugins[dplugin_id]
 
-                if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                     dplugin.startup_config = dplugin.plugin.get_current_config()
 
                 pl_xml = ET.SubElement(root, 'Plugin')
@@ -1130,7 +1130,7 @@ class Gui_api(QtCore.QObject):
 
             # check if this plugin should be saved to XML
             if dplugin.uname in plToSave:
-                if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                     dplugin.startup_config = dplugin.plugin.get_current_config()
 
                 to_create[dplugin.uname] = {}

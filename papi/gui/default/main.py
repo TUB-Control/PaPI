@@ -613,7 +613,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :param dplugin:
         :return:
         """
-        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER or dplugin.type == pc.PLUGIN_PCP_IDENTIFIER:
+        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
 
             # sub_window_ori = dplugin.plugin.get_sub_window()
             #
@@ -661,7 +661,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :param dplugin:
         :return:
         """
-        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER or dplugin.type == pc.PLUGIN_PCP_IDENTIFIER:
+        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
             config = dplugin.plugin.config
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():

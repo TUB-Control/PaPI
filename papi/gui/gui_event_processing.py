@@ -31,7 +31,7 @@ import traceback
 import importlib.machinery
 import time
 
-from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
     PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_START_FAILED
@@ -297,7 +297,7 @@ class GuiEventProcessing(QtCore.QObject):
         config = dict(list(start_config.items()) + list(config.items()))
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER or plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin = self.gui_data.add_plugin(None, None, False, self.gui_queue, plugin, id)
@@ -468,7 +468,4 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
 
         if dplugin is not None:
-            if dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
-                dplugin.plugin.new_parameter_info(event.dparameter_object)
-            else:
-                self.log.printText(1, 'non-pcp plugin received new parameter information. Why? Check if bug!')
+            dplugin.plugin.new_parameter_info(event.dparameter_object)

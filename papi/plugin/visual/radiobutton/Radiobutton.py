@@ -35,10 +35,10 @@ from PyQt5 import QtCore
 
 from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 import papi.constants as pc
 
-class Radiobutton(pcp_base):
+class Radiobutton(vip_base):
     def initiate_layer_0(self, config):
 
         self.event_choice = DEvent('Choice')

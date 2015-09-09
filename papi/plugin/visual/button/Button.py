@@ -35,10 +35,10 @@ from PyQt5 import QtGui, QtCore
 
 from papi.data.DPlugin import DEvent
 from papi.data.DSignal import DSignal
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.constants import REGEX_SIGNED_FLOAT
 
-class Button(pcp_base):
+class Button(vip_base):
 
     def __init__(self):
         super(Button, self).__init__()

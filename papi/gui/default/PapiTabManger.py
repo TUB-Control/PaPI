@@ -38,7 +38,7 @@ from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox , QTabWidget, QMdiA
 
 
 from papi.gui.default.custom import FileLineEdit
-from papi.constants import PLUGIN_PCP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, \
+from papi.constants import PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_DPP_IDENTIFIER, \
                                     GUI_TABWIDGET_IDENTIFIER
 
 
@@ -105,7 +105,7 @@ class PapiTabManger(QObject):
             allPlugins = self.dGui.get_all_plugins()
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
-                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER or dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
                     tabOfPlugin = dplugin.plugin.config['tab']['value']
                     if tabOfPlugin == old_name:
                         dplugin.plugin.config['tab']['value'] = new_name
@@ -122,7 +122,7 @@ class PapiTabManger(QObject):
             allPlugins = self.dGui.get_all_plugins()
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
-                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER or dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
                     tabOfPlugin = dplugin.plugin.config['tab']['value']
                     if tabOfPlugin == old_name:
                         dplugin.plugin.config['tab']['value'] = new_name
@@ -190,7 +190,7 @@ class PapiTabManger(QObject):
             plugins = self.dGui.get_all_plugins()
             for pl_id in plugins:
                 plugin = plugins[pl_id]
-                if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                if plugin.type == PLUGIN_VIP_IDENTIFIER:
                     if plugin.plugin.config['tab']['value'] == tab_name:
                         self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin.get_sub_window())
                         plugin.plugin.config['tab']['value'] = self.get_default_tab(ind).name
@@ -390,7 +390,7 @@ class PapiTabManger(QObject):
                 for pl_id in plugins:
 
                     plugin = plugins[pl_id]
-                    if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                    if plugin.type == PLUGIN_VIP_IDENTIFIER:
 
                         if plugin.plugin.config['tab']['value'] == window.windowName:
 
@@ -415,7 +415,7 @@ class PapiTabManger(QObject):
             plugins = self.dGui.get_all_plugins()
             for pl_id in plugins:
                 plugin = plugins[pl_id]
-                if plugin.type == PLUGIN_VIP_IDENTIFIER or plugin.type == PLUGIN_PCP_IDENTIFIER:
+                if plugin.type == PLUGIN_VIP_IDENTIFIER:
                     if plugin.plugin.config['tab']['value'] == tabOb.name:
                         subwin = plugin.plugin.get_sub_window()
                         posX = subwin.pos().x()

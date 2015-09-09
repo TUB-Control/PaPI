@@ -34,14 +34,14 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DBlock
 
 from papi.plugin.visual.Console.CmdInput import CmdInput
 
 
-class Console(pcp_base):
+class Console(vip_base):
 
 
     def initiate_layer_0(self, config=None):

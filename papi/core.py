@@ -45,7 +45,7 @@ from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEV
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
     CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
 
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, \
     PLUGIN_DPP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
     PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_DEAD
@@ -646,8 +646,8 @@ class Core:
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
                             if pl.state != PLUGIN_STATE_PAUSE or pl.state != PLUGIN_STATE_STOPPED:
-                                # plugin exists, check whether it is a ViP or not
-                                if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                                # plugin exists, check whether it is a ViP
+                                if pl.type == PLUGIN_VIP_IDENTIFIER:
                                     # Because its a ViP, we need a list of destination ID for new_data
                                     id_list.append(pl.id)
                                 else:
@@ -733,8 +733,8 @@ class Core:
                             sub_signals.append('t')
                             opt.data = dict([(i, Data[i]) for i in sub_signals if i in Data])
 
-                            # plugin exists, check whether it is a ViP or not
-                            if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                            # plugin exists, check whether it is a ViP
+                            if pl.type == PLUGIN_VIP_IDENTIFIER:
                                 # Plugin runs in GUI
                                 opt = event.get_optional_parameter()
                                 opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
@@ -855,9 +855,8 @@ class Core:
         # creates a new plugin id because plugin exsits
         plugin_id = self.core_data.create_id()
 
-        # checks if plugin is of not of type ViP or PCP, because these two will run in GUI process
-        if plugin.plugin_object.get_type() != PLUGIN_VIP_IDENTIFIER and \
-                        plugin.plugin_object.get_type() != PLUGIN_PCP_IDENTIFIER:
+        # checks if plugin is of not of type ViP, because these two will run in GUI process
+        if plugin.plugin_object.get_type() != PLUGIN_VIP_IDENTIFIER:
             # So plugin will not run in GUI
             # it will need an own process and queue to function
 
