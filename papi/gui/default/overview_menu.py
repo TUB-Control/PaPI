@@ -28,6 +28,9 @@ Sven Knuth
 
 __author__ = 'knuths'
 
+import os
+import configparser
+
 from papi.gui.default.item import PaPIRootItem, PaPITreeModel, PaPITreeItem
 from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
@@ -74,15 +77,17 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.pluginTree.setModel(self.dpluginModel)
         self.pluginTree.setUniformRowHeights(True)
 
-        self.visual_root = PaPIRootItem('Visualization      ')
-        self.io_root = PaPIRootItem('Input/Output     ')
-        self.dpp_root = PaPIRootItem('Data Processing')
-        self.pcp_root = PaPIRootItem('Plugin Control    ')
+        self.plugin_roots = {}
 
-        self.dpluginModel.appendRow(self.visual_root)
-        self.dpluginModel.appendRow(self.io_root)
-        self.dpluginModel.appendRow(self.dpp_root)
-        self.dpluginModel.appendRow(self.pcp_root)
+        # self.visual_root = PaPIRootItem('Visualization      ')
+        # self.io_root = PaPIRootItem('Input/Output     ')
+        # self.dpp_root = PaPIRootItem('Data Processing')
+        # self.pcp_root = PaPIRootItem('Plugin Control    ')
+        #
+        # self.dpluginModel.appendRow(self.visual_root)
+        # self.dpluginModel.appendRow(self.io_root)
+        # self.dpluginModel.appendRow(self.dpp_root)
+        # self.dpluginModel.appendRow(self.pcp_root)
 
         # -----------------------------------
         # Build structure of parameter tree
@@ -113,6 +118,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         self.connectionModel = PaPITreeModel()
         self.connectionModel.setHorizontalHeaderLabels([''])
+        self.connectionTree.setHeaderHidden(True)
         self.connectionTree.setModel(self.connectionModel)
         self.connectionTree.setUniformRowHeights(True)
 
@@ -121,26 +127,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         self.subscriptions_root = PaPIRootItem('Subscriptions')
         self.connectionModel.appendRow(self.subscriptions_root)
-
-        # # -----------------------------------
-        # # Build structure of subscriber tree
-        # # -----------------------------------
-        #
-        # self.subscriberModel = PaPITreeModel()
-        # self.subscriberModel.setHorizontalHeaderLabels(['Subscriber'])
-        # self.subscribersTree.setModel(self.subscriberModel)
-        # self.subscribersTree.setUniformRowHeights(True)
-        #
-        # # -----------------------------------
-        # # Build structure of subscriptions tree
-        # # -----------------------------------
-        #
-        # self.subscriptionModel = PaPITreeModel()
-        # self.subscriptionModel.setHorizontalHeaderLabels(['Subscription'])
-        # self.subscriptionsTree.setModel(self.subscriptionModel)
-        # self.subscriptionsTree.setUniformRowHeights(True)
-
-
 
         # -----------------------------------
         # signal/slots
@@ -741,14 +727,21 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             # ------------------------------
             plugin_item = DPluginTreeItem(dplugin)
 
-            if dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                self.visual_root.appendRow(plugin_item)
-            if dplugin.type == PLUGIN_IOP_IDENTIFIER:
-                self.io_root.appendRow(plugin_item)
-            if dplugin.type == PLUGIN_DPP_IDENTIFIER:
-                self.dpp_root.appendRow(plugin_item)
+            plugin_root = self.get_plugin_root(dplugin.path)
+            plugin_root.appendRow(plugin_item)
+            #
+            # if dplugin.type == PLUGIN_VIP_IDENTIFIER:
+            #     self.visual_root.appendRow(plugin_item)
+            # if dplugin.type == PLUGIN_IOP_IDENTIFIER:
+            #     self.io_root.appendRow(plugin_item)
+            # if dplugin.type == PLUGIN_DPP_IDENTIFIER:
+            #     self.dpp_root.appendRow(plugin_item)
             # if dplugin.type == PLUGIN_PCP_IDENTIFIER:
             #     self.pcp_root.appendRow(plugin_item)
+
+        for root in sorted(self.plugin_roots.keys()):
+            self.pluginTree.model().appendRow(self.plugin_roots[root])
+            self.plugin_roots[root].sortChildren(0)
 
     def play_button_callback(self):
         """
@@ -839,6 +832,27 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         dplugin = self.pluginTree.model().data(self.pluginTree.currentIndex(), Qt.UserRole)
 
         self.gui_api.do_edit_plugin_uname(dplugin.uname, dblock, {"edit" : dsignal})
+
+    def get_plugin_root(self,path):
+        parts = path.split('/');
+        part = parts[-3]
+
+        if part not in self.plugin_roots:
+
+            cfg_file = str.join("/", parts[0:-2]) + "/" + pc.GUI_PLUGIN_CONFIG
+
+            name = part
+
+            if os.path.isfile(cfg_file):
+                config = configparser.ConfigParser()
+                config.read(cfg_file)
+                if 'Config' in config.sections():
+                    if 'name' in config.options('Config'):
+                        name = config.get('Config', 'name')
+
+            self.plugin_roots[part] = PaPIRootItem(name)
+
+        return self.plugin_roots[part]
 
     def keyPressEvent(self, event):
         """

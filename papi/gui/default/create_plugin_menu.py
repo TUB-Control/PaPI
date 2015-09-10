@@ -29,6 +29,8 @@ Sven Knuth
 from modulefinder import ModuleFinder
 import importlib
 import re
+import os
+import configparser
 
 from papi.gui.default.item import PaPIRootItem, PaPITreeModel
 from papi.gui.default.item import PluginTreeItem
@@ -64,9 +66,6 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginTree.setDragEnabled(True)
         self.pluginTree.setDropIndicatorShown(True)
 
-        # self.plugin_manager.setPluginPlaces(
-        #     PLUGIN_ROOT_FOLDER_LIST
-        # )
         self.setWindowTitle('Available Plugins')
 
         model = PaPITreeModel()
@@ -76,15 +75,17 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginTree.setUniformRowHeights(True)
         self.pluginTree.setSortingEnabled(True)
 
-        self.visual_root = PaPIRootItem('Visualization      ')
-        self.io_root = PaPIRootItem('Input/Output     ')
-        self.dpp_root = PaPIRootItem('Data Processing')
-        self.pcp_root = PaPIRootItem('Plugin Control    ')
+        self.plugin_roots = {}
+        #
+        # self.visual_root = PaPIRootItem('Visualization      ')
+        # self.io_root = PaPIRootItem('Input/Output     ')
+        # self.dpp_root = PaPIRootItem('Data Processing')
+        # self.pcp_root = PaPIRootItem('Plugin Control    ')
 
-        model.appendRow(self.visual_root)
-        model.appendRow(self.io_root)
-        model.appendRow(self.dpp_root)
-        model.appendRow(self.pcp_root)
+        # model.appendRow(self.visual_root)
+        # model.appendRow(self.io_root)
+        # model.appendRow(self.dpp_root)
+        # model.appendRow(self.pcp_root)
 
         self.configuration_inputs = {}
 
@@ -196,19 +197,21 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
                 pluginfo.loadable = False
             plugin_item = PluginTreeItem(pluginfo)
 
-            if '/visual/' in pluginfo.path:
-                self.visual_root.appendRow(plugin_item)
-            if '/io/' in pluginfo.path:
-                self.io_root.appendRow(plugin_item)
-            if '/dpp/' in pluginfo.path:
-                self.dpp_root.appendRow(plugin_item)
-            if '/pcp/' in pluginfo.path:
-                self.pcp_root.appendRow(plugin_item)
+            plugin_root = self.get_plugin_root(pluginfo.path)
+            plugin_root.appendRow(plugin_item)
 
-        self.visual_root.sortChildren(0)
-        self.io_root.sortChildren(0)
-        self.dpp_root.sortChildren(0)
-        self.pcp_root.sortChildren(0)
+            # if '/visual/' in pluginfo.path:
+            #     self.visual_root.appendRow(plugin_item)
+            # if '/io/' in pluginfo.path:
+            #     self.io_root.appendRow(plugin_item)
+            # if '/dpp/' in pluginfo.path:
+            #     self.dpp_root.appendRow(plugin_item)
+            # if '/pcp/' in pluginfo.path:
+            #     self.pcp_root.appendRow(plugin_item)
+
+        for root in sorted(self.plugin_roots.keys()):
+            self.pluginTree.model().appendRow(self.plugin_roots[root])
+            self.plugin_roots[root].sortChildren(0)
 
     def help_button_triggered(self):
         index = self.pluginTree.currentIndex()
@@ -228,6 +231,27 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
             suffix = "." + '.'.join(path.split('/')[-2:])
             target_url = pc.PAPI_DOC_URL + pc.PAPI_DOC_PREFIX_PLUGIN + "." + plugin_type.lower() + suffix + ".html"
             QDesktopServices.openUrl(QUrl(target_url, QUrl.TolerantMode))
+
+    def get_plugin_root(self,path):
+        parts = path.split('/');
+        part = parts[-3]
+
+        if part not in self.plugin_roots:
+
+            cfg_file = str.join("/", parts[0:-2]) + "/" + pc.GUI_PLUGIN_CONFIG
+
+            name = part
+
+            if os.path.isfile(cfg_file):
+                config = configparser.ConfigParser()
+                config.read(cfg_file)
+                if 'Config' in config.sections():
+                    if 'name' in config.options('Config'):
+                        name = config.get('Config', 'name')
+
+            self.plugin_roots[part] = PaPIRootItem(name)
+
+        return self.plugin_roots[part]
 
     def clear(self):
         self.nameEdit.setText('')
