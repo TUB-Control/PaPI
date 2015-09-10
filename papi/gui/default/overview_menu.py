@@ -715,15 +715,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
             plugin_root = self.get_plugin_root(dplugin.path)
             plugin_root.appendRow(plugin_item)
-            #
-            # if dplugin.type == PLUGIN_VIP_IDENTIFIER:
-            #     self.visual_root.appendRow(plugin_item)
-            # if dplugin.type == PLUGIN_IOP_IDENTIFIER:
-            #     self.io_root.appendRow(plugin_item)
-            # if dplugin.type == PLUGIN_DPP_IDENTIFIER:
-            #     self.dpp_root.appendRow(plugin_item)
-            # if dplugin.type == PLUGIN_PCP_IDENTIFIER:
-            #     self.pcp_root.appendRow(plugin_item)
 
         for root in sorted(self.plugin_roots.keys()):
             self.pluginTree.model().appendRow(self.plugin_roots[root])
