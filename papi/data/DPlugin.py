@@ -218,10 +218,16 @@ class DPlugin(DObject):
                 subscription = self.__subscriptions[dblock.dplugin_id][dblock.name]
                 for signal in signals:
                     subscription.rm_signal(signal)
+
+                # subSignalList = subscription.get_signals()
+                # print(subSignalList)
+                # if (1 == len(subscription.get_signals()) and CORE_TIME_SIGNAL in subSignalList):
+                #     subscription.rm_signal(CORE_TIME_SIGNAL)
+                # print(subscription.get_signals())
+
                 if 0 == len(subscription.get_signals()):
                     subscription.remove()
                     del self.__subscriptions[dblock.dplugin_id][dblock.name]
-                    return None
                 return subscription
             else:
                 return None
