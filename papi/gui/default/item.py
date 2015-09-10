@@ -81,6 +81,8 @@ class PaPITreeItem(QStandardItem):
         :return: True if items were removed and has no more children
         """
 
+        containsDeletedItems = False
+
         for row in range(self.rowCount()):
             treeItem = self.child(row)
             if treeItem is not None:
@@ -90,19 +92,19 @@ class PaPITreeItem(QStandardItem):
 
                 if hasattr(item, 'state'):
                     if item.state == 'deleted':
+                        containsDeletedItems = True
                         self.removeRow(row)
-                        return not self.hasChildren()
+
                 if hasattr(item, 'deleted'):
                     if item.deleted:
+                        containsDeletedItems = True
                         self.removeRow(row)
-                        return not self.hasChildren()
 
                 if canBeRemoved:
+                    containsDeletedItems = True
                     self.removeRow(row)
-                    return True
 
-            return False
-
+        return not self.hasChildren() and containsDeletedItems
 
 
 class PaPIRootItem(PaPITreeItem):
@@ -168,6 +170,16 @@ class PaPITreeModel(QStandardItemModel):
             return Qt.ItemIsEnabled
 
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled
+
+    def remove_item(self, rItem):
+        for r in range(self.rowCount()):
+            for c in range(self.columnCount()):
+                item = self.item(r, c)
+
+                if item == rItem:
+                    self.removeRow(r)
+                    return
+
 
 # ------------------------------------
 # Item Custom

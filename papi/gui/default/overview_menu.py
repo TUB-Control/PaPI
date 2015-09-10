@@ -30,6 +30,7 @@ __author__ = 'knuths'
 
 import os
 import configparser
+import copy
 
 from papi.gui.default.item import PaPIRootItem, PaPITreeModel, PaPITreeItem
 from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
@@ -46,7 +47,6 @@ import papi.constants as pc
 
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
 from PyQt5.QtCore import Qt
-
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter, DSubscription
 
@@ -650,18 +650,19 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                 self.clear()
             else:
                 self.pluginWidget.setEnabled(True)
-                #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
-                #self.pluginTree.clicked.emit(index)
                 self.plugin_item_refresh(index)
 
         # -----------------------------------------
         # case: remove already deleted plugins
         # -----------------------------------------
+        key_copy = self.plugin_roots.copy().keys()
+        for root in key_copy:
 
-        self.visual_root.clean()
-        self.dpp_root.clean()
-        self.io_root.clean()
-        self.pcp_root.clean()
+            self.plugin_roots[root].clean()
+
+            if not self.plugin_roots[root].rowCount():
+                self.dpluginModel.remove_item(self.plugin_roots[root])
+                del self.plugin_roots[root]
 
         self.subscribers_root.clean()
         self.subscriptions_root.clean()
@@ -674,27 +675,13 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         if new_dplugin is not None:
             plugin_item = DPluginTreeItem(new_dplugin)
-            if new_dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                if not self.visual_root.hasItem(new_dplugin):
-                    self.visual_root.appendRow(plugin_item)
-            if new_dplugin.type == PLUGIN_IOP_IDENTIFIER:
-                if not self.io_root.hasItem(new_dplugin):
-                    #                plugin_item = DPluginTreeItem(new_dplugin)
-                    self.io_root.appendRow(plugin_item)
-            if new_dplugin.type == PLUGIN_DPP_IDENTIFIER:
-                if not self.dpp_root.hasItem(new_dplugin):
-                    self.dpp_root.appendRow(plugin_item)
-            # if new_dplugin.type == PLUGIN_PCP_IDENTIFIER:
-            #     if not self.pcp_root.hasItem(new_dplugin):
-            #         self.pcp_root.appendRow(plugin_item)
+            plugin_root = self.get_plugin_root(new_dplugin.path)
 
+            if not plugin_root.hasItem(new_dplugin):
+                plugin_root.appendRow(plugin_item)
 
-                    #TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters
-                    #index = self.pluginTree.currentIndex()
-                    #if index.isValid():
-                    #    self.plugin_item_refresh(index)
-
-                    #self.pluginTree.clicked.emit(index)
+            if plugin_root not in self.dpluginModel.findItems("", Qt.MatchContains):
+                self.dpluginModel.appendRow(plugin_root)
 
 
     def cancel_subscription_action(self, source: DPlugin, dblock: DBlock, signals: []):
@@ -707,7 +694,6 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         """
         index = self.pluginTree.currentIndex()
         subscriber = self.pluginTree.model().data(index, Qt.UserRole)
-        print(signals)
         self.gui_api.do_unsubscribe_uname(subscriber.uname, source.uname, dblock.name, signals)
 
     def showEvent(self, *args, **kwargs):

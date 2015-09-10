@@ -1139,9 +1139,7 @@ class Gui_api(QtCore.QObject):
 
                 to_create[dplugin.uname]["identifier"] = {'value' : dplugin.plugin_identifier}
                 plugin_config = {}
-                print(dplugin.startup_config)
                 for config in dplugin.startup_config:
-                    print(config)
                     for value in dplugin.startup_config[config]:
                         if value == 'value':
                             plugin_config[config] = {'value' : dplugin.startup_config[config][value]}
@@ -1185,8 +1183,6 @@ class Gui_api(QtCore.QObject):
 
         papi_config = {"PaPIConfig" : json_config}
 
-
-        print(json.dumps(papi_config))
 
         try:
             with open(path, 'w') as outfile:

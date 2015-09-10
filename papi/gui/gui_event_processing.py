@@ -305,6 +305,7 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
             dplugin.startup_config = config
+            dplugin.path = plugin_orginal.path
             # call the init function of plugin and set queues and id
             api = Plugin_api(self.gui_data, self.core_queue, self.gui_id, uname + ' API:', tabManager=self.TabManger)
 
@@ -339,6 +340,7 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.uname = uname
             dplugin.startup_config = opt.plugin_config
             dplugin.type = opt.plugin_type
+            dplugin.path = plugin_orginal.path
             # debug print
             self.log.printText(1, 'create_plugin, Plugin with name  ' + str(uname) + '  was added as non ViP')
 
