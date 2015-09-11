@@ -647,7 +647,6 @@ class UDP_Plugin(iop_base):
                 block = list(self.blocks.keys())[0]
 
                 if len(self.blocks[block].signals) == len(signals_to_send)+1:
-                    print(signals_to_send)
                     if timestamp is None:
                         self.send_new_data(block, [self.t], signals_to_send )
                     else:
