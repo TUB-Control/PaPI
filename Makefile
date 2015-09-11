@@ -58,10 +58,11 @@ $(RST_DES_DIR)/%.rst: $(RST_FILES_SRC)
 	fi
 #	Copy rst files
 	$(eval rst_name:= $(subst $(RST_DES_DIR),.,$(subst /rst,.rst,$(subst .,/, $@))))
-	@echo "Creating file" $@
+	$(eval tar_name:= $(subst papi,man.papi,$@))
+	@echo "Creating file" $@ "-->" $(tar_name)
 #	$(eval arr:= $(shell echo $(subst $(RST_DES_DIR)/,,$(@:.rst=)) | tr "." "\n"))
-#	@echo "Creating file" $@ "<-" $(rst_name)
-	@cp $(rst_name) $@
+#    @echo "Creating file" $(tar_name) "<-" $(rst_name)
+	@cp $(rst_name) $(tar_name)
 #   Copy _static files
 	$(eval static_folder_src:= $(dir $(rst_name))$(RST_STATIC_FOLDER_SRC)/)
 	
@@ -73,7 +74,7 @@ $(RST_DES_DIR)/%.rst: $(RST_FILES_SRC)
 	
 #	@echo "Copy static files from" $(static_folder_src) "to" $(RST_STATIC_FOLDER_DES)/
 	@if [ -d $(static_folder_src) ] ; then \
-	sed -i s,$(RST_STATIC_FOLDER_SRC),$(RST_STATIC_FOLDER_SRC)/$(unique_name),g $@ ; \
+	sed -i s,$(RST_STATIC_FOLDER_SRC),$(RST_STATIC_FOLDER_SRC)/$(unique_name),g $(tar_name) ; \
 	$(MKDIR_P) $(RST_STATIC_FOLDER_DES)/$(unique_name) ; \
 	cp -Rp $(static_folder_src)* $(RST_STATIC_FOLDER_DES)/$(unique_name)/ ; \
 	fi
@@ -92,6 +93,7 @@ html: create_rst
 	make -C docs html
 
 clean:
+	@rm $(RST_DES_DIR)/man*rst
 	@rm $(RST_DES_DIR)/papi*rst
 	@rm $(RST_DES_DIR)/modules.rst
 	@rm $(RST_DES_DIR)/$(README_RST)

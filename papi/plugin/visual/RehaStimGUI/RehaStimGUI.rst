@@ -106,4 +106,4 @@ A default configuration for this plugin can be found here: :download:`example_co
 
 A simulink model and with a PaPI configuration can be found here: :download:`SimulinkModel <_static/rehastim_gui.slx>`, :download:`PaPI Configuration <_static/rehastim_config.m>`,
 
-It is only neccessary to build the model, start the binary, start PaPI and start the :doc:`papi.plugin.visual.PaPIController.PaPIController`.
+It is only neccessary to build the model, start the binary, start PaPI and start the :doc:`man.papi.plugin.visual.PaPIController.PaPIController`.

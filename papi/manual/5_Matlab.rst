@@ -68,7 +68,7 @@ Input Signals
 The `control` is used to control the internal behaviour of the block
 
 .. list-table:: Possible values control signal
-    :widths: 15 10 10 30
+    :widths: 15 10
     :header-rows: 1
 
     * - Value
