@@ -830,8 +830,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     def changed_search_plugin_text_field(self, value):
         if not len(value):
             value = "*"
+            self.pluginTree.collapseAll()
         else:
             value = "*" + value + "*"
+            self.pluginTree.expandAll()
         regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
         self.pluginProxyModel.setFilterRegExp(regex)
 

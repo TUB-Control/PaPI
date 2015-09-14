@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginCreateMenu.ui'
 #
-# Created: Mon Sep 14 14:36:22 2015
+# Created: Mon Sep 14 15:03:55 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,6 +92,7 @@ class Ui_PluginCreateMenu(object):
     def retranslateUi(self, PluginCreateMenu):
         _translate = QtCore.QCoreApplication.translate
         PluginCreateMenu.setWindowTitle(_translate("PluginCreateMenu", "MainWindow"))
+        self.pluginSearchText.setPlaceholderText(_translate("PluginCreateMenu", "Search for ..."))
         self.pathLabel.setText(_translate("PluginCreateMenu", "Path"))
         self.modulesLabel.setText(_translate("PluginCreateMenu", "Missing\n"
 "Modules"))

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Mon Sep 14 15:00:33 2015
+# Created: Mon Sep 14 15:03:55 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -139,6 +139,7 @@ class Ui_PluginOverviewMenu(object):
     def retranslateUi(self, PluginOverviewMenu):
         _translate = QtCore.QCoreApplication.translate
         PluginOverviewMenu.setWindowTitle(_translate("PluginOverviewMenu", "MainWindow"))
+        self.pluginSearchText.setPlaceholderText(_translate("PluginOverviewMenu", "Search for ..."))
         self.unameLabel.setText(_translate("PluginOverviewMenu", "Unique name"))
         self.usedpluginLabel.setText(_translate("PluginOverviewMenu", "Used plugin"))
         self.stateLabel.setText(_translate("PluginOverviewMenu", "State"))

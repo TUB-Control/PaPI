@@ -30,7 +30,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="pluginSearchText"/>
+         <widget class="QLineEdit" name="pluginSearchText">
+          <property name="placeholderText">
+           <string>Search for ...</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
