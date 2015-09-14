@@ -6,6 +6,7 @@ v.1.x:
 
 -  **feature**: Added ability to define favourite plugins
 -  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
+-  **feature**: Added ability to filter plugins in the create and overview menu
 -  **doc**: Added documentation for the main window
 -  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase 
 -  **gui**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
