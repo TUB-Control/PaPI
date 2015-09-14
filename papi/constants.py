@@ -91,7 +91,7 @@ PAPI_DOC_URL                     = 'http://tub-control.github.io/PaPI/'
 if PAPI_DEV_EDITION:
     PAPI_DOC_URL += "dev/"
 
-PAPI_DOC_PREFIX_PLUGIN           = 'papi.plugin'
+PAPI_DOC_PREFIX_PLUGIN           = 'man.papi.plugin'
 
 # EVENT CONSTANTS
 # TODO

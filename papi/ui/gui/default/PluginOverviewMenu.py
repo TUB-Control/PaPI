@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Mon Sep 14 14:36:22 2015
+# Created: Mon Sep 14 15:00:33 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -133,7 +133,7 @@ class Ui_PluginOverviewMenu(object):
         self.menubar.addAction(self.menuAction.menuAction())
 
         self.retranslateUi(PluginOverviewMenu)
-        self.tabWidget_2.setCurrentIndex(2)
+        self.tabWidget_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(PluginOverviewMenu)
 
     def retranslateUi(self, PluginOverviewMenu):

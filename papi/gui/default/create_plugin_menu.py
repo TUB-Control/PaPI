@@ -205,16 +205,11 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         if plugin_info is not None:
-            plugin_type = plugin_info.plugin_object.get_type();
 
-            if plugin_type.lower() == 'iop':
-                plugin_type = 'io'
-
-            if plugin_type.lower() == 'vip':
-                plugin_type = 'visual'
 
 
             path = plugin_info.path
+            plugin_type = path.split('/')[-3]
             suffix = "." + '.'.join(path.split('/')[-2:])
             target_url = pc.PAPI_DOC_URL + pc.PAPI_DOC_PREFIX_PLUGIN + "." + plugin_type.lower() + suffix + ".html"
             QDesktopServices.openUrl(QUrl(target_url, QUrl.TolerantMode))
