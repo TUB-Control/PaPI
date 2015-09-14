@@ -38,7 +38,7 @@ import time
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 
-#RENAME TO PLUGIN NAME
+
 class LCDDisplay(vip_base):
 
 

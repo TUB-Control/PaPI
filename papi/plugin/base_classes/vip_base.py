@@ -27,13 +27,13 @@ Stefan Ruppin
 """
 
 from papi.plugin.base_classes.base_visual import base_visual
-
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
-
-
 class vip_base(base_visual):
+    """
+    Base class to inherent from when creation a visual plugin for th gui
 
+    """
     def initiate_layer_1(self, config):
         return self.initiate_layer_0(config)
 

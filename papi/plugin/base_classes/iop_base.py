@@ -29,7 +29,6 @@ Contributors:
 
 
 from papi.plugin.base_classes.ownProcess_base import ownProcess_base
-
 from papi.constants import PLUGIN_IOP_IDENTIFIER
 
 class iop_base(ownProcess_base):
