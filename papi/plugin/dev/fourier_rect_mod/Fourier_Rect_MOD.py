@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 from papi.plugin.base_classes.iop_base import iop_base
 from papi.data.DPlugin import DBlock

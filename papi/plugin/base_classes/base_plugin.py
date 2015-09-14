@@ -29,11 +29,10 @@ Sven Knuth
 
 from papi.data.DPlugin import DBlock, DEvent
 from papi.data.DParameter import DParameter
-import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.yapsy.IPlugin import IPlugin
 from papi.constants import CORE_TIME_SIGNAL
-
+import papi.event as Event
 
 class base_plugin(IPlugin):
     """
@@ -53,7 +52,6 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        #self.__dplugin_ids__    = {} Not sure where needed TODO
         self.dplugin_info       = None
         self.__subscription_for_demux = None
 
@@ -153,7 +151,7 @@ class base_plugin(IPlugin):
     # ------------------
     def merge_configs(self, cfg1, cfg2):
         """
-        This function is used to merge two functions.
+        This function is used to merge two configurations.
 
         :param cfg1:
         :param cfg2:
@@ -163,7 +161,7 @@ class base_plugin(IPlugin):
 
     def emit_event(self, data, event):
         """
-        This function is used by pcp plugins to emit a specific event.
+        This function is used by plugins to emit a specific event.
 
         :param data: New value provided by the DEvent
         :param event: DEvent which should be emitted.
@@ -198,29 +196,6 @@ class base_plugin(IPlugin):
         event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
-    def create_new_block(self, name, signalNames, types, frequency):
-        raise NotImplementedError('Create_new_block')
-        #
-        # if not isinstance(name, str):
-        #     raise Wrong_type('name', str)
-        #
-        # if not isinstance(signalNames, list):
-        #     raise Wrong_type('signalNames')
-        #
-        # for signalName in signalNames:
-        #     if not isinstance(signalName, str):
-        #         raise Wrong_type('signalName (' + str(signalName)+')', str)
-        #
-        # if not isinstance(types, list):
-        #     raise Wrong_type('types')
-        #
-        # if len(signalNames) != len(types):
-        #     raise Wrong_length('signalNames', 'types')
-        #
-        # count = len(signalNames)
-        #
-        # return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )
-
     def send_new_data(self, block_name, time_line, data):
         """
         This function is called by plugins to send new data for a single block.
@@ -238,32 +213,6 @@ class base_plugin(IPlugin):
         opt.block_name = block_name
 
         event = Event.data.NewData(self.__id__, 0, opt, None)
-        self._Core_event_queue__.put(event)
-
-
-    def send_new_data_old2(self, time_line, data, block_name):
-        raise NotImplementedError('send_new_data_old2')
-        # TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name
-        vec_data = []
-        vec_data.append(time_line)
-        for item in data:
-            vec_data.append(item)
-
-        opt = DOptionalData(DATA=vec_data)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
-        self._Core_event_queue__.put(event)
-
-    def send_new_data_old1(self, data, block_name):
-        raise NotImplementedError('send_new_data_old1')
-
-        opt = DOptionalData(DATA=data)
-        opt.data_source_id = self.__id__
-        opt.block_name = block_name
-
-        event = Event.data.NewData(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
     def send_new_event_list(self, events):
@@ -403,6 +352,7 @@ class base_plugin(IPlugin):
     def demux(self, source_id, block_name, data):
         """
         Internal function which is called to demux all signals.
+        This function will make sure that only the subscribed signals will be transferred to the plugin.
 
         :param source_id:
         :param block_name:

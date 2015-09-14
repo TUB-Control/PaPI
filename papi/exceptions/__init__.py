@@ -26,4 +26,4 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+

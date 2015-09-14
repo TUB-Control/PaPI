@@ -26,13 +26,12 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'stefan'
-
-from papi.plugin.base_classes.base_plugin import base_plugin
 import re
 from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
-
+from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
+
+
 
 class base_visual(base_plugin):
     """
@@ -142,6 +141,14 @@ class base_visual(base_plugin):
 
 
     def set_window_for_internal_usage(self, subwindow):
+        """
+        This function will take a subwindow and will prepare all his call back function to work within PaPI
+        It will also set the window reference for later use.
+
+        :param subwindow
+        :type subwindow: QMdiSubWindow
+        :return:
+        """
         self._subWindow = subwindow
         self.original_resize_function = self._subWindow.resizeEvent
         self.original_move_function = self._subWindow.moveEvent
@@ -155,11 +162,27 @@ class base_visual(base_plugin):
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
 
     def set_widget_for_internal_usage(self, widget):
+        """
+        Will take QWidget and will place it in the subwindow
+
+        Gets called by plugin developer!
+
+        :param widget: QWidget
+        :type widget: QWidget
+        :return:
+        """
         self.widget = widget
         self._subWindow.setWidget(self.widget)
 
 
     def window_move(self, event):
+        """
+        New callback function for movement of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
+
+        :param event:
+        :return:
+        """
         pos = self._subWindow.pos()
 
         x = pos.x()
@@ -169,7 +192,13 @@ class base_visual(base_plugin):
 
 
     def window_resize(self, event):
+        """
+        New callback function for resizing of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
 
+        :param event:
+        :return:
+        """
         size = event.size()
         w = size.width()
         h = size.height()
@@ -185,16 +214,39 @@ class base_visual(base_plugin):
         self.original_resize_function(event)
 
     def window_mouse_move(self, event):
+        """
+        New callback function for mouse move of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
+
+        :param event:
+        :return:
+        """
         if self.movable:
             self.original_mouse_move_function(event)
 
     def get_sub_window(self):
+        """
+        Getter method to get subwindow of plugin
+
+        :return: QMdiSubWindow
+        """
         return self._subWindow
 
     def get_widget(self):
+        """
+        Getter method to get widget of plugin
+
+        :return: QWidget
+        """
         return self.widget
 
     def create_control_context_menu(self):
+        """
+        This function will create the general PaPI Control context menu to be used in Plugins.
+
+        :return: QMenu
+        """
+
         ctrlMenu = QMenu("Control")
 
         del_action = QAction('Close plugin',self.widget)
@@ -216,7 +268,7 @@ class base_visual(base_plugin):
             for t in tabs:
                 if t != self.config['tab']['value']:
                     entry = QAction(t, self.widget)
-                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
+                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_move_triggered(p))
                     tab_entrys.append(entry)
                     tabMenu.addAction(entry)
 
@@ -227,7 +279,14 @@ class base_visual(base_plugin):
         ctrlMenu.addAction(del_action)
         return ctrlMenu
 
-    def tabMenu_triggered(self, item):
+    def tabMenu_move_triggered(self, item):
+        """
+        This callback function gets called when the user clicked on the moveToTab action at the context menu.
+        Will start the process of moving the plugin window to another tab
+
+        :param item: TabName to be moved to
+        :return:
+        """
         pos = self._subWindow.pos()
         posX = pos.x()
         posY = pos.y()
@@ -236,11 +295,26 @@ class base_visual(base_plugin):
 
 
     def ctlrMenu_exit(self):
+        """
+        Callback function for context menu for closing plugins
+
+        :return:
+        """
         self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
         print(self.config['tab']['value'])
 
     def ctlrMenu_pause(self):
+        """
+        Callback function for context menu for pausing plugins
+
+        :return:
+        """
         self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
 
     def ctlrMenu_resume(self):
+        """
+        Callback function for context menu for resuming plugins
+
+        :return:
+        """
         self.control_api.do_resume_plugin_by_uname(self.dplugin_info.uname)

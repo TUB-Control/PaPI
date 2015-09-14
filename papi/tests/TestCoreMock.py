@@ -1,4 +1,4 @@
-__author__ = 'stefan'
+
 
 import unittest
 from papi.data.DGui import DGui

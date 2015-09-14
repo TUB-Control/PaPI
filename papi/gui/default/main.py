@@ -26,7 +26,7 @@ Contributors
 Sven Knuth, Stefan Ruppin
 """
 
-__author__ = 'knuths'
+
 
 import sys
 import os

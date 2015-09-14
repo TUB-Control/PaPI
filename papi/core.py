@@ -26,7 +26,7 @@ Contributors
 Stefan Ruppin
 """
 
-__author__ = 'ruppin'
+
 
 import os
 from multiprocessing import Process, Queue

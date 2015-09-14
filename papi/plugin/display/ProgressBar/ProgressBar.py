@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'knuths'
+
 
 from PyQt5.QtWidgets import QMdiSubWindow, QProgressBar
 from PyQt5 import  QtCore

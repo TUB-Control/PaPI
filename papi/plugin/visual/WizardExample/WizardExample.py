@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtWidgets import QMdiSubWindow, QLabel, QVBoxLayout, QWizardPage, QWizard, QLineEdit

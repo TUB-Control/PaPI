@@ -25,7 +25,7 @@ along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 Contributors
 Stefan Ruppin
 """
-__author__ = 'stefan'
+
 
 import datetime
 import time

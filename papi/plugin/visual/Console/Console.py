@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+
 
 
 from PyQt5 import QtCore

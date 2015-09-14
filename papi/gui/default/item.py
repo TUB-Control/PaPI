@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 from PyQt5.QtWidgets    import QMdiSubWindow, QAction, QToolBar,QTreeView, QMenu
 from PyQt5.QtCore       import Qt, QRegExp, pyqtSignal, QSortFilterProxyModel, QModelIndex

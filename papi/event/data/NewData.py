@@ -26,7 +26,7 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 from papi.event.data.DataBase import DataBase
 

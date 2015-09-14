@@ -26,10 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
-
 from papi.plugin.base_classes.ownProcess_base import ownProcess_base
-
 from papi.constants import PLUGIN_DPP_IDENTIFIER
 
 class dpp_base(ownProcess_base):

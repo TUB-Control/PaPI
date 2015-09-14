@@ -26,7 +26,7 @@ Contributors:
 Mirjana Ruppel
 """
 
-__author__ = 'Mirjana'
+
 
 # basic import for block and parameter structure
 from papi.data.DPlugin import DBlock

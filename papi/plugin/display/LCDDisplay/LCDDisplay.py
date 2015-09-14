@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+
 
 
 from papi.plugin.base_classes.vip_base import vip_base
@@ -38,7 +38,7 @@ import time
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 
-#RENAME TO PLUGIN NAME
+
 class LCDDisplay(vip_base):
 
 

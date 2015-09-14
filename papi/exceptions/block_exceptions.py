@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 
 class Wrong_type(Exception):

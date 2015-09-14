@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 
 from PyQt5.QtWidgets import QPushButton

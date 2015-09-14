@@ -26,7 +26,7 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'ruppins'
+
 
 from papi.data.DCore import DCore
 

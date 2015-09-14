@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 # basic import for block and parameter structure
 from papi.data.DPlugin import DBlock

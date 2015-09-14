@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 
 from papi.plugin.base_classes.vip_base import vip_base
