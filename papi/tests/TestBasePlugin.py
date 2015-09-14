@@ -33,6 +33,7 @@ import unittest
 from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.data.DPlugin import DBlock, DEvent
 from papi.data.DParameter import DParameter
+import papi.exceptions as pe
 
 class TestBasePlugin(unittest.TestCase):
 
@@ -58,7 +59,7 @@ class TestBasePlugin(unittest.TestCase):
 
     def test_parameterChanges(self):
 
-        self.assertRaises(ValueError, self.basePlugin.emit_event, None, None)
+        self.assertRaises(pe.WrongType, self.basePlugin.emit_event, None, None)
         self.assertRaises(AttributeError, self.basePlugin.send_parameter_change, None, "DBlock")
         self.assertRaises(AttributeError, self.basePlugin.emit_event, None, "DEvent")
         self.assertRaises(AttributeError, self.basePlugin.send_parameter_change, None, DBlock("Block"))
@@ -76,8 +77,8 @@ class TestBasePlugin(unittest.TestCase):
 
     def test_send_new_event_list(self):
 
-        self.assertRaises(ValueError, self.basePlugin.send_new_event_list, None)
-        self.assertRaises(ValueError, self.basePlugin.send_new_event_list, [])
+        self.assertRaises(pe.WrongType, self.basePlugin.send_new_event_list, None)
+        self.assertRaises(pe.WrongLength, self.basePlugin.send_new_event_list, [])
 
         events = [
             DEvent('1'), DEvent('2'), DEvent('3')
@@ -85,8 +86,13 @@ class TestBasePlugin(unittest.TestCase):
         self.assertRaises(AttributeError, self.basePlugin.send_new_event_list, events)
 
     def test_send_new_block_list(self):
-        self.assertRaises(ValueError, self.basePlugin.send_new_block_list, None)
-        self.assertRaises(ValueError, self.basePlugin.send_new_block_list, [])
+        self.assertRaises(pe.WrongType, self.basePlugin.send_new_block_list, None)
+        self.assertRaises(pe.WrongLength, self.basePlugin.send_new_block_list, [])
+
+        blocks = [
+            DBlock('1'), 1, DBlock('3')
+        ]
+        self.assertRaises(pe.WrongType, self.basePlugin.send_new_block_list, blocks)
 
         blocks = [
             DBlock('1'), DBlock('2'), DBlock('3')
@@ -94,8 +100,13 @@ class TestBasePlugin(unittest.TestCase):
         self.assertRaises(AttributeError, self.basePlugin.send_new_block_list, blocks)
 
     def test_send_new_parameter_list(self):
-        self.assertRaises(ValueError, self.basePlugin.send_new_parameter_list, None)
-        self.assertRaises(ValueError, self.basePlugin.send_new_parameter_list, [])
+        self.assertRaises(pe.WrongType, self.basePlugin.send_new_parameter_list, None)
+        self.assertRaises(pe.WrongLength, self.basePlugin.send_new_parameter_list, [])
+
+        parameters = [
+            DParameter('1'), DParameter('2'), 3
+        ]
+        self.assertRaises(pe.WrongType, self.basePlugin.send_new_parameter_list, parameters)
 
         parameters = [
             DParameter('1'), DParameter('2'), DParameter('3')
@@ -103,12 +114,12 @@ class TestBasePlugin(unittest.TestCase):
         self.assertRaises(AttributeError, self.basePlugin.send_new_parameter_list, parameters)
 
     def test_delete_block(self):
-        self.assertRaises(ValueError, self.basePlugin.send_delete_block, None)
+        self.assertRaises(pe.WrongType, self.basePlugin.send_delete_block, None)
         self.assertRaises(AttributeError, self.basePlugin.send_delete_block, 'DBlock')
         self.assertRaises(AttributeError, self.basePlugin.send_delete_block, DBlock('DBlock'))
 
     def send_delete_parameter(self):
-        self.assertRaises(ValueError, self.basePlugin.send_delete_parameter, None)
+        self.assertRaises(pe.WrongType, self.basePlugin.send_delete_parameter, None)
         self.assertRaises(AttributeError, self.basePlugin.send_delete_parameter, 'DParameter')
         self.assertRaises(AttributeError, self.basePlugin.send_delete_parameter, DParameter('DParameter'))
 

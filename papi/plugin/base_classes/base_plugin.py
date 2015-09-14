@@ -33,6 +33,7 @@ from papi.data.DOptionalData import DOptionalData
 from papi.yapsy.IPlugin import IPlugin
 from papi.constants import CORE_TIME_SIGNAL
 import papi.event as Event
+import papi.exceptions as pe
 
 class base_plugin(IPlugin):
     """
@@ -168,7 +169,7 @@ class base_plugin(IPlugin):
         :return:
         """
         if isinstance(event, DEvent) == False and isinstance(event, str) == False:
-            raise ValueError("Attribute event: Not of type DEvent or str")
+            raise pe.WrongType("block",  [DEvent, str])
 
         self.send_parameter_change(data, event)
 
@@ -184,8 +185,8 @@ class base_plugin(IPlugin):
         opt.data_source_id = self.__id__
         opt.is_parameter = True
 
-        if isinstance(block, DBlock) == False and isinstance(block, str) == False:
-            raise ValueError("Attribute block: Not of type DBlock or str")
+        if isinstance(block, DBlock) is False and isinstance(block, str) is False:
+            raise pe.WrongType("block",  [DBlock, str])
 
         if isinstance(block, DBlock):
             opt.block_name = block.name
@@ -224,15 +225,15 @@ class base_plugin(IPlugin):
         """
 
         if not isinstance(events, list):
-            raise ValueError('Attribute events: Expected ' + str(list))
+            raise pe.WrongType("events", list)
 
         if len(events) == 0:
-            raise ValueError('Attribute events: Contains no elements ')
+            raise pe.WrongLength("events", len(events), ">0")
 
         for i in range(len(events)):
             event = events[i]
             if not isinstance(event, DEvent):
-                raise ValueError('Attribute events['+str(i)+']: Expected ' + str(DEvent) )
+                raise pe.WrongType('events['+str(i)+']', DEvent)
 
         self.send_new_block_list(events)
 
@@ -245,15 +246,15 @@ class base_plugin(IPlugin):
         """
 
         if not isinstance(blocks, list):
-            raise ValueError('Attribute blocks: Expected ' + str(list))
+            raise pe.WrongType("blocks", list)
 
         if len(blocks) == 0:
-            raise ValueError('Attribute events: Contains no elements ')
+            raise pe.WrongLength("blocks", len(blocks), ">0")
 
         for i in range(len(blocks)):
             block = blocks[i]
             if not isinstance(block, DBlock):
-                raise ValueError('Attribute blocks['+str(i)+']: Expected ' + str(DBlock) )
+                raise pe.WrongType('blocks['+str(i)+']', DBlock)
 
         opt = DOptionalData()
         opt.block_list = blocks
@@ -269,16 +270,15 @@ class base_plugin(IPlugin):
         """
 
         if not isinstance(parameters, list):
-            raise ValueError('Attribute parameters: Expected ' + str(list))
+            raise pe.WrongType("parameters", list)
 
         if len(parameters) == 0:
-            raise ValueError('Attribute parameters: Contains no elements ')
+            raise pe.WrongLength("parameters", len(parameters), ">0")
 
         for i in range(len(parameters)):
             parameter = parameters[i]
             if not isinstance(parameter, DParameter):
-                raise ValueError('Attribute parameters['+str(i)+']: Expected ' + str(DParameter) )
-
+                raise pe.WrongType('parameters['+str(i)+']', DParameter)
 
         opt = DOptionalData()
         opt.parameter_list = parameters
@@ -296,7 +296,7 @@ class base_plugin(IPlugin):
         block_name = None
 
         if isinstance(block, DBlock) == False and isinstance(block, str) == False:
-            raise ValueError('Attribute parameters: Expected ' + str(DBlock) + ' or ' + str(str))
+            raise pe.WrongType("parameters", [DBlock, str])
 
         if isinstance(block, DBlock):
             block_name = block.name
@@ -318,7 +318,7 @@ class base_plugin(IPlugin):
         parameter_name = None
 
         if isinstance(parameter, DParameter) == False and isinstance(parameter, str) == False:
-            raise ValueError('Attribute parameters: Expected ' + str(DParameter) + ' or ' + str(str))
+            raise pe.WrongType("parameter", [DParameter, str])
 
         if isinstance(parameter, DParameter):
             parameter_name = parameter.name
