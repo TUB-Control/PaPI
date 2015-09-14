@@ -313,7 +313,7 @@ class DCore():
         if dplugin is not None:
             dblock = dplugin.get_dblock_by_name(dblock_name)
             if dblock is not None:
-                dplugin_ids = dblock.get_subscribers()
+                dplugin_ids = copy.deepcopy(dblock.get_subscribers())
                 for dplugin_id in dplugin_ids:
 
                     subscriber = self.get_dplugin_by_id(dplugin_id)
