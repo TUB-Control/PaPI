@@ -76,25 +76,29 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
 
-<span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span><span class="p">,</span> <span class="n">PaPITreeItem</span><span class="p">,</span> <span class="n">PaPITreeProxyModel</span>
 <span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">DPluginTreeModel</span><span class="p">,</span> <span class="n">DParameterTreeModel</span><span class="p">,</span> <span class="n">DBlockTreeModel</span>
 <span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">DPluginTreeItem</span><span class="p">,</span> <span class="n">DBlockTreeItem</span><span class="p">,</span> <span class="n">DParameterTreeItem</span><span class="p">,</span> <span class="n">DSignalTreeItem</span>
 
 <span class="kn">from</span> <span class="nn">papi.ui.gui.default.PluginOverviewMenu</span> <span class="kn">import</span> <span class="n">Ui_PluginOverviewMenu</span>
 
 
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">,</span> \
     <span class="n">PLUGIN_STATE_DEAD</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_STATE_RESUMED</span><span class="p">,</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">,</span> \
     <span class="n">PLUGIN_STATE_DELETE</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QStandardItemModel</span>
+<span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
+
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QAbstractItemView</span><span class="p">,</span> <span class="n">QAction</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRegExp</span>
 
-
-<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DParameter</span>
+<span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DParameter</span><span class="p">,</span> <span class="n">DSubscription</span>
 
 
 <div class="viewcode-block" id="OverviewPluginMenu"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu">[docs]</a><span class="k">class</span> <span class="nc">OverviewPluginMenu</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_PluginOverviewMenu</span><span class="p">):</span>
@@ -120,18 +124,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span> <span class="o">=</span> <span class="n">DPluginTreeModel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Name&#39;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span> <span class="o">=</span> <span class="n">PaPITreeProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="p">)</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">,</span> <span class="n">QRegExp</span><span class="o">.</span><span class="n">Wildcard</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;ViP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;IOP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;DPP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;PCP&#39;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c"># -----------------------------------</span>
         <span class="c"># Build structure of parameter tree</span>
@@ -157,22 +158,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">showInternalNameCheckBox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_internal_name_callback</span><span class="p">)</span>
 
         <span class="c"># -----------------------------------</span>
-        <span class="c"># Build structure of subscriber tree</span>
+        <span class="c"># Build structure of connection tree</span>
         <span class="c"># -----------------------------------</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span> <span class="o">=</span> <span class="n">PaPITreeModel</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Subscriber&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span> <span class="o">=</span> <span class="n">PaPITreeModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">setHeaderHidden</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="c"># -----------------------------------</span>
-        <span class="c"># Build structure of subscriptions tree</span>
-        <span class="c"># -----------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribers_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;Subscribers&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribers_root</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span> <span class="o">=</span> <span class="n">PaPITreeModel</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Subscription&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;Subscriptions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscriptions_root</span><span class="p">)</span>
 
         <span class="c"># -----------------------------------</span>
         <span class="c"># signal/slots</span>
@@ -194,16 +193,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parameterTree</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameterTree</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_context_menu_parameter_tree</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_context_menu_subscriber_tree</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_context_menu_subscription_tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_context_menu_connection_tree</span><span class="p">)</span>
 
         <span class="c"># ----------------------------------</span>
         <span class="c"># Add Actions</span>
         <span class="c"># ----------------------------------</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionRefresh</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginSearchText</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changed_search_plugin_text_field</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
@@ -215,8 +212,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bModel</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dparameterModel</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribers_root</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions_root</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">unameEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">usedpluginEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stateEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
@@ -225,8 +224,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">bModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Name&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dparameterModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Name&#39;</span><span class="p">,</span> <span class="s">&#39;Value&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Subscriber&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Subscription&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionModel</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;&#39;</span><span class="p">])</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.plugin_item_changed"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.plugin_item_changed">[docs]</a>    <span class="k">def</span> <span class="nf">plugin_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -241,9 +239,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 
         <span class="c"># ------------------------------------</span>
         <span class="c"># Get all needed dplugin information</span>
@@ -255,7 +253,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">typeEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alivestateEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">alive_state</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+        <span class="c"># if dplugin.type != PLUGIN_PCP_IDENTIFIER:</span>
+        <span class="k">if</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pauseButton</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">playButton</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stopButton</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
@@ -294,9 +293,10 @@
             <span class="c"># -------------------------</span>
 
             <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_signals</span><span class="p">():</span>
-                <span class="n">signal_item</span> <span class="o">=</span> <span class="n">DSignalTreeItem</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">showInternalNameCheckBox</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pc</span><span class="o">.</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]:</span>
+                    <span class="n">signal_item</span> <span class="o">=</span> <span class="n">DSignalTreeItem</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">showInternalNameCheckBox</span><span class="p">)</span>
 
-                <span class="n">block_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">signal_item</span><span class="p">)</span>
+                    <span class="n">block_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">signal_item</span><span class="p">)</span>
 
             <span class="n">block_item</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -307,14 +307,31 @@
             <span class="n">subscriber_ids</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()</span>
 
             <span class="k">for</span> <span class="n">subscriber_id</span> <span class="ow">in</span> <span class="n">subscriber_ids</span><span class="p">:</span>
+                <span class="c"># Other plugin</span>
                 <span class="n">subscriber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgui</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">)</span>
-                <span class="n">subscriber_item</span> <span class="o">=</span> <span class="n">DPluginTreeItem</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span>
 
-                <span class="n">block_item</span> <span class="o">=</span> <span class="n">DBlockTreeItem</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">subscriber</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">():</span>
 
-                <span class="n">subscriber_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">block_item</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">dblock_sub_id</span> <span class="ow">in</span> <span class="n">subscriber</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">subscriberModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">subscriber_item</span><span class="p">)</span>
+
+                        <span class="n">subscriber_item</span> <span class="o">=</span> <span class="n">DPluginTreeItem</span><span class="p">(</span><span class="n">subscriber</span><span class="p">)</span>
+                        <span class="c">#                self.subscriberModel.appendRow(subscriber_item)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">subscribers_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">subscriber_item</span><span class="p">)</span>
+
+                        <span class="n">subscription</span> <span class="o">=</span> <span class="n">subscriber</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">dblock_sub_id</span><span class="p">]</span>
+
+                        <span class="n">block_item</span> <span class="o">=</span> <span class="n">DBlockTreeItem</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>
+
+                        <span class="n">subscriber_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">block_item</span><span class="p">)</span>
+
+                        <span class="n">subscription_item</span> <span class="o">=</span> <span class="n">PaPITreeItem</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="s">&quot;Signals&quot;</span><span class="p">)</span>
+                        <span class="n">block_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">subscription_item</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">signal_uname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()):</span>
+                            <span class="k">if</span> <span class="n">signal_uname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pc</span><span class="o">.</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]:</span>
+                                <span class="n">signal_item</span> <span class="o">=</span> <span class="n">PaPITreeItem</span><span class="p">(</span><span class="n">signal_uname</span><span class="p">,</span> <span class="n">signal_uname</span><span class="p">)</span>
+
+                                <span class="n">subscription_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">signal_item</span><span class="p">)</span>
 
 
         <span class="c"># -------------------------</span>
@@ -331,7 +348,8 @@
 
             <span class="n">dplugin_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dplugin_sub_id</span><span class="p">)</span>
             <span class="n">dplugin_sub_item</span> <span class="o">=</span> <span class="n">DPluginTreeItem</span><span class="p">(</span><span class="n">dplugin_sub</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">dplugin_sub_item</span><span class="p">)</span>
+            <span class="c">#self.subscriptionModel.appendRow(dplugin_sub_item)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">dplugin_sub_item</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">dblock_names</span><span class="p">:</span>
 
@@ -341,11 +359,15 @@
 
                 <span class="n">subscription</span> <span class="o">=</span> <span class="n">dblock_names</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
 
+                <span class="n">subscription_item</span> <span class="o">=</span> <span class="n">PaPITreeItem</span><span class="p">(</span><span class="n">subscription</span><span class="p">,</span> <span class="s">&quot;Signals&quot;</span><span class="p">)</span>
+
+                <span class="n">dblock_sub_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">subscription_item</span><span class="p">)</span>
+
                 <span class="k">for</span> <span class="n">signal_uname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">signal_uname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pc</span><span class="o">.</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]:</span>
+                        <span class="n">signal_item</span> <span class="o">=</span> <span class="n">PaPITreeItem</span><span class="p">(</span><span class="n">signal_uname</span><span class="p">,</span> <span class="n">signal_uname</span><span class="p">)</span>
 
-                    <span class="n">signal_item</span> <span class="o">=</span> <span class="n">QStandardItem</span><span class="p">(</span><span class="n">signal_uname</span><span class="p">)</span>
-
-                    <span class="n">dblock_sub_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">signal_item</span><span class="p">)</span>
+                        <span class="n">subscription_item</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">signal_item</span><span class="p">)</span>
 
         <span class="c"># --------------------------</span>
         <span class="c"># Add DParameters</span>
@@ -370,13 +392,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bModel</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.plugin_item_refresh"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.plugin_item_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">plugin_item_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">parameterTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">blockTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
     <span class="c"># noinspection PyUnresolvedReferences</span></div>
 <div class="viewcode-block" id="OverviewPluginMenu.open_context_menu_dplugin_tree"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_dplugin_tree">[docs]</a>    <span class="k">def</span> <span class="nf">open_context_menu_dplugin_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
@@ -454,7 +472,7 @@
 
             <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="OverviewPluginMenu.open_context_menu_subscriber_tree"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscriber_tree">[docs]</a>    <span class="k">def</span> <span class="nf">open_context_menu_subscriber_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+<div class="viewcode-block" id="OverviewPluginMenu.open_context_menu_connection_tree"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_connection_tree">[docs]</a>    <span class="k">def</span> <span class="nf">open_context_menu_connection_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This callback function is called to create a context menu</span>
 <span class="sd">        for the subscriper tree</span>
@@ -462,97 +480,83 @@
 <span class="sd">        :param position:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">isIndexHidden</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">isIndexHidden</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+        <span class="n">parIndex</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="n">subscriberPart</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">subscriptionPart</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">isSignal</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="nb">object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">parIndex</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s">&quot;Subscribers&quot;</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">:</span>
+                <span class="n">subscriberPart</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="s">&quot;Subscriptions&quot;</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">:</span>
+                <span class="n">subscriptionPart</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="p">(</span> <span class="n">subscriptionPart</span> <span class="ow">or</span> <span class="n">subscriberPart</span> <span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">parIndex</span> <span class="o">=</span> <span class="n">parIndex</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">parIndex</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">subscriptionPart</span> <span class="ow">or</span> <span class="n">subscriberPart</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">),</span> <span class="n">DSubscription</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="n">dblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-        <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-
-        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s">&#39;Remove&#39;</span><span class="p">)</span>
-
-        <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Remove Subscriber&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">dblock</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">dplugin</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_subscriber_action</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
-
-        <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribersTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
-</div>
-<div class="viewcode-block" id="OverviewPluginMenu.open_context_menu_subscription_tree"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscription_tree">[docs]</a>    <span class="k">def</span> <span class="nf">open_context_menu_subscription_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This callback function is called to create a context menu</span>
-<span class="sd">        for the subscription tree</span>
-
-<span class="sd">        :param position:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
-        <span class="n">isSignal</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="n">menu</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="c"># ----------------------------------</span>
-        <span class="c"># Open no context menu if invalid</span>
-        <span class="c"># ----------------------------------</span>
-
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="c"># ----------------------------------</span>
-        <span class="c"># Open no context menu for parent</span>
-        <span class="c"># ----------------------------------</span>
-
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="c"># ----------------------------------</span>
-        <span class="c"># Open no context menu for hidden objects</span>
-        <span class="c"># ----------------------------------</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">isIndexHidden</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">),</span> <span class="n">DPlugin</span><span class="p">):</span>
+            <span class="k">return</span>
 
         <span class="c"># ----------------------------------</span>
         <span class="c"># Open no context menu for signals</span>
         <span class="c"># ----------------------------------</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">isSignal</span> <span class="o">=</span> <span class="bp">True</span>
-
-        <span class="c"># ----------------------------------</span>
-        <span class="c"># Get necessary objects for this subscription</span>
-        <span class="c"># ----------------------------------</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">isSignal</span><span class="p">:</span>
-            <span class="n">dblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Remove Subscription&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">signal_uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
-            <span class="n">dblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+            <span class="n">isSignal</span> <span class="o">=</span> <span class="bp">False</span>
 
-            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Remove Signal -&gt; &#39;</span> <span class="o">+</span> <span class="n">signal_uname</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+
+        <span class="c"># ----------------------------------</span>
+        <span class="c"># Get necessary objects for this subscription/subscriber</span>
+        <span class="c"># ----------------------------------</span>
+
+        <span class="k">if</span> <span class="n">isSignal</span><span class="p">:</span>
+            <span class="n">dblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+            <span class="n">signal_uname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
             <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">signal_uname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
 
-        <span class="c"># ----------------------------------</span>
-        <span class="c"># Create context menu</span>
-        <span class="c"># ----------------------------------</span>
+        <span class="k">if</span> <span class="n">subscriberPart</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Remove Subscriber&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">dblock</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">dplugin</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_subscriber_action</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
 
-        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">subscriptionPart</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Remove Subscription&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">dblock</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">signals</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancel_subscription_action</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s">&#39;Remove&#39;</span><span class="p">)</span>
         <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">dblock</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">signals</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancel_subscription_action</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
-
-        <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscriptionsTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectionTree</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.open_context_menu_parameter_tree"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_parameter_tree">[docs]</a>    <span class="k">def</span> <span class="nf">open_context_menu_parameter_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -585,7 +589,7 @@
         <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">dplugin_ids</span><span class="p">:</span>
             <span class="n">dplugin_pcp</span> <span class="o">=</span> <span class="n">dplugin_ids</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">dplugin_pcp</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dplugin_pcp</span><span class="o">.</span><span class="n">get_devent</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c"># action = QAction(self.tr(dplugin.uname), self)</span>
                 <span class="c"># sub_menu.addAction(action)</span>
                 <span class="n">pcp_menu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">dplugin_pcp</span><span class="o">.</span><span class="n">uname</span><span class="p">),</span> <span class="n">sub_menu</span><span class="p">)</span>
@@ -595,7 +599,10 @@
 
                 <span class="k">for</span> <span class="n">dblock_pcp_id</span> <span class="ow">in</span> <span class="n">dblock_pcp_ids</span><span class="p">:</span>
                     <span class="n">dblock_pcp</span> <span class="o">=</span> <span class="n">dblock_pcp_ids</span><span class="p">[</span><span class="n">dblock_pcp_id</span><span class="p">]</span>
-                    <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">dblock_pcp</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">pcp_menu</span><span class="p">)</span>
+
+                    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dblock_pcp</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="n">dblock_pcp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; (&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;)&#39;</span><span class="p">,</span> <span class="n">pcp_menu</span><span class="p">)</span>
                     <span class="n">pcp_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
                     <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">dparameter</span><span class="p">,</span> <span class="n">p3</span><span class="o">=</span><span class="n">dplugin_pcp</span><span class="p">,</span> <span class="n">p4</span><span class="o">=</span><span class="n">dblock_pcp</span><span class="p">:</span>
@@ -662,9 +669,7 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-
         <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_unsubscribe_uname</span><span class="p">(</span><span class="n">subscriber</span><span class="o">.</span><span class="n">uname</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">uname</span><span class="p">,</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.refresh_action"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.refresh_action">[docs]</a>    <span class="k">def</span> <span class="nf">refresh_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dplugin</span><span class="p">:</span> <span class="n">DPlugin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -687,22 +692,28 @@
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">PLUGIN_STATE_DELETE</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pluginWidget</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-                <span class="c">#TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters</span>
-                <span class="c">#self.pluginTree.clicked.emit(index)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pluginWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_item_refresh</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
         <span class="c"># -----------------------------------------</span>
         <span class="c"># case: remove already deleted plugins</span>
         <span class="c"># -----------------------------------------</span>
+        <span class="n">key_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">key_copy</span><span class="p">:</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">]</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">]</span><span class="o">.</span><span class="n">rowCount</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">remove_item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">])</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribers_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscriptions_root</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+
+        <span class="c">#        self.subscribersTree</span>
 
         <span class="c"># -----------------------------------------</span>
         <span class="c"># case: a DPlugin was added</span>
@@ -710,27 +721,13 @@
 
         <span class="k">if</span> <span class="n">new_dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">plugin_item</span> <span class="o">=</span> <span class="n">DPluginTreeItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
-<span class="c">#                plugin_item = DPluginTreeItem(new_dplugin)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
+            <span class="n">plugin_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plugin_root</span><span class="p">(</span><span class="n">new_dplugin</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_root</span><span class="o">.</span><span class="n">hasItem</span><span class="p">(</span><span class="n">new_dplugin</span><span class="p">):</span>
+                <span class="n">plugin_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
 
-        <span class="c">#TODO: Keeps redrawing everything, triggers tree collapse everytime. Disables also the live change of parameters</span>
-        <span class="c">#index = self.pluginTree.currentIndex()</span>
-        <span class="c">#if index.isValid():</span>
-        <span class="c">#    self.plugin_item_refresh(index)</span>
-
-            <span class="c">#self.pluginTree.clicked.emit(index)</span>
+            <span class="k">if</span> <span class="n">plugin_root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">findItems</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">MatchContains</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dpluginModel</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_root</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.cancel_subscription_action"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.cancel_subscription_action">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_subscription_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">dblock</span><span class="p">:</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">signals</span><span class="p">:</span> <span class="p">[]):</span>
@@ -743,7 +740,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
         <span class="n">subscriber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_unsubscribe_uname</span><span class="p">(</span><span class="n">subscriber</span><span class="o">.</span><span class="n">uname</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">uname</span><span class="p">,</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">signals</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.showEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -763,14 +759,12 @@
             <span class="c"># ------------------------------</span>
             <span class="n">plugin_item</span> <span class="o">=</span> <span class="n">DPluginTreeItem</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_IOP_IDENTIFIER</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
+            <span class="n">plugin_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plugin_root</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">plugin_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">]</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="OverviewPluginMenu.play_button_callback"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.play_button_callback">[docs]</a>    <span class="k">def</span> <span class="nf">play_button_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -862,6 +856,35 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_edit_plugin_uname</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">,</span> <span class="n">dblock</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;edit&quot;</span> <span class="p">:</span> <span class="n">dsignal</span><span class="p">})</span>
 </div>
+<div class="viewcode-block" id="OverviewPluginMenu.get_plugin_root"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.get_plugin_root">[docs]</a>    <span class="k">def</span> <span class="nf">get_plugin_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">);</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">part</span>
+        <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">:</span>
+
+            <span class="n">cfg_file</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_PLUGIN_CONFIG</span>
+
+
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">):</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;Config&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="s">&#39;Config&#39;</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Config&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="OverviewPluginMenu.changed_search_plugin_text_field"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.changed_search_plugin_text_field">[docs]</a>    <span class="k">def</span> <span class="nf">changed_search_plugin_text_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">,</span> <span class="n">QRegExp</span><span class="o">.</span><span class="n">Wildcard</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="OverviewPluginMenu.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used to handle key events for this gui element.</span>
@@ -873,7 +896,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">hasFocus</span><span class="p">()</span> <span class="ow">and</span> \
-                <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Left</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Right</span><span class="p">]:</span>
+                        <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Left</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Right</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plugin_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span></div></div>
 </pre></div>
 

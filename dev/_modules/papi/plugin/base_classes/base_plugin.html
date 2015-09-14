@@ -78,10 +78,10 @@
 
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DEvent</span>
 <span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
-<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 <span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
 <span class="kn">from</span> <span class="nn">papi.yapsy.IPlugin</span> <span class="kn">import</span> <span class="n">IPlugin</span>
-
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_TIME_SIGNAL</span>
+<span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 
 <div class="viewcode-block" id="base_plugin"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin">[docs]</a><span class="k">class</span> <span class="nc">base_plugin</span><span class="p">(</span><span class="n">IPlugin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -101,7 +101,6 @@
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#self.__dplugin_ids__    = {} Not sure where needed TODO</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span>       <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="o">=</span> <span class="bp">None</span>
 </div>
@@ -201,7 +200,7 @@
     <span class="c"># ------------------</span></div>
 <div class="viewcode-block" id="base_plugin.merge_configs"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.merge_configs">[docs]</a>    <span class="k">def</span> <span class="nf">merge_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg1</span><span class="p">,</span> <span class="n">cfg2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function is used to merge two functions.</span>
+<span class="sd">        This function is used to merge two configurations.</span>
 
 <span class="sd">        :param cfg1:</span>
 <span class="sd">        :param cfg2:</span>
@@ -211,7 +210,7 @@
 </div>
 <div class="viewcode-block" id="base_plugin.emit_event"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.emit_event">[docs]</a>    <span class="k">def</span> <span class="nf">emit_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function is used by pcp plugins to emit a specific event.</span>
+<span class="sd">        This function is used by plugins to emit a specific event.</span>
 
 <span class="sd">        :param data: New value provided by the DEvent</span>
 <span class="sd">        :param event: DEvent which should be emitted.</span>
@@ -246,29 +245,6 @@
         <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="base_plugin.create_new_block"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.create_new_block">[docs]</a>    <span class="k">def</span> <span class="nf">create_new_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">signalNames</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">frequency</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Create_new_block&#39;</span><span class="p">)</span>
-        <span class="c">#</span>
-        <span class="c"># if not isinstance(name, str):</span>
-        <span class="c">#     raise Wrong_type(&#39;name&#39;, str)</span>
-        <span class="c">#</span>
-        <span class="c"># if not isinstance(signalNames, list):</span>
-        <span class="c">#     raise Wrong_type(&#39;signalNames&#39;)</span>
-        <span class="c">#</span>
-        <span class="c"># for signalName in signalNames:</span>
-        <span class="c">#     if not isinstance(signalName, str):</span>
-        <span class="c">#         raise Wrong_type(&#39;signalName (&#39; + str(signalName)+&#39;)&#39;, str)</span>
-        <span class="c">#</span>
-        <span class="c"># if not isinstance(types, list):</span>
-        <span class="c">#     raise Wrong_type(&#39;types&#39;)</span>
-        <span class="c">#</span>
-        <span class="c"># if len(signalNames) != len(types):</span>
-        <span class="c">#     raise Wrong_length(&#39;signalNames&#39;, &#39;types&#39;)</span>
-        <span class="c">#</span>
-        <span class="c"># count = len(signalNames)</span>
-        <span class="c">#</span>
-        <span class="c"># return DBlock(self.__id__, count, frequency, name, signal_names_internal=signalNames, signal_types=types )</span>
-</div>
 <div class="viewcode-block" id="base_plugin.send_new_data"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called by plugins to send new data for a single block.</span>
@@ -280,38 +256,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">dataHash</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="n">dataHash</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_line</span>
+        <span class="n">dataHash</span><span class="p">[</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_line</span>
         <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span> <span class="o">=</span> <span class="n">dataHash</span><span class="p">)</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
 
         <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="base_plugin.send_new_data_old2"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old2">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data_old2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;send_new_data_old2&#39;</span><span class="p">)</span>
-        <span class="c"># TODO: known limitation, signal count of data+timeline HAVE TO match len of names defined in DBlock of block_name</span>
-        <span class="n">vec_data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">vec_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_line</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">vec_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-
-        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">vec_data</span><span class="p">)</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
-
-        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="base_plugin.send_new_data_old1"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data_old1">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_data_old1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;send_new_data_old1&#39;</span><span class="p">)</span>
-
-        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">(</span><span class="n">DATA</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block_name</span>
-
-        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__id__</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_Core_event_queue__</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_plugin.send_new_event_list"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.send_new_event_list">[docs]</a>    <span class="k">def</span> <span class="nf">send_new_event_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
@@ -451,6 +401,7 @@
 <div class="viewcode-block" id="base_plugin.demux"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.demux">[docs]</a>    <span class="k">def</span> <span class="nf">demux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Internal function which is called to demux all signals.</span>
+<span class="sd">        This function will make sure that only the subscribed signals will be transferred to the plugin.</span>
 
 <span class="sd">        :param source_id:</span>
 <span class="sd">        :param block_name:</span>
@@ -462,8 +413,6 @@
 
         <span class="n">sub_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span><span class="p">[</span><span class="n">source_id</span><span class="p">][</span><span class="n">block_name</span><span class="p">]</span>
         <span class="n">sub_signals</span> <span class="o">=</span> <span class="n">sub_object</span><span class="o">.</span><span class="n">signals</span>
-        <span class="k">if</span> <span class="s">&#39;t&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sub_signals</span><span class="p">:</span>
-            <span class="n">sub_signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_signals</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></div></div>
 </pre></div>

@@ -76,10 +76,13 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">papi.data</span> <span class="kn">import</span> <span class="n">DParameter</span>
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_TIME_SIGNAL</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
+
 
 <span class="kn">from</span> <span class="nn">papi.data.DObject</span> <span class="kn">import</span> <span class="n">DObject</span>
+<span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
 
@@ -101,6 +104,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">DSignal</span><span class="p">(</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">))</span>
 
 <div class="viewcode-block" id="DBlock.add_subscribers"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.add_subscribers">[docs]</a>    <span class="k">def</span> <span class="nf">add_subscribers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -152,7 +156,7 @@
         <span class="k">if</span> <span class="n">signal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">dname</span> <span class="o">+</span> <span class="s">&quot;_deleted&quot;</span>
-            <span class="n">signal</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="bp">True</span>
@@ -166,7 +170,7 @@
 <span class="sd">        :return:</span>
 <span class="sd">        :rtype []:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribers</span>
 </div>
 <div class="viewcode-block" id="DBlock.get_signal_by_uname"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DBlock.get_signal_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">get_signal_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -192,7 +196,9 @@
 
 </div></div>
 <div class="viewcode-block" id="DEvent"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DEvent">[docs]</a><span class="k">class</span> <span class="nc">DEvent</span><span class="p">(</span><span class="n">DBlock</span><span class="p">):</span>
-    <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DEvent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="DPlugin"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin">[docs]</a><span class="k">class</span> <span class="nc">DPlugin</span><span class="p">(</span><span class="n">DObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -262,6 +268,15 @@
                 <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
                     <span class="n">subscription</span><span class="o">.</span><span class="n">rm_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
+                <span class="c"># subSignalList = subscription.get_signals()</span>
+                <span class="c"># print(subSignalList)</span>
+                <span class="c"># if (1 == len(subscription.get_signals()) and CORE_TIME_SIGNAL in subSignalList):</span>
+                <span class="c">#     subscription.rm_signal(CORE_TIME_SIGNAL)</span>
+                <span class="c"># print(subscription.get_signals())</span>
+
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()):</span>
+                    <span class="n">subscription</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
                 <span class="k">return</span> <span class="n">subscription</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">None</span>
@@ -270,7 +285,7 @@
 </div>
 <div class="viewcode-block" id="DPlugin.subscribe"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This plugin subscribes a &#39;dblock&#39; by remembering the dblog id.</span>
+<span class="sd">        This plugin subscribes a &#39;dblock&#39; by remembering the dblock id.</span>
 
 <span class="sd">        :param dblock: DBlock which should be subscribed</span>
 <span class="sd">        :return:</span>
@@ -303,6 +318,7 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">])</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
@@ -314,7 +330,7 @@
 </div>
 <div class="viewcode-block" id="DPlugin.get_subscribtions"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_subscribtions">[docs]</a>    <span class="k">def</span> <span class="nf">get_subscribtions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a reference to a dictionary of all subcribtions.</span>
+<span class="sd">        Returns a reference to a dictionary of all subscribtions.</span>
 
 <span class="sd">        :return {}{} of DPlugin ids to DBlock names :</span>
 <span class="sd">        :rtype: {}{}</span>
@@ -349,6 +365,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -393,7 +410,7 @@
         <span class="k">if</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
             <span class="n">dblock</span><span class="o">.</span><span class="n">name</span> <span class="o">+=</span> <span class="s">&quot;_deleted&quot;</span>
-            <span class="n">dblock</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">dblock</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
@@ -406,6 +423,16 @@
 <span class="sd">        :rtype {}:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span>
+</div>
+<div class="viewcode-block" id="DPlugin.get_devent"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_devent">[docs]</a>    <span class="k">def</span> <span class="nf">get_devent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">devent_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">:</span>
+            <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__blocks</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
+                <span class="n">devent_dict</span><span class="p">[</span><span class="n">dblock_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+
+        <span class="k">return</span> <span class="n">devent_dict</span>
+
 </div>
 <div class="viewcode-block" id="DPlugin.get_dblock_by_name"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DPlugin.get_dblock_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_dblock_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -467,14 +494,16 @@
         <span class="c"># Update DParameters of DPlugin</span>
         <span class="c"># -----------------------------</span>
 
+        <span class="n">copy_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span><span class="o">.</span><span class="n">update_meta</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">copy_parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
 
-        <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="n">copy_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">__parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rm_parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">])</span>
 
@@ -482,7 +511,53 @@
         <span class="c"># Update DSubscriptions of DPlugin</span>
         <span class="c"># -----------------------------</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__subscriptions</span>
+        <span class="n">copy_subscriptions</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">)</span>
+        <span class="n">meta_subscriptions</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">__subscriptions</span>
+
+        <span class="c">#self.__subscriptions = meta_subscriptions</span>
+
+        <span class="c"># ---------------------------------------</span>
+        <span class="c"># Create missing subscriptions</span>
+        <span class="c"># Update existing subscriptions</span>
+        <span class="c"># ---------------------------------------</span>
+
+        <span class="k">for</span> <span class="n">dplugin_uname</span> <span class="ow">in</span> <span class="n">meta_subscriptions</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">dplugin_uname</span> <span class="ow">in</span> <span class="n">copy_subscriptions</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">meta_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]:</span>
+
+                    <span class="k">if</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">copy_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span><span class="o">.</span><span class="n">update_meta</span><span class="p">(</span><span class="n">meta_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]</span>
+
+        <span class="c"># -----------------------------------------</span>
+        <span class="c"># Remove no more needed subscriptions</span>
+        <span class="c"># -----------------------------------------</span>
+
+        <span class="k">for</span> <span class="n">dplugin_uname</span> <span class="ow">in</span> <span class="n">copy_subscriptions</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">dplugin_uname</span> <span class="ow">in</span> <span class="n">meta_subscriptions</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">copy_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]:</span>
+
+                    <span class="k">if</span> <span class="n">dblock_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]:</span>
+                        <span class="c"># Remove old subscription for dblock_name of dplugin_name</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+                        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dblock_name</span> <span class="ow">in</span> <span class="n">copy_subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]:</span>
+                    <span class="c"># Remove old subscritions for dplugin_uname</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">][</span><span class="n">dblock_name</span><span class="p">]</span>
+
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dplugin_uname</span><span class="p">]</span>
+
 
         <span class="c"># -----------------------------</span>
         <span class="c"># Update DBlocks of DPlugin</span>
@@ -498,8 +573,11 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dblock</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dblock</span> <span class="o">=</span> <span class="n">dblock</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dblock_name</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dplugin_id</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">alias</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DSubscription.add_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.add_signal">[docs]</a>    <span class="k">def</span> <span class="nf">add_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -542,7 +620,11 @@
 <span class="sd">        :return:</span>
 <span class="sd">        :rtype: []</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span>
+</div>
+<div class="viewcode-block" id="DSubscription.update_meta"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.update_meta">[docs]</a>    <span class="k">def</span> <span class="nf">update_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscription</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alias</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">alias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span> <span class="o">=</span> <span class="n">subscription</span><span class="o">.</span><span class="n">signals</span>
 </div>
 <div class="viewcode-block" id="DSubscription.attach_signal"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DPlugin.DSubscription.attach_signal">[docs]</a>    <span class="k">def</span> <span class="nf">attach_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Stop Using this function.&quot;</span><span class="p">)</span>

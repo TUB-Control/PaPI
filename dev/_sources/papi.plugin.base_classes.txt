@@ -44,14 +44,6 @@ papi.plugin.base_classes.ownProcess_base module
     :undoc-members:
     :show-inheritance:
 
-papi.plugin.base_classes.pcp_base module
-----------------------------------------
-
-.. automodule:: papi.plugin.base_classes.pcp_base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 papi.plugin.base_classes.vip_base module
 ----------------------------------------
 

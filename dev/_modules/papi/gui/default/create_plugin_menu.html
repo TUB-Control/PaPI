@@ -79,12 +79,14 @@
 <span class="kn">from</span> <span class="nn">modulefinder</span> <span class="kn">import</span> <span class="n">ModuleFinder</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
 
 <span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PaPIRootItem</span><span class="p">,</span> <span class="n">PaPITreeModel</span>
-<span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PluginTreeItem</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PluginTreeItem</span><span class="p">,</span> <span class="n">PaPITreeProxyModel</span>
 <span class="kn">from</span> <span class="nn">papi.yapsy.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">from</span> <span class="nn">papi.ui.gui.default.PluginCreateMenu</span> <span class="kn">import</span> <span class="n">Ui_PluginCreateMenu</span>
 
@@ -114,27 +116,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setDropIndicatorShown</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="c"># self.plugin_manager.setPluginPlaces(</span>
-        <span class="c">#     PLUGIN_ROOT_FOLDER_LIST</span>
-        <span class="c"># )</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&#39;Available Plugins&#39;</span><span class="p">)</span>
 
         <span class="n">model</span> <span class="o">=</span> <span class="n">PaPITreeModel</span><span class="p">()</span>
         <span class="n">model</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">([</span><span class="s">&#39;Name&#39;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span> <span class="o">=</span> <span class="n">PaPITreeProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">,</span> <span class="n">QRegExp</span><span class="o">.</span><span class="n">Wildcard</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="p">)</span>
+
+<span class="c">#        self.pluginTree.setModel(model)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setUniformRowHeights</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setSortingEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;ViP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;IOP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;DPP&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="s">&#39;PCP&#39;</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">configuration_inputs</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -145,6 +145,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">createButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help_button_triggered</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finder</span> <span class="o">=</span> <span class="n">ModuleFinder</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginSearchText</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changed_search_plugin_text_field</span><span class="p">)</span>
 
 
 
@@ -205,8 +207,6 @@
         <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="n">found_imports</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">QListWidgetItem</span><span class="p">(</span><span class="n">imp</span><span class="p">)</span>
 
-
-
             <span class="n">spam_loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">find_loader</span><span class="p">(</span><span class="n">imp</span><span class="p">)</span>
             <span class="n">found</span> <span class="o">=</span> <span class="n">spam_loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
@@ -217,8 +217,6 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">modulesList</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">modulesLabel</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-
-
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.show_create_plugin_dialog"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.show_create_plugin_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">show_create_plugin_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
@@ -230,7 +228,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.showEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">locatePlugins</span><span class="p">()</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginCandidates</span><span class="p">()</span>
@@ -246,19 +243,12 @@
                 <span class="n">pluginfo</span><span class="o">.</span><span class="n">loadable</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="n">plugin_item</span> <span class="o">=</span> <span class="n">PluginTreeItem</span><span class="p">(</span><span class="n">pluginfo</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="s">&#39;/visual/&#39;</span> <span class="ow">in</span> <span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;/io/&#39;</span> <span class="ow">in</span> <span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;/dpp/&#39;</span> <span class="ow">in</span> <span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;/pcp/&#39;</span> <span class="ow">in</span> <span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
+            <span class="n">plugin_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plugin_root</span><span class="p">(</span><span class="n">pluginfo</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">plugin_root</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">plugin_item</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">visual_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">io_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dpp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pcp_root</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">root</span><span class="p">]</span><span class="o">.</span><span class="n">sortChildren</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.help_button_triggered"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.help_button_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">help_button_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
@@ -278,6 +268,34 @@
             <span class="n">suffix</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
             <span class="n">target_url</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_URL</span> <span class="o">+</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_PREFIX_PLUGIN</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">plugin_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">suffix</span> <span class="o">+</span> <span class="s">&quot;.html&quot;</span>
             <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">target_url</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="CreatePluginMenu.get_plugin_root"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.get_plugin_root">[docs]</a>    <span class="k">def</span> <span class="nf">get_plugin_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">);</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">part</span>
+        <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">:</span>
+
+            <span class="n">cfg_file</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_PLUGIN_CONFIG</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">):</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;Config&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="s">&#39;Config&#39;</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Config&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="n">PaPIRootItem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plugin_roots</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="CreatePluginMenu.changed_search_plugin_text_field"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.changed_search_plugin_text_field">[docs]</a>    <span class="k">def</span> <span class="nf">changed_search_plugin_text_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">,</span> <span class="n">QRegExp</span><span class="o">.</span><span class="n">Wildcard</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="CreatePluginMenu.clear"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_menu.CreatePluginMenu.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nameEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>

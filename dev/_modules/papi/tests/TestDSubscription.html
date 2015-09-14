@@ -75,14 +75,14 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">import</span> <span class="nn">unittest</span>
 
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DSubscription</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
 <span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
-
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_TIME_SIGNAL</span>
 
 <div class="viewcode-block" id="TestDSusbcription"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDSubscription.TestDSusbcription">[docs]</a><span class="k">class</span> <span class="nc">TestDSusbcription</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
@@ -91,7 +91,7 @@
 </div>
 <div class="viewcode-block" id="TestDSusbcription.test_attach_signal"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDSubscription.TestDSusbcription.test_attach_signal">[docs]</a>    <span class="k">def</span> <span class="nf">test_attach_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">)</span>
-        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">)</span>
         <span class="n">ds_2</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;f1_1&#39;</span><span class="p">)</span>
         <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">)</span>
         <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_2</span><span class="p">)</span>
@@ -106,7 +106,7 @@
 </div>
 <div class="viewcode-block" id="TestDSusbcription.test_remove_signal"><a class="viewcode-back" href="../../../papi.tests.html#papi.tests.TestDSubscription.TestDSusbcription.test_remove_signal">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dblock</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;SinMit_f1&#39;</span><span class="p">)</span>
-        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+        <span class="n">ds_1</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">)</span>
         <span class="n">dblock</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">ds_1</span><span class="p">)</span>
 
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">DSubscription</span><span class="p">(</span><span class="n">dblock</span><span class="p">)</span>

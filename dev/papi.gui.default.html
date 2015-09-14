@@ -374,6 +374,11 @@ Sven Knuth</p>
 <em class="property">class </em><tt class="descclassname">papi.gui.default.create_plugin_menu.</tt><tt class="descname">CreatePluginMenu</tt><big>(</big><em>gui_api</em>, <em>TabManger</em>, <em>plugin_manager</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/create_plugin_menu.html#CreatePluginMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.create_plugin_menu.CreatePluginMenu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">papi.ui.gui.default.PluginCreateMenu.Ui_PluginCreateMenu</span></tt></p>
 <dl class="method">
+<dt id="papi.gui.default.create_plugin_menu.CreatePluginMenu.changed_search_plugin_text_field">
+<tt class="descname">changed_search_plugin_text_field</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/create_plugin_menu.html#CreatePluginMenu.changed_search_plugin_text_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.create_plugin_menu.CreatePluginMenu.changed_search_plugin_text_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.create_plugin_menu.CreatePluginMenu.clear">
 <tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/create_plugin_menu.html#CreatePluginMenu.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.create_plugin_menu.CreatePluginMenu.clear" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -381,6 +386,11 @@ Sven Knuth</p>
 <dl class="method">
 <dt id="papi.gui.default.create_plugin_menu.CreatePluginMenu.closeEvent">
 <tt class="descname">closeEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/create_plugin_menu.html#CreatePluginMenu.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.create_plugin_menu.CreatePluginMenu.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.create_plugin_menu.CreatePluginMenu.get_plugin_root">
+<tt class="descname">get_plugin_root</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/create_plugin_menu.html#CreatePluginMenu.get_plugin_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.create_plugin_menu.CreatePluginMenu.get_plugin_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -469,6 +479,11 @@ Sven Knuth</p>
 <dl class="method">
 <dt id="papi.gui.default.custom.PaPIConfigSaveDialog.select_items">
 <tt class="descname">select_items</tt><big>(</big><em>flag</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.select_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.select_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd">
+<tt class="descname">select_simulink_ortd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.select_simulink_ortd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -683,22 +698,7 @@ Sven Knuth</p>
 <dl class="class">
 <dt id="papi.gui.default.item.PaPIRootItem">
 <em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPIRootItem</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItem</span></tt></p>
-<dl class="method">
-<dt id="papi.gui.default.item.PaPIRootItem.clean">
-<tt class="descname">clean</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.clean" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is called to remove all rows which contain an item marked as &#8216;deleted&#8217;.
-This only works with items having an state-attribute e.g. DPlugin.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
 <dl class="method">
 <dt id="papi.gui.default.item.PaPIRootItem.data">
 <tt class="descname">data</tt><big>(</big><em>role</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.data" title="Permalink to this definition">¶</a></dt>
@@ -706,6 +706,11 @@ This only works with items having an state-attribute e.g. DPlugin.</p>
 :param role:
 :return:</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIRootItem.filter_for">
+<tt class="descname">filter_for</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.filter_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.filter_for" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.default.item.PaPIRootItem.hasItem">
@@ -766,6 +771,21 @@ This only works with items having an state-attribute e.g. DPlugin.</p>
 <em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeItem</tt><big>(</big><em>object</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItem</span></tt></p>
 <dl class="method">
+<dt id="papi.gui.default.item.PaPITreeItem.clean">
+<tt class="descname">clean</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to remove all rows which contain an item marked as &#8216;deleted&#8217;.
+This only works with items having an state-attribute e.g. DPlugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if items were removed and has no more children</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.item.PaPITreeItem.data">
 <tt class="descname">data</tt><big>(</big><em>role</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
@@ -785,8 +805,29 @@ This only works with items having an state-attribute e.g. DPlugin.</p>
 <em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItemModel</span></tt></p>
 <dl class="method">
+<dt id="papi.gui.default.item.PaPITreeModel.filter_for">
+<tt class="descname">filter_for</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.filter_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.filter_for" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.item.PaPITreeModel.flags">
 <tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeModel.remove_item">
+<tt class="descname">remove_item</tt><big>(</big><em>rItem</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.remove_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.remove_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPITreeProxyModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeProxyModel</tt><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeProxyModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QSortFilterProxyModel</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeProxyModel.filterAcceptsRow">
+<tt class="descname">filterAcceptsRow</tt><big>(</big><em>p_int: int</em>, <em>sourceParent: PyQt5.QtCore.QModelIndex</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeProxyModel.filterAcceptsRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1247,6 +1288,11 @@ create and cancel subscriptions.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.changed_search_plugin_text_field">
+<tt class="descname">changed_search_plugin_text_field</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.changed_search_plugin_text_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.changed_search_plugin_text_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.overview_menu.OverviewPluginMenu.clear">
 <tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will clear this window.</p>
@@ -1303,6 +1349,11 @@ create and cancel subscriptions.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.get_plugin_root">
+<tt class="descname">get_plugin_root</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.get_plugin_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.get_plugin_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.overview_menu.OverviewPluginMenu.keyPressEvent">
 <tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.keyPressEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to handle key events for this gui element.</p>
@@ -1323,6 +1374,23 @@ create and cancel subscriptions.</p>
 <tt class="descname">open_context_menu_block_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.open_context_menu_block_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_block_tree" title="Permalink to this definition">¶</a></dt>
 <dd><p>This callback function is called to create a context menu
 for the block tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_connection_tree">
+<tt class="descname">open_context_menu_connection_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.open_context_menu_connection_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_connection_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function is called to create a context menu
+for the subscriper tree</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1357,40 +1425,6 @@ for the dplugin tree</p>
 <tt class="descname">open_context_menu_parameter_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.open_context_menu_parameter_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_parameter_tree" title="Permalink to this definition">¶</a></dt>
 <dd><p>This callback function is called to create a context menu
 for the parameter tree</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscriber_tree">
-<tt class="descname">open_context_menu_subscriber_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.open_context_menu_subscriber_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscriber_tree" title="Permalink to this definition">¶</a></dt>
-<dd><p>This callback function is called to create a context menu
-for the subscriper tree</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscription_tree">
-<tt class="descname">open_context_menu_subscription_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.open_context_menu_subscription_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.open_context_menu_subscription_tree" title="Permalink to this definition">¶</a></dt>
-<dd><p>This callback function is called to create a context menu
-for the subscription tree</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

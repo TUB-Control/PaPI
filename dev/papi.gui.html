@@ -166,7 +166,7 @@ Stefan Ruppin</p>
 <dt id="papi.gui.gui_api.Gui_api.do_close_program">
 <tt class="descname">do_close_program</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_close_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_close_program" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tell core to close papi. Core will respond and will close all open plugins.
-GUI will close all PCP and VIP Plugins due to calling their quit function</p>
+GUI will close all VIP Plugins due to calling their quit function</p>
 </dd></dl>
 
 <dl class="method">
@@ -403,6 +403,11 @@ User wants to resume a plugin, so this method will send an event to core.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_save_json_config_reloaded">
+<tt class="descname">do_save_json_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_json_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_json_config_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_save_xml_config">
 <tt class="descname">do_save_xml_config</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will save papis current state to a xml file provided by path.</p>
@@ -421,7 +426,23 @@ User wants to resume a plugin, so this method will send an event to core.</p>
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">
 <tt class="descname">do_save_xml_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> &#8211; </li>
+<li><strong>plToSave</strong> &#8211; </li>
+<li><strong>sToSave</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_set_parameter">

@@ -75,7 +75,7 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -92,11 +92,17 @@
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">DObject</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">DObject</span><span class="o">.</span><span class="n">create_unique_id</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">False</span>
 
+<div class="viewcode-block" id="DObject.remove"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DObject.DObject.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="DObject.get_id"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DObject.DObject.get_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+</div>
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="DObject.get_id"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DObject.DObject.get_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_id</span><span class="p">():</span>
+<div class="viewcode-block" id="DObject.create_unique_id"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DObject.DObject.create_unique_id">[docs]</a>    <span class="k">def</span> <span class="nf">create_unique_id</span><span class="p">():</span>
         <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
         <span class="n">DObject</span><span class="o">.</span><span class="n">__id__</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DObject</span><span class="o">.</span><span class="n">__id__</span><span class="p">)</span></div></div>

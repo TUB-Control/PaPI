@@ -80,7 +80,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">papi.error_codes</span> <span class="kn">as</span> <span class="nn">ERROR</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuth&#39;</span>
+
 
 
 <div class="viewcode-block" id="DCore"><a class="viewcode-back" href="../../../papi.data.html#papi.data.DCore.DCore">[docs]</a><span class="k">class</span> <span class="nc">DCore</span><span class="p">():</span>
@@ -106,7 +106,7 @@
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c">#self.__newid += 1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">=</span> <span class="n">DObject</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span> <span class="o">=</span> <span class="n">DObject</span><span class="o">.</span><span class="n">create_unique_id</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__newid</span>
 <span class="c">#        return uuid.uuid4().int &gt;&gt; 64</span>
 </div>
@@ -220,7 +220,7 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c">#Get Susbcriber DPlugin</span>
+        <span class="c">#Get Subscriber DPlugin</span>
         <span class="n">subscriber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">subscriber</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -342,8 +342,9 @@
 
             <span class="n">dblock</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">)</span>
 
-            <span class="n">dplugin_ids</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">dplugin_ids</span><span class="p">:</span>
+            <span class="n">copy_dplugin_ids</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
+
+            <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">copy_dplugin_ids</span><span class="p">:</span>
 
                 <span class="n">subscriber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dplugin_id</span><span class="p">)</span>
 
@@ -361,7 +362,7 @@
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">dblock</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_dblock_by_name</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dblock</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">dplugin_ids</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">()</span>
+                <span class="n">dplugin_ids</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dblock</span><span class="o">.</span><span class="n">get_subscribers</span><span class="p">())</span>
                 <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">dplugin_ids</span><span class="p">:</span>
 
                     <span class="n">subscriber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dplugin_id</span><span class="p">)</span>
@@ -440,6 +441,7 @@
         <span class="n">subscription</span> <span class="o">=</span> <span class="n">subscriber</span><span class="o">.</span><span class="n">unsubscribe_signals</span><span class="p">(</span><span class="n">dblock</span><span class="p">,</span> <span class="n">signals</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">subscription</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot; Subscription for target &quot;</span> <span class="o">+</span> <span class="n">target</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; and DBlock &quot;</span> <span class="o">+</span> <span class="n">dblock_name</span> <span class="o">+</span> <span class="s">&quot; is None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">False</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>

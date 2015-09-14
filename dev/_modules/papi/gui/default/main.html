@@ -76,7 +76,7 @@
 <span class="sd">Sven Knuth, Stefan Ruppin</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -501,13 +501,13 @@
         <span class="c">#     if &#39;value&#39; in cfg[&#39;activeTab&#39;][&#39;active&#39;]:</span>
         <span class="c">#         self.TabManager.set_tab_active_by_index(int( cfg[&#39;activeTab&#39;][&#39;active&#39;][&#39;value&#39;] ))</span>
         <span class="c">#</span>
-        <span class="c"># #################</span>
-        <span class="c"># # windows size: #</span>
-        <span class="c"># #################</span>
-        <span class="c"># if &#39;size&#39; in cfg:</span>
-        <span class="c">#     w = int(cfg[&#39;size&#39;][&#39;x&#39;][&#39;value&#39;])</span>
-        <span class="c">#     h = int(cfg[&#39;size&#39;][&#39;y&#39;][&#39;value&#39;])</span>
-        <span class="c">#     self.resize_gui_window(w,h)</span>
+        <span class="c">#################</span>
+        <span class="c"># windows size: #</span>
+        <span class="c">#################</span>
+        <span class="k">if</span> <span class="s">&#39;Size&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Size&#39;</span><span class="p">][</span><span class="s">&#39;X&#39;</span><span class="p">])</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Size&#39;</span><span class="p">][</span><span class="s">&#39;Y&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize_gui_window</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
 
         <span class="c"># ------------------------</span>
         <span class="c"># Restore favourite icons</span>
@@ -622,8 +622,14 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">):</span>
 
+
+
             <span class="k">if</span> <span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span><span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plToSave</span><span class="o">=</span><span class="n">plugin_list</span><span class="p">,</span> <span class="n">sToSave</span><span class="o">=</span><span class="n">subscription_list</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&quot;json&quot;</span> <span class="ow">in</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedNameFilter</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_json_config_reloaded</span><span class="p">(</span><span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plToSave</span><span class="o">=</span><span class="n">plugin_list</span><span class="p">,</span> <span class="n">sToSave</span><span class="o">=</span><span class="n">subscription_list</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s">&quot;xml&quot;</span> <span class="ow">in</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedNameFilter</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span><span class="n">fileNames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plToSave</span><span class="o">=</span><span class="n">plugin_list</span><span class="p">,</span> <span class="n">sToSave</span><span class="o">=</span><span class="n">subscription_list</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.closeEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -657,7 +663,7 @@
 <span class="sd">        :param dplugin:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
 
             <span class="c"># sub_window_ori = dplugin.plugin.get_sub_window()</span>
             <span class="c">#</span>
@@ -705,7 +711,7 @@
 <span class="sd">        :param dplugin:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span>
             <span class="n">tab_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">():</span>

@@ -23,8 +23,8 @@ Manuals :
    :maxdepth: 2
    :glob:
 
-   papi.manual
-   papi.plugin.doc
+   man.papi.manual
+   man.papi.plugin.doc
 
 
 

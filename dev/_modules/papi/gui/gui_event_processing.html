@@ -80,7 +80,7 @@
 <span class="kn">import</span> <span class="nn">importlib.machinery</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> \
     <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_WOKRING_INTERVAL</span><span class="p">,</span> \
     <span class="n">PLUGIN_ROOT_FOLDER_LIST</span><span class="p">,</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">,</span> <span class="n">PLUGIN_STATE_STOPPED</span><span class="p">,</span> \
     <span class="n">PLUGIN_STATE_START_FAILED</span>
@@ -93,7 +93,7 @@
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DPlugin</span>
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Stefan&#39;</span>
+
 
 
 <div class="viewcode-block" id="GuiEventProcessing"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing">[docs]</a><span class="k">class</span> <span class="nc">GuiEventProcessing</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
@@ -346,7 +346,7 @@
         <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">start_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
         <span class="c"># check if plugin in ViP (includes pcp) or something which is not running in the gui process</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
             <span class="c"># plugin in running in gui process</span>
             <span class="c"># add a new dplugin object to DGui and set its type and uname</span>
             <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
@@ -354,6 +354,7 @@
             <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_type</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin_identifier</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">config</span>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">path</span>
             <span class="c"># call the init function of plugin and set queues and id</span>
             <span class="n">api</span> <span class="o">=</span> <span class="n">Plugin_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">uname</span> <span class="o">+</span> <span class="s">&#39; API:&#39;</span><span class="p">,</span> <span class="n">tabManager</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TabManger</span><span class="p">)</span>
 
@@ -388,6 +389,7 @@
             <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">uname</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_config</span>
             <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">plugin_type</span>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">path</span>
             <span class="c"># debug print</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;create_plugin, Plugin with name  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uname</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  was added as non ViP&#39;</span><span class="p">)</span>
 
@@ -517,10 +519,7 @@
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">new_parameter_info</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">dparameter_object</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;non-pcp plugin received new parameter information. Why? Check if bug!&#39;</span><span class="p">)</span></div></div>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">new_parameter_info</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">dparameter_object</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

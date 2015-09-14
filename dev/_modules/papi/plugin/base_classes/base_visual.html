@@ -75,13 +75,12 @@
 <span class="sd">Stefan Ruppin</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;stefan&#39;</span>
-
-<span class="kn">from</span> <span class="nn">papi.plugin.base_classes.base_plugin</span> <span class="kn">import</span> <span class="n">base_plugin</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QMdiSubWindow</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QAction</span>
-
+<span class="kn">from</span> <span class="nn">papi.plugin.base_classes.base_plugin</span> <span class="kn">import</span> <span class="n">base_plugin</span>
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span>
+
+
 
 <div class="viewcode-block" id="base_visual"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual">[docs]</a><span class="k">class</span> <span class="nc">base_visual</span><span class="p">(</span><span class="n">base_plugin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -191,6 +190,14 @@
 
 </div>
 <div class="viewcode-block" id="base_visual.set_window_for_internal_usage"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.set_window_for_internal_usage">[docs]</a>    <span class="k">def</span> <span class="nf">set_window_for_internal_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subwindow</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will take a subwindow and will prepare all his call back function to work within PaPI</span>
+<span class="sd">        It will also set the window reference for later use.</span>
+
+<span class="sd">        :param subwindow</span>
+<span class="sd">        :type subwindow: QMdiSubWindow</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span> <span class="o">=</span> <span class="n">subwindow</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">original_resize_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">resizeEvent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">original_move_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">moveEvent</span>
@@ -204,11 +211,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </div>
 <div class="viewcode-block" id="base_visual.set_widget_for_internal_usage"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.set_widget_for_internal_usage">[docs]</a>    <span class="k">def</span> <span class="nf">set_widget_for_internal_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Will take QWidget and will place it in the subwindow</span>
+
+<span class="sd">        Gets called by plugin developer!</span>
+
+<span class="sd">        :param widget: QWidget</span>
+<span class="sd">        :type widget: QWidget</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="base_visual.window_move"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.window_move">[docs]</a>    <span class="k">def</span> <span class="nf">window_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        New callback function for movement of a subwindow.</span>
+<span class="sd">        Will do some PaPI specific tasks and then call the original subwindow callback function.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
@@ -218,7 +241,13 @@
 
 </div>
 <div class="viewcode-block" id="base_visual.window_resize"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.window_resize">[docs]</a>    <span class="k">def</span> <span class="nf">window_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        New callback function for resizing of a subwindow.</span>
+<span class="sd">        Will do some PaPI specific tasks and then call the original subwindow callback function.</span>
 
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">size</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
@@ -234,16 +263,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">original_resize_function</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_visual.window_mouse_move"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.window_mouse_move">[docs]</a>    <span class="k">def</span> <span class="nf">window_mouse_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        New callback function for mouse move of a subwindow.</span>
+<span class="sd">        Will do some PaPI specific tasks and then call the original subwindow callback function.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">movable</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">original_mouse_move_function</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_visual.get_sub_window"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.get_sub_window">[docs]</a>    <span class="k">def</span> <span class="nf">get_sub_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter method to get subwindow of plugin</span>
+
+<span class="sd">        :return: QMdiSubWindow</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span>
 </div>
 <div class="viewcode-block" id="base_visual.get_widget"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.get_widget">[docs]</a>    <span class="k">def</span> <span class="nf">get_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter method to get widget of plugin</span>
+
+<span class="sd">        :return: QWidget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
 </div>
 <div class="viewcode-block" id="base_visual.create_control_context_menu"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.create_control_context_menu">[docs]</a>    <span class="k">def</span> <span class="nf">create_control_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will create the general PaPI Control context menu to be used in Plugins.</span>
+
+<span class="sd">        :return: QMenu</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">ctrlMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s">&quot;Control&quot;</span><span class="p">)</span>
 
         <span class="n">del_action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s">&#39;Close plugin&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
@@ -265,7 +317,7 @@
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tabs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]:</span>
                     <span class="n">entry</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
-                    <span class="n">entry</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabMenu_triggered</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+                    <span class="n">entry</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabMenu_move_triggered</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
                     <span class="n">tab_entrys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
                     <span class="n">tabMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 
@@ -276,7 +328,14 @@
         <span class="n">ctrlMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">del_action</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ctrlMenu</span>
 </div>
-<div class="viewcode-block" id="base_visual.tabMenu_triggered"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.tabMenu_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">tabMenu_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<div class="viewcode-block" id="base_visual.tabMenu_move_triggered"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.tabMenu_move_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">tabMenu_move_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This callback function gets called when the user clicked on the moveToTab action at the context menu.</span>
+<span class="sd">        Will start the process of moving the plugin window to another tab</span>
+
+<span class="sd">        :param item: TabName to be moved to</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subWindow</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
         <span class="n">posX</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
         <span class="n">posY</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
@@ -285,13 +344,28 @@
 
 </div>
 <div class="viewcode-block" id="base_visual.ctlrMenu_exit"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_exit">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function for context menu for closing plugins</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_delete_plugin_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
         <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
 </div>
 <div class="viewcode-block" id="base_visual.ctlrMenu_pause"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_pause">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function for context menu for pausing plugins</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_pause_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="base_visual.ctlrMenu_resume"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_resume">[docs]</a>    <span class="k">def</span> <span class="nf">ctlrMenu_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function for context menu for resuming plugins</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">control_api</span><span class="o">.</span><span class="n">do_resume_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dplugin_info</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span></div></div>
 </pre></div>
 

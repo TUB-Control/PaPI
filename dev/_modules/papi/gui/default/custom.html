@@ -76,7 +76,7 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QColor</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QColorDialog</span><span class="p">,</span> <span class="n">QPushButton</span>
@@ -174,7 +174,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">file_dialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setFileMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">AnyFile</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setNameFilter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&quot;PaPI-Cfg (*.xml)&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setNameFilters</span><span class="p">(</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&quot;PaPI-Cfg (*.xml)&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&quot;PaPI-Cfg (*.json)&quot;</span><span class="p">)</span> <span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">CONFIG_DEFAULT_DIRECTORY</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Save Configuration&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">AcceptSave</span><span class="p">)</span>
@@ -218,6 +218,7 @@
         <span class="n">unselect_all_plugins</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;No plugins&#39;</span><span class="p">)</span>
         <span class="n">unselect_all_subs</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;No subscriptions&#39;</span><span class="p">)</span>
 
+        <span class="n">select_for_simulink_ortd</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">&#39;Select for Simulink/ORTD&#39;</span><span class="p">)</span>
 
         <span class="n">select_all_plugins</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span>  <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_items</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
         <span class="n">select_all_subs</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span>  <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_items</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
@@ -232,7 +233,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">button_vlayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">select_all_subs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">button_vlayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">unselect_all_plugins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">button_vlayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">unselect_all_subs</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_vlayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">select_for_simulink_ortd</span><span class="p">)</span>
 
 <span class="c">#        self.vlayout.addWidget(self.buttons_widget)</span>
 
@@ -256,7 +257,10 @@
 
             <span class="k">if</span> <span class="n">flag</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">flag</span><span class="p">))</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-
+</div>
+<div class="viewcode-block" id="PaPIConfigSaveDialog.select_simulink_ortd"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd">[docs]</a>    <span class="k">def</span> <span class="nf">select_simulink_ortd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="PaPIConfigSaveDialog.fill_with"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.fill_with">[docs]</a>    <span class="k">def</span> <span class="nf">fill_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">DGui</span><span class="p">):</span>
 

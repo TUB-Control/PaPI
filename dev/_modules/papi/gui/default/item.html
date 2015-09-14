@@ -76,10 +76,10 @@
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;knuths&#39;</span>
+
 
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span>    <span class="kn">import</span> <span class="n">QMdiSubWindow</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QToolBar</span><span class="p">,</span><span class="n">QTreeView</span><span class="p">,</span> <span class="n">QMenu</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span>       <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRegExp</span><span class="p">,</span> <span class="n">pyqtSignal</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span>       <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRegExp</span><span class="p">,</span> <span class="n">pyqtSignal</span><span class="p">,</span> <span class="n">QSortFilterProxyModel</span><span class="p">,</span> <span class="n">QModelIndex</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtGui</span>        <span class="kn">import</span> <span class="n">QStandardItemModel</span><span class="p">,</span> <span class="n">QStandardItem</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QBrush</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QDragEnterEvent</span><span class="p">,</span> <span class="n">QDropEvent</span>
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
@@ -122,11 +122,43 @@
 </div>
 <div class="viewcode-block" id="PaPITreeItem.get_decoration"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeItem.get_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="PaPITreeItem.clean"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeItem.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is called to remove all rows which contain an item marked as &#39;deleted&#39;.</span>
+<span class="sd">        This only works with items having an state-attribute e.g. DPlugin.</span>
 
+<span class="sd">        :return: True if items were removed and has no more children</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">containsDeletedItems</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="n">treeItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">treeItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
+
+                <span class="n">canBeRemoved</span> <span class="o">=</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;deleted&#39;</span><span class="p">:</span>
+                        <span class="n">containsDeletedItems</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s">&#39;deleted&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">deleted</span><span class="p">:</span>
+                        <span class="n">containsDeletedItems</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">canBeRemoved</span><span class="p">:</span>
+                    <span class="n">containsDeletedItems</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasChildren</span><span class="p">()</span> <span class="ow">and</span> <span class="n">containsDeletedItems</span>
 </div></div>
-<div class="viewcode-block" id="PaPIRootItem"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPIRootItem">[docs]</a><span class="k">class</span> <span class="nc">PaPIRootItem</span><span class="p">(</span><span class="n">QStandardItem</span><span class="p">):</span>
+<div class="viewcode-block" id="PaPIRootItem"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPIRootItem">[docs]</a><span class="k">class</span> <span class="nc">PaPIRootItem</span><span class="p">(</span><span class="n">PaPITreeItem</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PaPIRootItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PaPIRootItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectable</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -151,21 +183,8 @@
         <span class="c">#     return self.object</span>
 
         <span class="k">return</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="PaPIRootItem.clean"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPIRootItem.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function is called to remove all rows which contain an item marked as &#39;deleted&#39;.</span>
-<span class="sd">        This only works with items having an state-attribute e.g. DPlugin.</span>
 
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
-            <span class="n">treeItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">treeItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">item</span> <span class="o">=</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s">&#39;state&#39;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s">&#39;deleted&#39;</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="PaPIRootItem.hasItem"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPIRootItem.hasItem">[docs]</a>    <span class="k">def</span> <span class="nf">hasItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sItem</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -180,6 +199,14 @@
                 <span class="n">item</span> <span class="o">=</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">sItem</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="PaPIRootItem.filter_for"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPIRootItem.filter_for">[docs]</a>    <span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="n">treeItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">value</span> <span class="o">+</span> <span class="s">&quot; in? &quot;</span> <span class="o">+</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;Hide:&#39;</span> <span class="o">+</span> <span class="n">treeItem</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
 <span class="c"># ------------------------------------</span>
 <span class="c"># Model Objects</span>
@@ -200,6 +227,21 @@
             <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span>
 
         <span class="k">return</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span>
+</div>
+<div class="viewcode-block" id="PaPITreeModel.remove_item"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeModel.remove_item">[docs]</a>    <span class="k">def</span> <span class="nf">remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rItem</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columnCount</span><span class="p">()):</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">rItem</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                    <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="PaPITreeModel.filter_for"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeModel.filter_for">[docs]</a>    <span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">filter_for</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
 
 <span class="c"># ------------------------------------</span>
 <span class="c"># Item Custom</span>
@@ -759,6 +801,22 @@
 
         <span class="k">return</span> <span class="bp">None</span>
 
+
+<span class="c"># ------------------------------------</span>
+<span class="c"># Custom Proxy object</span>
+<span class="c"># ------------------------------------</span>
+</div></div>
+<div class="viewcode-block" id="PaPITreeProxyModel"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeProxyModel">[docs]</a><span class="k">class</span> <span class="nc">PaPITreeProxyModel</span><span class="p">(</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
+<div class="viewcode-block" id="PaPITreeProxyModel.filterAcceptsRow"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.item.PaPITreeProxyModel.filterAcceptsRow">[docs]</a>    <span class="k">def</span> <span class="nf">filterAcceptsRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_int</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">sourceParent</span><span class="p">:</span> <span class="n">QModelIndex</span> <span class="p">):</span>
+        <span class="n">index0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p_int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sourceParent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sourceParent</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index0</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index0</span><span class="p">)</span>
+            <span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterRegExp</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">reg</span><span class="o">.</span><span class="n">exactMatch</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
 <span class="c"># ------------------------------------</span>
 <span class="c"># Custom GUI elements</span>
 <span class="c"># ------------------------------------</span>

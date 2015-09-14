@@ -350,8 +350,18 @@ Sven Knuth</p>
 <em class="property">class </em><tt class="descclassname">papi.data.DObject.</tt><tt class="descname">DObject</tt><a class="reference internal" href="_modules/papi/data/DObject.html#DObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
 <dl class="staticmethod">
+<dt id="papi.data.DObject.DObject.create_unique_id">
+<em class="property">static </em><tt class="descname">create_unique_id</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.create_unique_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.create_unique_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.data.DObject.DObject.get_id">
-<em class="property">static </em><tt class="descname">get_id</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.get_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.get_id" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_id</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.get_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.get_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.data.DObject.DObject.remove">
+<tt class="descname">remove</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.remove" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -597,6 +607,11 @@ returns false if parameter already exists.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.data.DPlugin.DPlugin.get_devent">
+<tt class="descname">get_devent</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_devent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_devent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.get_meta">
 <tt class="descname">get_meta</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_meta" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -630,7 +645,7 @@ returns false if parameter already exists.</p>
 <dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.get_subscribtions">
 <tt class="descname">get_subscribtions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_subscribtions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_subscribtions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a reference to a dictionary of all subcribtions.</p>
+<dd><p>Returns a reference to a dictionary of all subscribtions.</p>
 <p>:return {}{} of DPlugin ids to DBlock names :
 :rtype: {}{}</p>
 </dd></dl>
@@ -678,7 +693,7 @@ returns false if parameter doesn&#8217;t exist.</p>
 <dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.subscribe">
 <tt class="descname">subscribe</tt><big>(</big><em>dblock</em><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>This plugin subscribes a &#8216;dblock&#8217; by remembering the dblog id.</p>
+<dd><p>This plugin subscribes a &#8216;dblock&#8217; by remembering the dblock id.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -854,6 +869,11 @@ returns false if parameter doesn&#8217;t exist.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="papi.data.DPlugin.DSubscription.update_meta">
+<tt class="descname">update_meta</tt><big>(</big><em>subscription</em><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DSubscription.update_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DSubscription.update_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
