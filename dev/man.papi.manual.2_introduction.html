@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; papi 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
+    <link rel="up" title="PaPI Manual" href="man.papi.manual.html" />
+    <link rel="next" title="Examples" href="man.papi.manual.3_examples.html" />
+    <link rel="prev" title="Installation" href="man.papi.manual.1_installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="man.papi.manual.3_examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="man.papi.manual.1_installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="man.papi.manual.html" accesskey="U">PaPI Manual</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>PaPI stands for Plugin based Process Interaction.</p>
+<p>The idea of PaPI was to create a program which can visualize data from
+external processes by using a plugin based architecture. The main
+development reason for PaPI was to replace QRtaiLab.</p>
+<p>PaPI&#8217;s architecture should try to utilize the power of multi-processor
+systems by using more than just one core. While the choice of using
+Python as programming language leads to a slightly slower execution
+speed, it allows a fast and easy development of new plugins.</p>
+<div class="section" id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>We divided PaPI in three main parts:</dt>
+<dd><ul class="first last simple">
+<li>PaPI Core</li>
+<li>PaPI GUI</li>
+<li>Plugin</li>
+</ul>
+</dd>
+</dl>
+<p>processes</p>
+<div class="figure">
+<img alt="" src="_images/PaPIStructureWithArrows.png" />
+</div>
+<p>Due to the fact that the PaPI Core was realized in python, simple
+multi-threading is not improving the performance (see python global
+interpreter lock). That is why PaPI is using a message based
+communication over multiple processes to increase performance.</p>
+<p>Please note that process boundaries result in separated memory of the
+parts.</p>
+<p>The PaPI Core will create and manage a database with all open plugins
+and the data routes.</p>
+<p>New plugins that generate data will send them to the PaPI Core. The core
+will do a look up in the routing table and redirect the message if there
+is a subscriber. For processes to get messages, they need to subscribe
+signals of PaPI plugins.</p>
+</div>
+</div>
+<div class="section" id="papi-plugins">
+<h1>PaPI Plugins<a class="headerlink" href="#papi-plugins" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="types">
+<h2>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h2>
+<p>PaPI divided the plugin structure in 4 types of plugins:</p>
+<blockquote>
+<div><ul class="simple">
+<li>IO Plugin(IOP): Input-Output Plugins, runs in separate process, generates new data for PaPI, e.g. UDP Receiver, ORTD</li>
+<li>DP Plugin(DPP): Data Processing Plugins, runs in separate process, process data in PaPI, get data from PapI, generate new data for PaPI, e.g. adding signals</li>
+<li>VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot</li>
+<li>PC Plugin(PCP): Parameter Control Plugin, runs in GUI process, used to be a control element for setting paramter of other plugins, e.g. Slider</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="signal-blocks-and-parameters">
+<h2>Signal, Blocks and Parameters<a class="headerlink" href="#signal-blocks-and-parameters" title="Permalink to this headline">¶</a></h2>
+<p>A PaPI Plugin can offer several signals to PaPI for other plugins to
+use. Each signal is owned by a signal block. A block in PaPI is a
+collection of signals that will be always synchronized. One could say
+that all signals of one block have the same sample time for PaPI and are
+send united. That means that signals of one block are always synchronous
+in their samples but two different blocks cannot be easily related to
+each other in respect to their samples.</p>
+<p>One Plugin can offer multiple blocks and every block can offer an
+arbitrary number of signals.</p>
+<p>Additionally to blocks and signals, plugins can offer parameters to
+PaPI. Parameter can be changed using the GUI or PCPs.</p>
+</div>
+<div class="section" id="plugin-architecture">
+<h2>Plugin Architecture<a class="headerlink" href="#plugin-architecture" title="Permalink to this headline">¶</a></h2>
+<p>PaPI uses a flag based plugin interaction. That means that plugins that
+want to be integrated in PaPI need to implement a list of callback
+functions. These callback functions will be called by PaPI to use the
+plugin. There are some functions that must be implemented and some
+functions that are optional.</p>
+<dl class="docutils">
+<dt>Mandatory to implement are:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">start_init(self,</span> <span class="pre">config=None)</span></tt> [for IOP/DPP],</li>
+<li><tt class="docutils literal"><span class="pre">initiate_layer_0(self,</span> <span class="pre">config=None)</span></tt> [for VIP/PCP]</li>
+<li><tt class="docutils literal"><span class="pre">execute(self,</span> <span class="pre">Data=None,</span> <span class="pre">block_name</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">plugin_uname</span> <span class="pre">=</span> <span class="pre">None)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">quit(self)</span></tt></li>
+</ul>
+</dd>
+</dl>
+<p>These three functions defines the core functionality of a plugin. To see
+more detailed information on how to create a plugin, refer to: <a class="reference external" href="DesignPlugin">Design
+guide plugin</a></p>
+<div class="section" id="plugin-init">
+<h3>Plugin init<a class="headerlink" href="#plugin-init" title="Permalink to this headline">¶</a></h3>
+<p>When creating a plugin the function start_init<em>layer</em>0 will be
+called. These functions can be used to do all basic initialization
+needed for the plugin to run, e.g. open widgets or open network
+connections. It is mandatory that this function returns true at the end
+otherwise the plugin will not be started! One important part of the init
+method is to define the signals this plugin will offer to PaPI.</p>
+<p>This function should in simple cases also be used to create parameters,
+blocks and signals.</p>
+</div>
+<div class="section" id="plugin-execution">
+<h3>plugin execution<a class="headerlink" href="#plugin-execution" title="Permalink to this headline">¶</a></h3>
+<p>When a plugin is started the normal operation loop will call the execute
+function of a block. That means all the execution logic of a plugin
+needs to be integrated in the execute function. It is important to note
+that the execute function is not allowed to block. When a blocking
+functionality is needed one can achieve that by using a thread. In this
+function new data can be sent to PaPI using a PaPI function.</p>
+</div>
+<div class="section" id="plugin-quit">
+<h3>plugin quit<a class="headerlink" href="#plugin-quit" title="Permalink to this headline">¶</a></h3>
+<p>When a plugins is deleted, stopped or PaPI will end operation, the
+<tt class="docutils literal"><span class="pre">quit()</span></tt> function will be called to enable the plugin developer to
+clean things up, e.g. to close network connections or file handlers.</p>
+</div>
+<div class="section" id="additional-functions">
+<h3>Additional functions<a class="headerlink" href="#additional-functions" title="Permalink to this headline">¶</a></h3>
+<p>For additional functions and deeper understanding or programming
+examples, please take a look at <a class="reference external" href="DesignPlugin">Design guide plugin</a></p>
+</div>
+</div>
+<div class="section" id="graphical-user-interface">
+<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="main-window">
+<h3>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline">¶</a></h3>
+<p>The main window of PaPI will look like this:</p>
+<div class="figure">
+<img alt="" src="_images/GUI_StartScreen.png" />
+<p class="caption"><strong>PaPI main window</strong></p>
+</div>
+<p>The main window of PaPI contains the following elements.</p>
+<ol class="arabic">
+<li><p class="first">Toolbar : Contains all actions sorted by different topics.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Common actions were displayed here:</dt>
+<dd><ul class="first last simple">
+<li>Load configuration</li>
+<li>Save configuration</li>
+<li>Open: Create Plugin Menu</li>
+<li>Open: Show Plugin Menu</li>
+<li>Reset PaPI</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Favourite plugins were displayed here.</p>
+</li>
+<li><p class="first">Area which contains all started visual plugins.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="papi-menu">
+<h3>PaPI menu<a class="headerlink" href="#papi-menu" title="Permalink to this headline">¶</a></h3>
+<div class="figure">
+<img alt="" src="_images/GUI_Toolbar_PaPI.png" />
+<p class="caption"><strong>Toolbar: PaPI</strong></p>
+</div>
+<p>The <cite>PaPI menu</cite> contains the following actions:</p>
+<ol class="arabic simple">
+<li>Load: Load a new configuration</li>
+<li>Save: Save the current configuration.</li>
+<li>ReloadConfig: Reset PaPI and reload the last loaded configuration.</li>
+<li>ResetPaPI: Remove all plugins and subscriptions.</li>
+<li>Exit: Quit PaPI</li>
+</ol>
+</div>
+<div class="section" id="plugin-menu">
+<h3>Plugin menu<a class="headerlink" href="#plugin-menu" title="Permalink to this headline">¶</a></h3>
+<div class="figure">
+<img alt="" src="_images/GUI_Toolbar_Plugin.png" />
+<p class="caption"><strong>Toolbar: Plugin</strong></p>
+</div>
+<p>The <cite>Plugin menu</cite> contains the following actions:</p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>Overview: Opens a menu which</dt>
+<dd><ul class="first last simple">
+<li>displays all known information about all running plugins.</li>
+<li>is used to create subscriptions.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Create: Opens a menu which is used to create new plugins.</p>
+</li>
+<li><p class="first">Reload DB: Reloads the internal database containing information about all available plugins.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="view-menu">
+<h3>View menu<a class="headerlink" href="#view-menu" title="Permalink to this headline">¶</a></h3>
+<div class="figure">
+<img alt="" src="_images/GUI_Toolbar_View.png" />
+<p class="caption"><strong>Toolbar: View</strong></p>
+</div>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>RunMode: Enables a less customizable view.</dt>
+<dd><ul class="first last simple">
+<li>STILL IN DEVELOPMENT</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Toolbar: Hide and show the toolbar</p>
+</li>
+</ol>
+</div>
+<div class="section" id="help-menu">
+<h3>Help menu<a class="headerlink" href="#help-menu" title="Permalink to this headline">¶</a></h3>
+<div class="figure">
+<img alt="" src="_images/GUI_Toolbar_Help.png" />
+<p class="caption"><strong>Toolbar: Help</strong></p>
+</div>
+<ol class="arabic simple">
+<li>PaPI Wiki: Opens the wiki hosted on Github in the default web browser.</li>
+<li>PaPI Doc: Opens the offical documentation for the current PaPI version in the default web browser.</li>
+<li>About: Displays information about the current PaPI version.</li>
+<li>About Qt: Displays information about the current Qt version.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#architecture">Architecture</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#papi-plugins">PaPI Plugins</a><ul>
+<li><a class="reference internal" href="#types">Types</a></li>
+<li><a class="reference internal" href="#signal-blocks-and-parameters">Signal, Blocks and Parameters</a></li>
+<li><a class="reference internal" href="#plugin-architecture">Plugin Architecture</a><ul>
+<li><a class="reference internal" href="#plugin-init">Plugin init</a></li>
+<li><a class="reference internal" href="#plugin-execution">plugin execution</a></li>
+<li><a class="reference internal" href="#plugin-quit">plugin quit</a></li>
+<li><a class="reference internal" href="#additional-functions">Additional functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#graphical-user-interface">Graphical User Interface</a><ul>
+<li><a class="reference internal" href="#main-window">Main Window</a></li>
+<li><a class="reference internal" href="#papi-menu">PaPI menu</a></li>
+<li><a class="reference internal" href="#plugin-menu">Plugin menu</a></li>
+<li><a class="reference internal" href="#view-menu">View menu</a></li>
+<li><a class="reference internal" href="#help-menu">Help menu</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="man.papi.manual.1_installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="man.papi.manual.3_examples.html"
+                        title="next chapter">Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/man.papi.manual.2_introduction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="man.papi.manual.3_examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="man.papi.manual.1_installation.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="man.papi.manual.html" >PaPI Manual</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
