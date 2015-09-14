@@ -18,14 +18,21 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QTreeView" name="pluginTree">
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectItems</enum>
-        </property>
-        <attribute name="headerCascadingSectionResizes">
-         <bool>true</bool>
-        </attribute>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTreeView" name="pluginTree">
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+          <attribute name="headerCascadingSectionResizes">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="pluginSearchText"/>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QScrollArea" name="scrollArea">

@@ -32,7 +32,7 @@ import os
 import configparser
 import copy
 
-from papi.gui.default.item import PaPIRootItem, PaPITreeModel, PaPITreeItem
+from papi.gui.default.item import PaPIRootItem, PaPITreeModel, PaPITreeItem, PaPITreeProxyModel
 from papi.gui.default.item import DPluginTreeModel, DParameterTreeModel, DBlockTreeModel
 from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTreeItem, DSignalTreeItem
 
@@ -46,7 +46,7 @@ from papi.constants import PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_
 import papi.constants as pc
 
 from PyQt5.QtWidgets    import QLineEdit, QMainWindow, QMenu, QAbstractItemView, QAction
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRegExp
 
 from papi.data.DPlugin import DPlugin, DBlock, DParameter, DSubscription
 
@@ -74,20 +74,15 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.dpluginModel = DPluginTreeModel()
         self.dpluginModel.setHorizontalHeaderLabels(['Name'])
 
-        self.pluginTree.setModel(self.dpluginModel)
+        self.pluginProxyModel = PaPITreeProxyModel(self)
+        self.pluginProxyModel.setSourceModel(self.dpluginModel)
+        regex = QRegExp("*", Qt.CaseInsensitive, QRegExp.Wildcard)
+        self.pluginProxyModel.setFilterRegExp(regex)
+
+        self.pluginTree.setModel(self.pluginProxyModel)
         self.pluginTree.setUniformRowHeights(True)
 
         self.plugin_roots = {}
-
-        # self.visual_root = PaPIRootItem('Visualization      ')
-        # self.io_root = PaPIRootItem('Input/Output     ')
-        # self.dpp_root = PaPIRootItem('Data Processing')
-        # self.pcp_root = PaPIRootItem('Plugin Control    ')
-        #
-        # self.dpluginModel.appendRow(self.visual_root)
-        # self.dpluginModel.appendRow(self.io_root)
-        # self.dpluginModel.appendRow(self.dpp_root)
-        # self.dpluginModel.appendRow(self.pcp_root)
 
         # -----------------------------------
         # Build structure of parameter tree
@@ -155,6 +150,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         # Add Actions
         # ----------------------------------
         self.actionRefresh.triggered.connect(self.refresh_action)
+        self.pluginSearchText.textChanged.connect(self.changed_search_plugin_text_field)
 
         self.clear()
 
@@ -717,7 +713,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             plugin_root.appendRow(plugin_item)
 
         for root in sorted(self.plugin_roots.keys()):
-            self.pluginTree.model().appendRow(self.plugin_roots[root])
+            self.pluginTree.model().sourceModel().appendRow(self.plugin_roots[root])
             self.plugin_roots[root].sortChildren(0)
 
     def play_button_callback(self):
@@ -813,12 +809,12 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     def get_plugin_root(self,path):
         parts = path.split('/');
         part = parts[-3]
-
+        name = part
         if part not in self.plugin_roots:
 
             cfg_file = str.join("/", parts[0:-2]) + "/" + pc.GUI_PLUGIN_CONFIG
 
-            name = part
+
 
             if os.path.isfile(cfg_file):
                 config = configparser.ConfigParser()
@@ -830,6 +826,14 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             self.plugin_roots[part] = PaPIRootItem(name)
 
         return self.plugin_roots[part]
+
+    def changed_search_plugin_text_field(self, value):
+        if not len(value):
+            value = "*"
+        else:
+            value = "*" + value + "*"
+        regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
+        self.pluginProxyModel.setFilterRegExp(regex)
 
     def keyPressEvent(self, event):
         """

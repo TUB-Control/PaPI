@@ -18,7 +18,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QTreeView" name="pluginTree"/>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QTreeView" name="pluginTree"/>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="pluginSearchText"/>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QWidget" name="pluginWidget" native="true">

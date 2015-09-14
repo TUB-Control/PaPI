@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginCreateMenu.ui'
 #
-# Created: Wed Sep  9 15:51:01 2015
+# Created: Mon Sep 14 14:36:22 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,11 +19,17 @@ class Ui_PluginCreateMenu(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.pluginTree = QtWidgets.QTreeView(self.centralwidget)
         self.pluginTree.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.pluginTree.setObjectName("pluginTree")
         self.pluginTree.header().setCascadingSectionResizes(True)
-        self.horizontalLayout.addWidget(self.pluginTree)
+        self.verticalLayout_2.addWidget(self.pluginTree)
+        self.pluginSearchText = QtWidgets.QLineEdit(self.centralwidget)
+        self.pluginSearchText.setObjectName("pluginSearchText")
+        self.verticalLayout_2.addWidget(self.pluginSearchText)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setEnabled(False)
         self.scrollArea.setWidgetResizable(True)

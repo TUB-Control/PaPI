@@ -29,7 +29,7 @@ Sven Knuth
 __author__ = 'knuths'
 
 from PyQt5.QtWidgets    import QMdiSubWindow, QAction, QToolBar,QTreeView, QMenu
-from PyQt5.QtCore       import Qt, QRegExp, pyqtSignal
+from PyQt5.QtCore       import Qt, QRegExp, pyqtSignal, QSortFilterProxyModel, QModelIndex
 from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon, QDragEnterEvent, QDropEvent
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
@@ -106,7 +106,6 @@ class PaPITreeItem(QStandardItem):
 
         return not self.hasChildren() and containsDeletedItems
 
-
 class PaPIRootItem(PaPITreeItem):
     def __init__(self, name):
         super(PaPIRootItem, self).__init__(name, name)
@@ -151,6 +150,14 @@ class PaPIRootItem(PaPITreeItem):
                 if item == sItem:
                     return True
 
+    def filter_for(self, value):
+
+        for row in range(self.rowCount()):
+            treeItem = self.child(row)
+            print(value + " in? " + treeItem.name)
+            if value in treeItem.name:
+                print('Hide:' + treeItem.name)
+
 # ------------------------------------
 # Model Objects
 # ------------------------------------
@@ -179,6 +186,11 @@ class PaPITreeModel(QStandardItemModel):
                 if item == rItem:
                     self.removeRow(r)
                     return
+
+    def filter_for(self, name):
+        for r in range(self.rowCount()):
+            item = self.item(r, 0)
+            item.filter_for(name)
 
 
 # ------------------------------------
@@ -739,6 +751,22 @@ class StructTreeNode(QStandardItem):
 
         return None
 
+
+# ------------------------------------
+# Custom Proxy object
+# ------------------------------------
+
+class PaPITreeProxyModel(QSortFilterProxyModel):
+    def filterAcceptsRow(self, p_int:int, sourceParent: QModelIndex ):
+        index0 = self.sourceModel().index(p_int, 0, sourceParent)
+        if sourceParent.data() is None:
+            return True
+
+        if self.sourceModel().data(index0) is not None:
+            text = self.sourceModel().data(index0)
+            reg = self.filterRegExp()
+            return reg.exactMatch(text)
+        return False
 # ------------------------------------
 # Custom GUI elements
 # ------------------------------------

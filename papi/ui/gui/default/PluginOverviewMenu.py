@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Wed Sep  9 15:51:01 2015
+# Created: Mon Sep 14 14:36:22 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,9 +19,15 @@ class Ui_PluginOverviewMenu(object):
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
         self.pluginTree = QtWidgets.QTreeView(self.centralwidget)
         self.pluginTree.setObjectName("pluginTree")
-        self.horizontalLayout.addWidget(self.pluginTree)
+        self.verticalLayout.addWidget(self.pluginTree)
+        self.pluginSearchText = QtWidgets.QLineEdit(self.centralwidget)
+        self.pluginSearchText.setObjectName("pluginSearchText")
+        self.verticalLayout.addWidget(self.pluginSearchText)
+        self.horizontalLayout.addLayout(self.verticalLayout)
         self.pluginWidget = QtWidgets.QWidget(self.centralwidget)
         self.pluginWidget.setEnabled(False)
         self.pluginWidget.setObjectName("pluginWidget")

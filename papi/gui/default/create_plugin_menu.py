@@ -33,7 +33,7 @@ import os
 import configparser
 
 from papi.gui.default.item import PaPIRootItem, PaPITreeModel
-from papi.gui.default.item import PluginTreeItem
+from papi.gui.default.item import PluginTreeItem, PaPITreeProxyModel
 from papi.yapsy.PluginManager import PluginManager
 
 __author__ = 'knuths'
@@ -71,21 +71,20 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         model = PaPITreeModel()
         model.setHorizontalHeaderLabels(['Name'])
 
-        self.pluginTree.setModel(model)
+        self.pluginProxyModel = PaPITreeProxyModel(self)
+        self.pluginProxyModel.setSourceModel(model)
+
+        regex = QRegExp("*", Qt.CaseInsensitive, QRegExp.Wildcard)
+        self.pluginProxyModel.setFilterRegExp(regex)
+
+        self.pluginTree.setModel(self.pluginProxyModel)
+
+#        self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
         self.pluginTree.setSortingEnabled(True)
 
-        self.plugin_roots = {}
-        #
-        # self.visual_root = PaPIRootItem('Visualization      ')
-        # self.io_root = PaPIRootItem('Input/Output     ')
-        # self.dpp_root = PaPIRootItem('Data Processing')
-        # self.pcp_root = PaPIRootItem('Plugin Control    ')
 
-        # model.appendRow(self.visual_root)
-        # model.appendRow(self.io_root)
-        # model.appendRow(self.dpp_root)
-        # model.appendRow(self.pcp_root)
+        self.plugin_roots = {}
 
         self.configuration_inputs = {}
 
@@ -96,6 +95,8 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.createButton.clicked.connect(self.show_create_plugin_dialog)
         self.helpButton.clicked.connect(self.help_button_triggered)
         self.finder = ModuleFinder()
+
+        self.pluginSearchText.textChanged.connect(self.changed_search_plugin_text_field)
 
 
 
@@ -156,8 +157,6 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         for imp in found_imports:
             item = QListWidgetItem(imp)
 
-
-
             spam_loader = importlib.find_loader(imp)
             found = spam_loader is not None
             if not found:
@@ -169,8 +168,6 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
             self.modulesList.setEnabled(True)
             self.modulesLabel.setEnabled(True)
 
-
-
     def show_create_plugin_dialog(self):
         index = self.pluginTree.currentIndex()
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
@@ -181,7 +178,6 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
                 self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
-
 
         self.plugin_manager.locatePlugins()
         candidates = self.plugin_manager.getPluginCandidates()
@@ -200,17 +196,8 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
             plugin_root = self.get_plugin_root(pluginfo.path)
             plugin_root.appendRow(plugin_item)
 
-            # if '/visual/' in pluginfo.path:
-            #     self.visual_root.appendRow(plugin_item)
-            # if '/io/' in pluginfo.path:
-            #     self.io_root.appendRow(plugin_item)
-            # if '/dpp/' in pluginfo.path:
-            #     self.dpp_root.appendRow(plugin_item)
-            # if '/pcp/' in pluginfo.path:
-            #     self.pcp_root.appendRow(plugin_item)
-
         for root in sorted(self.plugin_roots.keys()):
-            self.pluginTree.model().appendRow(self.plugin_roots[root])
+            self.pluginTree.model().sourceModel().appendRow(self.plugin_roots[root])
             self.plugin_roots[root].sortChildren(0)
 
     def help_button_triggered(self):
@@ -235,12 +222,10 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
     def get_plugin_root(self,path):
         parts = path.split('/');
         part = parts[-3]
-
+        name = part
         if part not in self.plugin_roots:
 
             cfg_file = str.join("/", parts[0:-2]) + "/" + pc.GUI_PLUGIN_CONFIG
-
-            name = part
 
             if os.path.isfile(cfg_file):
                 config = configparser.ConfigParser()
@@ -252,6 +237,15 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
             self.plugin_roots[part] = PaPIRootItem(name)
 
         return self.plugin_roots[part]
+
+    def changed_search_plugin_text_field(self, value):
+        if not len(value):
+            value = "*"
+        else:
+            value = "*" + value + "*"
+        regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
+        self.pluginProxyModel.setFilterRegExp(regex)
+
 
     def clear(self):
         self.nameEdit.setText('')
