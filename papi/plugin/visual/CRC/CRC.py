@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Knuths'
+
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *

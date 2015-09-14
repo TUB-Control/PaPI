@@ -26,7 +26,7 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'ruppins'
+
 
 
 from papi.plugin.base_classes.dpp_base import dpp_base

@@ -30,7 +30,7 @@ from papi.data import DParameter
 from papi.constants import CORE_TIME_SIGNAL
 
 
-__author__ = 'knuths'
+
 
 from papi.data.DObject import DObject
 from papi.data.DSignal import DSignal

@@ -36,7 +36,7 @@ from papi.gui.default.item import PaPIRootItem, PaPITreeModel
 from papi.gui.default.item import PluginTreeItem
 from papi.yapsy.PluginManager import PluginManager
 
-__author__ = 'knuths'
+
 
 from papi.ui.gui.default.PluginCreateMenu import Ui_PluginCreateMenu
 

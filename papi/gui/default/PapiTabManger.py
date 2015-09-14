@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 
 from PyQt5.QtCore import Qt, QObject

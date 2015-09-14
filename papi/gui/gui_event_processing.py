@@ -44,7 +44,7 @@ from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
 from PyQt5 import QtCore
 
-__author__ = 'Stefan'
+
 
 
 class GuiEventProcessing(QtCore.QObject):

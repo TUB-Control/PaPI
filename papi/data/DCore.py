@@ -31,7 +31,7 @@ from papi.ConsoleLog import ConsoleLog
 import copy
 import papi.error_codes as ERROR
 
-__author__ = 'knuth'
+
 
 
 class DCore():

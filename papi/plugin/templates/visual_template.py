@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+
 
 from PyQt5.QtGui import QMdiSubWindow
 import papi.pyqtgraph as pq

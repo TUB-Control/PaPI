@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 import os
 from PyQt5.QtGui import QIcon, QPixmap

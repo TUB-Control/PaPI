@@ -26,7 +26,7 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'stefan'
+
 
 from papi.plugin.base_classes.base_plugin import base_plugin
 import re

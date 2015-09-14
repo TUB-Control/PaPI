@@ -42,7 +42,7 @@ IDEAS
 
 """
 
-__author__ = 'CK'
+
 
 from papi.plugin.base_classes.iop_base import iop_base
 

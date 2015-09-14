@@ -13,7 +13,7 @@ from papi.data.DSignal import DSignal
 
 import numpy
 import time
-__author__ = 'knuths'
+
 
 
 class CPU_Load(iop_base):

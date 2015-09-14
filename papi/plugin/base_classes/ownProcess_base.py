@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 
 from papi.plugin.base_classes.base_plugin import base_plugin

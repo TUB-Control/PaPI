@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 from papi.gui.gui_event_processing import GuiEventProcessing
 from papi.gui.gui_api import Gui_api

@@ -26,7 +26,7 @@ Contributors
 Sven Knuth
 """
 
-__author__ = 'control'
+
 
 from papi.core              import Core
 from papi.gui.default.main   import GUI, run_gui_in_own_process

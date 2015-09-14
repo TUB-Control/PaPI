@@ -26,7 +26,7 @@ Contributors
 Stefan Ruppin
 """
 
-__author__ = 'ruppin'
+
 
 import platform
 from os.path import expanduser

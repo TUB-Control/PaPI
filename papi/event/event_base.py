@@ -26,7 +26,7 @@ Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'control'
+
 
 class PapiEventBase(object):
     count = 0

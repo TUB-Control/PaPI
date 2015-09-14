@@ -26,7 +26,7 @@ Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'knuths'
+
 
 from PyQt5.QtGui import QColor
 import re
