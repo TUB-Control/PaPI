@@ -125,6 +125,21 @@ class Plugin_api(QtCore.QObject):
         """
         self.__default_api.do_set_parameter(plugin_id,parameter_name,value)
 
+    def do_update_parameter(self, plugin_id, parameter_name, value):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to update a parameter in the gui. Used by a owner of a plugin to
+        inform the gui that a parameter was internally changed.
+
+        :param plugin_id: id of plugin which owns the parameter
+        :type plugin_id: int
+        :param parameter_name: name of parameter to change
+        :type parameter_name: basestring
+        :param value: new parameter value to set
+        :type value:
+        """
+        self.__default_api.do_set_parameter(plugin_id,parameter_name,value, only_db_update=True)
+
 
     def do_resume_plugin_by_uname(self, plugin_uname):
         """

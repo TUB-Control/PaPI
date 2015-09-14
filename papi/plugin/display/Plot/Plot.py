@@ -222,7 +222,7 @@ class Plot(vip_base):
         # --------------------------------
 
         self.__plotWidget__ = PlotWidget()
-
+        self.__plotWidget__.yRangeChanged.connect(self.plot_yrange_changed)
         self.__plotWidget__.setWindowTitle('PlotPerformanceTitle')
 
         self.__plotWidget__.showGrid(x=self.__show_grid_x__, y=self.__show_grid_y__)
@@ -1011,6 +1011,12 @@ class Plot(vip_base):
         for signal_name in self.signals:
             self.signals[signal_name].set_downsampling_rate(rate)
 
+    def plot_yrange_changed(self):
+
+        viewbox = self.__plotWidget__.getPlotItem().getViewBox()
+        [xRange, yRange] = viewbox.viewRange()
+        self.control_api.do_update_parameter(self.__id__, 'yRange', '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']')
+
     def quit(self):
         """
         Function quit plugin
@@ -1354,6 +1360,8 @@ class PlotItem(object):
 
 class PlotWidget(pg.PlotWidget):
 
+    yRangeChanged = QtCore.pyqtSignal()
+
     def __init__(self):
         super(PlotWidget, self).__init__()
         self.paint = True
@@ -1368,5 +1376,15 @@ class PlotWidget(pg.PlotWidget):
         if self.paint:
             self.scene().prepareForPaint()
         return QGraphicsView.paintEvent(self, ev)
+
+    def wheelEvent(self, ev):
+        super(PlotWidget, self).wheelEvent(ev)
+        self.yRangeChanged.emit()
+
+    def mouseReleaseEvent(self, ev):
+        super(PlotWidget, self).mouseReleaseEvent(ev)
+        self.yRangeChanged.emit()
+
+
 
 

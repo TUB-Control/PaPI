@@ -405,6 +405,9 @@ class GuiEventProcessing(QtCore.QObject):
             # plugin does not exist
             self.log.printText(1, 'update_meta, Plugin with id  ' + str(pl_id) + '  does not exist')
 
+    def process_update_parameter(self, event):
+        print('Just update')
+
     def process_set_parameter(self, event):
         """
         Processes set_parameter event.
@@ -420,6 +423,8 @@ class GuiEventProcessing(QtCore.QObject):
         # get optional data of event
         opt = event.get_optional_parameter()
 
+        if isinstance(event, Event.instruction.UpdateParameter):
+            return
 
         # get destination plugin from DGUI
         dplugin = self.gui_data.get_dplugin_by_id(dID)

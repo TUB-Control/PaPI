@@ -13,3 +13,4 @@ from .Unsubscribe import Unsubscribe
 from .SetParameter import SetParameter
 from .CloseProgram import CloseProgram
 from .UpdateMeta import UpdateMeta
+from .UpdateParameter import UpdateParameter

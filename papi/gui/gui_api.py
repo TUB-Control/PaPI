@@ -297,7 +297,7 @@ class Gui_api(QtCore.QObject):
         # call do_subscribe with ids to subscribe
         self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
 
-    def do_set_parameter(self, plugin_id, parameter_name, value):
+    def do_set_parameter(self, plugin_id, parameter_name, value, only_db_update = False):
         """
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
@@ -308,6 +308,8 @@ class Gui_api(QtCore.QObject):
         :type parameter_name: basestring
         :param value: new parameter value to set
         :type value:
+        :param only_db_update: do_set_parameter of the target plugin will not be called. Updates only the internal database.
+        :type boolean:
         """
         # get plugin from DGUI
         dplug = self.gui_data.get_dplugin_by_id(plugin_id)
@@ -332,7 +334,10 @@ class Gui_api(QtCore.QObject):
                         opt.is_parameter = True
                         opt.parameter_alias = parameter_name
                         opt.block_name = None
-                        e = Event.instruction.SetParameter(self.gui_id, dplug.id, opt)
+                        if only_db_update:
+                            e = Event.instruction.UpdateParameter(self.gui_id, dplug.id, opt)
+                        else:
+                            e = Event.instruction.SetParameter(self.gui_id, dplug.id, opt)
                         self.core_queue.put(e)
 
     def do_set_parameter_uname(self, plugin_uname, parameter_name, value):
