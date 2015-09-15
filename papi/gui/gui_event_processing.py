@@ -29,7 +29,8 @@ Contributors:
 import copy
 import traceback
 import importlib.machinery
-import time
+import sys
+import imp
 
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
@@ -285,9 +286,20 @@ class GuiEventProcessing(QtCore.QObject):
         # plugin seems to exist, so get the path of the plugin file
         imp_path = plugin_orginal.path + ".py"
         # build a loader object for this plugin
-        loader = importlib.machinery.SourceFileLoader(plugin_orginal.name.lower(), imp_path)
-        # load the plugin source code
-        current_modul = loader.load_module()
+        module_name = plugin_orginal.name.lower()
+
+        spec = importlib.util.find_spec(module_name)
+        #Module was not yet loaded
+        if spec is None:
+            loader = importlib.machinery.SourceFileLoader(module_name, imp_path)
+            current_modul = loader.load_module()
+            #Add path to sys path otherwise importlib.import_module will not find the module
+            sys_path = "/".join(plugin_orginal.path.split('/')[0:-1])
+            sys.path.append(sys_path)
+        else:
+            #Import module
+            current_modul = importlib.import_module(module_name)
+
         # build the plugin class name for usage
         class_name = plugin_orginal.name[:1].upper() + plugin_orginal.name[1:]
         # get the plugin class of the source code loaded and init class as a new object
