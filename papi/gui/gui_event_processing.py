@@ -30,7 +30,6 @@ import copy
 import traceback
 import importlib.machinery
 import sys
-import imp
 
 from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
