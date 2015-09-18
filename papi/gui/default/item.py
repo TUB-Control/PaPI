@@ -800,13 +800,13 @@ class PaPIToolbar(QToolBar):
     def dragEnterEvent(self, event: QDragEnterEvent):
         source = event.source()
         if isinstance(source, QTreeView):
-            if isinstance(source.model(), PaPITreeModel):
+            if isinstance(source.model(), PaPITreeProxyModel):
                 event.acceptProposedAction()
 
     def dropEvent(self, event: QDropEvent):
         source = event.source()
         if isinstance(source, QTreeView):
-            if isinstance(source.model(), PaPITreeModel):
+            if isinstance(source.model(), PaPITreeProxyModel):
                 for index in source.selectedIndexes():
                     plugin_info = source.model().data(index, Qt.UserRole)
                     self.clickedFavouritePlugin.emit(plugin_info)
