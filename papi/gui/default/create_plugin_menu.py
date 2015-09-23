@@ -98,6 +98,8 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
 
         self.pluginSearchText.textChanged.connect(self.changed_search_plugin_text_field)
 
+        # set focus to the search bar
+        self.pluginSearchText.setFocus(Qt.OtherFocusReason)
 
 
     def keyPressEvent(self, event):
@@ -109,8 +111,13 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+        # Use enter/return to bring up the dialog for a selected plugin
+        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginTree.hasFocus():
            self.show_create_plugin_dialog()
+
+        # if search bar has focus and user pressed enter/return, change focus to the plugin tree
+        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginSearchText.hasFocus():
+            self.pluginTree.setFocus(Qt.OtherFocusReason)
 
 
     def pluginItemChanged(self, index):

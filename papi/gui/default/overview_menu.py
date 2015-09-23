@@ -154,6 +154,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         self.clear()
 
+        # set focus to the search bar
+        self.pluginSearchText.setFocus(Qt.OtherFocusReason)
+
+
     def clear(self):
         """
         This function will clear this window.
@@ -850,3 +854,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         if self.pluginTree.hasFocus() and \
                         event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
             self.plugin_item_changed(self.pluginTree.currentIndex())
+
+        # if search bar has focus and user pressed enter/return, change focus to the plugin tree
+        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginSearchText.hasFocus():
+            self.pluginTree.setFocus(Qt.OtherFocusReason)
