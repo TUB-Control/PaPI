@@ -838,6 +838,10 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         else:
             value = "*" + value + "*"
             self.pluginTree.expandAll()
+
+        self.pluginProxyModel.sourceModel().mark_visibility_by_name(value)
+
+        # Used to trigger filter action
         regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
         self.pluginProxyModel.setFilterRegExp(regex)
 
