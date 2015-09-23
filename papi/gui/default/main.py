@@ -197,6 +197,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         signal.signal(signal.SIGINT, lambda a,b: self.signal_handler(a,b))
 
+        # List for keys that are active
+        self.keysActiveList = [];
 
 
     def signal_handler(self,signal, frame):
@@ -747,9 +749,38 @@ class GUI(QMainWindow, Ui_DefaultMain):
                     window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Escape:
+
+        if event.key() not in self.keysActiveList:
+            self.keysActiveList.append(event.key())
+
+        if  QtCore.Qt.Key_Escape in self.keysActiveList:
             if self.in_run_mode:
                 self.toggle_run_mode()
+
+        # open create menu with CTRL+N
+        if QtCore.Qt.Key_N in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.triggered_show_create_plugin_menu()
+            self.keysActiveList.remove(QtCore.Qt.Key_N)
+            self.keysActiveList.remove(QtCore.Qt.Key_Control)
+
+        # open overview menu with CTRL+O
+        if QtCore.Qt.Key_O in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.triggered_show_overview_menu()
+            self.keysActiveList.remove(QtCore.Qt.Key_O)
+            self.keysActiveList.remove(QtCore.Qt.Key_Control)
+
+        # open save doalog with CTRL+S
+        if QtCore.Qt.Key_S in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.triggered_save()
+            self.keysActiveList.remove(QtCore.Qt.Key_S)
+            self.keysActiveList.remove(QtCore.Qt.Key_Control)
+
+
+
+    def keyReleaseEvent(self, event):
+        if event.key() in self.keysActiveList:
+            self.keysActiveList.remove(event.key())
+
 
     def resize_gui_window(self, w, h):
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
