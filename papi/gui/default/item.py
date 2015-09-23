@@ -48,6 +48,7 @@ class PaPITreeItem(QStandardItem):
         self.object = object
         self.name = name
         self.tool_tip = "Plugin: " + self.name
+        self.visible = True
 
     def data(self, role):
         """
@@ -150,13 +151,21 @@ class PaPIRootItem(PaPITreeItem):
                 if item == sItem:
                     return True
 
-    def filter_for(self, value):
+    def mark_visibility_by_name(self, value):
+
+        all_items_are_hidden = True
 
         for row in range(self.rowCount()):
             treeItem = self.child(row)
-            print(value + " in? " + treeItem.name)
-            if value in treeItem.name:
-                print('Hide:' + treeItem.name)
+            regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
+
+            if regex.exactMatch(treeItem.name):
+                treeItem.visible = True
+                all_items_are_hidden = False
+            else:
+                treeItem.visible = False
+
+        self.visible = not all_items_are_hidden
 
 # ------------------------------------
 # Model Objects
@@ -187,10 +196,10 @@ class PaPITreeModel(QStandardItemModel):
                     self.removeRow(r)
                     return
 
-    def filter_for(self, name):
+    def mark_visibility_by_name(self, name):
         for r in range(self.rowCount()):
             item = self.item(r, 0)
-            item.filter_for(name)
+            item.mark_visibility_by_name(name)
 
 
 # ------------------------------------
@@ -759,14 +768,20 @@ class StructTreeNode(QStandardItem):
 class PaPITreeProxyModel(QSortFilterProxyModel):
     def filterAcceptsRow(self, p_int:int, sourceParent: QModelIndex ):
         index0 = self.sourceModel().index(p_int, 0, sourceParent)
-        if sourceParent.data() is None:
-            return True
 
-        if self.sourceModel().data(index0) is not None:
-            text = self.sourceModel().data(index0)
-            reg = self.filterRegExp()
-            return reg.exactMatch(text)
-        return False
+        # if sourceParent.data() is None:
+        #     return True
+        #text = self.sourceModel().data(index0)
+
+        item = self.sourceModel().itemFromIndex(index0)
+
+        return item.visible
+        #
+        # if self.sourceModel().data(index0) is not None:
+        #     text = self.sourceModel().data(index0)
+        #     reg = self.filterRegExp()
+        #     return reg.exactMatch(text)
+        # return False
 # ------------------------------------
 # Custom GUI elements
 # ------------------------------------

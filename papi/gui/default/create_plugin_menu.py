@@ -238,14 +238,20 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         return self.plugin_roots[part]
 
     def changed_search_plugin_text_field(self, value):
+
         if not len(value):
             value = "*"
             self.pluginTree.collapseAll()
         else:
             value = "*" + value + "*"
             self.pluginTree.expandAll()
+
+        self.pluginProxyModel.sourceModel().mark_visibility_by_name(value)
+
+        # Used to trigger filter action
         regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
         self.pluginProxyModel.setFilterRegExp(regex)
+
 
 
 
