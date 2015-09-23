@@ -198,7 +198,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         signal.signal(signal.SIGINT, lambda a,b: self.signal_handler(a,b))
 
         # List for keys that are active
-        self.keysActiveList = [];
+        self.keysActiveList = []
 
 
     def signal_handler(self,signal, frame):
@@ -250,11 +250,21 @@ class GUI(QMainWindow, Ui_DefaultMain):
         # -------------------------------------
         # Create actions
         # -------------------------------------
+        _translate = QtCore.QCoreApplication.translate
+
         self.actionLoad.triggered.connect(self.triggered_load)
+        self.actionLoad.setShortcut(_translate("DefaultMain","Ctrl+L"))
+
+
+
         self.actionSave.triggered.connect(self.triggered_save)
+        self.actionSave.setShortcut(_translate("DefaultMain","Ctrl+S"))
 
         self.actionOverview.triggered.connect(self.triggered_show_overview_menu)
+        self.actionOverview.setShortcut(_translate("DefaultMain","Ctrl+O"))
+
         self.actionCreate.triggered.connect(self.triggered_show_create_plugin_menu)
+        self.actionCreate.setShortcut(_translate("DefaultMain","Ctrl+N"))
 
         self.actionResetPaPI.triggered.connect(self.triggered_reset_papi)
         self.actionReloadConfig.triggered.connect(self.triggered_reload_config)
@@ -266,6 +276,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.actionPaPI_Wiki.triggered.connect(self.triggered_papi_wiki)
 
         self.actionPaPI_Doc.triggered.connect(self.triggered_papi_doc)
+        self.actionPaPI_Doc.setShortcut(_translate("DefaultMain","Ctrl+H"))
+
         self.actionAbout.triggered.connect(self.triggered_papi_about)
         self.actionAbout_Qt.triggered.connect(self.triggered_papi_about_qt)
 
@@ -756,26 +768,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if  QtCore.Qt.Key_Escape in self.keysActiveList:
             if self.in_run_mode:
                 self.toggle_run_mode()
-
-        # open create menu with CTRL+N
-        if QtCore.Qt.Key_N in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
-            self.triggered_show_create_plugin_menu()
-            self.keysActiveList.remove(QtCore.Qt.Key_N)
-            self.keysActiveList.remove(QtCore.Qt.Key_Control)
-
-        # open overview menu with CTRL+O
-        if QtCore.Qt.Key_O in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
-            self.triggered_show_overview_menu()
-            self.keysActiveList.remove(QtCore.Qt.Key_O)
-            self.keysActiveList.remove(QtCore.Qt.Key_Control)
-
-        # open save doalog with CTRL+S
-        if QtCore.Qt.Key_S in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
-            self.triggered_save()
-            self.keysActiveList.remove(QtCore.Qt.Key_S)
-            self.keysActiveList.remove(QtCore.Qt.Key_Control)
-
-
 
     def keyReleaseEvent(self, event):
         if event.key() in self.keysActiveList:
