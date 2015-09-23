@@ -142,6 +142,16 @@ class PapiTabManger(QObject):
     def set_tab_active_by_index(self, index):
         self.tabWidget.setCurrentIndex(index)
 
+    def select_next_tab(self):
+        cur_ind = self.get_currently_active_tab()
+        self.set_tab_active_by_index(cur_ind+1)
+
+    def select_prev_tab(self):
+        cur_ind = self.get_currently_active_tab()
+        self.set_tab_active_by_index(cur_ind-1)
+
+
+
     def set_tab_active_by_name(self, tabName):
         if tabName in self.tab_dict_uname:
             tabObj = self.tab_dict_uname[tabName]

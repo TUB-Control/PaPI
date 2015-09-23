@@ -198,7 +198,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         signal.signal(signal.SIGINT, lambda a,b: self.signal_handler(a,b))
 
         # List for keys that are active
-        self.keysActiveList = []
+        self.keysActiveList = [];
 
 
     def signal_handler(self,signal, frame):
@@ -761,13 +761,23 @@ class GUI(QMainWindow, Ui_DefaultMain):
                     window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
     def keyPressEvent(self, event):
-
         if event.key() not in self.keysActiveList:
             self.keysActiveList.append(event.key())
 
         if  QtCore.Qt.Key_Escape in self.keysActiveList:
             if self.in_run_mode:
                 self.toggle_run_mode()
+
+        if QtCore.Qt.Key_D in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.gui_management.tab_manager.select_next_tab()
+            self.keysActiveList.remove(QtCore.Qt.Key_D)
+            #self.keysActiveList.remove(QtCore.Qt.Key_Control)
+
+        if QtCore.Qt.Key_A in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.gui_management.tab_manager.select_prev_tab()
+            self.keysActiveList.remove(QtCore.Qt.Key_A)
+            #self.keysActiveList.remove(QtCore.Qt.Key_Control)
+
 
     def keyReleaseEvent(self, event):
         if event.key() in self.keysActiveList:
