@@ -127,6 +127,11 @@ class PaPIRootItem(PaPITreeItem):
         if role == Qt.DisplayRole:
             return self.name + " (" + str(self.rowCount()) + ")"
 
+        # if role == Qt.BackgroundRole:
+        #     return QBrush(QColor(0,0,0,0))
+        #
+        # if role in [ Qt.ForegroundRole, Qt.TextColorRole]:
+        #     return QBrush(QColor(0,0,0,100))
         # if role == Qt.DecorationRole:
         #     return self.get_decoration()
 
@@ -135,6 +140,7 @@ class PaPIRootItem(PaPITreeItem):
 
         return None
 
+        #return super(PaPIRootItem, self).data(role)
 
 
     def hasItem(self, sItem):
@@ -182,8 +188,9 @@ class PaPITreeModel(QStandardItemModel):
 
         parent = index.parent()
 
+
         if not parent.isValid():
-            return Qt.ItemIsEnabled
+            return Qt.NoItemFlags
 
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled
 

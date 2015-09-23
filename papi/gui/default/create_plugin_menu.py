@@ -79,6 +79,7 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginTree.setModel(self.pluginProxyModel)
         self.pluginTree.setUniformRowHeights(True)
         self.pluginTree.setSortingEnabled(True)
+        self.pluginTree.setStyleSheet(pc.TREE_CSS)
 
         self.plugin_roots = {}
 

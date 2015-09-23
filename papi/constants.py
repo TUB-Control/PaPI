@@ -166,3 +166,30 @@ REGEX_SIGNED_FLOAT_OR_INT = r'([-]{0,1}\d+(.\d+)?)'
 CFG_TYPE_FILE = 'file'
 CFG_TYPE_COLOR = 'color'
 CFG_TYPE_BOOL = 'bool'
+
+TREE_CSS = """
+QTreeView { alternate-background-color: yellow;}
+QTreeView::branch:has-siblings:!adjoins-item {
+    border-image: url(papi/gui/default/images/vline.png) 0;
+}
+
+QTreeView::branch:has-siblings:adjoins-item {
+    border-image: url(papi/gui/default/images/branch-more.png) 0;
+}
+
+QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+    border-image: url(papi/gui/default/images/branch-end.png) 0;
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+        border-image: none;
+        image: url(papi/gui/default/images/branch-closed.png);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+        border-image: none;
+        image: url(papi/gui/default/images/branch-open.png);
+}
+"""

@@ -130,6 +130,9 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.pauseButton.clicked.connect(self.pause_button_callback)
         self.stopButton.clicked.connect(self.stop_start_button_callback)
         self.pluginTree.clicked.connect(self.plugin_item_changed)
+        self.pluginTree.selectionModel().selectionChanged.connect(self.changed_dplugin_tree_selection)
+
+        self.pluginTree.setStyleSheet(pc.TREE_CSS)
 
         # ----------------------------------
         # Add context menu
@@ -863,4 +866,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter or event.key() == Qt.Key_Down \
             or event.key() == Qt.Key_Up) and self.pluginSearchText.hasFocus():
             self.pluginTree.setFocus(Qt.OtherFocusReason)
+
+    def changed_dplugin_tree_selection(self, new_selection, old_selection):
+        pass
 
