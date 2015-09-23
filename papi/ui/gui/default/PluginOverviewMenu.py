@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginOverviewMenu.ui'
 #
-# Created: Mon Sep 14 15:03:55 2015
+# Created: Wed Sep 23 16:34:27 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
