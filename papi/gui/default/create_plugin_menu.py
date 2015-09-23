@@ -112,10 +112,10 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginTree.hasFocus():
            self.show_create_plugin_dialog()
 
-        # if search bar has focus and user pressed enter/return, change focus to the plugin tree
-        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginSearchText.hasFocus():
+        # if search bar has focus and user pressed enter/return,arrow up/down, change focus to the plugin tree
+        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter or event.key() == Qt.Key_Down \
+            or event.key() == Qt.Key_Up) and self.pluginSearchText.hasFocus():
             self.pluginTree.setFocus(Qt.OtherFocusReason)
-
 
     def pluginItemChanged(self, index):
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)

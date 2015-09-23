@@ -855,6 +855,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
                         event.key() in [Qt.Key_Return, Qt.Key_Down, Qt.Key_Up, Qt.Key_Left, Qt.Key_Right]:
             self.plugin_item_changed(self.pluginTree.currentIndex())
 
-        # if search bar has focus and user pressed enter/return, change focus to the plugin tree
-        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginSearchText.hasFocus():
+        # if search bar has focus and user pressed enter/return,arrow up/down, change focus to the plugin tree
+        if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter or event.key() == Qt.Key_Down \
+            or event.key() == Qt.Key_Up) and self.pluginSearchText.hasFocus():
             self.pluginTree.setFocus(Qt.OtherFocusReason)
+
