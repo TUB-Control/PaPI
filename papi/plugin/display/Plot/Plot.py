@@ -439,7 +439,7 @@ class Plot(vip_base):
             self.update_legend()
 
         if name == 'show_legend':
-
+            self.config['show_legend']['value'] = value
             if value == '0':
                 if self.__legend__ is not None:
                     self.__legend__.scene().removeItem(self.__legend__)
@@ -447,6 +447,7 @@ class Plot(vip_base):
                     self.__legend__ = None
             if value == '1':
                 self.update_legend()
+
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.update_buffer_size(value)

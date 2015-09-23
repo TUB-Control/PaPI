@@ -352,9 +352,17 @@ class Gui_api(QtCore.QObject):
         :param value: new parameter value to set
         :type value:
         """
-        id = self.do_get_plugin_id_from_uname(plugin_uname)
-        if id is not None:
-            self.do_set_parameter(id, parameter_name, value)
+        # id = self.do_get_plugin_id_from_uname(plugin_uname)
+        # if id is not None:
+        #     self.do_set_parameter(id, parameter_name, value)
+        #     print(parameter_name, value)
+        opt = DOptionalData()
+        opt.data = value
+        opt.is_parameter = True
+        opt.parameter_alias = parameter_name
+        opt.block_name = None
+        e = Event.instruction.SetParameterByUname(self.gui_id,plugin_uname, opt)
+        self.core_queue.put(e)
 
     def do_pause_plugin_by_id(self, plugin_id):
         """

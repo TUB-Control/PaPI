@@ -111,6 +111,7 @@ class Core:
                                           'subscribe_by_uname':     self.__process_subscribe_by_uname__,
                                           'unsubscribe':            self.__process_unsubsribe__,
                                           'set_parameter':          self.__process_set_parameter__,
+                                          'set_parameter_by_uname': self.__process_set_parameter__,
                                           'pause_plugin':           self.__process_pause_plugin__,
                                           'resume_plugin':          self.__process_resume_plugin__,
                                           'start_plugin':           self.__process_start_plugin__
@@ -206,7 +207,10 @@ class Core:
             self.log.printText(2, 'Event->' + event.get_eventtype() + '   ' + event.get_event_operation())
 
             # process the next event of queue
-            self.__process_event__(event)
+            try:
+                self.__process_event__(event)
+            except Exception as Exc:
+                print(Exc)
 
             # check if there are still plugins alive or gui is still alive before ending core main loop
             self.core_goOn = self.core_data.get_dplugins_count() != 0 or self.gui_alive
@@ -399,7 +403,7 @@ class Core:
     def new_subscription(self, subscriber_id, source_id, block_name, signals, sub_alias, orginal_event=None):
         """
         Gets information of a new and wanted subscription.
-        This methond will try to create the wanted subscription.
+        This method will try to create the wanted subscription.
 
         :param subscriber_id: Id of the plugin that want to get data
         :param source_id:  Id of the plugin that will be the data source
@@ -1204,13 +1208,32 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-        # get destination id and optional parameter
-        opt = event.get_optional_parameter()
-        pl_id = event.get_destinatioID()
 
-        # get DPlugin object of destination id from DCore and check for existence
-        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if isinstance(event, Event.instruction.SetParameterByUname):
+            dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
+            if dplugin is not None:
+                if dplugin.state != PLUGIN_STATE_START_SUCCESFUL:
+                    # plugin not here yet, put event in delayed queue
+                    self.core_delayed_operation_queue.append(event)
+                    self.log.printText(2, 'setParameterByUname, event was placed in delayed queue because plugin: '
+                                       + event.plugin_uname + ' does not exist yet.')
+                    return 0
+                # build forward event for gui with ids instead of uname
+                forward_event = Event.instruction.SetParameter(event.get_originID(), dplugin.id, event.get_optional_parameter())
+        else:
+            # get destination id
+            pl_id = event.get_destinatioID()
+            # get DPlugin object of destination id from DCore and check for existence
+            dplugin = self.core_data.get_dplugin_by_id(pl_id)
+            forward_event = event
+            if dplugin is None:
+                #  pluign with id does not exist, so id is wrong.
+                self.log.printText(1, 'set_paramenter, plugin with id ' + str(pl_id) + ' not found')
+                return -1
+
+
         if dplugin is not None:
+            opt = event.get_optional_parameter()
             # Plugin exists
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
@@ -1219,15 +1242,12 @@ class Core:
                 para = parameters[opt.parameter_alias]
                 para.value = opt.data
                 # route the event to the destination plugin queue
-                dplugin.queue.put(event)
+                dplugin.queue.put(forward_event)
                 # change event type for plugin
                 #update GUI
-                self.update_meta_data_to_gui(pl_id)
+                self.update_meta_data_to_gui(dplugin.id)
                 return 1
-        else:
-            # destination plugin does not exist
-            self.log.printText(1, 'set_paramenter, plugin with id ' + str(pl_id) + ' not found')
-            return -1
+
 
     def __process_new_block__(self, event):
         """
