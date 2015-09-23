@@ -276,6 +276,16 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.default.PapiTabManger.PapiTabManger.select_next_tab">
+<tt class="descname">select_next_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PapiTabManger.html#PapiTabManger.select_next_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PapiTabManger.PapiTabManger.select_next_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PapiTabManger.PapiTabManger.select_prev_tab">
+<tt class="descname">select_prev_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PapiTabManger.html#PapiTabManger.select_prev_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PapiTabManger.PapiTabManger.select_prev_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.default.PapiTabManger.PapiTabManger.setTabs_movable_closable">
 <tt class="descname">setTabs_movable_closable</tt><big>(</big><em>move</em>, <em>close</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PapiTabManger.html#PapiTabManger.setTabs_movable_closable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PapiTabManger.PapiTabManger.setTabs_movable_closable" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -708,11 +718,6 @@ Sven Knuth</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.gui.default.item.PaPIRootItem.filter_for">
-<tt class="descname">filter_for</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.filter_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.filter_for" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="papi.gui.default.item.PaPIRootItem.hasItem">
 <tt class="descname">hasItem</tt><big>(</big><em>sItem</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.hasItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.hasItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to check if an item is already part of this Tree</p>
@@ -727,6 +732,11 @@ Sven Knuth</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIRootItem.mark_visibility_by_name">
+<tt class="descname">mark_visibility_by_name</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.mark_visibility_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.mark_visibility_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -805,13 +815,13 @@ This only works with items having an state-attribute e.g. DPlugin.</p>
 <em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItemModel</span></tt></p>
 <dl class="method">
-<dt id="papi.gui.default.item.PaPITreeModel.filter_for">
-<tt class="descname">filter_for</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.filter_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.filter_for" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.gui.default.item.PaPITreeModel.flags">
+<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.flags" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="papi.gui.default.item.PaPITreeModel.flags">
-<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.flags" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.gui.default.item.PaPITreeModel.mark_visibility_by_name">
+<tt class="descname">mark_visibility_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.mark_visibility_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.mark_visibility_by_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -991,6 +1001,11 @@ Closes all opened windows.</p>
 <dl class="method">
 <dt id="papi.gui.default.main.GUI.keyPressEvent">
 <tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/main.html#GUI.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.main.GUI.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.main.GUI.keyReleaseEvent">
+<tt class="descname">keyReleaseEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/main.html#GUI.keyReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.main.GUI.keyReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1286,6 +1301,11 @@ create and cancel subscriptions.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.overview_menu.OverviewPluginMenu.changed_dplugin_tree_selection">
+<tt class="descname">changed_dplugin_tree_selection</tt><big>(</big><em>new_selection</em>, <em>old_selection</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/overview_menu.html#OverviewPluginMenu.changed_dplugin_tree_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.overview_menu.OverviewPluginMenu.changed_dplugin_tree_selection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="papi.gui.default.overview_menu.OverviewPluginMenu.changed_search_plugin_text_field">

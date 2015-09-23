@@ -52,6 +52,14 @@ papi.event.instruction.SetParameter module
     :undoc-members:
     :show-inheritance:
 
+papi.event.instruction.SetParameterByUname module
+-------------------------------------------------
+
+.. automodule:: papi.event.instruction.SetParameterByUname
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.event.instruction.StopPlugin module
 ----------------------------------------
 
@@ -96,6 +104,14 @@ papi.event.instruction.UpdateMeta module
 ----------------------------------------
 
 .. automodule:: papi.event.instruction.UpdateMeta
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.instruction.UpdateParameter module
+---------------------------------------------
+
+.. automodule:: papi.event.instruction.UpdateParameter
     :members:
     :undoc-members:
     :show-inheritance:

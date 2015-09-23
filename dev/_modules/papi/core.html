@@ -160,6 +160,7 @@
                                           <span class="s">&#39;subscribe_by_uname&#39;</span><span class="p">:</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__process_subscribe_by_uname__</span><span class="p">,</span>
                                           <span class="s">&#39;unsubscribe&#39;</span><span class="p">:</span>            <span class="bp">self</span><span class="o">.</span><span class="n">__process_unsubsribe__</span><span class="p">,</span>
                                           <span class="s">&#39;set_parameter&#39;</span><span class="p">:</span>          <span class="bp">self</span><span class="o">.</span><span class="n">__process_set_parameter__</span><span class="p">,</span>
+                                          <span class="s">&#39;set_parameter_by_uname&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_set_parameter__</span><span class="p">,</span>
                                           <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span>           <span class="bp">self</span><span class="o">.</span><span class="n">__process_pause_plugin__</span><span class="p">,</span>
                                           <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span>          <span class="bp">self</span><span class="o">.</span><span class="n">__process_resume_plugin__</span><span class="p">,</span>
                                           <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span>           <span class="bp">self</span><span class="o">.</span><span class="n">__process_start_plugin__</span>
@@ -255,7 +256,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Event-&gt;&#39;</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">get_eventtype</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;   &#39;</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_operation</span><span class="p">())</span>
 
             <span class="c"># process the next event of queue</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__process_event__</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__process_event__</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">Exc</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">Exc</span><span class="p">)</span>
 
             <span class="c"># check if there are still plugins alive or gui is still alive before ending core main loop</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">core_goOn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugins_count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_alive</span>
@@ -448,7 +452,7 @@
 <div class="viewcode-block" id="Core.new_subscription"><a class="viewcode-back" href="../../papi.html#papi.core.Core.new_subscription">[docs]</a>    <span class="k">def</span> <span class="nf">new_subscription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signals</span><span class="p">,</span> <span class="n">sub_alias</span><span class="p">,</span> <span class="n">orginal_event</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets information of a new and wanted subscription.</span>
-<span class="sd">        This methond will try to create the wanted subscription.</span>
+<span class="sd">        This method will try to create the wanted subscription.</span>
 
 <span class="sd">        :param subscriber_id: Id of the plugin that want to get data</span>
 <span class="sd">        :param source_id:  Id of the plugin that will be the data source</span>
@@ -1253,13 +1257,32 @@
 <span class="sd">        :type dplugin_sub: DPlugin</span>
 <span class="sd">        :type dplugin_source: DPlugin</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># get destination id and optional parameter</span>
-        <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
-        <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
 
-        <span class="c"># get DPlugin object of destination id from DCore and check for existence</span>
-        <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameterByUname</span><span class="p">):</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">plugin_uname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span><span class="p">:</span>
+                    <span class="c"># plugin not here yet, put event in delayed queue</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">core_delayed_operation_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;setParameterByUname, event was placed in delayed queue because plugin: &#39;</span>
+                                       <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">plugin_uname</span> <span class="o">+</span> <span class="s">&#39; does not exist yet.&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="mi">0</span>
+                <span class="c"># build forward event for gui with ids instead of uname</span>
+                <span class="n">forward_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get_originID</span><span class="p">(),</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># get destination id</span>
+            <span class="n">pl_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_destinatioID</span><span class="p">()</span>
+            <span class="c"># get DPlugin object of destination id from DCore and check for existence</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+            <span class="n">forward_event</span> <span class="o">=</span> <span class="n">event</span>
+            <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c">#  pluign with id does not exist, so id is wrong.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;set_paramenter, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
             <span class="c"># Plugin exists</span>
             <span class="c"># get parameter list of plugin [hash]</span>
             <span class="n">parameters</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
@@ -1268,15 +1291,12 @@
                 <span class="n">para</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">]</span>
                 <span class="n">para</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span>
                 <span class="c"># route the event to the destination plugin queue</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">forward_event</span><span class="p">)</span>
                 <span class="c"># change event type for plugin</span>
                 <span class="c">#update GUI</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_meta_data_to_gui</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                 <span class="k">return</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c"># destination plugin does not exist</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;set_paramenter, plugin with id &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; not found&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
 </div>
 <div class="viewcode-block" id="Core.__process_new_block__"><a class="viewcode-back" href="../../papi.html#papi.core.Core.__process_new_block__">[docs]</a>    <span class="k">def</span> <span class="nf">__process_new_block__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

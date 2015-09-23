@@ -8,7 +8,6 @@ Subpackages
 
     papi.data
     papi.event
-    papi.exceptions
     papi.gui
     papi.plugin
     papi.tests
@@ -45,6 +44,14 @@ papi.error_codes module
 -----------------------
 
 .. automodule:: papi.error_codes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.exceptions module
+----------------------
+
+.. automodule:: papi.exceptions
     :members:
     :undoc-members:
     :show-inheritance:

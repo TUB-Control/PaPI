@@ -346,7 +346,7 @@
         <span class="c"># call do_subscribe with ids to subscribe</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_unsubscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signal_index</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Gui_api.do_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Gui_api.do_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">only_db_update</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Something like a callback function for gui triggered events.</span>
 <span class="sd">        User wants to change a parameter of a plugin</span>
@@ -357,6 +357,8 @@
 <span class="sd">        :type parameter_name: basestring</span>
 <span class="sd">        :param value: new parameter value to set</span>
 <span class="sd">        :type value:</span>
+<span class="sd">        :param only_db_update: do_set_parameter of the target plugin will not be called. Updates only the internal database.</span>
+<span class="sd">        :type boolean:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get plugin from DGUI</span>
         <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span>
@@ -381,7 +383,10 @@
                         <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
                         <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">parameter_name</span>
                         <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
-                        <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">only_db_update</span><span class="p">:</span>
+                            <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">UpdateParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Gui_api.do_set_parameter_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -396,9 +401,17 @@
 <span class="sd">        :param value: new parameter value to set</span>
 <span class="sd">        :type value:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">do_set_parameter</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="c"># id = self.do_get_plugin_id_from_uname(plugin_uname)</span>
+        <span class="c"># if id is not None:</span>
+        <span class="c">#     self.do_set_parameter(id, parameter_name, value)</span>
+        <span class="c">#     print(parameter_name, value)</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">parameter_name</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameterByUname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Gui_api.do_pause_plugin_by_id"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_pause_plugin_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">do_pause_plugin_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

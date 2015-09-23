@@ -6,11 +6,16 @@ v.1.x:
 
 -  **feature**: Added ability to define favourite plugins
 -  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
--  **feature**: Added ability to filter plugins in the create and overview menu
+-  **feature**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
 -  **doc**: Added documentation for the main window
--  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase 
--  **gui**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
-- **fix**: The connection between a PCP and a parameter will now be correctly restored.
+-  **doc**: Added documentation for shortcuts
+-  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase
+-  **gui**: Added search bar for overview menu and create menu
+-  **gui**: Added shortcut features to search bar and tree in overview menu and create menu
+-  **gui**: Added shortcuts for actions of the main window for example: save, load
+-  **fix**: The connection between a PCP and a parameter will now be correctly restored.
+-  **fix**: 'PreviousParameter' from cfg will now be restored correctly
+-  **plugin**: Plot plugin will now save zoom modifications done by scrolling
 
 v.1.2:
 ------

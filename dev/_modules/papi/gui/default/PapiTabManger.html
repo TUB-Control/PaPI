@@ -192,6 +192,16 @@
 <div class="viewcode-block" id="PapiTabManger.set_tab_active_by_index"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_tab_active_by_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_tab_active_by_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </div>
+<div class="viewcode-block" id="PapiTabManger.select_next_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.select_next_tab">[docs]</a>    <span class="k">def</span> <span class="nf">select_next_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cur_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_currently_active_tab</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tab_active_by_index</span><span class="p">(</span><span class="n">cur_ind</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PapiTabManger.select_prev_tab"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.select_prev_tab">[docs]</a>    <span class="k">def</span> <span class="nf">select_prev_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cur_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_currently_active_tab</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tab_active_by_index</span><span class="p">(</span><span class="n">cur_ind</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+</div>
 <div class="viewcode-block" id="PapiTabManger.set_tab_active_by_name"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.PapiTabManger.PapiTabManger.set_tab_active_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_tab_active_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabName</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
             <span class="n">tabObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>

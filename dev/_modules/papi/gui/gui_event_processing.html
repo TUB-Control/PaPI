@@ -78,7 +78,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">importlib.machinery</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">PLUGIN_STATE_PAUSE</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> \
     <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_WOKRING_INTERVAL</span><span class="p">,</span> \
@@ -334,9 +334,20 @@
         <span class="c"># plugin seems to exist, so get the path of the plugin file</span>
         <span class="n">imp_path</span> <span class="o">=</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="s">&quot;.py&quot;</span>
         <span class="c"># build a loader object for this plugin</span>
-        <span class="n">loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">machinery</span><span class="o">.</span><span class="n">SourceFileLoader</span><span class="p">(</span><span class="n">plugin_orginal</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">imp_path</span><span class="p">)</span>
-        <span class="c"># load the plugin source code</span>
-        <span class="n">current_modul</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="c">#Module was not yet loaded</span>
+        <span class="k">if</span> <span class="n">spec</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">machinery</span><span class="o">.</span><span class="n">SourceFileLoader</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">imp_path</span><span class="p">)</span>
+            <span class="n">current_modul</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
+            <span class="c">#Add path to sys path otherwise importlib.import_module will not find the module</span>
+            <span class="n">sys_path</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plugin_orginal</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sys_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c">#Import module</span>
+            <span class="n">current_modul</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+
         <span class="c"># build the plugin class name for usage</span>
         <span class="n">class_name</span> <span class="o">=</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">plugin_orginal</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="c"># get the plugin class of the source code loaded and init class as a new object</span>
@@ -454,6 +465,9 @@
             <span class="c"># plugin does not exist</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;update_meta, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist&#39;</span><span class="p">)</span>
 </div>
+<div class="viewcode-block" id="GuiEventProcessing.process_update_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_update_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">process_update_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Just update&#39;</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="GuiEventProcessing.process_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">process_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes set_parameter event.</span>
@@ -469,6 +483,8 @@
         <span class="c"># get optional data of event</span>
         <span class="n">opt</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get_optional_parameter</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">UpdateParameter</span><span class="p">):</span>
+            <span class="k">return</span>
 
         <span class="c"># get destination plugin from DGUI</span>
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span>

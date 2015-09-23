@@ -180,6 +180,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pauseButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pause_button_callback</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_start_button_callback</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plugin_item_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changed_dplugin_tree_selection</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">TREE_CSS</span><span class="p">)</span>
 
         <span class="c"># ----------------------------------</span>
         <span class="c"># Add context menu</span>
@@ -203,6 +206,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginSearchText</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changed_search_plugin_text_field</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c"># set focus to the search bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginSearchText</span><span class="o">.</span><span class="n">setFocus</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">OtherFocusReason</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="OverviewPluginMenu.clear"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -880,8 +887,14 @@
 <div class="viewcode-block" id="OverviewPluginMenu.changed_search_plugin_text_field"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.changed_search_plugin_text_field">[docs]</a>    <span class="k">def</span> <span class="nf">changed_search_plugin_text_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">collapseAll</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">expandAll</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">mark_visibility_by_name</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c"># Used to trigger filter action</span>
         <span class="n">regex</span> <span class="o">=</span> <span class="n">QRegExp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">,</span> <span class="n">QRegExp</span><span class="o">.</span><span class="n">Wildcard</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginProxyModel</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
 </div>
@@ -897,8 +910,16 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">hasFocus</span><span class="p">()</span> <span class="ow">and</span> \
                         <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Left</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Right</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span></div></div>
-</pre></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plugin_item_changed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span>
+
+        <span class="c"># if search bar has focus and user pressed enter/return,arrow up/down, change focus to the plugin tree</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Enter</span> <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span> \
+            <span class="ow">or</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginSearchText</span><span class="o">.</span><span class="n">hasFocus</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTree</span><span class="o">.</span><span class="n">setFocus</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">OtherFocusReason</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="OverviewPluginMenu.changed_dplugin_tree_selection"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.overview_menu.OverviewPluginMenu.changed_dplugin_tree_selection">[docs]</a>    <span class="k">def</span> <span class="nf">changed_dplugin_tree_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_selection</span><span class="p">,</span> <span class="n">old_selection</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div></div></div>
 
           </div>
         </div>

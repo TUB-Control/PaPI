@@ -82,6 +82,7 @@
 <span class="kn">from</span> <span class="nn">papi.yapsy.IPlugin</span> <span class="kn">import</span> <span class="n">IPlugin</span>
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">CORE_TIME_SIGNAL</span>
 <span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
+<span class="kn">import</span> <span class="nn">papi.exceptions</span> <span class="kn">as</span> <span class="nn">pe</span>
 
 <div class="viewcode-block" id="base_plugin"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin">[docs]</a><span class="k">class</span> <span class="nc">base_plugin</span><span class="p">(</span><span class="n">IPlugin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -217,7 +218,7 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Attribute event: Not of type DEvent or str&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;block&quot;</span><span class="p">,</span>  <span class="p">[</span><span class="n">DEvent</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">send_parameter_change</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
 </div>
@@ -233,8 +234,8 @@
         <span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Attribute block: Not of type DBlock or str&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;block&quot;</span><span class="p">,</span>  <span class="p">[</span><span class="n">DBlock</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
             <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
@@ -273,15 +274,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute events: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;events&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute events: Contains no elements &#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongLength</span><span class="p">(</span><span class="s">&quot;events&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">),</span> <span class="s">&quot;&gt;0&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)):</span>
             <span class="n">event</span> <span class="o">=</span> <span class="n">events</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute events[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DEvent</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&#39;events[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]&#39;</span><span class="p">,</span> <span class="n">DEvent</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
 </div>
@@ -294,15 +295,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute blocks: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;blocks&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute events: Contains no elements &#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongLength</span><span class="p">(</span><span class="s">&quot;blocks&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">),</span> <span class="s">&quot;&gt;0&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)):</span>
             <span class="n">block</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute blocks[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DBlock</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&#39;blocks[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]&#39;</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">)</span>
 
         <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">block_list</span> <span class="o">=</span> <span class="n">blocks</span>
@@ -318,16 +319,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute parameters: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;parameters&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute parameters: Contains no elements &#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongLength</span><span class="p">(</span><span class="s">&quot;parameters&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span> <span class="s">&quot;&gt;0&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)):</span>
             <span class="n">parameter</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">DParameter</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute parameters[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DParameter</span><span class="p">)</span> <span class="p">)</span>
-
+                <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&#39;parameters[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]&#39;</span><span class="p">,</span> <span class="n">DParameter</span><span class="p">)</span>
 
         <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">parameter_list</span> <span class="o">=</span> <span class="n">parameters</span>
@@ -345,7 +345,7 @@
         <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute parameters: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DBlock</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; or &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;parameters&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">DBlock</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">):</span>
             <span class="n">block_name</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
@@ -367,7 +367,7 @@
         <span class="n">parameter_name</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">DParameter</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Attribute parameters: Expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">DParameter</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; or &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;parameter&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">DParameter</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">DParameter</span><span class="p">):</span>
             <span class="n">parameter_name</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>

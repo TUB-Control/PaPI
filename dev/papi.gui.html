@@ -26,7 +26,7 @@
     <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
     <link rel="up" title="papi package" href="papi.html" />
     <link rel="next" title="papi.gui.default package" href="papi.gui.default.html" />
-    <link rel="prev" title="papi.exceptions package" href="papi.exceptions.html" /> 
+    <link rel="prev" title="papi.event.status package" href="papi.event.status.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,7 +42,7 @@
           <a href="papi.gui.default.html" title="papi.gui.default package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="papi.exceptions.html" title="papi.exceptions package"
+          <a href="papi.event.status.html" title="papi.event.status package"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="papi.html" accesskey="U">papi package</a> &raquo;</li> 
@@ -446,7 +446,7 @@ User wants to resume a plugin, so this method will send an event to core.</p>
 
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_set_parameter">
-<tt class="descname">do_set_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_set_parameter" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">do_set_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em>, <em>only_db_update=False</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something like a callback function for gui triggered events.
 User wants to change a parameter of a plugin
 :param plugin_id: id of plugin which owns the parameter</p>
@@ -457,6 +457,7 @@ User wants to change a parameter of a plugin
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
 <li><strong>value</strong> &#8211; new parameter value to set</li>
+<li><strong>only_db_update</strong> &#8211; do_set_parameter of the target plugin will not be called. Updates only the internal database.</li>
 </ul>
 </td>
 </tr>
@@ -920,6 +921,11 @@ Quit plugin, emit DPlugin was removed -&gt; necessary signal for the GUI.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_update_parameter">
+<tt class="descname">process_update_parameter</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_update_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_update_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin">
 <tt class="descname">removed_dplugin</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin" title="Permalink to this definition">¶</a></dt>
@@ -1089,6 +1095,27 @@ In this case, user wants one plugin to subscribe another</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_update_parameter">
+<tt class="descname">do_update_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_update_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_update_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to update a parameter in the gui. Used by a owner of a plugin to
+inform the gui that a parameter was internally changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin which owns the parameter</li>
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.get_all_plugins">
 <tt class="descname">get_all_plugins</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_all_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_all_plugins" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1129,8 +1156,8 @@ Sven Knuth</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.exceptions.html"
-                        title="previous chapter">papi.exceptions package</a></p>
+  <p class="topless"><a href="papi.event.status.html"
+                        title="previous chapter">papi.event.status package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="papi.gui.default.html"
                         title="next chapter">papi.gui.default package</a></p>
@@ -1169,7 +1196,7 @@ Sven Knuth</p>
           <a href="papi.gui.default.html" title="papi.gui.default package"
              >next</a> |</li>
         <li class="right" >
-          <a href="papi.exceptions.html" title="papi.exceptions package"
+          <a href="papi.event.status.html" title="papi.event.status package"
              >previous</a> |</li>
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
           <li><a href="papi.html" >papi package</a> &raquo;</li> 

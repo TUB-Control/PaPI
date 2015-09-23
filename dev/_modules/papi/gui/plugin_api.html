@@ -173,6 +173,21 @@
 <span class="sd">        :type value:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">do_set_parameter</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">,</span><span class="n">parameter_name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Plugin_api.do_update_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.do_update_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_update_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Something like a callback function for gui triggered events.</span>
+<span class="sd">        User wants to update a parameter in the gui. Used by a owner of a plugin to</span>
+<span class="sd">        inform the gui that a parameter was internally changed.</span>
+
+<span class="sd">        :param plugin_id: id of plugin which owns the parameter</span>
+<span class="sd">        :type plugin_id: int</span>
+<span class="sd">        :param parameter_name: name of parameter to change</span>
+<span class="sd">        :type parameter_name: basestring</span>
+<span class="sd">        :param value: new parameter value to set</span>
+<span class="sd">        :type value:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">do_set_parameter</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">,</span><span class="n">parameter_name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span> <span class="n">only_db_update</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="Plugin_api.do_resume_plugin_by_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.do_resume_plugin_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_resume_plugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">):</span>

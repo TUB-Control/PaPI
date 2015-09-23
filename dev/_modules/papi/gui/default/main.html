@@ -247,6 +247,8 @@
 
         <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_handler</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
 
+        <span class="c"># List for keys that are active</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="o">=</span> <span class="p">[];</span>
 
 
 <div class="viewcode-block" id="GUI.signal_handler"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.signal_handler">[docs]</a>    <span class="k">def</span> <span class="nf">signal_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">signal</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
@@ -298,11 +300,21 @@
         <span class="c"># -------------------------------------</span>
         <span class="c"># Create actions</span>
         <span class="c"># -------------------------------------</span>
+        <span class="n">_translate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">actionLoad</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_load</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionLoad</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span><span class="s">&quot;Ctrl+L&quot;</span><span class="p">))</span>
+
+
+
         <span class="bp">self</span><span class="o">.</span><span class="n">actionSave</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_save</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSave</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span><span class="s">&quot;Ctrl+S&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">actionOverview</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_show_overview_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionOverview</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span><span class="s">&quot;Ctrl+O&quot;</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">actionCreate</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_show_create_plugin_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionCreate</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span><span class="s">&quot;Ctrl+N&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">actionResetPaPI</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_reset_papi</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionReloadConfig</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_reload_config</span><span class="p">)</span>
@@ -314,6 +326,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actionPaPI_Wiki</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_papi_wiki</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">actionPaPI_Doc</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_papi_doc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionPaPI_Doc</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span><span class="s">&quot;Ctrl+H&quot;</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">actionAbout</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_papi_about</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionAbout_Qt</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_papi_about_qt</span><span class="p">)</span>
 
@@ -797,9 +811,28 @@
                     <span class="n">window</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">())</span>
+
+        <span class="k">if</span>  <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">toggle_run_mode</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_D</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="o">.</span><span class="n">select_next_tab</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_D</span><span class="p">)</span>
+            <span class="c">#self.keysActiveList.remove(QtCore.Qt.Key_Control)</span>
+
+        <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="o">.</span><span class="n">select_prev_tab</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_A</span><span class="p">)</span>
+            <span class="c">#self.keysActiveList.remove(QtCore.Qt.Key_Control)</span>
+
+</div>
+<div class="viewcode-block" id="GUI.keyReleaseEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.keyReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">())</span>
+
 </div>
 <div class="viewcode-block" id="GUI.resize_gui_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.resize_gui_window">[docs]</a>    <span class="k">def</span> <span class="nf">resize_gui_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
