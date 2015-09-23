@@ -142,7 +142,7 @@ class Plot(vip_base):
         # Read configuration
         # ---------------------------
         int_re = re.compile(r'(\d+)')
-
+        self.__show_legend__ = self.config['show_legend']['value'] == '1'
         self.__show_grid_x__ = self.config['x-grid']['value'] == '1'
         self.__show_grid_y__ = self.config['y-grid']['value'] == '1'
         self.__rolling_plot__ = self.config['rolling_plot']['value'] == '1'
@@ -275,6 +275,9 @@ class Plot(vip_base):
         self.__parameters__['yRange'] = \
             DParameter('yRange', self.config['yRange']['value'],  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
+        self.__parameters__['show_legend'] = \
+            DParameter('show_legend', self.config['show_legend']['value'],  Regex=pc.REGEX_BOOL_BIN)
+
         if not self.__papi_debug__:
             self.send_new_parameter_list(list(self.__parameters__.values()))
 
@@ -282,8 +285,11 @@ class Plot(vip_base):
         # Create Legend
         # ---------------------------
 
-        self.__legend__ = pg.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
-        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+        if self.__show_legend__:
+            self.__legend__ = self.__plotWidget__.getPlotItem().addLegend()
+        else:
+            self.__legend__ = None
+
 
         self.__last_time__ = current_milli_time()
 
@@ -432,6 +438,15 @@ class Plot(vip_base):
             self.update_pens()
             self.update_legend()
 
+        if name == 'show_legend':
+
+            if value == '0':
+                if self.__legend__ is not None:
+                    self.__legend__.scene().removeItem(self.__legend__)
+                    del self.__legend__
+                    self.__legend__ = None
+            if value == '1':
+                self.update_legend()
         if name == 'buffersize':
             self.config['buffersize']['value'] = value
             self.update_buffer_size(value)
@@ -651,7 +666,7 @@ class Plot(vip_base):
             self.update_downsampling_rate()
         else:
             self.update_signals()
-            self.update_legend()
+            #self.update_legend()
 
     def add_plot_item(self, signal, signal_id):
         """
@@ -846,6 +861,14 @@ class Plot(vip_base):
         if self.__stp_active__:
             self.rolling_Checkbox.setDisabled(True)
 
+        # show legend
+
+        self.legend_Checkbox = QCheckBox()
+        self.legend_Checkbox.setText('Show legend')
+        self.legend_Checkbox.setChecked(self.config['show_legend']['value'] == '1')
+        self.legend_Checkbox.stateChanged.connect(self.contextMenu_legend_toogled)
+        self.legend_Checkbox_Action = QWidgetAction(self.__plotWidget__)
+        self.legend_Checkbox_Action.setDefaultWidget(self.legend_Checkbox)
 
         ##### Build axes menu
         #self.axesMenu.addAction(self.xRange_Action)
@@ -881,6 +904,7 @@ class Plot(vip_base):
         self.custMenu.addMenu(self.gridMenu)
         self.custMenu.addSeparator().setText("Rolling Plot")
         self.custMenu.addAction(self.rolling_Checkbox_Action)
+        self.custMenu.addAction(self.legend_Checkbox_Action)
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
 
         if not self.__papi_debug__:
@@ -931,6 +955,12 @@ class Plot(vip_base):
         else:
             self.control_api.do_set_parameter(self.__id__, 'rolling', '0')
 
+    def contextMenu_legend_toogled(self):
+        if self.legend_Checkbox.isChecked():
+            self.control_api.do_set_parameter(self.__id__, 'show_legend', '1')
+        else:
+            self.control_api.do_set_parameter(self.__id__, 'show_legend', '0')
+
     def contextMenu_xGrid_toogle(self):
         if self.xGrid_Checkbox.isChecked():
             self.control_api.do_set_parameter(self.__id__, 'x-grid', '1')
@@ -977,11 +1007,15 @@ class Plot(vip_base):
         :return:
         """
 
-        self.__legend__.scene().removeItem(self.__legend__)
-        del self.__legend__
+        if not self.__show_legend__:
+            return
 
-        self.__legend__ = pg.LegendItem((100, 40), offset=(40, 1))  # args are (size, offset)
-        self.__legend__.setParentItem(self.__plotWidget__.graphicsItem())
+        if self.__legend__ is not None:
+            self.__legend__.scene().removeItem(self.__legend__)
+            del self.__legend__
+            self.__legend__ = None
+
+        self.__legend__ = self.__plotWidget__.getPlotItem().addLegend()
 
         if not self.__papi_debug__:
             self.update_signals()
@@ -1113,6 +1147,11 @@ class Plot(vip_base):
             'regex': '^\[(\d+\.\d+)\s+(\d+\.\d+)\]$',
             'advanced': '1',
             'display_text': 'y: range'
+        },  'show_legend' : {
+            'value' : '1',
+            'regex' : pc.REGEX_BOOL_BIN,
+            'display_text' : 'Enable/Disable legend',
+            'type' : pc.CFG_TYPE_BOOL
         }
         }
         # http://www.regexr.com/
