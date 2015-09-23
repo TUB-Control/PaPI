@@ -1051,6 +1051,8 @@ class Plot(vip_base):
         [xRange, yRange] = viewbox.viewRange()
         self.control_api.do_update_parameter(self.__id__, 'yRange', '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']')
 
+        self.config['yRange']['value'] = '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']'
+
     def quit(self):
         """
         Function quit plugin
