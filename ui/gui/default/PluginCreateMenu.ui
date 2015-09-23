@@ -30,11 +30,22 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="pluginSearchText">
-          <property name="placeholderText">
-           <string>Search for ...</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="pluginSearchText">
+            <property name="placeholderText">
+             <string>Search for ...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="helpButton">
+            <property name="text">
+             <string>Help</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -51,75 +62,83 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>367</width>
+           <width>356</width>
            <height>585</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="2" column="0">
-             <widget class="QLabel" name="pathLabel">
-              <property name="text">
-               <string>Path</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QListWidget" name="modulesList"/>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="modulesLabel">
-              <property name="text">
-               <string>Missing
-Modules</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="descriptionLabel">
-              <property name="text">
-               <string>Description</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="pathEdit"/>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="authorLabel">
-              <property name="text">
-               <string>Author</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="nameEdit"/>
-            </item>
-            <item row="3" column="1">
-             <widget class="QTextEdit" name="descriptionText"/>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="nameLabel">
-              <property name="text">
-               <string>Name</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="authorEdit"/>
-            </item>
-            <item row="5" column="1">
+           <widget class="QLabel" name="nameLabel">
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="nameEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="authorLabel">
+            <property name="text">
+             <string>Author</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="authorEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="pathLabel">
+            <property name="text">
+             <string>Path</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="pathEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="descriptionLabel">
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="descriptionText">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="modulesLabel">
+            <property name="text">
+             <string>Missing Modules</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="modulesList"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
              <widget class="QPushButton" name="createButton">
               <property name="text">
                <string>Create Plugin</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QPushButton" name="helpButton">
-              <property name="text">
-               <string>Help</string>
               </property>
              </widget>
             </item>

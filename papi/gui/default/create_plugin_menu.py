@@ -34,13 +34,12 @@ import configparser
 
 from papi.gui.default.item import PaPIRootItem, PaPITreeModel
 from papi.gui.default.item import PluginTreeItem, PaPITreeProxyModel
-from papi.yapsy.PluginManager import PluginManager
-
-
 
 from papi.ui.gui.default.PluginCreateMenu import Ui_PluginCreateMenu
-
 from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+
+from . import get16Icon
+
 import papi.constants as pc
 
 from PyQt5.QtCore       import *
@@ -78,11 +77,8 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginProxyModel.setFilterRegExp(regex)
 
         self.pluginTree.setModel(self.pluginProxyModel)
-
-#        self.pluginTree.setModel(model)
         self.pluginTree.setUniformRowHeights(True)
         self.pluginTree.setSortingEnabled(True)
-
 
         self.plugin_roots = {}
 
@@ -98,9 +94,10 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
 
         self.pluginSearchText.textChanged.connect(self.changed_search_plugin_text_field)
 
-        # set focus to the search bar
         self.pluginSearchText.setFocus(Qt.OtherFocusReason)
-
+        self.helpButton.setText('')
+        self.helpButton.setIcon(get16Icon('help.png'))
+        self.helpButton.setToolTip('Opens the documentation for the currently selected plugin.')
 
     def keyPressEvent(self, event):
 

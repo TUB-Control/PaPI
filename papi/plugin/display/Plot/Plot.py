@@ -656,7 +656,8 @@ class Plot(vip_base):
         # -------------------------------
         for signal_name in self.signals.copy():
             if signal_name not in current_signals:
-                self.remove_plot_item(signal_name)
+                if self.__legend__ is not None:
+                    self.remove_plot_item(signal_name)
                 changes = True
 
         if changes:
@@ -1051,6 +1052,8 @@ class Plot(vip_base):
         viewbox = self.__plotWidget__.getPlotItem().getViewBox()
         [xRange, yRange] = viewbox.viewRange()
         self.control_api.do_update_parameter(self.__id__, 'yRange', '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']')
+
+        self.config['yRange']['value'] = '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']'
 
     def quit(self):
         """
