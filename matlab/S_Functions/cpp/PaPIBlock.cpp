@@ -458,6 +458,8 @@ void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
     //send current input data
         this->clearOutput(this->stream_out);
         this->sendInput(u1, time, this->stream_out);
+
+
         this->udphandle->sendData(this->stream_out, (std::size_t) this->amount_output);
     }
 
@@ -632,7 +634,6 @@ void PaPIBlock::sendConfig(int stream_out[]) {
         stream_out[1] = this->sent_counter;
         stream_out[2] = -4;
         stream_out[3] = 0;
-
 
         int output_count = 4;
         int shift = 0;

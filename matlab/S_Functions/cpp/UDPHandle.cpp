@@ -136,11 +136,12 @@ void UDPHandle::startSend() {
     {
 
         boost::system::error_code ignored_error;
-
+        this->mutex_send_buffer_.lock();
         this->udp_socket->send_to(
             boost::asio::buffer(this->send_buffer_, sizeof(char)*this->send_msg_length_) ,
             *this->udp_endpoint_destination, 0, ignored_error
         );
+        this->mutex_send_buffer_.unlock();
 
         if (ignored_error) {
             printf("StartSend:: Error occured: %s \n", ignored_error.message().c_str());
@@ -158,7 +159,9 @@ void UDPHandle::sendData(const char* stream, std::size_t msg_length) {
     if (this->threadInitialized) {
         this->send_msg_length_ = msg_length;
 
+        this->mutex_send_buffer_.lock();
         std::memcpy(this->send_buffer_.begin(), stream, sizeof(char)*msg_length);
+        this->mutex_send_buffer_.unlock();
         this->sigSendData();
     }
 }
@@ -166,8 +169,12 @@ void UDPHandle::sendData(const char* stream, std::size_t msg_length) {
 void UDPHandle::sendData(int* stream, std::size_t msg_length) {
     if (this->threadInitialized) {
         this->send_msg_length_ = msg_length*4;
+
+        this->mutex_send_buffer_.lock();
         std::memcpy(this->send_buffer_.begin(), stream, sizeof(int)*msg_length);
+        this->mutex_send_buffer_.unlock();
         this->sigSendData();
+
     }
 }
 
