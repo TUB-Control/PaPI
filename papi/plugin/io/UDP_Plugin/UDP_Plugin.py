@@ -375,7 +375,11 @@ class UDP_Plugin(iop_base):
                 unp = unp + str(struct.unpack_from('<s',rev,i)[0])[2]
                 i += 1
 
-            self.config_buffer[int(Counter)] = unp
+            if int(Counter) not in self.config_buffer:
+                self.config_buffer[int(Counter)] = unp
+            else:
+                if self.config_buffer[int(Counter)] != unp:
+                    self.config_buffer = {}
 
             # Check counter key series for holes
             counters = list(self.config_buffer.keys())
@@ -416,6 +420,7 @@ class UDP_Plugin(iop_base):
         if self.timer_active:
             self.timer.cancel()
             self.timer_active = False
+            #self.config_buffer = {}
 
     def callback_timeout_timer(self):
         print('ORTD_PLUGIN: Config timeout, requesting a new config')
@@ -461,7 +466,6 @@ class UDP_Plugin(iop_base):
             self.update_parameter_list(ORTDParameters)
 
             self.process_papi_configuration(plToCreate, plToClose, subscriptions, paraConnections, activeTab)
-
             return True
         except ValueError as e:
             return False
@@ -758,6 +762,5 @@ class UDP_Plugin(iop_base):
 
         if 'ParametersConfig' in configuration:
             ORTDParameters = configuration['ParametersConfig']
-
         return ORTDSources, ORTDParameters, plToCreate, plToClose, subscriptions, paraConnections, activeTab
 
