@@ -465,7 +465,6 @@ class Plot(vip_base):
 
         for signal_name in self.signals.keys():
             signal_id = self.signals[signal_name].id
-
             new_pen = self.get_pen(signal_id)
             other_pen = self.get_pen(signal_id)
 
@@ -635,11 +634,13 @@ class Plot(vip_base):
 
                 for signal_name in subscription.get_signals():
 
-                    signal = subscription.get_dblock().get_signal_by_uname(signal_name)
-                    current_signals[signal_name] = {}
-                    current_signals[signal_name]['signal'] = signal
-                    current_signals[signal_name]['index'] = index
-                    index += 1
+                    if signal_name != pc.CORE_TIME_SIGNAL:
+
+                        signal = subscription.get_dblock().get_signal_by_uname(signal_name)
+                        current_signals[signal_name] = {}
+                        current_signals[signal_name]['signal'] = signal
+                        current_signals[signal_name]['index'] = index
+                        index += 1
 
         # ----------------------------
         # Add new subscribed signals
