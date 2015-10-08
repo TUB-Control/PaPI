@@ -809,7 +809,7 @@ class RehaStimGUI(vip_base, object):
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         pass
 
 class OptionWidget(QtWidgets.QWidget):

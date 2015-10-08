@@ -146,7 +146,7 @@ class Slider(vip_base):
     def cb_quit(self):
         pass
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
             value = float(dparameter_object.default)
             self.text_field.setText(str(value))

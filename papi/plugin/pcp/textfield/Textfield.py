@@ -100,7 +100,7 @@ class Textfield(vip_base):
         change = self.lineedit.text()
         self.pl_emit_event(str(change), self.event_change)
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
             value = dparameter_object.default
 

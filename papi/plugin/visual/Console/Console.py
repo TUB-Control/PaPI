@@ -147,7 +147,7 @@ class Console(vip_base):
         pass
 
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         pass
 
 

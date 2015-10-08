@@ -486,4 +486,4 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
 
         if dplugin is not None:
-            dplugin.plugin.new_parameter_info(event.dparameter_object)
+            dplugin.plugin.cb_new_parameter_info(event.dparameter_object)

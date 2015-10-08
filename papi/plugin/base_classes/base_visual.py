@@ -315,3 +315,11 @@ class base_visual(base_plugin):
         :return:
         """
         self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
+
+    def cb_new_parameter_info(self, dparameter_object):
+        """
+
+        :param dparameter_object:
+        :return:
+        """
+        raise NotImplementedError("Please Implement this method")
