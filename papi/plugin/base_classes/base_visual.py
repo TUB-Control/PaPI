@@ -318,8 +318,9 @@ class base_visual(base_plugin):
 
     def cb_new_parameter_info(self, dparameter_object):
         """
-
-        :param dparameter_object:
+        Will be called to notify a plugin that a new parameter subscription was done and will give
+        information about the init values
+        :param dparameter_object: DParameter
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass

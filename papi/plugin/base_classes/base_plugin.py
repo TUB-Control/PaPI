@@ -104,19 +104,19 @@ class base_plugin(IPlugin):
     # ----------------------
     def cb_pause(self):
         """
-        Called when the plugin should pause. Must be implemented !
+        Called when the plugin should pause.
 
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass
 
     def cb_resume(self):
         """
-        Called when the plugin should resume. Must be implemented !
+        Called when the plugin should resume.
 
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass
 
     def cb_quit(self):
         """
@@ -129,13 +129,13 @@ class base_plugin(IPlugin):
     def cb_set_parameter(self, parameter_name, parameter_value):
         """
         Called when a parameter was changed.
-        This function is called with the parameter name and its current value. Must be implemented !
+        This function is called with the parameter name and its current value.
 
         :param parameter_name: Name of parameter
         :param parameter_value: New value of the parameter
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass
 
     def _set_parameter_internal(self, name, value):
         """
@@ -347,7 +347,7 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass
 
     def pl_get_dplugin_info(self):
         """
