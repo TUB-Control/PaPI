@@ -64,7 +64,7 @@ class IOP_DPP_template(iop_base):
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
+        #   self.pl_send_new_parameter_list(para_list)
 
         # if wanted, change event mode to True, False, 'default'
         # self.set_event_trigger_mode('default')

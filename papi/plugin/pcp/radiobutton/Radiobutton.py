@@ -54,7 +54,7 @@ class Radiobutton(vip_base):
         para_list.append(self.para_texts)
         para_list.append(self.para_values)
 
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
         self.central_widget = QWidget()
 

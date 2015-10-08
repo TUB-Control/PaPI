@@ -137,7 +137,7 @@ class ownProcess_base(base_plugin):
                 if op=='new_data' and self.__paused is False and self.__plugin_stopped is False:
                     opt = event.get_optional_parameter()
                     if opt.is_parameter is False:
-                        data = self.demux(opt.data_source_id, opt.block_name, opt.data)
+                        data = self._demux(opt.data_source_id, opt.block_name, opt.data)
                         self.cb_execute(Data=data, block_name = opt.block_name, plugin_uname= event.source_plugin_uname)
                     if opt.is_parameter is True:
                         self._set_parameter_internal(opt.parameter_alias, opt.data)
@@ -150,7 +150,7 @@ class ownProcess_base(base_plugin):
                 # process a update with meta information from the core
                 if op == 'update_meta' and self.__plugin_stopped is False:
                     opt = event.get_optional_parameter()
-                    self.update_plugin_meta(opt.plugin_object)
+                    self._update_plugin_meta(opt.plugin_object)
 
             else: # there was no new event
                 if self.__paused or self.__EventTriggered or self.__plugin_stopped:

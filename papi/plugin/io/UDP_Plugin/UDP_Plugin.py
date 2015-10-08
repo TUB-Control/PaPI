@@ -226,7 +226,7 @@ class UDP_Plugin(iop_base):
         self.pl_send_new_block_list([self.ConsoleBlock])
 
         self.consoleIn      = DParameter('consoleIn',default='')
-        self.send_new_parameter_list([self.consoleIn])
+        self.pl_send_new_parameter_list([self.consoleIn])
 
         if self.UseSocketIO:
             self.thread_socketio.start()
@@ -517,7 +517,7 @@ class UDP_Plugin(iop_base):
                     init_value = 0
 
                 para_object = DParameter(para_name, default=str(init_value), OptionalObject=opt_object)
-                self.send_new_parameter_list([para_object])
+                self.pl_send_new_parameter_list([para_object])
 
 
             newList[para_name] = para_object
@@ -526,7 +526,7 @@ class UDP_Plugin(iop_base):
         self.parameters = newList
 
         for par in toDeleteDict:
-            self.send_delete_parameter(par)
+            self.pl_send_delete_parameter(par)
 
 
     def update_block_list(self,ORTDSources):
@@ -534,7 +534,7 @@ class UDP_Plugin(iop_base):
         #newBlock = DBlock('SourceGroup'+str(self.block_id))
         #self.blocks['SourceGroup'+str(self.block_id)] = newBlock
         if 'SourceGroup0' in self.blocks:
-            self.send_delete_block('SourceGroup0')
+            self.pl_send_delete_block('SourceGroup0')
         newBlock = DBlock('SourceGroup0')
         self.blocks['SourceGroup0'] = newBlock
         self.Sources = ORTDSources
@@ -548,7 +548,7 @@ class UDP_Plugin(iop_base):
 
         # Remove BLOCKS
         #if 'SourceGroup'+str(self.block_id-1) in self.blocks:
-            #self.send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
+            #self.pl_send_delete_block(self.blocks.pop('SourceGroup'+str(self.block_id-1)).name)
 
     def process_papi_data_stream(self, rev):
 

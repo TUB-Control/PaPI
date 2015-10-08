@@ -63,7 +63,7 @@ class Trigger(dpp_base):
         self.para3 = DParameter('Choose', default=0, Regex='\d+')
         para_l = [self.para3]
 
-        self.send_new_parameter_list(para_l)
+        self.pl_send_new_parameter_list(para_l)
 
         self.set_event_trigger_mode(True)
 

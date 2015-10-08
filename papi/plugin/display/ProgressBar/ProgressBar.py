@@ -105,7 +105,7 @@ class ProgressBar(vip_base):
         para_list.append(self.para_show_current_max)
 
         # build parameter list to send to Core
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
         return True
 

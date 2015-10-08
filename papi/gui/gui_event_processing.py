@@ -166,7 +166,7 @@ class GuiEventProcessing(QtCore.QObject):
                     try:
                         if opt.is_parameter is False:
                             dplugin.plugin.cb_execute(
-                                Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
+                                Data=dplugin.plugin._demux(opt.data_source_id, opt.block_name, opt.data),
                                 block_name=opt.block_name, plugin_uname=event.source_plugin_uname)
                         else:
                             dplugin.plugin._set_parameter_internal(opt.parameter_alias, opt.data)
@@ -332,7 +332,7 @@ class GuiEventProcessing(QtCore.QObject):
 
                 # first set meta to plugin (meta infos in plugin)
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+                    dplugin.plugin._update_plugin_meta(dplugin.get_meta())
 
             except Exception as E:
                 dplugin.state = PLUGIN_STATE_STOPPED
@@ -405,7 +405,7 @@ class GuiEventProcessing(QtCore.QObject):
             if dplugin.own_process is False:
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
                     # try:
-                        dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+                        dplugin.plugin._update_plugin_meta(dplugin.get_meta())
                     # except Exception as E:
                     #     dplugin.state = PLUGIN_STATE_STOPPED
                     #     tb = traceback.format_exc()

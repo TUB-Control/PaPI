@@ -279,7 +279,7 @@ class Plot(vip_base):
             DParameter('show_legend', self.config['show_legend']['value'],  Regex=pc.REGEX_BOOL_BIN)
 
         if not self.__papi_debug__:
-            self.send_new_parameter_list(list(self.__parameters__.values()))
+            self.pl_send_new_parameter_list(list(self.__parameters__.values()))
 
         # ---------------------------
         # Create Legend

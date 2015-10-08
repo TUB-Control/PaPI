@@ -99,29 +99,29 @@ class TestBasePlugin(unittest.TestCase):
         ]
         self.assertRaises(AttributeError, self.basePlugin.pl_send_new_block_list, blocks)
 
-    def test_send_new_parameter_list(self):
-        self.assertRaises(pe.WrongType, self.basePlugin.send_new_parameter_list, None)
-        self.assertRaises(pe.WrongLength, self.basePlugin.send_new_parameter_list, [])
+    def test_pl_send_new_parameter_list(self):
+        self.assertRaises(pe.WrongType, self.basePlugin.pl_send_new_parameter_list, None)
+        self.assertRaises(pe.WrongLength, self.basePlugin.pl_send_new_parameter_list, [])
 
         parameters = [
             DParameter('1'), DParameter('2'), 3
         ]
-        self.assertRaises(pe.WrongType, self.basePlugin.send_new_parameter_list, parameters)
+        self.assertRaises(pe.WrongType, self.basePlugin.pl_send_new_parameter_list, parameters)
 
         parameters = [
             DParameter('1'), DParameter('2'), DParameter('3')
         ]
-        self.assertRaises(AttributeError, self.basePlugin.send_new_parameter_list, parameters)
+        self.assertRaises(AttributeError, self.basePlugin.pl_send_new_parameter_list, parameters)
 
     def test_delete_block(self):
-        self.assertRaises(pe.WrongType, self.basePlugin.send_delete_block, None)
-        self.assertRaises(AttributeError, self.basePlugin.send_delete_block, 'DBlock')
-        self.assertRaises(AttributeError, self.basePlugin.send_delete_block, DBlock('DBlock'))
+        self.assertRaises(pe.WrongType, self.basePlugin.pl_send_delete_block, None)
+        self.assertRaises(AttributeError, self.basePlugin.pl_send_delete_block, 'DBlock')
+        self.assertRaises(AttributeError, self.basePlugin.pl_send_delete_block, DBlock('DBlock'))
 
-    def send_delete_parameter(self):
-        self.assertRaises(pe.WrongType, self.basePlugin.send_delete_parameter, None)
-        self.assertRaises(AttributeError, self.basePlugin.send_delete_parameter, 'DParameter')
-        self.assertRaises(AttributeError, self.basePlugin.send_delete_parameter, DParameter('DParameter'))
+    def pl_send_delete_parameter(self):
+        self.assertRaises(pe.WrongType, self.basePlugin.pl_send_delete_parameter, None)
+        self.assertRaises(AttributeError, self.basePlugin.pl_send_delete_parameter, 'DParameter')
+        self.assertRaises(AttributeError, self.basePlugin.pl_send_delete_parameter, DParameter('DParameter'))
 
     def test_controlFunctions(self):
         pass

@@ -261,7 +261,7 @@ class base_plugin(IPlugin):
         event = Event.data.NewBlock(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
-    def send_new_parameter_list(self, parameters):
+    def pl_send_new_parameter_list(self, parameters):
         """
         Used to inform the PaPI framework about all DParameters provided by this plugins.
 
@@ -286,7 +286,7 @@ class base_plugin(IPlugin):
         event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
 
-    def send_delete_block(self, block):
+    def pl_send_delete_block(self, block):
         """
         Used to inform the PaPI framework that a single DBlock was deleted.
 
@@ -307,7 +307,7 @@ class base_plugin(IPlugin):
         event = Event.data.DeleteBlock(self.__id__, 0, block_name)
         self._Core_event_queue__.put(event)
 
-    def send_delete_parameter(self, parameter):
+    def pl_send_delete_parameter(self, parameter):
         """
         Used to inform the PaPI framework that a single DParameter was deleted.
 
@@ -329,7 +329,7 @@ class base_plugin(IPlugin):
         event = Event.data.DeleteParameter(self.__id__, 0, parameter_name)
         self._Core_event_queue__.put(event)
 
-    def update_plugin_meta(self, dplug):
+    def _update_plugin_meta(self, dplug):
         """
         Function which is used to update all meta information which are known by the PaPI framework.
 
@@ -349,7 +349,16 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def demux(self, source_id, block_name, data):
+    def pl_get_dplugin_info(self):
+        """
+        Getter for the dplugin info object of type DPlugin
+
+        :return: DPlugin Object
+        """
+        return self._dplugin_info
+
+
+    def _demux(self, source_id, block_name, data):
         """
         Internal function which is called to demux all signals.
         This function will make sure that only the subscribed signals will be transferred to the plugin.
@@ -368,5 +377,3 @@ class base_plugin(IPlugin):
         return dict([(i, data[i]) for i in sub_signals if i in data])
 
 
-    def pl_get_dplugin_info(self):
-        return self._dplugin_info

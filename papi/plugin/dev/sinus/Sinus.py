@@ -71,7 +71,7 @@ class Sinus(iop_base):
         self.para3 = DParameter('Frequenz Block SinMit_f3', default= 0.3, Regex='[0-9]+.[0-9]+')
         para_l = [self.para3]
 
-        self.send_new_parameter_list(para_l)
+        self.pl_send_new_parameter_list(para_l)
 
         print('Sinus started working')
 

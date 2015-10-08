@@ -23,7 +23,7 @@ class CPU_Load(iop_base):
         self.delta_t = 0.01
         self.para_delta_t = DParameter('Delta_t', default=0.01)
 
-        self.send_new_parameter_list([self.para_delta_t])
+        self.pl_send_new_parameter_list([self.para_delta_t])
 
         block1 = DBlock('CPUload')
 
