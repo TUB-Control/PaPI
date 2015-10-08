@@ -81,7 +81,7 @@ class base_visual(base_plugin):
         self.window_name = self.config['name']['value']
 
         self._set_window_for_internal_usage(QMdiSubWindow())
-        return self.initiate_layer_1(self.config)
+        return self._initiate_layer_1(self.config)
 
     def pl_get_current_config(self):
         """
@@ -91,7 +91,7 @@ class base_visual(base_plugin):
         """
         return self.config
 
-    def initiate_layer_1(self, config):
+    def _initiate_layer_1(self, config):
         """
         This function is called when the PaPI framework has called all internal function which are
         needed to initialize the plugin. This function should be filled by the plugin developer.

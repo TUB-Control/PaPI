@@ -37,7 +37,7 @@ class ownProcess_base(base_plugin):
     It is not possible to create a widget which is displayed in the graphical interface of PaPI.
     """
 
-    def work_process(self, CoreQueue, pluginQueue, id, defaultEventTriggered=False, config=None, autostart=True):
+    def _work_process(self, CoreQueue, pluginQueue, id, defaultEventTriggered=False, config=None, autostart=True):
         """
         This is the main working function of plugins running in their own process.
 
@@ -70,14 +70,14 @@ class ownProcess_base(base_plugin):
         # will check if plugin shall be started immediately after creation
         if autostart is True:
             # call start_init function to use developers init
-            self.starting_sequence(config)
+            self._starting_sequence(config)
         else:
             self.__plugin_stopped = True
 
         # main working loop
         while self.__goOn:
             # check event trigger mode
-            self.evaluate_event_trigger(defaultEventTriggered)
+            self._evaluate_event_trigger(defaultEventTriggered)
             # Check for new event in plugin queue
             event = None
             try:
@@ -112,7 +112,7 @@ class ownProcess_base(base_plugin):
                 # plugin should start again after it was stopped once
                 if op=='start_plugin' and self.__plugin_stopped is True:
                     # maybe new config?
-                    self.starting_sequence(config)
+                    self._starting_sequence(config)
                     self.__plugin_stopped = False
 
                 # pause this plugin
@@ -159,7 +159,7 @@ class ownProcess_base(base_plugin):
                     # call the plugin cb_execute function if event mode allows it.
                     self.cb_execute()
 
-    def starting_sequence(self, config):
+    def _starting_sequence(self, config):
         """
         This is the starting point for the operation of a plugin.
         This function will start the plugin. Therefore it will call the setup function and will report
@@ -191,7 +191,7 @@ class ownProcess_base(base_plugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def evaluate_event_trigger(self,default):
+    def _evaluate_event_trigger(self,default):
         """
         Will evaluate the event trigger mode and set it to the needed value
 
@@ -205,7 +205,7 @@ class ownProcess_base(base_plugin):
         if self.__user_event_triggered is False:
             self.__EventTriggered = False
 
-    def set_event_trigger_mode(self, mode):
+    def pl_set_event_trigger_mode(self, mode):
         """
         Enables the plugin developer to set the event_trigger_mode. This meas that when set to TRUE, the
         plugin is set to be event triggered which means that the cb_execute function will only be called when

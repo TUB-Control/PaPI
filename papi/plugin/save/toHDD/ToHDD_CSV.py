@@ -43,7 +43,7 @@ class ToHDD_CSV(dpp_base):
         else:
             self.config = dict(list(default_config.items()) + list(config.items()))
 
-        self.set_event_trigger_mode(True)
+        self.pl_set_event_trigger_mode(True)
 
         self.known_blocks = {}
 

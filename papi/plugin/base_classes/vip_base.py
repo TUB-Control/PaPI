@@ -34,7 +34,7 @@ class vip_base(base_visual):
     Base class to inherent from when creation a visual plugin for th gui
 
     """
-    def initiate_layer_1(self, config):
+    def _initiate_layer_1(self, config):
         return self.initiate_layer_0(config)
 
     def initiate_layer_0(self, config):

@@ -48,7 +48,7 @@ class ToMAT(dpp_base):
 
         self.config = config
 
-        self.set_event_trigger_mode(True)
+        self.pl_set_event_trigger_mode(True)
 
         self.name_mat_file = self.config['file']['value']
 

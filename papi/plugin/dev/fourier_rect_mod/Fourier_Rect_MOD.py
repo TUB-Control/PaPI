@@ -70,7 +70,7 @@ class Fourier_Rect_MOD(iop_base):
 
         self.pl_send_new_block_list([self.block1])
 
-        self.set_event_trigger_mode(True)
+        self.pl_set_event_trigger_mode(True)
 
         self.goOn = True
 

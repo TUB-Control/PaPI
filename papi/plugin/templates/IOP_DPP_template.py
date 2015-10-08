@@ -67,7 +67,7 @@ class IOP_DPP_template(iop_base):
         #   self.pl_send_new_parameter_list(para_list)
 
         # if wanted, change event mode to True, False, 'default'
-        # self.set_event_trigger_mode('default')
+        # self.pl_set_event_trigger_mode('default')
 
         # use startup config like this:
         # self.sample = config['sampleinterval']['value']

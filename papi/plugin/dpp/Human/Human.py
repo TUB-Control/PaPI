@@ -89,7 +89,7 @@ class Human(dpp_base):
     def start_init(self, config=None):
 
         # Plugin is triggered by arrival of data
-        self.set_event_trigger_mode(True)
+        self.pl_set_event_trigger_mode(True)
         self.config = config
         # Read Configuration
 

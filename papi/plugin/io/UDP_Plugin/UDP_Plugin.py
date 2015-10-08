@@ -180,7 +180,7 @@ class UDP_Plugin(iop_base):
 
         self.t = 0
 
-        self.set_event_trigger_mode(True)
+        self.pl_set_event_trigger_mode(True)
 
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
