@@ -20,8 +20,6 @@ We divided PaPI in three main parts:
     - PaPI GUI
     - Plugin
 
-processes
-
 .. figure:: _static/introduction/PaPIStructureWithArrows.png
    :alt: 
 
@@ -68,20 +66,33 @@ each other in respect to their samples.
 One Plugin can offer multiple blocks and every block can offer an
 arbitrary number of signals.
 
+.. figure:: _static/introduction/PaPIBlockSignal.png
+   :alt:
+
+   **A single block contains one or more signals.**
+
 Parameters
 ----------
 
-Additionally to blocks and signals, plugins can offer parameters to
-PaPI. A parameter can be changed using the overview menu  or PCPs.
+Additionally to blocks and signals, plugins can offer parameters to PaPI which can be used to affect the internal behavior of a plugin.
+A parameter can be changed using the overview menu or events, see next section.
+
+.. figure:: _static/introduction/PaPIParameter.png
+   :alt:
+
+   **Parameters can change a plugin's behavior at runtime.**
 
 Events
 ------
 
 A plugin can provide events which can be used to change parameters of other plugins.
 
-E.g. a button plugin provides a ``click``-event which can be subscribed by an arbitrary parameter of a different plugin. When the ``click``-event gets triggered the parameter will be changed according to the value delivered by the event.
+E.g. a plugin provides a event as a ``Click`` or ``Change`` which can be subscribed by an arbitrary parameter of a different plugin. When the ``Click``-event gets triggered the parameter will be changed according to the value delivered by the event. It is also possible to provide more than one event per plugin and a single event can be subscribed by more than one parameter.
 
-A button plugin prov
+.. figure:: _static/introduction/PaPIEvent.png
+   :alt:
+
+   **Parameters can be changed by using events if a parameter subscribed an event.**
 
 Plugin Architecture
 -------------------
@@ -94,49 +105,49 @@ functions that are optional.
 
 Mandatory to implement are:
     - ``start_init(self, config=None)`` [for IOP/DPP],
-    - ``initiate_layer_0(self, config=None)`` [for VIP/PCP]
-    - ``cb_execute(self, Data=None, block_name = None, plugin_uname = None)``
+    - ``initiate_layer_0(self, config=None)`` [for VIP]
+    - ``execute(self, Data=None, block_name = None, plugin_uname = None)``
     - ``quit(self)``
 
 These three functions defines the core functionality of a plugin. To see
-more detailed information on how to create a plugin, refer to: `Design
-guide plugin <DesignPlugin>`__
+more detailed information on how to create a plugin, refer to: :ref:`Design guide plugin <man_design_guide>`
 
 Plugin init
 ~~~~~~~~~~~
 
-When creating a plugin the function start\_init\ *layer*\ 0 will be
-called. These functions can be used to do all basic initialization
+When creating a plugin the function ``start_init`` or ``initiate_layer_0`` will be
+called which depends on the type of plugin ( IOP/DPP or VIP). These functions can be used to do all basic initialization
 needed for the plugin to run, e.g. open widgets or open network
 connections. It is mandatory that this function returns true at the end
 otherwise the plugin will not be started! One important part of the init
 method is to define the signals this plugin will offer to PaPI.
 
-This function should in simple cases also be used to create parameters,
-blocks and signals.
+For simple cases this function should be used to create blocks with signals, parameters and events. For more advanced application it is also possible to create blocks, signals, parameters and events at run-time that means after the initiate function were called.
 
 plugin execution
 ~~~~~~~~~~~~~~~~
 
-When a plugin is started the normal operation loop will call the cb_execute
+When a plugin is started the normal operation loop will call the ``execute``
 function of a block. That means all the execution logic of a plugin
-needs to be integrated in the cb_execute function. It is important to note
-that the cb_execute function is not allowed to block. When a blocking
+needs to be integrated in the execute function. It is important to note
+that the execute function must be **non-blocking**. When a blocking
 functionality is needed one can achieve that by using a thread. In this
 function new data can be sent to PaPI using a PaPI function.
+
+The ``execute`` function is when a new data package arrives.
 
 plugin quit
 ~~~~~~~~~~~
 
 When a plugins is deleted, stopped or PaPI will end operation, the
 ``quit()`` function will be called to enable the plugin developer to
-clean things up, e.g. to close network connections or file handlers.
+clean things up, e.g. to close network connections or file handles.
 
 Additional functions
 ~~~~~~~~~~~~~~~~~~~~
 
 For additional functions and deeper understanding or programming
-examples, please take a look at `Design guide plugin <DesignPlugin>`__
+examples, please take a look at :ref:`Design guide plugin <man_design_guide>`
 
 Graphical User Interface
 ------------------------
