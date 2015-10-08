@@ -238,7 +238,7 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
             try:
-                if dplugin.plugin.start_init(dplugin.plugin.pl_get_current_config()) is True:
+                if dplugin.plugin._starting_sequence(dplugin.plugin.pl_get_current_config()) is True:
                     dplugin.state = PLUGIN_STATE_START_SUCCESFUL
                     self.added_dplugin.emit(dplugin)
                 else:
@@ -324,7 +324,7 @@ class GuiEventProcessing(QtCore.QObject):
             try:
                 dplugin.plugin._init_plugin(self.core_queue, self.gui_queue, dplugin.id, api,
                                            dpluginInfo=dplugin.get_meta(),TabManger=self.TabManger)
-                if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
+                if dplugin.plugin._starting_sequence(copy.deepcopy(config)) is True:
                     # start succcessfull
                     self.core_queue.put(Event.status.StartSuccessfull(dplugin.id, 0, None))
                 else:

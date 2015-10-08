@@ -41,7 +41,7 @@ import papi.constants as pc
 
 class Slider(vip_base):
 
-    def initiate_layer_0(self, config):
+    def cb_initialize_plugin(self, config):
 
         self.event_change = DEvent('Change')
 

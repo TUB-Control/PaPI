@@ -46,7 +46,7 @@ class Button(vip_base):
         self.name = None
         self.cur_value = None
 
-    def initiate_layer_0(self, config):
+    def cb_initialize_plugin(self, config):
 
         #super(Button, self).start_init(config)
 

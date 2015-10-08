@@ -63,7 +63,7 @@ class base_visual(base_plugin):
         self.TabManager = TabManger
         self.movable = True
 
-    def start_init(self, config=None):
+    def _starting_sequence(self, config=None):
         """
         Internal start function called by the PaPI framework;
 
@@ -81,7 +81,17 @@ class base_visual(base_plugin):
         self.window_name = self.config['name']['value']
 
         self._set_window_for_internal_usage(QMdiSubWindow())
-        return self._initiate_layer_1(self.config)
+        return self._start_plugin_base(self.config)
+
+    def _start_plugin_base(self, config):
+        """
+        Needs to be implemented by plugin base class
+
+        :param config: cfg to start plugin with (dict)
+        :type config: dict
+        :return:
+        """
+        raise NotImplementedError("Please Implement this method")
 
     def pl_get_current_config(self):
         """
@@ -90,17 +100,6 @@ class base_visual(base_plugin):
         :return:
         """
         return self.config
-
-    def _initiate_layer_1(self, config):
-        """
-        This function is called when the PaPI framework has called all internal function which are
-        needed to initialize the plugin. This function should be filled by the plugin developer.
-
-
-        :param config: Startup configuration
-        :return:
-        """
-        raise NotImplementedError("Please Implement this method")
 
     def _get_configuration_base(self):
         """

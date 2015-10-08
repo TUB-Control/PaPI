@@ -35,7 +35,23 @@ class iop_base(ownProcess_base):
     """
     This plugin is used to create an interface to different data sources.
     """
-    def initiate_layer_0(self, config):
+    def _start_plugin_base(self, config):
+        """
+        Needs to be implemented by plugin base class
+
+        :param config: cfg to start plugin with (dict)
+        :type config: dict
+        :return:
+        """
+        return self.cb_initialize_plugin(config)
+
+    def cb_initialize_plugin(self, config):
+        """
+        Callback function to be implemented by the plugin developer for the init phase of a plugin
+        :param config: cfg to start plugin with (dict)
+        :type config: dict
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
     def _get_configuration_base(self):

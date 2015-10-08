@@ -45,7 +45,7 @@ class Fourier_Rect(iop_base):
     amax = 20
 
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         self.t = 0
         self.amax = Fourier_Rect.amax

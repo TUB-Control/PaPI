@@ -43,7 +43,7 @@ from papi.plugin.base_classes.dpp_base import dpp_base
 # DPP: class IOP_DPP_template(dpp_base):
 class IOP_DPP_template(iop_base):
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
         # do user init
         # define vars, connect to rtai .....
 
@@ -101,7 +101,7 @@ class IOP_DPP_template(iop_base):
 
         # implement cb_execute and send new data
         #    self.pl_send_new_data('blockName', timeVector, signals_to_send )
-        # Attention: block_name has to match the name defined in start_init for the specific block
+        # Attention: block_name has to match the name defined in cb_initialize_plugin for the specific block
         # signals_to_send need to be a dict with "signalName->values"
 
 

@@ -40,7 +40,7 @@ from papi.data.DParameter import DParameter
 class HTMLViewer(vip_base):
 
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         # ---------------------------
         # Read configuration

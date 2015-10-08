@@ -130,7 +130,7 @@ class Plot(vip_base):
             4: (100, 100, 100)
         }
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self, config=None):
         """
         Function initiate layer 0
 
@@ -1088,7 +1088,7 @@ class Plot(vip_base):
 
         self.config = config
         self.__id__ = 0
-        self.initiate_layer_0(config)
+        self.cb_initialize_plugin(config)
 
         signal_1 = DSignal('signal_1')
         signal_2 = DSignal('signal_2')

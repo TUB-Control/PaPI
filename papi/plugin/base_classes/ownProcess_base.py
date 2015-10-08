@@ -69,7 +69,7 @@ class ownProcess_base(base_plugin):
 
         # will check if plugin shall be started immediately after creation
         if autostart is True:
-            # call start_init function to use developers init
+            # call _start_plugin_base function to use developers init
             self._starting_sequence(config)
         else:
             self.__plugin_stopped = True
@@ -168,7 +168,7 @@ class ownProcess_base(base_plugin):
         :param config:
         :return:
         """
-        if self.start_init(config):
+        if self._start_plugin_base(config):
             # report start successfull event
             event = Event.status.StartSuccessfull(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
@@ -182,11 +182,12 @@ class ownProcess_base(base_plugin):
             event = Event.status.JoinRequest(self.__id__, 0, None)
             self._Core_event_queue__.put(event)
 
-    def start_init(self, config):
+    def _start_plugin_base(self, config):
         """
-        Needs to be implemented by plugin developer
+        Needs to be implemented by plugin base class
 
-        :param config:
+        :param config: cfg to start plugin with (dict)
+        :type config: dict
         :return:
         """
         raise NotImplementedError("Please Implement this method")

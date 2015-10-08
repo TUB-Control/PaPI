@@ -34,7 +34,7 @@ import csv
 
 class ToHDD_CSV(dpp_base):
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         default_config = self.get_startup_configuration()
 

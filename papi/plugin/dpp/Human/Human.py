@@ -86,7 +86,7 @@ class HumanRequestHandler(http.server.SimpleHTTPRequestHandler):
 # Main Plugin
 class Human(dpp_base):
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         # Plugin is triggered by arrival of data
         self.pl_set_event_trigger_mode(True)

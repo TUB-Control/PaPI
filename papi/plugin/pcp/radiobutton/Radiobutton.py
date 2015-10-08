@@ -39,7 +39,7 @@ from papi.plugin.base_classes.vip_base import vip_base
 import papi.constants as pc
 
 class Radiobutton(vip_base):
-    def initiate_layer_0(self, config):
+    def cb_initialize_plugin(self, config):
 
         self.event_choice = DEvent('Choice')
 

@@ -38,7 +38,7 @@ from papi.data.DParameter import DParameter
 
 class Textfield(vip_base):
 
-    def initiate_layer_0(self, config):
+    def cb_initialize_plugin(self, config):
 
         self.event_change = DEvent('Change')
 

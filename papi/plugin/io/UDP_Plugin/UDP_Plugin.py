@@ -128,7 +128,7 @@ class UDP_Plugin(iop_base):
 
         return config
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
         print('ORTD', self.__id__, ':process id', os.getpid())
 
         # open UDP

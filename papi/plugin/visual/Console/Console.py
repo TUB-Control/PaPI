@@ -44,7 +44,7 @@ from papi.plugin.visual.Console.CmdInput import CmdInput
 class Console(vip_base):
 
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         # ---------------------------
         # Read configuration

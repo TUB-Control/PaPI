@@ -46,7 +46,7 @@ import papi.constants as pc
 class StartExternalScript(vip_base):
 
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         # --------------------------------
         # Create Widget
