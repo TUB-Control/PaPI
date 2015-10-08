@@ -1,3 +1,5 @@
+.. _man_design_guide:
+
 Design Guide Plugin development
 ===============================
 
@@ -18,8 +20,8 @@ development of an own plugin. The template files can be found in
 
 The plugins are written in python 3.4. For the development we recommend to use one of these tools:
 
-   - Any editor with syntax highlighting (e.g. gedit, atom)
-   - PyCharm
+   - Any editor with syntax highlighting (e.g. `gedit <https://wiki.gnome.org/Apps/Gedit>`_, `atom <https://github.com/atom/atom>`_)
+   - `PyCharm <https://www.jetbrains.com/pycharm/>`_
 
 
 ... create Blocks
@@ -31,7 +33,7 @@ e.g. a plot.
 
 It is necessary to imports this objects:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DPlugin import DBlock
     from papi.data.DSignal import DSignal
@@ -43,7 +45,8 @@ the Block can be used by other plugins. It is **very important** to know
 that the PaPI-backend only knows the last blocks sent by
 ``send_new_block_list``. Previous sent blocks will be deleted.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
        self.block = DBlock('Source')
@@ -58,7 +61,7 @@ Parameters are used to enable an external control of a running plugin.
 
 It is necessary to imports this object:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DParameter import DParameter
 
@@ -66,7 +69,8 @@ At first three parameters are created and the PaPI-backend gets
 informed. To limit possible user entries at the frontend for the third parameter a regex
 was defined
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
 
@@ -82,7 +86,7 @@ Events are used to change parameters of other plugins.
 
 It is necessary to imports this object:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DSignal import DEvent
 
@@ -91,7 +95,8 @@ the event can be used to change parameters of other plugins. It is **very import
 that the PaPI-backend only knows the last events sent by
 ``send_new_event_list``. Previous sent events will be deleted.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
 
@@ -100,7 +105,8 @@ that the PaPI-backend only knows the last events sent by
 
 An event can be emitted as following e.g. as the result of clicking a button in the GUI.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
     
     def clicked_start_button(self):
         self.emit_event('1', self.event_start)
@@ -114,7 +120,8 @@ the time vector. The other entries are data vectors. To determine the
 data source the corresponding block\_name is given for a single execute
 step.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def execute(self, Data=None, block_name = None, plugin_uname = None):
        time = Data['t']
@@ -132,7 +139,8 @@ determine the modified parameter the parameter's name is given as
 is always from type ``string`` that means it may be necessary to cast
 the string as float, or int.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def set_parameter(self, name, value):
        if name == 'ParameterName1':
@@ -154,7 +162,8 @@ the string as float, or int.
 It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def get_plugin_configuration(self):
        config = {
@@ -239,7 +248,7 @@ What happens if the user triggers ...
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def pause(self):
         """
@@ -256,7 +265,7 @@ This enables the developer to handle a users wish to break the plugin. PaPI will
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def resume(self):
         """
@@ -273,7 +282,7 @@ This enables the developer to handle a users wish to resume the plugin. PaPI wil
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def quit(self):
         """
