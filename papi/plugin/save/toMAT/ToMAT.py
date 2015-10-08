@@ -80,7 +80,7 @@ class ToMAT(dpp_base):
         print('toMAT resume')
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
         if self.saving:
             t = Data[CORE_TIME_SIGNAL]

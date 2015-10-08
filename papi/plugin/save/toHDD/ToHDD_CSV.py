@@ -65,7 +65,7 @@ class ToHDD_CSV(dpp_base):
         print('toHDD resume')
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         t = Data[CORE_TIME_SIGNAL]
 
         if block_name not in self.known_blocks.keys():

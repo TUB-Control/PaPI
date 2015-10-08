@@ -41,7 +41,7 @@ class CPU_Load(iop_base):
     def resume(self):
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         vec = numpy.zeros((2,1))
 
         vec[0,0] = self.t*10

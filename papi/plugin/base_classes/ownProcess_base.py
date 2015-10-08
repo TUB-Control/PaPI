@@ -138,7 +138,7 @@ class ownProcess_base(base_plugin):
                     opt = event.get_optional_parameter()
                     if opt.is_parameter is False:
                         data = self.demux(opt.data_source_id, opt.block_name, opt.data)
-                        self.execute(Data=data, block_name = opt.block_name, plugin_uname= event.source_plugin_uname)
+                        self.cb_execute(Data=data, block_name = opt.block_name, plugin_uname= event.source_plugin_uname)
                     if opt.is_parameter is True:
                         self.set_parameter_internal(opt.parameter_alias, opt.data)
 
@@ -156,8 +156,8 @@ class ownProcess_base(base_plugin):
                 if self.__paused or self.__EventTriggered or self.__plugin_stopped:
                     pass
                 else:
-                    # call the plugin execute function if event mode allows it.
-                    self.execute()
+                    # call the plugin cb_execute function if event mode allows it.
+                    self.cb_execute()
 
     def starting_sequence(self, config):
         """
@@ -208,7 +208,7 @@ class ownProcess_base(base_plugin):
     def set_event_trigger_mode(self, mode):
         """
         Enables the plugin developer to set the event_trigger_mode. This meas that when set to TRUE, the
-        plugin is set to be event triggered which means that the execute function will only be called when
+        plugin is set to be event triggered which means that the cb_execute function will only be called when
         a new event (newData) arrives.
 
         default will mean the default value for the specific plugin type.

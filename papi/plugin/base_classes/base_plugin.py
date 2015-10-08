@@ -44,7 +44,7 @@ class base_plugin(IPlugin):
     def __init__(self):
         super(base_plugin, self).__init__()
         self.__id__ = -1
-        self.dplugin_info = None
+        self._dplugin_info = None
         self.__subscription_for_demux = None
 
     def papi_init(self, ):
@@ -53,7 +53,7 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        self.dplugin_info       = None
+        self._dplugin_info       = None
         self.__subscription_for_demux = None
 
     def get_type(self):
@@ -64,7 +64,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         """
         Called by the PaPI framework when new date can be processed.  Must be implemented !
 
@@ -337,8 +337,8 @@ class base_plugin(IPlugin):
         :return:
         """
 
-        self.dplugin_info = dplug
-        self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
+        self._dplugin_info = dplug
+        self.__subscription_for_demux = self._dplugin_info.get_subscribtions()
         self.plugin_meta_updated()
 
     def plugin_meta_updated(self):
@@ -360,9 +360,13 @@ class base_plugin(IPlugin):
         :return:
         """
         if self.__subscription_for_demux is None:
-           self.__subscription_for_demux = self.dplugin_info.get_subscribtions()
+           self.__subscription_for_demux = self._dplugin_info.get_subscribtions()
 
         sub_object = self.__subscription_for_demux[source_id][block_name]
         sub_signals = sub_object.signals
 
         return dict([(i, data[i]) for i in sub_signals if i in data])
+
+
+    def pl_get_dplugin_info(self):
+        return self._dplugin_info

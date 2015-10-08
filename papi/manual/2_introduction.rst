@@ -83,7 +83,7 @@ functions that are optional.
 Mandatory to implement are:
     - ``start_init(self, config=None)`` [for IOP/DPP],
     - ``initiate_layer_0(self, config=None)`` [for VIP/PCP]
-    - ``execute(self, Data=None, block_name = None, plugin_uname = None)``
+    - ``cb_execute(self, Data=None, block_name = None, plugin_uname = None)``
     - ``quit(self)``
 
 These three functions defines the core functionality of a plugin. To see
@@ -106,10 +106,10 @@ blocks and signals.
 plugin execution
 ~~~~~~~~~~~~~~~~
 
-When a plugin is started the normal operation loop will call the execute
+When a plugin is started the normal operation loop will call the cb_execute
 function of a block. That means all the execution logic of a plugin
-needs to be integrated in the execute function. It is important to note
-that the execute function is not allowed to block. When a blocking
+needs to be integrated in the cb_execute function. It is important to note
+that the cb_execute function is not allowed to block. When a blocking
 functionality is needed one can achieve that by using a thread. In this
 function new data can be sent to PaPI using a PaPI function.
 

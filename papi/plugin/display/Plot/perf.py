@@ -67,7 +67,7 @@ def do_fctn(plugin):
 
 
 
-        plugin.execute(data)
+        plugin.cb_execute(data)
 
 
 

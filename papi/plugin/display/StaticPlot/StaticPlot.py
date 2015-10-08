@@ -181,9 +181,9 @@ class StaticPlot(vip_base):
         pass
 
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         """
-        Function execute
+        Function cb_execute
 
         :param **kwargs:
         :param Data:

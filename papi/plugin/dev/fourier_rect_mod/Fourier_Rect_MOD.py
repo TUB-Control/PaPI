@@ -117,7 +117,7 @@ class Fourier_Rect_MOD(iop_base):
             time.sleep(0.001*self.amax )
 
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         print("EXECUTE FUNC")
         pass
 

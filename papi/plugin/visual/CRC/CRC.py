@@ -346,7 +346,7 @@ class CRC(vip_base):
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def cb_execute(self, Data=None, block_name = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data

@@ -88,7 +88,7 @@ class IOP_DPP_template(iop_base):
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
@@ -99,7 +99,7 @@ class IOP_DPP_template(iop_base):
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
-        # implement execute and send new data
+        # implement cb_execute and send new data
         #    self.send_new_data('blockName', timeVector, signals_to_send )
         # Attention: block_name has to match the name defined in start_init for the specific block
         # signals_to_send need to be a dict with "signalName->values"
