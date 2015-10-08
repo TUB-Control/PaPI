@@ -64,7 +64,7 @@ class Button(vip_base):
         self.pl_send_new_event_list([self.event_click])
 
         self.button = self.create_widget()
-        self.set_widget_for_internal_usage(self.button)
+        self.pl_set_widget_for_internal_usage(self.button)
         self.button.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.button.customContextMenuRequested.connect(self.show_context_menu)
 
@@ -73,7 +73,7 @@ class Button(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.button.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def create_widget(self):

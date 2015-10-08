@@ -38,7 +38,7 @@ class iop_base(ownProcess_base):
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")
 
-    def get_configuration_base(self):
+    def _get_configuration_base(self):
         config = {}
         return config
 

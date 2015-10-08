@@ -70,7 +70,7 @@ class LCDDisplay(vip_base):
         self.LcdWidget.customContextMenuRequested.connect(self.show_context_menu)
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
-        self.set_widget_for_internal_usage( self.LcdWidget )
+        self.pl_set_widget_for_internal_usage( self.LcdWidget )
 
 
         # ---------------------------
@@ -101,7 +101,7 @@ class LCDDisplay(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.LcdWidget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def cb_pause(self):

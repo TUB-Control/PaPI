@@ -124,7 +124,7 @@ class RehaStimGUI(vip_base, object):
 
         self.widget = self.create_widget()
         self.create_actions()
-        self.set_widget_for_internal_usage( self.widget )
+        self.pl_set_widget_for_internal_usage( self.widget )
         self.current_state = None
 
 
@@ -325,7 +325,7 @@ class RehaStimGUI(vip_base, object):
 
     def show_context_menu(self, pos):
         gloPos = self.LcdWidget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def clicked_load_config(self):

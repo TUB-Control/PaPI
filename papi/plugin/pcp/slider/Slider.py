@@ -46,7 +46,7 @@ class Slider(vip_base):
         self.event_change = DEvent('Change')
 
         self.pl_send_new_event_list([self.event_change])
-        self.set_widget_for_internal_usage(self.create_widget())
+        self.pl_set_widget_for_internal_usage(self.create_widget())
 
         return True
 
@@ -91,7 +91,7 @@ class Slider(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.slider.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def value_changed(self, change):

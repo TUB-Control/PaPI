@@ -66,7 +66,7 @@ class Radiobutton(vip_base):
             if self.config['selected_index']['value'] != '':
                 self.pre_selected_index = int(self.config['selected_index']['value'])
 
-        self.set_widget_for_internal_usage(self.central_widget)
+        self.pl_set_widget_for_internal_usage(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
 
         self.buttons = []
@@ -120,7 +120,7 @@ class Radiobutton(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.central_widget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def button_released(self):

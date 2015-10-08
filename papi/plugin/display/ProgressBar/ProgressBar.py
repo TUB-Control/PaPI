@@ -74,7 +74,7 @@ class ProgressBar(vip_base):
 
         self.set_value(self.min_range)
 
-        self.set_widget_for_internal_usage(self.progressbar)
+        self.pl_set_widget_for_internal_usage(self.progressbar)
 
 
         # ---------------------------
@@ -111,7 +111,7 @@ class ProgressBar(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.progressbar.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def cb_pause(self):

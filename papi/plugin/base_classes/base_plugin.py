@@ -75,7 +75,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def get_configuration_base(self):
+    def _get_configuration_base(self):
         """
         Returns the base configuration. Must be implemented !
 
@@ -90,7 +90,7 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        return self._merge_configs(self.get_configuration_base(), self.cb_get_plugin_configuration())
+        return self._merge_configs(self._get_configuration_base(), self.cb_get_plugin_configuration())
 
     def cb_get_plugin_configuration(self):
         """

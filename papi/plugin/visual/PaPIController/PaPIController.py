@@ -51,7 +51,7 @@ class PaPIController(vip_base):
         # Create Widget needed for this plugin
 
         self.ControllerWidget = QWidget()
-        self.set_widget_for_internal_usage( self.ControllerWidget )
+        self.pl_set_widget_for_internal_usage( self.ControllerWidget )
         hbox = QHBoxLayout()
         self.ControllerWidget.setLayout(hbox)
         self.status_label = QLabel()

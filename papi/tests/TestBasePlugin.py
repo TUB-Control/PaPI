@@ -47,7 +47,7 @@ class TestBasePlugin(unittest.TestCase):
 
         self.assertRaises(NotImplementedError, self.basePlugin.get_type)
         self.assertRaises(NotImplementedError, self.basePlugin.cb_execute, None, None, None)
-        self.assertRaises(NotImplementedError, self.basePlugin.get_configuration_base)
+        self.assertRaises(NotImplementedError, self.basePlugin._get_configuration_base)
         self.assertRaises(NotImplementedError, self.basePlugin.get_startup_configuration)
         self.assertRaises(NotImplementedError, self.basePlugin.get_plugin_configuration)
 

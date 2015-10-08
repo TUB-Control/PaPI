@@ -88,7 +88,7 @@ class WizardExample(vip_base):
 
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
-        self.set_widget_for_internal_usage( self.wizardwidget )
+        self.pl_set_widget_for_internal_usage( self.wizardwidget )
 
         # ---------------------------
         # Create Parameters

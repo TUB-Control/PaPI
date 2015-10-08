@@ -58,7 +58,7 @@ class HTMLViewer(vip_base):
 
         # This call is important, because the background structure needs to know the used widget!
         # In the background the qmidiwindow will becreated and the widget will be added
-        self.set_widget_for_internal_usage( self.WebView )
+        self.pl_set_widget_for_internal_usage( self.WebView )
         print(isUrl)
         if isUrl == '1':
             url = QtCore.QUrl(content)
@@ -72,7 +72,7 @@ class HTMLViewer(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.WebView.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def cb_pause(self):

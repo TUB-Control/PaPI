@@ -876,7 +876,7 @@ class Gui_api(QtCore.QObject):
                 # check if this plugin should be saved to XML
                 if dplugin.uname in plToSave:
                     if dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                        dplugin.startup_config = dplugin.plugin.get_current_config()
+                        dplugin.startup_config = dplugin.plugin.pl_get_current_config()
 
                     pl_xml = ET.SubElement(plugins_xml, 'Plugin')
                     pl_xml.set('uname', dplugin.uname)
@@ -1042,7 +1042,7 @@ class Gui_api(QtCore.QObject):
                 dplugin = plugins[dplugin_id]
 
                 if dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                    dplugin.startup_config = dplugin.plugin.get_current_config()
+                    dplugin.startup_config = dplugin.plugin.pl_get_current_config()
 
                 pl_xml = ET.SubElement(root, 'Plugin')
                 pl_xml.set('uname', dplugin.uname)
@@ -1146,7 +1146,7 @@ class Gui_api(QtCore.QObject):
             # check if this plugin should be saved to XML
             if dplugin.uname in plToSave:
                 if dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                    dplugin.startup_config = dplugin.plugin.get_current_config()
+                    dplugin.startup_config = dplugin.plugin.pl_get_current_config()
 
                 to_create[dplugin.uname] = {}
 

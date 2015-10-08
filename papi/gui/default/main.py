@@ -632,9 +632,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
             # sub_window_ori = dplugin.plugin.get_sub_window()
             #
             # dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
-            # dplugin.plugin.set_widget_for_internal_usage(sub_window_ori.widget())
+            # dplugin.plugin.pl_set_widget_for_internal_usage(sub_window_ori.widget())
 
-            sub_window = dplugin.plugin.get_sub_window()
+            sub_window = dplugin.plugin._get_sub_window()
 
             config = dplugin.startup_config
             tab_name = config['tab']['value']
@@ -680,7 +680,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():
                 tabOb = self.TabManager.get_tabs_by_uname()[tab_name]
-                tabOb.removeSubWindow(dplugin.plugin.get_sub_window())
+                tabOb.removeSubWindow(dplugin.plugin._get_sub_window())
                 if tabOb.closeIfempty is True:
                     if len(tabOb.subWindowList()) == 0:
                         if isinstance(tabOb, TabObject):

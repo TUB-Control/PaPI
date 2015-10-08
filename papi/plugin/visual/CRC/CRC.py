@@ -315,7 +315,7 @@ class CRC(vip_base):
 
         self.widget = CreateRecordingConfig(self.control_api)
 
-        self.set_widget_for_internal_usage( self.widget )
+        self.pl_set_widget_for_internal_usage( self.widget )
 
 
         # ---------------------------
@@ -331,7 +331,7 @@ class CRC(vip_base):
 
     def show_context_menu(self, pos):
         gloPos = self.widget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def cb_pause(self):

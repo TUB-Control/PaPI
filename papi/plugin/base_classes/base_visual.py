@@ -42,7 +42,7 @@ class base_visual(base_plugin):
     def __init__(self):
         super(base_visual, self).__init__()
 
-    def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
+    def _init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
         """
         Internal initialize function called by the PaPI framework;
 
@@ -80,10 +80,10 @@ class base_visual(base_plugin):
 
         self.window_name = self.config['name']['value']
 
-        self.set_window_for_internal_usage(QMdiSubWindow())
+        self._set_window_for_internal_usage(QMdiSubWindow())
         return self.initiate_layer_1(self.config)
 
-    def get_current_config(self):
+    def pl_get_current_config(self):
         """
         Used to get the current configuration.
 
@@ -102,7 +102,7 @@ class base_visual(base_plugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def get_configuration_base(self):
+    def _get_configuration_base(self):
         """
         Returns the basic configuration for this plugin base.
 
@@ -140,7 +140,7 @@ class base_visual(base_plugin):
         return config
 
 
-    def set_window_for_internal_usage(self, subwindow):
+    def _set_window_for_internal_usage(self, subwindow):
         """
         This function will take a subwindow and will prepare all his call back function to work within PaPI
         It will also set the window reference for later use.
@@ -154,14 +154,14 @@ class base_visual(base_plugin):
         self.original_move_function = self._subWindow.moveEvent
         self.original_mouse_move_function = self._subWindow.mouseMoveEvent
 
-        self._subWindow.resizeEvent = self.window_resize
-        self._subWindow.moveEvent = self.window_move
+        self._subWindow.resizeEvent = self._window_resize
+        self._subWindow.moveEvent = self._window_move
 
 
         self._subWindow.setWindowTitle(self.window_name)
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
 
-    def set_widget_for_internal_usage(self, widget):
+    def pl_set_widget_for_internal_usage(self, widget):
         """
         Will take QWidget and will place it in the subwindow
 
@@ -175,7 +175,7 @@ class base_visual(base_plugin):
         self._subWindow.setWidget(self._widget)
 
 
-    def window_move(self, event):
+    def _window_move(self, event):
         """
         New callback function for movement of a subwindow.
         Will do some PaPI specific tasks and then call the original subwindow callback function.
@@ -191,7 +191,7 @@ class base_visual(base_plugin):
         self.original_move_function(event)
 
 
-    def window_resize(self, event):
+    def _window_resize(self, event):
         """
         New callback function for resizing of a subwindow.
         Will do some PaPI specific tasks and then call the original subwindow callback function.
@@ -203,7 +203,7 @@ class base_visual(base_plugin):
         w = size.width()
         h = size.height()
 
-        isMaximized = self.get_sub_window().isMaximized()
+        isMaximized = self._get_sub_window().isMaximized()
 
         if isMaximized:
             self.config['maximized']['value'] = '1'
@@ -213,7 +213,7 @@ class base_visual(base_plugin):
         self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
-    def window_mouse_move(self, event):
+    def _window_mouse_move(self, event):
         """
         New callback function for mouse move of a subwindow.
         Will do some PaPI specific tasks and then call the original subwindow callback function.
@@ -224,7 +224,7 @@ class base_visual(base_plugin):
         if self.movable:
             self.original_mouse_move_function(event)
 
-    def get_sub_window(self):
+    def _get_sub_window(self):
         """
         Getter method to get subwindow of plugin
 
@@ -240,7 +240,7 @@ class base_visual(base_plugin):
         """
         return self._widget
 
-    def create_control_context_menu(self):
+    def pl_create_control_context_menu(self):
         """
         This function will create the general PaPI Control context menu to be used in Plugins.
 
@@ -250,16 +250,16 @@ class base_visual(base_plugin):
         ctrlMenu = QMenu("Control")
 
         del_action = QAction('Close plugin',self._widget)
-        del_action.triggered.connect(self.ctlrMenu_exit)
+        del_action.triggered.connect(self._ctlrMenu_exit)
 
         pause_action = QAction('Pause plugin',self._widget)
-        pause_action.triggered.connect(self.ctlrMenu_pause)
+        pause_action.triggered.connect(self._ctlrMenu_pause)
 
         resume_action = QAction('Resume plugin',self._widget)
-        resume_action.triggered.connect(self.ctlrMenu_resume)
+        resume_action.triggered.connect(self._ctlrMenu_resume)
 
         subMenu_action = QAction('Open Signal Manager',self._widget)
-        #subMenu_action.triggered.connect(self.ctlrMenu_resume)
+        #subMenu_action.triggered.connect(self._ctlrMenu_resume)
 
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
         if len(tabs) > 1:
@@ -268,7 +268,7 @@ class base_visual(base_plugin):
             for t in tabs:
                 if t != self.config['tab']['value']:
                     entry = QAction(t, self._widget)
-                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_move_triggered(p))
+                    entry.triggered.connect(lambda ignore, p=t: self._tabMenu_move_triggered(p))
                     tab_entrys.append(entry)
                     tabMenu.addAction(entry)
 
@@ -279,7 +279,7 @@ class base_visual(base_plugin):
         ctrlMenu.addAction(del_action)
         return ctrlMenu
 
-    def tabMenu_move_triggered(self, item):
+    def _tabMenu_move_triggered(self, item):
         """
         This callback function gets called when the user clicked on the moveToTab action at the context menu.
         Will start the process of moving the plugin window to another tab
@@ -294,7 +294,7 @@ class base_visual(base_plugin):
             self.config['tab']['value'] = item
 
 
-    def ctlrMenu_exit(self):
+    def _ctlrMenu_exit(self):
         """
         Callback function for context menu for closing plugins
 
@@ -303,7 +303,7 @@ class base_visual(base_plugin):
         self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
         print(self.config['tab']['value'])
 
-    def ctlrMenu_pause(self):
+    def _ctlrMenu_pause(self):
         """
         Callback function for context menu for pausing plugins
 
@@ -311,7 +311,7 @@ class base_visual(base_plugin):
         """
         self.control_api.do_pause_plugin_by_uname(self._dplugin_info.uname)
 
-    def ctlrMenu_resume(self):
+    def _ctlrMenu_resume(self):
         """
         Callback function for context menu for resuming plugins
 

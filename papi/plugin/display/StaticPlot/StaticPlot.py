@@ -128,7 +128,7 @@ class StaticPlot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().disableAutoRange()
         self.__plotWidget__.getPlotItem().getViewBox().setYRange(0,6)
 
-        self.set_widget_for_internal_usage(self.__plotWidget__)
+        self.pl_set_widget_for_internal_usage(self.__plotWidget__)
 
         # ---------------------------
         # Create Parameters
@@ -390,7 +390,7 @@ class StaticPlot(vip_base):
 
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
 
-        self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+        self.__plotWidget__.getPlotItem().ctrlMenu = [self.pl_create_control_context_menu(), self.custMenu]
 
     def showContextMenu(self):
         self.setup_context_menu()

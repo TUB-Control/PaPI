@@ -54,7 +54,7 @@ class StartExternalScript(vip_base):
         # Create Widget needed for this plugin
 
         self.SESWidget = QWidget()
-        self.set_widget_for_internal_usage( self.SESWidget )
+        self.pl_set_widget_for_internal_usage( self.SESWidget )
 
 
         hbox = QHBoxLayout()

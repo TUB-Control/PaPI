@@ -243,8 +243,8 @@ class Plot(vip_base):
 
 
         if not self.__papi_debug__:
-#            self.set_widget_for_internal_usage(self.__plotWidget__)
-            self.set_widget_for_internal_usage(self.central_widget)
+#            self.pl_set_widget_for_internal_usage(self.__plotWidget__)
+            self.pl_set_widget_for_internal_usage(self.central_widget)
 
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pg.ViewBox.YAxis, enable=False)
         self.__plotWidget__.getPlotItem().getViewBox().enableAutoRange(axis=pg.ViewBox.XAxis, enable=False)
@@ -911,7 +911,7 @@ class Plot(vip_base):
         self.__plotWidget__.getPlotItem().getViewBox().menu.clear()
 
         if not self.__papi_debug__:
-            self.__plotWidget__.getPlotItem().ctrlMenu = [self.create_control_context_menu(), self.custMenu]
+            self.__plotWidget__.getPlotItem().ctrlMenu = [self.pl_create_control_context_menu(), self.custMenu]
 
     def showContextMenu(self):
         self.setup_context_menu()

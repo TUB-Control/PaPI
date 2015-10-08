@@ -202,7 +202,7 @@ class PapiTabManger(QObject):
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
                     if plugin.plugin.config['tab']['value'] == tab_name:
-                        self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin.get_sub_window())
+                        self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin._get_sub_window())
                         plugin.plugin.config['tab']['value'] = self.get_default_tab(ind).name
 
             self.remove_tab(tabOb)
@@ -404,7 +404,7 @@ class PapiTabManger(QObject):
 
                         if plugin.plugin.config['tab']['value'] == window.windowName:
 
-                            subwin = plugin.plugin.get_sub_window()
+                            subwin = plugin.plugin._get_sub_window()
                             posX = subwin.pos().x()
                             posY = subwin.pos().y()
                             self.moveFromTo(window.windowName,destTab.name, subwin,posX=posX,posY=posY)
@@ -427,7 +427,7 @@ class PapiTabManger(QObject):
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
                     if plugin.plugin.config['tab']['value'] == tabOb.name:
-                        subwin = plugin.plugin.get_sub_window()
+                        subwin = plugin.plugin._get_sub_window()
                         posX = subwin.pos().x()
                         posY = subwin.pos().y()
                         self.moveFromTo(tabOb.name,neWin.windowName, subwin,posX=posX,posY=posY)
