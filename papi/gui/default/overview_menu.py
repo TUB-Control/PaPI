@@ -210,15 +210,9 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.typeEdit.setText(dplugin.type)
         self.alivestateEdit.setText(dplugin.alive_state)
 
-        # if dplugin.type != PLUGIN_PCP_IDENTIFIER:
-        if 0:
-            self.pauseButton.setDisabled(False)
-            self.playButton.setDisabled(False)
-            self.stopButton.setDisabled(False)
-        else:
-            self.pauseButton.setDisabled(True)
-            self.playButton.setDisabled(True)
-            self.stopButton.setDisabled(True)
+        self.pauseButton.setDisabled(False)
+        self.playButton.setDisabled(False)
+        self.stopButton.setDisabled(False)
 
         if dplugin.alive_state != PLUGIN_STATE_DEAD:
             if dplugin.state == PLUGIN_STATE_PAUSE:

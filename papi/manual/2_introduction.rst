@@ -54,8 +54,8 @@ PaPI divided the plugin structure in 4 types of plugins:
     - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot
     - PC Plugin(PCP): Parameter Control Plugin, runs in GUI process, used to be a control element for setting paramter of other plugins, e.g. Slider
 
-Signal, Blocks and Parameters
------------------------------
+Signal/Blocks
+-------------
 
 A PaPI Plugin can offer several signals to PaPI for other plugins to
 use. Each signal is owned by a signal block. A block in PaPI is a
@@ -68,8 +68,20 @@ each other in respect to their samples.
 One Plugin can offer multiple blocks and every block can offer an
 arbitrary number of signals.
 
+Parameters
+----------
+
 Additionally to blocks and signals, plugins can offer parameters to
-PaPI. Parameter can be changed using the GUI or PCPs.
+PaPI. A parameter can be changed using the overview menu  or PCPs.
+
+Events
+------
+
+A plugin can provide events which can be used to change parameters of other plugins.
+
+E.g. a button plugin provides a ``click``-event which can be subscribed by an arbitrary parameter of a different plugin. When the ``click``-event gets triggered the parameter will be changed according to the value delivered by the event.
+
+A button plugin prov
 
 Plugin Architecture
 -------------------
