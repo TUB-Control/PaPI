@@ -43,7 +43,7 @@ from papi.pyqtgraph.Qt import QtGui, QtCore
 class TemplateName(vip_base):
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
 #        self.config = config
 

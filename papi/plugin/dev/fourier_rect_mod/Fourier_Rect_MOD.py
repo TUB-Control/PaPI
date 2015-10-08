@@ -46,7 +46,7 @@ import pickle
 class Fourier_Rect_MOD(iop_base):
     max_approx = 20
     amax = 20
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         self.t = 0
         self.amax = Fourier_Rect_MOD.amax
         self.amplitude = 1

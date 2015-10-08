@@ -41,12 +41,12 @@ import time
 #RENAME TO PLUGIN NAME
 class ProgressBar(vip_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         # ---------------------------
         # Read configuration
         # ---------------------------
         # Note: this cfg items have to exist!
-
+        self.config = self.pl_get_current_config()
         self.progress_value = self.config['progress_value']['value']
         self.trigger_value = self.config['trigger_value']['value']
         self.reset_trigger_value = self.config['reset_trigger_value']['value']

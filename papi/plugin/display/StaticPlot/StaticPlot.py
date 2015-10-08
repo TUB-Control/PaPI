@@ -97,14 +97,14 @@ class StaticPlot(vip_base):
             4: (100, 100, 100)
         }
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         """
         Function initiate layer 0
 
         :param config:
         :return:
         """
-
+        self.config = self.pl_get_current_config()
         # ---------------------------
         # Read configuration
         # ---------------------------

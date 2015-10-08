@@ -70,25 +70,23 @@ class base_visual(base_plugin):
         :param config:
         :return:
         """
-        self.config = config
+        self._config = config
         # --------------------------------
 
         # get needed data from config
         size_re = re.compile(r'([0-9]+)')
-        self.window_size = size_re.findall(self.config['size']['value'])
-        self.window_pos = size_re.findall(self.config['position']['value'])
+        self.window_size = size_re.findall(self._config['size']['value'])
+        self.window_pos = size_re.findall(self._config['position']['value'])
 
-        self.window_name = self.config['name']['value']
+        self.window_name = self._config['name']['value']
 
         self._set_window_for_internal_usage(QMdiSubWindow())
-        return self._start_plugin_base(self.config)
+        return self._start_plugin_base()
 
-    def _start_plugin_base(self, config):
+    def _start_plugin_base(self):
         """
         Needs to be implemented by plugin base class
 
-        :param config: cfg to start plugin with (dict)
-        :type config: dict
         :return:
         """
         raise NotImplementedError("Please Implement this method")
@@ -99,7 +97,7 @@ class base_visual(base_plugin):
 
         :return:
         """
-        return self.config
+        return self._config
 
     def _get_configuration_base(self):
         """
@@ -186,7 +184,7 @@ class base_visual(base_plugin):
 
         x = pos.x()
         y = pos.y()
-        self.config['position']['value'] = '(' + str(x) + ',' + str(y) + ')'
+        self._config['position']['value'] = '(' + str(x) + ',' + str(y) + ')'
         self.original_move_function(event)
 
 
@@ -205,11 +203,11 @@ class base_visual(base_plugin):
         isMaximized = self._get_sub_window().isMaximized()
 
         if isMaximized:
-            self.config['maximized']['value'] = '1'
+            self._config['maximized']['value'] = '1'
         else:
-            self.config['maximized']['value'] = '0'
+            self._config['maximized']['value'] = '0'
 
-        self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
+        self._config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
     def _window_mouse_move(self, event):
@@ -265,7 +263,7 @@ class base_visual(base_plugin):
             tabMenu = ctrlMenu.addMenu('Move to tab')
             tab_entrys = []
             for t in tabs:
-                if t != self.config['tab']['value']:
+                if t != self._config['tab']['value']:
                     entry = QAction(t, self._widget)
                     entry.triggered.connect(lambda ignore, p=t: self._tabMenu_move_triggered(p))
                     tab_entrys.append(entry)
@@ -289,8 +287,8 @@ class base_visual(base_plugin):
         pos = self._subWindow.pos()
         posX = pos.x()
         posY = pos.y()
-        if self.TabManager.moveFromTo(self.config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
-            self.config['tab']['value'] = item
+        if self.TabManager.moveFromTo(self._config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
+            self._config['tab']['value'] = item
 
 
     def _ctlrMenu_exit(self):
@@ -300,7 +298,7 @@ class base_visual(base_plugin):
         :return:
         """
         self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
-        print(self.config['tab']['value'])
+        print(self._config['tab']['value'])
 
     def _ctlrMenu_pause(self):
         """

@@ -40,11 +40,12 @@ import threading, time
 
 class PaPIController(vip_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.udp_plugin_uname = config['UDP_Plugin_uname']['value']
+        self.config = self.pl_get_current_config()
+        self.udp_plugin_uname = self.config['UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
         # --------------------------------

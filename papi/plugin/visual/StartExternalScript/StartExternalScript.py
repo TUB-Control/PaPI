@@ -46,13 +46,13 @@ import papi.constants as pc
 class StartExternalScript(vip_base):
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-
+        self.config = self.pl_get_current_config()
         self.SESWidget = QWidget()
         self.pl_set_widget_for_internal_usage( self.SESWidget )
 
@@ -77,7 +77,7 @@ class StartExternalScript(vip_base):
         # ---------------------------
         self.external_state = 'offline'
 
-        self.path = config['path']['value']
+        self.path = self.config['path']['value']
         file = os.path.basename(self.path)
         self.dir = self.path[:-len(file)]
 

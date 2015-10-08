@@ -39,7 +39,9 @@ import numpy
 
 class Sinus(iop_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
+        config = self.pl_get_current_config()
+
         self.t = 0
         self.amax = int(config['amax']['value'])
         self.f = float(config['f']['value'])

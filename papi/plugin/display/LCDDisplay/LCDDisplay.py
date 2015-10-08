@@ -41,9 +41,8 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 
 class LCDDisplay(vip_base):
 
-
-    def cb_initialize_plugin(self, config=None):
-
+    def cb_initialize_plugin(self):
+        self.config = self.pl_get_current_config()
         # ---------------------------
         # Read configuration
         # ---------------------------

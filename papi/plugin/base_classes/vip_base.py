@@ -34,21 +34,18 @@ class vip_base(base_visual):
     Base class to inherent from when creation a visual plugin for th gui
 
     """
-    def _start_plugin_base(self, config):
+    def _start_plugin_base(self):
         """
         Needs to be implemented by plugin base class
 
-        :param config: cfg to start plugin with (dict)
-        :type config: dict
         :return:
         """
-        return self.cb_initialize_plugin(config)
+        return self.cb_initialize_plugin()
 
-    def cb_initialize_plugin(self, config):
+    def cb_initialize_plugin(self):
         """
         Callback function to be implemented by the plugin developer for the init phase of a plugin
-        :param config: cfg to start plugin with (dict)
-        :type config: dict
+
         :return:
         """
         raise NotImplementedError("Please Implement this method")

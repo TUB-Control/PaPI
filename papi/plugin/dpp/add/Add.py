@@ -43,7 +43,7 @@ import os
 
 class Add(dpp_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         self.t = 0
         #print(['ADD: process id: ',os.getpid()] )
         self.approx_max = 300

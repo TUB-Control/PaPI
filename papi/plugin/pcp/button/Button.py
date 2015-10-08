@@ -46,13 +46,13 @@ class Button(vip_base):
         self.name = None
         self.cur_value = None
 
-    def cb_initialize_plugin(self, config):
-
+    def cb_initialize_plugin(self):
+        self.config = self.pl_get_current_config()
         #super(Button, self).start_init(config)
 
         self.event_click = DEvent('Click')
 
-        self.name = config['name']['value']
+        self.name = self.config['name']['value']
         self.cur_value = 0
 
         self.value_up = self.config['state1']['value']

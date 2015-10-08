@@ -45,7 +45,8 @@ class Fourier_Rect(iop_base):
     amax = 20
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
+        self.config = self.pl_get_current_config()
 
         self.t = 0
         self.amax = Fourier_Rect.amax
@@ -58,8 +59,8 @@ class Fourier_Rect(iop_base):
         print(['Fourier: process id: ',os.getpid()] )
 
 
-        self.HOST = config['host']['value']
-        self.PORT = int( config['port']['value'] )
+        self.HOST = self.config['host']['value']
+        self.PORT = int( self.config['port']['value'] )
 
         # SOCK_DGRAM is the socket type to use for UDP sockets
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

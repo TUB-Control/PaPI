@@ -108,15 +108,15 @@ class RehaStimGUI(vip_base, object):
 
         pass
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
 
         # ---------------------------
         # Read configuration
         # ---------------------------
-
-        self.signal_next_state = config['signal_next_state']['value']
-        self.readOnly = config['readonly']['value'] == '1'
+        self.config = self.pl_get_current_config()
+        self.signal_next_state = self.config['signal_next_state']['value']
+        self.readOnly = self.config['readonly']['value'] == '1'
 
         # ---------------------------
         # Create Widget

@@ -41,7 +41,7 @@ class Trigger(dpp_base):
     def __init__(self):
         self.initialized = False
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
 
 

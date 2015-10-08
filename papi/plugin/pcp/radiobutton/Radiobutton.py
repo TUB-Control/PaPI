@@ -39,13 +39,13 @@ from papi.plugin.base_classes.vip_base import vip_base
 import papi.constants as pc
 
 class Radiobutton(vip_base):
-    def cb_initialize_plugin(self, config):
+    def cb_initialize_plugin(self):
 
         self.event_choice = DEvent('Choice')
 
         self.pl_send_new_event_list([self.event_choice])
 
-
+        self.config = self.pl_get_current_config()
         para_list = []
 
         self.para_texts    = DParameter('texts', default=self.config['option_texts']['value'])

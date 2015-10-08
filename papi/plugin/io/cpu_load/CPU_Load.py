@@ -18,7 +18,7 @@ import time
 
 class CPU_Load(iop_base):
     INTERVAL = 0.1
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         self.t = 0
         self.delta_t = 0.01
         self.para_delta_t = DParameter('Delta_t', default=0.01)

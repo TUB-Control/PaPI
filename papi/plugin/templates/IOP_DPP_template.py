@@ -43,7 +43,7 @@ from papi.plugin.base_classes.dpp_base import dpp_base
 # DPP: class IOP_DPP_template(dpp_base):
 class IOP_DPP_template(iop_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         # do user init
         # define vars, connect to rtai .....
 

@@ -56,7 +56,7 @@ class WizardExample(vip_base):
 
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         #self.config = config
 

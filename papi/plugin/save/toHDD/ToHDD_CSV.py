@@ -34,14 +34,12 @@ import csv
 
 class ToHDD_CSV(dpp_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         default_config = self.get_startup_configuration()
 
-        if config is None:
-            self.config = default_config
-        else:
-            self.config = dict(list(default_config.items()) + list(config.items()))
+
+        self.config = self.pl_get_current_config()
 
         self.pl_set_event_trigger_mode(True)
 

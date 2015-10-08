@@ -44,9 +44,9 @@ class ToMAT(dpp_base):
         super(ToMAT, self).__init__()
         self.parameters = {}
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
-        self.config = config
+        self.config = self.pl_get_current_config()
 
         self.pl_set_event_trigger_mode(True)
 

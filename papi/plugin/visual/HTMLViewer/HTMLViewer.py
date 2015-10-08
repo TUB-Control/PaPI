@@ -40,13 +40,14 @@ from papi.data.DParameter import DParameter
 class HTMLViewer(vip_base):
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         # ---------------------------
         # Read configuration
         # ---------------------------
-        content = config['content']['value']
-        isUrl   = config['isUrl']['value']
+        self.config = self.pl_get_current_config()
+        content = self.config['content']['value']
+        isUrl   = self.config['isUrl']['value']
 
 
 

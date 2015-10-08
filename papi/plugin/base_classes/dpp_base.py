@@ -33,21 +33,18 @@ class dpp_base(ownProcess_base):
     """
     This kind of plugin is to process data provided by other plugins.
     """
-    def _start_plugin_base(self, config):
+    def _start_plugin_base(self):
         """
         Needs to be implemented by plugin base class
 
-        :param config: cfg to start plugin with (dict)
-        :type config: dict
         :return:
         """
-        return self.cb_initialize_plugin(config)
+        return self.cb_initialize_plugin()
 
-    def cb_initialize_plugin(self, config):
+    def cb_initialize_plugin(self):
         """
         Callback function to be implemented by the plugin developer for the init phase of a plugin
-        :param config: cfg to start plugin with (dict)
-        :type config: dict
+
         :return:
         """
         raise NotImplementedError("Please Implement this method")

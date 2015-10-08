@@ -310,7 +310,7 @@ class CreateRecordingConfig(QMainWindow, Ui_CreateRecording):
 class CRC(vip_base):
 
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
 
         self.widget = CreateRecordingConfig(self.control_api)

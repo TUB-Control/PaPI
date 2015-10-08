@@ -128,23 +128,23 @@ class UDP_Plugin(iop_base):
 
         return config
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
         print('ORTD', self.__id__, ':process id', os.getpid())
-
+        self.config = self.pl_get_current_config()
         # open UDP
-        self.HOST = config['address']['value']
-        self.SOURCE_PORT = int(config['source_port']['value'])
-        self.OUT_PORT = int(config['out_port']['value'])
+        self.HOST = self.config['address']['value']
+        self.SOURCE_PORT = int(self.config['source_port']['value'])
+        self.OUT_PORT = int(self.config['out_port']['value'])
 
         self.LOCALBIND_HOST = '' # config['source_address']['value']     #CK
 
 
 
-        self.sendOnReceivePort = True if config['SendOnReceivePort']['value'] == '1' else False
-        self.UseSocketIO = True if config['UseSocketIO']['value'] == '1' else False
+        self.sendOnReceivePort = True if self.config['SendOnReceivePort']['value'] == '1' else False
+        self.UseSocketIO = True if self.config['UseSocketIO']['value'] == '1' else False
 
         if self.UseSocketIO:
-            self.SocketIOPort = int(config['socketio_port']['value'])
+            self.SocketIOPort = int(self.config['socketio_port']['value'])
 
 
         #self.sendOnReceivePort = True  # NOTE: remove this
@@ -156,9 +156,9 @@ class UDP_Plugin(iop_base):
 
         self.PAPI_SIMULINK_BLOCK = False
 
-        self.separate = int(config['SeparateSignals']['value'])
+        self.separate = int(self.config['SeparateSignals']['value'])
 
-        self.onlyInitialConfig = config['OnlyInitialConfig']['value'] == '1'
+        self.onlyInitialConfig = self.config['OnlyInitialConfig']['value'] == '1'
         self.hasInitialConfig = False
 
         if (not self.sendOnReceivePort):

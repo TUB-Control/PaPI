@@ -86,11 +86,11 @@ class HumanRequestHandler(http.server.SimpleHTTPRequestHandler):
 # Main Plugin
 class Human(dpp_base):
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         # Plugin is triggered by arrival of data
         self.pl_set_event_trigger_mode(True)
-        self.config = config
+        self.config = self.pl_get_current_config()
         # Read Configuration
 
         self.Up_w_Id = self.config['quat_upperarm_w']['value']
