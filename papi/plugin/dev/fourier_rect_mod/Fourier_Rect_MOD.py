@@ -81,12 +81,12 @@ class Fourier_Rect_MOD(iop_base):
 
         return True
 
-    def pause(self):
+    def cb_pause(self):
         self.goOn = False
         self.thread.join()
 
 
-    def resume(self):
+    def cb_resume(self):
         self.goOn = True
         self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST,self.PORT) )
         self.thread.start()
@@ -121,15 +121,15 @@ class Fourier_Rect_MOD(iop_base):
         print("EXECUTE FUNC")
         pass
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         self.goOn = False
         self.thread.join()
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         return {}

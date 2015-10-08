@@ -455,7 +455,7 @@ class Gui_api(QtCore.QObject):
             dplugin = plugins[dplugin_id]
             if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 try:
-                    dplugin.plugin.quit()
+                    dplugin.plugin.cb_quit()
                 except Exception as E:
                     tb = traceback.format_exc()
                     self.plugin_died.emit(dplugin, E, tb)

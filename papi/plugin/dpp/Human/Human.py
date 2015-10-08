@@ -145,11 +145,11 @@ class Human(dpp_base):
         # Return init success
         return True
 
-    def pause(self):
+    def cb_pause(self):
         # Will be called, when plugin gets paused
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # Will be called when plugin gets resumed
         pass
 
@@ -215,10 +215,10 @@ class Human(dpp_base):
                            self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
 
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         #TODO: self.thread.join()
 
         self.thread_goOn = False
@@ -228,7 +228,7 @@ class Human(dpp_base):
         pass
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "quat_upperarm_w": {
                 'value': 'quat_upperarm_w'
@@ -261,7 +261,7 @@ class Human(dpp_base):
         }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
 

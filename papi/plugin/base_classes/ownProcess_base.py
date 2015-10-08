@@ -96,7 +96,7 @@ class ownProcess_base(base_plugin):
 
                 # plugin shall stop operation
                 if op=='stop_plugin' :
-                    self.quit()
+                    self.cb_quit()
                     if event.delete is True:
                         # delete plugin, so work_progress will stop completely
                         self.__goOn = 0
@@ -118,12 +118,12 @@ class ownProcess_base(base_plugin):
                 # pause this plugin
                 if op=='pause_plugin' and self.__paused is False and self.__plugin_stopped is False:
                     self.__paused = True
-                    self.pause()
+                    self.cb_pause()
 
                 # resume this plugin if it was paused
                 if op=='resume_plugin' and self.__paused is True and self.__plugin_stopped is False:
                     self.__paused = False
-                    self.resume()
+                    self.cb_resume()
 
                 # answer the check alive call from the core
                 if op=='check_alive_status':

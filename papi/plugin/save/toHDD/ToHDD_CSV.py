@@ -51,13 +51,13 @@ class ToHDD_CSV(dpp_base):
 
         return True
 
-    def pause(self):
+    def cb_pause(self):
         for b in self.known_blocks.values():
             b['file'].close()
         print('toHDD pause')
         pass
 
-    def resume(self):
+    def cb_resume(self):
         for b in self.known_blocks.values():
             b['file'] = open(self.config['file']['value']+'.csv', 'a')
             b['csv'] =  csv.writer( b['file'], delimiter=self.config['delimiter']['value'],
@@ -88,11 +88,11 @@ class ToHDD_CSV(dpp_base):
             self.known_blocks[block_name]['csv'].writerows(rows)
 
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
        pass
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "log-type": {
                 'value': 1,
@@ -107,11 +107,11 @@ class ToHDD_CSV(dpp_base):
         }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         for b in self.known_blocks.values():
             b['file'].close()
 
         print('toHDD: will quit')
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass

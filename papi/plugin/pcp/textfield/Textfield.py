@@ -72,10 +72,10 @@ class Textfield(vip_base):
     def clicked(self):
         pass
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'size': {
                 'value': "(150,60)",
@@ -93,7 +93,7 @@ class Textfield(vip_base):
             }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
     def value_changed(self):
