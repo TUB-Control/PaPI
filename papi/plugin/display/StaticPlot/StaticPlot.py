@@ -164,7 +164,7 @@ class StaticPlot(vip_base):
 
         return True
 
-    def pause(self):
+    def cb_pause(self):
         """
         Function pause
 
@@ -172,7 +172,7 @@ class StaticPlot(vip_base):
         """
         pass
 
-    def resume(self):
+    def cb_resume(self):
         """
         Function resume
 
@@ -192,7 +192,7 @@ class StaticPlot(vip_base):
         """
         pass
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         """
         Function set parameters
 
@@ -290,7 +290,7 @@ class StaticPlot(vip_base):
 
 #        self.__plotWidget__.getPlotItem().getViewBox().setXRange(x_min, x_max)
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         This function is called whenever meta information are changed.
         This enables the plot to handle more than one input for plotting.
@@ -414,7 +414,7 @@ class StaticPlot(vip_base):
             self.control_api.do_set_parameter(self.__id__, 'yRange', '[' + float(mi) + ' ' + float(ma) + ']')
 
 
-    def quit(self):
+    def cb_quit(self):
         """
         Function quit plugin
 
@@ -422,7 +422,7 @@ class StaticPlot(vip_base):
         """
         print('StaticPlot: will quit')
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         """
         Function get plugin configuration
 

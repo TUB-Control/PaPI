@@ -34,11 +34,11 @@ class CPU_Load(iop_base):
         self.send_new_block_list([block1])
         return True
 
-    def pause(self):
+    def cb_pause(self):
         pass
 
 
-    def resume(self):
+    def cb_resume(self):
         pass
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
@@ -54,11 +54,11 @@ class CPU_Load(iop_base):
 
         time.sleep(self.delta_t)
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
 
-    def quit(self):
+    def cb_quit(self):
         print('CPU Load: will quit')
 
 
@@ -91,8 +91,8 @@ class CPU_Load(iop_base):
         load = 1-(idle_time/total_time)
         return load
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         return {}

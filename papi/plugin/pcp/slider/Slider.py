@@ -103,10 +103,10 @@ class Slider(vip_base):
     def clicked(self):
         pass
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'lower_bound': {
                 'value': '0.0'
@@ -143,7 +143,7 @@ class Slider(vip_base):
         if event.key() == Qt.Key_Minus:
             self.slider.setValue(self.slider.value() - 1)
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
     def new_parameter_info(self, dparameter_object):

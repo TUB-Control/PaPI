@@ -68,13 +68,13 @@ class PaPIController(vip_base):
         self.start_UDP_plugin()
         return True
 
-    def pause(self):
+    def cb_pause(self):
         # will be called, when plugin gets paused
         # can be used to get plugin in a defined state before pause
         # e.a. close communication ports, files etc.
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # will be called when plugin gets resumed
         # can be used to wake up the plugin from defined pause state
         # e.a. reopen communication ports, files etc.
@@ -194,17 +194,17 @@ class PaPIController(vip_base):
 
         self.thread_alive = False
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
         # if name == 'irgendeinParameter':
         #   do that .... with value
         pass
 
-    def quit(self):
+    def cb_quit(self):
         # do something before plugin will close, e.a. close connections ...
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         #
         # Implement a own part of the config
         # config is a hash of hass object
@@ -262,7 +262,7 @@ class PaPIController(vip_base):
         }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         Whenever the meta information is updated this function is called (if implemented).
 

@@ -81,7 +81,7 @@ class OptionalObject(object):
 
 
 class UDP_Plugin(iop_base):
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'address': {
                 'value': '127.0.0.1',
@@ -287,13 +287,13 @@ class UDP_Plugin(iop_base):
 
 
 
-    def pause(self):
+    def cb_pause(self):
         self.lock.acquire()
         self.thread_goOn = False
         self.lock.release()
         self.thread.join()
 
-    def resume(self):
+    def cb_resume(self):
         self.thread_goOn = True
         self.thread = threading.Thread(target=self.thread_execute, args=(self.HOST, self.SOURCE_PORT))
         self.thread.start()
@@ -660,7 +660,7 @@ class UDP_Plugin(iop_base):
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         if name in self.parameters:
             parameter = self.parameters[name]
             Pid = parameter.OptionalObject.ORTD_par_id
@@ -705,7 +705,7 @@ class UDP_Plugin(iop_base):
                 self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
 
 
-    def quit(self):
+    def cb_quit(self):
         self.lock.acquire()
         self.thread_goOn = False
         self.lock.release()
@@ -714,7 +714,7 @@ class UDP_Plugin(iop_base):
             self.sock_parameter.close()
         print('ORTD-Plugin will quit')
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
     def plconf(self):

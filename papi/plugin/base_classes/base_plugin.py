@@ -90,9 +90,9 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        return self.merge_configs(self.get_configuration_base(), self.get_plugin_configuration())
+        return self.merge_configs(self.get_configuration_base(), self.cb_get_plugin_configuration())
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         """
         Returns the plugin specific configuration. Must be implemented !
 
@@ -102,7 +102,7 @@ class base_plugin(IPlugin):
 
     # some control callback functions
     # ----------------------
-    def pause(self):
+    def cb_pause(self):
         """
         Called when the plugin should pause. Must be implemented !
 
@@ -110,7 +110,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def resume(self):
+    def cb_resume(self):
         """
         Called when the plugin should resume. Must be implemented !
 
@@ -118,7 +118,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def quit(self):
+    def cb_quit(self):
         """
         Called when the plugin should quit. Must be implemented !
 
@@ -126,7 +126,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def set_parameter(self, parameter_name, parameter_value):
+    def cb_set_parameter(self, parameter_name, parameter_value):
         """
         Called when a parameter was changed.
         This function is called with the parameter name and its current value. Must be implemented !
@@ -145,7 +145,7 @@ class base_plugin(IPlugin):
         :param value:
         :return:
         """
-        self.set_parameter(name, value)
+        self.cb_set_parameter(name, value)
 
 
     # some api functions
@@ -339,9 +339,9 @@ class base_plugin(IPlugin):
 
         self._dplugin_info = dplug
         self.__subscription_for_demux = self._dplugin_info.get_subscribtions()
-        self.plugin_meta_updated()
+        self.cb_plugin_meta_updated()
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         Function which is called when ever the meta information were updated.
 

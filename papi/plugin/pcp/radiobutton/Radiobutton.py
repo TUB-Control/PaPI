@@ -132,7 +132,7 @@ class Radiobutton(vip_base):
                 else:
                     self.emit_event(self.option_texts[i], self.event_choice)
 
-    def set_parameter(self, parameter_name, parameter_value):
+    def cb_set_parameter(self, parameter_name, parameter_value):
 
 
         if parameter_name == self.para_texts.name:
@@ -143,10 +143,10 @@ class Radiobutton(vip_base):
             self.set_option_values(parameter_value)
 
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'option_texts': {
                 'display_text' : 'Displayed Option',
@@ -173,7 +173,7 @@ class Radiobutton(vip_base):
             }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
     def new_parameter_info(self, dparameter_object):

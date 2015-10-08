@@ -104,7 +104,7 @@ class Button(vip_base):
         self.emit_event(str(val), self.event_click)
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "state1": {
                 'value': 0,
@@ -133,10 +133,10 @@ class Button(vip_base):
             } }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
     def new_parameter_info(self, dparameter_object):

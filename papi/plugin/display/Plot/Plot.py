@@ -309,7 +309,7 @@ class Plot(vip_base):
         self.initiate_update_plot()
         return True
 
-    def pause(self):
+    def cb_pause(self):
         """
         Function pause
 
@@ -317,7 +317,7 @@ class Plot(vip_base):
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=True, y=True)
 
-    def resume(self):
+    def cb_resume(self):
         """
         Function resume
 
@@ -389,7 +389,7 @@ class Plot(vip_base):
 
         # print("Plot time: %0.5f sec" % (self.__last_plot_time__) )
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         """
         Function set parameters
 
@@ -613,7 +613,7 @@ class Plot(vip_base):
 
         self.__new_added_data__ = 0
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         This function is called whenever meta information are changed.
         This enables the plot to handle more than one input for plotting.
@@ -1056,7 +1056,7 @@ class Plot(vip_base):
 
         self.config['yRange']['value'] = '[' + str(yRange[0]) + ' ' + str(yRange[1]) + ']'
 
-    def quit(self):
+    def cb_quit(self):
         """
         Function quit plugin
 
@@ -1065,7 +1065,7 @@ class Plot(vip_base):
         print('PlotPerformance: will quit')
 
     def debug_papi(self):
-        config = self.get_plugin_configuration()
+        config = self.get_cb_plugin_configuration()
 
         config['yRange'] =  {
             'value': '[0.0 50.0]',
@@ -1107,7 +1107,7 @@ class Plot(vip_base):
 
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         """
         Function get plugin configuration
 

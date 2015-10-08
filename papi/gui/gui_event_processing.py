@@ -194,7 +194,7 @@ class GuiEventProcessing(QtCore.QObject):
         if dplugin is not None:
             if dplugin.own_process is False:
                 try:
-                    dplugin.plugin.quit()
+                    dplugin.plugin.cb_quit()
                 except Exception as E:
                     tb = traceback.format_exc()
                     self.plugin_died.emit(dplugin, E, tb)
@@ -218,7 +218,7 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
             try:
-                dplugin.plugin.quit()
+                dplugin.plugin.cb_quit()
                 dplugin.state = PLUGIN_STATE_STOPPED
                 self.removed_dplugin.emit(dplugin)
                 self.dgui_changed.emit()
@@ -459,7 +459,7 @@ class GuiEventProcessing(QtCore.QObject):
 
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            dplugin.plugin.pause()
+            dplugin.plugin.cb_pause()
 
     def process_resume_plugin(self, event):
         """
@@ -473,7 +473,7 @@ class GuiEventProcessing(QtCore.QObject):
 
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            dplugin.plugin.resume()
+            dplugin.plugin.cb_resume()
 
     def process_parameter_info(self, event):
         """

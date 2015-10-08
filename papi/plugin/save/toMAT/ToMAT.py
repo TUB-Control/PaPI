@@ -72,11 +72,11 @@ class ToMAT(dpp_base):
 
         return True
 
-    def pause(self):
+    def cb_pause(self):
         print('toMAT pause')
         pass
 
-    def resume(self):
+    def cb_resume(self):
         print('toMAT resume')
         pass
 
@@ -104,7 +104,7 @@ class ToMAT(dpp_base):
                 self.saving = False
                 self.save_data_as_mat_file()
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         if name == 'start_saving':
             if value == '0':
                 if self.saving:
@@ -130,7 +130,7 @@ class ToMAT(dpp_base):
 
         self.data_to_save = {}
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
              "file": {
                 'value': 'log.mat',
@@ -139,7 +139,7 @@ class ToMAT(dpp_base):
         }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
 
         # quit during save process
         # save already known data
@@ -148,5 +148,5 @@ class ToMAT(dpp_base):
 
         print('toMAT: will quit')
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass

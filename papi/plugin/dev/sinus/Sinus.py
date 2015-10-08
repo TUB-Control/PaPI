@@ -77,11 +77,11 @@ class Sinus(iop_base):
 
         return True
 
-    def pause(self):
+    def cb_pause(self):
         print('Sinus pause')
         pass
 
-    def resume(self):
+    def cb_resume(self):
         print('Sinus resume')
         pass
 
@@ -105,12 +105,12 @@ class Sinus(iop_base):
 
         time.sleep(self.amax*0.005)
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         if name == self.para3.name:
             self.para3.value = float(value)
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "amax": {
                 'value': 3,
@@ -121,8 +121,8 @@ class Sinus(iop_base):
         }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         print('Sinus: will quit')
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
