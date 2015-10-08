@@ -175,7 +175,7 @@ class UDP_Plugin(iop_base):
         self.ControlBlock.add_signal(DSignal('ControllerSignalParameter'))
         self.ControlBlock.add_signal(DSignal('ControllerSignalClose'))
         self.ControlBlock.add_signal(DSignal('ActiveTab'))
-        self.send_new_block_list([self.ControlBlock])
+        self.pl_send_new_block_list([self.ControlBlock])
 
 
         self.t = 0
@@ -223,7 +223,7 @@ class UDP_Plugin(iop_base):
 
         self.ConsoleBlock = DBlock('ConsoleSignals')
         self.ConsoleBlock.add_signal(DSignal('MainSignal'))
-        self.send_new_block_list([self.ConsoleBlock])
+        self.pl_send_new_block_list([self.ConsoleBlock])
 
         self.consoleIn      = DParameter('consoleIn',default='')
         self.send_new_parameter_list([self.consoleIn])
@@ -237,7 +237,7 @@ class UDP_Plugin(iop_base):
         # Got a chunk of data from a console interface in the target server
         self.sio_count += 1
 
-        self.send_new_data(self.ConsoleBlock.name, [self.sio_count], {'MainSignal':data['Data']})
+        self.pl_send_new_data(self.ConsoleBlock.name, [self.sio_count], {'MainSignal':data['Data']})
 
     def SIO_callback_PAPICONFIG(self, data):
         # Got a new PaPI plugin configuration in JSON-format via socket.io connection
@@ -473,14 +473,14 @@ class UDP_Plugin(iop_base):
 
     def process_papi_configuration(self, toCreate, toClose, subs, paraConnections, activeTab):
 
-        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
+        self.pl_send_new_data('ControllerSignals', [1], {'ControlSignalReset': 1,
                                                               'ControlSignalCreate':None,
                                                               'ControlSignalSub':None,
                                                               'ControllerSignalParameter':None,
                                                               'ControllerSignalClose':None,
                                                               'ActiveTab': None })
 
-        self.send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
+        self.pl_send_new_data('ControllerSignals', [1], {'ControlSignalReset':0,
                                                               'ControlSignalCreate':toCreate,
                                                               'ControlSignalSub':subs,
                                                               'ControllerSignalParameter':paraConnections,
@@ -544,7 +544,7 @@ class UDP_Plugin(iop_base):
             sig_name = Source['SourceName']
             newBlock.add_signal(DSignal(sig_name))
 
-        self.send_new_block_list([newBlock])
+        self.pl_send_new_block_list([newBlock])
 
         # Remove BLOCKS
         #if 'SourceGroup'+str(self.block_id-1) in self.blocks:
@@ -653,9 +653,9 @@ class UDP_Plugin(iop_base):
 
                 if len(self.blocks[block].signals) == len(signals_to_send)+1:
                     if timestamp is None:
-                        self.send_new_data(block, [self.t], signals_to_send )
+                        self.pl_send_new_data(block, [self.t], signals_to_send )
                     else:
-                        self.send_new_data(block, [timestamp], signals_to_send )
+                        self.pl_send_new_data(block, [timestamp], signals_to_send )
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')

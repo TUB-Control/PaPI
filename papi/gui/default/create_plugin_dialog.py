@@ -54,7 +54,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         startup_config = plugin_info.plugin_object.get_startup_configuration()
         self.cfg = startup_config
         self.plugin_name = plugin_info.name
-        self.plugin_type = plugin_info.plugin_object.get_type()
+        self.plugin_type = plugin_info.plugin_object._get_type()
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
 

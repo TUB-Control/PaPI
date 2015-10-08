@@ -58,7 +58,7 @@ class Trigger(dpp_base):
         self.block3.add_signal(signal)
 
         blockList = [self.block1, self.block2, self.block3]
-        self.send_new_block_list(blockList)
+        self.pl_send_new_block_list(blockList)
 
         self.para3 = DParameter('Choose', default=0, Regex='\d+')
         para_l = [self.para3]
@@ -86,13 +86,13 @@ class Trigger(dpp_base):
         value = int(float(value))
         if name == self.para3.name:
             if value == 0:
-                self.send_new_data('Progress', [0], {'percent': [20]})
+                self.pl_send_new_data('Progress', [0], {'percent': [20]})
 
             if value == 1:
-                self.send_new_data('Trigger', [0], {'trigger': [0]})
+                self.pl_send_new_data('Trigger', [0], {'trigger': [0]})
 
             if value == 2:
-                self.send_new_data('ResetTrigger', [0], {'reset': [0]})
+                self.pl_send_new_data('ResetTrigger', [0], {'reset': [0]})
 
 
     def cb_get_plugin_configuration(self):

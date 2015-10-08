@@ -54,7 +54,7 @@ class base_visual(base_plugin):
         :param TabManger: The tab mananger.
         :return:
         """
-        super(base_visual, self).papi_init()
+        super(base_visual, self)._papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
@@ -273,7 +273,7 @@ class base_visual(base_plugin):
                     tabMenu.addAction(entry)
 
         ctrlMenu.addAction(subMenu_action)
-        if self.get_type() == PLUGIN_VIP_IDENTIFIER:
+        if self._get_type() == PLUGIN_VIP_IDENTIFIER:
            ctrlMenu.addAction(resume_action)
            ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)

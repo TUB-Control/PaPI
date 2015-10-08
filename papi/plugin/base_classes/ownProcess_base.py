@@ -59,7 +59,7 @@ class ownProcess_base(base_plugin):
         self.__paused = False
 
         # initialize the base class and all objects
-        self.papi_init()
+        self._papi_init()
 
         # working should go at least one time/cycle
         self.__goOn = 1
@@ -140,12 +140,12 @@ class ownProcess_base(base_plugin):
                         data = self.demux(opt.data_source_id, opt.block_name, opt.data)
                         self.cb_execute(Data=data, block_name = opt.block_name, plugin_uname= event.source_plugin_uname)
                     if opt.is_parameter is True:
-                        self.set_parameter_internal(opt.parameter_alias, opt.data)
+                        self._set_parameter_internal(opt.parameter_alias, opt.data)
 
                 # This case appears when a parameter gets changed through an api call e.g. in the overview menu
                 if op == 'set_parameter' and self.__plugin_stopped is False:
                     opt = event.get_optional_parameter()
-                    self.set_parameter_internal(opt.parameter_alias, opt.data)
+                    self._set_parameter_internal(opt.parameter_alias, opt.data)
 
                 # process a update with meta information from the core
                 if op == 'update_meta' and self.__plugin_stopped is False:

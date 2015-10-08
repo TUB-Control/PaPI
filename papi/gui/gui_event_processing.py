@@ -169,7 +169,7 @@ class GuiEventProcessing(QtCore.QObject):
                                 Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
                                 block_name=opt.block_name, plugin_uname=event.source_plugin_uname)
                         else:
-                            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+                            dplugin.plugin._set_parameter_internal(opt.parameter_alias, opt.data)
                     except Exception as E:
                         tb = traceback.format_exc()
 
@@ -308,7 +308,7 @@ class GuiEventProcessing(QtCore.QObject):
         config = dict(list(start_config.items()) + list(config.items()))
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
+        if plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin = self.gui_data.add_plugin(None, None, False, self.gui_queue, plugin, id)
@@ -442,7 +442,7 @@ class GuiEventProcessing(QtCore.QObject):
         # check if it exists
         if dplugin is not None:
             # it exists, so call its execute function
-            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+            dplugin.plugin._set_parameter_internal(opt.parameter_alias, opt.data)
         else:
             # plugin does not exist in DGUI
             self.log.printText(1, 'set_parameter, Plugin with id  ' + str(dID) + '  does not exist in DGui')

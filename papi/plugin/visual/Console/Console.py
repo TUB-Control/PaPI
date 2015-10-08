@@ -67,7 +67,7 @@ class Console(vip_base):
 
         block = DBlock('Command')
 
-        self.send_new_block_list([block])
+        self.pl_send_new_block_list([block])
 
         return True
 
@@ -210,7 +210,7 @@ class PaPIConsoleWidget(QWidget):
         self.write("<font color='green'>%s</font><br>\n"%cmd, html=True)
         sb = self.ui.output.verticalScrollBar()
         sb.setValue(sb.maximum())
-        self.plugin.send_parameter_change(cmd,'Command')
+        self.plugin.pl_send_parameter_change(cmd,'Command')
 
     def write(self, strn, html=False):
         self.ui.output.moveCursor(QtGui.QTextCursor.End)

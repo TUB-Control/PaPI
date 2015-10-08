@@ -70,7 +70,7 @@ class Fourier_Rect(iop_base):
         for i in range(1,self.max_approx):
             self.block1.add_signal(DSignal('rect'+str(i)))
 
-        self.send_new_block_list([self.block1])
+        self.pl_send_new_block_list([self.block1])
 
         return True
 
@@ -106,7 +106,7 @@ class Fourier_Rect(iop_base):
             for i in range(self.max_approx):
                 vech['rect'+str(i)] = data[i*self.amax:(i+1)*self.amax]
 
-            self.send_new_data('Rectangle', t, vech)
+            self.pl_send_new_data('Rectangle', t, vech)
 
         time.sleep(0.001*self.amax )
 

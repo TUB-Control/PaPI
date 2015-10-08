@@ -40,5 +40,5 @@ class vip_base(base_visual):
     def initiate_layer_0(self, config):
         raise NotImplementedError("Please Implement this method")
 
-    def get_type(self):
+    def _get_type(self):
         return PLUGIN_VIP_IDENTIFIER

@@ -105,7 +105,7 @@ class PapiTabManger(QObject):
             allPlugins = self.dGui.get_all_plugins()
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
-                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
+                if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
                     tabOfPlugin = dplugin.plugin.config['tab']['value']
                     if tabOfPlugin == old_name:
                         dplugin.plugin.config['tab']['value'] = new_name
@@ -122,7 +122,7 @@ class PapiTabManger(QObject):
             allPlugins = self.dGui.get_all_plugins()
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
-                if dplugin.plugin.get_type() == PLUGIN_VIP_IDENTIFIER:
+                if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
                     tabOfPlugin = dplugin.plugin.config['tab']['value']
                     if tabOfPlugin == old_name:
                         dplugin.plugin.config['tab']['value'] = new_name

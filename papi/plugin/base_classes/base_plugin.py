@@ -47,7 +47,7 @@ class base_plugin(IPlugin):
         self._dplugin_info = None
         self.__subscription_for_demux = None
 
-    def papi_init(self, ):
+    def _papi_init(self, ):
         """
         Used to initialized this class in the context of PaPI
 
@@ -56,7 +56,7 @@ class base_plugin(IPlugin):
         self._dplugin_info       = None
         self.__subscription_for_demux = None
 
-    def get_type(self):
+    def _get_type(self):
         """
         Returns the type of the plugin. Must be implemented !
 
@@ -90,7 +90,7 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        return self.merge_configs(self.get_configuration_base(), self.cb_get_plugin_configuration())
+        return self._merge_configs(self.get_configuration_base(), self.cb_get_plugin_configuration())
 
     def cb_get_plugin_configuration(self):
         """
@@ -137,7 +137,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def set_parameter_internal(self, name, value):
+    def _set_parameter_internal(self, name, value):
         """
         Internal function used to set parameters.
 
@@ -150,7 +150,7 @@ class base_plugin(IPlugin):
 
     # some api functions
     # ------------------
-    def merge_configs(self, cfg1, cfg2):
+    def _merge_configs(self, cfg1, cfg2):
         """
         This function is used to merge two configurations.
 
@@ -160,7 +160,7 @@ class base_plugin(IPlugin):
         """
         return dict(list(cfg1.items()) + list(cfg2.items()) )
 
-    def emit_event(self, data, event):
+    def pl_emit_event(self, data, event):
         """
         This function is used by plugins to emit a specific event.
 
@@ -171,9 +171,9 @@ class base_plugin(IPlugin):
         if isinstance(event, DEvent) == False and isinstance(event, str) == False:
             raise pe.WrongType("block",  [DEvent, str])
 
-        self.send_parameter_change(data, event)
+        self.pl_send_parameter_change(data, event)
 
-    def send_parameter_change(self, data, block):
+    def pl_send_parameter_change(self, data, block):
         """
         Internal function, should be not directly used anymore.
 
@@ -197,7 +197,7 @@ class base_plugin(IPlugin):
         event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
-    def send_new_data(self, block_name, time_line, data):
+    def pl_send_new_data(self, block_name, time_line, data):
         """
         This function is called by plugins to send new data for a single block.
 
@@ -216,7 +216,7 @@ class base_plugin(IPlugin):
         event = Event.data.NewData(self.__id__, 0, opt, None)
         self._Core_event_queue__.put(event)
 
-    def send_new_event_list(self, events):
+    def pl_send_new_event_list(self, events):
         """
         Used to inform the PaPI framework about all DEvents provided by this plugins.
 
@@ -235,9 +235,9 @@ class base_plugin(IPlugin):
             if not isinstance(event, DEvent):
                 raise pe.WrongType('events['+str(i)+']', DEvent)
 
-        self.send_new_block_list(events)
+        self.pl_send_new_block_list(events)
 
-    def send_new_block_list(self, blocks):
+    def pl_send_new_block_list(self, blocks):
         """
         Used to inform the PaPI framework about all DBlocks provided by this plugins.
 
