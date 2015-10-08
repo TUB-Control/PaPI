@@ -45,7 +45,7 @@ class Slider(vip_base):
 
         self.event_change = DEvent('Change')
 
-        self.send_new_event_list([self.event_change])
+        self.pl_send_new_event_list([self.event_change])
         self.set_widget_for_internal_usage(self.create_widget())
 
         return True
@@ -98,7 +98,7 @@ class Slider(vip_base):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.emit_event(str(val), self.event_change)
+        self.pl_emit_event(str(val), self.event_change)
 
     def clicked(self):
         pass

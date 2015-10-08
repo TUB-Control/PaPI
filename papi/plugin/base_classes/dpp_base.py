@@ -41,5 +41,5 @@ class dpp_base(ownProcess_base):
         return config
 
 
-    def get_type(self):
+    def _get_type(self):
         return PLUGIN_DPP_IDENTIFIER

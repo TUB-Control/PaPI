@@ -147,7 +147,7 @@ class StaticPlot(vip_base):
         self.__parameters__['yRange'] = \
             DParameter('yRange', '[0,1]',  Regex='^\[(\d+\.\d+)\s+(\d+\.\d+)\]$')
 
-        self.send_new_parameter_list(list(self.__parameters__.values()))
+        self.pl_send_new_parameter_list(list(self.__parameters__.values()))
 
         # ---------------------------
         # Create Legend

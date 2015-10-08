@@ -66,12 +66,12 @@ class Sinus(iop_base):
         #self.block4 = self.create_new_block('Sin4', [CORE_TIME_SIGNAL,'f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
 
         blockList = [self.block1, self.block2, self.block3]
-        self.send_new_block_list(blockList)
+        self.pl_send_new_block_list(blockList)
 
         self.para3 = DParameter('Frequenz Block SinMit_f3', default= 0.3, Regex='[0-9]+.[0-9]+')
         para_l = [self.para3]
 
-        self.send_new_parameter_list(para_l)
+        self.pl_send_new_parameter_list(para_l)
 
         print('Sinus started working')
 
@@ -99,9 +99,9 @@ class Sinus(iop_base):
             vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
             self.t += 0.005
 
-        self.send_new_data('SinMit_f1' , vec[0] , {'f1_1': vec[1] } )
-        self.send_new_data('SinMit_f2', vec2[0], {'f2_1': vec2[1]} )
-        self.send_new_data('SinMit_f3', vec3[0], {'f3_1': vec3[1], 'f3_2': vec3[2], 'f3_scalar': [10,10,10] } )
+        self.pl_send_new_data('SinMit_f1' , vec[0] , {'f1_1': vec[1] } )
+        self.pl_send_new_data('SinMit_f2', vec2[0], {'f2_1': vec2[1]} )
+        self.pl_send_new_data('SinMit_f3', vec3[0], {'f3_1': vec3[1], 'f3_2': vec3[2], 'f3_scalar': [10,10,10] } )
 
         time.sleep(self.amax*0.005)
 

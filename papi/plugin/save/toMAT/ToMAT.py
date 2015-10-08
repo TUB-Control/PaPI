@@ -61,7 +61,7 @@ class ToMAT(dpp_base):
         self.parameters['save_data_for_x_ms'] = DParameter('save_data_for_x_ms',default='0', Regex=pc.REGEX_SINGLE_INT)
         self.parameters['file'] = DParameter('file',default='')
 
-        self.send_new_parameter_list(list(self.parameters.values()))
+        self.pl_send_new_parameter_list(list(self.parameters.values()))
 
         self.time_slot = 0
         self.time_start = 0;

@@ -860,7 +860,7 @@ class Core:
         plugin_id = self.core_data.create_id()
 
         # checks if plugin is of not of type ViP, because these two will run in GUI process
-        if plugin.plugin_object.get_type() != PLUGIN_VIP_IDENTIFIER:
+        if plugin.plugin_object._get_type() != PLUGIN_VIP_IDENTIFIER:
             # So plugin will not run in GUI
             # it will need an own process and queue to function
 
@@ -868,7 +868,7 @@ class Core:
             plugin_queue = Queue()
 
             # decide if plugin will need to get Data from another plugin
-            if plugin.plugin_object.get_type() == PLUGIN_DPP_IDENTIFIER:
+            if plugin.plugin_object._get_type() == PLUGIN_DPP_IDENTIFIER:
                 # plugin will get data from another, so make its execution triggered by events
                 eventTriggered = True
             else:
@@ -894,7 +894,7 @@ class Core:
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
             dplug.plugin_identifier = plugin.name
             dplug.uname = optData.plugin_uname
-            dplug.type = plugin.plugin_object.get_type()
+            dplug.type = plugin.plugin_object._get_type()
             dplug.alive_count = self.alive_count
             dplug.startup_config = plugin_config
             dplug.path = plugin.path
@@ -915,7 +915,7 @@ class Core:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue,
                                               plugin, plugin_id)
             dplug.uname = optData.plugin_uname
-            dplug.type = plugin.plugin_object.get_type()
+            dplug.type = plugin.plugin_object._get_type()
             dplug.plugin_identifier = plugin.name
             dplug.startup_config = optData.plugin_config
             dplug.path = plugin.path

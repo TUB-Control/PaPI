@@ -43,7 +43,7 @@ class Radiobutton(vip_base):
 
         self.event_choice = DEvent('Choice')
 
-        self.send_new_event_list([self.event_choice])
+        self.pl_send_new_event_list([self.event_choice])
 
 
         para_list = []
@@ -54,7 +54,7 @@ class Radiobutton(vip_base):
         para_list.append(self.para_texts)
         para_list.append(self.para_values)
 
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
         self.central_widget = QWidget()
 
@@ -128,9 +128,9 @@ class Radiobutton(vip_base):
             if self.buttons[i].isChecked():
                 self.config['selected_index']['value'] = str(i)
                 if len(self.option_values) == len(self.option_texts):
-                    self.emit_event(self.option_values[i], self.event_choice)
+                    self.pl_emit_event(self.option_values[i], self.event_choice)
                 else:
-                    self.emit_event(self.option_texts[i], self.event_choice)
+                    self.pl_emit_event(self.option_texts[i], self.event_choice)
 
     def cb_set_parameter(self, parameter_name, parameter_value):
 

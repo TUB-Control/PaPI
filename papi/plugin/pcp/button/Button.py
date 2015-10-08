@@ -61,7 +61,7 @@ class Button(vip_base):
         self.text_down = (self.config['state2_text']['value'])
         self.button_state = 'up'
 
-        self.send_new_event_list([self.event_click])
+        self.pl_send_new_event_list([self.event_click])
 
         self.button = self.create_widget()
         self.set_widget_for_internal_usage(self.button)
@@ -101,7 +101,7 @@ class Button(vip_base):
             self.button.setText(self.text_up)
             val = self.value_up
 
-        self.emit_event(str(val), self.event_click)
+        self.pl_emit_event(str(val), self.event_click)
 
 
     def cb_get_plugin_configuration(self):

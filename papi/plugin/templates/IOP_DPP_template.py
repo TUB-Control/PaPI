@@ -56,7 +56,7 @@ class IOP_DPP_template(iop_base):
 
 
         # send block list
-        #   self.send_new_block_list([block1, block2, block3])
+        #   self.pl_send_new_block_list([block1, block2, block3])
 
         # create a parameter object
         #   self.para1 = DParameter('ParameterName',default=0)
@@ -64,7 +64,7 @@ class IOP_DPP_template(iop_base):
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
+        #   self.pl_send_new_parameter_list(para_list)
 
         # if wanted, change event mode to True, False, 'default'
         # self.set_event_trigger_mode('default')
@@ -100,7 +100,7 @@ class IOP_DPP_template(iop_base):
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         # implement cb_execute and send new data
-        #    self.send_new_data('blockName', timeVector, signals_to_send )
+        #    self.pl_send_new_data('blockName', timeVector, signals_to_send )
         # Attention: block_name has to match the name defined in start_init for the specific block
         # signals_to_send need to be a dict with "signalName->values"
 

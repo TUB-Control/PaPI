@@ -80,7 +80,7 @@ class TemplateName(vip_base):
 
         # build parameter list to send to Core
         #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
+        #   self.pl_send_new_parameter_list(para_list)
 
         # ---------------------------
         # Create Legend

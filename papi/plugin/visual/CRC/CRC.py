@@ -324,7 +324,7 @@ class CRC(vip_base):
         para_list = []
 
         # build parameter list to send to Core
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
 
         return True

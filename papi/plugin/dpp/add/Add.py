@@ -57,7 +57,7 @@ class Add(dpp_base):
         self.block1.add_signal(signal)
 
 
-        self.send_new_block_list([self.block1])
+        self.pl_send_new_block_list([self.block1])
 
 
         return True
@@ -102,7 +102,7 @@ class Add(dpp_base):
                     result = numpy.add(result, signal)
 
 
-        self.send_new_data('AddOut1', Data[CORE_TIME_SIGNAL], {'Sum':result})
+        self.pl_send_new_data('AddOut1', Data[CORE_TIME_SIGNAL], {'Sum':result})
 
 
 

@@ -23,7 +23,7 @@ class CPU_Load(iop_base):
         self.delta_t = 0.01
         self.para_delta_t = DParameter('Delta_t', default=0.01)
 
-        self.send_new_parameter_list([self.para_delta_t])
+        self.pl_send_new_parameter_list([self.para_delta_t])
 
         block1 = DBlock('CPUload')
 
@@ -31,7 +31,7 @@ class CPU_Load(iop_base):
         block1.add_signal(signal)
 
 
-        self.send_new_block_list([block1])
+        self.pl_send_new_block_list([block1])
         return True
 
     def cb_pause(self):
@@ -50,7 +50,7 @@ class CPU_Load(iop_base):
         self.t += self.delta_t
 
 
-        self.send_new_data('CPUload', vec[0], {'load_in_percent':vec[1]} )
+        self.pl_send_new_data('CPUload', vec[0], {'load_in_percent':vec[1]} )
 
         time.sleep(self.delta_t)
 

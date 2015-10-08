@@ -42,7 +42,7 @@ class Textfield(vip_base):
 
         self.event_change = DEvent('Change')
 
-        self.send_new_event_list([self.event_change])
+        self.pl_send_new_event_list([self.event_change])
         self.set_widget_for_internal_usage(self.create_widget())
 
         return True
@@ -67,7 +67,7 @@ class Textfield(vip_base):
         self.cmenu.exec_(gloPos)
 
     def value_changed(self, change):
-        self.emit_event(str(change), self.event_change)
+        self.pl_emit_event(str(change), self.event_change)
 
     def clicked(self):
         pass
@@ -98,7 +98,7 @@ class Textfield(vip_base):
 
     def value_changed(self):
         change = self.lineedit.text()
-        self.emit_event(str(change), self.event_change)
+        self.pl_emit_event(str(change), self.event_change)
 
     def new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
