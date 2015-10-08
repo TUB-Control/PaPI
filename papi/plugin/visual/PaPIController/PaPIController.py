@@ -80,7 +80,7 @@ class PaPIController(vip_base):
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
@@ -312,8 +312,8 @@ class PaPIController(vip_base):
 
 
         self.control_api.do_create_plugin('UDP_Plugin', self.udp_plugin_uname, ortd_cfg, True)
-
-        self.control_api.do_subscribe_uname(self.dplugin_info.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
+        dp_info = self.pl_get_dplugin_info()
+        self.control_api.do_subscribe_uname(dp_info.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',

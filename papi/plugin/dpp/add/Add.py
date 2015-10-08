@@ -69,7 +69,7 @@ class Add(dpp_base):
     def resume(self):
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         #self.approx = round(self.approx_max*self.para1.value)
 #        self.vec[1] = 0
 #        self.vec[0] = Data[0]

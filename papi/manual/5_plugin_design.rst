@@ -114,16 +114,16 @@ An event can be emitted as following e.g. as the result of clicking a button in 
 ... process new data
 ~~~~~~~~~~~~~~~~~~~~
 
-The function ``execute`` is called by the PaPI backend with a currently
+The function ``cb_execute`` is called by the PaPI backend with a currently
 received data set. Data is a dictionary with an entry 't' which contains
 the time vector. The other entries are data vectors. To determine the
-data source the corresponding block\_name is given for a single execute
+data source the corresponding block\_name is given for a single cb_execute
 step.
 
 .. code-block:: python
     :linenos:
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
        time = Data['t']
 
        for key in Data:
@@ -258,7 +258,7 @@ The PaPI framework executes this functions
         """
         pass
 
-This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``execute(Data, block_name, plugin_uname)`` function.
+This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``cb_execute(Data, block_name, plugin_uname)`` function.
 
 ... resume?
 ~~~~~~~~~~~
@@ -275,7 +275,7 @@ The PaPI framework executes this functions
         """
         pass
 
-This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``execute(Data, block_name, plugin_uname)`` function if necessary.
+This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``cb_execute(Data, block_name, plugin_uname)`` function if necessary.
 
 ... quit?
 ~~~~~~~~~

@@ -630,7 +630,8 @@ class UDP_Plugin(iop_base):
             self.signal_values[SourceId] = val
 
         else:
-            print('ORTD_PLUGIN - '+self.dplugin_info.uname+': received data with an unknown id ('+str(SourceId)+')')
+            dp_info = self.pl_get_dplugin_info()
+            print('ORTD_PLUGIN - '+dp_info.uname+': received data with an unknown id ('+str(SourceId)+')')
 
     def process_finished_action(self, SourceId, rev, timestamp=None):
         if SourceId == -1:
@@ -656,7 +657,7 @@ class UDP_Plugin(iop_base):
                     else:
                         self.send_new_data(block, [timestamp], signals_to_send )
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         raise Exception('Should not be called!')
 
     def set_parameter(self, name, value):

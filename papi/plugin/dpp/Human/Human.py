@@ -153,7 +153,7 @@ class Human(dpp_base):
         # Will be called when plugin gets resumed
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
         # IMPORTANT: The identification names have to be the same as written in RTmain.sce!
 

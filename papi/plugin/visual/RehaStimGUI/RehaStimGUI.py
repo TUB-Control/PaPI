@@ -708,7 +708,7 @@ class RehaStimGUI(vip_base, object):
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
         if self.signal_next_state in Data:
             next_state_nr = int(Data[self.signal_next_state][0])

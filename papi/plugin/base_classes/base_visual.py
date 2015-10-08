@@ -59,7 +59,7 @@ class base_visual(base_plugin):
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
         self.control_api = control_api
-        self.dplugin_info = dpluginInfo
+        self._dplugin_info = dpluginInfo
         self.TabManager = TabManger
         self.movable = True
 
@@ -171,8 +171,8 @@ class base_visual(base_plugin):
         :type widget: QWidget
         :return:
         """
-        self.widget = widget
-        self._subWindow.setWidget(self.widget)
+        self._widget = widget
+        self._subWindow.setWidget(self._widget)
 
 
     def window_move(self, event):
@@ -232,13 +232,13 @@ class base_visual(base_plugin):
         """
         return self._subWindow
 
-    def get_widget(self):
+    def pl_get_widget(self):
         """
         Getter method to get widget of plugin
 
         :return: QWidget
         """
-        return self.widget
+        return self._widget
 
     def create_control_context_menu(self):
         """
@@ -249,16 +249,16 @@ class base_visual(base_plugin):
 
         ctrlMenu = QMenu("Control")
 
-        del_action = QAction('Close plugin',self.widget)
+        del_action = QAction('Close plugin',self._widget)
         del_action.triggered.connect(self.ctlrMenu_exit)
 
-        pause_action = QAction('Pause plugin',self.widget)
+        pause_action = QAction('Pause plugin',self._widget)
         pause_action.triggered.connect(self.ctlrMenu_pause)
 
-        resume_action = QAction('Resume plugin',self.widget)
+        resume_action = QAction('Resume plugin',self._widget)
         resume_action.triggered.connect(self.ctlrMenu_resume)
 
-        subMenu_action = QAction('Open Signal Manager',self.widget)
+        subMenu_action = QAction('Open Signal Manager',self._widget)
         #subMenu_action.triggered.connect(self.ctlrMenu_resume)
 
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
@@ -267,7 +267,7 @@ class base_visual(base_plugin):
             tab_entrys = []
             for t in tabs:
                 if t != self.config['tab']['value']:
-                    entry = QAction(t, self.widget)
+                    entry = QAction(t, self._widget)
                     entry.triggered.connect(lambda ignore, p=t: self.tabMenu_move_triggered(p))
                     tab_entrys.append(entry)
                     tabMenu.addAction(entry)
@@ -300,7 +300,7 @@ class base_visual(base_plugin):
 
         :return:
         """
-        self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
+        self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
         print(self.config['tab']['value'])
 
     def ctlrMenu_pause(self):
@@ -309,7 +309,7 @@ class base_visual(base_plugin):
 
         :return:
         """
-        self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
+        self.control_api.do_pause_plugin_by_uname(self._dplugin_info.uname)
 
     def ctlrMenu_resume(self):
         """
@@ -317,4 +317,4 @@ class base_visual(base_plugin):
 
         :return:
         """
-        self.control_api.do_resume_plugin_by_uname(self.dplugin_info.uname)
+        self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)

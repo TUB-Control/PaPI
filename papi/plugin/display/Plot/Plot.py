@@ -325,9 +325,9 @@ class Plot(vip_base):
         """
         self.__plotWidget__.getPlotItem().getViewBox().setMouseEnabled(x=False, y=True)
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         """
-        Function execute
+        Function cb_execute
 
         :param Data:
         :param block_name:
@@ -620,8 +620,8 @@ class Plot(vip_base):
 
         :return:
         """
-
-        subscriptions = self.dplugin_info.get_subscribtions()
+        dp_info = self.pl_get_dplugin_info()
+        subscriptions = dp_info.get_subscribtions()
         changes = False
         current_signals = {}
         index = 0
@@ -988,8 +988,8 @@ class Plot(vip_base):
 
         :return:
         """
-
-        subscriptions = self.dplugin_info.get_subscribtions()
+        dp_info = self.pl_get_dplugin_info()
+        subscriptions = dp_info.get_subscribtions()
 
         for dpluginsub_id in subscriptions:
             for dblock_name in subscriptions[dpluginsub_id]:
