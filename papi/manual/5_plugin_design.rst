@@ -74,10 +74,11 @@ was defined
 
     def start_init(self, config=None):
 
-       self.block = DBlock('Source')
-       signal = DSignal('Step')
-       self.block.add_signal(signal)
-       self.send_new_block_list([block])
+        self.para_foo      = DParameter('foo',default=0)
+        self.para_bar      = DParameter('bar',default=0)
+        self.para_baz      = DParameter('baz',default=1, Regex='[0-9]+')
+
+        self.send_new_parameter_list(para_list)
 
 ... create Events
 ~~~~~~~~~~~~~~~~~
@@ -143,18 +144,18 @@ the string as float, or int.
     :linenos:
 
     def set_parameter(self, name, value):
-       if name == 'ParameterName1':
-          print(name + " --> " + str(value));
+        if name == 'ParameterName1':
+            print(name + " --> " + str(value));
 
-       if name == 'ParameterName2':
-          new_int = int(float(value))
-          print(name + " --> " + str(new_int))
+        if name == 'ParameterName2':
+            new_int = int(float(value))
+            print(name + " --> " + str(new_int))
 
-       if name == 'ParameterName3':
-          if int(float(value)) == int('1'):
-             print(name + " --> " + " True ")
-          else:
-             print(name + " --> " + " False ")
+        if name == 'ParameterName3':
+            if int(float(value)) == int('1'):
+                print(name + " --> " + " True ")
+            else:
+                print(name + " --> " + " False ")
 
 ...to create a configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,35 +167,35 @@ be modified by the user during the creation process.
     :linenos:
 
     def get_plugin_configuration(self):
-       config = {
-          'flag': {
-             'value': "0",
-             'regex': '^(1|0)$',
-             'type': 'bool',
-             'display_text': 'Flag',
-             'tooltip' : 'Checkable checkbox'
-          }, 
-          'color': {
-             'value': "(123,123,123)",
-             'regex': '^\(\d+\s*,\s*\d+\s*,\s*\d+\)$',
-             'type': 'color',   
-             'advanced': '1',
-             'display_text': 'Color'
-          }, 
-          'file': {
-             'value': "",
-             'advanced': '1',
-             'type' : 'file',
-             'display_text': 'Needed File',
-             'tooltip' : 'File needed by the plugin'
-          }, 
-          'text': {
-             'value': 'Wert',
-             'advanced': '1',
-             'display_text': 'Erweiterter Wert'
-          }
-       }
-       return config
+        config = {
+            'flag': {
+                'value': "0",
+                'regex': '^(1|0)$',
+                'type': 'bool',
+                'display_text': 'Flag',
+                'tooltip' : 'Checkable checkbox'
+          },
+            'color': {
+                'value': "(123,123,123)",
+                'regex': '^\(\d+\s*,\s*\d+\s*,\s*\d+\)$',
+                'type': 'color',
+                'advanced': '1',
+                'display_text': 'Color'
+            },
+            'file': {
+                'value': "",
+                'advanced': '1',
+                'type' : 'file',
+                'display_text': 'Needed File',
+                'tooltip' : 'File needed by the plugin'
+            },
+            'text': {
+                'value': 'Wert',
+                'advanced': '1',
+                'display_text': 'Erweiterter Wert'
+            }
+        }
+        return config
 
 As you can see it is possible to describe a single configuration attribute in a detailed way but only the key ``value`` is mandatory.
 
@@ -239,6 +240,16 @@ PaPI supports currently only the following types.
       - (0|1)
 
 In case of an unknown type or none type was defined a simple textfield is used.
+
+.. figure:: _static/design/PaPIFileDialog.png
+   :alt:
+
+   **File dialog.**
+
+.. figure:: _static/design/PaPIColorPicker.png
+   :alt:
+
+   **Color picker.**
 
 What happens if the user triggers ...
 -------------------------------------
