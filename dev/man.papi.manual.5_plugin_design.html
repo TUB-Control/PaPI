@@ -23,10 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
-    <link rel="up" title="PaPI Manual" href="man.papi.manual.html" />
-    <link rel="next" title="Matlab" href="man.papi.manual.6_Matlab.html" />
-    <link rel="prev" title="Examples" href="man.papi.manual.4_examples.html" /> 
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,14 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.6_Matlab.html" title="Matlab"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.4_examples.html" title="Examples"
-             accesskey="P">previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="man.papi.manual.html" accesskey="U">PaPI Manual</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -55,12 +48,32 @@
           <div class="body">
             
   <div class="section" id="design-guide-plugin-development">
-<h1>Design Guide Plugin development<a class="headerlink" href="#design-guide-plugin-development" title="Permalink to this headline">¶</a></h1>
+<span id="man-design-guide"></span><h1>Design Guide Plugin development<a class="headerlink" href="#design-guide-plugin-development" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="how-to">
 <h2>How to ...<a class="headerlink" href="#how-to" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="start">
 <h3>... start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h3>
-<p>It is recommended to use a given template as entry point for the
+<p>The plugins are written in python 3.4. For the development we recommend to use one of these tools:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Any editor with syntax highlighting (e.g. <a class="reference external" href="https://wiki.gnome.org/Apps/Gedit">gedit</a>, <a class="reference external" href="https://github.com/atom/atom">atom</a>)</li>
+<li><a class="reference external" href="https://www.jetbrains.com/pycharm/">PyCharm</a></li>
+</ul>
+</div></blockquote>
+<p>The name of a plugin has to be unique, in the following we will use <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> as a placeholder.</p>
+<p>The plugin directory <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> has to contain a plugin python file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.py</span></tt>, a plugin description file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.yapsy-plugin</span></tt>. Additionally it is possible and recommended to add a documentation as a plugin documentation file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> and a small icon as 16x16 png with the name <tt class="docutils literal"><span class="pre">box.png</span></tt>. Files, which are used in the rst-file, should be stored in the sub folder <tt class="docutils literal"><span class="pre">_static/manual</span></tt>, otherwise these files wont be recognized during the documentation build process.</p>
+<p>A sample folder structure is given here:</p>
+<div class="highlight-None"><div class="highlight"><pre>/LCDDisplay/
+    _static/manual/
+        LCDDisplay.png
+    LCDDisplay.py
+    LCDDisplay.rst
+    LCDDisplay.yapsy-plugin
+    box.png
+</pre></div>
+</div>
+<p>The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: <tt class="docutils literal"><span class="pre">papi/plugin/</span></tt></p>
+<p>It is recommended to use a given template for the <strong>plugin python file</strong>, which enables an ease entry point for the
 development of an own plugin. The template files can be found in
 <tt class="docutils literal"><span class="pre">papi/plugin/templates</span></tt>.</p>
 <ul class="simple">
@@ -69,13 +82,19 @@ or Data Processing Plugin.</li>
 <li><tt class="docutils literal"><span class="pre">visual_template.py</span></tt> - template for the development of visual
 Plugins.</li>
 </ul>
-<p>The plugins are written in python 3.4. For the development we recommend to use one of these tools:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Any editor with syntax highlighting (e.g. gedit, atom)</li>
-<li>PyCharm</li>
-</ul>
-</div></blockquote>
+<p>The <strong>plugin description</strong> file has to provide the following information as an ini file and must be stored as <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.yapsy-plugin</span></tt>.</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[Core]</span>
+<span class="na">Name</span> <span class="o">=</span> <span class="s">&lt;unique-plugin-name&gt;</span>
+<span class="na">Module</span> <span class="o">=</span> <span class="s">&lt;unique-plugin-name&gt;</span>
+
+<span class="k">[Documentation]</span>
+<span class="na">Author</span> <span class="o">=</span> <span class="s">Foo Bar</span>
+<span class="na">Version</span> <span class="o">=</span> <span class="s">1.0</span>
+<span class="na">Description</span> <span class="o">=</span> <span class="s">This FooBar plugin is used by PaPI.</span>
+<span class="na">Icon</span> <span class="o">=</span> <span class="s">License: &lt;URL&gt;, Provided by: &lt;URL&gt;</span>
+</pre></div>
+</div>
+<p>By using <a class="reference external" href="http://docutils.sourceforge.net/rst.html">rst</a> for the documentation, the <strong>plugin documentation</strong> file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> will be recognized during the documentation build process  .</p>
 </div>
 <div class="section" id="create-blocks">
 <h3>... create Blocks<a class="headerlink" href="#create-blocks" title="Permalink to this headline">¶</a></h3>
@@ -83,7 +102,7 @@ Plugins.</li>
 entire block and or a single signal can be subscribed by other plugins
 e.g. a plot.</p>
 <p>It is necessary to imports this objects:</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
 </pre></div>
 </div>
@@ -93,71 +112,91 @@ previous created Block. At the end the PaPI-backend will be informed and
 the Block can be used by other plugins. It is <strong>very important</strong> to know
 that the PaPI-backend only knows the last blocks sent by
 <tt class="docutils literal"><span class="pre">send_new_block_list</span></tt>. Previous sent blocks will be deleted.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
    <span class="n">signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">([</span><span class="n">block</span><span class="p">])</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 </div>
 <div class="section" id="create-parameters">
 <h3>... create Parameters<a class="headerlink" href="#create-parameters" title="Permalink to this headline">¶</a></h3>
 <p>Parameters are used to enable an external control of a running plugin.</p>
 <p>It is necessary to imports this object:</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
 </pre></div>
 </div>
 <p>At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries at the frontend for the third parameter a regex
-was defined</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+informed. To limit possible user entries in the frontend, a regex
+was defined for the</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 
-   <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
-   <span class="n">signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">([</span><span class="n">block</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">para_foo</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">para_bar</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;bar&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">para_baz</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;baz&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Regex</span><span class="o">=</span><span class="s">&#39;[0-9]+&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_new_parameter_list</span><span class="p">(</span><span class="n">para_list</span><span class="p">)</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 </div>
 <div class="section" id="create-events">
 <h3>... create Events<a class="headerlink" href="#create-events" title="Permalink to this headline">¶</a></h3>
 <p>Events are used to change parameters of other plugins.</p>
 <p>It is necessary to imports this object:</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DEvent</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DEvent</span>
 </pre></div>
 </div>
 <p>A new event is define by the following code. At the end the PaPI-backend will be informed and
 the event can be used to change parameters of other plugins. It is <strong>very important</strong> to know
 that the PaPI-backend only knows the last events sent by
 <tt class="docutils literal"><span class="pre">send_new_event_list</span></tt>. Previous sent events will be deleted.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 
    <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span>         <span class="o">=</span> <span class="n">DEvent</span><span class="p">(</span><span class="s">&#39;Start&#39;</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">send_new_event_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">])</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 <p>An event can be emitted as following e.g. as the result of clicking a button in the GUI.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">emit_event</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">)</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 </div>
 <div class="section" id="process-new-data">
 <h3>... process new data<a class="headerlink" href="#process-new-data" title="Permalink to this headline">¶</a></h3>
-<p>The function <tt class="docutils literal"><span class="pre">execute</span></tt> is called by the PaPI backend with a currently
+<p>The function <tt class="docutils literal"><span class="pre">cb_execute</span></tt> is called by the PaPI backend with a currently
 received data set. Data is a dictionary with an entry &#8216;t&#8217; which contains
 the time vector. The other entries are data vectors. To determine the
-data source the corresponding block_name is given for a single execute
+data source the corresponding block_name is given for a single cb_execute
 step.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
    <span class="n">time</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>
 
    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Data</span><span class="p">:</span>
       <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s">&#39;t&#39;</span><span class="p">:</span>
          <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 </div>
 <div class="section" id="to-react-to-parameter-changes">
 <h3>... to react to parameter changes<a class="headerlink" href="#to-react-to-parameter-changes" title="Permalink to this headline">¶</a></h3>
@@ -166,58 +205,99 @@ determine the modified parameter the parameter&#8217;s name is given as
 <tt class="docutils literal"><span class="pre">name</span></tt>, of course the new value is also given as <tt class="docutils literal"><span class="pre">value</span></tt>. The value
 is always from type <tt class="docutils literal"><span class="pre">string</span></tt> that means it may be necessary to cast
 the string as float, or int.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-   <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName1&#39;</span><span class="p">:</span>
-      <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName1&#39;</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
 
-   <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName2&#39;</span><span class="p">:</span>
-      <span class="n">new_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-      <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_int</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName2&#39;</span><span class="p">:</span>
+        <span class="n">new_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_int</span><span class="p">))</span>
 
-   <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName3&#39;</span><span class="p">:</span>
-      <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">):</span>
-         <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; True &quot;</span><span class="p">)</span>
-      <span class="k">else</span><span class="p">:</span>
-         <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; False &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName3&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; True &quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; False &quot;</span><span class="p">)</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 </div>
 <div class="section" id="to-create-a-configuration">
 <h3>...to create a configuration<a class="headerlink" href="#to-create-a-configuration" title="Permalink to this headline">¶</a></h3>
 <p>It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-   <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s">&#39;flag&#39;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;0&quot;</span><span class="p">,</span>
-         <span class="s">&#39;regex&#39;</span><span class="p">:</span> <span class="s">&#39;^(1|0)$&#39;</span><span class="p">,</span>
-         <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="s">&#39;bool&#39;</span><span class="p">,</span>
-         <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Flag&#39;</span><span class="p">,</span>
-         <span class="s">&#39;tooltip&#39;</span> <span class="p">:</span> <span class="s">&#39;Checkable checkbox&#39;</span>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;flag&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;0&quot;</span><span class="p">,</span>
+            <span class="s">&#39;regex&#39;</span><span class="p">:</span> <span class="s">&#39;^(1|0)$&#39;</span><span class="p">,</span>
+            <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="s">&#39;bool&#39;</span><span class="p">,</span>
+            <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Flag&#39;</span><span class="p">,</span>
+            <span class="s">&#39;tooltip&#39;</span> <span class="p">:</span> <span class="s">&#39;Checkable checkbox&#39;</span>
       <span class="p">},</span>
-      <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;(123,123,123)&quot;</span><span class="p">,</span>
-         <span class="s">&#39;regex&#39;</span><span class="p">:</span> <span class="s">&#39;^\(\d+\s*,\s*\d+\s*,\s*\d+\)$&#39;</span><span class="p">,</span>
-         <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="s">&#39;color&#39;</span><span class="p">,</span>
-         <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
-         <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Color&#39;</span>
-      <span class="p">},</span>
-      <span class="s">&#39;file&#39;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
-         <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
-         <span class="s">&#39;type&#39;</span> <span class="p">:</span> <span class="s">&#39;file&#39;</span><span class="p">,</span>
-         <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Needed File&#39;</span><span class="p">,</span>
-         <span class="s">&#39;tooltip&#39;</span> <span class="p">:</span> <span class="s">&#39;File needed by the plugin&#39;</span>
-      <span class="p">},</span>
-      <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
-         <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&#39;Wert&#39;</span><span class="p">,</span>
-         <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
-         <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Erweiterter Wert&#39;</span>
-      <span class="p">}</span>
-   <span class="p">}</span>
-   <span class="k">return</span> <span class="n">config</span>
+        <span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;(123,123,123)&quot;</span><span class="p">,</span>
+            <span class="s">&#39;regex&#39;</span><span class="p">:</span> <span class="s">&#39;^\(\d+\s*,\s*\d+\s*,\s*\d+\)$&#39;</span><span class="p">,</span>
+            <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="s">&#39;color&#39;</span><span class="p">,</span>
+            <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Color&#39;</span>
+        <span class="p">},</span>
+        <span class="s">&#39;file&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s">&#39;type&#39;</span> <span class="p">:</span> <span class="s">&#39;file&#39;</span><span class="p">,</span>
+            <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Needed File&#39;</span><span class="p">,</span>
+            <span class="s">&#39;tooltip&#39;</span> <span class="p">:</span> <span class="s">&#39;File needed by the plugin&#39;</span>
+        <span class="p">},</span>
+        <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&#39;Wert&#39;</span><span class="p">,</span>
+            <span class="s">&#39;advanced&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
+            <span class="s">&#39;display_text&#39;</span><span class="p">:</span> <span class="s">&#39;Erweiterter Wert&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">config</span>
 </pre></div>
-</div>
+</td></tr></table></div>
 <p>As you can see it is possible to describe a single configuration attribute in a detailed way but only the key <tt class="docutils literal"><span class="pre">value</span></tt> is mandatory.</p>
 <p>The other keys are used to provided a comfortable change of the attribute during the creation process.</p>
 <table border="1" class="docutils">
@@ -282,6 +362,14 @@ be modified by the user during the creation process.</p>
 </tbody>
 </table>
 <p>In case of an unknown type or none type was defined a simple textfield is used.</p>
+<div class="figure">
+<img alt="" src="_images/PaPIFileDialog.png" />
+<p class="caption"><strong>File dialog.</strong></p>
+</div>
+<div class="figure">
+<img alt="" src="_images/PaPIColorPicker.png" />
+<p class="caption"><strong>Color picker.</strong></p>
+</div>
 </div>
 </div>
 <div class="section" id="what-happens-if-the-user-triggers">
@@ -289,7 +377,7 @@ be modified by the user during the creation process.</p>
 <div class="section" id="pause">
 <h3>... pause?<a class="headerlink" href="#pause" title="Permalink to this headline">¶</a></h3>
 <p>The PaPI framework executes this functions</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function pause</span>
 
@@ -298,12 +386,12 @@ be modified by the user during the creation process.</p>
     <span class="k">pass</span>
 </pre></div>
 </div>
-<p>This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the <tt class="docutils literal"><span class="pre">execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function.</p>
+<p>This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the <tt class="docutils literal"><span class="pre">cb_execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function.</p>
 </div>
 <div class="section" id="resume">
 <h3>... resume?<a class="headerlink" href="#resume" title="Permalink to this headline">¶</a></h3>
 <p>The PaPI framework executes this functions</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function resume</span>
 
@@ -312,12 +400,12 @@ be modified by the user during the creation process.</p>
     <span class="k">pass</span>
 </pre></div>
 </div>
-<p>This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the <tt class="docutils literal"><span class="pre">execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function if necessary.</p>
+<p>This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the <tt class="docutils literal"><span class="pre">cb_execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function if necessary.</p>
 </div>
 <div class="section" id="quit">
 <h3>... quit?<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
 <p>The PaPI framework executes this functions</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function quit</span>
 
@@ -360,17 +448,25 @@ be modified by the user during the creation process.</p>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="man.papi.manual.4_examples.html"
-                        title="previous chapter">Examples</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="man.papi.manual.6_Matlab.html"
-                        title="next chapter">Matlab</a></p>
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.5_plugin_design.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -397,14 +493,10 @@ be modified by the user during the creation process.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.6_Matlab.html" title="Matlab"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.4_examples.html" title="Examples"
-             >previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="man.papi.manual.html" >PaPI Manual</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">

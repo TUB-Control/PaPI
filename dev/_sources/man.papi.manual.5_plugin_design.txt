@@ -1,3 +1,5 @@
+.. _man_design_guide:
+
 Design Guide Plugin development
 ===============================
 
@@ -7,7 +9,30 @@ How to ...
 ... start
 ~~~~~~~~~
 
-It is recommended to use a given template as entry point for the
+The plugins are written in python 3.4. For the development we recommend to use one of these tools:
+
+   - Any editor with syntax highlighting (e.g. `gedit <https://wiki.gnome.org/Apps/Gedit>`_, `atom <https://github.com/atom/atom>`_)
+   - `PyCharm <https://www.jetbrains.com/pycharm/>`_
+
+The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
+
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and recommended to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static/manual``, otherwise these files wont be recognized during the documentation build process.
+
+A sample folder structure is given here:
+
+.. code-block:: None
+
+    /LCDDisplay/
+        _static/manual/
+            LCDDisplay.png
+        LCDDisplay.py
+        LCDDisplay.rst
+        LCDDisplay.yapsy-plugin
+        box.png
+
+The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: ``papi/plugin/``
+
+It is recommended to use a given template for the **plugin python file**, which enables an ease entry point for the
 development of an own plugin. The template files can be found in
 ``papi/plugin/templates``.
 
@@ -16,11 +41,21 @@ development of an own plugin. The template files can be found in
 -  ``visual_template.py`` - template for the development of visual
    Plugins.
 
-The plugins are written in python 3.4. For the development we recommend to use one of these tools:
+The **plugin description** file has to provide the following information as an ini file and must be stored as ``<unique-plugin-name>.yapsy-plugin``.
 
-   - Any editor with syntax highlighting (e.g. gedit, atom)
-   - PyCharm
+.. code-block:: ini
 
+    [Core]
+    Name = <unique-plugin-name>
+    Module = <unique-plugin-name>
+
+    [Documentation]
+    Author = Foo Bar
+    Version = 1.0
+    Description = This FooBar plugin is used by PaPI.
+    Icon = License: <URL>, Provided by: <URL>
+
+By using `rst <http://docutils.sourceforge.net/rst.html>`_ for the documentation, the **plugin documentation** file ``<unique-plugin-name>.rst`` will be recognized during the documentation build process  .
 
 ... create Blocks
 ~~~~~~~~~~~~~~~~~
@@ -31,7 +66,7 @@ e.g. a plot.
 
 It is necessary to imports this objects:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DPlugin import DBlock
     from papi.data.DSignal import DSignal
@@ -43,7 +78,8 @@ the Block can be used by other plugins. It is **very important** to know
 that the PaPI-backend only knows the last blocks sent by
 ``send_new_block_list``. Previous sent blocks will be deleted.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
        self.block = DBlock('Source')
@@ -58,22 +94,24 @@ Parameters are used to enable an external control of a running plugin.
 
 It is necessary to imports this object:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DParameter import DParameter
 
 At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries at the frontend for the third parameter a regex
-was defined
+informed. To limit possible user entries in the frontend, a regex
+was defined for the
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
 
-       self.block = DBlock('Source')
-       signal = DSignal('Step')
-       self.block.add_signal(signal)
-       self.send_new_block_list([block])
+        self.para_foo      = DParameter('foo',default=0)
+        self.para_bar      = DParameter('bar',default=0)
+        self.para_baz      = DParameter('baz',default=1, Regex='[0-9]+')
+
+        self.send_new_parameter_list(para_list)
 
 ... create Events
 ~~~~~~~~~~~~~~~~~
@@ -82,7 +120,7 @@ Events are used to change parameters of other plugins.
 
 It is necessary to imports this object:
 
-.. code:: python
+.. code-block:: python
 
     from papi.data.DSignal import DEvent
 
@@ -91,7 +129,8 @@ the event can be used to change parameters of other plugins. It is **very import
 that the PaPI-backend only knows the last events sent by
 ``send_new_event_list``. Previous sent events will be deleted.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def start_init(self, config=None):
 
@@ -100,7 +139,8 @@ that the PaPI-backend only knows the last events sent by
 
 An event can be emitted as following e.g. as the result of clicking a button in the GUI.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
     
     def clicked_start_button(self):
         self.emit_event('1', self.event_start)
@@ -108,15 +148,16 @@ An event can be emitted as following e.g. as the result of clicking a button in 
 ... process new data
 ~~~~~~~~~~~~~~~~~~~~
 
-The function ``execute`` is called by the PaPI backend with a currently
+The function ``cb_execute`` is called by the PaPI backend with a currently
 received data set. Data is a dictionary with an entry 't' which contains
 the time vector. The other entries are data vectors. To determine the
-data source the corresponding block\_name is given for a single execute
+data source the corresponding block\_name is given for a single cb_execute
 step.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
        time = Data['t']
 
        for key in Data:
@@ -132,21 +173,22 @@ determine the modified parameter the parameter's name is given as
 is always from type ``string`` that means it may be necessary to cast
 the string as float, or int.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def set_parameter(self, name, value):
-       if name == 'ParameterName1':
-          print(name + " --> " + str(value));
+        if name == 'ParameterName1':
+            print(name + " --> " + str(value));
 
-       if name == 'ParameterName2':
-          new_int = int(float(value))
-          print(name + " --> " + str(new_int))
+        if name == 'ParameterName2':
+            new_int = int(float(value))
+            print(name + " --> " + str(new_int))
 
-       if name == 'ParameterName3':
-          if int(float(value)) == int('1'):
-             print(name + " --> " + " True ")
-          else:
-             print(name + " --> " + " False ")
+        if name == 'ParameterName3':
+            if int(float(value)) == int('1'):
+                print(name + " --> " + " True ")
+            else:
+                print(name + " --> " + " False ")
 
 ...to create a configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,38 +196,39 @@ the string as float, or int.
 It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.
 
-.. code:: python
+.. code-block:: python
+    :linenos:
 
     def get_plugin_configuration(self):
-       config = {
-          'flag': {
-             'value': "0",
-             'regex': '^(1|0)$',
-             'type': 'bool',
-             'display_text': 'Flag',
-             'tooltip' : 'Checkable checkbox'
-          }, 
-          'color': {
-             'value': "(123,123,123)",
-             'regex': '^\(\d+\s*,\s*\d+\s*,\s*\d+\)$',
-             'type': 'color',   
-             'advanced': '1',
-             'display_text': 'Color'
-          }, 
-          'file': {
-             'value': "",
-             'advanced': '1',
-             'type' : 'file',
-             'display_text': 'Needed File',
-             'tooltip' : 'File needed by the plugin'
-          }, 
-          'text': {
-             'value': 'Wert',
-             'advanced': '1',
-             'display_text': 'Erweiterter Wert'
-          }
-       }
-       return config
+        config = {
+            'flag': {
+                'value': "0",
+                'regex': '^(1|0)$',
+                'type': 'bool',
+                'display_text': 'Flag',
+                'tooltip' : 'Checkable checkbox'
+          },
+            'color': {
+                'value': "(123,123,123)",
+                'regex': '^\(\d+\s*,\s*\d+\s*,\s*\d+\)$',
+                'type': 'color',
+                'advanced': '1',
+                'display_text': 'Color'
+            },
+            'file': {
+                'value': "",
+                'advanced': '1',
+                'type' : 'file',
+                'display_text': 'Needed File',
+                'tooltip' : 'File needed by the plugin'
+            },
+            'text': {
+                'value': 'Wert',
+                'advanced': '1',
+                'display_text': 'Erweiterter Wert'
+            }
+        }
+        return config
 
 As you can see it is possible to describe a single configuration attribute in a detailed way but only the key ``value`` is mandatory.
 
@@ -231,6 +274,16 @@ PaPI supports currently only the following types.
 
 In case of an unknown type or none type was defined a simple textfield is used.
 
+.. figure:: _static/manual/design/PaPIFileDialog.png
+   :alt:
+
+   **File dialog.**
+
+.. figure:: _static/manual/design/PaPIColorPicker.png
+   :alt:
+
+   **Color picker.**
+
 What happens if the user triggers ...
 -------------------------------------
 
@@ -239,7 +292,7 @@ What happens if the user triggers ...
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def pause(self):
         """
@@ -249,14 +302,14 @@ The PaPI framework executes this functions
         """
         pass
 
-This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``execute(Data, block_name, plugin_uname)`` function.
+This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``cb_execute(Data, block_name, plugin_uname)`` function.
 
 ... resume?
 ~~~~~~~~~~~
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def resume(self):
         """
@@ -266,14 +319,14 @@ The PaPI framework executes this functions
         """
         pass
 
-This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``execute(Data, block_name, plugin_uname)`` function if necessary.
+This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``cb_execute(Data, block_name, plugin_uname)`` function if necessary.
 
 ... quit?
 ~~~~~~~~~
 
 The PaPI framework executes this functions
 
-.. code:: python
+.. code-block:: python
 
     def quit(self):
         """

@@ -36,7 +36,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -68,7 +71,7 @@
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="sd">GNU General Public License for more details.</span>
 <span class="sd"> </span>
-<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">You should have received a copy of the GNU General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="sd"> </span>
 <span class="sd">Contributors:</span>
@@ -214,11 +217,11 @@
                     <span class="c"># check if new_data is a parameter or new raw data</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                                <span class="n">Data</span><span class="o">=</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">demux</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
+                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_execute</span><span class="p">(</span>
+                                <span class="n">Data</span><span class="o">=</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_demux</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">data_source_id</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
                                 <span class="n">block_name</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">source_plugin_uname</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
                         <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
 
@@ -243,7 +246,7 @@
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_quit</span><span class="p">()</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
                     <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
@@ -267,7 +270,7 @@
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_quit</span><span class="p">()</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">removed_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
@@ -287,7 +290,7 @@
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_starting_sequence</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">())</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
                     <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_START_SUCCESFUL</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">added_dplugin</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -357,7 +360,7 @@
         <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">start_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
         <span class="c"># check if plugin in ViP (includes pcp) or something which is not running in the gui process</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
             <span class="c"># plugin in running in gui process</span>
             <span class="c"># add a new dplugin object to DGui and set its type and uname</span>
             <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
@@ -371,9 +374,9 @@
 
             <span class="c"># call the plugin developers init function with config</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span>
+                <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_init_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span>
                                            <span class="n">dpluginInfo</span><span class="o">=</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">(),</span><span class="n">TabManger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TabManger</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">start_init</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_starting_sequence</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
                     <span class="c"># start succcessfull</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">StartSuccessfull</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -381,7 +384,7 @@
 
                 <span class="c"># first set meta to plugin (meta infos in plugin)</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">PLUGIN_STATE_STOPPED</span><span class="p">]:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
                 <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">PLUGIN_STATE_STOPPED</span>
@@ -454,7 +457,7 @@
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">own_process</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">PLUGIN_STATE_STOPPED</span><span class="p">]:</span>
                     <span class="c"># try:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_update_plugin_meta</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">get_meta</span><span class="p">())</span>
                     <span class="c"># except Exception as E:</span>
                     <span class="c">#     dplugin.state = PLUGIN_STATE_STOPPED</span>
                     <span class="c">#     tb = traceback.format_exc()</span>
@@ -491,7 +494,7 @@
         <span class="c"># check if it exists</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c"># it exists, so call its execute function</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_set_parameter_internal</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># plugin does not exist in DGUI</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;set_parameter, Plugin with id  &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dID</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;  does not exist in DGui&#39;</span><span class="p">)</span>
@@ -508,7 +511,7 @@
 
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pause</span><span class="p">()</span>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_pause</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_resume_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_resume_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_resume_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -522,7 +525,7 @@
 
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">resume</span><span class="p">()</span>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_resume</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="GuiEventProcessing.process_parameter_info"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_parameter_info">[docs]</a>    <span class="k">def</span> <span class="nf">process_parameter_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -535,7 +538,7 @@
         <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">pl_id</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">new_parameter_info</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">dparameter_object</span><span class="p">)</span></div></div>
+            <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_new_parameter_info</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">dparameter_object</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -543,6 +546,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -569,7 +586,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

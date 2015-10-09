@@ -23,10 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
-    <link rel="up" title="PaPI Manual" href="man.papi.manual.html" />
-    <link rel="next" title="Installed plugins" href="man.papi.plugin.doc.html" />
-    <link rel="prev" title="Design Guide Plugin development" href="man.papi.manual.5_plugin_design.html" /> 
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,14 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.plugin.doc.html" title="Installed plugins"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.5_plugin_design.html" title="Design Guide Plugin development"
-             accesskey="P">previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="man.papi.manual.html" accesskey="U">PaPI Manual</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -184,6 +177,8 @@ A template <cite>template.slx</cite> can also be found in the same directory it 
 </div>
 <div class="section" id="block-configuration">
 <h2>Block Configuration<a class="headerlink" href="#block-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tab-1">
+<h3>Tab 1<a class="headerlink" href="#tab-1" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_1.png" />
 <p class="caption"><strong>This tab is used to describe the signals and parameters as they appear in PaPI.</strong></p>
@@ -194,7 +189,7 @@ Therefore, the first parameter has a size of 1, the second a size of 2, the thir
 It is also possible to describe if the signal should be splitted, which is the default case. Having a signal of dimension 4 which should be splitted leads to four different signals in PaPI, if not only one signal with the size four appears in PaPI.</p>
 <p>The field &#8216;Json config&#8217; can be used to provide a configuration which is sent to PaPI. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).</p>
 <div class="section" id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h4>
 <hr class="docutils" />
 <table border="1" class="docutils">
 <colgroup>
@@ -216,7 +211,7 @@ It is also possible to describe if the signal should be splitted, which is the d
 </div>
 <hr class="docutils" />
 <div class="section" id="signals">
-<h3>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h3>
+<h4>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h4>
 <hr class="docutils" />
 <table border="1" class="docutils">
 <colgroup>
@@ -238,20 +233,21 @@ It is also possible to describe if the signal should be splitted, which is the d
 </div>
 <hr class="docutils" />
 <div class="section" id="naming">
-<h3>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h3>
+<h4>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
 <div class="section" id="tab-2">
-<h4>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h4>
+<h3>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_2.png" />
 <p class="caption"><strong>This tab is used set the needed information for the udp communication.</strong></p>
 </div>
 </div>
 <div class="section" id="tab-3">
-<h4>Tab 3<a class="headerlink" href="#tab-3" title="Permalink to this headline">¶</a></h4>
+<h3>Tab 3<a class="headerlink" href="#tab-3" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_3.png" />
 <p class="caption"><strong>This tab provides the ability to set a sampling rate for the underlying blocks.</strong></p>
-</div>
 </div>
 </div>
 </div>
@@ -290,13 +286,14 @@ This must be done when different PaPI Blocks were used because this prevent a si
 <li><a class="reference internal" href="#build">Build</a></li>
 <li><a class="reference internal" href="#code-generation">Code generation</a></li>
 <li><a class="reference internal" href="#block-configuration">Block Configuration</a><ul>
+<li><a class="reference internal" href="#tab-1">Tab 1</a><ul>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
 <li><a class="reference internal" href="#signals">Signals</a></li>
-<li><a class="reference internal" href="#naming">Naming</a><ul>
-<li><a class="reference internal" href="#tab-2">Tab 2</a></li>
-<li><a class="reference internal" href="#tab-3">Tab 3</a></li>
+<li><a class="reference internal" href="#naming">Naming</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tab-2">Tab 2</a></li>
+<li><a class="reference internal" href="#tab-3">Tab 3</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#example-stateflow">Example: Stateflow</a></li>
@@ -304,17 +301,25 @@ This must be done when different PaPI Blocks were used because this prevent a si
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="man.papi.manual.5_plugin_design.html"
-                        title="previous chapter">Design Guide Plugin development</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="man.papi.plugin.doc.html"
-                        title="next chapter">Installed plugins</a></p>
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.6_Matlab.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -341,14 +346,10 @@ This must be done when different PaPI Blocks were used because this prevent a si
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.plugin.doc.html" title="Installed plugins"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.5_plugin_design.html" title="Design Guide Plugin development"
-             >previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="man.papi.manual.html" >PaPI Manual</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">

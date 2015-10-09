@@ -15,7 +15,11 @@ v.1.x:
 -  **gui**: Added shortcuts for actions of the main window for example: save, load
 -  **fix**: The connection between a PCP and a parameter will now be correctly restored.
 -  **fix**: 'PreviousParameter' from cfg will now be restored correctly
+-  **fix**: Removed old references to previous used license.
+-  **fix**: Various not mentionable bug fixes, see Github issue tracker.
 -  **plugin**: Plot plugin will now save zoom modifications done by scrolling
+-  **plugin**: Added prefix (cb\_/pl\_) for functions provided by plugins which can be used by plugin developer.
+-  **plugin**: Renamed ownProcess\_base to base\_ownProcess.
 
 v.1.2:
 ------
@@ -28,7 +32,7 @@ v.1.2:
 -  **plugin**: Added a new pcplugin: Textfield
 -  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
 -  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
--  **plugin**: A visual plugin can now open maximized.
+-  **plugin**: A visual plugin can now be opened maximized.
 -  **plugin**: Added a new visual plugin: Console. Mainly used to control scilab in connection with ORTD.
 -  **feature**: Added a simulink block which enables the communication
    between PaPI and simulink

@@ -36,7 +36,10 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -68,7 +71,7 @@
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="sd">GNU General Public License for more details.</span>
 
-<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">You should have received a copy of the GNU General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 <span class="sd">Contributors</span>
@@ -909,7 +912,7 @@
         <span class="n">plugin_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">create_id</span><span class="p">()</span>
 
         <span class="c"># checks if plugin is of not of type ViP, because these two will run in GUI process</span>
-        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
             <span class="c"># So plugin will not run in GUI</span>
             <span class="c"># it will need an own process and queue to function</span>
 
@@ -917,7 +920,7 @@
             <span class="n">plugin_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
 
             <span class="c"># decide if plugin will need to get Data from another plugin</span>
-            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_DPP_IDENTIFIER</span><span class="p">:</span>
                 <span class="c"># plugin will get data from another, so make its execution triggered by events</span>
                 <span class="n">eventTriggered</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -934,7 +937,7 @@
 
             <span class="c"># create Process object for new plugin</span>
             <span class="c"># set parameter for work function of plugin, such as queues, id and eventTriggered</span>
-            <span class="n">PluginProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">work_process</span><span class="p">,</span> \
+            <span class="n">PluginProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_work_process</span><span class="p">,</span> \
                                     <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">core_event_queue</span><span class="p">,</span> <span class="n">plugin_queue</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">eventTriggered</span><span class="p">,</span> \
                                           <span class="n">plugin_config</span><span class="p">,</span> <span class="n">optData</span><span class="o">.</span><span class="n">autostart</span><span class="p">))</span>
             <span class="n">PluginProcess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -943,7 +946,7 @@
             <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="n">PluginProcess</span><span class="p">,</span> <span class="n">PluginProcess</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">plugin_queue</span><span class="p">,</span> <span class="n">plugin</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">)</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span>
-            <span class="n">dplug</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
+            <span class="n">dplug</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">alive_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alive_count</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">plugin_config</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">path</span>
@@ -964,7 +967,7 @@
             <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_process</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_event_queue</span><span class="p">,</span>
                                               <span class="n">plugin</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">)</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_uname</span>
-            <span class="n">dplug</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
+            <span class="n">dplug</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">name</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">optData</span><span class="o">.</span><span class="n">plugin_config</span>
             <span class="n">dplug</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">path</span>
@@ -1442,6 +1445,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -1468,7 +1485,10 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

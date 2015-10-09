@@ -36,7 +36,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -68,7 +71,7 @@
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="sd">GNU General Public License for more details.</span>
 
-<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">You should have received a copy of the GNU General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 <span class="sd">Contributors</span>
@@ -504,7 +507,7 @@
             <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_quit</span><span class="p">()</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
                     <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
@@ -670,7 +673,8 @@
 </div>
 <div class="viewcode-block" id="Gui_api.config_loader_subs_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+<span class="sd">        Function for callback when timer finished to apply</span>
+<span class="sd">            subscriptions and parameter changed of config.</span>
 
 <span class="sd">        :param pl_to_start: list of plugins to start</span>
 <span class="sd">        :type pl_to_start: list</span>
@@ -679,9 +683,10 @@
 <span class="sd">        :param parameters_to_change: parameter changes to apply</span>
 <span class="sd">        :type parameters_to_change: list</span>
 <span class="sd">        :param signals_to_change: signal name changes to apply</span>
-<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :type signals_to_change: list</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s">&#39;dest&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;block&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;signals&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">])</span>
 
@@ -843,7 +848,8 @@
 </div>
 <div class="viewcode-block" id="Gui_api.config_loader_subs"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+<span class="sd">        Function for callback when timer finished to apply</span>
+<span class="sd">            subscriptions and parameter changed of config.</span>
 
 <span class="sd">        :param pl_to_start: list of plugins to start</span>
 <span class="sd">        :type pl_to_start: list</span>
@@ -852,9 +858,10 @@
 <span class="sd">        :param parameters_to_change: parameter changes to apply</span>
 <span class="sd">        :type parameters_to_change: list</span>
 <span class="sd">        :param signals_to_change: signal name changes to apply</span>
-<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :type signals_to_change: list</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
 
@@ -925,7 +932,7 @@
                 <span class="c"># check if this plugin should be saved to XML</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">plToSave</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 
                     <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">plugins_xml</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
                     <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
@@ -1091,7 +1098,7 @@
                 <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 
                 <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
                 <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
@@ -1195,7 +1202,7 @@
             <span class="c"># check if this plugin should be saved to XML</span>
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">plToSave</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 
                 <span class="n">to_create</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1334,6 +1341,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -1360,7 +1381,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

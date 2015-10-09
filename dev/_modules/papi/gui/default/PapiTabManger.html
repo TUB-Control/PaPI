@@ -36,7 +36,10 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li><a href="../default.html" accesskey="U">papi.gui.default</a> &raquo;</li> 
       </ul>
@@ -69,7 +72,7 @@
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="sd">GNU General Public License for more details.</span>
 <span class="sd"> </span>
-<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">You should have received a copy of the GNU General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="sd"> </span>
 <span class="sd">Contributors:</span>
@@ -155,7 +158,7 @@
             <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">pluign_ind</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
                 <span class="n">dplugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pluign_ind</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                     <span class="n">tabOfPlugin</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">tabOfPlugin</span> <span class="o">==</span> <span class="n">old_name</span><span class="p">:</span>
                         <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
@@ -172,7 +175,7 @@
             <span class="n">allPlugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dGui</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">pluign_ind</span> <span class="ow">in</span> <span class="n">allPlugins</span><span class="p">:</span>
                 <span class="n">dplugin</span> <span class="o">=</span> <span class="n">allPlugins</span><span class="p">[</span><span class="n">pluign_ind</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                     <span class="n">tabOfPlugin</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">tabOfPlugin</span> <span class="o">==</span> <span class="n">old_name</span><span class="p">:</span>
                         <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_name</span>
@@ -252,7 +255,7 @@
                 <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tab_name</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">tab_name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get_default_tab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">())</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">tab_name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get_default_tab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_sub_window</span><span class="p">())</span>
                         <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_tab</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_tab</span><span class="p">(</span><span class="n">tabOb</span><span class="p">)</span>
@@ -454,7 +457,7 @@
 
                         <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">:</span>
 
-                            <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">()</span>
+                            <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_sub_window</span><span class="p">()</span>
                             <span class="n">posX</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
                             <span class="n">posY</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span><span class="n">destTab</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">subwin</span><span class="p">,</span><span class="n">posX</span><span class="o">=</span><span class="n">posX</span><span class="p">,</span><span class="n">posY</span><span class="o">=</span><span class="n">posY</span><span class="p">)</span>
@@ -477,7 +480,7 @@
                 <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">pl_id</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                        <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_sub_window</span><span class="p">()</span>
+                        <span class="n">subwin</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_sub_window</span><span class="p">()</span>
                         <span class="n">posX</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
                         <span class="n">posY</span> <span class="o">=</span> <span class="n">subwin</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">moveFromTo</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">neWin</span><span class="o">.</span><span class="n">windowName</span><span class="p">,</span> <span class="n">subwin</span><span class="p">,</span><span class="n">posX</span><span class="o">=</span><span class="n">posX</span><span class="p">,</span><span class="n">posY</span><span class="o">=</span><span class="n">posY</span><span class="p">)</span>
@@ -667,6 +670,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
@@ -693,7 +710,10 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+    
         <li><a href="../../../../index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li><a href="../default.html" >papi.gui.default</a> &raquo;</li> 
       </ul>

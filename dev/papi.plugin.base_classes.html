@@ -23,10 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
-    <link rel="up" title="papi.plugin package" href="papi.plugin.html" />
-    <link rel="next" title="papi.plugin.visual package" href="papi.plugin.visual.html" />
-    <link rel="prev" title="papi.plugin package" href="papi.plugin.html" /> 
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,15 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.visual.html" title="papi.plugin.visual package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.html" title="papi.plugin package"
-             accesskey="P">previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="papi.html" >papi package</a> &raquo;</li>
-          <li><a href="papi.plugin.html" accesskey="U">papi.plugin package</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -60,6 +52,52 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-papi.plugin.base_classes.base_ownProcess">
+<span id="papi-plugin-base-classes-base-ownprocess-module"></span><h2>papi.plugin.base_classes.base_ownProcess module<a class="headerlink" href="#module-papi.plugin.base_classes.base_ownProcess" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+&lt;Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.plugin.base_classes.base_ownProcess.base_ownProcess">
+<em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.base_ownProcess.</tt><tt class="descname">base_ownProcess</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/base_ownProcess.html#base_ownProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_plugin.base_plugin" title="papi.plugin.base_classes.base_plugin.base_plugin"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_plugin.base_plugin</span></tt></a></p>
+<p>This plugin base should be used by a plugin if should run in an own process.
+It is not possible to create a widget which is displayed in the graphical interface of PaPI.</p>
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_get_current_config">
+<tt class="descname">pl_get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_ownProcess.html#base_ownProcess.pl_get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_get_current_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to get the current configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_set_event_trigger_mode">
+<tt class="descname">pl_set_event_trigger_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_ownProcess.html#base_ownProcess.pl_set_event_trigger_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_set_event_trigger_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables the plugin developer to set the event_trigger_mode. This meas that when set to TRUE, the
+plugin is set to be event triggered which means that the cb_execute function will only be called when
+a new event (newData) arrives.</p>
+<p>default will mean the default value for the specific plugin type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; True, False, or &#8216;default&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-papi.plugin.base_classes.base_plugin">
 <span id="papi-plugin-base-classes-base-plugin-module"></span><h2>papi.plugin.base_classes.base_plugin module<a class="headerlink" href="#module-papi.plugin.base_classes.base_plugin" title="Permalink to this headline">¶</a></h2>
 <p>Contributors:
@@ -71,52 +109,8 @@ Sven Knuth</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">papi.yapsy.IPlugin.IPlugin</span></tt></p>
 <p>This class is used as basis class for all other plugin bases</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.demux">
-<tt class="descname">demux</tt><big>(</big><em>source_id</em>, <em>block_name</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.demux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.demux" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internal function which is called to demux all signals.
-This function will make sure that only the subscribed signals will be transferred to the plugin.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>source_id</strong> &#8211; </li>
-<li><strong>block_name</strong> &#8211; </li>
-<li><strong>data</strong> &#8211; </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.emit_event">
-<tt class="descname">emit_event</tt><big>(</big><em>data</em>, <em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.emit_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.emit_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used by plugins to emit a specific event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> &#8211; New value provided by the DEvent</li>
-<li><strong>event</strong> &#8211; DEvent which should be emitted.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.execute">
-<tt class="descname">execute</tt><big>(</big><em>Data=None</em>, <em>block_name=None</em>, <em>plugin_uname=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.execute" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_execute">
+<tt class="descname">cb_execute</tt><big>(</big><em>Data=None</em>, <em>block_name=None</em>, <em>plugin_uname=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called by the PaPI framework when new date can be processed.  Must be implemented !</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -137,9 +131,9 @@ This function will make sure that only the subscribed signals will be transferre
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.get_configuration_base">
-<tt class="descname">get_configuration_base</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.get_configuration_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.get_configuration_base" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the base configuration. Must be implemented !</p>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_get_plugin_configuration">
+<tt class="descname">cb_get_plugin_configuration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_get_plugin_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_get_plugin_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plugin specific configuration. Must be implemented !</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -151,14 +145,78 @@ This function will make sure that only the subscribed signals will be transferre
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.get_plugin_configuration">
-<tt class="descname">get_plugin_configuration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.get_plugin_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.get_plugin_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the plugin specific configuration. Must be implemented !</p>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_pause">
+<tt class="descname">cb_pause</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the plugin should pause.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_plugin_meta_updated">
+<tt class="descname">cb_plugin_meta_updated</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_plugin_meta_updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_plugin_meta_updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which is called when ever the meta information were updated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_quit">
+<tt class="descname">cb_quit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the plugin should quit. Must be implemented !</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_resume">
+<tt class="descname">cb_resume</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the plugin should resume.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_set_parameter">
+<tt class="descname">cb_set_parameter</tt><big>(</big><em>parameter_name</em>, <em>parameter_value</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a parameter was changed.
+This function is called with the parameter name and its current value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameter_name</strong> &#8211; Name of parameter</li>
+<li><strong>parameter_value</strong> &#8211; New value of the parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -180,30 +238,16 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.get_type">
-<tt class="descname">get_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the type of the plugin. Must be implemented !</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.merge_configs">
-<tt class="descname">merge_configs</tt><big>(</big><em>cfg1</em>, <em>cfg2</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.merge_configs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.merge_configs" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used to merge two configurations.</p>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_emit_event">
+<tt class="descname">pl_emit_event</tt><big>(</big><em>data</em>, <em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_emit_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_emit_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used by plugins to emit a specific event.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cfg1</strong> &#8211; </li>
-<li><strong>cfg2</strong> &#8211; </li>
+<li><strong>data</strong> &#8211; New value provided by the DEvent</li>
+<li><strong>event</strong> &#8211; DEvent which should be emitted.</li>
 </ul>
 </td>
 </tr>
@@ -215,78 +259,22 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.papi_init">
-<tt class="descname">papi_init</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.papi_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.papi_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to initialized this class in the context of PaPI</p>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_get_dplugin_info">
+<tt class="descname">pl_get_dplugin_info</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_dplugin_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_dplugin_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the dplugin info object of type DPlugin</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">DPlugin Object</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pause">
-<tt class="descname">pause</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pause" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the plugin should pause. Must be implemented !</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.plugin_meta_updated">
-<tt class="descname">plugin_meta_updated</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.plugin_meta_updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.plugin_meta_updated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function which is called when ever the meta information were updated.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.quit">
-<tt class="descname">quit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.quit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the plugin should quit. Must be implemented !</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.resume">
-<tt class="descname">resume</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.resume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when the plugin should resume. Must be implemented !</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_delete_block">
-<tt class="descname">send_delete_block</tt><big>(</big><em>block</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_delete_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_delete_block" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_delete_block">
+<tt class="descname">pl_send_delete_block</tt><big>(</big><em>block</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_delete_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_delete_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to inform the PaPI framework that a single DBlock was deleted.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -301,8 +289,8 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_delete_parameter">
-<tt class="descname">send_delete_parameter</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_delete_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_delete_parameter" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_delete_parameter">
+<tt class="descname">pl_send_delete_parameter</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_delete_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_delete_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to inform the PaPI framework that a single DParameter was deleted.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -317,8 +305,8 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_block_list">
-<tt class="descname">send_new_block_list</tt><big>(</big><em>blocks</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_block_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_block_list" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_block_list">
+<tt class="descname">pl_send_new_block_list</tt><big>(</big><em>blocks</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_new_block_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_block_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to inform the PaPI framework about all DBlocks provided by this plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -333,8 +321,8 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_data">
-<tt class="descname">send_new_data</tt><big>(</big><em>block_name</em>, <em>time_line</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_data" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_data">
+<tt class="descname">pl_send_new_data</tt><big>(</big><em>block_name</em>, <em>time_line</em>, <em>data</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_new_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is called by plugins to send new data for a single block.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -355,8 +343,8 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_event_list">
-<tt class="descname">send_new_event_list</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_event_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_event_list" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_event_list">
+<tt class="descname">pl_send_new_event_list</tt><big>(</big><em>events</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_new_event_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_event_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to inform the PaPI framework about all DEvents provided by this plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -371,94 +359,14 @@ and the plugin configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_new_parameter_list">
-<tt class="descname">send_new_parameter_list</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_new_parameter_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_new_parameter_list" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_parameter_list">
+<tt class="descname">pl_send_new_parameter_list</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_send_new_parameter_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_send_new_parameter_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to inform the PaPI framework about all DParameters provided by this plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> &#8211; List of DParameters</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.send_parameter_change">
-<tt class="descname">send_parameter_change</tt><big>(</big><em>data</em>, <em>block</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.send_parameter_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.send_parameter_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internal function, should be not directly used anymore.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> &#8211; </li>
-<li><strong>block</strong> &#8211; </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.set_parameter">
-<tt class="descname">set_parameter</tt><big>(</big><em>parameter_name</em>, <em>parameter_value</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.set_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called when a parameter was changed.
-This function is called with the parameter name and its current value. Must be implemented !</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>parameter_name</strong> &#8211; Name of parameter</li>
-<li><strong>parameter_value</strong> &#8211; New value of the parameter</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.set_parameter_internal">
-<tt class="descname">set_parameter_internal</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.set_parameter_internal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.set_parameter_internal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internal function used to set parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> &#8211; </li>
-<li><strong>value</strong> &#8211; </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.update_plugin_meta">
-<tt class="descname">update_plugin_meta</tt><big>(</big><em>dplug</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.update_plugin_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.update_plugin_meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function which is used to update all meta information which are known by the PaPI framework.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dplug</strong> &#8211; DPlugin object containg all known information</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
@@ -480,8 +388,17 @@ Stefan Ruppin</p>
 <p>This class is used by all plugins which are not running in an own process.
 They are all executed the gui process.</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.create_control_context_menu">
-<tt class="descname">create_control_context_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.create_control_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.create_control_context_menu" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_visual.base_visual.cb_new_parameter_info">
+<tt class="descname">cb_new_parameter_info</tt><big>(</big><em>dparameter_object</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.cb_new_parameter_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.cb_new_parameter_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will be called to notify a plugin that a new parameter subscription was done and will give
+information about the init values
+:param dparameter_object: DParameter
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_visual.base_visual.pl_create_control_context_menu">
+<tt class="descname">pl_create_control_context_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.pl_create_control_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.pl_create_control_context_menu" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will create the general PaPI Control context menu to be used in Plugins.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -494,64 +411,8 @@ They are all executed the gui process.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_exit">
-<tt class="descname">ctlrMenu_exit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.ctlrMenu_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback function for context menu for closing plugins</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_pause">
-<tt class="descname">ctlrMenu_pause</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.ctlrMenu_pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_pause" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback function for context menu for pausing plugins</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_resume">
-<tt class="descname">ctlrMenu_resume</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.ctlrMenu_resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.ctlrMenu_resume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback function for context menu for resuming plugins</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.get_configuration_base">
-<tt class="descname">get_configuration_base</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.get_configuration_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.get_configuration_base" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the basic configuration for this plugin base.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.get_current_config">
-<tt class="descname">get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.get_current_config" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_visual.base_visual.pl_get_current_config">
+<tt class="descname">pl_get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.pl_get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.pl_get_current_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to get the current configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -564,22 +425,8 @@ They are all executed the gui process.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.get_sub_window">
-<tt class="descname">get_sub_window</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.get_sub_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.get_sub_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getter method to get subwindow of plugin</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">QMdiSubWindow</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.get_widget">
-<tt class="descname">get_widget</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.get_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.get_widget" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_visual.base_visual.pl_get_widget">
+<tt class="descname">pl_get_widget</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.pl_get_widget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.pl_get_widget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Getter method to get widget of plugin</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -592,50 +439,8 @@ They are all executed the gui process.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.init_plugin">
-<tt class="descname">init_plugin</tt><big>(</big><em>CoreQueue</em>, <em>pluginQueue</em>, <em>id</em>, <em>control_api</em>, <em>dpluginInfo=None</em>, <em>TabManger=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.init_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.init_plugin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internal initialize function called by the PaPI framework;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>CoreQueue</strong> &#8211; Queue used to send messages to the Core.</li>
-<li><strong>pluginQueue</strong> &#8211; Queue which is used by the PaPI framework to send messages to this plugins.</li>
-<li><strong>id</strong> &#8211; The internal plugin ID.</li>
-<li><strong>control_api</strong> &#8211; Access to the control_api provided by the PaPI framework.</li>
-<li><strong>dpluginInfo</strong> &#8211; Meta information about this plugin.</li>
-<li><strong>TabManger</strong> &#8211; The tab mananger.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.initiate_layer_1">
-<tt class="descname">initiate_layer_1</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.initiate_layer_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.initiate_layer_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is called when the PaPI framework has called all internal function which are
-needed to initialize the plugin. This function should be filled by the plugin developer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; Startup configuration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.set_widget_for_internal_usage">
-<tt class="descname">set_widget_for_internal_usage</tt><big>(</big><em>widget</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.set_widget_for_internal_usage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.set_widget_for_internal_usage" title="Permalink to this definition">¶</a></dt>
+<dt id="papi.plugin.base_classes.base_visual.base_visual.pl_set_widget_for_internal_usage">
+<tt class="descname">pl_set_widget_for_internal_usage</tt><big>(</big><em>widget</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.pl_set_widget_for_internal_usage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.pl_set_widget_for_internal_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Will take QWidget and will place it in the subwindow</p>
 <p>Gets called by plugin developer!</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -643,100 +448,6 @@ needed to initialize the plugin. This function should be filled by the plugin de
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>widget</strong> (<em>QWidget</em>) &#8211; QWidget</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.set_window_for_internal_usage">
-<tt class="descname">set_window_for_internal_usage</tt><big>(</big><em>subwindow</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.set_window_for_internal_usage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.set_window_for_internal_usage" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function will take a subwindow and will prepare all his call back function to work within PaPI
-It will also set the window reference for later use.</p>
-<p>:param subwindow
-:type subwindow: QMdiSubWindow
-:return:</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.start_init">
-<tt class="descname">start_init</tt><big>(</big><em>config=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.start_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.start_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internal start function called by the PaPI framework;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.tabMenu_move_triggered">
-<tt class="descname">tabMenu_move_triggered</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.tabMenu_move_triggered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.tabMenu_move_triggered" title="Permalink to this definition">¶</a></dt>
-<dd><p>This callback function gets called when the user clicked on the moveToTab action at the context menu.
-Will start the process of moving the plugin window to another tab</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> &#8211; TabName to be moved to</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.window_mouse_move">
-<tt class="descname">window_mouse_move</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.window_mouse_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.window_mouse_move" title="Permalink to this definition">¶</a></dt>
-<dd><p>New callback function for mouse move of a subwindow.
-Will do some PaPI specific tasks and then call the original subwindow callback function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.window_move">
-<tt class="descname">window_move</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.window_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.window_move" title="Permalink to this definition">¶</a></dt>
-<dd><p>New callback function for movement of a subwindow.
-Will do some PaPI specific tasks and then call the original subwindow callback function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.window_resize">
-<tt class="descname">window_resize</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.window_resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.window_resize" title="Permalink to this definition">¶</a></dt>
-<dd><p>New callback function for resizing of a subwindow.
-Will do some PaPI specific tasks and then call the original subwindow callback function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
@@ -754,22 +465,21 @@ Will do some PaPI specific tasks and then call the original subwindow callback f
 <dl class="class">
 <dt id="papi.plugin.base_classes.dpp_base.dpp_base">
 <em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.dpp_base.</tt><tt class="descname">dpp_base</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/dpp_base.html#dpp_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.dpp_base.dpp_base" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base" title="papi.plugin.base_classes.ownProcess_base.ownProcess_base"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.ownProcess_base.ownProcess_base</span></tt></a></p>
+<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess" title="papi.plugin.base_classes.base_ownProcess.base_ownProcess"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_ownProcess.base_ownProcess</span></tt></a></p>
 <p>This kind of plugin is to process data provided by other plugins.</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.dpp_base.dpp_base.get_configuration_base">
-<tt class="descname">get_configuration_base</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/dpp_base.html#dpp_base.get_configuration_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.dpp_base.dpp_base.get_configuration_base" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.dpp_base.dpp_base.get_type">
-<tt class="descname">get_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/dpp_base.html#dpp_base.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.dpp_base.dpp_base.get_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.dpp_base.dpp_base.initiate_layer_0">
-<tt class="descname">initiate_layer_0</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/dpp_base.html#dpp_base.initiate_layer_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.dpp_base.dpp_base.initiate_layer_0" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="papi.plugin.base_classes.dpp_base.dpp_base.cb_initialize_plugin">
+<tt class="descname">cb_initialize_plugin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/dpp_base.html#dpp_base.cb_initialize_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.dpp_base.dpp_base.cb_initialize_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to be implemented by the plugin developer for the init phase of a plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -781,125 +491,17 @@ Will do some PaPI specific tasks and then call the original subwindow callback f
 <dl class="class">
 <dt id="papi.plugin.base_classes.iop_base.iop_base">
 <em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.iop_base.</tt><tt class="descname">iop_base</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/iop_base.html#iop_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.iop_base.iop_base" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base" title="papi.plugin.base_classes.ownProcess_base.ownProcess_base"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.ownProcess_base.ownProcess_base</span></tt></a></p>
+<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess" title="papi.plugin.base_classes.base_ownProcess.base_ownProcess"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_ownProcess.base_ownProcess</span></tt></a></p>
 <p>This plugin is used to create an interface to different data sources.</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.iop_base.iop_base.get_configuration_base">
-<tt class="descname">get_configuration_base</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/iop_base.html#iop_base.get_configuration_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.iop_base.iop_base.get_configuration_base" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.iop_base.iop_base.get_type">
-<tt class="descname">get_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/iop_base.html#iop_base.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.iop_base.iop_base.get_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.iop_base.iop_base.initiate_layer_0">
-<tt class="descname">initiate_layer_0</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/iop_base.html#iop_base.initiate_layer_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.iop_base.iop_base.initiate_layer_0" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-papi.plugin.base_classes.ownProcess_base">
-<span id="papi-plugin-base-classes-ownprocess-base-module"></span><h2>papi.plugin.base_classes.ownProcess_base module<a class="headerlink" href="#module-papi.plugin.base_classes.ownProcess_base" title="Permalink to this headline">¶</a></h2>
-<p>Contributors:
-&lt;Stefan Ruppin</p>
-<dl class="class">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base">
-<em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.ownProcess_base.</tt><tt class="descname">ownProcess_base</tt><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_plugin.base_plugin" title="papi.plugin.base_classes.base_plugin.base_plugin"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_plugin.base_plugin</span></tt></a></p>
-<p>This plugin base should be used by a plugin if should run in an own process.
-It is not possible to create a widget which is displayed in the graphical interface of PaPI.</p>
-<dl class="method">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base.evaluate_event_trigger">
-<tt class="descname">evaluate_event_trigger</tt><big>(</big><em>default</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base.evaluate_event_trigger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base.evaluate_event_trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Will evaluate the event trigger mode and set it to the needed value</p>
+<dt id="papi.plugin.base_classes.iop_base.iop_base.cb_initialize_plugin">
+<tt class="descname">cb_initialize_plugin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/iop_base.html#iop_base.cb_initialize_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.iop_base.iop_base.cb_initialize_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to be implemented by the plugin developer for the init phase of a plugin</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>default</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base.set_event_trigger_mode">
-<tt class="descname">set_event_trigger_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base.set_event_trigger_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base.set_event_trigger_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Enables the plugin developer to set the event_trigger_mode. This meas that when set to TRUE, the
-plugin is set to be event triggered which means that the execute function will only be called when
-a new event (newData) arrives.</p>
-<p>default will mean the default value for the specific plugin type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mode</strong> &#8211; True, False, or &#8216;default&#8217;</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base.start_init">
-<tt class="descname">start_init</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base.start_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base.start_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Needs to be implemented by plugin developer</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base.starting_sequence">
-<tt class="descname">starting_sequence</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base.starting_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base.starting_sequence" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the starting point for the operation of a plugin.
-This function will start the plugin. Therefore it will call the setup function and will report
-the success of the start to the core by sending an event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.ownProcess_base.ownProcess_base.work_process">
-<tt class="descname">work_process</tt><big>(</big><em>CoreQueue</em>, <em>pluginQueue</em>, <em>id</em>, <em>defaultEventTriggered=False</em>, <em>config=None</em>, <em>autostart=True</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ownProcess_base.html#ownProcess_base.work_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ownProcess_base.ownProcess_base.work_process" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the main working function of plugins running in their own process.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>CoreQueue</strong> &#8211; multiprocessing queue of core for plugin to send data</li>
-<li><strong>pluginQueue</strong> &#8211; multiprocessing queue for plugin to receive data</li>
-<li><strong>id</strong> &#8211; Plugin id</li>
-<li><strong>defaultEventTriggered</strong> &#8211; event mode</li>
-<li><strong>config</strong> &#8211; Pluign intial cfg</li>
-<li><strong>autostart</strong> &#8211; Should plugin start immediately after call?</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -918,19 +520,18 @@ Stefan Ruppin</p>
 <dd><p>Bases: <a class="reference internal" href="#papi.plugin.base_classes.base_visual.base_visual" title="papi.plugin.base_classes.base_visual.base_visual"><tt class="xref py py-class docutils literal"><span class="pre">papi.plugin.base_classes.base_visual.base_visual</span></tt></a></p>
 <p>Base class to inherent from when creation a visual plugin for th gui</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.vip_base.vip_base.get_type">
-<tt class="descname">get_type</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.get_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.get_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.vip_base.vip_base.initiate_layer_0">
-<tt class="descname">initiate_layer_0</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.initiate_layer_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.initiate_layer_0" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.vip_base.vip_base.initiate_layer_1">
-<tt class="descname">initiate_layer_1</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.initiate_layer_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.initiate_layer_1" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="papi.plugin.base_classes.vip_base.vip_base.cb_initialize_plugin">
+<tt class="descname">cb_initialize_plugin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/vip_base.html#vip_base.cb_initialize_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.vip_base.vip_base.cb_initialize_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function to be implemented by the plugin developer for the init phase of a plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -950,28 +551,36 @@ Stefan Ruppin</p>
   <ul>
 <li><a class="reference internal" href="#">papi.plugin.base_classes package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-papi.plugin.base_classes.base_ownProcess">papi.plugin.base_classes.base_ownProcess module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.base_plugin">papi.plugin.base_classes.base_plugin module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.base_visual">papi.plugin.base_classes.base_visual module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.dpp_base">papi.plugin.base_classes.dpp_base module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.iop_base">papi.plugin.base_classes.iop_base module</a></li>
-<li><a class="reference internal" href="#module-papi.plugin.base_classes.ownProcess_base">papi.plugin.base_classes.ownProcess_base module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.vip_base">papi.plugin.base_classes.vip_base module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.plugin.html"
-                        title="previous chapter">papi.plugin package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="papi.plugin.visual.html"
-                        title="next chapter">papi.plugin.visual package</a></p>
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.plugin.base_classes.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -998,15 +607,10 @@ Stefan Ruppin</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.visual.html" title="papi.plugin.visual package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="papi.plugin.html" title="papi.plugin package"
-             >previous</a> |</li>
+    
         <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
-          <li><a href="papi.html" >papi package</a> &raquo;</li>
-          <li><a href="papi.plugin.html" >papi.plugin package</a> &raquo;</li> 
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">

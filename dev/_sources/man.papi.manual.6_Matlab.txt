@@ -130,7 +130,7 @@ Due to a new version of ert_linux, it is needed to use **C89/C90 (ANSI)** as def
 Block Configuration
 -------------------
 Tab 1
-^^^^^
+~~~~~
 .. figure:: _static/manual/matlab/Tab_1.png
    :figwidth: 40%
    :alt:
@@ -146,7 +146,7 @@ It is also possible to describe if the signal should be splitted, which is the d
 The field 'Json config' can be used to provide a configuration which is sent to PaPI. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).
 
 Parameters
-~~~~~~~~~~
+^^^^^^^^^^
 
 
 .. |Parameter_Example_1| image:: _static/manual/matlab/Parameter_Example_1.png
@@ -174,7 +174,7 @@ Parameters
 ------------
 
 Signals
-~~~~~~~
+^^^^^^^
 
 
 .. |Signal_Example_1| image:: _static/manual/matlab/Signal_Example_1.png
@@ -202,11 +202,11 @@ Signals
 ------------
 
 Naming
-~~~~~~
+^^^^^^
 
 
 Tab 2
-^^^^^
+~~~~~
 .. figure:: _static/manual/matlab/Tab_2.png
    :figwidth: 40%
    :alt:
@@ -214,7 +214,7 @@ Tab 2
    **This tab is used set the needed information for the udp communication.**
 
 Tab 3
-^^^^^
+~~~~~
 .. figure:: _static/manual/matlab/Tab_3.png
    :figwidth: 40%
    :alt:

@@ -23,9 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.2.0 documentation" href="index.html" />
-    <link rel="next" title="Installation" href="man.papi.manual.1_installation.html" />
-    <link rel="prev" title="papi.tests package" href="papi.tests.html" /> 
+    <link rel="top" title="papi 1.2.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,13 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.1_installation.html" title="Installation"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="papi.tests.html" title="papi.tests package"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -73,8 +68,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="man.papi.manual.2_introduction.html#papi-plugins">PaPI Plugins</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#signal-blocks-and-parameters">Signal, Blocks and Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#signal-blocks">Signal/Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#events">Events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-architecture">Plugin Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#functions">Functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-init">Plugin init</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-execution">plugin execution</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-quit">plugin quit</a></li>
@@ -126,9 +124,9 @@
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.6_Matlab.html#build">Build</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.6_Matlab.html#code-generation">Code generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.6_Matlab.html#block-configuration">Block Configuration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#parameters">Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#signals">Signals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#naming">Naming</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#tab-1">Tab 1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#tab-2">Tab 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.6_Matlab.html#tab-3">Tab 3</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.6_Matlab.html#example-stateflow">Example: Stateflow</a></li>
@@ -144,17 +142,25 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.tests.html"
-                        title="previous chapter">papi.tests package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="man.papi.manual.1_installation.html"
-                        title="next chapter">Installation</a></p>
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc_framework.html">Framework</a> </li>
+	  </li>
+	</ul>
+	
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -181,13 +187,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="man.papi.manual.1_installation.html" title="Installation"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="papi.tests.html" title="papi.tests package"
-             >previous</a> |</li>
-        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">
