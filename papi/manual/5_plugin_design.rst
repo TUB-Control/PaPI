@@ -9,7 +9,30 @@ How to ...
 ... start
 ~~~~~~~~~
 
-It is recommended to use a given template as entry point for the
+The plugins are written in python 3.4. For the development we recommend to use one of these tools:
+
+   - Any editor with syntax highlighting (e.g. `gedit <https://wiki.gnome.org/Apps/Gedit>`_, `atom <https://github.com/atom/atom>`_)
+   - `PyCharm <https://www.jetbrains.com/pycharm/>`_
+
+The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
+
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and recommended to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
+
+A sample folder structure is given here:
+
+.. code-block:: None
+
+    /LCDDisplay/
+        _static/
+            LCDDisplay.png
+        LCDDisplay.py
+        LCDDisplay.rst
+        LCDDisplay.yapsy-plugin
+        box.png
+
+The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: ``papi/plugin/``
+
+It is recommended to use a given template for the **plugin python file**, which enables an ease entry point for the
 development of an own plugin. The template files can be found in
 ``papi/plugin/templates``.
 
@@ -18,11 +41,21 @@ development of an own plugin. The template files can be found in
 -  ``visual_template.py`` - template for the development of visual
    Plugins.
 
-The plugins are written in python 3.4. For the development we recommend to use one of these tools:
+The **plugin description** file has to provide the following information as an ini file and must be stored as ``<unique-plugin-name>.yapsy-plugin``.
 
-   - Any editor with syntax highlighting (e.g. `gedit <https://wiki.gnome.org/Apps/Gedit>`_, `atom <https://github.com/atom/atom>`_)
-   - `PyCharm <https://www.jetbrains.com/pycharm/>`_
+.. code-block:: ini
 
+    [Core]
+    Name = <unique-plugin-name>
+    Module = <unique-plugin-name>
+
+    [Documentation]
+    Author = Foo Bar
+    Version = 1.0
+    Description = This FooBar plugin is used by PaPI.
+    Icon = License: <URL>, Provided by: <URL>
+
+By using `rst <http://docutils.sourceforge.net/rst.html>`_ for the documentation, the **plugin documentation** file ``<unique-plugin-name>.rst`` will be recognized during the documentation build process  .
 
 ... create Blocks
 ~~~~~~~~~~~~~~~~~
@@ -66,8 +99,8 @@ It is necessary to imports this object:
     from papi.data.DParameter import DParameter
 
 At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries at the frontend for the third parameter a regex
-was defined
+informed. To limit possible user entries in the frontend, a regex
+was defined for the
 
 .. code-block:: python
     :linenos:

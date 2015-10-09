@@ -621,7 +621,8 @@ class Gui_api(QtCore.QObject):
 
     def config_loader_subs_reloaded(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
         """
-        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+        Function for callback when timer finished to apply
+            subscriptions and parameter changed of config.
 
         :param pl_to_start: list of plugins to start
         :type pl_to_start: list
@@ -630,9 +631,10 @@ class Gui_api(QtCore.QObject):
         :param parameters_to_change: parameter changes to apply
         :type parameters_to_change: list
         :param signals_to_change: signal name changes to apply
-        :type signals_to_change list
+        :type signals_to_change: list
         :return:
         """
+
         for sub in subs_to_make:
             self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
 
@@ -794,7 +796,8 @@ class Gui_api(QtCore.QObject):
 
     def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
         """
-        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+        Function for callback when timer finished to apply
+            subscriptions and parameter changed of config.
 
         :param pl_to_start: list of plugins to start
         :type pl_to_start: list
@@ -803,9 +806,10 @@ class Gui_api(QtCore.QObject):
         :param parameters_to_change: parameter changes to apply
         :type parameters_to_change: list
         :param signals_to_change: signal name changes to apply
-        :type signals_to_change list
+        :type signals_to_change: list
         :return:
         """
+
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 

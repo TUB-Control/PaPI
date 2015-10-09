@@ -49,8 +49,7 @@ PaPI divided the plugin structure in 4 types of plugins:
 
     - IO Plugin(IOP): Input-Output Plugins, runs in separate process, generates new data for PaPI, e.g. UDP Receiver, ORTD
     - DP Plugin(DPP): Data Processing Plugins, runs in separate process, process data in PaPI, get data from PapI, generate new data for PaPI, e.g. adding signals
-    - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot
-    - PC Plugin(PCP): Parameter Control Plugin, runs in GUI process, used to be a control element for setting paramter of other plugins, e.g. Slider
+    - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot, or to provide control elements for setting parameter,  e.g. Slider.
 
 Signal/Blocks
 -------------
@@ -99,30 +98,97 @@ Plugin Architecture
 
 PaPI uses a flag based plugin interaction. That means that plugins that
 want to be integrated in PaPI need to implement a list of callback
-functions. These callback functions will be called by PaPI to use the
-plugin. There are some functions that must be implemented and some
-functions that are optional.
+functions.
 
-Mandatory to implement are:
-    - ``start_init(self, config=None)`` [for IOP/DPP],
-    - ``initiate_layer_0(self, config=None)`` [for VIP]
-    - ``execute(self, Data=None, block_name = None, plugin_uname = None)``
-    - ``quit(self)``
+The PaPI framework provides two kind of functions for the development of plugin which can or must be implemented.
 
-These three functions defines the core functionality of a plugin. To see
-more detailed information on how to create a plugin, refer to: :ref:`Design guide plugin <man_design_guide>`
+| ``callback functions``: These functions are called by the PaPI framework to interact with plugin.
+| ``plugin function``: These function are called by the plugin developer to communicate with the PaPI framework.
+
+These functions defines the core functionality of a plugin. To see more detailed information on how to create a plugin, refer to: :ref:`Design guide plugin <man_design_guide>`
+
+There are some ``callback functions`` that must be implemented and some functions that are optional.
+
+
+Functions
+~~~~~~~~~
+
+Callback functions
+++++++++++++++++++
+
+These functions can be used by all types of plugins in which the highlighted functions must be implemented.
+
+.. code-block:: python
+    :emphasize-lines: 1-4
+
+    self.cb_initialize_plugin()
+    self.cb_execute(Data, block_name, plugin_uname)
+    self.cb_quit()
+    self.cb_get_plugin_configuration()
+    self.cb_pause()
+    self.cb_resume()
+    self.cb_set_parameter(self, parameter_name, parameter_value)
+    self.cb_plugin_meta_updated()
+
+
+These functions can only be used by plugins of type ViP.
+
+.. code-block:: python
+
+    self.cb_new_parameter_info(dparameter_object)
+
+
+Plugin functions
+++++++++++++++++
+
+These functions can be used by all types of plugins:
+
+.. code-block:: python
+
+    self.pl_emit_event(data, event)
+    self.pl_send_new_data(self, block_name, time_line, data)
+    self.pl_send_new_event_list(events)
+    self.pl_send_new_block_list(blocks)
+    self.pl_send_new_parameter_list(parameters)
+    self.pl_send_delete_block(block)
+    self.pl_send_delete_parameter(parameter)
+    self.pl_get_dplugin_info()
+
+These functions can only be used by plugins of type ViP.
+
+.. code-block:: python
+
+    self.pl_create_control_context_menu()
+    self.pl_get_widget()
+    self.pl_set_widget_for_internal_usage()
+    self.pl_get_current_config()
+
+These functions can only be used by plugins of type IOP or DPP.
+
+.. code-block:: python
+
+    self.pl_set_event_trigger_mode(true|false)
+    self.pl_get_current_config()
+
 
 Plugin init
 ~~~~~~~~~~~
 
-When creating a plugin the function ``start_init`` or ``initiate_layer_0`` will be
-called which depends on the type of plugin ( IOP/DPP or VIP). These functions can be used to do all basic initialization
+When creating a plugin the function ``cb_initialize_plugin`` will be
+called. These functions can be used to do all basic initialization
 needed for the plugin to run, e.g. open widgets or open network
 connections. It is mandatory that this function returns true at the end
 otherwise the plugin will not be started! One important part of the init
 method is to define the signals this plugin will offer to PaPI.
 
 For simple cases this function should be used to create blocks with signals, parameters and events. For more advanced application it is also possible to create blocks, signals, parameters and events at run-time that means after the initiate function were called.
+
+The figure below shows the chain of called function by the PaPI framework if a plugin should be initialized.
+
+.. figure:: _static/introduction/PaPIInitializePlugin.png
+   :alt:
+
+   **Functions called to initialize a plugin.**
 
 plugin execution
 ~~~~~~~~~~~~~~~~

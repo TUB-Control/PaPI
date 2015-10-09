@@ -80,6 +80,7 @@ PaPI is embedding:
 <ul>
 <li>Yapsy 1.10.423 published under BSD-License, <a href="http://yapsy.sourceforge.net/#license">License</a></li>
 <li>pyqtgraph-0.9.10 published under MIT-License, <a href="http://www.opensource.org/licenses/mit-license.php">License</a></li>
+<li>JSONlab 1.1 published under BSD-License and GPLv3, <a href="https://github.com/fangq/jsonlab">License</a></li>
 </ul>
 </body
 </html>

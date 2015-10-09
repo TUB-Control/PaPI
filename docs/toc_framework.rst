@@ -3,11 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PaPI's documentation!
-================================
-
-README: :doc:`README`
-CHANGELOG: :doc:`CHANGELOG`
+Framework
+=========
 
 PaPI Framework:
 
@@ -16,16 +13,6 @@ PaPI Framework:
    :glob:
 
    papi
-
-Manuals :
-
-.. toctree::
-   :maxdepth: 2
-   :glob:
-
-   man.papi.manual
-   man.papi.plugin.doc
-
 
 
 Indices and tables
