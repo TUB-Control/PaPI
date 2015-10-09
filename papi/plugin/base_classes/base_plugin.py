@@ -171,9 +171,9 @@ class base_plugin(IPlugin):
         if isinstance(event, DEvent) == False and isinstance(event, str) == False:
             raise pe.WrongType("block",  [DEvent, str])
 
-        self.pl_send_parameter_change(data, event)
+        self._send_parameter_change(data, event)
 
-    def pl_send_parameter_change(self, data, block):
+    def _send_parameter_change(self, data, block):
         """
         Internal function, should be not directly used anymore.
 

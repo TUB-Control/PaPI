@@ -210,7 +210,7 @@ class PaPIConsoleWidget(QWidget):
         self.write("<font color='green'>%s</font><br>\n"%cmd, html=True)
         sb = self.ui.output.verticalScrollBar()
         sb.setValue(sb.maximum())
-        self.plugin.pl_send_parameter_change(cmd,'Command')
+        self.plugin._send_parameter_change(cmd,'Command')
 
     def write(self, strn, html=False):
         self.ui.output.moveCursor(QtGui.QTextCursor.End)

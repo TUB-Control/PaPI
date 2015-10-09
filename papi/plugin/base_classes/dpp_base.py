@@ -26,10 +26,10 @@ Contributors:
 <Stefan Ruppin
 """
 
-from papi.plugin.base_classes.ownProcess_base import ownProcess_base
+from papi.plugin.base_classes.base_ownProcess import base_ownProcess
 from papi.constants import PLUGIN_DPP_IDENTIFIER
 
-class dpp_base(ownProcess_base):
+class dpp_base(base_ownProcess):
     """
     This kind of plugin is to process data provided by other plugins.
     """

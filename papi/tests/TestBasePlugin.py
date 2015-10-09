@@ -60,9 +60,9 @@ class TestBasePlugin(unittest.TestCase):
     def test_parameterChanges(self):
 
         self.assertRaises(pe.WrongType, self.basePlugin.pl_emit_event, None, None)
-        self.assertRaises(AttributeError, self.basePlugin.pl_send_parameter_change, None, "DBlock")
+        self.assertRaises(AttributeError, self.basePlugin._send_parameter_change, None, "DBlock")
         self.assertRaises(AttributeError, self.basePlugin.pl_emit_event, None, "DEvent")
-        self.assertRaises(AttributeError, self.basePlugin.pl_send_parameter_change, None, DBlock("Block"))
+        self.assertRaises(AttributeError, self.basePlugin._send_parameter_change, None, DBlock("Block"))
         self.assertRaises(AttributeError, self.basePlugin.pl_emit_event, None, DEvent("Event"))
 
     # def test_createNewBlock(self):

@@ -28,10 +28,10 @@ Contributors:
 
 
 
-from papi.plugin.base_classes.ownProcess_base import ownProcess_base
+from papi.plugin.base_classes.base_ownProcess import base_ownProcess
 from papi.constants import PLUGIN_IOP_IDENTIFIER
 
-class iop_base(ownProcess_base):
+class iop_base(base_ownProcess):
     """
     This plugin is used to create an interface to different data sources.
     """

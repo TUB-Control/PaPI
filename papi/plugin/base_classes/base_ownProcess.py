@@ -31,7 +31,7 @@ from papi.plugin.base_classes.base_plugin import base_plugin
 import papi.event as Event
 
 
-class ownProcess_base(base_plugin):
+class base_ownProcess(base_plugin):
     """
     This plugin base should be used by a plugin if should run in an own process.
     It is not possible to create a widget which is displayed in the graphical interface of PaPI.
