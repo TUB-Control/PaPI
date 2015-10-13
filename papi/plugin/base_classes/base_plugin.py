@@ -408,7 +408,7 @@ class base_plugin(IPlugin):
         :type field_name: basestring
         :param sub_field: Name of the sub_field to return value instead of 'value' field.
         :type sub_field: basestring
-        :return: None if field does not exist or cfg is none, otherwise return field value.
+        :return: None if field does not exist or cfg is none, otherwise return field value (as basestring).
         """
         if self._config is not None and self._config != {}:
             if field_name is not None and field_name != '':
