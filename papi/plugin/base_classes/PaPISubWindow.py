@@ -55,3 +55,11 @@ class PaPISubWindow(QMdiSubWindow):
 
     def isInteractionAllowed(self):
         return self._interaction_possible
+
+    # Design choice: do not use the context menu of the title bar of subwindows
+    def contextMenuEvent(self, QContextMenuEvent):
+        # if self._interaction_possible:
+        #     QMdiSubWindow.contextMenuEvent(self,QContextMenuEvent)
+        # else:
+        #     pass
+        pass

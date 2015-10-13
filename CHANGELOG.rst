@@ -4,9 +4,11 @@ Changelog
 v.1.x:
 ------
 
+-  **feature**: A new run-mode is available. Prevents Plugins resize and move.
 -  **feature**: Added ability to define favourite plugins
 -  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
 -  **feature**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
+-  **improvement**: Cleaned up the plugin developers API
 -  **doc**: Added documentation for the main window
 -  **doc**: Added documentation for shortcuts
 -  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase
