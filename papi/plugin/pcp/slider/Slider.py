@@ -44,7 +44,7 @@ class Slider(vip_base):
     def cb_initialize_plugin(self):
 
         self.event_change = DEvent('Change')
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         self.pl_send_new_event_list([self.event_change])
         self.pl_set_widget_for_internal_usage(self.create_widget())
 

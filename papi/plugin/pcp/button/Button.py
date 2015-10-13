@@ -47,7 +47,7 @@ class Button(vip_base):
         self.cur_value = None
 
     def cb_initialize_plugin(self):
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         #super(Button, self).start_init(config)
 
         self.event_click = DEvent('Click')

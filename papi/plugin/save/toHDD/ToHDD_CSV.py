@@ -36,10 +36,9 @@ class ToHDD_CSV(dpp_base):
 
     def cb_initialize_plugin(self):
 
-        default_config = self.get_startup_configuration()
 
 
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
 
         self.pl_set_event_trigger_mode(True)
 

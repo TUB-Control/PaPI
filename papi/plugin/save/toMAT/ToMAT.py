@@ -46,7 +46,7 @@ class ToMAT(dpp_base):
 
     def cb_initialize_plugin(self):
 
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
 
         self.pl_set_event_trigger_mode(True)
 

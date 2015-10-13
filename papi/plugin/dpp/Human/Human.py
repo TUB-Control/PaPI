@@ -90,7 +90,7 @@ class Human(dpp_base):
 
         # Plugin is triggered by arrival of data
         self.pl_set_event_trigger_mode(True)
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         # Read Configuration
 
         self.Up_w_Id = self.config['quat_upperarm_w']['value']

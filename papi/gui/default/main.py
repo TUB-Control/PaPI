@@ -676,7 +676,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :return:
         """
         if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
-            config = dplugin.plugin.config
+            config = dplugin.plugin.pl_get_current_config()
             tab_name = config['tab']['value']
             if tab_name in self.TabManager.get_tabs_by_uname():
                 tabOb = self.TabManager.get_tabs_by_uname()[tab_name]

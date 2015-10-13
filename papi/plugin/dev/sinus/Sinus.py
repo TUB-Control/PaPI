@@ -40,7 +40,7 @@ import numpy
 class Sinus(iop_base):
 
     def cb_initialize_plugin(self):
-        config = self.pl_get_current_config()
+        config = self.pl_get_current_config_ref()
 
         self.t = 0
         self.amax = int(config['amax']['value'])

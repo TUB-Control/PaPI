@@ -26,6 +26,7 @@ Contributors:
 Stefan Ruppin
 Sven Knuth
 """
+import copy
 
 from papi.data.DPlugin import DBlock, DEvent
 from papi.data.DParameter import DParameter
@@ -46,6 +47,7 @@ class base_plugin(IPlugin):
         self.__id__ = -1
         self._dplugin_info = None
         self.__subscription_for_demux = None
+        self._config = {}
 
     def _papi_init(self, ):
         """
@@ -83,7 +85,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def get_startup_configuration(self):
+    def _get_startup_configuration(self):
         """
         Creates the startup configuration which is created by merging the configuration provided by the plugin base
         and the plugin configuration.
@@ -376,4 +378,64 @@ class base_plugin(IPlugin):
 
         return dict([(i, data[i]) for i in sub_signals if i in data])
 
+    def pl_get_current_config(self):
+        """
+        Used to get the current configuration. This will make a deepcopy of the config dict and return it.
+        So, the result can be changed without affection the 'real' plugin configuration which is saved to files or used for
+        future starts of this (saved) plugin.
+        :return: deepcopy of _config dict
+        """
+        return copy.deepcopy(self._config)
 
+    def pl_get_current_config_ref(self):
+        """
+        Used to get the current configuration, enables you to change it directly!
+        Changes done to this config reference will be saved within the plugin.
+        This config will be used when saving the plugin in a papi_config to a file (e.g. xml) and will be
+        reused on reload.
+
+        :return: link/ref configuration dict (NO COPY)
+        """
+        return self._config
+
+    def pl_get_config_element(self, field_name, sub_field = None):
+        """
+        Methods enables the user to get a field value of the current configuration.
+        If the field_name exists, the 'value' part will be returned.
+        If sub_field is given, return the sub_field instead of 'value'
+
+        :param field_name: Name of the field to return value from.
+        :type field_name: basestring
+        :param sub_field: Name of the sub_field to return value instead of 'value' field.
+        :type sub_field: basestring
+        :return: None if field does not exist or cfg is none, otherwise return field value (as basestring).
+        """
+        if self._config is not None and self._config != {}:
+            if field_name is not None and field_name != '':
+                if field_name in self._config:
+                    field_dict = self._config[field_name]
+                    if sub_field is None or field_dict == '':
+                        return field_dict['value']
+                    else:
+                        if sub_field in field_dict:
+                            return field_dict[sub_field]
+
+        return None
+
+    def pl_set_config_element(self,field_name, value):
+        """
+        Setter function used to set fields in the plugin configuration.
+        It will modify the 'value' field of the field with name field_name.
+
+        :param field_name: Name of the field to change value of.
+        :type field_name: basestring
+        :param value:
+        :return: True, if field got changed in _config. False, if not.
+        """
+        if self._config is not None and self._config != {}:
+            if field_name is not None and field_name != '':
+                if field_name in self._config:
+                    if 'value' in self._config[field_name]:
+                        self._config[field_name]['value'] = str(value)
+                        return True
+        return False

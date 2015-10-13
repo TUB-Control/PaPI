@@ -52,7 +52,7 @@ class StartExternalScript(vip_base):
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         self.SESWidget = QWidget()
         self.pl_set_widget_for_internal_usage( self.SESWidget )
 

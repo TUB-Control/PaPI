@@ -114,7 +114,7 @@ class RehaStimGUI(vip_base, object):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         self.signal_next_state = self.config['signal_next_state']['value']
         self.readOnly = self.config['readonly']['value'] == '1'
 

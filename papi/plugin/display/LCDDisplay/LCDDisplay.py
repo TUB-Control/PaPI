@@ -42,19 +42,17 @@ from PyQt5 import QtGui, QtWidgets, QtCore
 class LCDDisplay(vip_base):
 
     def cb_initialize_plugin(self):
-        self.config = self.pl_get_current_config()
         # ---------------------------
         # Read configuration
         # ---------------------------
         # Note: this cfg items have to exist!
-        self.time_treshold  = int(self.config['updateFrequency']['value'])
-        self.value_scale    = float(self.config['value_scale']['value'])
-        self.value_offset   = float(self.config['value_offset']['value'])
-        self.digit_count    = int(self.config['digit_count']['value'])
+        self.time_treshold  = int  (self.pl_get_config_element('update_interval'))
+        self.value_scale    = float(self.pl_get_config_element('value_scale')    )
+        self.value_offset   = float(self.pl_get_config_element('value_offset')   )
+        self.digit_count    = int  (self.pl_get_config_element('digit_count')    )
 
-        self.init_value = 0
-        if self.config['value_init']['value'] is not None:
-            self.init_value     = float(self.config['value_init']['value'])
+        # if self.config['value_init']['value'] is not None:
+        self.init_value     = float(self.pl_get_config_element('value_init') )
 
 
         # --------------------------------
@@ -149,18 +147,19 @@ class LCDDisplay(vip_base):
         #   do that .... with value
         if name == self.para_treshold.name:
             self.time_treshold = int(value)
-            self.config['updateFrequency']['value'] = value
+            #self.config['updateFrequency']['value'] = value
+            self.pl_set_config_element(self.para_treshold.name,value)
 
         if name == self.para_value_scale.name:
-            self.config[self.para_value_scale.name]['value'] = value
+            self.pl_set_config_element(self.para_value_scale.name, value)
             self.value_scale = float(value)
 
         if name == self.para_value_offset.name:
-            self.config[self.para_value_offset.name]['value'] = value
+            self.pl_set_config_element(self.para_value_offset.name, value)
             self.value_offset = float(value)
 
         if name == self.para_digit_count.name:
-            self.config[self.para_digit_count.name]['value'] = value
+            self.pl_set_config_element(self.para_digit_count.name, value)
             self.digit_count = int(value)
             self.LcdWidget.setDigitCount(self.digit_count)
 
@@ -180,7 +179,7 @@ class LCDDisplay(vip_base):
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
         config = {
-             "updateFrequency": {
+             "update_interval": {
                      'value': '1000',
                      'regex': '[0-9]+',
                      'display_text' : 'Minimal time between updates (in ms)',

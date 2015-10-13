@@ -46,7 +46,7 @@ class ProgressBar(vip_base):
         # Read configuration
         # ---------------------------
         # Note: this cfg items have to exist!
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         self.progress_value = self.config['progress_value']['value']
         self.trigger_value = self.config['trigger_value']['value']
         self.reset_trigger_value = self.config['reset_trigger_value']['value']
