@@ -51,3 +51,12 @@ class DSignal(DObject):
             self.dname = uname
         else:
             self.dname = dname
+
+    def get_name(self):
+        """
+        Returns the name of this signal.
+
+        :return name: Unique name
+        """
+
+        return self.uname
