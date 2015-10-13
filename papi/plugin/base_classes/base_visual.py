@@ -247,8 +247,7 @@ class base_visual(base_plugin):
         resume_action = QAction('Resume plugin',self._widget)
         resume_action.triggered.connect(self._ctlrMenu_resume)
 
-        subMenu_action = QAction('Open Signal Manager',self._widget)
-        #subMenu_action.triggered.connect(self._ctlrMenu_resume)
+        #subMenu_action = QAction('Open Signal Manager',self._widget)
 
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
         if len(tabs) > 1:
@@ -261,7 +260,7 @@ class base_visual(base_plugin):
                     tab_entrys.append(entry)
                     tabMenu.addAction(entry)
 
-        ctrlMenu.addAction(subMenu_action)
+        #ctrlMenu.addAction(subMenu_action)
         if self._get_type() == PLUGIN_VIP_IDENTIFIER:
            ctrlMenu.addAction(resume_action)
            ctrlMenu.addAction(pause_action)
