@@ -717,22 +717,31 @@ class GUI(QMainWindow, Ui_DefaultMain):
         errMsg.show()
 
     def toggle_run_mode(self):
-        if self.in_run_mode:
-            self.in_run_mode = False
-            self.loadButton.show()
-            self.saveButton.show()
-            self.menubar.setHidden(False)
-            self.toogle_lock()
+        if self.in_run_mode is False:
+            # hide toolbar
+            self.toolBar.setHidden(True)
+            self.actionToolbar.setChecked(False)
+            # lock subwindows in tabs
+            for tabName in self.TabManager.tab_dict_uname:
+                tabObject = self.TabManager.tab_dict_uname[tabName]
 
-        elif not self.in_run_mode:
+                for subWindow in tabObject.subWindowList():
+                    subWindow.disableInteraction()
             self.in_run_mode = True
-            self.loadButton.hide()
-            self.saveButton.hide()
-            self.menubar.hide()
-            self.toogle_lock()
+        else:
+            # show toolbar
+            self.toolBar.setHidden(False)
+            self.actionToolbar.setChecked(True)
+            # unlock subwindows in tabs
+            for tabName in self.TabManager.tab_dict_uname:
+                tabObject = self.TabManager.tab_dict_uname[tabName]
+
+                for subWindow in tabObject.subWindowList():
+                    subWindow.enableInteraction()
+            self.in_run_mode = False
 
     def toogle_lock(self):
-
+        raise Exception("PLEASE REPORT THIS BUG!!")
         if self.in_run_mode:
             for tab_name in self.TabManager.get_tabs_by_uname():
                 area = self.TabManager.get_tabs_by_uname()[tab_name]

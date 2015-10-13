@@ -106,9 +106,9 @@ class PapiTabManger(QObject):
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
                 if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
-                    tabOfPlugin = dplugin.plugin.config['tab']['value']
+                    tabOfPlugin = dplugin.plugin._config['tab']['value']
                     if tabOfPlugin == old_name:
-                        dplugin.plugin.config['tab']['value'] = new_name
+                        dplugin.plugin._config['tab']['value'] = new_name
 
     def rename_window(self, window, new_name):
         if new_name not in self.tab_dict_uname:
@@ -123,9 +123,9 @@ class PapiTabManger(QObject):
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
                 if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
-                    tabOfPlugin = dplugin.plugin.config['tab']['value']
+                    tabOfPlugin = dplugin.plugin._config['tab']['value']
                     if tabOfPlugin == old_name:
-                        dplugin.plugin.config['tab']['value'] = new_name
+                        dplugin.plugin._config['tab']['value'] = new_name
 
     def get_default_tab(self, NotThisIndex):
         if NotThisIndex == 0:
@@ -201,9 +201,9 @@ class PapiTabManger(QObject):
             for pl_id in plugins:
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
-                    if plugin.plugin.config['tab']['value'] == tab_name:
+                    if plugin.plugin._config['tab']['value'] == tab_name:
                         self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin._get_sub_window())
-                        plugin.plugin.config['tab']['value'] = self.get_default_tab(ind).name
+                        plugin.plugin._config['tab']['value'] = self.get_default_tab(ind).name
 
             self.remove_tab(tabOb)
         else:
@@ -402,14 +402,14 @@ class PapiTabManger(QObject):
                     plugin = plugins[pl_id]
                     if plugin.type == PLUGIN_VIP_IDENTIFIER:
 
-                        if plugin.plugin.config['tab']['value'] == window.windowName:
+                        if plugin.plugin._config['tab']['value'] == window.windowName:
 
                             subwin = plugin.plugin._get_sub_window()
                             posX = subwin.pos().x()
                             posY = subwin.pos().y()
                             self.moveFromTo(window.windowName,destTab.name, subwin,posX=posX,posY=posY)
 
-                            plugin.plugin.config['tab']['value'] = destTab.name
+                            plugin.plugin._config['tab']['value'] = destTab.name
 
             window.alreadyDocked = True
             self.remove_window(window)
@@ -426,12 +426,12 @@ class PapiTabManger(QObject):
             for pl_id in plugins:
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
-                    if plugin.plugin.config['tab']['value'] == tabOb.name:
+                    if plugin.plugin._config['tab']['value'] == tabOb.name:
                         subwin = plugin.plugin._get_sub_window()
                         posX = subwin.pos().x()
                         posY = subwin.pos().y()
                         self.moveFromTo(tabOb.name,neWin.windowName, subwin,posX=posX,posY=posY)
-                        plugin.plugin.config['tab']['value'] = neWin.windowName
+                        plugin.plugin._config['tab']['value'] = neWin.windowName
 
         self.remove_tab(tabOb)
         self.rename_window(neWin,tabName)
