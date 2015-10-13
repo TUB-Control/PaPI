@@ -94,7 +94,7 @@ class GuiEventProcessing(QtCore.QObject):
                               'pause_plugin': self.process_pause_plugin,
                               'resume_plugin': self.process_resume_plugin,
                               'stop_plugin': self.process_stop_plugin,
-                              'start_plugin': self.process_start_plugin,
+                              'start_plugin': self.process_restart_plugin,
                               'parameter_info': self.process_parameter_info
         }
 
@@ -226,10 +226,10 @@ class GuiEventProcessing(QtCore.QObject):
                 tb = traceback.format_exc()
                 self.plugin_died.emit(dplugin, E, tb)
 
-    def process_start_plugin(self, event):
+    def process_restart_plugin(self, event):
         """
         Processes plugin_start event.
-        Used to start a plugin after the plugin was stopped. Emit DPlugin was added -> necessary signal for the GUI.
+        Used to (re-)start a plugin after the plugin was stopped. Emit DPlugin was added -> necessary signal for the GUI.
 
         :param event:
         :return:

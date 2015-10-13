@@ -130,7 +130,7 @@ class UDP_Plugin(iop_base):
 
     def cb_initialize_plugin(self):
         print('ORTD', self.__id__, ':process id', os.getpid())
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         # open UDP
         self.HOST = self.config['address']['value']
         self.SOURCE_PORT = int(self.config['source_port']['value'])

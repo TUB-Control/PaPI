@@ -45,7 +45,7 @@ class HTMLViewer(vip_base):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         content = self.config['content']['value']
         isUrl   = self.config['isUrl']['value']
 

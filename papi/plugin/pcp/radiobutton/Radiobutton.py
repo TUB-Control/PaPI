@@ -45,7 +45,7 @@ class Radiobutton(vip_base):
 
         self.pl_send_new_event_list([self.event_choice])
 
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         para_list = []
 
         self.para_texts    = DParameter('texts', default=self.config['option_texts']['value'])

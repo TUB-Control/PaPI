@@ -104,7 +104,7 @@ class StaticPlot(vip_base):
         :param config:
         :return:
         """
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         # ---------------------------
         # Read configuration
         # ---------------------------

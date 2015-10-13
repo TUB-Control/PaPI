@@ -91,14 +91,6 @@ class base_visual(base_plugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def pl_get_current_config(self):
-        """
-        Used to get the current configuration.
-
-        :return:
-        """
-        return self._config
-
     def _get_configuration_base(self):
         """
         Returns the basic configuration for this plugin base.

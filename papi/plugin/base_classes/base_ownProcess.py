@@ -219,10 +219,3 @@ class base_ownProcess(base_plugin):
         if mode is True or mode is False or mode == 'default':
             self.__user_event_triggered = mode
 
-    def pl_get_current_config(self):
-        """
-        Used to get the current configuration.
-
-        :return:
-        """
-        return self._config

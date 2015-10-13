@@ -44,7 +44,7 @@ class PaPIController(vip_base):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.config = self.pl_get_current_config()
+        self.config = self.pl_get_current_config_ref()
         self.udp_plugin_uname = self.config['UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
