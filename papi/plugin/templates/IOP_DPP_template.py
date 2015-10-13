@@ -47,6 +47,10 @@ class IOP_DPP_template(iop_base):
     # Will initialize the plugin in context of PaPI and the plugin developer!
     def cb_initialize_plugin(self):
         # --------------------------------
+        # Step 0: Read documentation: http://tub-control.github.io/PaPI/
+        # --------------------------------
+
+        # --------------------------------
         # Step 1: Read configuration items (startup cfg)
         # OPTIONAL
         # --------------------------------
