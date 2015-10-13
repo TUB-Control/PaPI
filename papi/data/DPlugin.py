@@ -145,6 +145,15 @@ class DBlock(DObject):
         """
         return copy.deepcopy(self.signals)
 
+    def get_name(self):
+        """
+        Returns the name of this block.
+
+        :return block_name:
+        """
+        return self.name
+
+
 
 class DEvent(DBlock):
     def __init__(self, name):

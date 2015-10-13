@@ -1,19 +1,32 @@
-<PaPI Date="2015-09-23 16:43:50" PaPI_version="1.2.0">
+<PaPI Date="2015-10-13 14:25:01" PaPI_version="1.2.0">
   <Configuration>
-    <Size>
-      <X>771</X>
-      <Y>853</Y>
-    </Size>
+    <Tabs>
+      <Tab>
+        <Position>0</Position>
+        <Background>default</Background>
+      </Tab>
+    </Tabs>
     <ActiveTab>
       <Active>0</Active>
     </ActiveTab>
-    <Tabs>
-      <Tab>
-        <Background>default</Background>
-        <Position>0</Position>
-      </Tab>
-    </Tabs>
-    <Favourites />
+    <Size>
+      <Y>853</Y>
+      <X>771</X>
+    </Size>
+    <Favourites>
+      <Plot>
+        <position>9</position>
+      </Plot>
+      <PaPIController>
+        <position>8</position>
+      </PaPIController>
+      <UDP_Plugin>
+        <position>11</position>
+      </UDP_Plugin>
+      <Radiobutton>
+        <position>10</position>
+      </Radiobutton>
+    </Favourites>
   </Configuration>
   <Plugins>
     <Plugin uname="CPUXLoad">
@@ -37,29 +50,50 @@
     <Plugin uname="Plot">
       <Identifier>Plot</Identifier>
       <StartConfig>
-        <Parameter Name="tab">
-          <value>Tab</value>
-        </Parameter>
-        <Parameter Name="rolling_plot">
-          <value>1</value>
+        <Parameter Name="name">
+          <value>CPU Load Plot</value>
         </Parameter>
         <Parameter Name="buffersize">
           <value>50</value>
         </Parameter>
-        <Parameter Name="color">
-          <value>[0 1 2 3 4]</value>
-        </Parameter>
-        <Parameter Name="position">
-          <value>(0,0)</value>
+        <Parameter Name="yRange">
+          <value>[-1.7247263489960574 110.19514897823622]</value>
         </Parameter>
         <Parameter Name="style">
           <value>[0 0 0 0 0]</value>
         </Parameter>
+        <Parameter Name="rolling_plot">
+          <value>1</value>
+        </Parameter>
         <Parameter Name="yRange-auto">
           <value>1</value>
         </Parameter>
+        <Parameter Name="color">
+          <value>[0 1 2 3 4]</value>
+        </Parameter>
         <Parameter Name="xRange-auto">
           <value>1</value>
+        </Parameter>
+        <Parameter Name="position">
+          <value>(0,0)</value>
+        </Parameter>
+        <Parameter Name="y-grid">
+          <value>0</value>
+        </Parameter>
+        <Parameter Name="show_legend">
+          <value>1</value>
+        </Parameter>
+        <Parameter Name="uname">
+          <value>Plot</value>
+        </Parameter>
+        <Parameter Name="tab">
+          <value>Tab</value>
+        </Parameter>
+        <Parameter Name="size">
+          <value>(449,449)</value>
+        </Parameter>
+        <Parameter Name="xRange">
+          <value>[0,1]</value>
         </Parameter>
         <Parameter Name="downsampling_rate">
           <value>1</value>
@@ -70,37 +104,16 @@
         <Parameter Name="maximized">
           <value>0</value>
         </Parameter>
-        <Parameter Name="yRange">
-          <value>[0.0 100.0]</value>
-        </Parameter>
-        <Parameter Name="size">
-          <value>(449,449)</value>
-        </Parameter>
-        <Parameter Name="name">
-          <value>CPU Load Plot</value>
-        </Parameter>
-        <Parameter Name="y-grid">
-          <value>0</value>
-        </Parameter>
-        <Parameter Name="xRange">
-          <value>[0,1]</value>
-        </Parameter>
-        <Parameter Name="uname">
-          <value>Plot</value>
-        </Parameter>
-        <Parameter Name="show_legend">
-          <value>1</value>
-        </Parameter>
       </StartConfig>
       <PreviousParameters>
-        <Parameter Name="x-grid">0</Parameter>
-        <Parameter Name="yRange">[-1978.4382956181034 891.2108655531747]</Parameter>
+        <Parameter Name="y-grid">0</Parameter>
         <Parameter Name="buffersize">50</Parameter>
+        <Parameter Name="yRange">[-1.7247263489960574 110.19514897823622]</Parameter>
         <Parameter Name="style">[0 0 0 0 0]</Parameter>
         <Parameter Name="color">[0 1 2 3 4]</Parameter>
-        <Parameter Name="y-grid">0</Parameter>
-        <Parameter Name="rolling">1</Parameter>
         <Parameter Name="show_legend">1</Parameter>
+        <Parameter Name="rolling">1</Parameter>
+        <Parameter Name="x-grid">0</Parameter>
         <Parameter Name="downsampling_rate">1</Parameter>
       </PreviousParameters>
       <DBlocks />

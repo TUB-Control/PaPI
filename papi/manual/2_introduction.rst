@@ -179,7 +179,7 @@ These functions can be used by all types of plugins:
 
     self.pl_emit_event(data, event)
 
-    self.pl_send_new_data(self, block_name, time_line, data)
+    self.pl_send_new_data(block_name, time_line, data)
 
     self.pl_send_new_event_list(events)
 
@@ -193,6 +193,13 @@ These functions can be used by all types of plugins:
 
     self.pl_get_dplugin_info()
 
+    self.pl_get_config_element(field_name, sub_field=None)
+
+    self.pl_get_current_config()
+
+    self.pl_set_config_element(field_name, value)
+
+    self.pl_get_current_config_ref()
 
 These functions can only be used by plugins of type ViP.
 
@@ -202,18 +209,13 @@ These functions can only be used by plugins of type ViP.
 
     self.pl_get_widget()
 
-    self.pl_set_widget_for_internal_usage()
-
-    self.pl_get_current_config()
-
+    self.pl_set_widget_for_internal_usage( widget )
 
 These functions can only be used by plugins of type IOP or DPP.
 
 .. code-block:: python
 
     self.pl_set_event_trigger_mode(true|false)
-
-    self.pl_get_current_config()
 
 
 Plugin initialize

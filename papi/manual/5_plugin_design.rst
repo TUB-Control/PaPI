@@ -81,12 +81,57 @@ that the PaPI-backend only knows the last blocks sent by
 .. code-block:: python
     :linenos:
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
        self.block = DBlock('Source')
        signal = DSignal('Step')
        self.block.add_signal(signal)
        self.pl_send_new_block_list([block])
+
+send new data
+~~~~~~~~~~~~~
+
+Here we assume an IOPlugin which ``cb_execute`` function is called in a loop. In the first step the plugin must be initialized.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_initialize_plugin(self):
+
+        self.block = DBlock('Source')
+        self.step_signal = DSignal('Step')
+        self.block.add_signal(self.step_signal)
+        self.pl_send_new_block_list([self.block])
+
+        self.delta_t = 0.1 #[s]
+        self.t = 0
+        self.signal_value = 0
+
+In the next step we implement the ability to provide a step at time 10.
+
+.. warning:: This is just an easy example. PaPI doesn't provide soft real-time.
+
+
+
+.. code-block:: python
+    :linenos:
+
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
+
+        if self.t < 10:
+            self.signal_value = 1
+
+        self.pl_send_new_data('Source', [self.t], {'Step' : vec[self.signal_value]} )
+
+        self.t += self.delta_t
+        time.sleep(self.delta_t)
+
+An alternative call of ``pl_send_new_data`` is given here:
+
+.. code-block:: python
+
+        self.pl_send_new_data(self.block.get_name(), [self.t], {self.step_signal.get_name() : vec[self.signal_value]} )
+
 
 create parameters
 ~~~~~~~~~~~~~~~~~
@@ -106,7 +151,7 @@ was defined for the
 .. code-block:: python
     :linenos:
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         self.para_foo      = DParameter('foo',default=0)
         self.para_bar      = DParameter('bar',default=0)
@@ -133,7 +178,7 @@ that the PaPI-backend only knows the last events sent by
 .. code-block:: python
     :linenos:
 
-    def cb_initialize_plugin(self, config=None):
+    def cb_initialize_plugin(self):
 
         self.event_start         = DEvent('Start')
         self.pl_send_new_event_list([self.event_start])
@@ -150,8 +195,8 @@ that the PaPI-backend only knows the last events sent by
     def clicked_start_button(self):
         self.pl_emit_event('1', self.event_start)
 
-to create a configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~
+create a configuration
+~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.
@@ -236,17 +281,115 @@ PaPI supports currently only the following types.
 
 In case of an unknown type or none type was defined a simple textfield is used.
 
-.. figure:: _static/design/PaPIFileDialog.png
-   :alt:
-   :figwidth: 40%
+.. |FILEDIALOG| image:: _static/design/PaPIFileDialog.png
+                    :height: 150px
 
-   **File dialog.**
+.. |COLORPICKER| image:: _static/design/PaPIColorPicker.png
+                    :height: 150px
 
-.. figure:: _static/design/PaPIColorPicker.png
-   :alt:
-   :figwidth: 40%
++--------------------+--------------------+
+|   |FILEDIALOG|     | |COLORPICKER|      |
+|                    |                    |
+| **File dialog.**   | **Color picker.**  |
++--------------------+--------------------+
 
-   **Color picker.**
+get a configuration at startup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The plugin configuration can be changed by the user during the creation process of the plugin and leads to a modified configuration which will be used as startup configuration. This configuration can be accessed in three different ways:
+
+1. Use of ``pl_get_config_element``: This function provides the value of an provided attribute, is also possible define another key whose value should be returned.
+
+.. note:: We recommend to use this function.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_initialize_plugin(self):
+        self.color       = self.pl_get_config_element('color')
+        self.color_regex = self.pl_get_config_element('color','regex')
+
+
+2. Use of ``pl_get_current_config``: This function provides a copy of the complete modified configuration. The plugin developer has to check if the attribute, e.g. color, exists in the configuration. Otherwise an exception can be raised due to an missing key name in the configuration.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_initialize_plugin(self):
+        self.config      = self.pl_get_current_config()
+        self.color       = self.config['color']['value']
+        self.color_regex = self.config['color']['regex']
+
+3. Use of ``pl_get_current_config_ref``: This function provides a reference to the complete modified configuration. Single values are accessed in the same way as in the example before but changes in the configuration will affected the startup configuration. Thereby it is possible to modify the configuration for the next startup if the current PaPI setting is saved as an XML file because the current startup configuration will be stored and taken when the configuration is loaded.
+
+
+.. warning:: Use this function only if you know what you do ! Take a look at the documentation for this function.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_initialize_plugin(self):
+        self.config      = self.pl_get_current_config()
+        self.color       = self.config['color']['value']
+        self.color_regex = self.config['color']['regex']
+
+        self.config['text']['value'] = 'FooBar'
+
+If you only like to change one single value in the startup configuration we recommend the function ``pl_set_config_element``:
+
+.. warning:: Use this function only if you know what you do !  Take a look at the documentation for this function.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_initailize_plugin():
+        pl_set_config_element('color', '(10,20,30)')
+
+Visual plugins
+--------------
+
+The following description is only valid for plugins which are based on ``visual_template.py`` or rather are a subclass of ``vip_base``
+
+create a widget
+~~~~~~~~~~~~~~~
+
+Creating a widget is very simple, all we need is to import the following modules:
+
+
+.. code-block:: python
+
+    from PyQt5 import QtWidgets
+
+and to create a widget in the ``cb_initialize_plugin`` function and to inform the PaPI backend about the widget by using ``pl_set_widget_for_internal_usage``
+
+.. code-block:: python
+
+    def cb_initialize_plugin(self):
+        self.LcdWidget = QtWidgets.QLCDNumber()
+
+        self.pl_set_widget_for_internal_usage(self.LcdWidget)
+
+
+context menu
+~~~~~~~~~~~~
+
+Lets enhance the previous example by adding the default context menu. The function ``pl_create_control_context_menu`` is hereby called to get the default context menu to provide a basic set of function
+
+.. code-block:: python
+
+    from PyQt5 import QtCore
+
+    def cb_initialize_plugin(self):
+        self.LcdWidget = QtWidgets.QLCDNumber()
+        self.pl_set_widget_for_internal_usage(self.LcdWidget)
+
+        self.LcdWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.LcdWidget.customContextMenuRequested.connect(self.show_context_menu)
+
+    def show_context_menu(self, pos):
+        gloPos = self.LcdWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
 What happens if PaPI ...
 ------------------------
@@ -255,20 +398,22 @@ sends new data?
 ~~~~~~~~~~~~~~~
 
 The function ``cb_execute`` is called by the PaPI backend with a currently
-received data set. Data is a dictionary with an entry 't' which contains
-the time vector. The other entries are data vectors. To determine the
-data source the corresponding block\_name is given for a single cb_execute
+received data set. Data is a dictionary with an entry ``CORE_TIME_SIGNAL``, a constant defined in `papi.constants.`, which contains
+the time vector. The other entries are data vectors of subscribed signals. To determine the
+data source the corresponding block\_name  and plugin\_name is given for a single cb_execute
 step.
 
 .. code-block:: python
     :linenos:
 
-    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
-       time = Data['t']
+    import papi.constants as pc
 
-       for key in Data:
-          if key != 't':
-             data = Data[key]
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
+       time = Data[pc.CORE_TIME_SIGNAL]
+
+       for signal_name in Data:
+          if signal_name != pc.CORE_TIME_SIGNAL:
+             data = Data[signal_name]
 
 sends a parameter changes?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -282,7 +427,7 @@ the string as float, or int.
 .. code-block:: python
     :linenos:
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         if name == 'ParameterName1':
             print(name + " --> " + str(value));
 
@@ -307,7 +452,7 @@ The PaPI framework executes this functions
 
 .. code-block:: python
 
-    def pause(self):
+    def cb_pause(self):
         """
         Function pause
 
@@ -324,7 +469,7 @@ The PaPI framework executes this functions
 
 .. code-block:: python
 
-    def resume(self):
+    def cb_resume(self):
         """
         Function resume
 
@@ -337,11 +482,13 @@ This enables the developer to handle a users wish to resume the plugin. PaPI wil
 quit?
 ~~~~~
 
-The PaPI framework executes this functions
+The PaPI framework executes this functions when this function was executed PaPI will stop and remove the plugin.
+
+This function must be implemented because the plugin developer should be aware of the fact that this function exists. Quiting a plugin without stopping it in a proper could have bad effects on other running plugins.
 
 .. code-block:: python
 
-    def quit(self):
+    def cb_quit(self):
         """
         Function quit
 
@@ -349,4 +496,3 @@ The PaPI framework executes this functions
         """
         pass
 
-When this function was exectuted PaPI will stop and remove the plugin.
