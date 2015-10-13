@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """
 Copyright (C) 2014 Technische Universität Berlin,
@@ -23,137 +23,136 @@ You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
-<Stefan Ruppin
+<Stefan Ruppin, Sven Knuth
 """
 
 
+# Default PaPI imports used to create a plugin!
+# Please remember that this template will only show the default PaPI imports and not any imports of example lines of Code
+from papi.data.DPlugin import DBlock                            # for creating Blocks
+from papi.data.DSignal import DSignal                           # for signal creation
+from papi.data.DParameter import DParameter                     # for Parameter creation
+import papi.constants as pconst                                 # for PaPI constants like some Regex or Time Signal Name
 
-# basic import for block and parameter structure
-from papi.data.DPlugin import DBlock
-from papi.data.DParameter import DParameter
-from papi.data.DSignal import DSignal
+# One of them is not needed!
+# Delete the line when you decided for iop or dpp
+from papi.plugin.base_classes.iop_base import iop_base          # Needed for a IOP Plugin
+from papi.plugin.base_classes.dpp_base import dpp_base          # Needed for a IOP Plugin
 
-# one of them is not nedded!
-# delete line when you decided for iop or dpp
-from papi.plugin.base_classes.iop_base import iop_base
-from papi.plugin.base_classes.dpp_base import dpp_base
-
-# decide whether this should be a IOP plugin or a DPP plugin!
-# IOP: class IOP_DPP_template(iop_base):
-# DPP: class IOP_DPP_template(dpp_base):
+# Template Class for a Plugin running in a separate process.
+# A Plugin running in separate processes needs to inherent from iop_base or dpp_base!
+# RENAME CLASS TO PLUGIN NAME
 class IOP_DPP_template(iop_base):
-
+    # OBLIGATORY function to implement!
+    # Will initialize the plugin in context of PaPI and the plugin developer!
     def cb_initialize_plugin(self):
-        # do user init
-        # define vars, connect to rtai .....
+        # --------------------------------
+        # Step 1: Read configuration items (startup cfg)
+        # OPTIONAL
+        # --------------------------------
+        #  Please read the Documentation of pl_get_config_element() to understand what is happening here.
+        #  e.g. a configuration item named 'offset' is read.
+        offset = self.pl_get_config_element('offset')
+        offset = float(offset) if offset is not None else 0
 
-        # create a block object
-        #   self.block1 = DBlock('blockName')
+        # --------------------------------
+        # Step 2:Define blocks for output signals and define signals of blocks!
+        # OPTIONAL
+        # --------------------------------
+        # Here: block called CPU_LOAD with 2 signals for Core1 and Core2
+        blockLoad = DBlock('CPU_LOAD')
+        sig_core1 = DSignal('Load_C1')
+        sig_core2 = DSignal('Load_C2')
 
-        #signal = DSignal('signalName')
+        blockLoad.add_signal(sig_core1)
+        blockLoad.add_signal(sig_core2)
 
-        #self.block1.add_signal(signal)
+        self.pl_send_new_block_list([blockLoad])
 
+        # --------------------------------
+        # Step 3: Define parameter that are offered to PaPI
+        # OPTIONAL
+        # Sub-Step 1: Create Parameter Object
+        # Sub-Step 2: Send list of Parameter Objects created to PaPI
+        # --------------------------------
+        #   use self. to remember the parameter object in this class/context for own usage!
+        #   e.g. parameter named parameterName1 is created!
+        #   Refer to the Doc of DParameter to read about advanced usages!
+        self. parameter1 = DParameter('parameterName1')
+        self. parameter2 = DParameter('parameterName2')
+        self.pl_send_new_parameter_list([self.parameter1, self.parameter1])
 
-        # send block list
-        #   self.pl_send_new_block_list([block1, block2, block3])
+        # --------------------------------
+        # Step 4: Set the plugin trigger mode
+        # OPTIONAL
+        # In most cases for IOP you will leave it default, for DPP you will set it to true
+        # Default will mean, that PaPI will decide on it.
+        # --------------------------------
+        self.pl_set_event_trigger_mode('default')
 
-        # create a parameter object
-        #   self.para1 = DParameter('ParameterName',default=0)
-        #   self.para2 = DParameter('ParameterName',default=0)
+        # --------------------------------
+        # Step 5: Developer and Plugin specific configuration
+        # OPTIONAL
+        # --------------------------------
 
-        # build parameter list to send to Core
-        #   para_list = [self.para1 self.para2]
-        #   self.pl_send_new_parameter_list(para_list)
-
-        # if wanted, change event mode to True, False, 'default'
-        # self.pl_set_event_trigger_mode('default')
-
-        # use startup config like this:
-        # self.sample = config['sampleinterval']['value']
-
-
-        # return init success, important!
+        # --------------------------------
+        # Step 6: Return Value
+        # OBLIGATORY
+        # Return True if the everything is alright!
+        # False will lead to PaPI not starting this Plugin!
+        # --------------------------------
         return True
 
-    def cb_pause(self):
-        # will be called, when plugin gets paused
-        # can be used to get plugin in a defined state before pause
-        # e.a. close communication ports, files etc.
+    # OBLIGATORY function to implement!
+    # Will be called by PaPI before the Plugin will close!
+    # This is a clean-up callback function!
+    def cb_quit(self):
+        # clean up!
+        # e.g. close files or sockets, or free memory ....
         pass
 
-    def cb_resume(self):
-        # will be called when plugin gets resumed
-        # can be used to wake up the plugin from defined pause state
-        # e.a. reopen communication ports, files etc.
-        pass
-
+    # OPTIONAL function to implement!
+    # Will be called by PaPI whenever a signal arrived with this plugin as destination!
+    # This is a callback function that will only need to be implemented if you want to react to signals (NOT PARAMETER)
+    # For most of the plugins like plots or displays the main work of changing the visualisation will be done!
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
-        # Do main work here!
-        # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
-        # If this plugin is a DPP, then it will get Data with data
-
-        # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
-        # hash signal_name: value
-
+        # Arguments of this function can be looked up in detail in the Doc.
+        # Data: dict of data
+        # block_name: name of the block the data belongs to   (SOURCE)
+        # plugin_name: name of the plugin the data belongs to (SOURCE)
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
-        # implement cb_execute and send new data
-        #    self.pl_send_new_data('blockName', timeVector, signals_to_send )
-        # Attention: block_name has to match the name defined in cb_initialize_plugin for the specific block
-        # signals_to_send need to be a dict with "signalName->values"
+        # e.g. send data for a signal to PaPI, remember to always send all signals of a block in one step!
+        self.pl_send_new_data('CPU_LOAD',time.time(), {'Load_C1': 0, 'Load_C2': 0} )
 
 
-        pass
-
-
+    # OPTIONAL function to implement!
+    # Will be called by PaPI whenever a parameter of this plugin was changed!
+    # This callback function enables the developer to react to these changes!
     def cb_set_parameter(self, name, value):
-        # attetion: value is a string and need to be processed !
-        # if name == 'irgendeinParameter':
-        #   do that .... with value
-        pass
+        # Attention: value is a string and need to be processed/casted !
+        # e.g. react to change in parameter1, printing the value!
+        if name == self.parameter1.name:
+            print(value)
 
-    def cb_quit(self):
-        # do something before plugin will close, e.a. close connections ...
-        pass
-
-
+    # OPTIONAL function to implement!
+    # All plugins have a plugin configuration that is defined by PaPI and extended by the plugin developer.
+    # This function will represent the extended part of the configuration.
+    # If it is not implemented, just the PaPI defined base configuration will be used, otherwise a merge will happen!
+    # See Doc for details!
+    # But remember: This cfg part should include all items addressed with pl_get_config_element()!
     def cb_get_plugin_configuration(self):
-        #
-        # Implement a own part of the config
-        # config is a hash of hass object
-        # config_parameter_name : {}
-        # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
-        # configs can be marked as advanced for create dialog
+        # return has to be a dict of a special structure!
+        # Info: online regex tool: http://utilitymill.com/utility/Regex_For_Range
 
-        # config = {
-        #     "amax": {
-        #         'value': 3,
-        #         'regex': '[0-9]+'
-        # }, 'f': {
-        #         'value': "1",
-        #         'regex': '\d+.{0,1}\d*'
-        # }}
-        config = {}
-        return config
-
-
-
-
-    def cb_plugin_meta_updated(self):
-        """
-        Whenever the meta information is updated this function is called.
-        If this function is called there is no guarantee anymore that previous used reference are still used.
-
-        :return:
-        """
-
-        #dplugin_info = self.dplugin_info
-        pass
-
-
-
-
-
+        # e.g. for our offset configuration item
+        ex_config = {
+            'offset': {
+                    'value': '0',
+                    'tooltip': 'Used to offset displayed value',
+                    'regex': '-?\d+(\.?\d+)?',
+                    'advanced': '1'
+            }
+        }
+        return ex_config
 

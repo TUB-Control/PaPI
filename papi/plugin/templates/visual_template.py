@@ -35,7 +35,7 @@ from papi.data.DParameter import DParameter                     # for Parameter 
 import papi.constants as pconst                                 # for PaPI constants like some Regex or Time Signal Name
 
 
-# Template Class for Plugin.
+# Template Class for a Visual Plugin running on the GUI.
 # A Plugin running in GUI needs to inherent from vip_base!
 # RENAME CLASS TO PLUGIN NAME
 class TemplateName(vip_base):
@@ -106,10 +106,9 @@ class TemplateName(vip_base):
         # plugin_name: name of the plugin the data belongs to (SOURCE)
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
-        # e.g. change widget properties
+        # e.g. change widget properties (is this case no data is required)
         widget = self.pl_get_widget()
-        widget.name = 'Hallo'
-        pass
+        widget.setWindowTitle('NewName')
 
     # OPTIONAL function to implement!
     # Will be called by PaPI whenever a parameter of this plugin was changed!
