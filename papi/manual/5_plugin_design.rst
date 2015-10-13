@@ -309,6 +309,7 @@ The plugin configuration can be changed by the user during the creation process 
         self.color       = self.pl_get_config_element('color')
         self.color_regex = self.pl_get_config_element('color','regex')
 
+
 2. Use of ``pl_get_current_config``: This function provides a copy of the complete modified configuration. The plugin developer has to check if the attribute, e.g. color, exists in the configuration. Otherwise an exception can be raised due to an missing key name in the configuration.
 
 .. code-block:: python
@@ -343,6 +344,52 @@ If you only like to change one single value in the startup configuration we reco
 
     def cb_initailize_plugin():
         pl_set_config_element('color', '(10,20,30)')
+
+Visual plugins
+--------------
+
+The following description is only valid for plugins which are based on ``visual_template.py`` or rather are a subclass of ``vip_base``
+
+create a widget
+~~~~~~~~~~~~~~~
+
+Creating a widget is very simple, all we need is to import the following modules:
+
+
+.. code-block:: python
+
+    from PyQt5 import QtWidgets
+
+and to create a widget in the ``cb_initialize_plugin`` function and to inform the PaPI backend about the widget by using ``pl_set_widget_for_internal_usage``
+
+.. code-block:: python
+
+    def cb_initialize_plugin(self):
+        self.LcdWidget = QtWidgets.QLCDNumber()
+
+        self.pl_set_widget_for_internal_usage(self.LcdWidget)
+
+
+context menu
+~~~~~~~~~~~~
+
+Lets enhance the previous example by adding the default context menu. The function ``pl_create_control_context_menu`` is hereby called to get the default context menu to provide a basic set of function
+
+.. code-block:: python
+
+    from PyQt5 import QtCore
+
+    def cb_initialize_plugin(self):
+        self.LcdWidget = QtWidgets.QLCDNumber()
+        self.pl_set_widget_for_internal_usage(self.LcdWidget)
+
+        self.LcdWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.LcdWidget.customContextMenuRequested.connect(self.show_context_menu)
+
+    def show_context_menu(self, pos):
+        gloPos = self.LcdWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
 What happens if PaPI ...
 ------------------------
@@ -405,7 +452,7 @@ The PaPI framework executes this functions
 
 .. code-block:: python
 
-    def pause(self):
+    def cb_pause(self):
         """
         Function pause
 
@@ -422,7 +469,7 @@ The PaPI framework executes this functions
 
 .. code-block:: python
 
-    def resume(self):
+    def cb_resume(self):
         """
         Function resume
 
@@ -435,11 +482,13 @@ This enables the developer to handle a users wish to resume the plugin. PaPI wil
 quit?
 ~~~~~
 
-The PaPI framework executes this functions
+The PaPI framework executes this functions when this function was executed PaPI will stop and remove the plugin.
+
+This function must be implemented because the plugin developer should be aware of the fact that this function exists. Quiting a plugin without stopping it in a proper could have bad effects on other running plugins.
 
 .. code-block:: python
 
-    def quit(self):
+    def cb_quit(self):
         """
         Function quit
 
@@ -447,4 +496,3 @@ The PaPI framework executes this functions
         """
         pass
 
-When this function was exectuted PaPI will stop and remove the plugin.
