@@ -51,8 +51,10 @@ PaPI divided the plugin structure in 4 types of plugins:
     - DP Plugin(DPP): Data Processing Plugins, runs in separate process, process data in PaPI, get data from PapI, generate new data for PaPI, e.g. adding signals
     - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot, or to provide control elements for setting parameter,  e.g. Slider.
 
-Signal/Blocks
--------------
+.. _man_signal_block:
+
+Signals/Blocks
+--------------
 
 A PaPI Plugin can offer several signals to PaPI for other plugins to
 use. Each signal is owned by a signal block. A block in PaPI is a
@@ -65,10 +67,16 @@ each other in respect to their samples.
 One Plugin can offer multiple blocks and every block can offer an
 arbitrary number of signals.
 
+A whole block or only a subset of signals can be subscribed by another plugin. If the block owner, the plugin which owns the subscribed block, sends new data. This action triggers the execute functions of the subscriber, the plugin which subscribed the block.
+
+The block owner sends new data commonly synchronous which can be triggered by a timer, external program or device.
+
 .. figure:: _static/introduction/PaPIBlockSignal.png
    :alt:
 
-   **A single block contains one or more signals.**
+   **A block contains one or more signals and be subscribed. The block owner triggers the execute function by sending new data.**
+
+.. _man_parameters:
 
 Parameters
 ----------
@@ -76,25 +84,32 @@ Parameters
 Additionally to blocks and signals, plugins can offer parameters to PaPI which can be used to affect the internal behavior of a plugin.
 A parameter can be changed using the overview menu or events, see next section.
 
+A parameter change occurs commonly asynchronous by user interaction.
+
 .. figure:: _static/introduction/PaPIParameter.png
    :alt:
 
-   **Parameters can change a plugin's behavior at runtime.**
+   **Parameters can change a plugins behavior at runtime.**
+
+.. _man_events:
 
 Events
 ------
 
-A plugin can provide events which can be used to change parameters of other plugins.
+A plugin can provide events which can be used to change parameters of other plugins in more practical way by using GUI elements.
 
 E.g. a plugin provides a event as a ``Click`` or ``Change`` which can be subscribed by an arbitrary parameter of a different plugin. When the ``Click``-event gets triggered the parameter will be changed according to the value delivered by the event. It is also possible to provide more than one event per plugin and a single event can be subscribed by more than one parameter.
 
 .. figure:: _static/introduction/PaPIEvent.png
    :alt:
 
-   **Parameters can be changed by using events if a parameter subscribed an event.**
+   **Parameters can be changed by using events if a parameter subscribes an event.**
 
 Plugin Architecture
 -------------------
+
+Functions
+~~~~~~~~~
 
 PaPI uses a flag based plugin interaction. That means that plugins that
 want to be integrated in PaPI need to implement a list of callback
@@ -103,39 +118,56 @@ functions.
 The PaPI framework provides two kind of functions for the development of plugin which can or must be implemented.
 
 | ``callback functions``: These functions are called by the PaPI framework to interact with plugin.
-| ``plugin function``: These function are called by the plugin developer to communicate with the PaPI framework.
+| ``plugin functions``: These function are called by the plugin developer to communicate with the PaPI framework.
 
 These functions defines the core functionality of a plugin. To see more detailed information on how to create a plugin, refer to: :ref:`Design guide plugin <man_design_guide>`
 
 There are some ``callback functions`` that must be implemented and some functions that are optional.
 
 
-Functions
-~~~~~~~~~
-
 Callback functions
 ++++++++++++++++++
 
-These functions can be used by all types of plugins in which the highlighted functions must be implemented.
+These functions can be implemented by all types of plugins
 
-.. code-block:: python
-    :emphasize-lines: 1-4
-
-    self.cb_initialize_plugin()
-    self.cb_execute(Data, block_name, plugin_uname)
-    self.cb_quit()
-    self.cb_get_plugin_configuration()
-    self.cb_pause()
-    self.cb_resume()
-    self.cb_set_parameter(self, parameter_name, parameter_value)
-    self.cb_plugin_meta_updated()
-
-
-These functions can only be used by plugins of type ViP.
+in which these functions are **mandatory**.
 
 .. code-block:: python
 
-    self.cb_new_parameter_info(dparameter_object)
+    def cb_initialize_plugin()
+        pass
+
+    def cb_quit()
+        pass
+
+and these functions are **optional**.
+
+.. code-block:: python
+
+    def cb_execute(Data, block_name, plugin_uname)
+        pass
+
+    def cb_get_plugin_configuration()
+        pass
+
+    def cb_pause()
+        pass
+
+    def cb_resume()
+        pass
+
+    def cb_set_parameter(self, parameter_name, parameter_value)
+        pass
+
+    def cb_plugin_meta_updated()
+        pass
+
+These functions can only be used by plugins of type **ViP**.
+
+.. code-block:: python
+
+    def cb_new_parameter_info(dparameter_object)
+        pass
 
 
 Plugin functions
@@ -146,33 +178,46 @@ These functions can be used by all types of plugins:
 .. code-block:: python
 
     self.pl_emit_event(data, event)
+
     self.pl_send_new_data(self, block_name, time_line, data)
+
     self.pl_send_new_event_list(events)
+
     self.pl_send_new_block_list(blocks)
+
     self.pl_send_new_parameter_list(parameters)
+
     self.pl_send_delete_block(block)
+
     self.pl_send_delete_parameter(parameter)
+
     self.pl_get_dplugin_info()
+
 
 These functions can only be used by plugins of type ViP.
 
 .. code-block:: python
 
     self.pl_create_control_context_menu()
+
     self.pl_get_widget()
+
     self.pl_set_widget_for_internal_usage()
+
     self.pl_get_current_config()
+
 
 These functions can only be used by plugins of type IOP or DPP.
 
 .. code-block:: python
 
     self.pl_set_event_trigger_mode(true|false)
+
     self.pl_get_current_config()
 
 
-Plugin init
-~~~~~~~~~~~
+Plugin initialize
+~~~~~~~~~~~~~~~~~
 
 When creating a plugin the function ``cb_initialize_plugin`` will be
 called. These functions can be used to do all basic initialization
@@ -190,7 +235,7 @@ The figure below shows the chain of called function by the PaPI framework if a p
 
    **Functions called to initialize a plugin.**
 
-plugin execution
+Plugin execution
 ~~~~~~~~~~~~~~~~
 
 When a plugin is started the normal operation loop will call the ``execute``
@@ -202,7 +247,7 @@ function new data can be sent to PaPI using a PaPI function.
 
 The ``execute`` function is when a new data package arrives.
 
-plugin quit
+Plugin quit
 ~~~~~~~~~~~
 
 When a plugins is deleted, stopped or PaPI will end operation, the
@@ -216,7 +261,10 @@ For additional functions and deeper understanding or programming
 examples, please take a look at :ref:`Design guide plugin <man_design_guide>`
 
 Graphical User Interface
-------------------------
+========================
+
+PaPI Main Window
+----------------
 
 Main Window
 ~~~~~~~~~~~
