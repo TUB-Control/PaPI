@@ -68,14 +68,14 @@ class base_plugin(IPlugin):
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         """
-        Called by the PaPI framework when new date can be processed.  Must be implemented !
+        Called by the PaPI framework when new date can be processed.
 
         :param Data: Contains a hash with an array for every key.
         :param block_name: Block of the plugin to which the signal belongs
         :param plugin_uname: Plugin which sent this data.
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        pass
 
     def _get_configuration_base(self):
         """
@@ -96,11 +96,11 @@ class base_plugin(IPlugin):
 
     def cb_get_plugin_configuration(self):
         """
-        Returns the plugin specific configuration. Must be implemented !
+        Returns the plugin specific configuration.
 
         :return:
         """
-        raise NotImplementedError("Please Implement this method")
+        return {}
 
     # some control callback functions
     # ----------------------
