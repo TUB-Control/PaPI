@@ -237,6 +237,9 @@ class base_visual(base_plugin):
 
         :return: QMenu
         """
+        # Disable context menu if run mode is enabled!
+        if self._subWindow.isInteractionAllowed() is False:
+            return QMenu('RunMode!')
 
         ctrlMenu = QMenu("Control")
 
