@@ -878,9 +878,9 @@ class Core:
             plugin_config = optData.plugin_config
 
             if plugin_config is None or plugin_config == {}:
-                plugin_config = plugin.plugin_object.get_startup_configuration()
+                plugin_config = plugin.plugin_object._get_startup_configuration()
             else:
-                plugin_config = dict(list(plugin.plugin_object.get_startup_configuration().items())+list(plugin_config.items()))
+                plugin_config = dict(list(plugin.plugin_object._get_startup_configuration().items())+list(plugin_config.items()))
 
 
             # create Process object for new plugin

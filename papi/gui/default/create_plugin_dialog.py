@@ -51,7 +51,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
 
     def set_plugin(self, plugin_info):
-        startup_config = plugin_info.plugin_object.get_startup_configuration()
+        startup_config = plugin_info.plugin_object._get_startup_configuration()
         self.cfg = startup_config
         self.plugin_name = plugin_info.name
         self.plugin_type = plugin_info.plugin_object._get_type()

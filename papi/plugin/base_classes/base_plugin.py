@@ -85,7 +85,7 @@ class base_plugin(IPlugin):
         """
         raise NotImplementedError("Please Implement this method")
 
-    def get_startup_configuration(self):
+    def _get_startup_configuration(self):
         """
         Creates the startup configuration which is created by merging the configuration provided by the plugin base
         and the plugin configuration.

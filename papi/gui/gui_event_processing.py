@@ -304,7 +304,7 @@ class GuiEventProcessing(QtCore.QObject):
         # get the plugin class of the source code loaded and init class as a new object
         plugin = getattr(current_modul, class_name)()
         # get default startup configuration for merge with user defined startup_configuration
-        start_config = plugin.get_startup_configuration()
+        start_config = plugin._get_startup_configuration()
         config = dict(list(start_config.items()) + list(config.items()))
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
