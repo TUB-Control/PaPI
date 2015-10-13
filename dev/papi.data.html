@@ -434,6 +434,21 @@ Contains a bunch of signals of a the same data source.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.data.DPlugin.DBlock.get_name">
+<tt class="descname">get_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DBlock.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DBlock.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of this block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Return block_name:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="papi.data.DPlugin.DBlock.get_signal_by_uname">
 <tt class="descname">get_signal_by_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DBlock.get_signal_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DBlock.get_signal_by_uname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a signal object by a signal&#8217;s uname.</p>
@@ -880,6 +895,20 @@ Sven Knuth</p>
 <em class="property">class </em><tt class="descclassname">papi.data.DSignal.</tt><tt class="descname">DSignal</tt><big>(</big><em>uname</em>, <em>dname=None</em><big>)</big><a class="reference internal" href="_modules/papi/data/DSignal.html#DSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DSignal.DSignal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#papi.data.DObject.DObject" title="papi.data.DObject.DObject"><tt class="xref py py-class docutils literal"><span class="pre">papi.data.DObject.DObject</span></tt></a></p>
 <p>DSignal is used for the internal description of a signal.</p>
+<dl class="method">
+<dt id="papi.data.DSignal.DSignal.get_name">
+<tt class="descname">get_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DSignal.html#DSignal.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DSignal.DSignal.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of this signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return name:</th><td class="field-body">Unique name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -896,6 +925,22 @@ Sven Knuth</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">papi.data package</a><ul>
@@ -912,25 +957,12 @@ Sven Knuth</p>
 </li>
 </ul>
 
-	<h3> Links </h3>
-	<ul> 
-	  <li>
-	    <a href="CHANGELOG.html">Changelog</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
-	  </li>
-	</ul>
-	
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.data.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

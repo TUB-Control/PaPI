@@ -153,7 +153,7 @@ Parameters
                          :alt:
                          :height: 250
 
-.. |Paremter_Ex_1_cap| replace:: **Signals of the parameters were named in simulink.**
+.. |Parameter_Ex_1_cap| replace:: **Signals of the parameters were named in simulink.**
 
 
 
@@ -161,14 +161,14 @@ Parameters
                          :alt:
                          :height: 250
 
-.. |Paremter_Ex_2_cap| replace:: **As the parameters will appear in PaPI.**
+.. |Parameter_Ex_2_cap| replace:: **As the parameters will appear in PaPI.**
 
 ------------
 
 +-----------------------+------+-----------------------+
 | |Parameter_Example_1| |      | |Parameter_Example_2| |
 |                       |      |                       |
-| |Paremter_Ex_1_cap|   |      | |Paremter_Ex_2_cap|   |
+| |Parameter_Ex_1_cap|  |      | |Parameter_Ex_2_cap|  |
 +-----------------------+------+-----------------------+
 
 ------------

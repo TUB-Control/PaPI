@@ -844,6 +844,23 @@ Gui now knows, that a plugin was closed by core and needs to update its DGui dat
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_restart_plugin">
+<tt class="descname">process_restart_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_restart_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_restart_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes plugin_start event.
+Used to (re-)start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_resume_plugin">
 <tt class="descname">process_resume_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_resume_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_resume_plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Core sent event to resume a plugin in GUI, so call the resume function of this plugin</p>
@@ -862,23 +879,6 @@ Gui now knows, that a plugin was closed by core and needs to update its DGui dat
 <tt class="descname">process_set_parameter</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes set_parameter event.
 Used to handle parameter sets by the gui or other plugins.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_start_plugin">
-<tt class="descname">process_start_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_start_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_start_plugin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes plugin_start event.
-Used to start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1142,6 +1142,22 @@ Sven Knuth</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">papi.gui package</a><ul>
@@ -1156,25 +1172,12 @@ Sven Knuth</p>
 </li>
 </ul>
 
-	<h3> Links </h3>
-	<ul> 
-	  <li>
-	    <a href="CHANGELOG.html">Changelog</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
-	  </li>
-	</ul>
-	
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.gui.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

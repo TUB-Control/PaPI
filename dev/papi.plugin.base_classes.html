@@ -63,20 +63,6 @@
 <p>This plugin base should be used by a plugin if should run in an own process.
 It is not possible to create a widget which is displayed in the graphical interface of PaPI.</p>
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_get_current_config">
-<tt class="descname">pl_get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_ownProcess.html#base_ownProcess.pl_get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_get_current_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to get the current configuration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_set_event_trigger_mode">
 <tt class="descname">pl_set_event_trigger_mode</tt><big>(</big><em>mode</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_ownProcess.html#base_ownProcess.pl_set_event_trigger_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_ownProcess.base_ownProcess.pl_set_event_trigger_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables the plugin developer to set the event_trigger_mode. This meas that when set to TRUE, the
@@ -111,7 +97,7 @@ Sven Knuth</p>
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_execute">
 <tt class="descname">cb_execute</tt><big>(</big><em>Data=None</em>, <em>block_name=None</em>, <em>plugin_uname=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called by the PaPI framework when new date can be processed.  Must be implemented !</p>
+<dd><p>Called by the PaPI framework when new date can be processed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -133,7 +119,7 @@ Sven Knuth</p>
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.cb_get_plugin_configuration">
 <tt class="descname">cb_get_plugin_configuration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.cb_get_plugin_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.cb_get_plugin_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the plugin specific configuration. Must be implemented !</p>
+<dd><p>Returns the plugin specific configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -223,21 +209,6 @@ This function is called with the parameter name and its current value.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="papi.plugin.base_classes.base_plugin.base_plugin.get_startup_configuration">
-<tt class="descname">get_startup_configuration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.get_startup_configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.get_startup_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the startup configuration which is created by merging the configuration provided by the plugin base
-and the plugin configuration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_emit_event">
 <tt class="descname">pl_emit_event</tt><big>(</big><em>data</em>, <em>event</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_emit_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_emit_event" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used by plugins to emit a specific event.</p>
@@ -253,6 +224,55 @@ and the plugin configuration.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element">
+<tt class="descname">pl_get_config_element</tt><big>(</big><em>field_name</em>, <em>sub_field=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_config_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Methods enables the user to get a field value of the current configuration.
+If the field_name exists, the &#8216;value&#8217; part will be returned.
+If sub_field is given, return the sub_field instead of &#8216;value&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>field_name</strong> (<em>basestring</em>) &#8211; Name of the field to return value from.</li>
+<li><strong>sub_field</strong> (<em>basestring</em>) &#8211; Name of the sub_field to return value instead of &#8216;value&#8217; field.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None if field does not exist or cfg is none, otherwise return field value (as basestring).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config">
+<tt class="descname">pl_get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to get the current configuration. This will make a deepcopy of the config dict and return it.
+So, the result can be changed without affection the &#8216;real&#8217; plugin configuration which is saved to files or used for
+future starts of this (saved) plugin.
+:return: deepcopy of _config dict</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config_ref">
+<tt class="descname">pl_get_current_config_ref</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_current_config_ref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to get the current configuration, enables you to change it directly!
+Changes done to this config reference will be saved within the plugin.
+This config will be used when saving the plugin in a papi_config to a file (e.g. xml) and will be
+reused on reload.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">link/ref configuration dict (NO COPY)</td>
 </tr>
 </tbody>
 </table>
@@ -374,6 +394,28 @@ and the plugin configuration.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_set_config_element">
+<tt class="descname">pl_set_config_element</tt><big>(</big><em>field_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_set_config_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_set_config_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setter function used to set fields in the plugin configuration.
+It will modify the &#8216;value&#8217; field of the field with name field_name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>field_name</strong> (<em>basestring</em>) &#8211; Name of the field to change value of.</li>
+<li><strong>value</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True, if field got changed in _config. False, if not.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -405,20 +447,6 @@ information about the init values
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">QMenu</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="papi.plugin.base_classes.base_visual.base_visual.pl_get_current_config">
-<tt class="descname">pl_get_current_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_visual.html#base_visual.pl_get_current_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_visual.base_visual.pl_get_current_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to get the current configuration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -547,6 +575,22 @@ Stefan Ruppin</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">papi.plugin.base_classes package</a><ul>
@@ -562,25 +606,12 @@ Stefan Ruppin</p>
 </li>
 </ul>
 
-	<h3> Links </h3>
-	<ul> 
-	  <li>
-	    <a href="CHANGELOG.html">Changelog</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
-	  </li>
-	</ul>
-	
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.plugin.base_classes.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

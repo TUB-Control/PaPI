@@ -78,6 +78,7 @@
 <span class="sd">Stefan Ruppin</span>
 <span class="sd">Sven Knuth</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span><span class="p">,</span> <span class="n">DEvent</span>
 <span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
@@ -98,6 +99,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__id__</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dplugin_info</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__subscription_for_demux</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_papi_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -118,14 +120,14 @@
 
 <div class="viewcode-block" id="base_plugin.cb_execute"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.cb_execute">[docs]</a>    <span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Called by the PaPI framework when new date can be processed.  Must be implemented !</span>
+<span class="sd">        Called by the PaPI framework when new date can be processed.</span>
 
 <span class="sd">        :param Data: Contains a hash with an array for every key.</span>
 <span class="sd">        :param block_name: Block of the plugin to which the signal belongs</span>
 <span class="sd">        :param plugin_uname: Plugin which sent this data.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
 </div>
     <span class="k">def</span> <span class="nf">_get_configuration_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -135,7 +137,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="base_plugin.get_startup_configuration"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.get_startup_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">get_startup_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_startup_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the startup configuration which is created by merging the configuration provided by the plugin base</span>
 <span class="sd">        and the plugin configuration.</span>
@@ -143,14 +145,14 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_configs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_configuration_base</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">cb_get_plugin_configuration</span><span class="p">())</span>
-</div>
+
 <div class="viewcode-block" id="base_plugin.cb_get_plugin_configuration"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.cb_get_plugin_configuration">[docs]</a>    <span class="k">def</span> <span class="nf">cb_get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the plugin specific configuration. Must be implemented !</span>
+<span class="sd">        Returns the plugin specific configuration.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Please Implement this method&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span>
 
     <span class="c"># some control callback functions</span>
     <span class="c"># ----------------------</span></div>
@@ -427,7 +429,69 @@
         <span class="n">sub_signals</span> <span class="o">=</span> <span class="n">sub_object</span><span class="o">.</span><span class="n">signals</span>
 
         <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sub_signals</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
-</pre></div></div>
+
+<div class="viewcode-block" id="base_plugin.pl_get_current_config"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config">[docs]</a>    <span class="k">def</span> <span class="nf">pl_get_current_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to get the current configuration. This will make a deepcopy of the config dict and return it.</span>
+<span class="sd">        So, the result can be changed without affection the &#39;real&#39; plugin configuration which is saved to files or used for</span>
+<span class="sd">        future starts of this (saved) plugin.</span>
+<span class="sd">        :return: deepcopy of _config dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="base_plugin.pl_get_current_config_ref"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_current_config_ref">[docs]</a>    <span class="k">def</span> <span class="nf">pl_get_current_config_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to get the current configuration, enables you to change it directly!</span>
+<span class="sd">        Changes done to this config reference will be saved within the plugin.</span>
+<span class="sd">        This config will be used when saving the plugin in a papi_config to a file (e.g. xml) and will be</span>
+<span class="sd">        reused on reload.</span>
+
+<span class="sd">        :return: link/ref configuration dict (NO COPY)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+</div>
+<div class="viewcode-block" id="base_plugin.pl_get_config_element"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element">[docs]</a>    <span class="k">def</span> <span class="nf">pl_get_config_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">sub_field</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Methods enables the user to get a field value of the current configuration.</span>
+<span class="sd">        If the field_name exists, the &#39;value&#39; part will be returned.</span>
+<span class="sd">        If sub_field is given, return the sub_field instead of &#39;value&#39;</span>
+
+<span class="sd">        :param field_name: Name of the field to return value from.</span>
+<span class="sd">        :type field_name: basestring</span>
+<span class="sd">        :param sub_field: Name of the sub_field to return value instead of &#39;value&#39; field.</span>
+<span class="sd">        :type sub_field: basestring</span>
+<span class="sd">        :return: None if field does not exist or cfg is none, otherwise return field value (as basestring).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">!=</span> <span class="p">{}:</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span>
+                    <span class="n">field_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">sub_field</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">field_dict</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">sub_field</span> <span class="ow">in</span> <span class="n">field_dict</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="n">sub_field</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="base_plugin.pl_set_config_element"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_set_config_element">[docs]</a>    <span class="k">def</span> <span class="nf">pl_set_config_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">field_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter function used to set fields in the plugin configuration.</span>
+<span class="sd">        It will modify the &#39;value&#39; field of the field with name field_name.</span>
+
+<span class="sd">        :param field_name: Name of the field to change value of.</span>
+<span class="sd">        :type field_name: basestring</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return: True, if field got changed in _config. False, if not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">!=</span> <span class="p">{}:</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s">&#39;value&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">field_name</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span></div></div>
+</pre></div>
 
           </div>
         </div>
@@ -440,10 +504,13 @@
 	    <a href="../../../../CHANGELOG.html">Changelog</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../../toc_manual.html">Manual</a> </li>
+	    <a href="../../../../toc.manual.html">Manual</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../../toc_framework.html">Framework</a> </li>
+	    <a href="../../../../toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../man.papi.plugin.doc.html">Plugins</a> </li>
 	  </li>
 	</ul>
 	

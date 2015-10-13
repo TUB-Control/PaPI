@@ -98,8 +98,8 @@ signals of PaPI plugins.</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="signal-blocks">
-<h2>Signal/Blocks<a class="headerlink" href="#signal-blocks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="signals-blocks">
+<span id="man-signal-block"></span><h2>Signals/Blocks<a class="headerlink" href="#signals-blocks" title="Permalink to this headline">¶</a></h2>
 <p>A PaPI Plugin can offer several signals to PaPI for other plugins to
 use. Each signal is owned by a signal block. A block in PaPI is a
 collection of signals that will be always synchronized. One could say
@@ -109,58 +109,80 @@ in their samples but two different blocks cannot be easily related to
 each other in respect to their samples.</p>
 <p>One Plugin can offer multiple blocks and every block can offer an
 arbitrary number of signals.</p>
+<p>A whole block or only a subset of signals can be subscribed by another plugin. If the block owner, the plugin which owns the subscribed block, sends new data. This action triggers the execute functions of the subscriber, the plugin which subscribed the block.</p>
+<p>The block owner sends new data commonly synchronous which can be triggered by a timer, external program or device.</p>
 <div class="figure">
 <img alt="" src="_images/PaPIBlockSignal.png" />
-<p class="caption"><strong>A single block contains one or more signals.</strong></p>
+<p class="caption"><strong>A block contains one or more signals and be subscribed. The block owner triggers the execute function by sending new data.</strong></p>
 </div>
 </div>
 <div class="section" id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<span id="man-parameters"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>Additionally to blocks and signals, plugins can offer parameters to PaPI which can be used to affect the internal behavior of a plugin.
 A parameter can be changed using the overview menu or events, see next section.</p>
+<p>A parameter change occurs commonly asynchronous by user interaction.</p>
 <div class="figure">
 <img alt="" src="_images/PaPIParameter.png" />
-<p class="caption"><strong>Parameters can change a plugin&#8217;s behavior at runtime.</strong></p>
+<p class="caption"><strong>Parameters can change a plugins behavior at runtime.</strong></p>
 </div>
 </div>
 <div class="section" id="events">
-<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
-<p>A plugin can provide events which can be used to change parameters of other plugins.</p>
+<span id="man-events"></span><h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>A plugin can provide events which can be used to change parameters of other plugins in more practical way by using GUI elements.</p>
 <p>E.g. a plugin provides a event as a <tt class="docutils literal"><span class="pre">Click</span></tt> or <tt class="docutils literal"><span class="pre">Change</span></tt> which can be subscribed by an arbitrary parameter of a different plugin. When the <tt class="docutils literal"><span class="pre">Click</span></tt>-event gets triggered the parameter will be changed according to the value delivered by the event. It is also possible to provide more than one event per plugin and a single event can be subscribed by more than one parameter.</p>
 <div class="figure">
 <img alt="" src="_images/PaPIEvent.png" />
-<p class="caption"><strong>Parameters can be changed by using events if a parameter subscribed an event.</strong></p>
+<p class="caption"><strong>Parameters can be changed by using events if a parameter subscribes an event.</strong></p>
 </div>
 </div>
 <div class="section" id="plugin-architecture">
 <h2>Plugin Architecture<a class="headerlink" href="#plugin-architecture" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
 <p>PaPI uses a flag based plugin interaction. That means that plugins that
 want to be integrated in PaPI need to implement a list of callback
 functions.</p>
 <p>The PaPI framework provides two kind of functions for the development of plugin which can or must be implemented.</p>
 <div class="line-block">
 <div class="line"><tt class="docutils literal"><span class="pre">callback</span> <span class="pre">functions</span></tt>: These functions are called by the PaPI framework to interact with plugin.</div>
-<div class="line"><tt class="docutils literal"><span class="pre">plugin</span> <span class="pre">function</span></tt>: These function are called by the plugin developer to communicate with the PaPI framework.</div>
+<div class="line"><tt class="docutils literal"><span class="pre">plugin</span> <span class="pre">functions</span></tt>: These function are called by the plugin developer to communicate with the PaPI framework.</div>
 </div>
 <p>These functions defines the core functionality of a plugin. To see more detailed information on how to create a plugin, refer to: <a class="reference internal" href="man.papi.manual.5_plugin_design.html#man-design-guide"><em>Design guide plugin</em></a></p>
 <p>There are some <tt class="docutils literal"><span class="pre">callback</span> <span class="pre">functions</span></tt> that must be implemented and some functions that are optional.</p>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="callback-functions">
 <h4>Callback functions<a class="headerlink" href="#callback-functions" title="Permalink to this headline">¶</a></h4>
-<p>These functions can be used by all types of plugins in which the highlighted functions must be implemented.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="hll"><span class="bp">self</span><span class="o">.</span><span class="n">cb_initialize_plugin</span><span class="p">()</span>
-</span><span class="hll"><span class="bp">self</span><span class="o">.</span><span class="n">cb_execute</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">)</span>
-</span><span class="hll"><span class="bp">self</span><span class="o">.</span><span class="n">cb_quit</span><span class="p">()</span>
-</span><span class="hll"><span class="bp">self</span><span class="o">.</span><span class="n">cb_get_plugin_configuration</span><span class="p">()</span>
-</span><span class="bp">self</span><span class="o">.</span><span class="n">cb_pause</span><span class="p">()</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">cb_resume</span><span class="p">()</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">cb_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">)</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">cb_plugin_meta_updated</span><span class="p">()</span>
+<p>These functions can be implemented by all types of plugins</p>
+<p>in which these functions are <strong>mandatory</strong>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">()</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_quit</span><span class="p">()</span>
+    <span class="k">pass</span>
 </pre></div>
 </div>
-<p>These functions can only be used by plugins of type ViP.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">cb_new_parameter_info</span><span class="p">(</span><span class="n">dparameter_object</span><span class="p">)</span>
+<p>and these functions are <strong>optional</strong>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">)</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_get_plugin_configuration</span><span class="p">()</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_pause</span><span class="p">()</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_resume</span><span class="p">()</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">)</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">cb_plugin_meta_updated</span><span class="p">()</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>These functions can only be used by plugins of type <strong>ViP</strong>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_new_parameter_info</span><span class="p">(</span><span class="n">dparameter_object</span><span class="p">)</span>
+    <span class="k">pass</span>
 </pre></div>
 </div>
 </div>
@@ -168,31 +190,46 @@ functions.</p>
 <h4>Plugin functions<a class="headerlink" href="#plugin-functions" title="Permalink to this headline">¶</a></h4>
 <p>These functions can be used by all types of plugins:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">pl_emit_event</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_data</span><span class="p">(</span><span class="n">block_name</span><span class="p">,</span> <span class="n">time_line</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_event_list</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_block_list</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_parameter_list</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_delete_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_delete_parameter</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_dplugin_info</span><span class="p">()</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_get_config_element</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">sub_field</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_set_config_element</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config_ref</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>These functions can only be used by plugins of type ViP.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">pl_create_control_context_menu</span><span class="p">()</span>
+
 <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_widget</span><span class="p">()</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">pl_set_widget_for_internal_usage</span><span class="p">()</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">pl_set_widget_for_internal_usage</span><span class="p">(</span> <span class="n">widget</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>These functions can only be used by plugins of type IOP or DPP.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">pl_set_event_trigger_mode</span><span class="p">(</span><span class="n">true</span><span class="o">|</span><span class="n">false</span><span class="p">)</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="plugin-init">
-<h3>Plugin init<a class="headerlink" href="#plugin-init" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="plugin-initialize">
+<h3>Plugin initialize<a class="headerlink" href="#plugin-initialize" title="Permalink to this headline">¶</a></h3>
 <p>When creating a plugin the function <tt class="docutils literal"><span class="pre">cb_initialize_plugin</span></tt> will be
 called. These functions can be used to do all basic initialization
 needed for the plugin to run, e.g. open widgets or open network
@@ -207,7 +244,7 @@ method is to define the signals this plugin will offer to PaPI.</p>
 </div>
 </div>
 <div class="section" id="plugin-execution">
-<h3>plugin execution<a class="headerlink" href="#plugin-execution" title="Permalink to this headline">¶</a></h3>
+<h3>Plugin execution<a class="headerlink" href="#plugin-execution" title="Permalink to this headline">¶</a></h3>
 <p>When a plugin is started the normal operation loop will call the <tt class="docutils literal"><span class="pre">execute</span></tt>
 function of a block. That means all the execution logic of a plugin
 needs to be integrated in the execute function. It is important to note
@@ -217,7 +254,7 @@ function new data can be sent to PaPI using a PaPI function.</p>
 <p>The <tt class="docutils literal"><span class="pre">execute</span></tt> function is when a new data package arrives.</p>
 </div>
 <div class="section" id="plugin-quit">
-<h3>plugin quit<a class="headerlink" href="#plugin-quit" title="Permalink to this headline">¶</a></h3>
+<h3>Plugin quit<a class="headerlink" href="#plugin-quit" title="Permalink to this headline">¶</a></h3>
 <p>When a plugins is deleted, stopped or PaPI will end operation, the
 <tt class="docutils literal"><span class="pre">quit()</span></tt> function will be called to enable the plugin developer to
 clean things up, e.g. to close network connections or file handles.</p>
@@ -228,8 +265,11 @@ clean things up, e.g. to close network connections or file handles.</p>
 examples, please take a look at <a class="reference internal" href="man.papi.manual.5_plugin_design.html#man-design-guide"><em>Design guide plugin</em></a></p>
 </div>
 </div>
+</div>
 <div class="section" id="graphical-user-interface">
-<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline">¶</a></h2>
+<h1>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="papi-main-window">
+<h2>PaPI Main Window<a class="headerlink" href="#papi-main-window" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="main-window">
 <h3>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline">¶</a></h3>
 <p>The main window of PaPI will look like this:</p>
@@ -338,6 +378,22 @@ examples, please take a look at <a class="reference internal" href="man.papi.man
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Introduction</a><ul>
@@ -346,7 +402,7 @@ examples, please take a look at <a class="reference internal" href="man.papi.man
 </li>
 <li><a class="reference internal" href="#papi-plugins">PaPI Plugins</a><ul>
 <li><a class="reference internal" href="#types">Types</a></li>
-<li><a class="reference internal" href="#signal-blocks">Signal/Blocks</a></li>
+<li><a class="reference internal" href="#signals-blocks">Signals/Blocks</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
 <li><a class="reference internal" href="#events">Events</a></li>
 <li><a class="reference internal" href="#plugin-architecture">Plugin Architecture</a><ul>
@@ -355,13 +411,16 @@ examples, please take a look at <a class="reference internal" href="man.papi.man
 <li><a class="reference internal" href="#plugin-functions">Plugin functions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#plugin-init">Plugin init</a></li>
-<li><a class="reference internal" href="#plugin-execution">plugin execution</a></li>
-<li><a class="reference internal" href="#plugin-quit">plugin quit</a></li>
+<li><a class="reference internal" href="#plugin-initialize">Plugin initialize</a></li>
+<li><a class="reference internal" href="#plugin-execution">Plugin execution</a></li>
+<li><a class="reference internal" href="#plugin-quit">Plugin quit</a></li>
 <li><a class="reference internal" href="#additional-functions">Additional functions</a></li>
 </ul>
 </li>
+</ul>
+</li>
 <li><a class="reference internal" href="#graphical-user-interface">Graphical User Interface</a><ul>
+<li><a class="reference internal" href="#papi-main-window">PaPI Main Window</a><ul>
 <li><a class="reference internal" href="#main-window">Main Window</a></li>
 <li><a class="reference internal" href="#papi-menu">PaPI menu</a></li>
 <li><a class="reference internal" href="#plugin-menu">Plugin menu</a></li>
@@ -373,25 +432,12 @@ examples, please take a look at <a class="reference internal" href="man.papi.man
 </li>
 </ul>
 
-	<h3> Links </h3>
-	<ul> 
-	  <li>
-	    <a href="CHANGELOG.html">Changelog</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
-	  </li>
-	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
-	  </li>
-	</ul>
-	
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.2_introduction.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

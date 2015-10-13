@@ -52,7 +52,7 @@
 <div class="section" id="how-to">
 <h2>How to ...<a class="headerlink" href="#how-to" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="start">
-<h3>... start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h3>
+<h3>start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h3>
 <p>The plugins are written in python 3.4. For the development we recommend to use one of these tools:</p>
 <blockquote>
 <div><ul class="simple">
@@ -97,10 +97,10 @@ Plugins.</li>
 <p>By using <a class="reference external" href="http://docutils.sourceforge.net/rst.html">rst</a> for the documentation, the <strong>plugin documentation</strong> file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> will be recognized during the documentation build process  .</p>
 </div>
 <div class="section" id="create-blocks">
-<h3>... create Blocks<a class="headerlink" href="#create-blocks" title="Permalink to this headline">¶</a></h3>
+<h3>create blocks<a class="headerlink" href="#create-blocks" title="Permalink to this headline">¶</a></h3>
 <p>Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
-e.g. a plot.</p>
+e.g. a plot. We recommend to read <a class="reference internal" href="man.papi.manual.2_introduction.html#man-signal-block"><em>Signals/Blocks</em></a>.</p>
 <p>It is necessary to imports this objects:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DPlugin</span> <span class="kn">import</span> <span class="n">DBlock</span>
 <span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DSignal</span>
@@ -116,17 +116,72 @@ that the PaPI-backend only knows the last blocks sent by
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
    <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
    <span class="n">signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
    <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_block_list</span><span class="p">([</span><span class="n">block</span><span class="p">])</span>
+   <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_block_list</span><span class="p">([</span><span class="n">block</span><span class="p">])</span>
 </pre></div>
 </td></tr></table></div>
 </div>
+<div class="section" id="send-new-data">
+<h3>send new data<a class="headerlink" href="#send-new-data" title="Permalink to this headline">¶</a></h3>
+<p>Here we assume an IOPlugin which <tt class="docutils literal"><span class="pre">cb_execute</span></tt> function is called in a loop. In the first step the plugin must be initialized.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">DBlock</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_signal</span> <span class="o">=</span> <span class="n">DSignal</span><span class="p">(</span><span class="s">&#39;Step&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">add_signal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_signal</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_block_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="p">])</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c">#[s]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</td></tr></table></div>
+<p>In the next step we implement the ability to provide a step at time 10.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is just an easy example. PaPI doesn&#8217;t provide soft real-time.</p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_data</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">],</span> <span class="p">{</span><span class="s">&#39;Step&#39;</span> <span class="p">:</span> <span class="n">vec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span><span class="p">]}</span> <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>An alternative call of <tt class="docutils literal"><span class="pre">pl_send_new_data</span></tt> is given here:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">],</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_signal</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span> <span class="p">:</span> <span class="n">vec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span><span class="p">]}</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="create-parameters">
-<h3>... create Parameters<a class="headerlink" href="#create-parameters" title="Permalink to this headline">¶</a></h3>
-<p>Parameters are used to enable an external control of a running plugin.</p>
+<h3>create parameters<a class="headerlink" href="#create-parameters" title="Permalink to this headline">¶</a></h3>
+<p>Parameters are used to enable an external control of a running plugin. We recommend to read <a class="reference internal" href="man.papi.manual.2_introduction.html#man-parameters"><em>Parameters</em></a>.</p>
 <p>It is necessary to imports this object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
 </pre></div>
@@ -140,71 +195,27 @@ was defined for the</p>
 4
 5
 6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">para_foo</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">para_bar</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;bar&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">para_baz</span>      <span class="o">=</span> <span class="n">DParameter</span><span class="p">(</span><span class="s">&#39;baz&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Regex</span><span class="o">=</span><span class="s">&#39;[0-9]+&#39;</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">send_new_parameter_list</span><span class="p">(</span><span class="n">para_list</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_parameter_list</span><span class="p">(</span><span class="n">para_list</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </div>
 <div class="section" id="create-events">
-<h3>... create Events<a class="headerlink" href="#create-events" title="Permalink to this headline">¶</a></h3>
-<p>Events are used to change parameters of other plugins.</p>
+<h3>create events<a class="headerlink" href="#create-events" title="Permalink to this headline">¶</a></h3>
+<p>Events are used to change parameters of other plugins. We recommend to read <a class="reference internal" href="man.papi.manual.2_introduction.html#man-events"><em>Events</em></a>.</p>
 <p>It is necessary to imports this object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DSignal</span> <span class="kn">import</span> <span class="n">DEvent</span>
 </pre></div>
 </div>
-<p>A new event is define by the following code. At the end the PaPI-backend will be informed and
+<p>A new event is defined by the following code and at the end the PaPI-backend will be informed and
 the event can be used to change parameters of other plugins. It is <strong>very important</strong> to know
 that the PaPI-backend only knows the last events sent by
-<tt class="docutils literal"><span class="pre">send_new_event_list</span></tt>. Previous sent events will be deleted.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-
-   <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span>         <span class="o">=</span> <span class="n">DEvent</span><span class="p">(</span><span class="s">&#39;Start&#39;</span><span class="p">)</span>
-   <span class="bp">self</span><span class="o">.</span><span class="n">send_new_event_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">])</span>
-</pre></div>
-</td></tr></table></div>
-<p>An event can be emitted as following e.g. as the result of clicking a button in the GUI.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">emit_event</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">)</span>
-</pre></div>
-</td></tr></table></div>
-</div>
-<div class="section" id="process-new-data">
-<h3>... process new data<a class="headerlink" href="#process-new-data" title="Permalink to this headline">¶</a></h3>
-<p>The function <tt class="docutils literal"><span class="pre">cb_execute</span></tt> is called by the PaPI backend with a currently
-received data set. Data is a dictionary with an entry &#8216;t&#8217; which contains
-the time vector. The other entries are data vectors. To determine the
-data source the corresponding block_name is given for a single cb_execute
-step.</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-   <span class="n">time</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>
-
-   <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Data</span><span class="p">:</span>
-      <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s">&#39;t&#39;</span><span class="p">:</span>
-         <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-</pre></div>
-</td></tr></table></div>
-</div>
-<div class="section" id="to-react-to-parameter-changes">
-<h3>... to react to parameter changes<a class="headerlink" href="#to-react-to-parameter-changes" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">set_parameter</span></tt> is always called when a parameter is changed. To
-determine the modified parameter the parameter&#8217;s name is given as
-<tt class="docutils literal"><span class="pre">name</span></tt>, of course the new value is also given as <tt class="docutils literal"><span class="pre">value</span></tt>. The value
-is always from type <tt class="docutils literal"><span class="pre">string</span></tt> that means it may be necessary to cast
-the string as float, or int.</p>
+<tt class="docutils literal"><span class="pre">send_new_event_list</span></tt>. Previous sent events will be deleted. In the code above a button also created which is used to trigger the change event by user interaction (clicking the button).</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -214,29 +225,29 @@ the string as float, or int.</p>
  7
  8
  9
-10
-11
-12
-13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName1&#39;</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName2&#39;</span><span class="p">:</span>
-        <span class="n">new_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_int</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span>         <span class="o">=</span> <span class="n">DEvent</span><span class="p">(</span><span class="s">&#39;Start&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_event_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName3&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; True &quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; False &quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clicked_start_button</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Click&#39;</span><span class="p">)</span>
+
+<span class="n">The</span> <span class="n">event</span> <span class="n">can</span> <span class="n">be</span> <span class="n">emitted</span> <span class="k">as</span> <span class="n">following</span><span class="p">,</span> <span class="n">here</span> <span class="k">as</span> <span class="n">the</span> <span class="n">result</span> <span class="n">of</span> <span class="n">clicking</span> <span class="n">a</span> <span class="n">button</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">GUI</span><span class="o">.</span>
+</pre></div>
+</td></tr></table></div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_emit_event</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </div>
-<div class="section" id="to-create-a-configuration">
-<h3>...to create a configuration<a class="headerlink" href="#to-create-a-configuration" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="create-a-configuration">
+<h3>create a configuration<a class="headerlink" href="#create-a-configuration" title="Permalink to this headline">¶</a></h3>
 <p>It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.</p>
+<p>The callback function <cite>cb_get_plugin_configuration</cite> is used to inform the PaPI backend about the configuration.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -266,7 +277,7 @@ be modified by the user during the creation process.</p>
 27
 28
 29
-30</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+30</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_get_plugin_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s">&#39;flag&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="s">&quot;0&quot;</span><span class="p">,</span>
@@ -299,9 +310,9 @@ be modified by the user during the creation process.</p>
 </pre></div>
 </td></tr></table></div>
 <p>As you can see it is possible to describe a single configuration attribute in a detailed way but only the key <tt class="docutils literal"><span class="pre">value</span></tt> is mandatory.</p>
-<p>The other keys are used to provided a comfortable change of the attribute during the creation process.</p>
+<p>The other keys are used to provided a comfortable change of the attribute during the creation process. The following table provides an overview over all supported keys for describing an arbitrary attribute.</p>
 <table border="1" class="docutils">
-<caption>Possible keys for an attribute</caption>
+<caption>Possible key for describing an attribute</caption>
 <colgroup>
 <col width="23%" />
 <col width="77%" />
@@ -362,22 +373,190 @@ be modified by the user during the creation process.</p>
 </tbody>
 </table>
 <p>In case of an unknown type or none type was defined a simple textfield is used.</p>
-<div class="figure">
-<img alt="" src="_images/PaPIFileDialog.png" />
-<p class="caption"><strong>File dialog.</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><blockquote class="first">
+<div><a class="reference internal" href="_images/PaPIFileDialog.png"><img alt="FILEDIALOG" src="_images/PaPIFileDialog.png" style="height: 150px;" /></a></div></blockquote>
+<p class="last"><strong>File dialog.</strong></p>
+</td>
+<td><p class="first"><a class="reference internal" href="_images/PaPIColorPicker.png"><img alt="COLORPICKER" src="_images/PaPIColorPicker.png" style="height: 150px;" /></a></p>
+<p class="last"><strong>Color picker.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="figure">
-<img alt="" src="_images/PaPIColorPicker.png" />
-<p class="caption"><strong>Color picker.</strong></p>
+<div class="section" id="get-a-configuration-at-startup">
+<h3>get a configuration at startup<a class="headerlink" href="#get-a-configuration-at-startup" title="Permalink to this headline">¶</a></h3>
+<p>The plugin configuration can be changed by the user during the creation process of the plugin and leads to a modified configuration which will be used as startup configuration. This configuration can be accessed in three different ways:</p>
+<ol class="arabic simple">
+<li>Use of <tt class="docutils literal"><span class="pre">pl_get_config_element</span></tt>: This function provides the value of an provided attribute, is also possible define another key whose value should be returned.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We recommend to use this function.</p>
 </div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_config_element</span><span class="p">(</span><span class="s">&#39;color&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color_regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_config_element</span><span class="p">(</span><span class="s">&#39;color&#39;</span><span class="p">,</span><span class="s">&#39;regex&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<ol class="arabic simple" start="2">
+<li>Use of <tt class="docutils literal"><span class="pre">pl_get_current_config</span></tt>: This function provides a copy of the complete modified configuration. The plugin developer has to check if the attribute, e.g. color, exists in the configuration. Otherwise an exception can be raised due to an missing key name in the configuration.</li>
+</ol>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color_regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;regex&#39;</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<ol class="arabic simple" start="3">
+<li>Use of <tt class="docutils literal"><span class="pre">pl_get_current_config_ref</span></tt>: This function provides a reference to the complete modified configuration. Single values are accessed in the same way as in the example before but changes in the configuration will affected the startup configuration. Thereby it is possible to modify the configuration for the next startup if the current PaPI setting is saved as an XML file because the current startup configuration will be stored and taken when the configuration is loaded.</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Use this function only if you know what you do ! Take a look at the documentation for this function.</p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">color_regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;regex&#39;</span><span class="p">]</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;FooBar&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p>If you only like to change one single value in the startup configuration we recommend the function <tt class="docutils literal"><span class="pre">pl_set_config_element</span></tt>:</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Use this function only if you know what you do !  Take a look at the documentation for this function.</p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initailize_plugin</span><span class="p">():</span>
+    <span class="n">pl_set_config_element</span><span class="p">(</span><span class="s">&#39;color&#39;</span><span class="p">,</span> <span class="s">&#39;(10,20,30)&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="visual-plugins">
+<h2>Visual plugins<a class="headerlink" href="#visual-plugins" title="Permalink to this headline">¶</a></h2>
+<p>The following description is only valid for plugins which are based on <tt class="docutils literal"><span class="pre">visual_template.py</span></tt> or rather are a subclass of <tt class="docutils literal"><span class="pre">vip_base</span></tt></p>
+<div class="section" id="create-a-widget">
+<h3>create a widget<a class="headerlink" href="#create-a-widget" title="Permalink to this headline">¶</a></h3>
+<p>Creating a widget is very simple, all we need is to import the following modules:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+</pre></div>
+</div>
+<p>and to create a widget in the <tt class="docutils literal"><span class="pre">cb_initialize_plugin</span></tt> function and to inform the PaPI backend about the widget by using <tt class="docutils literal"><span class="pre">pl_set_widget_for_internal_usage</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLCDNumber</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_set_widget_for_internal_usage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="context-menu">
+<h3>context menu<a class="headerlink" href="#context-menu" title="Permalink to this headline">¶</a></h3>
+<p>Lets enhance the previous example by adding the default context menu. The function <tt class="docutils literal"><span class="pre">pl_create_control_context_menu</span></tt> is hereby called to get the default context menu to provide a basic set of function</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+
+<span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLCDNumber</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pl_set_widget_for_internal_usage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_context_menu</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">show_context_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="n">gloPos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LcdWidget</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_create_control_context_menu</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cmenu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="n">gloPos</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-happens-if-papi">
+<h2>What happens if PaPI ...<a class="headerlink" href="#what-happens-if-papi" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sends-new-data">
+<h3>sends new data?<a class="headerlink" href="#sends-new-data" title="Permalink to this headline">¶</a></h3>
+<p>The function <tt class="docutils literal"><span class="pre">cb_execute</span></tt> is called by the PaPI backend with a currently
+received data set. Data is a dictionary with an entry <tt class="docutils literal"><span class="pre">CORE_TIME_SIGNAL</span></tt>, a constant defined in <cite>papi.constants.</cite>, which contains
+the time vector. The other entries are data vectors of subscribed signals. To determine the
+data source the corresponding block_name  and plugin_name is given for a single cb_execute
+step.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
+
+<span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+   <span class="n">time</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="n">pc</span><span class="o">.</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]</span>
+
+   <span class="k">for</span> <span class="n">signal_name</span> <span class="ow">in</span> <span class="n">Data</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">signal_name</span> <span class="o">!=</span> <span class="n">pc</span><span class="o">.</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">:</span>
+         <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="sends-a-parameter-changes">
+<h3>sends a parameter changes?<a class="headerlink" href="#sends-a-parameter-changes" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">set_parameter</span></tt> is always called when a parameter is changed. To
+determine the modified parameter the parameter&#8217;s name is given as
+<tt class="docutils literal"><span class="pre">name</span></tt>, of course the new value is also given as <tt class="docutils literal"><span class="pre">value</span></tt>. The value
+is always from type <tt class="docutils literal"><span class="pre">string</span></tt> that means it may be necessary to cast
+the string as float, or int.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName1&#39;</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">));</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName2&#39;</span><span class="p">:</span>
+        <span class="n">new_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_int</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;ParameterName3&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; True &quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; --&gt; &quot;</span> <span class="o">+</span> <span class="s">&quot; False &quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 </div>
 <div class="section" id="what-happens-if-the-user-triggers">
 <h2>What happens if the user triggers ...<a class="headerlink" href="#what-happens-if-the-user-triggers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="pause">
-<h3>... pause?<a class="headerlink" href="#pause" title="Permalink to this headline">¶</a></h3>
+<h3>pause?<a class="headerlink" href="#pause" title="Permalink to this headline">¶</a></h3>
 <p>The PaPI framework executes this functions</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_pause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function pause</span>
 
@@ -389,9 +568,9 @@ be modified by the user during the creation process.</p>
 <p>This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the <tt class="docutils literal"><span class="pre">cb_execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function.</p>
 </div>
 <div class="section" id="resume">
-<h3>... resume?<a class="headerlink" href="#resume" title="Permalink to this headline">¶</a></h3>
+<h3>resume?<a class="headerlink" href="#resume" title="Permalink to this headline">¶</a></h3>
 <p>The PaPI framework executes this functions</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function resume</span>
 
@@ -403,9 +582,10 @@ be modified by the user during the creation process.</p>
 <p>This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the <tt class="docutils literal"><span class="pre">cb_execute(Data,</span> <span class="pre">block_name,</span> <span class="pre">plugin_uname)</span></tt> function if necessary.</p>
 </div>
 <div class="section" id="quit">
-<h3>... quit?<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
-<p>The PaPI framework executes this functions</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<h3>quit?<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
+<p>The PaPI framework executes this functions when this function was executed PaPI will stop and remove the plugin.</p>
+<p>This function must be implemented because the plugin developer should be aware of the fact that this function exists. Quiting a plugin without stopping it in a proper could have bad effects on other running plugins.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function quit</span>
 
@@ -414,7 +594,6 @@ be modified by the user during the creation process.</p>
     <span class="k">pass</span>
 </pre></div>
 </div>
-<p>When this function was exectuted PaPI will stop and remove the plugin.</p>
 </div>
 </div>
 </div>
@@ -425,48 +604,61 @@ be modified by the user during the creation process.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Design Guide Plugin development</a><ul>
-<li><a class="reference internal" href="#how-to">How to ...</a><ul>
-<li><a class="reference internal" href="#start">... start</a></li>
-<li><a class="reference internal" href="#create-blocks">... create Blocks</a></li>
-<li><a class="reference internal" href="#create-parameters">... create Parameters</a></li>
-<li><a class="reference internal" href="#create-events">... create Events</a></li>
-<li><a class="reference internal" href="#process-new-data">... process new data</a></li>
-<li><a class="reference internal" href="#to-react-to-parameter-changes">... to react to parameter changes</a></li>
-<li><a class="reference internal" href="#to-create-a-configuration">...to create a configuration</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#what-happens-if-the-user-triggers">What happens if the user triggers ...</a><ul>
-<li><a class="reference internal" href="#pause">... pause?</a></li>
-<li><a class="reference internal" href="#resume">... resume?</a></li>
-<li><a class="reference internal" href="#quit">... quit?</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
 	<h3> Links </h3>
 	<ul> 
 	  <li>
 	    <a href="CHANGELOG.html">Changelog</a> </li>
 	  </li>
 	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
+	    <a href="toc.manual.html">Manual</a> </li>
 	  </li>
 	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
 	  </li>
 	</ul>
 	
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Guide Plugin development</a><ul>
+<li><a class="reference internal" href="#how-to">How to ...</a><ul>
+<li><a class="reference internal" href="#start">start</a></li>
+<li><a class="reference internal" href="#create-blocks">create blocks</a></li>
+<li><a class="reference internal" href="#send-new-data">send new data</a></li>
+<li><a class="reference internal" href="#create-parameters">create parameters</a></li>
+<li><a class="reference internal" href="#create-events">create events</a></li>
+<li><a class="reference internal" href="#create-a-configuration">create a configuration</a></li>
+<li><a class="reference internal" href="#get-a-configuration-at-startup">get a configuration at startup</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#visual-plugins">Visual plugins</a><ul>
+<li><a class="reference internal" href="#create-a-widget">create a widget</a></li>
+<li><a class="reference internal" href="#context-menu">context menu</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-happens-if-papi">What happens if PaPI ...</a><ul>
+<li><a class="reference internal" href="#sends-new-data">sends new data?</a></li>
+<li><a class="reference internal" href="#sends-a-parameter-changes">sends a parameter changes?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-happens-if-the-user-triggers">What happens if the user triggers ...</a><ul>
+<li><a class="reference internal" href="#pause">pause?</a></li>
+<li><a class="reference internal" href="#resume">resume?</a></li>
+<li><a class="reference internal" href="#quit">quit?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.5_plugin_design.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">

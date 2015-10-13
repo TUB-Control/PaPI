@@ -146,7 +146,7 @@
                               <span class="s">&#39;pause_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_pause_plugin</span><span class="p">,</span>
                               <span class="s">&#39;resume_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_resume_plugin</span><span class="p">,</span>
                               <span class="s">&#39;stop_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_stop_plugin</span><span class="p">,</span>
-                              <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_start_plugin</span><span class="p">,</span>
+                              <span class="s">&#39;start_plugin&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_restart_plugin</span><span class="p">,</span>
                               <span class="s">&#39;parameter_info&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_parameter_info</span>
         <span class="p">}</span>
 
@@ -278,10 +278,10 @@
                 <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="GuiEventProcessing.process_start_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_start_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_start_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="GuiEventProcessing.process_restart_plugin"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_event_processing.GuiEventProcessing.process_restart_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">process_restart_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes plugin_start event.</span>
-<span class="sd">        Used to start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</span>
+<span class="sd">        Used to (re-)start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</span>
 
 <span class="sd">        :param event:</span>
 <span class="sd">        :return:</span>
@@ -356,7 +356,7 @@
         <span class="c"># get the plugin class of the source code loaded and init class as a new object</span>
         <span class="n">plugin</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">current_modul</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)()</span>
         <span class="c"># get default startup configuration for merge with user defined startup_configuration</span>
-        <span class="n">start_config</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span>
+        <span class="n">start_config</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">_get_startup_configuration</span><span class="p">()</span>
         <span class="n">config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">start_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
         <span class="c"># check if plugin in ViP (includes pcp) or something which is not running in the gui process</span>
@@ -552,10 +552,13 @@
 	    <a href="../../../CHANGELOG.html">Changelog</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../toc_manual.html">Manual</a> </li>
+	    <a href="../../../toc.manual.html">Manual</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../toc_framework.html">Framework</a> </li>
+	    <a href="../../../toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../man.papi.plugin.doc.html">Plugins</a> </li>
 	  </li>
 	</ul>
 	

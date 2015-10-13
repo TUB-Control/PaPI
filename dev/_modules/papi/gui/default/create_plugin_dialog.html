@@ -104,7 +104,7 @@
 
 
 <div class="viewcode-block" id="CreatePluginDialog.set_plugin"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.create_plugin_dialog.CreatePluginDialog.set_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">set_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_info</span><span class="p">):</span>
-        <span class="n">startup_config</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">get_startup_configuration</span><span class="p">()</span>
+        <span class="n">startup_config</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_startup_configuration</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">startup_config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_name</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plugin_type</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">plugin_object</span><span class="o">.</span><span class="n">_get_type</span><span class="p">()</span>
@@ -322,10 +322,13 @@
 	    <a href="../../../../CHANGELOG.html">Changelog</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../../toc_manual.html">Manual</a> </li>
+	    <a href="../../../../toc.manual.html">Manual</a> </li>
 	  </li>
 	  <li>
-	    <a href="../../../../toc_framework.html">Framework</a> </li>
+	    <a href="../../../../toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../man.papi.plugin.doc.html">Plugins</a> </li>
 	  </li>
 	</ul>
 	

@@ -68,18 +68,21 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="man.papi.manual.2_introduction.html#papi-plugins">PaPI Plugins</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#signal-blocks">Signal/Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#signals-blocks">Signals/Blocks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#parameters">Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#events">Events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-architecture">Plugin Architecture</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#functions">Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-init">Plugin init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-execution">plugin execution</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-quit">plugin quit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-initialize">Plugin initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-execution">Plugin execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-quit">Plugin quit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#additional-functions">Additional functions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#graphical-user-interface">Graphical User Interface</a><ul>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="man.papi.manual.2_introduction.html#graphical-user-interface">Graphical User Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.2_introduction.html#papi-main-window">PaPI Main Window</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#main-window">Main Window</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#papi-menu">PaPI menu</a></li>
 <li class="toctree-l3"><a class="reference internal" href="man.papi.manual.2_introduction.html#plugin-menu">Plugin menu</a></li>
@@ -97,19 +100,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="man.papi.manual.5_plugin_design.html">Design Guide Plugin development</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#how-to">How to ...</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#start">... start</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-blocks">... create Blocks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-parameters">... create Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-events">... create Events</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#process-new-data">... process new data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#to-react-to-parameter-changes">... to react to parameter changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#to-create-a-configuration">...to create a configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#start">start</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-blocks">create blocks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#send-new-data">send new data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-parameters">create parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-events">create events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-a-configuration">create a configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#get-a-configuration-at-startup">get a configuration at startup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#visual-plugins">Visual plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#create-a-widget">create a widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#context-menu">context menu</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#what-happens-if-papi">What happens if PaPI ...</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#sends-new-data">sends new data?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#sends-a-parameter-changes">sends a parameter changes?</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#what-happens-if-the-user-triggers">What happens if the user triggers ...</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#pause">... pause?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#resume">... resume?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#quit">... quit?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#pause">pause?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#resume">resume?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="man.papi.manual.5_plugin_design.html#quit">quit?</a></li>
 </ul>
 </li>
 </ul>
@@ -148,19 +161,22 @@
 	    <a href="CHANGELOG.html">Changelog</a> </li>
 	  </li>
 	  <li>
-	    <a href="toc_manual.html">Manual</a> </li>
+	    <a href="toc.manual.html">Manual</a> </li>
 	  </li>
 	  <li>
-	    <a href="toc_framework.html">Framework</a> </li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
 	  </li>
 	</ul>
 	
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/man.papi.manual.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
-
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
