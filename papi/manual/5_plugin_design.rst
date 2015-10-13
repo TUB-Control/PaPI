@@ -6,8 +6,8 @@ Design Guide Plugin development
 How to ...
 ----------
 
-... start
-~~~~~~~~~
+start
+~~~~~
 
 The plugins are written in python 3.4. For the development we recommend to use one of these tools:
 
@@ -57,12 +57,12 @@ The **plugin description** file has to provide the following information as an i
 
 By using `rst <http://docutils.sourceforge.net/rst.html>`_ for the documentation, the **plugin documentation** file ``<unique-plugin-name>.rst`` will be recognized during the documentation build process  .
 
-... create Blocks
-~~~~~~~~~~~~~~~~~
+create blocks
+~~~~~~~~~~~~~
 
 Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
-e.g. a plot.
+e.g. a plot. We recommend to read :ref:`Signals/Blocks <man_signal_block>`.
 
 It is necessary to imports this objects:
 
@@ -81,16 +81,17 @@ that the PaPI-backend only knows the last blocks sent by
 .. code-block:: python
     :linenos:
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
+
        self.block = DBlock('Source')
        signal = DSignal('Step')
        self.block.add_signal(signal)
-       self.send_new_block_list([block])
+       self.pl_send_new_block_list([block])
 
-... create Parameters
-~~~~~~~~~~~~~~~~~~~~~
+create parameters
+~~~~~~~~~~~~~~~~~
 
-Parameters are used to enable an external control of a running plugin.
+Parameters are used to enable an external control of a running plugin. We recommend to read :ref:`Parameters <man_parameters>`.
 
 It is necessary to imports this object:
 
@@ -105,18 +106,18 @@ was defined for the
 .. code-block:: python
     :linenos:
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
         self.para_foo      = DParameter('foo',default=0)
         self.para_bar      = DParameter('bar',default=0)
         self.para_baz      = DParameter('baz',default=1, Regex='[0-9]+')
 
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
-... create Events
-~~~~~~~~~~~~~~~~~
+create events
+~~~~~~~~~~~~~
 
-Events are used to change parameters of other plugins.
+Events are used to change parameters of other plugins. We recommend to read :ref:`Events <man_events>`.
 
 It is necessary to imports this object:
 
@@ -124,82 +125,43 @@ It is necessary to imports this object:
 
     from papi.data.DSignal import DEvent
 
-A new event is define by the following code. At the end the PaPI-backend will be informed and
+A new event is defined by the following code and at the end the PaPI-backend will be informed and
 the event can be used to change parameters of other plugins. It is **very important** to know
 that the PaPI-backend only knows the last events sent by
-``send_new_event_list``. Previous sent events will be deleted.
+``send_new_event_list``. Previous sent events will be deleted. In the code above a button also created which is used to trigger the change event by user interaction (clicking the button).
 
 .. code-block:: python
     :linenos:
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self, config=None):
 
-       self.event_start         = DEvent('Start')
-       self.send_new_event_list([self.event_start])
+        self.event_start         = DEvent('Start')
+        self.pl_send_new_event_list([self.event_start])
 
-An event can be emitted as following e.g. as the result of clicking a button in the GUI.
+        self.button = QPushButton(self.name)
+        self.button.clicked.connect(self.clicked_start_button)
+        self.button.setText('Click')
+
+    The event can be emitted as following, here as the result of clicking a button in the GUI.
 
 .. code-block:: python
     :linenos:
-    
+
     def clicked_start_button(self):
-        self.emit_event('1', self.event_start)
+        self.pl_emit_event('1', self.event_start)
 
-... process new data
-~~~~~~~~~~~~~~~~~~~~
-
-The function ``cb_execute`` is called by the PaPI backend with a currently
-received data set. Data is a dictionary with an entry 't' which contains
-the time vector. The other entries are data vectors. To determine the
-data source the corresponding block\_name is given for a single cb_execute
-step.
-
-.. code-block:: python
-    :linenos:
-
-    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
-       time = Data['t']
-
-       for key in Data:
-          if key != 't':
-             data = Data[key]
-
-... to react to parameter changes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The ``set_parameter`` is always called when a parameter is changed. To
-determine the modified parameter the parameter's name is given as
-``name``, of course the new value is also given as ``value``. The value
-is always from type ``string`` that means it may be necessary to cast
-the string as float, or int.
-
-.. code-block:: python
-    :linenos:
-
-    def set_parameter(self, name, value):
-        if name == 'ParameterName1':
-            print(name + " --> " + str(value));
-
-        if name == 'ParameterName2':
-            new_int = int(float(value))
-            print(name + " --> " + str(new_int))
-
-        if name == 'ParameterName3':
-            if int(float(value)) == int('1'):
-                print(name + " --> " + " True ")
-            else:
-                print(name + " --> " + " False ")
-
-...to create a configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+to create a configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to set a default configuration for every plugin which can
 be modified by the user during the creation process.
 
+The callback function `cb_get_plugin_configuration` is used to inform the PaPI backend about the configuration.
+
 .. code-block:: python
     :linenos:
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'flag': {
                 'value': "0",
@@ -232,9 +194,9 @@ be modified by the user during the creation process.
 
 As you can see it is possible to describe a single configuration attribute in a detailed way but only the key ``value`` is mandatory.
 
-The other keys are used to provided a comfortable change of the attribute during the creation process.
+The other keys are used to provided a comfortable change of the attribute during the creation process. The following table provides an overview over all supported keys for describing an arbitrary attribute.
 
-.. list-table:: Possible keys for an attribute
+.. list-table:: Possible key for describing an attribute
     :widths: 3 10
     :header-rows: 1
 
@@ -276,19 +238,70 @@ In case of an unknown type or none type was defined a simple textfield is used.
 
 .. figure:: _static/design/PaPIFileDialog.png
    :alt:
+   :figwidth: 40%
 
    **File dialog.**
 
 .. figure:: _static/design/PaPIColorPicker.png
    :alt:
+   :figwidth: 40%
 
    **Color picker.**
+
+What happens if PaPI ...
+------------------------
+
+sends new data?
+~~~~~~~~~~~~~~~
+
+The function ``cb_execute`` is called by the PaPI backend with a currently
+received data set. Data is a dictionary with an entry 't' which contains
+the time vector. The other entries are data vectors. To determine the
+data source the corresponding block\_name is given for a single cb_execute
+step.
+
+.. code-block:: python
+    :linenos:
+
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
+       time = Data['t']
+
+       for key in Data:
+          if key != 't':
+             data = Data[key]
+
+sends a parameter changes?
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``set_parameter`` is always called when a parameter is changed. To
+determine the modified parameter the parameter's name is given as
+``name``, of course the new value is also given as ``value``. The value
+is always from type ``string`` that means it may be necessary to cast
+the string as float, or int.
+
+.. code-block:: python
+    :linenos:
+
+    def set_parameter(self, name, value):
+        if name == 'ParameterName1':
+            print(name + " --> " + str(value));
+
+        if name == 'ParameterName2':
+            new_int = int(float(value))
+            print(name + " --> " + str(new_int))
+
+        if name == 'ParameterName3':
+            if int(float(value)) == int('1'):
+                print(name + " --> " + " True ")
+            else:
+                print(name + " --> " + " False ")
+
 
 What happens if the user triggers ...
 -------------------------------------
 
-... pause?
-~~~~~~~~~~
+pause?
+~~~~~~
 
 The PaPI framework executes this functions
 
@@ -304,8 +317,8 @@ The PaPI framework executes this functions
 
 This enables the developer to handle a users wish to break the plugin. PaPI will also stop to call the ``cb_execute(Data, block_name, plugin_uname)`` function.
 
-... resume?
-~~~~~~~~~~~
+resume?
+~~~~~~~
 
 The PaPI framework executes this functions
 
@@ -321,8 +334,8 @@ The PaPI framework executes this functions
 
 This enables the developer to handle a users wish to resume the plugin. PaPI will start again to call the ``cb_execute(Data, block_name, plugin_uname)`` function if necessary.
 
-... quit?
-~~~~~~~~~
+quit?
+~~~~~
 
 The PaPI framework executes this functions
 

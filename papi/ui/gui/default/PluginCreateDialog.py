@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginCreateDialog.ui'
 #
-# Created: Wed Sep 23 16:34:27 2015
+# Created: Tue Oct 13 14:10:13 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,6 @@ class Ui_CreatePluginDialog(object):
         _translate = QtCore.QCoreApplication.translate
         CreatePluginDialog.setWindowTitle(_translate("CreatePluginDialog", "Dialog"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSimple), _translate("CreatePluginDialog", "Simple"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAdvance), _translate("CreatePluginDialog", "Advance"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAdvance), _translate("CreatePluginDialog", "Advanced"))
         self.autostartBox.setText(_translate("CreatePluginDialog", "Autostart"))
 

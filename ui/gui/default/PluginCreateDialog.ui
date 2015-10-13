@@ -37,7 +37,7 @@
      </widget>
      <widget class="QWidget" name="tabAdvance">
       <attribute name="title">
-       <string>Advance</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
