@@ -8,6 +8,8 @@ v.1.x:
 -  **feature**: Added ability to define favourite plugins
 -  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
 -  **feature**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
+-  **feature**: Auto-Scale of background images
+-  **feature**: Background image will be the same after dock / detach
 -  **improvement**: Cleaned up the plugin developers API
 -  **doc**: Added documentation for the main window
 -  **doc**: Added documentation for shortcuts
