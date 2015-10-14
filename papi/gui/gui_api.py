@@ -825,7 +825,7 @@ class Gui_api(QtCore.QObject):
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
-    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
+    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[], saveUserSettings=False):
         """
 
         :param path:
@@ -847,7 +847,7 @@ class Gui_api(QtCore.QObject):
             ##########################
             # Save gui configuration #
             ##########################
-            gui_cfg = self.get_gui_config_function()
+            gui_cfg = self.get_gui_config_function(saveUserSettings=saveUserSettings)
             gui_cfg_xml = ET.SubElement(root, 'Configuration')
 
             for cfg_item in gui_cfg:

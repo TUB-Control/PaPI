@@ -380,7 +380,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.actionResetPaPI.setIconVisibleInMenu(True)
         self.actionRunMode.setIconVisibleInMenu(True)
 
-    def get_gui_config(self):
+    def get_gui_config(self, saveUserSettings=False):
 
         actTab = {}
         actTab['Active'] = str(self.TabManager.get_currently_active_tab())
@@ -400,22 +400,24 @@ class GUI(QMainWindow, Ui_DefaultMain):
         size['Y']= str(self.size().height())
 
 
-        # ----------------------
-        # Set favourite plugins
-        # ----------------------
-        favourites = {}
-        actions = self.toolBar.actions()
-        for i in range(len(actions)):
-            action = actions[i]
-            if isinstance(action, PaPIFavAction):
-                favourites[action.text()] = {}
-                favourites[action.text()]['position'] = str(i)
-
         cfg = {}
         cfg['ActiveTab'] = actTab
         cfg['Tabs'] = tabs
         cfg['Size'] = size
-        cfg['Favourites'] = favourites
+
+        # ----------------------
+        # Set favourite plugins
+        # ----------------------
+        if saveUserSettings:
+            favourites = {}
+            actions = self.toolBar.actions()
+            for i in range(len(actions)):
+                action = actions[i]
+                if isinstance(action, PaPIFavAction):
+                    favourites[action.text()] = {}
+                    favourites[action.text()]['position'] = str(i)
+
+            cfg['Favourites'] = favourites
 
         return cfg
 
@@ -843,7 +845,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         self.toolBar.addAction(plugin_action)
 
-        self.gui_management.gui_api.do_save_xml_config_reloaded(pc.PAPI_USER_CFG, plToSave=[], sToSave=[])
+        self.gui_management.gui_api.do_save_xml_config_reloaded(
+            pc.PAPI_USER_CFG, plToSave=[], sToSave=[], saveUserSettings=True)
 
     def show_create_plugin_dialog(self, plugin_info):
         if plugin_info is not None:
