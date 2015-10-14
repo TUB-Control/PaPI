@@ -172,20 +172,20 @@ class PapiTabManger(QObject):
             return False
 
     def set_background_for_tab_with_name(self, name, bg):
-        print(name)
         if bg is not None:
             if name in self.tab_dict_uname:
-                pixmap  = QtGui.QPixmap(bg)
-
                 if isinstance(self.tab_dict_uname[name], TabObject):
                     widgetArea = self.tab_dict_uname[name]
                 elif isinstance(self.tab_dict_uname[name], PaPIWindow):
                     widgetArea = self.tab_dict_uname[name].tabWidget
 
-                qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
-
-                widgetArea.setBackground(qbrush_bg)
-                widgetArea.background = bg
+                widgetArea.setBackground_image(bg)
+                # pixmap  = QtGui.QPixmap(bg).scaled(widgetArea.size())
+                # qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
+                #
+                # widgetArea.setBackground(qbrush_bg)
+                # widgetArea.background = bg
+                # widgetArea.pixmap = QtGui.QPixmap(bg)
 
     def set_all_tabs_to_close_when_empty(self, state):
         for tabName in self.tab_dict_uname:
@@ -393,7 +393,8 @@ class PapiTabManger(QObject):
         if window.windowName in self.tab_dict_uname:
             winName = window.windowName
             destTab = self.add_tab('DOCK'+winName+'DOCK')
-
+             # reuse previous background (the one before dock)
+            destTab.setBackground_image(window.tabWidget.getBackground_image())
             if not window.tabWidget.isEmpty():
                 # create new Tab with name with affix and prefix
                 plugins = self.dGui.get_all_plugins()
@@ -420,6 +421,8 @@ class PapiTabManger(QObject):
         tabOb = self.tabWidget.currentWidget()
         tabName = tabOb.name
         neWin = self.add_wind('DETACH'+tabName + 'DETACH')
+        # reuse previous background (the one before detach)
+        neWin.tabWidget.setBackground_image(tabOb.getBackground_image())
 
         if  len(tabOb.subWindowList()) > 0:
             plugins = self.dGui.get_all_plugins()
@@ -594,7 +597,7 @@ class TabObject(QMdiArea):
         self.background = 'default'
         self.closeIfempty = False
         self.windowName = windowName
-
+        self.bg_pixmap = None
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
@@ -602,6 +605,21 @@ class TabObject(QMdiArea):
     def isEmpty(self):
         return len(self.subWindowList()) == 0
 
+    def resizeEvent(self, QResizeEvent):
+        QMdiArea.resizeEvent(self,QResizeEvent)
+        if self.bg_pixmap is not None:
+            qbrush_bg = QtGui.QBrush(QtGui.QColor() ,self.bg_pixmap.scaled(QResizeEvent.size()))
+            self.setBackground(qbrush_bg)
+
+    def setBackground_image(self,image):
+        if image is not None and image != '' and image != 'default':
+            self.bg_pixmap  = QtGui.QPixmap(image)
+            qbrush_bg = QtGui.QBrush(QtGui.QColor() ,self.bg_pixmap.scaled(self.size()))
+            self.setBackground(qbrush_bg)
+            self.background = image
+
+    def getBackground_image(self):
+        return self.background
 
 class DefaultCloseBox(QMessageBox):
 
