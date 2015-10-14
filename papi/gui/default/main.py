@@ -476,7 +476,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
         # ------------------------
         # Restore favourite icons
         # ------------------------
-
         if 'Favourites' in cfg:
             sorted_positions = {}
 
@@ -486,6 +485,19 @@ class GUI(QMainWindow, Ui_DefaultMain):
             for position in sorted(sorted_positions.keys()):
                 plugin = sorted_positions[position]
                 self.addFavPlugin(plugin)
+
+        # -----------------------
+        # Restore Tabs
+        # -----------------------
+        if 'Tabs' in cfg:
+            for tabName in cfg['Tabs']:
+                tab = cfg['Tabs'][tabName]
+                self.TabManager.add_tab(tabName)
+                if 'Background' in tab:
+                    self.TabManager.set_background_for_tab_with_name(tabName, tab['Background'])
+
+                
+
 
     def triggered_reload_plugin_db(self):
         """
@@ -721,6 +733,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
             # hide toolbar
             self.toolBar.setHidden(True)
             self.actionToolbar.setChecked(False)
+            # disable context menu of tabmanger
+            self.TabManager.disableContextMenus()
+
             # lock subwindows in tabs
             for tabName in self.TabManager.tab_dict_uname:
                 tabObject = self.TabManager.tab_dict_uname[tabName]
@@ -732,6 +747,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
             # show toolbar
             self.toolBar.setHidden(False)
             self.actionToolbar.setChecked(True)
+            # disable context menu of tabmanger
+            self.TabManager.enableContextMenus()
+
             # unlock subwindows in tabs
             for tabName in self.TabManager.tab_dict_uname:
                 tabObject = self.TabManager.tab_dict_uname[tabName]

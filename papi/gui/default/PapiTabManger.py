@@ -70,6 +70,17 @@ class PapiTabManger(QObject):
 
         self.centralWidget = centralWidget
 
+        self.contextMenusEnabled = True
+
+    def disableContextMenus(self):
+        self.contextMenusEnabled = False
+
+    def enableContextMenus(self):
+        self.contextMenusEnabled = True
+
+    def isContextMenuEnabled(self):
+        return self.contextMenusEnabled
+
     def get_tabs_by_uname(self):
         return self.tab_dict_uname
 
@@ -251,9 +262,10 @@ class PapiTabManger(QObject):
             self.tabWidget.setTabsClosable(close)
 
     def show_context_menu(self, pos):
-        self.cmenu = self.create_context_menu()
-        gloPos = self.tabWidget.mapToGlobal(pos)
-        self.cmenu.exec_(gloPos)
+        if self.isContextMenuEnabled():
+            self.cmenu = self.create_context_menu()
+            gloPos = self.tabWidget.mapToGlobal(pos)
+            self.cmenu.exec_(gloPos)
 
     def create_context_menu(self):
         ctrlMenu = QMenu("")
@@ -323,9 +335,10 @@ class PapiTabManger(QObject):
 
 
     def show_context_menu_window(self, pos, window):
-        self.cmenu = self.create_context_menu_window(window.tabWidget, window)
-        gloPos = window.mapToGlobal(pos)
-        self.cmenu.exec_(gloPos)
+        if self.isContextMenuEnabled():
+            self.cmenu = self.create_context_menu_window(window.tabWidget, window)
+            gloPos = window.mapToGlobal(pos)
+            self.cmenu.exec_(gloPos)
 
     def create_context_menu_window(self, tabWidget, window):
         ctrlMenu = QMenu("")
