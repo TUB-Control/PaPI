@@ -31,6 +31,7 @@ from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
 from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
+from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
 
 
 class base_visual(base_plugin):
@@ -80,7 +81,8 @@ class base_visual(base_plugin):
 
         self.window_name = self._config['name']['value']
 
-        self._set_window_for_internal_usage(QMdiSubWindow())
+        #self._set_window_for_internal_usage(QMdiSubWindow())
+        self._set_window_for_internal_usage(PaPISubWindow())
         return self._start_plugin_base()
 
     def _start_plugin_base(self):
@@ -235,6 +237,9 @@ class base_visual(base_plugin):
 
         :return: QMenu
         """
+        # Disable context menu if run mode is enabled!
+        if self._subWindow.isInteractionAllowed() is False:
+            return QMenu('Disabled!')
 
         ctrlMenu = QMenu("Control")
 

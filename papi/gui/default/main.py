@@ -478,7 +478,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
         # ------------------------
         # Restore favourite icons
         # ------------------------
-
         if 'Favourites' in cfg:
             sorted_positions = {}
 
@@ -488,6 +487,19 @@ class GUI(QMainWindow, Ui_DefaultMain):
             for position in sorted(sorted_positions.keys()):
                 plugin = sorted_positions[position]
                 self.addFavPlugin(plugin)
+
+        # -----------------------
+        # Restore Tabs
+        # -----------------------
+        if 'Tabs' in cfg:
+            for tabName in cfg['Tabs']:
+                tab = cfg['Tabs'][tabName]
+                self.TabManager.add_tab(tabName)
+                if 'Background' in tab:
+                    self.TabManager.set_background_for_tab_with_name(tabName, tab['Background'])
+
+                
+
 
     def triggered_reload_plugin_db(self):
         """
@@ -719,22 +731,37 @@ class GUI(QMainWindow, Ui_DefaultMain):
         errMsg.show()
 
     def toggle_run_mode(self):
-        if self.in_run_mode:
-            self.in_run_mode = False
-            self.loadButton.show()
-            self.saveButton.show()
-            self.menubar.setHidden(False)
-            self.toogle_lock()
+        if self.in_run_mode is False:
+            # hide toolbar
+            self.toolBar.setHidden(True)
+            self.actionToolbar.setChecked(False)
+            # disable context menu of tabmanger
+            self.TabManager.disableContextMenus()
 
-        elif not self.in_run_mode:
+            # lock subwindows in tabs
+            for tabName in self.TabManager.tab_dict_uname:
+                tabObject = self.TabManager.tab_dict_uname[tabName]
+
+                for subWindow in tabObject.subWindowList():
+                    subWindow.disableInteraction()
             self.in_run_mode = True
-            self.loadButton.hide()
-            self.saveButton.hide()
-            self.menubar.hide()
-            self.toogle_lock()
+        else:
+            # show toolbar
+            self.toolBar.setHidden(False)
+            self.actionToolbar.setChecked(True)
+            # disable context menu of tabmanger
+            self.TabManager.enableContextMenus()
+
+            # unlock subwindows in tabs
+            for tabName in self.TabManager.tab_dict_uname:
+                tabObject = self.TabManager.tab_dict_uname[tabName]
+
+                for subWindow in tabObject.subWindowList():
+                    subWindow.enableInteraction()
+            self.in_run_mode = False
 
     def toogle_lock(self):
-
+        raise Exception("PLEASE REPORT THIS BUG!!")
         if self.in_run_mode:
             for tab_name in self.TabManager.get_tabs_by_uname():
                 area = self.TabManager.get_tabs_by_uname()[tab_name]

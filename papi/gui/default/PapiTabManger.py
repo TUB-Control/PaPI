@@ -70,6 +70,17 @@ class PapiTabManger(QObject):
 
         self.centralWidget = centralWidget
 
+        self.contextMenusEnabled = True
+
+    def disableContextMenus(self):
+        self.contextMenusEnabled = False
+
+    def enableContextMenus(self):
+        self.contextMenusEnabled = True
+
+    def isContextMenuEnabled(self):
+        return self.contextMenusEnabled
+
     def get_tabs_by_uname(self):
         return self.tab_dict_uname
 
@@ -106,9 +117,9 @@ class PapiTabManger(QObject):
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
                 if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
-                    tabOfPlugin = dplugin.plugin.config['tab']['value']
+                    tabOfPlugin = dplugin.plugin._config['tab']['value']
                     if tabOfPlugin == old_name:
-                        dplugin.plugin.config['tab']['value'] = new_name
+                        dplugin.plugin._config['tab']['value'] = new_name
 
     def rename_window(self, window, new_name):
         if new_name not in self.tab_dict_uname:
@@ -123,9 +134,9 @@ class PapiTabManger(QObject):
             for pluign_ind in allPlugins:
                 dplugin = allPlugins[pluign_ind]
                 if dplugin.plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
-                    tabOfPlugin = dplugin.plugin.config['tab']['value']
+                    tabOfPlugin = dplugin.plugin._config['tab']['value']
                     if tabOfPlugin == old_name:
-                        dplugin.plugin.config['tab']['value'] = new_name
+                        dplugin.plugin._config['tab']['value'] = new_name
 
     def get_default_tab(self, NotThisIndex):
         if NotThisIndex == 0:
@@ -172,20 +183,20 @@ class PapiTabManger(QObject):
             return False
 
     def set_background_for_tab_with_name(self, name, bg):
-        print(name)
         if bg is not None:
             if name in self.tab_dict_uname:
-                pixmap  = QtGui.QPixmap(bg)
-
                 if isinstance(self.tab_dict_uname[name], TabObject):
                     widgetArea = self.tab_dict_uname[name]
                 elif isinstance(self.tab_dict_uname[name], PaPIWindow):
                     widgetArea = self.tab_dict_uname[name].tabWidget
 
-                qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
-
-                widgetArea.setBackground(qbrush_bg)
-                widgetArea.background = bg
+                widgetArea.setBackground_image(bg)
+                # pixmap  = QtGui.QPixmap(bg).scaled(widgetArea.size())
+                # qbrush_bg = QtGui.QBrush(QtGui.QColor() ,pixmap)
+                #
+                # widgetArea.setBackground(qbrush_bg)
+                # widgetArea.background = bg
+                # widgetArea.pixmap = QtGui.QPixmap(bg)
 
     def set_all_tabs_to_close_when_empty(self, state):
         for tabName in self.tab_dict_uname:
@@ -201,9 +212,9 @@ class PapiTabManger(QObject):
             for pl_id in plugins:
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
-                    if plugin.plugin.config['tab']['value'] == tab_name:
+                    if plugin.plugin._config['tab']['value'] == tab_name:
                         self.moveFromTo(tab_name,self.get_default_tab(ind).name, plugin.plugin._get_sub_window())
-                        plugin.plugin.config['tab']['value'] = self.get_default_tab(ind).name
+                        plugin.plugin._config['tab']['value'] = self.get_default_tab(ind).name
 
             self.remove_tab(tabOb)
         else:
@@ -251,9 +262,10 @@ class PapiTabManger(QObject):
             self.tabWidget.setTabsClosable(close)
 
     def show_context_menu(self, pos):
-        self.cmenu = self.create_context_menu()
-        gloPos = self.tabWidget.mapToGlobal(pos)
-        self.cmenu.exec_(gloPos)
+        if self.isContextMenuEnabled():
+            self.cmenu = self.create_context_menu()
+            gloPos = self.tabWidget.mapToGlobal(pos)
+            self.cmenu.exec_(gloPos)
 
     def create_context_menu(self):
         ctrlMenu = QMenu("")
@@ -323,9 +335,10 @@ class PapiTabManger(QObject):
 
 
     def show_context_menu_window(self, pos, window):
-        self.cmenu = self.create_context_menu_window(window.tabWidget, window)
-        gloPos = window.mapToGlobal(pos)
-        self.cmenu.exec_(gloPos)
+        if self.isContextMenuEnabled():
+            self.cmenu = self.create_context_menu_window(window.tabWidget, window)
+            gloPos = window.mapToGlobal(pos)
+            self.cmenu.exec_(gloPos)
 
     def create_context_menu_window(self, tabWidget, window):
         ctrlMenu = QMenu("")
@@ -393,7 +406,8 @@ class PapiTabManger(QObject):
         if window.windowName in self.tab_dict_uname:
             winName = window.windowName
             destTab = self.add_tab('DOCK'+winName+'DOCK')
-
+             # reuse previous background (the one before dock)
+            destTab.setBackground_image(window.tabWidget.getBackground_image())
             if not window.tabWidget.isEmpty():
                 # create new Tab with name with affix and prefix
                 plugins = self.dGui.get_all_plugins()
@@ -402,14 +416,14 @@ class PapiTabManger(QObject):
                     plugin = plugins[pl_id]
                     if plugin.type == PLUGIN_VIP_IDENTIFIER:
 
-                        if plugin.plugin.config['tab']['value'] == window.windowName:
+                        if plugin.plugin._config['tab']['value'] == window.windowName:
 
                             subwin = plugin.plugin._get_sub_window()
                             posX = subwin.pos().x()
                             posY = subwin.pos().y()
                             self.moveFromTo(window.windowName,destTab.name, subwin,posX=posX,posY=posY)
 
-                            plugin.plugin.config['tab']['value'] = destTab.name
+                            plugin.plugin._config['tab']['value'] = destTab.name
 
             window.alreadyDocked = True
             self.remove_window(window)
@@ -420,18 +434,20 @@ class PapiTabManger(QObject):
         tabOb = self.tabWidget.currentWidget()
         tabName = tabOb.name
         neWin = self.add_wind('DETACH'+tabName + 'DETACH')
+        # reuse previous background (the one before detach)
+        neWin.tabWidget.setBackground_image(tabOb.getBackground_image())
 
         if  len(tabOb.subWindowList()) > 0:
             plugins = self.dGui.get_all_plugins()
             for pl_id in plugins:
                 plugin = plugins[pl_id]
                 if plugin.type == PLUGIN_VIP_IDENTIFIER:
-                    if plugin.plugin.config['tab']['value'] == tabOb.name:
+                    if plugin.plugin._config['tab']['value'] == tabOb.name:
                         subwin = plugin.plugin._get_sub_window()
                         posX = subwin.pos().x()
                         posY = subwin.pos().y()
                         self.moveFromTo(tabOb.name,neWin.windowName, subwin,posX=posX,posY=posY)
-                        plugin.plugin.config['tab']['value'] = neWin.windowName
+                        plugin.plugin._config['tab']['value'] = neWin.windowName
 
         self.remove_tab(tabOb)
         self.rename_window(neWin,tabName)
@@ -594,7 +610,7 @@ class TabObject(QMdiArea):
         self.background = 'default'
         self.closeIfempty = False
         self.windowName = windowName
-
+        self.bg_pixmap = None
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
@@ -602,6 +618,21 @@ class TabObject(QMdiArea):
     def isEmpty(self):
         return len(self.subWindowList()) == 0
 
+    def resizeEvent(self, QResizeEvent):
+        QMdiArea.resizeEvent(self,QResizeEvent)
+        if self.bg_pixmap is not None:
+            qbrush_bg = QtGui.QBrush(QtGui.QColor() ,self.bg_pixmap.scaled(QResizeEvent.size()))
+            self.setBackground(qbrush_bg)
+
+    def setBackground_image(self,image):
+        if image is not None and image != '' and image != 'default':
+            self.bg_pixmap  = QtGui.QPixmap(image)
+            qbrush_bg = QtGui.QBrush(QtGui.QColor() ,self.bg_pixmap.scaled(self.size()))
+            self.setBackground(qbrush_bg)
+            self.background = image
+
+    def getBackground_image(self):
+        return self.background
 
 class DefaultCloseBox(QMessageBox):
 
