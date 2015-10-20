@@ -132,14 +132,16 @@ class RehaStimGUI(vip_base, object):
         # Create events
         # ---------------------------
 
-        self.event_new_config        = DEvent('StimulatorConfiguration')
+        self.event_new_config    = DEvent('StimulatorConfiguration')
         self.event_heartbeat     = DEvent('Heartbeat')
         self.event_maxima_slider = DEvent('MaximaSlider')
         self.event_control_stim  = DEvent('ControlStim')
         self.event_start         = DEvent('Start')
+        self.event_next_state    = DEvent('NextState')
 
-        self.pl_send_new_event_list([self.event_new_config, self.event_heartbeat,
-                                  self.event_maxima_slider, self.event_control_stim, self.event_start])
+        self.pl_send_new_event_list([ self.event_new_config, self.event_heartbeat,
+                                      self.event_maxima_slider, self.event_control_stim, self.event_start,
+                                      self.event_next_state ])
 
         # ---------------------------
         # Create Parameters
@@ -199,6 +201,12 @@ class RehaStimGUI(vip_base, object):
         self.timer.start(1000)
 
         self.heartbeat = 0
+
+        # ---------------------
+        # General variables
+        # ---------------------
+
+        self.last_next_state_nr = None
 
         return True
 
@@ -672,24 +680,31 @@ class RehaStimGUI(vip_base, object):
 
         return json_str
 
-    def select_state_widget(self, stateWidget, send_config=True):
+    def select_state_widget(self, stateWidget, send_config=True, send_preferred_state = True):
         if stateWidget is None:
             return
 
         old_stateWidget = self.current_state
 
-        self.unselect_state_widget(self.current_state)
+        if not send_preferred_state:
+            self.unselect_state_widget(self.current_state)
 
         if isinstance(stateWidget, StateWidget):
             for c in range(1, self.tableWidget.columnCount()):
                 if stateWidget == self.tableWidget.cellWidget(0, c):
                     self.tableWidget.selectColumn(c)
-                    self.current_state = stateWidget
-                    for r in range(1, self.tableWidget.rowCount()):
-                        cItem = self.tableWidget.cellWidget(r, c)
-                        cItem.setPalette(self.pal_cell_selected)
-                        cItem.setBackgroundRole(QtGui.QPalette.Highlight)
-                        cItem.setAutoFillBackground(True)
+
+
+                    if not send_preferred_state:
+                        self.current_state = stateWidget
+
+                        for r in range(1, self.tableWidget.rowCount()):
+                            cItem = self.tableWidget.cellWidget(r, c)
+                            cItem.setPalette(self.pal_cell_selected)
+                            cItem.setBackgroundRole(QtGui.QPalette.Highlight)
+                            cItem.setAutoFillBackground(True)
+                    else:
+                        self.pl_emit_event(str(c), self.event_next_state)
 
         simulink_cfg = self.create_config_for_simulink_block(current_state=old_stateWidget)
 
@@ -710,22 +725,36 @@ class RehaStimGUI(vip_base, object):
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
+        next_state = None
+
         if self.signal_next_state in Data:
             next_state_nr = int(Data[self.signal_next_state][0])
 
-            if self.current_state is not None:
+            if next_state_nr != self.last_next_state_nr:
+                self.last_next_state_nr = next_state_nr
+
                 for c in range(1, self.tableWidget.columnCount()):
-                    if self.current_state == self.tableWidget.cellWidget(0, c):
 
-                        if c+1 == next_state_nr:
-                            # The next state must exists
-                            if next_state_nr < self.tableWidget.columnCount():
-                                next_state = self.tableWidget.cellWidget(0,next_state_nr)
-                                self.select_state_widget(next_state, send_config=False)
+                    if next_state_nr < self.tableWidget.columnCount():
+                        next_state = self.tableWidget.cellWidget(0,next_state_nr)
 
-                        if c == self.tableWidget.columnCount()-1 and next_state_nr == 1:
-                            next_state = self.tableWidget.cellWidget(0, next_state_nr)
-                            self.select_state_widget(next_state, send_config=False)
+                    if next_state_nr < 0:
+                        self.unselect_state_widget(self.current_state)
+
+                        if next_state_nr == -1:
+                            pass # Maxima einstellen
+
+                        if next_state_nr == -5:
+                            pass # when stop is pressed
+
+                        if next_state_nr == -6:
+                            pass # plugin is died: Missing heartbeat?
+
+                    if next_state_nr == 11:
+                        self.unselect_state_widget(self.current_state)
+
+                    if next_state != self.current_state:
+                        self.select_state_widget(next_state, send_config=False, send_preferred_state=False)
 
     def timeout_send_heartbeat(self):
 
