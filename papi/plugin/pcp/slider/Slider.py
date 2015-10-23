@@ -37,19 +37,23 @@ import papi.constants as pc
 
 class Slider(vip_base):
     def cb_initialize_plugin(self):
-        # Set Slider widget for use in PaPI
-        self.pl_set_widget_for_internal_usage(self.create_widget())
-
         # Creates Slider Change Event to connect to Parameters and send it
         self.event_change = DEvent('Change')
         self.pl_send_new_event_list([self.event_change])
 
-        # Create Parameter list for change slider parameter live and send it
-        self.para_value_max     = DParameter('MaxValue', default=1.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
-        self.para_value_min     = DParameter('MinValue', default=0.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
-        self.para_tick_count    = DParameter('StepCount',default=11,  Regex=pc.REGEX_SINGLE_INT)
-        self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
+        # get items of cfg for fist start of the Slider and cast to float
+        self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
+        self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
+        self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
+        self.init_value = self.pl_get_config_element('value_init',castHandler=float)
 
+        # Create Parameter list for change slider parameter live and send it
+        self.para_value_max     = DParameter('MaxValue', default= self.value_max, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_value_min     = DParameter('MinValue', default=self.value_min, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_tick_count    = DParameter('StepCount',default=self.tick_count,  Regex=pc.REGEX_SINGLE_INT)
+        self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
+        # Set Slider widget for use in PaPI
+        self.pl_set_widget_for_internal_usage(self.create_widget())
         # return successful initialization
         return True
 
@@ -59,12 +63,6 @@ class Slider(vip_base):
         self.slider = QSlider()
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
-
-        # get items of cfg for fist start of the Slider and cast to float
-        self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
-        self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
-        self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
-        self.init_value = self.pl_get_config_element('value_init',castHandler=float)
 
         self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
