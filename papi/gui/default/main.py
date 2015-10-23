@@ -312,7 +312,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 self.toolbarAddFavPlugin(plugin_info)
 
     def favPluginWasRemoved(self):
-        self.gui_management.gui_api.do_save_xml_config_reloaded(pc.PAPI_USER_CFG, plToSave=[], sToSave=[])
+        self.gui_management.gui_api.do_save_xml_config_reloaded(
+            pc.PAPI_USER_CFG, plToSave=[], sToSave=[], saveUserSettings=True)
 
     def set_icons(self):
         # -------------------------------------
