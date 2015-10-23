@@ -589,9 +589,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
         """
         fileNames = ''
 
-        dialog = PaPIConfigSaveDialog(self)
+        dialog = PaPIConfigSaveDialog(self, self.gui_management.gui_api)
 
-        dialog.fill_with(self.gui_management.gui_api.gui_data)
+        dialog.fill_with()
 
         if dialog.exec_():
             fileNames = dialog.selectedFiles()

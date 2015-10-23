@@ -114,12 +114,12 @@ class ColorLineEdit(QPushButton):
 
 
 class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
-    def __init__(self, parent):
+    def __init__(self, parent, gui_api):
         super(PaPIConfigSaveDialog, self).__init__(parent)
 
         inital_hidden = True
 
-
+        self.gui_api = gui_api
 
         self.file_dialog = QFileDialog()
 
@@ -176,6 +176,8 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         unselect_all_plugins.clicked.connect(lambda  ignore, p = -1 : self.select_items(p))
         unselect_all_subs.clicked.connect(lambda  ignore, p = -2 : self.select_items(p))
 
+        select_for_simulink_ortd.clicked.connect(lambda  ignore : self.select_simulink_ortd())
+
 
         self.button_vlayout = QtWidgets.QVBoxLayout(self.buttons_widget)
 
@@ -210,11 +212,23 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
 
     def select_simulink_ortd(self):
         for r in range(self.pluginTable.rowCount()-1):
-            pass
+            label = self.pluginTable.cellWidget(r, 0)
+            dplugin = self.gui_api.gui_data.get_dplugin_by_uname(label.text())
 
-    def fill_with(self, data: DGui):
+            self.pluginTable.cellWidget(r, 1).setChecked(True)
+            self.pluginTable.cellWidget(r, 2).setChecked(True)
 
-        dplugins = data.get_all_plugins()
+            if dplugin.plugin_identifier in ['PaPIController']:
+                self.pluginTable.cellWidget(r, 1).setChecked(False)
+                self.pluginTable.cellWidget(r, 2).setChecked(False)
+
+            if dplugin.plugin_identifier in ['UDP_Plugin']:
+                self.pluginTable.cellWidget(r, 1).setChecked(False)
+
+
+    def fill_with(self):
+
+        dplugins = self.gui_api.gui_data.get_all_plugins()
 
         row = 0
 
@@ -258,7 +272,6 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
         self.pluginTable.verticalHeader().setStretchLastSection(True)
 
     def get_create_lists(self):
-        print('create lists')
 
         plugin_list = []
         subscription_list = []
