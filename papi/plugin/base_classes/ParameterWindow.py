@@ -30,6 +30,11 @@ class ParameterWindow(QMainWindow):
 
 
     def show_paramters(self, para_list):
+        """
+        Shows the list of parameters and values in the parameter window
+        :param para_list:
+        :return:
+        """
         for dparameter_name in sorted(para_list):
             dparameter = para_list[dparameter_name]
             dparameter_item = DParameterTreeItem(dparameter)

@@ -3,7 +3,8 @@ Changelog
 
 v.1.x:
 ------
-
+-  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically
+-  **feature**: Added a new parameter context menu to plugins which allows easy change of parameters without overview menu
 -  **feature**: A new run-mode is available. Prevents Plugins resize and move.
 -  **feature**: Added ability to define favourite plugins
 -  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
