@@ -659,10 +659,6 @@ class Core:
                                     opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                                     new_event = Event.data.NewData(oID, [pl.id], opt, source_plugin_uname= dplug.uname)
                                     pl.queue.put(new_event)
-
-                                    # this event will be a new parameter value for a plugin
-                                    #if opt.is_parameter is True:
-                                    #    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                             else:
                                 # plugin is paused
                                 pass
