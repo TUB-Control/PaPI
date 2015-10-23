@@ -398,7 +398,7 @@ class base_plugin(IPlugin):
         """
         return self._config
 
-    def pl_get_config_element(self, field_name, sub_field = None):
+    def pl_get_config_element(self, field_name, sub_field = None, castHandler=None):
         """
         Methods enables the user to get a field value of the current configuration.
         If the field_name exists, the 'value' part will be returned.
@@ -415,10 +415,22 @@ class base_plugin(IPlugin):
                 if field_name in self._config:
                     field_dict = self._config[field_name]
                     if sub_field is None or field_dict == '':
-                        return field_dict['value']
+                        if castHandler is None:
+                            return field_dict['value']
+                        else:
+                            try:
+                                return castHandler(field_dict['value'])
+                            except:
+                                return None
                     else:
                         if sub_field in field_dict:
-                            return field_dict[sub_field]
+                            if castHandler is None:
+                                return field_dict[sub_field]
+                            else:
+                                try:
+                                    return castHandler(field_dict[sub_field])
+                                except:
+                                    return None
 
         return None
 

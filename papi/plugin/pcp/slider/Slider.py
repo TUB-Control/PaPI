@@ -23,38 +23,34 @@ You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Sven Knuth, Stefan Ruppin
 """
 
-
-
-
-from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
-
 import papi.constants as pc
 
-
 class Slider(vip_base):
-
     def cb_initialize_plugin(self):
-
-        self.event_change = DEvent('Change')
-        self.config = self.pl_get_current_config_ref()
-        self.pl_send_new_event_list([self.event_change])
+        # Set Slider widget for use in PaPI
         self.pl_set_widget_for_internal_usage(self.create_widget())
 
-        self.para_value_max = DParameter('MaxValue', default=1.0)
-        self.para_value_min = DParameter('MinValue', default=0.0)
-        self.para_tick_count= DParameter('StepCount',default=11)
+        # Creates Slider Change Event to connect to Parameters and send it
+        self.event_change = DEvent('Change')
+        self.pl_send_new_event_list([self.event_change])
 
+        # Create Parameter list for change slider parameter live and send it
+        self.para_value_max     = DParameter('MaxValue', default=1.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_value_min     = DParameter('MinValue', default=0.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_tick_count    = DParameter('StepCount',default=11,  Regex=pc.REGEX_SINGLE_INT)
         self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
 
-
+        # return successful initialization
         return True
 
     def create_widget(self):
@@ -64,11 +60,10 @@ class Slider(vip_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.value_max = float(self.pl_get_config_element('upper_bound'))
-        self.value_min = float(self.pl_get_config_element('lower_bound'))
-        self.tick_count = float(self.pl_get_config_element('step_count'))
-        self.init_value = float(self.pl_get_config_element('value_init'))
-
+        self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
+        self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
+        self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
+        self.init_value = self.pl_get_config_element('value_init',castHandler=float)
 
         self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
