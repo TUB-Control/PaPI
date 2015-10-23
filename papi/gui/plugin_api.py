@@ -171,3 +171,10 @@ class Plugin_api(QtCore.QObject):
 
     def get_dplugin_by_uname(self, name):
         return self.__default_api.gui_data.get_dplugin_by_uname(name)
+
+    def get_dparameter_of_plugin_from_data(self, plugin_uname):
+        if plugin_uname is not None and plugin_uname != '':
+            dplugin = self.__default_api.gui_data.get_dplugin_by_uname(plugin_uname)
+            if dplugin is not None:
+                return dplugin.get_parameters()
+        return None

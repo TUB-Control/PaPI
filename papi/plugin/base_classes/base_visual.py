@@ -30,6 +30,7 @@ import re
 from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
 from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
+from papi.plugin.base_classes.ParameterWindow import ParameterWindow
 
 from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
 
@@ -246,6 +247,9 @@ class base_visual(base_plugin):
         del_action = QAction('Close plugin',self._widget)
         del_action.triggered.connect(self._ctlrMenu_exit)
 
+        para_action = QAction('Parameter',self._widget)
+        para_action.triggered.connect(self._ctlrMenu_Para)
+
         pause_action = QAction('Pause plugin',self._widget)
         pause_action.triggered.connect(self._ctlrMenu_pause)
 
@@ -266,6 +270,7 @@ class base_visual(base_plugin):
                     tabMenu.addAction(entry)
 
         #ctrlMenu.addAction(subMenu_action)
+        ctrlMenu.addAction(para_action)
         if self._get_type() == PLUGIN_VIP_IDENTIFIER:
            ctrlMenu.addAction(resume_action)
            ctrlMenu.addAction(pause_action)
@@ -285,6 +290,13 @@ class base_visual(base_plugin):
         posY = pos.y()
         if self.TabManager.moveFromTo(self._config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
             self._config['tab']['value'] = item
+
+    def _ctlrMenu_Para(self):
+        Para_List = self.control_api.get_dparameter_of_plugin_from_data(self._dplugin_info.uname)
+        if Para_List is not None:
+            win = ParameterWindow(self.pl_get_dplugin_info(), self.control_api, parent=self._widget)
+            win.show()
+            win.show_paramters(Para_List)
 
 
     def _ctlrMenu_exit(self):
