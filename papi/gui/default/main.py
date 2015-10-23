@@ -543,7 +543,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         :return:
         """
-        self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api)
+        self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api, self.gui_management.tab_manager)
         self.overview_menu.show()
 
     def triggered_show_toolbar(self):

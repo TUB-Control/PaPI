@@ -38,6 +38,7 @@ from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTre
 
 from papi.ui.gui.default.PluginOverviewMenu import Ui_PluginOverviewMenu
 
+from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 
 from papi.constants import PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \
@@ -58,14 +59,17 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     create and cancel subscriptions.
     """
 
-    def __init__(self, gui_api, parent=None):
+    def __init__(self, gui_api, tabmanager, parent=None):
         super(OverviewPluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = gui_api.gui_data
 
         self.gui_api = gui_api
+        self.TabManager = tabmanager;
 
         self.setWindowTitle("OverviewMenu")
+
+        self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
 
         # ----------------------------------
         # Build structure of plugin tree
@@ -373,10 +377,15 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         submenu = QMenu('Action')
         menu.addMenu(submenu)
-        action = QAction('Remove DPlugin', self)
+        action = QAction('Remove plugin', self)
         submenu.addAction(action)
 
         action.triggered.connect(lambda ignore, p=dplugin.id: self.gui_api.do_delete_plugin(p))
+
+        action = QAction('Copy plugin', self)
+        submenu.addAction(action)
+
+        action.triggered.connect(lambda ignore, p=dplugin: self.show_create_plugin_dialog(p))
 
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
@@ -841,6 +850,14 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         # Used to trigger filter action
         regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
         self.pluginProxyModel.setFilterRegExp(regex)
+
+    def show_create_plugin_dialog(self, dplugin):
+
+        if dplugin.type == PLUGIN_VIP_IDENTIFIER:
+            dplugin.startup_config = dplugin.plugin.pl_get_current_config()
+
+        self.plugin_create_dialog.set_dplugin(dplugin, dplugin.plugin._get_startup_configuration(), dplugin.type)
+        self.plugin_create_dialog.show()
 
     def keyPressEvent(self, event):
         """

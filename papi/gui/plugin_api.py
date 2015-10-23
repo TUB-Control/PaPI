@@ -178,3 +178,12 @@ class Plugin_api(QtCore.QObject):
             if dplugin is not None:
                 return dplugin.get_parameters()
         return None
+
+    def do_change_string_to_be_uname(self, name):
+        return self.__default_api.do_change_string_to_be_uname(name)
+
+    def change_uname_to_uniqe(self, name):
+        return self.__default_api.change_uname_to_uniqe(name)
+
+    def do_test_name_to_be_unique(self, name):
+        return self.__default_api.do_test_name_to_be_unique(name)

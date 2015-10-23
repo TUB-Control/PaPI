@@ -32,6 +32,7 @@ from PyQt5.QtCore    import QPoint
 from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 from papi.plugin.base_classes.ParameterWindow import ParameterWindow
+from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 
 from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
 
@@ -257,6 +258,9 @@ class base_visual(base_plugin):
         resume_action = QAction('Resume plugin',self._widget)
         resume_action.triggered.connect(self._ctlrMenu_resume)
 
+        copy_action = QAction('Copy plugin',self._widget)
+        copy_action.triggered.connect(self._ctlrMenu_copy)
+
         #subMenu_action = QAction('Open Signal Manager',self._widget)
 
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
@@ -272,10 +276,11 @@ class base_visual(base_plugin):
 
         #ctrlMenu.addAction(subMenu_action)
         ctrlMenu.addAction(para_action)
-        if self._get_type() == PLUGIN_VIP_IDENTIFIER:
-           ctrlMenu.addAction(resume_action)
-           ctrlMenu.addAction(pause_action)
+        ctrlMenu.addAction(resume_action)
+        ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
+        ctrlMenu.addAction(copy_action)
+
         return ctrlMenu
 
     def _tabMenu_move_triggered(self, item):
@@ -343,6 +348,23 @@ class base_visual(base_plugin):
         :return:
         """
         self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
+
+
+    def _ctlrMenu_copy(self):
+        """
+        Callback function for context menu for copying plugins
+
+        :return:
+        """
+        dplugin =  self.control_api.get_dplugin_by_uname(self._dplugin_info.uname)
+        dplugin.startup_config = self.pl_get_current_config()
+
+        plugin_create_dialog = CreatePluginDialog(self.control_api, self.TabManager, parent=self._widget)
+        plugin_create_dialog.set_dplugin(dplugin, self._get_startup_configuration(), self._get_type())
+        print()
+        plugin_create_dialog.show()
+
+#        self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
 
     def cb_new_parameter_info(self, dparameter_object):
         """
