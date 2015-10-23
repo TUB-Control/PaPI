@@ -23,31 +23,34 @@ You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Sven Knuth, Stefan Ruppin
 """
 
-
-
-
-from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
-
 import papi.constants as pc
 
-
 class Slider(vip_base):
-
     def cb_initialize_plugin(self):
-
-        self.event_change = DEvent('Change')
-        self.config = self.pl_get_current_config_ref()
-        self.pl_send_new_event_list([self.event_change])
+        # Set Slider widget for use in PaPI
         self.pl_set_widget_for_internal_usage(self.create_widget())
 
+        # Creates Slider Change Event to connect to Parameters and send it
+        self.event_change = DEvent('Change')
+        self.pl_send_new_event_list([self.event_change])
+
+        # Create Parameter list for change slider parameter live and send it
+        self.para_value_max     = DParameter('MaxValue', default=1.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_value_min     = DParameter('MinValue', default=0.0, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_tick_count    = DParameter('StepCount',default=11,  Regex=pc.REGEX_SINGLE_INT)
+        self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
+
+        # return successful initialization
         return True
 
     def create_widget(self):
@@ -57,13 +60,13 @@ class Slider(vip_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.value_max = float(self.config['upper_bound']['value'])
-        self.value_min = float(self.config['lower_bound']['value'])
-        self.tick_count = float(self.config['step_count']['value'])
-        self.init_value = float(self.config['value_init']['value'])
+        # get items of cfg for fist start of the Slider and cast to float
+        self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
+        self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
+        self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
+        self.init_value = self.pl_get_config_element('value_init',castHandler=float)
 
-
-        self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
+        self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
         self.slider.setMinimum(0)
         self.slider.setMaximum(self.tick_count-1)
@@ -103,8 +106,28 @@ class Slider(vip_base):
     def clicked(self):
         pass
 
-    def cb_plugin_meta_updated(self):
-        pass
+    def get_tick_width(self, max, min, count):
+        return (max-min)/(count-1)
+
+
+    def cb_set_parameter(self, parameter_name, parameter_value):
+        if parameter_name == self.para_value_max.name:
+            self.value_max = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('upper_bound', parameter_value)
+
+        if parameter_name == self.para_value_min.name:
+            self.value_min = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('lower_bound', parameter_value)
+            if float(self.pl_get_config_element('value_init')) < self.value_min:
+                self.pl_set_config_element('value_init', self.value_min)
+
+        if parameter_name == self.para_tick_count.name:
+            self.tick_count = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('step_count', parameter_value)
+
 
     def cb_get_plugin_configuration(self):
         config = {
@@ -136,7 +159,6 @@ class Slider(vip_base):
         return config
 
     def key_event(self, event):
-
         if event.key() == Qt.Key_Plus:
             self.slider.setValue(self.slider.value() + 1)
 
