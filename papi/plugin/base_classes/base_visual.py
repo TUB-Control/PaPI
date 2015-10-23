@@ -247,19 +247,19 @@ class base_visual(base_plugin):
         ctrlMenu = QMenu("Control")
 
         del_action = QAction('Close plugin',self._widget)
-        del_action.triggered.connect(self._ctlrMenu_exit)
+        del_action.triggered.connect(self._ctrlMenu_exit)
 
         para_action = QAction('Parameter',self._widget)
-        para_action.triggered.connect(self._ctlrMenu_Para)
+        para_action.triggered.connect(self._ctrlMenu_Para)
 
         pause_action = QAction('Pause plugin',self._widget)
-        pause_action.triggered.connect(self._ctlrMenu_pause)
+        pause_action.triggered.connect(self._ctrlMenu_pause)
 
         resume_action = QAction('Resume plugin',self._widget)
-        resume_action.triggered.connect(self._ctlrMenu_resume)
+        resume_action.triggered.connect(self._ctrlMenu_resume)
 
         copy_action = QAction('Copy plugin',self._widget)
-        copy_action.triggered.connect(self._ctlrMenu_copy)
+        copy_action.triggered.connect(self._ctrlMenu_copy)
 
         #subMenu_action = QAction('Open Signal Manager',self._widget)
 
@@ -276,10 +276,10 @@ class base_visual(base_plugin):
 
         #ctrlMenu.addAction(subMenu_action)
         ctrlMenu.addAction(para_action)
+        ctrlMenu.addAction(copy_action)
         ctrlMenu.addAction(resume_action)
         ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
-        ctrlMenu.addAction(copy_action)
 
         return ctrlMenu
 
@@ -297,7 +297,7 @@ class base_visual(base_plugin):
         if self.TabManager.moveFromTo(self._config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
             self._config['tab']['value'] = item
 
-    def _ctlrMenu_Para(self):
+    def _ctrlMenu_Para(self):
         # Opens a small parameter menu for the plugin
         # get the parameter list
         Para_List = self.control_api.get_dparameter_of_plugin_from_data(self._dplugin_info.uname)
@@ -324,7 +324,7 @@ class base_visual(base_plugin):
             win.show()
             win.show_paramters(Para_List)
 
-    def _ctlrMenu_exit(self):
+    def _ctrlMenu_exit(self):
         """
         Callback function for context menu for closing plugins
 
@@ -333,7 +333,7 @@ class base_visual(base_plugin):
         self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
         print(self._config['tab']['value'])
 
-    def _ctlrMenu_pause(self):
+    def _ctrlMenu_pause(self):
         """
         Callback function for context menu for pausing plugins
 
@@ -341,7 +341,7 @@ class base_visual(base_plugin):
         """
         self.control_api.do_pause_plugin_by_uname(self._dplugin_info.uname)
 
-    def _ctlrMenu_resume(self):
+    def _ctrlMenu_resume(self):
         """
         Callback function for context menu for resuming plugins
 
@@ -350,7 +350,7 @@ class base_visual(base_plugin):
         self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
 
 
-    def _ctlrMenu_copy(self):
+    def _ctrlMenu_copy(self):
         """
         Callback function for context menu for copying plugins
 
