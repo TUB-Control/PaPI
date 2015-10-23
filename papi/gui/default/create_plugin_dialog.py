@@ -38,6 +38,7 @@ from papi.ui.gui.default.PluginCreateDialog import Ui_CreatePluginDialog
 from papi.gui.default.custom import FileLineEdit, ColorLineEdit
 
 from papi.constants import GUI_DEFAULT_TAB
+import papi.constants as pc
 
 class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
@@ -58,6 +59,22 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.cfg['uname'] = {}
         self.cfg['uname']['value'] = ''
 
+    def set_dplugin(self, dplugin, ori_cfg, type):
+
+
+        self.plugin_name = dplugin.plugin_identifier
+        self.plugin_type = type
+
+        plugin_cfg = dplugin.startup_config
+
+        for key in plugin_cfg.keys():
+            if key in ori_cfg:
+                ori_cfg[key]['value'] = plugin_cfg[key]['value']
+
+        self.cfg = ori_cfg
+
+        self.cfg['uname'] = {}
+        self.cfg['uname']['value'] = ''
 
     def accept(self):
 
@@ -89,7 +106,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.done(0)
 
         autostart = True
-        if self.plugin_type == 'IOP' or self.plugin_type == 'DPP':
+        if self.plugin_type == pc.PLUGIN_IOP_IDENTIFIER or self.plugin_type == pc.PLUGIN_DPP_IDENTIFIER:
             autostart = self.autostartBox.isChecked()
 
         self.gui_api.do_create_plugin(self.plugin_name, config['uname']['value'], config=config, autostart=autostart)
