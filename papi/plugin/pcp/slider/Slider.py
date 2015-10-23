@@ -60,6 +60,7 @@ class Slider(vip_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
+        # get items of cfg for fist start of the Slider and cast to float
         self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
         self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
         self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
