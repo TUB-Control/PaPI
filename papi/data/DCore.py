@@ -395,7 +395,7 @@ class DCore():
             self.log.printText(1, " Subscription for target " + target.uname + " and DBlock " + dblock_name + " is None")
             return False
 
-        if len(subscription.get_signals()) == 0:
+        if len(subscription.get_signals()) == 1:
             return self.unsubscribe(subscriber_id, target_id, dblock_name)
 
         return True
