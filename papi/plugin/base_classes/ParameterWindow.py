@@ -6,24 +6,28 @@ from PyQt5.QtCore import Qt, QRegExp
 from papi.gui.default.item import DParameterTreeModel, DParameterTreeItem
 
 class ParameterWindow(QMainWindow):
-
-    def __init__(self, dplugin, api ,parent = None):
+    def __init__(self, dplugin, api, pl_win_name = '',parent = None):
         QMainWindow.__init__(self, parent)
 
+        # Build the tree for the parameters
         self.parameterTree = QTreeView(self)
         self.parameterTree.setObjectName("parameterTree")
-
+        # Add it as the central widget
         self.setCentralWidget(self.parameterTree)
-
+        # Add the DParameterTreeModel to the parameter tree
         self.dparameterModel = DParameterTreeModel()
         self.dparameterModel.setHorizontalHeaderLabels(['Name',''])
         self.parameterTree.setModel(self.dparameterModel)
         self.parameterTree.setUniformRowHeights(True)
-
+        # connect the callback function for value changes
         self.dparameterModel.dataChanged.connect(self.data_changed_parameter_model)
 
         self.dpluign_object = dplugin
         self.api = api
+
+        self.setWindowTitle(pl_win_name+' Parameter')
+
+
 
     def show_paramters(self, para_list):
         for dparameter_name in sorted(para_list):
@@ -32,8 +36,17 @@ class ParameterWindow(QMainWindow):
             self.dparameterModel.appendRow(dparameter_item)
             self.parameterTree.resizeColumnToContents(0)
             self.parameterTree.resizeColumnToContents(1)
-
         self.parameterTree.expandAll()
+
+        fh = self.parameterTree.fontMetrics().height()
+
+        if len(para_list.keys()) > 8:
+            self.setFixedHeight(fh*9+fh+25)
+        else:
+             self.setFixedHeight(fh*len(para_list.keys())+fh+fh+25)
+
+
+
 
     def data_changed_parameter_model(self, index, n):
         """
