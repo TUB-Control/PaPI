@@ -48,6 +48,13 @@ class Slider(vip_base):
         self.pl_send_new_event_list([self.event_change])
         self.pl_set_widget_for_internal_usage(self.create_widget())
 
+        self.para_value_max = DParameter('MaxValue', default=1.0)
+        self.para_value_min = DParameter('MinValue', default=0.0)
+        self.para_tick_count= DParameter('StepCount',default=11)
+
+        self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
+
+
         return True
 
     def create_widget(self):
@@ -57,13 +64,13 @@ class Slider(vip_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.value_max = float(self.config['upper_bound']['value'])
-        self.value_min = float(self.config['lower_bound']['value'])
-        self.tick_count = float(self.config['step_count']['value'])
-        self.init_value = float(self.config['value_init']['value'])
+        self.value_max = float(self.pl_get_config_element('upper_bound'))
+        self.value_min = float(self.pl_get_config_element('lower_bound'))
+        self.tick_count = float(self.pl_get_config_element('step_count'))
+        self.init_value = float(self.pl_get_config_element('value_init'))
 
 
-        self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
+        self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
         self.slider.setMinimum(0)
         self.slider.setMaximum(self.tick_count-1)
@@ -103,8 +110,28 @@ class Slider(vip_base):
     def clicked(self):
         pass
 
-    def cb_plugin_meta_updated(self):
-        pass
+    def get_tick_width(self, max, min, count):
+        return (max-min)/(count-1)
+
+
+    def cb_set_parameter(self, parameter_name, parameter_value):
+        if parameter_name == self.para_value_max.name:
+            self.value_max = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('upper_bound', parameter_value)
+
+        if parameter_name == self.para_value_min.name:
+            self.value_min = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('lower_bound', parameter_value)
+            if float(self.pl_get_config_element('value_init')) < self.value_min:
+                self.pl_set_config_element('value_init', self.value_min)
+
+        if parameter_name == self.para_tick_count.name:
+            self.tick_count = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.pl_set_config_element('step_count', parameter_value)
+
 
     def cb_get_plugin_configuration(self):
         config = {
@@ -136,7 +163,6 @@ class Slider(vip_base):
         return config
 
     def key_event(self, event):
-
         if event.key() == Qt.Key_Plus:
             self.slider.setValue(self.slider.value() + 1)
 
