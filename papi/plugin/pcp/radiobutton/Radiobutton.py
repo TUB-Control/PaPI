@@ -136,10 +136,12 @@ class Radiobutton(vip_base):
 
 
         if parameter_name == self.para_texts.name:
+            self.config['option_texts']['value'] = parameter_value
             self.set_option_texts(parameter_value)
             self.update_widget()
 
         if parameter_name == self.para_values.name:
+            self.config['option_values']['value'] = parameter_value
             self.set_option_values(parameter_value)
 
 
