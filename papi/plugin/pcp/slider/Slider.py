@@ -122,10 +122,6 @@ class Slider(vip_base):
                 self.pl_set_config_element('value_init', self.value_min)
 
         if parameter_name == self.para_tick_count.name:
-            print('PARA')
-            print(self.value_max)
-            print(self.value_min)
-            print(self.tick_count)
             self.tick_count = float(parameter_value)
             self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
             self.slider.setMinimum(self.value_min)
