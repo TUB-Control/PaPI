@@ -436,7 +436,7 @@ class StaticPlot(vip_base):
                 'tooltip' : 'Used as data source. Format: { "time" : [...], "y1" : [...], "y2" : [...]}'
             },
             'axis_identifier' : {
-                'value' :  CORE_TIME_SIGNAL,
+                'value' :  't',
                 'tooltip' : 'Used to specify the identifier for the X-Axis e.g. time in json_data'
             },
             'show_legend' : {
