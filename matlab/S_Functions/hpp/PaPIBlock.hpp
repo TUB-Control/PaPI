@@ -27,8 +27,6 @@ Sven Knuth
 #ifndef _PAPI_BLOCK_
 #define _PAPI_BLOCK_
 
-//#include <cstdint>
-
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -36,7 +34,6 @@ Sven Knuth
 #include <algorithm>
 #include <signal.h>
 #include <stdlib.h>
-
 #include <boost/array.hpp>
 
 #include <jsoncpp/json/json.h>

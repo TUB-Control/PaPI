@@ -125,7 +125,7 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *   Store information about the data output stream
     ****************************************** */
-    this->stream_out_size = 650;
+    this->stream_out_size = p3_size_data_out;
     this->stream_out = new int[this->stream_out_size];
     this->amount_output = this->stream_out_size;
 
