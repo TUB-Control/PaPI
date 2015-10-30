@@ -31,7 +31,7 @@ Contributors:
 from papi.plugin.base_classes.vip_base import vip_base
 from papi.gui.default.custom import FileLineEdit
 
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QWidget
 
@@ -59,15 +59,21 @@ class PaPIController(vip_base):
         self.status_label.setText('Controlling...')
         hbox.addWidget(self.status_label)
 
-
         self.lock = threading.Lock()
         self.plugin_started_list = []
         self.event_list = []
         self.thread_alive = False
 
+        self.ControllerWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ControllerWidget.customContextMenuRequested.connect(self.show_context_menu)
 
         self.start_UDP_plugin()
         return True
+
+    def show_context_menu(self, pos):
+        gloPos = self.ControllerWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
     def cb_pause(self):
         # will be called, when plugin gets paused

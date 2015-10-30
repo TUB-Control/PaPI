@@ -90,23 +90,17 @@ class WizardExample(vip_base):
         # In the background the qmidiwindow will becreated and the widget will be added
         self.pl_set_widget_for_internal_usage( self.wizardwidget )
 
-        # ---------------------------
-        # Create Parameters
-        # ---------------------------
-        # create a parameter object
-        #   self.para1 = DParameter('ParameterName',InitWert,1)
-        #   self.para2 = DParameter('ParameterName',InitWert,1)
+        self.wizardwidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.wizardwidget.customContextMenuRequested.connect(self.show_context_menu)
 
-        # build parameter list to send to Core
-        #   para_list = [self.para1 self.para2]
-        #   self.pl_send_new_parameter_list(para_list)
-
-        # ---------------------------
-        # Create Legend
-        # ---------------------------
 
 
         return True
+
+    def show_context_menu(self, pos):
+        gloPos = self.wizardwidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
     def cb_pause(self):
         # will be called, when plugin gets paused

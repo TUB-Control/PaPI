@@ -66,7 +66,7 @@ class Slider(vip_base):
 
         self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
-        self.slider.setMinimum(0)
+        self.slider.setMinimum(self.value_min)
         self.slider.setMaximum(self.tick_count-1)
 
         self.slider.setOrientation(QtCore.Qt.Horizontal)
@@ -124,6 +124,8 @@ class Slider(vip_base):
         if parameter_name == self.para_tick_count.name:
             self.tick_count = float(parameter_value)
             self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.slider.setMinimum(self.value_min)
+            self.slider.setMaximum(self.tick_count-1)
             self.pl_set_config_element('step_count', parameter_value)
 
 

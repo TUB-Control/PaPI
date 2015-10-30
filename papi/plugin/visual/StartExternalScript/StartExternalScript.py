@@ -30,6 +30,7 @@ Contributors:
 
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton
 from PyQt5.QtGui     import QHBoxLayout
+from PyQt5.QtCore import Qt
 
 import subprocess
 import os
@@ -71,6 +72,9 @@ class StartExternalScript(vip_base):
 
         hbox.addWidget(self.control_button)
 
+        self.SESWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.SESWidget.customContextMenuRequested.connect(self.show_context_menu)
+
 
         # ---------------------------
         # Create Legend
@@ -82,6 +86,11 @@ class StartExternalScript(vip_base):
         self.dir = self.path[:-len(file)]
 
         return True
+
+    def show_context_menu(self, pos):
+        gloPos = self.SESWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
     def button_click_callback(self):
         if self.external_state == 'offline':
