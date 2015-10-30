@@ -321,10 +321,10 @@ class CRC(vip_base):
         # ---------------------------
         # Create Parameters
         # ---------------------------
-        para_list = []
+        #para_list = []
 
         # build parameter list to send to Core
-        self.pl_send_new_parameter_list(para_list)
+        #self.pl_send_new_parameter_list(para_list)
 
 
         return True
