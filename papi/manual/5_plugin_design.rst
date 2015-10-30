@@ -16,7 +16,7 @@ The plugins are written in python 3.4. For the development we recommend to use o
 
 The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
 
-The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and recommended to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
 
 A sample folder structure is given here:
 
@@ -118,7 +118,7 @@ In the next step we implement the ability to provide a step at time 10.
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
-        if self.t < 10:
+        if self.t > 10:
             self.signal_value = 1
 
         self.pl_send_new_data('Source', [self.t], {'Step' : vec[self.signal_value]} )
@@ -138,7 +138,7 @@ create parameters
 
 Parameters are used to enable an external control of a running plugin. We recommend to read :ref:`Parameters <man_parameters>`.
 
-It is necessary to imports this object:
+It is necessary to import this object:
 
 .. code-block:: python
 
@@ -187,7 +187,7 @@ that the PaPI-backend only knows the last events sent by
         self.button.clicked.connect(self.clicked_start_button)
         self.button.setText('Click')
 
-    The event can be emitted as following, here as the result of clicking a button in the GUI.
+The event can be emitted as following, here as the result of clicking a button in the GUI.
 
 .. code-block:: python
     :linenos:
@@ -320,24 +320,22 @@ The plugin configuration can be changed by the user during the creation process 
         self.color       = self.config['color']['value']
         self.color_regex = self.config['color']['regex']
 
+.. warning:: Use this function only if you know what you do ! Take a look at the documentation for this function.
+
 3. Use of ``pl_get_current_config_ref``: This function provides a reference to the complete modified configuration. Single values are accessed in the same way as in the example before but changes in the configuration will affected the startup configuration. Thereby it is possible to modify the configuration for the next startup if the current PaPI setting is saved as an XML file because the current startup configuration will be stored and taken when the configuration is loaded.
 
-
-.. warning:: Use this function only if you know what you do ! Take a look at the documentation for this function.
 
 .. code-block:: python
     :linenos:
 
     def cb_initialize_plugin(self):
-        self.config      = self.pl_get_current_config()
+        self.config      = self.pl_get_current_config_ref()
         self.color       = self.config['color']['value']
         self.color_regex = self.config['color']['regex']
 
         self.config['text']['value'] = 'FooBar'
 
 If you only like to change one single value in the startup configuration we recommend the function ``pl_set_config_element``:
-
-.. warning:: Use this function only if you know what you do !  Take a look at the documentation for this function.
 
 .. code-block:: python
     :linenos:

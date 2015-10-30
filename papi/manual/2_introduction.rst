@@ -45,10 +45,10 @@ PaPI Plugins
 Types
 -----
 
-PaPI divided the plugin structure in 4 types of plugins:
+PaPI divided the plugin structure in 3 types of plugins:
 
-    - IO Plugin(IOP): Input-Output Plugins, runs in separate process, generates new data for PaPI, e.g. UDP Receiver, ORTD
-    - DP Plugin(DPP): Data Processing Plugins, runs in separate process, process data in PaPI, get data from PapI, generate new data for PaPI, e.g. adding signals
+    - IO Plugin(IOP): Input-Output Plugins, separate process, generates new data for PaPI, e.g. UDP Receiver, ORTD
+    - DP Plugin(DPP): Data Processing Plugins, separate process, process data in PaPI, get data from PaPI, generate new data for PaPI, e.g. additions of two signals
     - VI Plugin(VIP): Visual Plugin, runs in GUI process, used to display data, e.g. Plot, or to provide control elements for setting parameter,  e.g. Slider.
 
 .. _man_signal_block:
@@ -67,14 +67,14 @@ each other in respect to their samples.
 One Plugin can offer multiple blocks and every block can offer an
 arbitrary number of signals.
 
-A whole block or only a subset of signals can be subscribed by another plugin. If the block owner, the plugin which owns the subscribed block, sends new data. This action triggers the execute functions of the subscriber, the plugin which subscribed the block.
+A whole block or only a subset of signals can be subscribed by another plugin. If the block owner sends new data, the execute functions of the subscriber, the plugin which subscribed the block is triggered.
 
 The block owner sends new data commonly synchronous which can be triggered by a timer, external program or device.
 
 .. figure:: _static/introduction/PaPIBlockSignal.png
    :alt:
 
-   **A block contains one or more signals and be subscribed. The block owner triggers the execute function by sending new data.**
+   **A block contains one or more signals and can be subscribed. The block owner triggers the execute function by sending new data.**
 
 .. _man_parameters:
 
@@ -98,7 +98,7 @@ Events
 
 A plugin can provide events which can be used to change parameters of other plugins in more practical way by using GUI elements.
 
-E.g. a plugin provides a event as a ``Click`` or ``Change`` which can be subscribed by an arbitrary parameter of a different plugin. When the ``Click``-event gets triggered the parameter will be changed according to the value delivered by the event. It is also possible to provide more than one event per plugin and a single event can be subscribed by more than one parameter.
+E.g. a plugin provides an event as a ``Click`` or ``Change`` which can be subscribed by an arbitrary parameter of a different plugin. When the ``Click``-event gets triggered the parameter will be changed according to the value delivered by the event. It is also possible to provide more than one event per plugin and a single event can be subscribed by more than one parameter.
 
 .. figure:: _static/introduction/PaPIEvent.png
    :alt:
@@ -117,7 +117,7 @@ functions.
 
 The PaPI framework provides two kind of functions for the development of plugin which can or must be implemented.
 
-| ``callback functions``: These functions are called by the PaPI framework to interact with plugin.
+| ``callback functions``: These functions are called by the PaPI framework to interact with a plugin.
 | ``plugin functions``: These function are called by the plugin developer to communicate with the PaPI framework.
 
 These functions defines the core functionality of a plugin. To see more detailed information on how to create a plugin, refer to: :ref:`Design guide plugin <man_design_guide>`
@@ -222,7 +222,7 @@ Plugin initialize
 ~~~~~~~~~~~~~~~~~
 
 When creating a plugin the function ``cb_initialize_plugin`` will be
-called. These functions can be used to do all basic initialization
+called. This function can be used to do all basic initialization
 needed for the plugin to run, e.g. open widgets or open network
 connections. It is mandatory that this function returns true at the end
 otherwise the plugin will not be started! One important part of the init
@@ -247,7 +247,7 @@ that the execute function must be **non-blocking**. When a blocking
 functionality is needed one can achieve that by using a thread. In this
 function new data can be sent to PaPI using a PaPI function.
 
-The ``execute`` function is when a new data package arrives.
+The ``execute`` function is triggered when a new data package arrives.
 
 Plugin quit
 ~~~~~~~~~~~
