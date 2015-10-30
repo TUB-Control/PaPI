@@ -57,7 +57,11 @@ class Trigger(dpp_base):
         signal = DSignal('reset')
         self.block3.add_signal(signal)
 
-        blockList = [self.block1, self.block2, self.block3]
+        self.block4 = DBlock('ParaToSig')
+        signal = DSignal('parameter')
+        self.block4.add_signal(signal)
+
+        blockList = [self.block1, self.block2, self.block3, self.block4]
         self.pl_send_new_block_list(blockList)
 
         self.para3 = DParameter('Choose', default=0, Regex='\d+')
@@ -93,6 +97,9 @@ class Trigger(dpp_base):
 
             if value == 2:
                 self.pl_send_new_data('ResetTrigger', [0], {'reset': [0]})
+
+            if value > 3:
+                self.pl_send_new_data('ParaToSig', [0], {'parameter': [value]})
 
 
     def cb_get_plugin_configuration(self):
