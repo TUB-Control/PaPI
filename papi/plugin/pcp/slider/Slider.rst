@@ -34,6 +34,9 @@ The plugin uses this specific configuration.
     * - value_init
       - Float
       - Used to set an initial value.
+    * - vertical
+      - Bool
+      - Enables a vertical slider.
 
 Parameter
 ----------------------
