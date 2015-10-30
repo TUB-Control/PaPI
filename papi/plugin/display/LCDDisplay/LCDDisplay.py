@@ -38,6 +38,7 @@ import time
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 
+from papi.data import DConfiguration
 
 class LCDDisplay(vip_base):
 
@@ -52,8 +53,10 @@ class LCDDisplay(vip_base):
         self.digit_count    = int  (self.pl_get_config_element('digit_count')    )
 
         # if self.config['value_init']['value'] is not None:
-        self.init_value     = float(self.pl_get_config_element('value_init') )
+        self.init_value     = self.pl_get_config_element('value_init', castHandler=float)
 
+        if self.init_value is None:
+            self.init_value = 0
 
         # --------------------------------
         # Create Widget
@@ -213,6 +216,18 @@ class LCDDisplay(vip_base):
                     'advanced': '1'
             }
         }
+        # config = DConfiguration.DConfiguration()
+        #
+        # config.add(
+        #     name='size',
+        #     value='(150,75',
+        #     regex=DConfiguration.REGEX_BOOL_BIN
+        # )
+        # config.add(
+        #     name='name',
+        #     value=0,
+        #     regex=DConfiguration.REGEX_BOOL_BIN
+        # )
         return config
 
     def cb_plugin_meta_updated(self):
