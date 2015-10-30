@@ -312,10 +312,10 @@ class UDP_Plugin(iop_base):
         while goOn:
             try:
                 if not self.sendOnReceivePort:
-                    rev = self.sock_recv.recv(20000)  # not feasible for network connection other than loopback
+                    rev = self.sock_recv.recv(65507)  # not feasible for network connection other than loopback
                 else:
                     #print ("---- Waiting for data ----")
-                    rev, server = self.sock_recv.recvfrom(20000)  # not feasible for network connection other than loopback
+                    rev, server = self.sock_recv.recvfrom(65507)  # not feasible for network connection other than loopback
                     #print ("---- got ----")
                     #print (rev)
 
@@ -604,10 +604,11 @@ class UDP_Plugin(iop_base):
                             timestamp = val[0]
 
                     self.signal_values[signal_id] = val
-                                
+
                 #print("Signal: " + str(signal_id) + " Data: " + str(data)  );
             except struct.error:
-                print(sys.exc_info()[0])
+                print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+                print(sys.exc_info()[1])
                 print("Can't unpack.")
         self.process_finished_action(-1,None, timestamp)
     
