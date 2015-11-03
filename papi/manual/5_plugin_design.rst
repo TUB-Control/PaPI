@@ -20,7 +20,7 @@ The plugin directory ``<unique-plugin-name>`` has to contain a plugin python fil
 
 A sample folder structure is given here:
 
-.. code-block:: None
+.. code-block::
 
     /LCDDisplay/
         _static/
@@ -74,9 +74,7 @@ It is necessary to imports this objects:
 In the following we gonna create a Block with the name ``Source``. In
 the next step a signal named ``Step`` is created and added to the
 previous created Block. At the end the PaPI-backend will be informed and
-the Block can be used by other plugins. It is **very important** to know
-that the PaPI-backend only knows the last blocks sent by
-``send_new_block_list``. Previous sent blocks will be deleted.
+the Block can be used by other plugins. Previous sent blocks will be deleted.
 
 .. code-block:: python
     :linenos:
@@ -145,7 +143,7 @@ It is necessary to import this object:
     from papi.data.DParameter import DParameter
 
 At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries in the frontend, a regex
+informed by using the function ``pl_send_new_parameter_list``. To limit possible user entries in the frontend, a regex
 was defined for the
 
 .. code-block:: python
@@ -171,9 +169,7 @@ It is necessary to imports this object:
     from papi.data.DSignal import DEvent
 
 A new event is defined by the following code and at the end the PaPI-backend will be informed and
-the event can be used to change parameters of other plugins. It is **very important** to know
-that the PaPI-backend only knows the last events sent by
-``send_new_event_list``. Previous sent events will be deleted. In the code above a button also created which is used to trigger the change event by user interaction (clicking the button).
+the event can be used to change parameters of other plugins. In the code above a button was also created which is used to trigger the change event by a simple user interaction (clicking the button).
 
 .. code-block:: python
     :linenos:
