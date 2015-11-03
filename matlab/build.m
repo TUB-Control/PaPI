@@ -52,6 +52,7 @@ def.HostLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so','l
 def.TargetLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so','libboost_signals.so'};
 def.Options.language = 'C++';
 def.LibPaths = libPaths;
+def.SampleTime    = 'parameterized';
 
 defs = [defs; def];
 

@@ -68,8 +68,9 @@ private:
     // -------------------------------
     // Output vector
     // -------------------------------
-    bool para_out_was_set;
-    double* para_out;
+    //this buffer is used by the external thread
+    //to store the last recievd parameter changes
+    double* buffer_para_out;
 
     // -------------------------------
     // Internal variables
@@ -84,7 +85,7 @@ private:
     int* stream_out;
     int stream_out_size;
 
-    boost::mutex mutex_stream_in;
+    boost::mutex mutex_thread_data_update;
 
     int* offset_parameter;
     int* offset_input;
@@ -139,7 +140,7 @@ public:
     void clearOutput(int stream_out[]);
     void reset(double para_out[]);
 
-    void control(int control, double para_out[]);
+    void control(int control);
 };
 
 // Method wrappers

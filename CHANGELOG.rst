@@ -16,6 +16,8 @@ v.1.x:
 -  **doc**: Added documentation for the main window
 -  **doc**: Added documentation for shortcuts
 -  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase
+-  **simulink**: SampleTime of the PaPIBlock is now parameterized
+-  **simulink**: PaPIBlock is now always delayed by one step due to a legacy tool limitation: It is not possible to set the direct feedthrough flag to zero.
 -  **gui**: Added search bar for overview menu and create menu
 -  **gui**: Added shortcut features to search bar and tree in overview menu and create menu
 -  **gui**: Added shortcuts for actions of the main window for example: save, load

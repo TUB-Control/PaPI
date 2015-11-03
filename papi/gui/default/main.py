@@ -715,6 +715,13 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
+
+        # layout = errMsg.layout();
+        # spacer = QtGui.QSpacerItem(1000, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        # layout.addItem(spacer, layout.rowCount(), 0,1, layout.columnCount())
+
+        errMsg.setIcon(QtGui.QMessageBox.Critical)
+        errMsg.setSizeGripEnabled(True)
         errMsg.setWindowTitle("Plugin: " + dplugin.uname + " // " + str(e))
         errMsg.setText("Error in plugin" + dplugin.uname + " // " + str(e))
         errMsg.setDetailedText(str(msg))
@@ -725,6 +732,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
+
         errMsg.setWindowTitle(title)
         errMsg.setText(str(msg))
         errMsg.setDetailedText(str(detailed_msg))

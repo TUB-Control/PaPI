@@ -20,6 +20,8 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     papi_block_handle = get_param([gcb '/PaPI Block'],'handle');
 
+    papi_delay_block_handle = get_param([gcb '/PaPIDelay'],'handle');
+
     papi_block = get_param(papi_block_handle, 'PortHandles');
 
     port_handler = papi_block.Outport(1);
@@ -170,7 +172,7 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
         % ---
         % Create connection papi <-> selector
         % ---
-        src_handler = papi_block_handle;
+        src_handler = papi_delay_block_handle;
         dest_handler = select_handler;
         papi_connect_two_blocks(gcb, src_handler, 1, dest_handler, 1)
 
@@ -210,29 +212,37 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     init_command = 'port_label(''input'',  1  ,'' Control '');';
 
     papi_block_set_signal_parameter_names(gcb, json_config, papi_block_handle, init_command ,1,0, define_inputs, split_inputs);
-    disp(papi_block_handle);
-    
+
     % ------------------------------------------------
     % Calculate needed buffer size as a multiple of 4bytes
     % ------------------------------------------------
-    
+
     % i
     output_size = 4;
     for i=1:amountIn
+        if i <= length(split_inputs)
+            splitThisInput = split_inputs(i);
+        else
+            splitThisInput = 1;
+        end
 
-        if split_inputs(i)
+        if splitThisInput
             output_size = output_size + define_inputs(i)*3;
         else
             output_size = output_size + 1 + define_inputs(i)*2;
-        end           
+        end
     end
     output_size = output_size + 3;
 
     if 4*output_size > 65507
         error('Known limitation: It is not possible to send a data package with more than 65.507 bytes, see UDP-Package size');
     end
-    
+
+    if output_size < 400
+        output_size = 400;
+    end
+
     set_param(papi_block_handle, 'output_size', num2str(output_size) );
-    
+
     %set_param(papi_block_handle, 'output_size', '4700' );
 end
