@@ -208,6 +208,10 @@ class base_plugin(IPlugin):
         :param data: Data containing the values in a hash array of signal names as key.
         :return:
         """
+        if not isinstance(time_line, list):
+            raise pe.WrongType("time", list)
+        if not isinstance(data, dict):
+            raise pe.WrongType("data", dict)
 
         dataHash = data
         dataHash[CORE_TIME_SIGNAL] = time_line
