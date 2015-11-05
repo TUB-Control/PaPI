@@ -101,9 +101,9 @@ class Sinus(iop_base):
             vec3[2, i] = math.sin(2*math.pi*0.1*self.t)
             self.t += 0.005
 
-        self.pl_send_new_data('SinMit_f1' , vec[0] , {'f1_1': vec[1] } )
-        self.pl_send_new_data('SinMit_f2', vec2[0], {'f2_1': vec2[1]} )
-        self.pl_send_new_data('SinMit_f3', vec3[0], {'f3_1': vec3[1], 'f3_2': vec3[2], 'f3_scalar': [10,10,10] } )
+        self.pl_send_new_data('SinMit_f1' ,vec[0].tolist() , {'f1_1': vec[1] } )
+        self.pl_send_new_data('SinMit_f2', vec2[0].tolist(), {'f2_1': vec2[1]} )
+        self.pl_send_new_data('SinMit_f3', vec3[0].tolist(), {'f3_1': vec3[1], 'f3_2': vec3[2], 'f3_scalar': [10,10,10] } )
 
         time.sleep(self.amax*0.005)
 
