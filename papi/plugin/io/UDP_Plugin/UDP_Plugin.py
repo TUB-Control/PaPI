@@ -395,7 +395,6 @@ class UDP_Plugin(iop_base):
                 else:
                     self.config_complete = False
                     break
-
             if self.config_complete:
                 if not self.check_and_process_cfg(config_file):
                     self.start_timeout_timer()
