@@ -16,19 +16,42 @@ The plugins are written in python 3.4. For the development we recommend to use o
 
 The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
 
-The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_sta_tic``, otherwise these files wont be recognized during the documentation build process.
 
-A sample folder structure is given here:
+The whole plugin folder must then be stored under one of the provided categories, which can be found in ``papi/plugin/``.
 
-.. code-block::
+A sample folder structure for a plugin is given here:
 
-    /LCDDisplay/
-        _static/
-            LCDDisplay.png
-        LCDDisplay.py
-        LCDDisplay.rst
-        LCDDisplay.yapsy-plugin
-        box.png
+.. code-block:: bash
+
+    papi/
+        plugin/
+            display/
+                /LCDDisplay/
+                    _sta_tic/
+                        LCDDisplay.png
+                    LCDDisplay.py
+                    LCDDisplay.rst
+                    LCDDisplay.yapsy-plugin
+                    box.png
+
+It is also possible to create an own category by creating the following folder structure:
+
+.. code-block:: bash
+
+    papi/
+        plugin/
+            <unique-category-name>/
+                info.ini
+
+The ``info.ini`` is optional and contains the category name as it is used in PaPI.
+
+.. code-block:: ini
+
+    [Config]
+    Name = My Foo Bar Category
+
+
 
 The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: ``papi/plugin/``
 

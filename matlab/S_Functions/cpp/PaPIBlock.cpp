@@ -138,6 +138,9 @@ PaPIBlock::PaPIBlock(
         this->buffer_para_out[i] = 0;
     }
 
+    this->buildConfiguration(this->buffer_para_out);
+    this->data_to_sent = this->config.substr(0);
+
     /* ******************************************
     *    Start thread: UDP
     ****************************************** */
@@ -379,7 +382,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     ssConfig << styledWriter.write(this->papiJsonConfig);
     std::string config  = ssConfig.str();
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
-    //printf("%s", config.c_str());
+    //printf("Config: %s", config.c_str());
 
     //printf("Config size=%zu\n", config.size() );
     this->config = config;
@@ -452,14 +455,12 @@ void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
     // this->mutex_stream_in.unlock();
 
     this->mutex_thread_data_update.lock();
-
     //If still needed or requested, send current configuration
     if (!this->config_sent) {
         this->sendConfig(this->stream_out);
         this->udphandle->sendData(this->stream_out, (std::size_t) this->size_config);
 
     } else {
-
     //send current input data
         this->clearOutput(this->stream_out);
         this->sendInput(u1, time, this->stream_out);
@@ -608,7 +609,6 @@ void PaPIBlock::handleStream(std::size_t bytes_transferred /*in bytes_transferre
 
     //TODO: Aufrunden
 
-
     this->stream_in_length = (int) bytes_transferred / 4;
 
     std::memcpy(this->stream_in.begin(), buffer.begin(), bytes_transferred);
@@ -651,7 +651,6 @@ void PaPIBlock::sendConfig(int stream_out[]) {
         int shift = 0;
         char c;
         for (int i=0;;i++) {
-            //printf("%c", c);
             if ( i % 4 == 0 and i > 1) {
                 output_count ++;
                 shift = 0;
