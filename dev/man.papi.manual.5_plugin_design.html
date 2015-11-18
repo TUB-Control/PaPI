@@ -62,14 +62,30 @@
 </div></blockquote>
 <p>The name of a plugin has to be unique, in the following we will use <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> as a placeholder.</p>
 <p>The plugin directory <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> has to contain a plugin python file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.py</span></tt>, a plugin description file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.yapsy-plugin</span></tt>. Additionally it is possible and <strong>recommended</strong> to add a documentation as a plugin documentation file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> and a small icon as 16x16 png with the name <tt class="docutils literal"><span class="pre">box.png</span></tt>. Files, which are used in the rst-file, should be stored in the sub folder <tt class="docutils literal"><span class="pre">_static</span></tt>, otherwise these files wont be recognized during the documentation build process.</p>
-<p>A sample folder structure is given here:</p>
-<div class="highlight-bash"><div class="highlight"><pre>/LCDDisplay/
-    _static/
-        LCDDisplay.png
-    LCDDisplay.py
-    LCDDisplay.rst
-    LCDDisplay.yapsy-plugin
-    box.png
+<p>The whole plugin folder must then be stored under one of the provided categories, which can be found in <tt class="docutils literal"><span class="pre">papi/plugin/</span></tt>.</p>
+<p>A sample folder structure for a plugin is given here:</p>
+<div class="highlight-bash"><div class="highlight"><pre>papi/
+    plugin/
+        display/
+            /LCDDisplay/
+                _static/
+                    LCDDisplay.png
+                LCDDisplay.py
+                LCDDisplay.rst
+                LCDDisplay.yapsy-plugin
+                box.png
+</pre></div>
+</div>
+<p>It is also possible to create an own category by creating the following folder structure:</p>
+<div class="highlight-bash"><div class="highlight"><pre>papi/
+    plugin/
+        &lt;unique-category-name&gt;/
+            info.ini
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">info.ini</span></tt> is optional and contains the category name as it is used in PaPI.</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[Config]</span>
+<span class="na">Name</span> <span class="o">=</span> <span class="s">My Foo Bar Category</span>
 </pre></div>
 </div>
 <p>The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: <tt class="docutils literal"><span class="pre">papi/plugin/</span></tt></p>
