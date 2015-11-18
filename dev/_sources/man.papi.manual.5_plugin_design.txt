@@ -16,14 +16,14 @@ The plugins are written in python 3.4. For the development we recommend to use o
 
 The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
 
-The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static/manual``, otherwise these files wont be recognized during the documentation build process.
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
 
 A sample folder structure is given here:
 
-.. code-block::
+.. code-block:: bash
 
     /LCDDisplay/
-        _static/manual/
+        _static/
             LCDDisplay.png
         LCDDisplay.py
         LCDDisplay.rst
