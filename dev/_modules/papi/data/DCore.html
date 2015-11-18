@@ -447,7 +447,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot; Subscription for target &quot;</span> <span class="o">+</span> <span class="n">target</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; and DBlock &quot;</span> <span class="o">+</span> <span class="n">dblock_name</span> <span class="o">+</span> <span class="s">&quot; is None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">False</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">dblock_name</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">True</span>

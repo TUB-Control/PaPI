@@ -280,12 +280,6 @@
                 <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">signals</span><span class="p">:</span>
                     <span class="n">subscription</span><span class="o">.</span><span class="n">rm_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
-                <span class="c"># subSignalList = subscription.get_signals()</span>
-                <span class="c"># print(subSignalList)</span>
-                <span class="c"># if (1 == len(subscription.get_signals()) and CORE_TIME_SIGNAL in subSignalList):</span>
-                <span class="c">#     subscription.rm_signal(CORE_TIME_SIGNAL)</span>
-                <span class="c"># print(subscription.get_signals())</span>
-
                 <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()):</span>
                     <span class="n">subscription</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
                     <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__subscriptions</span><span class="p">[</span><span class="n">dblock</span><span class="o">.</span><span class="n">dplugin_id</span><span class="p">][</span><span class="n">dblock</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>

@@ -167,12 +167,12 @@
 
 </div>
 <div class="viewcode-block" id="PaPIConfigSaveDialog"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog">[docs]</a><span class="k">class</span> <span class="nc">PaPIConfigSaveDialog</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">gui_api</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PaPIConfigSaveDialog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="n">inital_hidden</span> <span class="o">=</span> <span class="bp">True</span>
 
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span> <span class="o">=</span> <span class="n">gui_api</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">file_dialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">()</span>
 
@@ -229,6 +229,8 @@
         <span class="n">unselect_all_plugins</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span>  <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_items</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
         <span class="n">unselect_all_subs</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span>  <span class="n">ignore</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_items</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
+        <span class="n">select_for_simulink_ortd</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span>  <span class="n">ignore</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_simulink_ortd</span><span class="p">())</span>
+
 
         <span class="bp">self</span><span class="o">.</span><span class="n">button_vlayout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buttons_widget</span><span class="p">)</span>
 
@@ -263,11 +265,23 @@
 </div>
 <div class="viewcode-block" id="PaPIConfigSaveDialog.select_simulink_ortd"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd">[docs]</a>    <span class="k">def</span> <span class="nf">select_simulink_ortd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="PaPIConfigSaveDialog.fill_with"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.fill_with">[docs]</a>    <span class="k">def</span> <span class="nf">fill_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">DGui</span><span class="p">):</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
 
-        <span class="n">dplugins</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;PaPIController&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;UDP_Plugin&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">cellWidget</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="PaPIConfigSaveDialog.fill_with"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.fill_with">[docs]</a>    <span class="k">def</span> <span class="nf">fill_with</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">dplugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
 
         <span class="n">row</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -311,7 +325,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pluginTable</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setStretchLastSection</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="PaPIConfigSaveDialog.get_create_lists"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.custom.PaPIConfigSaveDialog.get_create_lists">[docs]</a>    <span class="k">def</span> <span class="nf">get_create_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&#39;create lists&#39;</span><span class="p">)</span>
 
         <span class="n">plugin_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">subscription_list</span> <span class="o">=</span> <span class="p">[]</span>

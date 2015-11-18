@@ -877,7 +877,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">do_edit_plugin_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">),</span>
                                       <span class="p">{</span><span class="s">&#39;edit&#39;</span><span class="p">:</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">)})</span>
 </div>
-<div class="viewcode-block" id="Gui_api.do_save_xml_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Gui_api.do_save_xml_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param path:</span>
@@ -899,7 +899,7 @@
             <span class="c">##########################</span>
             <span class="c"># Save gui configuration #</span>
             <span class="c">##########################</span>
-            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">()</span>
+            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">(</span><span class="n">saveUserSettings</span><span class="o">=</span><span class="n">saveUserSettings</span><span class="p">)</span>
             <span class="n">gui_cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Configuration&#39;</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">cfg_item</span> <span class="ow">in</span> <span class="n">gui_cfg</span><span class="p">:</span>
@@ -1219,6 +1219,7 @@
             <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">sToSave</span><span class="p">:</span>
                 <span class="n">subsOfPl</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="n">subs</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+
                 <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
                     <span class="n">sourcePL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span>
 
@@ -1228,9 +1229,11 @@
                         <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="n">dsubscription</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="n">block</span><span class="p">]</span>
                         <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="s">&#39;alias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span>
-
+                        <span class="k">print</span><span class="p">(</span><span class="n">sourcePL</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                            <span class="n">to_control</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="k">if</span> <span class="n">sourcePL</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">to_control</span><span class="p">:</span>
+                                <span class="n">to_control</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                             <span class="n">to_control</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;parameter&#39;</span> <span class="p">:</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span><span class="p">}</span>
                         <span class="k">else</span><span class="p">:</span>
 

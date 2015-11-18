@@ -426,7 +426,7 @@ User wants to resume a plugin, so this method will send an event to core.</p>
 
 <dl class="method">
 <dt id="papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">
-<tt class="descname">do_save_xml_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">do_save_xml_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>saveUserSettings=False</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -955,6 +955,16 @@ Stefan Ruppin</p>
 <em class="property">class </em><tt class="descclassname">papi.gui.plugin_api.</tt><tt class="descname">Plugin_api</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>PLUGIN_API_IDENTIFIER</em>, <em>tabManager=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
 <dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.change_uname_to_uniqe">
+<tt class="descname">change_uname_to_uniqe</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.change_uname_to_uniqe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.change_uname_to_uniqe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_change_string_to_be_uname">
+<tt class="descname">do_change_string_to_be_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_change_string_to_be_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_change_string_to_be_uname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.do_create_plugin">
 <tt class="descname">do_create_plugin</tt><big>(</big><em>plugin_identifier</em>, <em>uname</em>, <em>config={}</em>, <em>autostart=True</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_create_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_create_plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.</p>
@@ -1096,6 +1106,11 @@ In this case, user wants one plugin to subscribe another</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_test_name_to_be_unique">
+<tt class="descname">do_test_name_to_be_unique</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_test_name_to_be_unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_test_name_to_be_unique" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.do_update_parameter">
 <tt class="descname">do_update_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_update_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_update_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Something like a callback function for gui triggered events.
@@ -1119,6 +1134,11 @@ inform the gui that a parameter was internally changed.</p>
 <dl class="method">
 <dt id="papi.gui.plugin_api.Plugin_api.get_all_plugins">
 <tt class="descname">get_all_plugins</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_all_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_all_plugins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.get_dparameter_of_plugin_from_data">
+<tt class="descname">get_dparameter_of_plugin_from_data</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_dparameter_of_plugin_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_dparameter_of_plugin_from_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

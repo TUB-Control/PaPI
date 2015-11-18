@@ -222,7 +222,23 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Plugin_api.get_dplugin_by_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.get_dplugin_by_uname">[docs]</a>    <span class="k">def</span> <span class="nf">get_dplugin_by_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Plugin_api.get_dparameter_of_plugin_from_data"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.get_dparameter_of_plugin_from_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_dparameter_of_plugin_from_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">plugin_uname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">plugin_uname</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dplugin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="Plugin_api.do_change_string_to_be_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.do_change_string_to_be_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_change_string_to_be_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">do_change_string_to_be_uname</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Plugin_api.change_uname_to_uniqe"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.change_uname_to_uniqe">[docs]</a>    <span class="k">def</span> <span class="nf">change_uname_to_uniqe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Plugin_api.do_test_name_to_be_unique"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.plugin_api.Plugin_api.do_test_name_to_be_unique">[docs]</a>    <span class="k">def</span> <span class="nf">do_test_name_to_be_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_api</span><span class="o">.</span><span class="n">do_test_name_to_be_unique</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

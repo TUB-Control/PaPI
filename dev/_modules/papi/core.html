@@ -711,10 +711,6 @@
                                     <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()[</span><span class="n">oID</span><span class="p">][</span><span class="n">opt</span><span class="o">.</span><span class="n">block_name</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
                                     <span class="n">new_event</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NewData</span><span class="p">(</span><span class="n">oID</span><span class="p">,</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">id</span><span class="p">],</span> <span class="n">opt</span><span class="p">,</span> <span class="n">source_plugin_uname</span><span class="o">=</span> <span class="n">dplug</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
                                     <span class="n">pl</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">new_event</span><span class="p">)</span>
-
-                                    <span class="c"># this event will be a new parameter value for a plugin</span>
-                                    <span class="c">#if opt.is_parameter is True:</span>
-                                    <span class="c">#    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="c"># plugin is paused</span>
                                 <span class="k">pass</span>

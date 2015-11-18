@@ -53,12 +53,21 @@
 <div class="section" id="v-1-x">
 <h1>v.1.x:<a class="headerlink" href="#v-1-x" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
+<li><strong>feature</strong>: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically</li>
+<li><strong>feature</strong>: Added a new parameter context menu to plugins which allows easy change of parameters without overview menu</li>
+<li><strong>feature</strong>: A new run-mode is available. Prevents Plugins resize and move.</li>
 <li><strong>feature</strong>: Added ability to define favourite plugins</li>
 <li><strong>feature</strong>: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder</li>
 <li><strong>feature</strong>: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block</li>
+<li><strong>feature</strong>: Auto-Scale of background images</li>
+<li><strong>feature</strong>: Background image will be the same after dock / detach</li>
+<li><strong>improvement</strong>: Backgorund image will now be loaded from cfg as well as opened tabs.</li>
+<li><strong>improvement</strong>: Cleaned up the plugin developers API</li>
 <li><strong>doc</strong>: Added documentation for the main window</li>
 <li><strong>doc</strong>: Added documentation for shortcuts</li>
 <li><strong>simulink</strong>: Added Checkbox to control if the UDPServer should be started in the initial phase</li>
+<li><strong>simulink</strong>: SampleTime of the PaPIBlock is now parameterized</li>
+<li><strong>simulink</strong>: PaPIBlock is now always delayed by one step due to a legacy tool limitation: It is not possible to set the direct feedthrough flag to zero.</li>
 <li><strong>gui</strong>: Added search bar for overview menu and create menu</li>
 <li><strong>gui</strong>: Added shortcut features to search bar and tree in overview menu and create menu</li>
 <li><strong>gui</strong>: Added shortcuts for actions of the main window for example: save, load</li>

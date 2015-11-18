@@ -260,6 +260,10 @@
 <span class="sd">        :param data: Data containing the values in a hash array of signal names as key.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_line</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;time&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pe</span><span class="o">.</span><span class="n">WrongType</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
 
         <span class="n">dataHash</span> <span class="o">=</span> <span class="n">data</span>
         <span class="n">dataHash</span><span class="p">[</span><span class="n">CORE_TIME_SIGNAL</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_line</span>
@@ -450,7 +454,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
 </div>
-<div class="viewcode-block" id="base_plugin.pl_get_config_element"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element">[docs]</a>    <span class="k">def</span> <span class="nf">pl_get_config_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">sub_field</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="base_plugin.pl_get_config_element"><a class="viewcode-back" href="../../../../papi.plugin.base_classes.html#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element">[docs]</a>    <span class="k">def</span> <span class="nf">pl_get_config_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">sub_field</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">castHandler</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Methods enables the user to get a field value of the current configuration.</span>
 <span class="sd">        If the field_name exists, the &#39;value&#39; part will be returned.</span>
@@ -467,10 +471,22 @@
                 <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span>
                     <span class="n">field_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">sub_field</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">field_dict</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">castHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="k">return</span> <span class="n">castHandler</span><span class="p">(</span><span class="n">field_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="k">return</span> <span class="bp">None</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">sub_field</span> <span class="ow">in</span> <span class="n">field_dict</span><span class="p">:</span>
-                            <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="n">sub_field</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">castHandler</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="k">return</span> <span class="n">field_dict</span><span class="p">[</span><span class="n">sub_field</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="k">return</span> <span class="n">castHandler</span><span class="p">(</span><span class="n">field_dict</span><span class="p">[</span><span class="n">sub_field</span><span class="p">])</span>
+                                <span class="k">except</span><span class="p">:</span>
+                                    <span class="k">return</span> <span class="bp">None</span>
 
         <span class="k">return</span> <span class="bp">None</span>
 </div>

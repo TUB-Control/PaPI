@@ -52,6 +52,80 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-papi.plugin.base_classes.PaPISubWindow">
+<span id="papi-plugin-base-classes-papisubwindow-module"></span><h2>papi.plugin.base_classes.PaPISubWindow module<a class="headerlink" href="#module-papi.plugin.base_classes.PaPISubWindow" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow">
+<em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.PaPISubWindow.</tt><tt class="descname">PaPISubWindow</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMdiSubWindow</span></tt></p>
+<dl class="method">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.contextMenuEvent">
+<tt class="descname">contextMenuEvent</tt><big>(</big><em>QContextMenuEvent</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow.contextMenuEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.contextMenuEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.disableInteraction">
+<tt class="descname">disableInteraction</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow.disableInteraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.disableInteraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.enableInteraction">
+<tt class="descname">enableInteraction</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow.enableInteraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.enableInteraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.isInteractionAllowed">
+<tt class="descname">isInteractionAllowed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow.isInteractionAllowed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.isInteractionAllowed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.mouseMoveEvent">
+<tt class="descname">mouseMoveEvent</tt><big>(</big><em>QMouseEvent</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/PaPISubWindow.html#PaPISubWindow.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.PaPISubWindow.PaPISubWindow.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.plugin.base_classes.ParameterWindow">
+<span id="papi-plugin-base-classes-parameterwindow-module"></span><h2>papi.plugin.base_classes.ParameterWindow module<a class="headerlink" href="#module-papi.plugin.base_classes.ParameterWindow" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="papi.plugin.base_classes.ParameterWindow.ParameterWindow">
+<em class="property">class </em><tt class="descclassname">papi.plugin.base_classes.ParameterWindow.</tt><tt class="descname">ParameterWindow</tt><big>(</big><em>dplugin</em>, <em>api</em>, <em>pl_win_name=''</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ParameterWindow.html#ParameterWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ParameterWindow.ParameterWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt></p>
+<dl class="method">
+<dt id="papi.plugin.base_classes.ParameterWindow.ParameterWindow.data_changed_parameter_model">
+<tt class="descname">data_changed_parameter_model</tt><big>(</big><em>index</em>, <em>n</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ParameterWindow.html#ParameterWindow.data_changed_parameter_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ParameterWindow.ParameterWindow.data_changed_parameter_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a dparameter value is changed by editing the &#8216;value&#8217;-column.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Index of current changed dparameter</li>
+<li><strong>n</strong> &#8211; None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.ParameterWindow.ParameterWindow.show_paramters">
+<tt class="descname">show_paramters</tt><big>(</big><em>para_list</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/ParameterWindow.html#ParameterWindow.show_paramters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.ParameterWindow.ParameterWindow.show_paramters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the list of parameters and values in the parameter window
+:param para_list:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-papi.plugin.base_classes.base_ownProcess">
 <span id="papi-plugin-base-classes-base-ownprocess-module"></span><h2>papi.plugin.base_classes.base_ownProcess module<a class="headerlink" href="#module-papi.plugin.base_classes.base_ownProcess" title="Permalink to this headline">¶</a></h2>
 <p>Contributors:
@@ -231,7 +305,7 @@ This function is called with the parameter name and its current value.</p>
 
 <dl class="method">
 <dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element">
-<tt class="descname">pl_get_config_element</tt><big>(</big><em>field_name</em>, <em>sub_field=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_config_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">pl_get_config_element</tt><big>(</big><em>field_name</em>, <em>sub_field=None</em>, <em>castHandler=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_get_config_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_get_config_element" title="Permalink to this definition">¶</a></dt>
 <dd><p>Methods enables the user to get a field value of the current configuration.
 If the field_name exists, the &#8216;value&#8217; part will be returned.
 If sub_field is given, return the sub_field instead of &#8216;value&#8217;</p>
@@ -595,6 +669,8 @@ Stefan Ruppin</p>
   <ul>
 <li><a class="reference internal" href="#">papi.plugin.base_classes package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-papi.plugin.base_classes.PaPISubWindow">papi.plugin.base_classes.PaPISubWindow module</a></li>
+<li><a class="reference internal" href="#module-papi.plugin.base_classes.ParameterWindow">papi.plugin.base_classes.ParameterWindow module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.base_ownProcess">papi.plugin.base_classes.base_ownProcess module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.base_plugin">papi.plugin.base_classes.base_plugin module</a></li>
 <li><a class="reference internal" href="#module-papi.plugin.base_classes.base_visual">papi.plugin.base_classes.base_visual module</a></li>

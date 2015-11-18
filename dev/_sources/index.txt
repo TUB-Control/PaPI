@@ -34,7 +34,7 @@ Basic installation on Ubuntu 14.04 64Bit, using python 3.4
 ``sudo apt-get install python3-pyqt5.qtwebkit`` (just needed for the
 HTMLViewer plugin) [optional]
 
-``sudo apt-get installl python3-pyqt5.qtsvg`` (just needed for the
+``sudo apt-get install python3-pyqt5.qtsvg`` (just needed for the
 export feature of the Plot plugin) [optional]
 
 ``sudo pip3 install socketio_client`` (required for ORTD_UDP) [optional]

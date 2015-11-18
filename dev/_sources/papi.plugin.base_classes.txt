@@ -4,6 +4,22 @@ papi.plugin.base_classes package
 Submodules
 ----------
 
+papi.plugin.base_classes.PaPISubWindow module
+---------------------------------------------
+
+.. automodule:: papi.plugin.base_classes.PaPISubWindow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.plugin.base_classes.ParameterWindow module
+-----------------------------------------------
+
+.. automodule:: papi.plugin.base_classes.ParameterWindow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.plugin.base_classes.base_ownProcess module
 -----------------------------------------------
 

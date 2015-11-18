@@ -61,17 +61,8 @@
 </ul>
 </div></blockquote>
 <p>The name of a plugin has to be unique, in the following we will use <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> as a placeholder.</p>
-<p>The plugin directory <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> has to contain a plugin python file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.py</span></tt>, a plugin description file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.yapsy-plugin</span></tt>. Additionally it is possible and recommended to add a documentation as a plugin documentation file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> and a small icon as 16x16 png with the name <tt class="docutils literal"><span class="pre">box.png</span></tt>. Files, which are used in the rst-file, should be stored in the sub folder <tt class="docutils literal"><span class="pre">_static/manual</span></tt>, otherwise these files wont be recognized during the documentation build process.</p>
+<p>The plugin directory <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;</span></tt> has to contain a plugin python file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.py</span></tt>, a plugin description file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.yapsy-plugin</span></tt>. Additionally it is possible and <strong>recommended</strong> to add a documentation as a plugin documentation file <tt class="docutils literal"><span class="pre">&lt;unique-plugin-name&gt;.rst</span></tt> and a small icon as 16x16 png with the name <tt class="docutils literal"><span class="pre">box.png</span></tt>. Files, which are used in the rst-file, should be stored in the sub folder <tt class="docutils literal"><span class="pre">_static/manual</span></tt>, otherwise these files wont be recognized during the documentation build process.</p>
 <p>A sample folder structure is given here:</p>
-<div class="highlight-None"><div class="highlight"><pre>/LCDDisplay/
-    _static/manual/
-        LCDDisplay.png
-    LCDDisplay.py
-    LCDDisplay.rst
-    LCDDisplay.yapsy-plugin
-    box.png
-</pre></div>
-</div>
 <p>The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: <tt class="docutils literal"><span class="pre">papi/plugin/</span></tt></p>
 <p>It is recommended to use a given template for the <strong>plugin python file</strong>, which enables an ease entry point for the
 development of an own plugin. The template files can be found in
@@ -109,9 +100,7 @@ e.g. a plot. We recommend to read <a class="reference internal" href="man.papi.m
 <p>In the following we gonna create a Block with the name <tt class="docutils literal"><span class="pre">Source</span></tt>. In
 the next step a signal named <tt class="docutils literal"><span class="pre">Step</span></tt> is created and added to the
 previous created Block. At the end the PaPI-backend will be informed and
-the Block can be used by other plugins. It is <strong>very important</strong> to know
-that the PaPI-backend only knows the last blocks sent by
-<tt class="docutils literal"><span class="pre">send_new_block_list</span></tt>. Previous sent blocks will be deleted.</p>
+the Block can be used by other plugins. Previous sent blocks will be deleted.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -165,7 +154,7 @@ that the PaPI-backend only knows the last blocks sent by
 8
 9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plugin_uname</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_data</span><span class="p">(</span><span class="s">&#39;Source&#39;</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">],</span> <span class="p">{</span><span class="s">&#39;Step&#39;</span> <span class="p">:</span> <span class="n">vec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">signal_value</span><span class="p">]}</span> <span class="p">)</span>
@@ -182,12 +171,12 @@ that the PaPI-backend only knows the last blocks sent by
 <div class="section" id="create-parameters">
 <h3>create parameters<a class="headerlink" href="#create-parameters" title="Permalink to this headline">¶</a></h3>
 <p>Parameters are used to enable an external control of a running plugin. We recommend to read <a class="reference internal" href="man.papi.manual.2_introduction.html#man-parameters"><em>Parameters</em></a>.</p>
-<p>It is necessary to imports this object:</p>
+<p>It is necessary to import this object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">papi.data.DParameter</span> <span class="kn">import</span> <span class="n">DParameter</span>
 </pre></div>
 </div>
 <p>At first three parameters are created and the PaPI-backend gets
-informed. To limit possible user entries in the frontend, a regex
+informed by using the function <tt class="docutils literal"><span class="pre">pl_send_new_parameter_list</span></tt>. To limit possible user entries in the frontend, a regex
 was defined for the</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -213,19 +202,15 @@ was defined for the</p>
 </pre></div>
 </div>
 <p>A new event is defined by the following code and at the end the PaPI-backend will be informed and
-the event can be used to change parameters of other plugins. It is <strong>very important</strong> to know
-that the PaPI-backend only knows the last events sent by
-<tt class="docutils literal"><span class="pre">send_new_event_list</span></tt>. Previous sent events will be deleted. In the code above a button also created which is used to trigger the change event by user interaction (clicking the button).</p>
-<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+the event can be used to change parameters of other plugins. In the code above a button was also created which is used to trigger the change event by a simple user interaction (clicking the button).</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span>         <span class="o">=</span> <span class="n">DEvent</span><span class="p">(</span><span class="s">&#39;Start&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pl_send_new_event_list</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">])</span>
@@ -233,10 +218,9 @@ that the PaPI-backend only knows the last events sent by
     <span class="bp">self</span><span class="o">.</span><span class="n">button</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clicked_start_button</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&#39;Click&#39;</span><span class="p">)</span>
-
-<span class="n">The</span> <span class="n">event</span> <span class="n">can</span> <span class="n">be</span> <span class="n">emitted</span> <span class="k">as</span> <span class="n">following</span><span class="p">,</span> <span class="n">here</span> <span class="k">as</span> <span class="n">the</span> <span class="n">result</span> <span class="n">of</span> <span class="n">clicking</span> <span class="n">a</span> <span class="n">button</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">GUI</span><span class="o">.</span>
 </pre></div>
 </td></tr></table></div>
+<p>The event can be emitted as following, here as the result of clicking a button in the GUI.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">clicked_start_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pl_emit_event</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_start</span><span class="p">)</span>
@@ -419,20 +403,20 @@ be modified by the user during the creation process.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">color_regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;regex&#39;</span><span class="p">]</span>
 </pre></div>
 </td></tr></table></div>
-<ol class="arabic simple" start="3">
-<li>Use of <tt class="docutils literal"><span class="pre">pl_get_current_config_ref</span></tt>: This function provides a reference to the complete modified configuration. Single values are accessed in the same way as in the example before but changes in the configuration will affected the startup configuration. Thereby it is possible to modify the configuration for the next startup if the current PaPI setting is saved as an XML file because the current startup configuration will be stored and taken when the configuration is loaded.</li>
-</ol>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Use this function only if you know what you do ! Take a look at the documentation for this function.</p>
 </div>
+<ol class="arabic simple" start="3">
+<li>Use of <tt class="docutils literal"><span class="pre">pl_get_current_config_ref</span></tt>: This function provides a reference to the complete modified configuration. Single values are accessed in the same way as in the example before but changes in the configuration will affected the startup configuration. Thereby it is possible to modify the configuration for the next startup if the current PaPI setting is saved as an XML file because the current startup configuration will be stored and taken when the configuration is loaded.</li>
+</ol>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5
 6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initialize_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">config</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pl_get_current_config_ref</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">color</span>       <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">color_regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">][</span><span class="s">&#39;regex&#39;</span><span class="p">]</span>
 
@@ -440,10 +424,6 @@ be modified by the user during the creation process.</p>
 </pre></div>
 </td></tr></table></div>
 <p>If you only like to change one single value in the startup configuration we recommend the function <tt class="docutils literal"><span class="pre">pl_set_config_element</span></tt>:</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Use this function only if you know what you do !  Take a look at the documentation for this function.</p>
-</div>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cb_initailize_plugin</span><span class="p">():</span>
     <span class="n">pl_set_config_element</span><span class="p">(</span><span class="s">&#39;color&#39;</span><span class="p">,</span> <span class="s">&#39;(10,20,30)&#39;</span><span class="p">)</span>

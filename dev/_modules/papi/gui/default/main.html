@@ -365,7 +365,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">toolbarAddFavPlugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.favPluginWasRemoved"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.favPluginWasRemoved">[docs]</a>    <span class="k">def</span> <span class="nf">favPluginWasRemoved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.set_icons"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.set_icons">[docs]</a>    <span class="k">def</span> <span class="nf">set_icons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># -------------------------------------</span>
@@ -433,7 +434,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actionResetPaPI</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionRunMode</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="GUI.get_gui_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.get_gui_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GUI.get_gui_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.get_gui_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
         <span class="n">actTab</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">actTab</span><span class="p">[</span><span class="s">&#39;Active&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_currently_active_tab</span><span class="p">())</span>
@@ -453,22 +454,24 @@
         <span class="n">size</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
 
 
-        <span class="c"># ----------------------</span>
-        <span class="c"># Set favourite plugins</span>
-        <span class="c"># ----------------------</span>
-        <span class="n">favourites</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolBar</span><span class="o">.</span><span class="n">actions</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">PaPIFavAction</span><span class="p">):</span>
-                <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()][</span><span class="s">&#39;position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-
         <span class="n">cfg</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;ActiveTab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">actTab</span>
         <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Tabs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tabs</span>
         <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Favourites&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">favourites</span>
+
+        <span class="c"># ----------------------</span>
+        <span class="c"># Set favourite plugins</span>
+        <span class="c"># ----------------------</span>
+        <span class="k">if</span> <span class="n">saveUserSettings</span><span class="p">:</span>
+            <span class="n">favourites</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolBar</span><span class="o">.</span><span class="n">actions</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">PaPIFavAction</span><span class="p">):</span>
+                    <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()][</span><span class="s">&#39;position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Favourites&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">favourites</span>
 
         <span class="k">return</span> <span class="n">cfg</span>
 </div>
@@ -529,7 +532,6 @@
         <span class="c"># ------------------------</span>
         <span class="c"># Restore favourite icons</span>
         <span class="c"># ------------------------</span>
-
         <span class="k">if</span> <span class="s">&#39;Favourites&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
             <span class="n">sorted_positions</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -539,6 +541,19 @@
             <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sorted_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">plugin</span> <span class="o">=</span> <span class="n">sorted_positions</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">addFavPlugin</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+
+        <span class="c"># -----------------------</span>
+        <span class="c"># Restore Tabs</span>
+        <span class="c"># -----------------------</span>
+        <span class="k">if</span> <span class="s">&#39;Tabs&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Tabs&#39;</span><span class="p">]:</span>
+                <span class="n">tab</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Tabs&#39;</span><span class="p">][</span><span class="n">tabName</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">tabName</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;Background&#39;</span> <span class="ow">in</span> <span class="n">tab</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">set_background_for_tab_with_name</span><span class="p">(</span><span class="n">tabName</span><span class="p">,</span> <span class="n">tab</span><span class="p">[</span><span class="s">&#39;Background&#39;</span><span class="p">])</span>
+
+                
+
 </div>
 <div class="viewcode-block" id="GUI.triggered_reload_plugin_db"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.triggered_reload_plugin_db">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_reload_plugin_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -582,7 +597,7 @@
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="o">=</span> <span class="n">OverviewPluginMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="o">=</span> <span class="n">OverviewPluginMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="GUI.triggered_show_toolbar"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.triggered_show_toolbar">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_show_toolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -628,9 +643,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fileNames</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
-        <span class="n">dialog</span> <span class="o">=</span> <span class="n">PaPIConfigSaveDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">PaPIConfigSaveDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">)</span>
 
-        <span class="n">dialog</span><span class="o">.</span><span class="n">fill_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">gui_data</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">fill_with</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
             <span class="n">fileNames</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
@@ -753,6 +768,13 @@
 
         <span class="n">errMsg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">650</span><span class="p">)</span>
+
+        <span class="c"># layout = errMsg.layout();</span>
+        <span class="c"># spacer = QtGui.QSpacerItem(1000, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)</span>
+        <span class="c"># layout.addItem(spacer, layout.rowCount(), 0,1, layout.columnCount())</span>
+
+        <span class="n">errMsg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
+        <span class="n">errMsg</span><span class="o">.</span><span class="n">setSizeGripEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Plugin: &quot;</span> <span class="o">+</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; // &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Error in plugin&quot;</span> <span class="o">+</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; // &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setDetailedText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
@@ -763,6 +785,7 @@
 
         <span class="n">errMsg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">650</span><span class="p">)</span>
+
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="n">errMsg</span><span class="o">.</span><span class="n">setDetailedText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">detailed_msg</span><span class="p">))</span>
@@ -770,22 +793,37 @@
         <span class="n">errMsg</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="GUI.toggle_run_mode"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.toggle_run_mode">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_run_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loadButton</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">saveButton</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">toogle_lock</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="c"># hide toolbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolBar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="c"># disable context menu of tabmanger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">disableContextMenus</span><span class="p">()</span>
 
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span><span class="p">:</span>
+            <span class="c"># lock subwindows in tabs</span>
+            <span class="k">for</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="n">tabObject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">subWindow</span> <span class="ow">in</span> <span class="n">tabObject</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+                    <span class="n">subWindow</span><span class="o">.</span><span class="n">disableInteraction</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loadButton</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">saveButton</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">toogle_lock</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># show toolbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolBar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="c"># disable context menu of tabmanger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">enableContextMenus</span><span class="p">()</span>
+
+            <span class="c"># unlock subwindows in tabs</span>
+            <span class="k">for</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="n">tabObject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tabName</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">subWindow</span> <span class="ow">in</span> <span class="n">tabObject</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+                    <span class="n">subWindow</span><span class="o">.</span><span class="n">enableInteraction</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
 <div class="viewcode-block" id="GUI.toogle_lock"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.toogle_lock">[docs]</a>    <span class="k">def</span> <span class="nf">toogle_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;PLEASE REPORT THIS BUG!!&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">():</span>
                 <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">()[</span><span class="n">tab_name</span><span class="p">]</span>
@@ -896,7 +934,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">toolBar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">plugin_action</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="GUI.show_create_plugin_dialog"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.main.GUI.show_create_plugin_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">show_create_plugin_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_info</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>

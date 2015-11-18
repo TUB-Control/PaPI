@@ -152,7 +152,11 @@
 <td>Int</td>
 <td>General control signal.</td>
 </tr>
-<tr class="row-even"><td>Start</td>
+<tr class="row-even"><td>NextState</td>
+<td>Int</td>
+<td>Sent when the user wants to change the state.</td>
+</tr>
+<tr class="row-odd"><td>Start</td>
 <td>Int</td>
 <td>Sent when &#8216;start&#8217; or &#8216;stop&#8217; was pressed.</td>
 </tr>
@@ -170,12 +174,13 @@
 <p>The slider_value is given in the range [0,1] with a resolution of 101, the current slider state is described by 1 (active) and 0 (inactive).</p>
 <p>The <strong>ControlStim</strong> event is used to trigger different actions, currently we use 2 to trigger the calibration process and 3 to finish the calibration process.</p>
 <p>The <strong>Start</strong> event is used to trigger start by 1 and stop by 0.</p>
+<p>The <strong>NextState</strong> event is used to send the preferred next state.</p>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>A default configuration for this plugin can be found here: <a class="reference download internal" href="_downloads/example_config1.xml"><tt class="xref download docutils literal"><span class="pre">example_config.xml</span></tt></a></p>
 <p>A simulink model and with a PaPI configuration can be found here: <a class="reference download internal" href="_downloads/rehastim_gui.slx"><tt class="xref download docutils literal"><span class="pre">SimulinkModel</span></tt></a>, <a class="reference download internal" href="_downloads/rehastim_config.m"><tt class="xref download docutils literal"><span class="pre">PaPI</span> <span class="pre">Configuration</span></tt></a>,</p>
-<p>It is only neccessary to build the model, start the binary, start PaPI and start the <a class="reference internal" href="man.papi.plugin.visual.PaPIController.PaPIController.html"><em>PaPIController</em></a>.</p>
+<p>It is only necessary to build the model, start the binary, start PaPI and start the <a class="reference internal" href="man.papi.plugin.visual.PaPIController.PaPIController.html"><em>PaPIController</em></a>.</p>
 </div>
 </div>
 

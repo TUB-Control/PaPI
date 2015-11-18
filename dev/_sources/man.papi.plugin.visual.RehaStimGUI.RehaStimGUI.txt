@@ -74,6 +74,9 @@ A plugin instance provides this events which can be used to manipulated paramete
     * - ControlStim
       - Int
       - General control signal.
+    * - NextState
+      - Int
+      - Sent when the user wants to change the state.
     * - Start
       - Int
       - Sent when 'start' or 'stop' was pressed.
@@ -98,6 +101,8 @@ The **ControlStim** event is used to trigger different actions, currently we use
 
 The **Start** event is used to trigger start by 1 and stop by 0.
 
+The **NextState** event is used to send the preferred next state.
+
 
 Example
 -------
@@ -106,4 +111,4 @@ A default configuration for this plugin can be found here: :download:`example_co
 
 A simulink model and with a PaPI configuration can be found here: :download:`SimulinkModel <_static/RehaStimGUI/rehastim_gui.slx>`, :download:`PaPI Configuration <_static/RehaStimGUI/rehastim_config.m>`,
 
-It is only neccessary to build the model, start the binary, start PaPI and start the :doc:`man.papi.plugin.visual.PaPIController.PaPIController`.
+It is only necessary to build the model, start the binary, start PaPI and start the :doc:`man.papi.plugin.visual.PaPIController.PaPIController`.
