@@ -31,7 +31,7 @@ Stefan Ruppin
 import platform
 from os.path import expanduser
 
-PAPI_DEV_EDITION                = False
+PAPI_DEV_EDITION                = True
 
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
