@@ -4,9 +4,9 @@ function [ json_config ] = rehastim_config( compact)
     block_name_ortd = 'SourceGroup0';
     plugin_name_ortd = 'ORTDPlugin1';
 
-    signals = {'NextState'};
+    signals = {'CurrentState'};
 
-    parameters = {'Configuration','Hearbeat','Control','MaximaSlider','Start'};
+    parameters = {'Configuration','Hearbeat','Control','MaximaSlider','Start','NextState','Slider'};
 
     pf = PacketFramework('PaPIConfig');
 
@@ -15,8 +15,8 @@ function [ json_config ] = rehastim_config( compact)
 
     pf.PF_changePluginConfig(rehagui_uname, { ...
             {'maximized', '1'}, ...
-            {'config', 'config.xml'} ...
-            {'signal_next_state', 'NextState'} ...
+            {'config', 'papi/plugin/visual/RehaStimGUI/_static/example_config.xml'} ...
+            {'signal_next_state', 'CurrentState'} ...
         } ...
     )
 
@@ -36,7 +36,8 @@ function [ json_config ] = rehastim_config( compact)
     pf.PF_addcontrol(rehagui_uname, 'ControlStim', {parameters(3)});
     pf.PF_addcontrol(rehagui_uname, 'MaximaSlider', {parameters(4)});
     pf.PF_addcontrol(rehagui_uname, 'Start', {parameters(5)});
-
+    pf.PF_addcontrol(rehagui_uname, 'NextState', {parameters(6)});
+    
     json_config = savejson('', pf.config, 'Compact', compact);
 
 

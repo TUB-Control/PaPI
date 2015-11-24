@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.data package &mdash; papi  documentation</title>
+    <title>papi.data package &mdash; papi 1.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,10 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="index.html" />
-    <link rel="up" title="papi package" href="papi.html" />
-    <link rel="next" title="papi.event package" href="papi.event.html" />
-    <link rel="prev" title="papi package" href="papi.html" /> 
+    <link rel="top" title="papi 1.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,14 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.event.html" title="papi.event package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="papi.html" title="papi package"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li>
-          <li><a href="papi.html" accesskey="U">papi package</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -58,6 +51,22 @@
 <h1>papi.data package<a class="headerlink" href="#papi-data-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-papi.data.DConfiguration">
+<span id="papi-data-dconfiguration-module"></span><h2>papi.data.DConfiguration module<a class="headerlink" href="#module-papi.data.DConfiguration" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.data.DConfiguration.DConfiguration">
+<em class="property">class </em><tt class="descclassname">papi.data.DConfiguration.</tt><tt class="descname">DConfiguration</tt><a class="reference internal" href="_modules/papi/data/DConfiguration.html#DConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DConfiguration.DConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.data.DObject.DObject" title="papi.data.DObject.DObject"><tt class="xref py py-class docutils literal"><span class="pre">papi.data.DObject.DObject</span></tt></a></p>
+<dl class="method">
+<dt id="papi.data.DConfiguration.DConfiguration.add">
+<tt class="descname">add</tt><big>(</big><em>args</em><big>)</big><a class="reference internal" href="_modules/papi/data/DConfiguration.html#DConfiguration.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DConfiguration.DConfiguration.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-papi.data.DCore">
 <span id="papi-data-dcore-module"></span><h2>papi.data.DCore module<a class="headerlink" href="#module-papi.data.DCore" title="Permalink to this headline">¶</a></h2>
@@ -349,7 +358,21 @@ Sven Knuth</p>
 <dt id="papi.data.DObject.DObject">
 <em class="property">class </em><tt class="descclassname">papi.data.DObject.</tt><tt class="descname">DObject</tt><a class="reference internal" href="_modules/papi/data/DObject.html#DObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>Base class for all PaPI-objects</p>
+<dl class="staticmethod">
+<dt id="papi.data.DObject.DObject.create_unique_id">
+<em class="property">static </em><tt class="descname">create_unique_id</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.create_unique_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.create_unique_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.data.DObject.DObject.get_id">
+<tt class="descname">get_id</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.get_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.get_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.data.DObject.DObject.remove">
+<tt class="descname">remove</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DObject.html#DObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DObject.DObject.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -374,6 +397,11 @@ Sven Knuth</p>
 <dd><p>Bases: <a class="reference internal" href="#papi.data.DObject.DObject" title="papi.data.DObject.DObject"><tt class="xref py py-class docutils literal"><span class="pre">papi.data.DObject.DObject</span></tt></a></p>
 <p>DParameter is used for the internal description of a parameter which are provided by a plugin.
 Parameters are used to interact with plugin.</p>
+<dl class="method">
+<dt id="papi.data.DParameter.DParameter.update_meta">
+<tt class="descname">update_meta</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="_modules/papi/data/DParameter.html#DParameter.update_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DParameter.DParameter.update_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -416,6 +444,21 @@ Contains a bunch of signals of a the same data source.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Rtype boolean:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.data.DPlugin.DBlock.get_name">
+<tt class="descname">get_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DBlock.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DBlock.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of this block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Return block_name:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -588,6 +631,11 @@ returns false if parameter already exists.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="papi.data.DPlugin.DPlugin.get_devent">
+<tt class="descname">get_devent</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_devent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_devent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.get_meta">
 <tt class="descname">get_meta</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_meta" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -621,7 +669,7 @@ returns false if parameter already exists.</p>
 <dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.get_subscribtions">
 <tt class="descname">get_subscribtions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.get_subscribtions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.get_subscribtions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a reference to a dictionary of all subcribtions.</p>
+<dd><p>Returns a reference to a dictionary of all subscribtions.</p>
 <p>:return {}{} of DPlugin ids to DBlock names :
 :rtype: {}{}</p>
 </dd></dl>
@@ -669,7 +717,7 @@ returns false if parameter doesn&#8217;t exist.</p>
 <dl class="method">
 <dt id="papi.data.DPlugin.DPlugin.subscribe">
 <tt class="descname">subscribe</tt><big>(</big><em>dblock</em><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DPlugin.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DPlugin.subscribe" title="Permalink to this definition">¶</a></dt>
-<dd><p>This plugin subscribes a &#8216;dblock&#8217; by remembering the dblog id.</p>
+<dd><p>This plugin subscribes a &#8216;dblock&#8217; by remembering the dblock id.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -846,6 +894,11 @@ returns false if parameter doesn&#8217;t exist.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="papi.data.DPlugin.DSubscription.update_meta">
+<tt class="descname">update_meta</tt><big>(</big><em>subscription</em><big>)</big><a class="reference internal" href="_modules/papi/data/DPlugin.html#DSubscription.update_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DPlugin.DSubscription.update_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -858,6 +911,20 @@ Sven Knuth</p>
 <em class="property">class </em><tt class="descclassname">papi.data.DSignal.</tt><tt class="descname">DSignal</tt><big>(</big><em>uname</em>, <em>dname=None</em><big>)</big><a class="reference internal" href="_modules/papi/data/DSignal.html#DSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DSignal.DSignal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#papi.data.DObject.DObject" title="papi.data.DObject.DObject"><tt class="xref py py-class docutils literal"><span class="pre">papi.data.DObject.DObject</span></tt></a></p>
 <p>DSignal is used for the internal description of a signal.</p>
+<dl class="method">
+<dt id="papi.data.DSignal.DSignal.get_name">
+<tt class="descname">get_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/data/DSignal.html#DSignal.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.data.DSignal.DSignal.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of this signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return name:</th><td class="field-body">Unique name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -874,10 +941,27 @@ Sven Knuth</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">papi.data package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-papi.data.DConfiguration">papi.data.DConfiguration module</a></li>
 <li><a class="reference internal" href="#module-papi.data.DCore">papi.data.DCore module</a></li>
 <li><a class="reference internal" href="#module-papi.data.DGui">papi.data.DGui module</a></li>
 <li><a class="reference internal" href="#module-papi.data.DObject">papi.data.DObject module</a></li>
@@ -890,12 +974,7 @@ Sven Knuth</p>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="papi.html"
-                        title="previous chapter">papi package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="papi.event.html"
-                        title="next chapter">papi.event package</a></p>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.data.txt"
@@ -927,14 +1006,10 @@ Sven Knuth</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.event.html" title="papi.event package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="papi.html" title="papi package"
-             >previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li>
-          <li><a href="papi.html" >papi package</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">

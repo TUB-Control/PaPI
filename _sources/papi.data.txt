@@ -4,6 +4,14 @@ papi.data package
 Submodules
 ----------
 
+papi.data.DConfiguration module
+-------------------------------
+
+.. automodule:: papi.data.DConfiguration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 papi.data.DCore module
 ----------------------
 

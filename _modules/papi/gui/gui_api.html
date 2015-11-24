@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.gui.gui_api &mdash; papi  documentation</title>
+    <title>papi.gui.gui_api &mdash; papi 1.3.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="../../../index.html" />
+    <link rel="top" title="papi 1.3.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+    
+        <li><a href="../../../index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -68,26 +71,27 @@
 <span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
 <span class="sd">GNU General Public License for more details.</span>
 
-<span class="sd">You should have received a copy of the GNU Lesser General Public License</span>
+<span class="sd">You should have received a copy of the GNU General Public License</span>
 <span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 <span class="sd">Contributors</span>
 <span class="sd">Stefan Ruppin</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;stefan&#39;</span>
+
 
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">import</span> <span class="nn">papi.event</span> <span class="kn">as</span> <span class="nn">Event</span>
 
 <span class="kn">from</span> <span class="nn">papi.data.DOptionalData</span> <span class="kn">import</span> <span class="n">DOptionalData</span>
 <span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
 <span class="kn">from</span> <span class="nn">papi.constants</span> <span class="kn">import</span> <span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">,</span> <span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">CONFIG_LOADER_SUBSCRIBE_DELAY</span><span class="p">,</span> \
-    <span class="n">CONFIG_ROOT_ELEMENT_NAME</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">,</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">CONFIG_ROOT_ELEMENT_NAME_RELOADED</span><span class="p">,</span> \
-    <span class="n">CONFIG_SAVE_CFG_BLACKLIST</span>
+    <span class="n">CONFIG_ROOT_ELEMENT_NAME</span><span class="p">,</span> <span class="n">CORE_PAPI_VERSION</span><span class="p">,</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">,</span> <span class="n">CONFIG_ROOT_ELEMENT_NAME_RELOADED</span><span class="p">,</span> \
+    <span class="n">CONFIG_SAVE_CFG_BLACKLIST</span><span class="p">,</span> <span class="n">CORE_TIME_SIGNAL</span>
 
 <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
@@ -345,7 +349,7 @@
         <span class="c"># call do_subscribe with ids to subscribe</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_unsubscribe</span><span class="p">(</span><span class="n">subscriber_id</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">signal_index</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Gui_api.do_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Gui_api.do_set_parameter"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">only_db_update</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Something like a callback function for gui triggered events.</span>
 <span class="sd">        User wants to change a parameter of a plugin</span>
@@ -356,6 +360,8 @@
 <span class="sd">        :type parameter_name: basestring</span>
 <span class="sd">        :param value: new parameter value to set</span>
 <span class="sd">        :type value:</span>
+<span class="sd">        :param only_db_update: do_set_parameter of the target plugin will not be called. Updates only the internal database.</span>
+<span class="sd">        :type boolean:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># get plugin from DGUI</span>
         <span class="n">dplug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">plugin_id</span><span class="p">)</span>
@@ -380,7 +386,10 @@
                         <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
                         <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">parameter_name</span>
                         <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
-                        <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">only_db_update</span><span class="p">:</span>
+                            <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">UpdateParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span> <span class="n">dplug</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Gui_api.do_set_parameter_uname"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_set_parameter_uname">[docs]</a>    <span class="k">def</span> <span class="nf">do_set_parameter_uname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_uname</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -395,9 +404,17 @@
 <span class="sd">        :param value: new parameter value to set</span>
 <span class="sd">        :type value:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_get_plugin_id_from_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">do_set_parameter</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="c"># id = self.do_get_plugin_id_from_uname(plugin_uname)</span>
+        <span class="c"># if id is not None:</span>
+        <span class="c">#     self.do_set_parameter(id, parameter_name, value)</span>
+        <span class="c">#     print(parameter_name, value)</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">DOptionalData</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">is_parameter</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">parameter_alias</span> <span class="o">=</span> <span class="n">parameter_name</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">block_name</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="o">.</span><span class="n">instruction</span><span class="o">.</span><span class="n">SetParameterByUname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_id</span><span class="p">,</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Gui_api.do_pause_plugin_by_id"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_pause_plugin_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">do_pause_plugin_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -482,15 +499,15 @@
 <div class="viewcode-block" id="Gui_api.do_close_program"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_close_program">[docs]</a>    <span class="k">def</span> <span class="nf">do_close_program</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Tell core to close papi. Core will respond and will close all open plugins.</span>
-<span class="sd">        GUI will close all PCP and VIP Plugins due to calling their quit function</span>
+<span class="sd">        GUI will close all VIP Plugins due to calling their quit function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
             <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">cb_quit</span><span class="p">()</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
                     <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">dplugin</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
@@ -551,6 +568,8 @@
                                 <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
                                    <span class="n">gui_config</span><span class="p">[</span><span class="nb">property</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="n">val</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">text</span>
 
+
+
                 <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Plugins&#39;</span><span class="p">:</span>
                     <span class="c">#############################</span>
                     <span class="c"># Read plugin configuration #</span>
@@ -601,7 +620,11 @@
 
                 <span class="k">if</span> <span class="n">root_element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Subscriptions&#39;</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">sub_xml</span> <span class="ow">in</span> <span class="n">root_element</span><span class="p">:</span>
-                        <span class="n">dest</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_uname_to_uniqe</span><span class="p">(</span><span class="n">sub_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Destination&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+                        <span class="c">#TODO: Ask stefan: Why this line?</span>
+                        <span class="c">#dest  = self.change_uname_to_uniqe(sub_xml.find(&#39;Destination&#39;).text)</span>
+
+                        <span class="n">dest</span>  <span class="o">=</span> <span class="n">sub_xml</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;Destination&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
                         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sub_xml</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s">&#39;Source&#39;</span><span class="p">:</span>
                                 <span class="n">sourceName</span> <span class="o">=</span>  <span class="n">source</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">]</span> <span class="c">#self.change_uname_to_uniqe(source.attrib[&#39;uname&#39;])</span>
@@ -615,6 +638,9 @@
                                         <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
                                     <span class="n">subs_to_make</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;dest&#39;</span><span class="p">:</span><span class="n">dest</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">:</span><span class="n">sourceName</span><span class="p">,</span> <span class="s">&#39;block&#39;</span><span class="p">:</span><span class="n">blockName</span><span class="p">,</span> <span class="s">&#39;alias&#39;</span><span class="p">:</span><span class="n">alias</span><span class="p">,</span> <span class="s">&#39;signals&#39;</span><span class="p">:</span><span class="n">signals</span><span class="p">})</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_gui_config_function</span><span class="p">(</span><span class="n">gui_config</span><span class="p">)</span>
+
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
             <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not loadable&quot;</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
@@ -638,6 +664,7 @@
             <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">plugins_to_start</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">do_create_plugin</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="s">&#39;identifier&#39;</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="s">&#39;uname&#39;</span><span class="p">],</span> <span class="n">pl</span><span class="p">[</span><span class="s">&#39;cfg&#39;</span><span class="p">])</span>
 
+
             <span class="bp">self</span><span class="o">.</span><span class="n">config_loader_subs_reloaded</span><span class="p">(</span><span class="n">plugins_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Loading Plugins&quot;</span><span class="p">,</span> <span class="s">&quot;Can&#39;t use: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unloadable_plugins</span><span class="p">)</span> <span class="o">+</span>
@@ -646,7 +673,8 @@
 </div>
 <div class="viewcode-block" id="Gui_api.config_loader_subs_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+<span class="sd">        Function for callback when timer finished to apply</span>
+<span class="sd">            subscriptions and parameter changed of config.</span>
 
 <span class="sd">        :param pl_to_start: list of plugins to start</span>
 <span class="sd">        :type pl_to_start: list</span>
@@ -655,9 +683,10 @@
 <span class="sd">        :param parameters_to_change: parameter changes to apply</span>
 <span class="sd">        :type parameters_to_change: list</span>
 <span class="sd">        :param signals_to_change: signal name changes to apply</span>
-<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :type signals_to_change: list</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s">&#39;dest&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;block&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;signals&#39;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">])</span>
 
@@ -819,7 +848,8 @@
 </div>
 <div class="viewcode-block" id="Gui_api.config_loader_subs"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.config_loader_subs">[docs]</a>    <span class="k">def</span> <span class="nf">config_loader_subs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_to_start</span><span class="p">,</span> <span class="n">subs_to_make</span><span class="p">,</span> <span class="n">parameters_to_change</span><span class="p">,</span> <span class="n">signals_to_change</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function for callback when timer finished to apply subscriptions and parameter changed of config.</span>
+<span class="sd">        Function for callback when timer finished to apply</span>
+<span class="sd">            subscriptions and parameter changed of config.</span>
 
 <span class="sd">        :param pl_to_start: list of plugins to start</span>
 <span class="sd">        :type pl_to_start: list</span>
@@ -828,9 +858,10 @@
 <span class="sd">        :param parameters_to_change: parameter changes to apply</span>
 <span class="sd">        :type parameters_to_change: list</span>
 <span class="sd">        :param signals_to_change: signal name changes to apply</span>
-<span class="sd">        :type signals_to_change list</span>
+<span class="sd">        :type signals_to_change: list</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs_to_make</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">do_subscribe_uname</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
 
@@ -846,9 +877,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">do_edit_plugin_uname</span><span class="p">(</span><span class="n">plugin_uname</span><span class="p">,</span> <span class="n">DBlock</span><span class="p">(</span><span class="n">dblock_name</span><span class="p">),</span>
                                       <span class="p">{</span><span class="s">&#39;edit&#39;</span><span class="p">:</span> <span class="n">DSignal</span><span class="p">(</span><span class="n">dsignal_uname</span><span class="p">,</span> <span class="n">dsignal_dname</span><span class="p">)})</span>
 </div>
-<div class="viewcode-block" id="Gui_api.do_save_xml_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Gui_api.do_save_xml_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_xml_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-
+<span class="sd">        :param path:</span>
+<span class="sd">        :param plToSave:</span>
+<span class="sd">        :param sToSave:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">subscriptionsToSave</span> <span class="o">=</span>  <span class="p">{}</span>
         <span class="c"># check for xml extension in path, add .xml if missing</span>
@@ -863,7 +899,7 @@
             <span class="c">##########################</span>
             <span class="c"># Save gui configuration #</span>
             <span class="c">##########################</span>
-            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">()</span>
+            <span class="n">gui_cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config_function</span><span class="p">(</span><span class="n">saveUserSettings</span><span class="o">=</span><span class="n">saveUserSettings</span><span class="p">)</span>
             <span class="n">gui_cfg_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Configuration&#39;</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">cfg_item</span> <span class="ow">in</span> <span class="n">gui_cfg</span><span class="p">:</span>
@@ -895,8 +931,8 @@
 
                 <span class="c"># check if this plugin should be saved to XML</span>
                 <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">plToSave</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                        <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                        <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 
                     <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">plugins_xml</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
                     <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
@@ -948,11 +984,12 @@
                         <span class="n">alldsignals</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">get_signals</span><span class="p">()</span>
 
                         <span class="k">for</span> <span class="n">dsignal</span> <span class="ow">in</span> <span class="n">alldsignals</span><span class="p">:</span>
-                            <span class="n">dsignal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblock_xml</span><span class="p">,</span> <span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
-                            <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span> <span class="o">!=</span> <span class="n">CORE_TIME_SIGNAL</span><span class="p">:</span>
+                                <span class="n">dsignal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dblock_xml</span><span class="p">,</span> <span class="s">&#39;DSignal&#39;</span><span class="p">)</span>
+                                <span class="n">dsignal_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
 
-                            <span class="n">dname_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dsignal_xml</span><span class="p">,</span> <span class="s">&#39;dname&#39;</span><span class="p">)</span>
-                            <span class="n">dname_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
+                                <span class="n">dname_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">dsignal_xml</span><span class="p">,</span> <span class="s">&#39;dname&#39;</span><span class="p">)</span>
+                                <span class="n">dname_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dsignal</span><span class="o">.</span><span class="n">dname</span>
 
                 <span class="c"># ---------------------------------------</span>
                 <span class="c"># Build temporary subscription objects</span>
@@ -1006,8 +1043,9 @@
 
                         <span class="n">signal_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">block_xml</span><span class="p">,</span><span class="s">&#39;Signals&#39;</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">subscriptionsToSave</span><span class="p">[</span><span class="n">dest</span><span class="p">][</span><span class="n">source</span><span class="p">][</span><span class="n">block</span><span class="p">][</span><span class="s">&#39;signals&#39;</span><span class="p">]:</span>
-                            <span class="n">sig_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">signal_xml</span><span class="p">,</span><span class="s">&#39;Signal&#39;</span><span class="p">)</span>
-                            <span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">sig</span>
+                            <span class="k">if</span> <span class="n">sig</span> <span class="o">!=</span> <span class="n">CORE_TIME_SIGNAL</span><span class="p">:</span>
+                                <span class="n">sig_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">signal_xml</span><span class="p">,</span><span class="s">&#39;Signal&#39;</span><span class="p">)</span>
+                                <span class="n">sig_xml</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">sig</span>
 
 
             <span class="c"># do transformation for readability and save xml tree to file</span>
@@ -1059,8 +1097,8 @@
             <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
                 <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_PCP_IDENTIFIER</span> <span class="ow">or</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
-                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_current_config</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
 
                 <span class="n">pl_xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&#39;Plugin&#39;</span><span class="p">)</span>
                 <span class="n">pl_xml</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;uname&#39;</span><span class="p">,</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
@@ -1148,6 +1186,85 @@
             <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s">&quot;Error: Config Loader&quot;</span><span class="p">,</span> <span class="s">&quot;Not saveable: &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
 </div>
+<div class="viewcode-block" id="Gui_api.do_save_json_config_reloaded"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.do_save_json_config_reloaded">[docs]</a>    <span class="k">def</span> <span class="nf">do_save_json_config_reloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span> <span class="o">!=</span> <span class="s">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">+=</span> <span class="s">&#39;.json&#39;</span>
+
+        <span class="n">json_config</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">to_create</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">to_control</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">to_sub</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_all_plugins</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">dplugin_id</span> <span class="ow">in</span> <span class="n">plugins</span><span class="p">:</span>
+            <span class="n">dplugin</span> <span class="o">=</span> <span class="n">plugins</span><span class="p">[</span><span class="n">dplugin_id</span><span class="p">]</span>
+
+            <span class="c"># check if this plugin should be saved to XML</span>
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">plToSave</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+                    <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+
+                <span class="n">to_create</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="n">to_create</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">][</span><span class="s">&quot;identifier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;value&#39;</span> <span class="p">:</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin_identifier</span><span class="p">}</span>
+                <span class="n">plugin_config</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">config</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s">&#39;value&#39;</span><span class="p">:</span>
+                            <span class="n">plugin_config</span><span class="p">[</span><span class="n">config</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;value&#39;</span> <span class="p">:</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span><span class="p">[</span><span class="n">config</span><span class="p">][</span><span class="n">value</span><span class="p">]}</span>
+
+                <span class="n">to_create</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">][</span><span class="s">&quot;config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_config</span>
+
+
+            <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="ow">in</span> <span class="n">sToSave</span><span class="p">:</span>
+                <span class="n">subsOfPl</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">subs</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">get_subscribtions</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
+                    <span class="n">sourcePL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span><span class="o">.</span><span class="n">get_dplugin_by_id</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span><span class="o">.</span><span class="n">uname</span>
+
+                    <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">]:</span>
+
+                        <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">dsubscription</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="n">block</span><span class="p">]</span>
+                        <span class="n">subsOfPl</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="s">&#39;alias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span>
+                        <span class="k">print</span><span class="p">(</span><span class="n">sourcePL</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">sourcePL</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">to_control</span><span class="p">:</span>
+                                <span class="n">to_control</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="n">to_control</span><span class="p">[</span><span class="n">sourcePL</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;parameter&#39;</span> <span class="p">:</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">alias</span><span class="p">}</span>
+                        <span class="k">else</span><span class="p">:</span>
+
+                            <span class="n">signals</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">dsubscription</span><span class="o">.</span><span class="n">get_signals</span><span class="p">():</span>
+                                <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+                            <span class="n">to_sub</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                            <span class="n">to_sub</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">][</span><span class="s">&#39;signals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signals</span>
+                            <span class="n">to_sub</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">][</span><span class="s">&#39;block&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="n">block</span>
+                            <span class="n">to_sub</span><span class="p">[</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">][</span><span class="s">&#39;plugin&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">sourcePL</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_create</span><span class="p">):</span>
+            <span class="n">json_config</span><span class="p">[</span><span class="s">&quot;ToCreate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_create</span><span class="p">;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_control</span><span class="p">):</span>
+            <span class="n">json_config</span><span class="p">[</span><span class="s">&quot;ToControl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_control</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_sub</span><span class="p">):</span>
+            <span class="n">json_config</span><span class="p">[</span><span class="s">&quot;ToSub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_sub</span>
+
+        <span class="n">papi_config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;PaPIConfig&quot;</span> <span class="p">:</span> <span class="n">json_config</span><span class="p">}</span>
+
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">papi_config</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+</div>
 <div class="viewcode-block" id="Gui_api.indent"><a class="viewcode-back" href="../../../papi.gui.html#papi.gui.gui_api.Gui_api.indent">[docs]</a>    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function which will apply a nice looking indentiation to xml structure before save. Better readability.</span>
@@ -1227,6 +1344,23 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
@@ -1253,7 +1387,10 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">papi  documentation</a> &raquo;</li>
+    
+        <li><a href="../../../index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

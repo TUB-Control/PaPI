@@ -1,9 +1,10 @@
-VisualPlugins
-================================
+papi.plugin.visual package
+==========================
 
-.. toctree::
-   :maxdepth: 1
-   :glob:
+Module contents
+---------------
 
-   papi.plugin.visual.*
-    
+.. automodule:: papi.plugin.visual
+    :members:
+    :undoc-members:
+    :show-inheritance:

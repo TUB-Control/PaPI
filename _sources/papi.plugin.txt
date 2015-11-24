@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     papi.plugin.base_classes
+    papi.plugin.visual
 
 Module contents
 ---------------

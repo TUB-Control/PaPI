@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi.plugin.base_classes package &mdash; papi 1.2.0 documentation</title>
+    <title>papi.plugin.base_classes package &mdash; papi 1.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.2.0',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.2.0 documentation" href="index.html" /> 
+    <link rel="top" title="papi 1.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
     
-        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
     <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
  
       </ul>
@@ -276,6 +276,82 @@ This function is called with the parameter name and its current value.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DBlock">
+<tt class="descname">pl_create_DBlock</tt><big>(</big><em>block_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_create_DBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DBlock for use in a PaPI Plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>block_name</strong> (<em>str</em>) &#8211; Name of the block</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">DBlock Object or None in case of error</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DEvent">
+<tt class="descname">pl_create_DEvent</tt><big>(</big><em>event_name</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_create_DEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DEvent for use in a PaPI Plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event_name</strong> (<em>str</em>) &#8211; Name of the event</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">DEvent object or None in case of error</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DParameter">
+<tt class="descname">pl_create_DParameter</tt><big>(</big><em>parameter_name</em>, <em>default_value=0</em>, <em>regex=None</em>, <em>optional_object_to_store=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_create_DParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DParameter for use in a PaPI Plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameter_name</strong> (<em>str</em>) &#8211; Name of parameter</li>
+<li><strong>default_value</strong> &#8211; Default value for GUI to display</li>
+<li><strong>regex</strong> &#8211; Regex string for GUI to filter user inputs</li>
+<li><strong>optional_object_to_store</strong> &#8211; optional object to store within parameter object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">DParameter object or None in case of error</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DSignal">
+<tt class="descname">pl_create_DSignal</tt><big>(</big><em>signal_uname</em>, <em>display_name=None</em><big>)</big><a class="reference internal" href="_modules/papi/plugin/base_classes/base_plugin.html#base_plugin.pl_create_DSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.plugin.base_classes.base_plugin.base_plugin.pl_create_DSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a DSignal for use in a PaPI Plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>signal_uname</strong> (<em>str</em>) &#8211; unique name of the signal (unique in block context)</li>
+<li><strong>display_name</strong> (<em>str</em>) &#8211; Name to display (alias) of the signal</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">DSignal Object or None in case of error</p>
 </td>
 </tr>
 </tbody>
@@ -715,7 +791,7 @@ Stefan Ruppin</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
     
-        <li><a href="index.html">papi 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
     <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
  
       </ul>

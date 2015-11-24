@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>papi package &mdash; papi  documentation</title>
+    <title>papi package &mdash; papi 1.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '',
+        VERSION:     '1.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,9 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi  documentation" href="index.html" />
-    <link rel="next" title="papi.data package" href="papi.data.html" />
-    <link rel="prev" title="Welcome to PaPI’s documentation!" href="index.html" /> 
+    <link rel="top" title="papi 1.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,13 +35,10 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.data.html" title="papi.data package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to PaPI’s documentation!"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>  
 
@@ -60,6 +55,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="papi.data.html">papi.data package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="papi.data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.data.html#module-papi.data.DConfiguration">papi.data.DConfiguration module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="papi.data.html#module-papi.data.DCore">papi.data.DCore module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="papi.data.html#module-papi.data.DGui">papi.data.DGui module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="papi.data.html#module-papi.data.DObject">papi.data.DObject module</a></li>
@@ -93,12 +89,14 @@
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.PausePlugin">papi.event.instruction.PausePlugin module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.ResumePlugin">papi.event.instruction.ResumePlugin module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.SetParameter">papi.event.instruction.SetParameter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.SetParameterByUname">papi.event.instruction.SetParameterByUname module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.StopPlugin">papi.event.instruction.StopPlugin module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.StopPluginByUname">papi.event.instruction.StopPluginByUname module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.Subscribe">papi.event.instruction.Subscribe module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.SubsribeByUname">papi.event.instruction.SubsribeByUname module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.Unsubscribe">papi.event.instruction.Unsubscribe module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.UpdateMeta">papi.event.instruction.UpdateMeta module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.UpdateParameter">papi.event.instruction.UpdateParameter module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction.startPlugin">papi.event.instruction.startPlugin module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.event.instruction.html#module-papi.event.instruction">Module contents</a></li>
 </ul>
@@ -124,25 +122,18 @@
 <li class="toctree-l2"><a class="reference internal" href="papi.event.html#module-papi.event">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="papi.exceptions.html">papi.exceptions package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="papi.exceptions.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="papi.exceptions.html#module-papi.exceptions.block_exceptions">papi.exceptions.block_exceptions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="papi.exceptions.html#module-papi.exceptions">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="papi.gui.html">papi.gui package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="papi.gui.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="papi.gui.qt_new.html">papi.gui.qt_new package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.PapiTabManger">papi.gui.qt_new.PapiTabManger module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.create_plugin_dialog">papi.gui.qt_new.create_plugin_dialog module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.create_plugin_menu">papi.gui.qt_new.create_plugin_menu module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#papi-gui-qt-new-create-record-config-module">papi.gui.qt_new.create_record_config module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.custom">papi.gui.qt_new.custom module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.item">papi.gui.qt_new.item module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.main">papi.gui.qt_new.main module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new.overview_menu">papi.gui.qt_new.overview_menu module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.gui.qt_new.html#module-papi.gui.qt_new">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="papi.gui.default.html">papi.gui.default package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.PapiTabManger">papi.gui.default.PapiTabManger module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.create_plugin_dialog">papi.gui.default.create_plugin_dialog module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.create_plugin_menu">papi.gui.default.create_plugin_menu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.custom">papi.gui.default.custom module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.item">papi.gui.default.item module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.main">papi.gui.default.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.overview_menu">papi.gui.default.overview_menu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -159,14 +150,19 @@
 <li class="toctree-l2"><a class="reference internal" href="papi.plugin.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="papi.plugin.base_classes.html">papi.plugin.base_classes package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.PaPISubWindow">papi.plugin.base_classes.PaPISubWindow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.ParameterWindow">papi.plugin.base_classes.ParameterWindow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.base_ownProcess">papi.plugin.base_classes.base_ownProcess module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.base_plugin">papi.plugin.base_classes.base_plugin module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.base_visual">papi.plugin.base_classes.base_visual module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.dpp_base">papi.plugin.base_classes.dpp_base module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.iop_base">papi.plugin.base_classes.iop_base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.ownProcess_base">papi.plugin.base_classes.ownProcess_base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.pcp_base">papi.plugin.base_classes.pcp_base module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes.vip_base">papi.plugin.base_classes.vip_base module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="papi.plugin.base_classes.html#module-papi.plugin.base_classes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="papi.plugin.visual.html">papi.plugin.visual package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="papi.plugin.visual.html#module-papi.plugin.visual">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -643,7 +639,7 @@ This function will change the value in DCore and update this information to GUI 
 <dt id="papi.core.Core.new_subscription">
 <tt class="descname">new_subscription</tt><big>(</big><em>subscriber_id</em>, <em>source_id</em>, <em>block_name</em>, <em>signals</em>, <em>sub_alias</em>, <em>orginal_event=None</em><big>)</big><a class="reference internal" href="_modules/papi/core.html#Core.new_subscription"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.core.Core.new_subscription" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets information of a new and wanted subscription.
-This methond will try to create the wanted subscription.</p>
+This method will try to create the wanted subscription.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -762,6 +758,24 @@ This will trigger all correctly running processes to send an answer to core</p>
 <p>Contributors
 Stefan Ruppin</p>
 </div>
+<div class="section" id="module-papi.exceptions">
+<span id="papi-exceptions-module"></span><h2>papi.exceptions module<a class="headerlink" href="#module-papi.exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+Stefan Ruppin
+Sven Knuth</p>
+<dl class="exception">
+<dt id="papi.exceptions.WrongLength">
+<em class="property">exception </em><tt class="descclassname">papi.exceptions.</tt><tt class="descname">WrongLength</tt><big>(</big><em>parameter</em>, <em>isLen</em>, <em>shLen</em><big>)</big><a class="reference internal" href="_modules/papi/exceptions.html#WrongLength"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.exceptions.WrongLength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="papi.exceptions.WrongType">
+<em class="property">exception </em><tt class="descclassname">papi.exceptions.</tt><tt class="descname">WrongType</tt><big>(</big><em>parameters</em>, <em>expected_type=None</em><big>)</big><a class="reference internal" href="_modules/papi/exceptions.html#WrongType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.exceptions.WrongType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.Exception</span></tt></p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-papi.helper">
 <span id="papi-helper-module"></span><h2>papi.helper module<a class="headerlink" href="#module-papi.helper" title="Permalink to this headline">¶</a></h2>
 <p>Contributors:
@@ -783,6 +797,22 @@ Stefan Ruppin</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">papi package</a><ul>
@@ -792,18 +822,14 @@ Stefan Ruppin</p>
 <li><a class="reference internal" href="#module-papi.constants">papi.constants module</a></li>
 <li><a class="reference internal" href="#module-papi.core">papi.core module</a></li>
 <li><a class="reference internal" href="#module-papi.error_codes">papi.error_codes module</a></li>
+<li><a class="reference internal" href="#module-papi.exceptions">papi.exceptions module</a></li>
 <li><a class="reference internal" href="#module-papi.helper">papi.helper module</a></li>
 <li><a class="reference internal" href="#module-papi">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to PaPI&#8217;s documentation!</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="papi.data.html"
-                        title="next chapter">papi.data package</a></p>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/papi.txt"
@@ -835,13 +861,10 @@ Stefan Ruppin</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="papi.data.html" title="papi.data package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to PaPI’s documentation!"
-             >previous</a> |</li>
-        <li><a href="index.html">papi  documentation</a> &raquo;</li> 
+    
+        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
       </ul>
     </div>
     <div class="footer">
