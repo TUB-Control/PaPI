@@ -701,7 +701,7 @@ class UDP_Plugin(iop_base):
                     else:
                         self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
         else:
-            if name == 'consoleIn':
+            if name == 'consoleIn' and self.UseSocketIO:
                 self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
 
 
