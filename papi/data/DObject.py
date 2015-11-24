@@ -19,17 +19,21 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
 
+
+import os
 
 class DObject():
+
+    __id__ = 0;
+
     """
     Base class for all PaPI-objects
     """
@@ -39,4 +43,17 @@ class DObject():
 
         :return:
         """
-        self.id = 0
+        self.id = DObject.create_unique_id()
+        self.deleted = False
+
+    def remove(self):
+        self.deleted = True
+
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def create_unique_id():
+        pid = os.getpid()
+        DObject.__id__ += 1
+        return str(pid) + "_" + str(DObject.__id__)

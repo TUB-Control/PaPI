@@ -7,4 +7,4 @@ Contents:
    :maxdepth: 3
    :glob:
 
-   papi.manual.*
+   man.papi.manual.*

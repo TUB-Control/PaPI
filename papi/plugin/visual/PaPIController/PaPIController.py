@@ -19,19 +19,19 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+
 
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.gui.qt_new.custom import FileLineEdit
+from papi.gui.default.custom import FileLineEdit
 
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QWizard, QWizardPage, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout, QWidget
 
@@ -40,53 +40,60 @@ import threading, time
 
 class PaPIController(vip_base):
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self):
         # ---------------------------
         # Read configuration
         # ---------------------------
-        self.ortd_uname = config['UDP_Plugin_uname']['value']
+        self.config = self.pl_get_current_config_ref()
+        self.udp_plugin_uname = self.config['UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
 
         self.ControllerWidget = QWidget()
-        self.set_widget_for_internal_usage( self.ControllerWidget )
+        self.pl_set_widget_for_internal_usage( self.ControllerWidget )
         hbox = QHBoxLayout()
         self.ControllerWidget.setLayout(hbox)
         self.status_label = QLabel()
         self.status_label.setText('Controlling...')
         hbox.addWidget(self.status_label)
 
-
         self.lock = threading.Lock()
         self.plugin_started_list = []
         self.event_list = []
         self.thread_alive = False
 
+        self.ControllerWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ControllerWidget.customContextMenuRequested.connect(self.show_context_menu)
 
         self.start_UDP_plugin()
         return True
 
-    def pause(self):
+    def show_context_menu(self, pos):
+        gloPos = self.ControllerWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
+
+    def cb_pause(self):
         # will be called, when plugin gets paused
         # can be used to get plugin in a defined state before pause
         # e.a. close communication ports, files etc.
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # will be called when plugin gets resumed
         # can be used to wake up the plugin from defined pause state
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
 
         # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
@@ -140,7 +147,7 @@ class PaPIController(vip_base):
                         if not isinstance(sig, list):
                             sig = [sig]
 
-                        self.control_api.do_subscribe_uname(pl_uname,self.ortd_uname, pl_cfg['block'], signals=sig, sub_alias= None)
+                        self.control_api.do_subscribe_uname(pl_uname,self.udp_plugin_uname, pl_cfg['block'], signals=sig, sub_alias= None)
 
             ############################
             #    Set parameter links   #
@@ -164,12 +171,12 @@ class PaPIController(vip_base):
                             if (pl_cfg['block'] == 'SliderBlock'):
                                 pl_cfg['block'] = 'Change'
 
-                            self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
+                            self.control_api.do_subscribe_uname(self.udp_plugin_uname,pl_uname, pl_cfg['block'], signals=[], sub_alias= para)
 
                         else:
                             for block in pl_cfg:
                                 para = pl_cfg[block]['parameter']
-                                self.control_api.do_subscribe_uname(self.ortd_uname,pl_uname, block, signals=[], sub_alias= para)
+                                self.control_api.do_subscribe_uname(self.udp_plugin_uname,pl_uname, block, signals=[], sub_alias= para)
 
 
             ############################
@@ -194,17 +201,17 @@ class PaPIController(vip_base):
 
         self.thread_alive = False
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
         # if name == 'irgendeinParameter':
         #   do that .... with value
         pass
 
-    def quit(self):
+    def cb_quit(self):
         # do something before plugin will close, e.a. close connections ...
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         #
         # Implement a own part of the config
         # config is a hash of hass object
@@ -247,8 +254,12 @@ class PaPIController(vip_base):
             "UseSocketIO" : {
                 'value' : '0',
                 'advanced' : '1',
-                'tooltip' : 'Use the Socket IO',
+                'tooltip' : 'Use socket.io connection to node.js target-server',
                 'type' : 'bool'
+            },
+            'socketio_port': {
+                'value': '8091',
+                'advanced': '1'
             },
             "OnlyInitialConfig" : {
                 'value' :'0',
@@ -258,7 +269,7 @@ class PaPIController(vip_base):
         }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         Whenever the meta information is updated this function is called (if implemented).
 
@@ -276,6 +287,7 @@ class PaPIController(vip_base):
         in_port  = self.config ['3:out_port']['value']
         SendOnReceivePort = self.config['SendOnReceivePort']['value']
         UseSocketIO = self.config['UseSocketIO']['value']
+        socketio_port = self.config['socketio_port']['value']
         OnlyInitialConfig = self.config['OnlyInitialConfig']['value']
 
         ortd_cfg ={
@@ -297,29 +309,32 @@ class PaPIController(vip_base):
             "UseSocketIO" : {
                 'value' : UseSocketIO,
             },
+            "socketio_port" : {
+                'value' : socketio_port,
+            },
             "OnlyInitialConfig" : {
                 'value' :OnlyInitialConfig,
             }
         }
 
 
-        self.control_api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
-
-        self.control_api.do_subscribe_uname(self.dplugin_info.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+        self.control_api.do_create_plugin('UDP_Plugin', self.udp_plugin_uname, ortd_cfg, True)
+        dp_info = self.pl_get_dplugin_info()
+        self.control_api.do_subscribe_uname(dp_info.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
                                                                                               'ControlSignalCreate',
                                                                                               'ControlSignalSub',
                                                                                               'ControllerSignalParameter',
                                                                                               'ControllerSignalClose',
                                                                                               'ActiveTab'])
-        self.control_api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+        self.control_api.do_set_parameter_uname(self.udp_plugin_uname, 'triggerConfiguration', '1')
 
 
 # class ControllerOrtdStart(QWizardPage):
-#     def __init__(self,api = None, uname= None, parent = None, ortd_uname = None, config = None):
+#     def __init__(self,api = None, uname= None, parent = None, udp_plugin_uname = None, config = None):
 #         QWizardPage.__init__(self, parent)
 #         self.config = config
 #         self.api = api
-#         self.ortd_uname = ortd_uname
+#         self.udp_plugin_uname = udp_plugin_uname
 #         self.uname = uname
 #         label = QLabel("Press 'Next' to start ORTD interaction")
 #         label.setWordWrap(True)
@@ -354,7 +369,7 @@ class PaPIController(vip_base):
 #         }
 #
 #
-#         self.api.do_create_plugin('ORTD_UDP', self.ortd_uname, ortd_cfg, True)
+#         self.api.do_create_plugin('UDP_Plugin', self.udp_plugin_uname, ortd_cfg, True)
 #
 #         self.thread = threading.Thread(target=self.subscribe_control_signal)
 #         self.thread.start()
@@ -363,13 +378,13 @@ class PaPIController(vip_base):
 #
 #     def subscribe_control_signal(self):
 #
-#         self.api.do_subscribe_uname(self.uname,self.ortd_uname, 'ControllerSignals', signals=['ControlSignalReset',
+#         self.api.do_subscribe_uname(self.uname,self.udp_plugin_uname, 'ControllerSignals', signals=['ControlSignalReset',
 #                                                                                               'ControlSignalCreate',
 #                                                                                               'ControlSignalSub',
 #                                                                                               'ControllerSignalParameter',
 #                                                                                               'ControllerSignalClose',
 #                                                                                               'ActiveTab'])
-#         self.api.do_set_parameter_uname(self.ortd_uname, 'triggerConfiguration', '1')
+#         self.api.do_set_parameter_uname(self.udp_plugin_uname, 'triggerConfiguration', '1')
 #
 #
 # class ControllerWorking(QWizardPage):

@@ -16,7 +16,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
@@ -54,9 +54,9 @@ typedef struct __attribute__((packed)) para {
 
 PaPIBlock::PaPIBlock(
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                    // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     )
     {
 
@@ -72,7 +72,6 @@ PaPIBlock::PaPIBlock(
     this->size_config = 0;
     this->stream_in_length = 0;
     this->output_was_init_with_zero = false;
-    this->para_out_was_set = false;
 
     /* ******************************************
     *    Store information about UDP
@@ -125,13 +124,22 @@ PaPIBlock::PaPIBlock(
     /* ******************************************
     *   Store information about the data output stream
     ****************************************** */
-    this->stream_out_size = 650;
+    this->stream_out_size = p3_size_data_out;
     this->stream_out = new int[this->stream_out_size];
     this->amount_output = this->stream_out_size;
 
     this->sent_counter = START_MESSAGE_COUNTER;
     this->config_sent = false;
     this->parseBlockJsonConfig(p2_json_config);
+
+    this->buffer_para_out = new double[this->size_output_parameters];
+
+    for (int i=0; i<this->size_output_parameters;i++){
+        this->buffer_para_out[i] = 0;
+    }
+
+    this->buildConfiguration(this->buffer_para_out);
+    this->data_to_sent = this->config.substr(0);
 
     /* ******************************************
     *    Start thread: UDP
@@ -151,7 +159,9 @@ PaPIBlock::PaPIBlock(
 
     #ifdef WITH_HW
         this->createUDPServer();
-        this->startUDPServer();
+        if (p10_start_udp) {
+            this->startUDPServer();
+        }
     #endif
 
 }
@@ -372,7 +382,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     ssConfig << styledWriter.write(this->papiJsonConfig);
     std::string config  = ssConfig.str();
     config.erase(std::remove(config.begin(), config.end(), '\n'), config.end());
-    //printf("%s", config.c_str());
+    //printf("Config: %s", config.c_str());
 
     //printf("Config size=%zu\n", config.size() );
     this->config = config;
@@ -418,49 +428,51 @@ std::string PaPIBlock::getInitialValueForParameter(double para_out[], int pid) {
 
 void PaPIBlock::setOutput(double u1[], double time, double y1_para_out[]) {
 
-    this->para_out = y1_para_out;
-    this->para_out_was_set = true;
+//    this->para_out_was_set = true;
+    //
+    // if (!this->output_was_init_with_zero) {
+    //     this->initOutputWithZero(y1_para_out, this->size_output_parameters);
+    //     this->output_was_init_with_zero = true;
+    // }
 
-    if (!this->output_was_init_with_zero) {
-        this->initOutputWithZero(y1_para_out, this->size_output_parameters);
-        this->output_was_init_with_zero = true;
-    }
+    // this->mutex_stream_in.lock();
+    // if (this->stream_in_length > 0 ) {
+    //     if (this->stream_in_length >= 1) {
+    //         // Request for current configuration
+    //         if (this->stream_in[2] == -3) {
+    //             if (this->config_sent) {
+    //                 this->buildConfiguration(this->buffer_para_out);
+    //             }
+    //             this->config_sent = false;
+    //             this->data_to_sent = this->config.substr(0);
+    //         }
+    //         // if (this->stream_in[0] == 12) {
+    //         //     this->setParaOut(y1_para_out);
+    //         // }
+    //     }
+    //     this->stream_in_length = 0;
+    // }
+    // this->mutex_stream_in.unlock();
 
-    this->mutex_stream_in.lock();
-    if (this->stream_in_length > 0 ) {
-        if (this->stream_in_length >= 1) {
-            // Request for current configuration
-            if (this->stream_in[2] == -3) {
-                if (this->config_sent) {
-                    this->buildConfiguration(this->para_out);
-                }
-                this->config_sent = false;
-                this->data_to_sent = this->config.substr(0);
-            }
-            // if (this->stream_in[0] == 12) {
-            //     this->setParaOut(y1_para_out);
-            // }
-        }
-        this->stream_in_length = 0;
-    }
-    this->mutex_stream_in.unlock();
-
-
+    this->mutex_thread_data_update.lock();
     //If still needed or requested, send current configuration
     if (!this->config_sent) {
         this->sendConfig(this->stream_out);
         this->udphandle->sendData(this->stream_out, (std::size_t) this->size_config);
 
     } else {
-
     //send current input data
         this->clearOutput(this->stream_out);
         this->sendInput(u1, time, this->stream_out);
         this->udphandle->sendData(this->stream_out, (std::size_t) this->amount_output);
     }
 
+    // set current output by current buffer_para_out
+    for(int i=0; i < this->size_output_parameters;i++) {
+        y1_para_out[i] = this->buffer_para_out[i];
+    }
 
-
+    this->mutex_thread_data_update.unlock();
 }
 
 void PaPIBlock::setParaOut(double para_out[]) {
@@ -498,14 +510,14 @@ void PaPIBlock::reset(double para_out[]) {
     this->data_to_sent = this->config.substr(0);
 }
 
-void PaPIBlock::control(int control, double para_out[]){
+void PaPIBlock::control(int control){
     if (control == 1) {
 
         #ifdef _PAPI_BLOCK_DEBUG_
             printf("PaPIBlock::control::startUDPServer\n");
         #endif
         this->startUDPServer();
-        this->reset(para_out);
+        this->reset(this->buffer_para_out);
     }
 
     if (control == 2) {
@@ -593,10 +605,9 @@ void PaPIBlock::sendInput(double u1[], double sim_time, int stream_out[]) {
 
 void PaPIBlock::handleStream(std::size_t bytes_transferred /*in bytes_transferred*/, boost::array<char, 8192> buffer) {
 
-    this->mutex_stream_in.lock();
+    this->mutex_thread_data_update.lock();
 
     //TODO: Aufrunden
-
 
     this->stream_in_length = (int) bytes_transferred / 4;
 
@@ -605,14 +616,19 @@ void PaPIBlock::handleStream(std::size_t bytes_transferred /*in bytes_transferre
     if (this->stream_in_length >= 1) {
         // Request for current configuration
         if (12 == this->stream_in[0]) {
-            if (this->para_out_was_set) {
-                this->setParaOut(this->para_out);
-    //                this->stream_in_length = 0;
+            this->setParaOut(this->buffer_para_out);
+        }
+
+        if (-3 == this->stream_in[2]) {
+            if (this->config_sent) {
+                this->buildConfiguration(this->buffer_para_out);
             }
+            this->config_sent = false;
+            this->data_to_sent = this->config.substr(0);
         }
     }
 
-    this->mutex_stream_in.unlock();
+    this->mutex_thread_data_update.unlock();
 
 }
 
@@ -631,12 +647,10 @@ void PaPIBlock::sendConfig(int stream_out[]) {
         stream_out[2] = -4;
         stream_out[3] = 0;
 
-
         int output_count = 4;
         int shift = 0;
         char c;
         for (int i=0;;i++) {
-            //printf("%c", c);
             if ( i % 4 == 0 and i > 1) {
                 output_count ++;
                 shift = 0;
@@ -698,9 +712,9 @@ std::string intToString(int i) {
 void createPaPIBlock(
     void **work1, //Working vector
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     )
     {
 
@@ -708,7 +722,7 @@ void createPaPIBlock(
         size_u1, size_p1, size_p2, size_p5, size_p6,
         p1_dimension_parameters, p2_json_config, p3_size_data_out,
         p4_amount_para_out, p5_dimension_input_signals, p6_split_signals,
-        p7_local_port, p8_remote_port, p9_remote_ip
+        p7_local_port, p8_remote_port, p9_remote_ip, p10_start_udp
         );
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 }
@@ -728,7 +742,7 @@ void outputPaPIBlock(
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 
     if (0 < u3_control) {
-        madClass->control(u3_control, y1_para_out);
+        madClass->control(u3_control);
     }
 
     madClass->setOutput(u1_data_in, u2_time, y1_para_out);

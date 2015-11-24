@@ -19,30 +19,42 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
  
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'control'
 
-from papi.plugin.base_classes.ownProcess_base import ownProcess_base
 
+from papi.plugin.base_classes.base_ownProcess import base_ownProcess
 from papi.constants import PLUGIN_IOP_IDENTIFIER
 
-class iop_base(ownProcess_base):
+class iop_base(base_ownProcess):
     """
     This plugin is used to create an interface to different data sources.
     """
-    def initiate_layer_0(self, config):
+    def _start_plugin_base(self):
+        """
+        Needs to be implemented by plugin base class
+
+        :return:
+        """
+        return self.cb_initialize_plugin()
+
+    def cb_initialize_plugin(self):
+        """
+        Callback function to be implemented by the plugin developer for the init phase of a plugin
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
-    def get_configuration_base(self):
+    def _get_configuration_base(self):
         config = {}
         return config
 
 
-    def get_type(self):
+    def _get_type(self):
         return PLUGIN_IOP_IDENTIFIER

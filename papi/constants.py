@@ -19,15 +19,17 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Stefan Ruppin
 """
 
-__author__ = 'ruppin'
 
+
+import platform
+from os.path import expanduser
 
 PAPI_DEV_EDITION                = False
 
@@ -36,8 +38,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = '1.2.0' # no spaces allowed
-CORE_CORE_VERSION               = '1.2.0' # no spaces allowed
+CORE_PAPI_VERSION               = '1.3.0' # no spaces allowed
+CORE_CORE_VERSION               = '1.3.0' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -47,7 +49,18 @@ CORE_ALIVE_CHECK_ENABLED        = True
 CORE_ALIVE_CHECK_INTERVAL       = 2 # seconds
 CORE_ALIVE_MAX_COUNT            = 10
 
+CORE_TIME_SIGNAL                = 'papi_time_signal'
+
 PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
+PAPI_USER_CFG                   = ''
+
+if platform.system() == 'Linux':
+    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
+
+if platform.system() == 'Darwin':
+    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
+
+
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
 
 # PaPI Information constants
@@ -61,12 +74,13 @@ Version """ + CORE_PAPI_VERSION + """
 <br/>
 <br/>
 Copyright """ + PAPI_COPYRIGHT + """ <a href="http://www.control.tu-berlin.de/">Control Systems Group</a>, TU-Berlin.<br/>
-Published under <a href="https://www.gnu.org/licenses/lgpl.html">LGPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
+Published under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL Version 3</a>. Hosted on <a href="https://github.com/TUB-Control/PaPI">GitHub</a>
 <br/><br/>
-PaPI uses:
+PaPI is embedding:
 <ul>
 <li>Yapsy 1.10.423 published under BSD-License, <a href="http://yapsy.sourceforge.net/#license">License</a></li>
 <li>pyqtgraph-0.9.10 published under MIT-License, <a href="http://www.opensource.org/licenses/mit-license.php">License</a></li>
+<li>JSONlab 1.1 published under BSD-License and GPLv3, <a href="https://github.com/fangq/jsonlab">License</a></li>
 </ul>
 </body
 </html>
@@ -78,7 +92,7 @@ PAPI_DOC_URL                     = 'http://tub-control.github.io/PaPI/'
 if PAPI_DEV_EDITION:
     PAPI_DOC_URL += "dev/"
 
-PAPI_DOC_PREFIX_PLUGIN           = 'papi.plugin'
+PAPI_DOC_PREFIX_PLUGIN           = 'man.papi.plugin'
 
 # EVENT CONSTANTS
 # TODO
@@ -88,7 +102,7 @@ PAPI_DOC_PREFIX_PLUGIN           = 'papi.plugin'
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_1.2.0'
+GUI_VERSION                      = 'v_1.3.0'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
@@ -101,6 +115,8 @@ GUI_DEFAULT_HEIGHT              = 853
 GUI_DEFAULT_TAB                 = 'PaPI-Tab'
 GUI_TABWIDGET_IDENTIFIER        = '__tabWidget'
 
+GUI_PLUGIN_CONFIG               = 'info.ini'
+
 # PLUGIN LOCATION CONSTANTS
 PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
 PLUGIN_IOP_FOLDER               = ''
@@ -111,7 +127,6 @@ PLUGIN_PCP_FOLDER               = ''
 # PLUGIN TYPE IDENTIFIER
 PLUGIN_IOP_IDENTIFIER           = 'IOP'
 PLUGIN_VIP_IDENTIFIER           = 'ViP'
-PLUGIN_PCP_IDENTIFIER           = 'PCP'
 PLUGIN_DPP_IDENTIFIER           = 'DPP'
 
 # PLUGIN STATE IDENTIFIER
@@ -152,3 +167,30 @@ REGEX_SIGNED_FLOAT_OR_INT = r'([-]{0,1}\d+(.\d+)?)'
 CFG_TYPE_FILE = 'file'
 CFG_TYPE_COLOR = 'color'
 CFG_TYPE_BOOL = 'bool'
+
+TREE_CSS = """
+QTreeView { alternate-background-color: yellow;}
+QTreeView::branch:has-siblings:!adjoins-item {
+    border-image: url(papi/gui/default/images/vline.png) 0;
+}
+
+QTreeView::branch:has-siblings:adjoins-item {
+    border-image: url(papi/gui/default/images/branch-more.png) 0;
+}
+
+QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+    border-image: url(papi/gui/default/images/branch-end.png) 0;
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+        border-image: none;
+        image: url(papi/gui/default/images/branch-closed.png);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+        border-image: none;
+        image: url(papi/gui/default/images/branch-open.png);
+}
+"""

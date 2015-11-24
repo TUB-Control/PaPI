@@ -19,17 +19,18 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Stefan'
+
 
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton
 from PyQt5.QtGui     import QHBoxLayout
+from PyQt5.QtCore import Qt
 
 import subprocess
 import os
@@ -46,15 +47,15 @@ import papi.constants as pc
 class StartExternalScript(vip_base):
 
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self):
 
         # --------------------------------
         # Create Widget
         # --------------------------------
         # Create Widget needed for this plugin
-
+        self.config = self.pl_get_current_config_ref()
         self.SESWidget = QWidget()
-        self.set_widget_for_internal_usage( self.SESWidget )
+        self.pl_set_widget_for_internal_usage( self.SESWidget )
 
 
         hbox = QHBoxLayout()
@@ -71,17 +72,25 @@ class StartExternalScript(vip_base):
 
         hbox.addWidget(self.control_button)
 
+        self.SESWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.SESWidget.customContextMenuRequested.connect(self.show_context_menu)
+
 
         # ---------------------------
         # Create Legend
         # ---------------------------
         self.external_state = 'offline'
 
-        self.path = config['path']['value']
+        self.path = self.config['path']['value']
         file = os.path.basename(self.path)
         self.dir = self.path[:-len(file)]
 
         return True
+
+    def show_context_menu(self, pos):
+        gloPos = self.SESWidget.mapToGlobal(pos)
+        self.cmenu = self.pl_create_control_context_menu()
+        self.cmenu.exec_(gloPos)
 
     def button_click_callback(self):
         if self.external_state == 'offline':
@@ -96,45 +105,45 @@ class StartExternalScript(vip_base):
             self.status_label.setText('offline...')
             os.killpg(self.process.pid, SIGTERM)
 
-    def pause(self):
+    def cb_pause(self):
         # will be called, when plugin gets paused
         # can be used to get plugin in a defined state before pause
         # e.a. close communication ports, files etc.
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # will be called when plugin gets resumed
         # can be used to wake up the plugin from defined pause state
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
 
         # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         pass
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         # attetion: value is a string and need to be processed !
         # if name == 'irgendeinParameter':
         #   do that .... with value
         pass
 
-    def quit(self):
+    def cb_quit(self):
         # do something before plugin will close, e.a. close connections ...
         if self.external_state == 'online':
             os.killpg(self.process.pid, SIGTERM)
             print('External script was running while plugin was closed! Script was killed.')
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         #
         # Implement a own part of the config
         # config is a hash of hass object
@@ -158,7 +167,7 @@ class StartExternalScript(vip_base):
         }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         Whenever the meta information is updated this function is called (if implemented).
 

@@ -10,33 +10,33 @@ Einsteinufer 17, D-10587 Berlin, Germany
 This file is part of PaPI.
 
 PaPI is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PaPI is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 <Stefan Ruppin
 """
 
-__author__ = 'Knuths'
+
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from papi.ui.gui.qt_new.CreateRecording import Ui_CreateRecording
+from papi.ui.gui.default.CreateRecording import Ui_CreateRecording
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QLabel, QComboBox, QStyleOptionButton,\
      QStyledItemDelegate, QStyle, QApplication
 
 
-from papi.gui.qt_new.item import PaPITreeModel
+from papi.gui.default.item import PaPITreeModel
 
 from papi.plugin.base_classes.vip_base import vip_base
 
@@ -310,64 +310,64 @@ class CreateRecordingConfig(QMainWindow, Ui_CreateRecording):
 class CRC(vip_base):
 
 
-    def initiate_layer_0(self, config=None):
+    def cb_initialize_plugin(self):
 
 
         self.widget = CreateRecordingConfig(self.control_api)
 
-        self.set_widget_for_internal_usage( self.widget )
+        self.pl_set_widget_for_internal_usage( self.widget )
 
 
         # ---------------------------
         # Create Parameters
         # ---------------------------
-        para_list = []
+        #para_list = []
 
         # build parameter list to send to Core
-        self.send_new_parameter_list(para_list)
+        #self.pl_send_new_parameter_list(para_list)
 
 
         return True
 
     def show_context_menu(self, pos):
         gloPos = self.widget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
-    def pause(self):
+    def cb_pause(self):
         # will be called, when plugin gets paused
         # can be used to get plugin in a defined state before pause
         # e.a. close communication ports, files etc.
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # will be called when plugin gets resumed
         # can be used to wake up the plugin from defined pause state
         # e.a. reopen communication ports, files etc.
         pass
 
-    def execute(self, Data=None, block_name = None):
+    def cb_execute(self, Data=None, block_name = None):
         # Do main work here!
         # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
         # If this plugin is a DPP, then it will get Data with data
 
         # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
+        # Data is a hash, so use ist like:  Data[CORE_TIME_SIGNAL] = [t1, t2, ...] where CORE_TIME_SIGNAL is a signal_name
         # hash signal_name: value
 
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
         pass
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         # do something before plugin will close, e.a. close connections ...
         pass
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         #
         # Implement a own part of the config
         # config is a hash of hass object
@@ -378,7 +378,7 @@ class CRC(vip_base):
         config = {}
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         """
         Whenever the meta information is updated this function is called (if implemented).
 

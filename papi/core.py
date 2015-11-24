@@ -19,14 +19,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Stefan Ruppin
 """
 
-__author__ = 'ruppin'
+
 
 import os
 from multiprocessing import Process, Queue
@@ -43,9 +43,9 @@ import papi.constants as pc
 
 from papi.constants import CORE_PROCESS_CONSOLE_IDENTIFIER, CORE_CONSOLE_LOG_LEVEL, CORE_PAPI_CONSOLE_START_MESSAGE, \
     CORE_CORE_CONSOLE_START_MESSAGE, CORE_ALIVE_CHECK_ENABLED, \
-    CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT
+    CORE_STOP_CONSOLE_MESSAGE, CORE_ALIVE_CHECK_INTERVAL, CORE_ALIVE_MAX_COUNT, CORE_TIME_SIGNAL
 
-from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+from papi.constants import PLUGIN_ROOT_FOLDER_LIST, PLUGIN_VIP_IDENTIFIER, \
     PLUGIN_DPP_IDENTIFIER, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, \
     PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_START_FAILED, PLUGIN_STATE_ALIVE, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_DEAD
@@ -111,6 +111,7 @@ class Core:
                                           'subscribe_by_uname':     self.__process_subscribe_by_uname__,
                                           'unsubscribe':            self.__process_unsubsribe__,
                                           'set_parameter':          self.__process_set_parameter__,
+                                          'set_parameter_by_uname': self.__process_set_parameter__,
                                           'pause_plugin':           self.__process_pause_plugin__,
                                           'resume_plugin':          self.__process_resume_plugin__,
                                           'start_plugin':           self.__process_start_plugin__
@@ -206,7 +207,10 @@ class Core:
             self.log.printText(2, 'Event->' + event.get_eventtype() + '   ' + event.get_event_operation())
 
             # process the next event of queue
-            self.__process_event__(event)
+            try:
+                self.__process_event__(event)
+            except Exception as Exc:
+                print(Exc)
 
             # check if there are still plugins alive or gui is still alive before ending core main loop
             self.core_goOn = self.core_data.get_dplugins_count() != 0 or self.gui_alive
@@ -399,7 +403,7 @@ class Core:
     def new_subscription(self, subscriber_id, source_id, block_name, signals, sub_alias, orginal_event=None):
         """
         Gets information of a new and wanted subscription.
-        This methond will try to create the wanted subscription.
+        This method will try to create the wanted subscription.
 
         :param subscriber_id: Id of the plugin that want to get data
         :param source_id:  Id of the plugin that will be the data source
@@ -429,15 +433,15 @@ class Core:
         if already_sub is False:
             dsubscription = self.core_data.subscribe(subscriber_id, source_id, block_name)
             if dsubscription is None:
-                # subscribtion failed
-                self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
+                # subscription failed
+                self.log.printText(1, 'subscribe, something failed in subscription process with subscriber id: ' + str(
                     subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name))
                 return -1
             else:
-                # subscribtion correct
+                # subscription correct
                 # set alias for parameter control (can be none if no parameter)
                 dsubscription.alias = sub_alias
-                # send event to plugin which will controll this parameter with information of parameter
+                # send event to plugin which will control this parameter with information of parameter
                 if sub_alias is not None:
                     sub_pl = self.core_data.get_dplugin_by_id(subscriber_id)
                     if sub_pl is not None:
@@ -449,7 +453,7 @@ class Core:
 
         if signals != []:
             if self.core_data.subscribe_signals(subscriber_id, source_id, block_name, signals) is None:
-                # subscribtion failed
+                # subscription failed
                 self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
                     subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name)
                                    + '. A Problem with signals')
@@ -646,8 +650,8 @@ class Core:
                         pl = self.core_data.get_dplugin_by_id(sub_id)
                         if pl is not None:
                             if pl.state != PLUGIN_STATE_PAUSE or pl.state != PLUGIN_STATE_STOPPED:
-                                # plugin exists, check whether it is a ViP or not
-                                if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                                # plugin exists, check whether it is a ViP
+                                if pl.type == PLUGIN_VIP_IDENTIFIER:
                                     # Because its a ViP, we need a list of destination ID for new_data
                                     id_list.append(pl.id)
                                 else:
@@ -655,10 +659,6 @@ class Core:
                                     opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
                                     new_event = Event.data.NewData(oID, [pl.id], opt, source_plugin_uname= dplug.uname)
                                     pl.queue.put(new_event)
-
-                                    # this event will be a new parameter value for a plugin
-                                    #if opt.is_parameter is True:
-                                    #    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                             else:
                                 # plugin is paused
                                 pass
@@ -667,7 +667,7 @@ class Core:
                             self.log.printText(1, 'new_data, subscriber plugin with id ' + str(
                                 sub_id) + ' does not exists')
                             return -1
-                    # check if our list with id is greater than 1, which will indicate that there is at least one ViP
+                    # check if our list with id is longer than 0, which will indicate that there is at least one ViP
                     # which will need to get this new data event
                     if len(id_list) > 0:
                         # send new_data event to GUI with id_list of destinations
@@ -730,11 +730,11 @@ class Core:
                             subcribtions = pl.get_subscribtions()
                             sub_object = subcribtions[oID][opt.block_name]
                             sub_signals = sub_object.signals
-                            sub_signals.append('t')
+                            sub_signals.append(CORE_TIME_SIGNAL)
                             opt.data = dict([(i, Data[i]) for i in sub_signals if i in Data])
 
-                            # plugin exists, check whether it is a ViP or not
-                            if pl.type == PLUGIN_VIP_IDENTIFIER or pl.type == PLUGIN_PCP_IDENTIFIER:
+                            # plugin exists, check whether it is a ViP
+                            if pl.type == PLUGIN_VIP_IDENTIFIER:
                                 # Plugin runs in GUI
                                 opt = event.get_optional_parameter()
                                 opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
@@ -855,9 +855,8 @@ class Core:
         # creates a new plugin id because plugin exsits
         plugin_id = self.core_data.create_id()
 
-        # checks if plugin is of not of type ViP or PCP, because these two will run in GUI process
-        if plugin.plugin_object.get_type() != PLUGIN_VIP_IDENTIFIER and \
-                        plugin.plugin_object.get_type() != PLUGIN_PCP_IDENTIFIER:
+        # checks if plugin is of not of type ViP, because these two will run in GUI process
+        if plugin.plugin_object._get_type() != PLUGIN_VIP_IDENTIFIER:
             # So plugin will not run in GUI
             # it will need an own process and queue to function
 
@@ -865,7 +864,7 @@ class Core:
             plugin_queue = Queue()
 
             # decide if plugin will need to get Data from another plugin
-            if plugin.plugin_object.get_type() == PLUGIN_DPP_IDENTIFIER:
+            if plugin.plugin_object._get_type() == PLUGIN_DPP_IDENTIFIER:
                 # plugin will get data from another, so make its execution triggered by events
                 eventTriggered = True
             else:
@@ -875,14 +874,14 @@ class Core:
             plugin_config = optData.plugin_config
 
             if plugin_config is None or plugin_config == {}:
-                plugin_config = plugin.plugin_object.get_startup_configuration()
+                plugin_config = plugin.plugin_object._get_startup_configuration()
             else:
-                plugin_config = dict(list(plugin.plugin_object.get_startup_configuration().items())+list(plugin_config.items()))
+                plugin_config = dict(list(plugin.plugin_object._get_startup_configuration().items())+list(plugin_config.items()))
 
 
             # create Process object for new plugin
             # set parameter for work function of plugin, such as queues, id and eventTriggered
-            PluginProcess = Process(target=plugin.plugin_object.work_process, \
+            PluginProcess = Process(target=plugin.plugin_object._work_process, \
                                     args=(self.core_event_queue, plugin_queue, plugin_id, eventTriggered, \
                                           plugin_config, optData.autostart))
             PluginProcess.start()
@@ -891,7 +890,7 @@ class Core:
             dplug = self.core_data.add_plugin(PluginProcess, PluginProcess.pid, True, plugin_queue, plugin, plugin_id)
             dplug.plugin_identifier = plugin.name
             dplug.uname = optData.plugin_uname
-            dplug.type = plugin.plugin_object.get_type()
+            dplug.type = plugin.plugin_object._get_type()
             dplug.alive_count = self.alive_count
             dplug.startup_config = plugin_config
             dplug.path = plugin.path
@@ -912,7 +911,7 @@ class Core:
             dplug = self.core_data.add_plugin(self.gui_process, self.gui_process.pid, False, self.gui_event_queue,
                                               plugin, plugin_id)
             dplug.uname = optData.plugin_uname
-            dplug.type = plugin.plugin_object.get_type()
+            dplug.type = plugin.plugin_object._get_type()
             dplug.plugin_identifier = plugin.name
             dplug.startup_config = optData.plugin_config
             dplug.path = plugin.path
@@ -1176,7 +1175,6 @@ class Core:
         # get event origin id and optional parameters
         opt = event.get_optional_parameter()
         oID = event.get_originID()
-
         if opt.signals == []:
             # try to unsubscribe
             if self.core_data.unsubscribe(oID, opt.source_ID, opt.block_name) is False:
@@ -1206,13 +1204,32 @@ class Core:
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
-        # get destination id and optional parameter
-        opt = event.get_optional_parameter()
-        pl_id = event.get_destinatioID()
 
-        # get DPlugin object of destination id from DCore and check for existence
-        dplugin = self.core_data.get_dplugin_by_id(pl_id)
+        if isinstance(event, Event.instruction.SetParameterByUname):
+            dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
+            if dplugin is not None:
+                if dplugin.state != PLUGIN_STATE_START_SUCCESFUL:
+                    # plugin not here yet, put event in delayed queue
+                    self.core_delayed_operation_queue.append(event)
+                    self.log.printText(2, 'setParameterByUname, event was placed in delayed queue because plugin: '
+                                       + event.plugin_uname + ' does not exist yet.')
+                    return 0
+                # build forward event for gui with ids instead of uname
+                forward_event = Event.instruction.SetParameter(event.get_originID(), dplugin.id, event.get_optional_parameter())
+        else:
+            # get destination id
+            pl_id = event.get_destinatioID()
+            # get DPlugin object of destination id from DCore and check for existence
+            dplugin = self.core_data.get_dplugin_by_id(pl_id)
+            forward_event = event
+            if dplugin is None:
+                #  pluign with id does not exist, so id is wrong.
+                self.log.printText(1, 'set_paramenter, plugin with id ' + str(pl_id) + ' not found')
+                return -1
+
+
         if dplugin is not None:
+            opt = event.get_optional_parameter()
             # Plugin exists
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
@@ -1221,15 +1238,12 @@ class Core:
                 para = parameters[opt.parameter_alias]
                 para.value = opt.data
                 # route the event to the destination plugin queue
-                dplugin.queue.put(event)
+                dplugin.queue.put(forward_event)
                 # change event type for plugin
                 #update GUI
-                self.update_meta_data_to_gui(pl_id)
+                self.update_meta_data_to_gui(dplugin.id)
                 return 1
-        else:
-            # destination plugin does not exist
-            self.log.printText(1, 'set_paramenter, plugin with id ' + str(pl_id) + ' not found')
-            return -1
+
 
     def __process_new_block__(self, event):
         """

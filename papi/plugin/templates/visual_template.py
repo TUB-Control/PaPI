@@ -19,140 +19,124 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
-<Stefan Ruppin
+<Stefan Ruppin, Sven Knuth
 """
 
-__author__ = 'Stefan'
 
-from PyQt5.QtGui import QMdiSubWindow
-import papi.pyqtgraph as pq
+# Default PaPI imports used to create a plugin!
+# Please remember that this template will only show the default PaPI imports and not any imports of example lines of Code
+# like QtWidgets.QWidget().
+from papi.plugin.base_classes.vip_base import vip_base          # for base class!
+from papi.data.DParameter import DParameter                     # for Parameter creation
+import papi.constants as pconst                                 # for PaPI constants like some Regex or Time Signal Name
 
-from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
 
-import collections
-import re
-
-from papi.pyqtgraph.Qt import QtGui, QtCore
-
-#RENAME TO PLUGIN NAME
+# Template Class for a Visual Plugin running on the GUI.
+# A Plugin running in GUI needs to inherent from vip_base!
+# RENAME CLASS TO PLUGIN NAME
 class TemplateName(vip_base):
+    # OBLIGATORY function to implement!
+    # Will initialize the plugin in context of PaPI and the plugin developer!
+    def cb_initialize_plugin(self):
+        # --------------------------------
+        # Step 1: Create Widget
+        # --------------------------------
+        #   e.g. an empty QWidget will be used (remember that QtWidgets.QWidget() needs to be imported!)
+        #   Call pl_set_widget_for_internal_usage() function to tell PaPI about your widget!
+        widget = QtWidgets.QWidget()
+        self.pl_set_widget_for_internal_usage(widget) # important and obligatory!
 
+        # --------------------------------
+        # Step 2: Read configuration items (startup cfg)
+        # OPTIONAL
+        # --------------------------------
+        #  Please read the Documentation of pl_get_config_element() to understand what is happening here.
+        #  e.g. a configuration item named 'offset' is read.
+        offset = self.pl_get_config_element('offset')
+        offset = float(offset) if offset is not None else 0
 
-    def initiate_layer_0(self, config=None):
+        # --------------------------------
+        # Step 3: Define parameter that are offered to PaPI
+        # OPTIONAL
+        # Sub-Step 1: Create Parameter Object
+        # Sub-Step 2: Send list of Parameter Objects created to PaPI
+        # --------------------------------
+        #   use self. to remember the parameter object in this class/context for own usage!
+        #   e.g. parameter named parameterName1 is created!
+        #   Refer to the Doc of DParameter to read about advanced usages!
+        self. parameter1 = DParameter('parameterName1')
+        self. parameter2 = DParameter('parameterName2')
+        self.pl_send_new_parameter_list([self.parameter1, self.parameter1])
 
-#        self.config = config
-
-        # ---------------------------
-        # Read configuration
-        # ---------------------------
-        # Note: this cfg items have to exist!
-        # self.show_grid_x = int(self.config['x-grid']['value']) == '1'
-        # self.show_grid_y = int(self.config['y-grid']['value']) == '1'
-        #
-        # int_re = re.compile(r'(\d+)')
-        #
-        # self.colors_selected = int_re.findall(self.config['color']['value']);
-        # self.types_selected = int_re.findall(self.config['style']['value']);
+        # --------------------------------
+        # Step 5: Developer and Plugin specific configuration
+        # OPTIONAL
+        # --------------------------------
 
 
         # --------------------------------
-        # Create Widget
+        # Step 6: Return Value
+        # OBLIGATORY
+        # Return True if the everything is alright!
+        # False will lead to PaPI not starting this Plugin!
         # --------------------------------
-        # Create Widget needed for this plugin
-
-        #self.plotWidget = pq.PlotWidget()
-
-        # This call is important, because the background structure needs to know the used widget!
-        # In the background the qmidiwindow will becreated and the widget will be added
-        #self.set_widget_for_internal_usage( self.plotWidget )
-
-        # ---------------------------
-        # Create Parameters
-        # ---------------------------
-        # create a parameter object
-        #   self.para1 = DParameter('ParameterName',default=0)
-        #   self.para2 = DParameter('ParameterName',default=0)
-
-        # build parameter list to send to Core
-        #   para_list = [self.para1 self.para2]
-        #   self.send_new_parameter_list(para_list)
-
-        # ---------------------------
-        # Create Legend
-        # ---------------------------
-
-
         return True
 
-    def pause(self):
-        # will be called, when plugin gets paused
-        # can be used to get plugin in a defined state before pause
-        # e.a. close communication ports, files etc.
+    # OBLIGATORY function to implement!
+    # Will be called by PaPI before the Plugin will close!
+    # This is a clean-up callback function!
+    def cb_quit(self):
+        # clean up!
+        # e.g. close files or sockets, or free memory ....
+        # more important in the context of IOP/DPP Plugins!
         pass
 
-    def resume(self):
-        # will be called when plugin gets resumed
-        # can be used to wake up the plugin from defined pause state
-        # e.a. reopen communication ports, files etc.
-        pass
-
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
-        # Do main work here!
-        # If this plugin is an IOP plugin, then there will be no Data parameter because it wont get data
-        # If this plugin is a DPP, then it will get Data with data
-
-        # param: Data is a Data hash and block_name is the block_name of Data origin
-        # Data is a hash, so use ist like:  Data['t'] = [t1, t2, ...] where 't' is a signal_name
-        # hash signal_name: value
-
+    # OPTIONAL function to implement!
+    # Will be called by PaPI whenever a signal arrived with this plugin as destination!
+    # This is a callback function that will only need to be implemented if you want to react to signals (NOT PARAMETER)
+    # For most of the plugins like plots or displays the main work of changing the visualisation will be done!
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
+        # Arguments of this function can be looked up in detail in the Doc.
+        # Data: dict of data
+        # block_name: name of the block the data belongs to   (SOURCE)
+        # plugin_name: name of the plugin the data belongs to (SOURCE)
         # Data could have multiple types stored in it e.a. Data['d1'] = int, Data['d2'] = []
 
-        pass
+        # e.g. change widget properties (is this case no data is required)
+        widget = self.pl_get_widget()
+        widget.setWindowTitle('NewName')
 
-    def set_parameter(self, name, value):
-        # attetion: value is a string and need to be processed !
-        # if name == 'irgendeinParameter':
-        #   do that .... with value
-        pass
+    # OPTIONAL function to implement!
+    # Will be called by PaPI whenever a parameter of this plugin was changed!
+    # This callback function enables the developer to react to these changes!
+    def cb_set_parameter(self, name, value):
+        # Attention: value is a string and need to be processed/casted !
+        # e.g. react to change in parameter1, printing the value!
+        if name == self.parameter1.name:
+            print(value)
 
-    def quit(self):
-        # do something before plugin will close, e.a. close connections ...
-        pass
+    # OPTIONAL function to implement!
+    # All plugins have a plugin configuration that is defined by PaPI and extended by the plugin developer.
+    # This function will represent the extended part of the configuration.
+    # If it is not implemented, just the PaPI defined base configuration will be used, otherwise a merge will happen!
+    # See Doc for details!
+    # But remember: This cfg part should include all items addressed with pl_get_config_element()!
+    def cb_get_plugin_configuration(self):
+        # return has to be a dict of a special structure!
+        # Info: online regex tool: http://utilitymill.com/utility/Regex_For_Range
 
+        # e.g. for our offset configuration item
+        ex_config = {
+            'offset': {
+                    'value': '0',
+                    'tooltip': 'Used to offset displayed value',
+                    'regex': '-?\d+(\.?\d+)?',
+                    'advanced': '1'
+            }
+        }
+        return ex_config
 
-    def get_plugin_configuration(self):
-        #
-        # Implement a own part of the config
-        # config is a hash of hass object
-        # config_parameter_name : {}
-        # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
-        # configs can be marked as advanced for create dialog
-        # http://utilitymill.com/utility/Regex_For_Range
-
-        # config = {
-        #     "amax": {
-        #         'value': 3,
-        #         'regex': '[0-9]+',
-        #         'display_text' : 'This AMax',
-        #         'advanced' : '1'
-        # }, 'f': {
-        #         'value': "1",
-        #         'regex': '\d+.{0,1}\d*'
-        # }}
-        config = {}
-        return config
-
-    def plugin_meta_updated(self):
-        """
-        Whenever the meta information is updated this function is called (if implemented).
-
-        :return:
-        """
-
-        #dplugin_info = self.dplugin_info
-        pass

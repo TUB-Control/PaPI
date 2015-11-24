@@ -19,7 +19,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
  
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
@@ -27,18 +27,30 @@ Stefan Ruppin
 """
 
 from papi.plugin.base_classes.base_visual import base_visual
-
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 
-
-
 class vip_base(base_visual):
+    """
+    Base class to inherent from when creation a visual plugin for th gui
 
-    def initiate_layer_1(self, config):
-        return self.initiate_layer_0(config)
+    """
+    def _start_plugin_base(self):
+        """
+        Needs to be implemented by plugin base class
 
-    def initiate_layer_0(self, config):
+        :return:
+        """
+        return self.cb_initialize_plugin()
+
+    def cb_initialize_plugin(self):
+        """
+        Callback function to be implemented by the plugin developer for the init phase of a plugin
+
+        :return:
+        """
         raise NotImplementedError("Please Implement this method")
 
-    def get_type(self):
+    def _get_type(self):
         return PLUGIN_VIP_IDENTIFIER
+
+

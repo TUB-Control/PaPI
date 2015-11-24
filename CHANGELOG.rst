@@ -1,6 +1,34 @@
 Changelog
 ---------
 
+v.1.3:
+------
+-  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically
+-  **feature**: Added a new parameter context menu to plugins which allows easy change of parameters without overview menu
+-  **feature**: A new run-mode is available. Prevents Plugins resize and move.
+-  **feature**: Added ability to define favourite plugins
+-  **feature**: Added ability to define custom categories of plugins by using custom subfolders in the plugin folder
+-  **feature**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
+-  **feature**: Auto-Scale of background images
+-  **feature**: Background image will be the same after dock / detach
+-  **improvement**: Background image will now be loaded from cfg as well as opened tabs.
+-  **improvement**: Cleaned up the plugin developers API
+-  **doc**: Added documentation for the main window
+-  **doc**: Added documentation for shortcuts
+-  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase
+-  **simulink**: SampleTime of the PaPIBlock is now parameterized
+-  **simulink**: PaPIBlock output is now always delayed by one step due to a legacy tool limitation: It is not possible to set the direct feedthrough flag to zero.
+-  **gui**: Added search bar for overview menu and create menu
+-  **gui**: Added shortcut features to search bar and tree in overview menu and create menu
+-  **gui**: Added shortcuts for actions of the main window for example: save, load
+-  **fix**: The connection between a PCP and a parameter will now be correctly restored.
+-  **fix**: 'PreviousParameter' from cfg will now be restored correctly
+-  **fix**: Removed old references to previous used license.
+-  **fix**: Various not mentionable bug fixes, see Github issue tracker.
+-  **plugin**: Plot plugin will now save zoom modifications done by scrolling
+-  **plugin**: Added prefix (cb\_/pl\_) for functions provided by plugins which can be used by plugin developer.
+-  **plugin**: Renamed ownProcess\_base to base\_ownProcess.
+
 v.1.2:
 ------
 
@@ -12,7 +40,7 @@ v.1.2:
 -  **plugin**: Added a new pcplugin: Textfield
 -  **plugin**: Changed Slider event to 'Change' (previous 'SliderBlock')
 -  **plugin**: Changed Button event to 'Click' (previous 'Click_event')
--  **plugin**: A visual plugin can now open maximized.
+-  **plugin**: A visual plugin can now be opened maximized.
 -  **plugin**: Added a new visual plugin: Console. Mainly used to control scilab in connection with ORTD.
 -  **feature**: Added a simulink block which enables the communication
    between PaPI and simulink

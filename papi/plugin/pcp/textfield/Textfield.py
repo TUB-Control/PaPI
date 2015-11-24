@@ -19,17 +19,16 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
 
-from papi.plugin.base_classes.pcp_base import pcp_base
 
+from papi.plugin.base_classes.vip_base import vip_base
 from PyQt5.QtGui        import QRegExpValidator
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5 import QtCore
@@ -37,14 +36,14 @@ from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
 
 
-class Textfield(pcp_base):
+class Textfield(vip_base):
 
-    def initiate_layer_0(self, config):
+    def cb_initialize_plugin(self):
 
         self.event_change = DEvent('Change')
-
-        self.send_new_event_list([self.event_change])
-        self.set_widget_for_internal_usage(self.create_widget())
+        self.config = self.pl_get_current_config_ref()
+        self.pl_send_new_event_list([self.event_change])
+        self.pl_set_widget_for_internal_usage(self.create_widget())
 
         return True
 
@@ -64,19 +63,19 @@ class Textfield(pcp_base):
 
     def show_context_menu(self, pos):
         gloPos = self.lineedit.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def value_changed(self, change):
-        self.emit_event(str(change), self.event_change)
+        self.pl_emit_event(str(change), self.event_change)
 
     def clicked(self):
         pass
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'size': {
                 'value': "(150,60)",
@@ -94,14 +93,14 @@ class Textfield(pcp_base):
             }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
     def value_changed(self):
         change = self.lineedit.text()
-        self.emit_event(str(change), self.event_change)
+        self.pl_emit_event(str(change), self.event_change)
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
             value = dparameter_object.default
 

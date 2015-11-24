@@ -19,14 +19,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 
 from PyQt5.QtWidgets import QPushButton
@@ -35,10 +35,10 @@ from PyQt5 import QtGui, QtCore
 
 from papi.data.DPlugin import DEvent
 from papi.data.DSignal import DSignal
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.constants import REGEX_SIGNED_FLOAT
 
-class Button(pcp_base):
+class Button(vip_base):
 
     def __init__(self):
         super(Button, self).__init__()
@@ -46,13 +46,13 @@ class Button(pcp_base):
         self.name = None
         self.cur_value = None
 
-    def initiate_layer_0(self, config):
-
+    def cb_initialize_plugin(self):
+        self.config = self.pl_get_current_config_ref()
         #super(Button, self).start_init(config)
 
         self.event_click = DEvent('Click')
 
-        self.name = config['name']['value']
+        self.name = self.config['name']['value']
         self.cur_value = 0
 
         self.value_up = self.config['state1']['value']
@@ -61,10 +61,10 @@ class Button(pcp_base):
         self.text_down = (self.config['state2_text']['value'])
         self.button_state = 'up'
 
-        self.send_new_event_list([self.event_click])
+        self.pl_send_new_event_list([self.event_click])
 
         self.button = self.create_widget()
-        self.set_widget_for_internal_usage(self.button)
+        self.pl_set_widget_for_internal_usage(self.button)
         self.button.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.button.customContextMenuRequested.connect(self.show_context_menu)
 
@@ -73,7 +73,7 @@ class Button(pcp_base):
 
     def show_context_menu(self, pos):
         gloPos = self.button.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def create_widget(self):
@@ -101,10 +101,10 @@ class Button(pcp_base):
             self.button.setText(self.text_up)
             val = self.value_up
 
-        self.emit_event(str(val), self.event_click)
+        self.pl_emit_event(str(val), self.event_click)
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "state1": {
                 'value': 0,
@@ -133,11 +133,11 @@ class Button(pcp_base):
             } }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         pass

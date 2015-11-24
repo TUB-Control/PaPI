@@ -1,4 +1,4 @@
-__author__ = 'stefan'
+
 
 #import papi.event.data as DataEvent
 

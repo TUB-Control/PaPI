@@ -19,26 +19,27 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Stefan Ruppin
 """
-__author__ = 'stefan'
+
 
 import datetime
 import time
 import traceback
 import os
+import json
 
 import papi.event as Event
 
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_PROCESS_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
-    CONFIG_SAVE_CFG_BLACKLIST
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_VIP_IDENTIFIER, CONFIG_ROOT_ELEMENT_NAME_RELOADED, \
+    CONFIG_SAVE_CFG_BLACKLIST, CORE_TIME_SIGNAL
 
 from PyQt5 import QtCore
 
@@ -296,7 +297,7 @@ class Gui_api(QtCore.QObject):
         # call do_subscribe with ids to subscribe
         self.do_unsubscribe(subscriber_id, source_id, block_name, signal_index)
 
-    def do_set_parameter(self, plugin_id, parameter_name, value):
+    def do_set_parameter(self, plugin_id, parameter_name, value, only_db_update = False):
         """
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
@@ -307,6 +308,8 @@ class Gui_api(QtCore.QObject):
         :type parameter_name: basestring
         :param value: new parameter value to set
         :type value:
+        :param only_db_update: do_set_parameter of the target plugin will not be called. Updates only the internal database.
+        :type boolean:
         """
         # get plugin from DGUI
         dplug = self.gui_data.get_dplugin_by_id(plugin_id)
@@ -331,7 +334,10 @@ class Gui_api(QtCore.QObject):
                         opt.is_parameter = True
                         opt.parameter_alias = parameter_name
                         opt.block_name = None
-                        e = Event.instruction.SetParameter(self.gui_id, dplug.id, opt)
+                        if only_db_update:
+                            e = Event.instruction.UpdateParameter(self.gui_id, dplug.id, opt)
+                        else:
+                            e = Event.instruction.SetParameter(self.gui_id, dplug.id, opt)
                         self.core_queue.put(e)
 
     def do_set_parameter_uname(self, plugin_uname, parameter_name, value):
@@ -346,9 +352,17 @@ class Gui_api(QtCore.QObject):
         :param value: new parameter value to set
         :type value:
         """
-        id = self.do_get_plugin_id_from_uname(plugin_uname)
-        if id is not None:
-            self.do_set_parameter(id, parameter_name, value)
+        # id = self.do_get_plugin_id_from_uname(plugin_uname)
+        # if id is not None:
+        #     self.do_set_parameter(id, parameter_name, value)
+        #     print(parameter_name, value)
+        opt = DOptionalData()
+        opt.data = value
+        opt.is_parameter = True
+        opt.parameter_alias = parameter_name
+        opt.block_name = None
+        e = Event.instruction.SetParameterByUname(self.gui_id,plugin_uname, opt)
+        self.core_queue.put(e)
 
     def do_pause_plugin_by_id(self, plugin_id):
         """
@@ -433,15 +447,15 @@ class Gui_api(QtCore.QObject):
     def do_close_program(self):
         """
         Tell core to close papi. Core will respond and will close all open plugins.
-        GUI will close all PCP and VIP Plugins due to calling their quit function
+        GUI will close all VIP Plugins due to calling their quit function
         """
 
         plugins = self.gui_data.get_all_plugins()
         for dplugin_id in plugins:
             dplugin = plugins[dplugin_id]
-            if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
+            if dplugin.type == PLUGIN_VIP_IDENTIFIER:
                 try:
-                    dplugin.plugin.quit()
+                    dplugin.plugin.cb_quit()
                 except Exception as E:
                     tb = traceback.format_exc()
                     self.plugin_died.emit(dplugin, E, tb)
@@ -502,6 +516,8 @@ class Gui_api(QtCore.QObject):
                                 for val in attr:
                                    gui_config[property.tag][attr.tag][val.tag] = val.text
 
+
+
                 if root_element.tag == 'Plugins':
                     #############################
                     # Read plugin configuration #
@@ -552,7 +568,11 @@ class Gui_api(QtCore.QObject):
 
                 if root_element.tag == 'Subscriptions':
                     for sub_xml in root_element:
-                        dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
+
+                        #TODO: Ask stefan: Why this line?
+                        #dest  = self.change_uname_to_uniqe(sub_xml.find('Destination').text)
+
+                        dest  = sub_xml.find('Destination').text
                         for source in sub_xml:
                             if source.tag == 'Source':
                                 sourceName =  source.attrib['uname'] #self.change_uname_to_uniqe(source.attrib['uname'])
@@ -566,6 +586,9 @@ class Gui_api(QtCore.QObject):
                                         signals.append(sig_xml.text)
 
                                     subs_to_make.append({'dest':dest, 'source':sourceName, 'block':blockName, 'alias':alias, 'signals':signals})
+
+            self.set_gui_config_function(gui_config)
+
         except Exception as E:
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not loadable", tb)
@@ -589,6 +612,7 @@ class Gui_api(QtCore.QObject):
             for pl in plugins_to_start:
                 self.do_create_plugin(pl['identifier'], pl['uname'], pl['cfg'])
 
+
             self.config_loader_subs_reloaded(plugins_to_start, subs_to_make, parameters_to_change, signals_to_change)
         else:
             self.error_occured.emit("Error: Loading Plugins", "Can't use: " + str(unloadable_plugins) +
@@ -597,7 +621,8 @@ class Gui_api(QtCore.QObject):
 
     def config_loader_subs_reloaded(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
         """
-        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+        Function for callback when timer finished to apply
+            subscriptions and parameter changed of config.
 
         :param pl_to_start: list of plugins to start
         :type pl_to_start: list
@@ -606,9 +631,10 @@ class Gui_api(QtCore.QObject):
         :param parameters_to_change: parameter changes to apply
         :type parameters_to_change: list
         :param signals_to_change: signal name changes to apply
-        :type signals_to_change list
+        :type signals_to_change: list
         :return:
         """
+
         for sub in subs_to_make:
             self.do_subscribe_uname(sub['dest'], sub['source'], sub['block'], sub['signals'], sub['alias'])
 
@@ -770,7 +796,8 @@ class Gui_api(QtCore.QObject):
 
     def config_loader_subs(self, pl_to_start, subs_to_make, parameters_to_change, signals_to_change):
         """
-        Function for callback when timer finished to apply subscriptions and parameter changed of config.
+        Function for callback when timer finished to apply
+            subscriptions and parameter changed of config.
 
         :param pl_to_start: list of plugins to start
         :type pl_to_start: list
@@ -779,9 +806,10 @@ class Gui_api(QtCore.QObject):
         :param parameters_to_change: parameter changes to apply
         :type parameters_to_change: list
         :param signals_to_change: signal name changes to apply
-        :type signals_to_change list
+        :type signals_to_change: list
         :return:
         """
+
         for sub in subs_to_make:
             self.do_subscribe_uname(sub[0], sub[1], sub[2], sub[3], sub[4])
 
@@ -797,9 +825,14 @@ class Gui_api(QtCore.QObject):
             self.do_edit_plugin_uname(plugin_uname, DBlock(dblock_name),
                                       {'edit': DSignal(dsignal_uname, dsignal_dname)})
 
-    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[]):
+    def do_save_xml_config_reloaded(self,path, plToSave=[], sToSave=[], saveUserSettings=False):
+        """
 
-
+        :param path:
+        :param plToSave:
+        :param sToSave:
+        :return:
+        """
 
         subscriptionsToSave =  {}
         # check for xml extension in path, add .xml if missing
@@ -814,7 +847,7 @@ class Gui_api(QtCore.QObject):
             ##########################
             # Save gui configuration #
             ##########################
-            gui_cfg = self.get_gui_config_function()
+            gui_cfg = self.get_gui_config_function(saveUserSettings=saveUserSettings)
             gui_cfg_xml = ET.SubElement(root, 'Configuration')
 
             for cfg_item in gui_cfg:
@@ -846,8 +879,8 @@ class Gui_api(QtCore.QObject):
 
                 # check if this plugin should be saved to XML
                 if dplugin.uname in plToSave:
-                    if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                        dplugin.startup_config = dplugin.plugin.get_current_config()
+                    if dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                        dplugin.startup_config = dplugin.plugin.pl_get_current_config()
 
                     pl_xml = ET.SubElement(plugins_xml, 'Plugin')
                     pl_xml.set('uname', dplugin.uname)
@@ -899,11 +932,12 @@ class Gui_api(QtCore.QObject):
                         alldsignals = dblock.get_signals()
 
                         for dsignal in alldsignals:
-                            dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
-                            dsignal_xml.set('uname', dsignal.uname)
+                            if dsignal.uname != CORE_TIME_SIGNAL:
+                                dsignal_xml = ET.SubElement(dblock_xml, 'DSignal')
+                                dsignal_xml.set('uname', dsignal.uname)
 
-                            dname_xml = ET.SubElement(dsignal_xml, 'dname')
-                            dname_xml.text = dsignal.dname
+                                dname_xml = ET.SubElement(dsignal_xml, 'dname')
+                                dname_xml.text = dsignal.dname
 
                 # ---------------------------------------
                 # Build temporary subscription objects
@@ -957,8 +991,9 @@ class Gui_api(QtCore.QObject):
 
                         signal_xml = ET.SubElement(block_xml,'Signals')
                         for sig in subscriptionsToSave[dest][source][block]['signals']:
-                            sig_xml = ET.SubElement(signal_xml,'Signal')
-                            sig_xml.text = sig
+                            if sig != CORE_TIME_SIGNAL:
+                                sig_xml = ET.SubElement(signal_xml,'Signal')
+                                sig_xml.text = sig
 
 
             # do transformation for readability and save xml tree to file
@@ -1010,8 +1045,8 @@ class Gui_api(QtCore.QObject):
             for dplugin_id in plugins:
                 dplugin = plugins[dplugin_id]
 
-                if dplugin.type == PLUGIN_PCP_IDENTIFIER or dplugin.type == PLUGIN_VIP_IDENTIFIER:
-                    dplugin.startup_config = dplugin.plugin.get_current_config()
+                if dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                    dplugin.startup_config = dplugin.plugin.pl_get_current_config()
 
                 pl_xml = ET.SubElement(root, 'Plugin')
                 pl_xml.set('uname', dplugin.uname)
@@ -1098,6 +1133,85 @@ class Gui_api(QtCore.QObject):
         except Exception as E:
             tb = traceback.format_exc()
             self.error_occured.emit("Error: Config Loader", "Not saveable: " + path, tb)
+
+    def do_save_json_config_reloaded(self, path, plToSave=[], sToSave=[]):
+        if path[-5:] != '.json':
+            path += '.json'
+
+        json_config = {}
+        to_create = {}
+        to_control = {}
+        to_sub = {}
+        plugins = self.gui_data.get_all_plugins()
+
+        for dplugin_id in plugins:
+            dplugin = plugins[dplugin_id]
+
+            # check if this plugin should be saved to XML
+            if dplugin.uname in plToSave:
+                if dplugin.type == PLUGIN_VIP_IDENTIFIER:
+                    dplugin.startup_config = dplugin.plugin.pl_get_current_config()
+
+                to_create[dplugin.uname] = {}
+
+                to_create[dplugin.uname]["identifier"] = {'value' : dplugin.plugin_identifier}
+                plugin_config = {}
+                for config in dplugin.startup_config:
+                    for value in dplugin.startup_config[config]:
+                        if value == 'value':
+                            plugin_config[config] = {'value' : dplugin.startup_config[config][value]}
+
+                to_create[dplugin.uname]["config"] = plugin_config
+
+
+            if dplugin.uname in sToSave:
+                subsOfPl = {}
+                subs = dplugin.get_subscribtions()
+
+                for sub in subs:
+                    sourcePL = self.gui_data.get_dplugin_by_id(sub).uname
+
+                    subsOfPl[sourcePL] = {}
+                    for block in subs[sub]:
+
+                        subsOfPl[sourcePL][block] = {}
+                        dsubscription = subs[sub][block]
+                        subsOfPl[sourcePL]['alias'] = dsubscription.alias
+                        print(sourcePL)
+                        print(block)
+                        if dsubscription.alias is not None:
+                            if sourcePL not in to_control:
+                                to_control[sourcePL] = {}
+                            to_control[sourcePL][block] = {'parameter' : dsubscription.alias}
+                        else:
+
+                            signals = []
+                            for s in dsubscription.get_signals():
+                                signals.append( str(s))
+
+                            to_sub[dplugin.uname] = {}
+                            to_sub[dplugin.uname]['signals'] = signals
+                            to_sub[dplugin.uname]['block']   = block
+                            to_sub[dplugin.uname]['plugin']  = sourcePL
+
+        if len(to_create):
+            json_config["ToCreate"] = to_create;
+        if len(to_control):
+            json_config["ToControl"] = to_control
+        if len(to_sub):
+            json_config["ToSub"] = to_sub
+
+        papi_config = {"PaPIConfig" : json_config}
+
+
+        try:
+            with open(path, 'w') as outfile:
+                json.dump(papi_config, outfile)
+
+        except:
+            pass
+
+
 
     def indent(self, elem, level=0):
         """

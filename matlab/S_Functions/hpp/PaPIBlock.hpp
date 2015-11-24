@@ -16,7 +16,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
@@ -27,8 +27,6 @@ Sven Knuth
 #ifndef _PAPI_BLOCK_
 #define _PAPI_BLOCK_
 
-//#include <cstdint>
-
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -36,7 +34,6 @@ Sven Knuth
 #include <algorithm>
 #include <signal.h>
 #include <stdlib.h>
-
 #include <boost/array.hpp>
 
 #include <jsoncpp/json/json.h>
@@ -71,8 +68,9 @@ private:
     // -------------------------------
     // Output vector
     // -------------------------------
-    bool para_out_was_set;
-    double* para_out;
+    //this buffer is used by the external thread
+    //to store the last recievd parameter changes
+    double* buffer_para_out;
 
     // -------------------------------
     // Internal variables
@@ -87,7 +85,7 @@ private:
     int* stream_out;
     int stream_out_size;
 
-    boost::mutex mutex_stream_in;
+    boost::mutex mutex_thread_data_update;
 
     int* offset_parameter;
     int* offset_input;
@@ -127,9 +125,9 @@ private:
 public:
     PaPIBlock(
         int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
-        int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+        int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+        int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
     );
 
     ~PaPIBlock();
@@ -142,16 +140,16 @@ public:
     void clearOutput(int stream_out[]);
     void reset(double para_out[]);
 
-    void control(int control, double para_out[]);
+    void control(int control);
 };
 
 // Method wrappers
 extern void createPaPIBlock(
     void **work1, //Working vector
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
-    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out, // Parameters: p1 - p3
-    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],  // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[]                  // Parameters: p7 - p9
+    int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
+    int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
 );
 
 extern void deletePaPIBlock(void **work1);

@@ -1,4 +1,4 @@
-__author__ = 'stefan'
+
 
 
 from .NewData import NewData

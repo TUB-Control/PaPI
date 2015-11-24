@@ -19,14 +19,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 
 
@@ -35,17 +35,17 @@ from PyQt5 import QtCore
 
 from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
-from papi.plugin.base_classes.pcp_base import pcp_base
+from papi.plugin.base_classes.vip_base import vip_base
 import papi.constants as pc
 
-class Radiobutton(pcp_base):
-    def initiate_layer_0(self, config):
+class Radiobutton(vip_base):
+    def cb_initialize_plugin(self):
 
         self.event_choice = DEvent('Choice')
 
-        self.send_new_event_list([self.event_choice])
+        self.pl_send_new_event_list([self.event_choice])
 
-
+        self.config = self.pl_get_current_config_ref()
         para_list = []
 
         self.para_texts    = DParameter('texts', default=self.config['option_texts']['value'])
@@ -54,7 +54,7 @@ class Radiobutton(pcp_base):
         para_list.append(self.para_texts)
         para_list.append(self.para_values)
 
-        self.send_new_parameter_list(para_list)
+        self.pl_send_new_parameter_list(para_list)
 
         self.central_widget = QWidget()
 
@@ -66,7 +66,7 @@ class Radiobutton(pcp_base):
             if self.config['selected_index']['value'] != '':
                 self.pre_selected_index = int(self.config['selected_index']['value'])
 
-        self.set_widget_for_internal_usage(self.central_widget)
+        self.pl_set_widget_for_internal_usage(self.central_widget)
         self.layout = QVBoxLayout(self.central_widget)
 
         self.buttons = []
@@ -120,7 +120,7 @@ class Radiobutton(pcp_base):
 
     def show_context_menu(self, pos):
         gloPos = self.central_widget.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def button_released(self):
@@ -128,25 +128,27 @@ class Radiobutton(pcp_base):
             if self.buttons[i].isChecked():
                 self.config['selected_index']['value'] = str(i)
                 if len(self.option_values) == len(self.option_texts):
-                    self.emit_event(self.option_values[i], self.event_choice)
+                    self.pl_emit_event(self.option_values[i], self.event_choice)
                 else:
-                    self.emit_event(self.option_texts[i], self.event_choice)
+                    self.pl_emit_event(self.option_texts[i], self.event_choice)
 
-    def set_parameter(self, parameter_name, parameter_value):
+    def cb_set_parameter(self, parameter_name, parameter_value):
 
 
         if parameter_name == self.para_texts.name:
+            self.config['option_texts']['value'] = parameter_value
             self.set_option_texts(parameter_value)
             self.update_widget()
 
         if parameter_name == self.para_values.name:
+            self.config['option_values']['value'] = parameter_value
             self.set_option_values(parameter_value)
 
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             'option_texts': {
                 'display_text' : 'Displayed Option',
@@ -173,10 +175,10 @@ class Radiobutton(pcp_base):
             }}
         return config
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
             value = dparameter_object.default
             if str(value) in self.option_values:

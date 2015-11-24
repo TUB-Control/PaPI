@@ -19,34 +19,50 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
-Sven Knuth
+Sven Knuth, Stefan Ruppin
 """
 
-__author__ = 'knuths'
-
-from papi.plugin.base_classes.pcp_base import pcp_base
-from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel
+from PyQt5.QtWidgets import QSlider, QHBoxLayout, QWidget, QLabel, QVBoxLayout
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
+
+from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DPlugin import DEvent
 from papi.data.DParameter import DParameter
-
 import papi.constants as pc
 
-
-class Slider(pcp_base):
-
-    def initiate_layer_0(self, config):
-
+class Slider(vip_base):
+    def cb_initialize_plugin(self):
+        # Creates Slider Change Event to connect to Parameters and send it
         self.event_change = DEvent('Change')
+        self.pl_send_new_event_list([self.event_change])
 
-        self.send_new_event_list([self.event_change])
-        self.set_widget_for_internal_usage(self.create_widget())
+        # get items of cfg for fist start of the Slider and cast to float
+        self.value_max  = self.pl_get_config_element('upper_bound',castHandler=float)
+        self.value_min  = self.pl_get_config_element('lower_bound',castHandler=float)
+        self.tick_count = self.pl_get_config_element('step_count',castHandler=float)
+        self.init_value = self.pl_get_config_element('value_init',castHandler=float)
+        self.vertical   = self.pl_get_config_element('vertical', castHandler=int)
 
+        if self.vertical is not None:
+            self.vertical = self.vertical == 1
+        else:
+            self.vertical = False
+
+
+
+        # Create Parameter list for change slider parameter live and send it
+        self.para_value_max     = DParameter('MaxValue', default= self.value_max, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_value_min     = DParameter('MinValue', default=self.value_min, Regex=pc.REGEX_SIGNED_FLOAT_OR_INT)
+        self.para_tick_count    = DParameter('StepCount',default=self.tick_count,  Regex=pc.REGEX_SINGLE_INT)
+        self.pl_send_new_parameter_list([self.para_tick_count, self.para_value_max, self.para_value_min])
+        # Set Slider widget for use in PaPI
+        self.pl_set_widget_for_internal_usage(self.create_widget())
+        # return successful initialization
         return True
 
     def create_widget(self):
@@ -56,18 +72,13 @@ class Slider(pcp_base):
         self.slider.sliderPressed.connect(self.clicked)
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.value_max = float(self.config['upper_bound']['value'])
-        self.value_min = float(self.config['lower_bound']['value'])
-        self.tick_count = float(self.config['step_count']['value'])
-        self.init_value = float(self.config['value_init']['value'])
-
-
-        self.tick_width = (self.value_max-self.value_min)/(self.tick_count-1)
+        self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
 
         self.slider.setMinimum(0)
         self.slider.setMaximum(self.tick_count-1)
 
-        self.slider.setOrientation(QtCore.Qt.Horizontal)
+        if not self.vertical:
+            self.slider.setOrientation(QtCore.Qt.Horizontal)
 
         self.text_field = QLabel()
         self.text_field.setMinimumWidth(25)
@@ -76,7 +87,11 @@ class Slider(pcp_base):
         init_value = (self.init_value - self.value_min)/self.tick_width
         init_value = round(init_value,0)
         self.slider.setValue(init_value)
-        self.layout = QHBoxLayout(self.central_widget)
+
+        if not self.vertical:
+            self.layout = QHBoxLayout(self.central_widget)
+        else:
+            self.layout = QVBoxLayout(self.central_widget)
 
         self.layout.addWidget(self.slider)
         self.layout.addWidget(self.text_field)
@@ -90,22 +105,45 @@ class Slider(pcp_base):
 
     def show_context_menu(self, pos):
         gloPos = self.slider.mapToGlobal(pos)
-        self.cmenu = self.create_control_context_menu()
+        self.cmenu = self.pl_create_control_context_menu()
         self.cmenu.exec_(gloPos)
 
     def value_changed(self, change):
         val = change * self.tick_width + self.value_min
         val = round(val, 8)
         self.text_field.setText(str(val))
-        self.emit_event(str(val), self.event_change)
+        self.pl_emit_event(str(val), self.event_change)
 
     def clicked(self):
         pass
 
-    def plugin_meta_updated(self):
-        pass
+    def get_tick_width(self, max, min, count):
+        return (max-min)/(count-1)
 
-    def get_plugin_configuration(self):
+
+    def cb_set_parameter(self, parameter_name, parameter_value):
+        if parameter_name == self.para_value_max.name:
+            self.value_max = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+
+            self.pl_set_config_element('upper_bound', parameter_value)
+
+        if parameter_name == self.para_value_min.name:
+            self.value_min = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+
+            self.pl_set_config_element('lower_bound', parameter_value)
+            if float(self.pl_get_config_element('value_init')) < self.value_min:
+                self.pl_set_config_element('value_init', self.value_min)
+
+        if parameter_name == self.para_tick_count.name:
+            self.tick_count = float(parameter_value)
+            self.tick_width = self.get_tick_width(self.value_max, self.value_min,self.tick_count)
+            self.slider.setMaximum(self.tick_count-1)
+            self.pl_set_config_element('step_count', parameter_value)
+
+
+    def cb_get_plugin_configuration(self):
         config = {
             'lower_bound': {
                 'value': '0.0'
@@ -123,6 +161,13 @@ class Slider(pcp_base):
                 'advanced': '1',
                 'tooltip': 'Determine size: (height,width)'
                 },
+            'vertical': {
+                'value': "0",
+                'regex': pc.REGEX_BOOL_BIN,
+                'advanced': '0',
+                'tooltip': 'Use a vertical representation of this slider.',
+                'display_text' : 'Vertical slider'
+                },
             'value_init': {
                     'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
@@ -135,17 +180,16 @@ class Slider(pcp_base):
         return config
 
     def key_event(self, event):
-
         if event.key() == Qt.Key_Plus:
             self.slider.setValue(self.slider.value() + 1)
 
         if event.key() == Qt.Key_Minus:
             self.slider.setValue(self.slider.value() - 1)
 
-    def quit(self):
+    def cb_quit(self):
         pass
 
-    def new_parameter_info(self, dparameter_object):
+    def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
             value = float(dparameter_object.default)
             self.text_field.setText(str(value))

@@ -1,0 +1,24 @@
+{% extends "!layout.html" %}
+{% block rootrellink %}
+    {{ super() }}
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+{% endblock %}
+
+{% block sidebartoc %}
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="{{ pathto('CHANGELOG') }}">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="{{ pathto('toc.manual') }}">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="{{ pathto('toc.framework') }}">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="{{ pathto('man.papi.plugin.doc') }}">Plugins</a> </li>
+	  </li>
+	</ul>
+	{{ super() }}
+{% endblock %}

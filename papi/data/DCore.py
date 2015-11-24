@@ -19,18 +19,19 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 from papi.data.DPlugin import DPlugin
+from papi.data.DObject import DObject
 from papi.ConsoleLog import ConsoleLog
 import copy
 import papi.error_codes as ERROR
 
-__author__ = 'knuth'
+
 
 
 class DCore():
@@ -55,7 +56,8 @@ class DCore():
         :returns: unique ID
         :rtype: int
         """
-        self.__newid += 1
+        #self.__newid += 1
+        self.__newid = DObject.create_unique_id()
         return self.__newid
 #        return uuid.uuid4().int >> 64
 
@@ -169,7 +171,7 @@ class DCore():
         :return:
         """
 
-        #Get Susbcriber DPlugin
+        #Get Subscriber DPlugin
         subscriber = self.get_dplugin_by_id(subscriber_id)
 
         if subscriber is None:
@@ -291,8 +293,9 @@ class DCore():
 
             dblock = dplugin.get_dblock_by_name(dblock_name)
 
-            dplugin_ids = dblock.get_subscribers()
-            for dplugin_id in dplugin_ids:
+            copy_dplugin_ids = copy.deepcopy(dblock.get_subscribers())
+
+            for dplugin_id in copy_dplugin_ids:
 
                 subscriber = self.get_dplugin_by_id(dplugin_id)
 
@@ -310,7 +313,7 @@ class DCore():
         if dplugin is not None:
             dblock = dplugin.get_dblock_by_name(dblock_name)
             if dblock is not None:
-                dplugin_ids = dblock.get_subscribers()
+                dplugin_ids = copy.deepcopy(dblock.get_subscribers())
                 for dplugin_id in dplugin_ids:
 
                     subscriber = self.get_dplugin_by_id(dplugin_id)
@@ -389,9 +392,10 @@ class DCore():
         subscription = subscriber.unsubscribe_signals(dblock, signals)
 
         if subscription is None:
+            self.log.printText(1, " Subscription for target " + target.uname + " and DBlock " + dblock_name + " is None")
             return False
 
-        if len(subscription.get_signals()) == 0:
+        if len(subscription.get_signals()) == 1:
             return self.unsubscribe(subscriber_id, target_id, dblock_name)
 
         return True

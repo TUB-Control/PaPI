@@ -13,35 +13,35 @@ from papi.data.DSignal import DSignal
 
 import numpy
 import time
-__author__ = 'knuths'
+
 
 
 class CPU_Load(iop_base):
     INTERVAL = 0.1
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self):
         self.t = 0
         self.delta_t = 0.01
-        self.para_delta_t = DParameter('Delta_t', default=0.01)
 
-        self.send_new_parameter_list([self.para_delta_t])
+        self.para_delta_t = self.pl_create_DParameter('Delta_t', default_value=0.01)
 
-        block1 = DBlock('CPUload')
+        self.pl_send_new_parameter_list([self.para_delta_t])
 
-        signal = DSignal('load_in_percent')
+        block1 = self.pl_create_DBlock('CPUload')
+        signal = self.pl_create_DSignal('load_in_percent')
+
         block1.add_signal(signal)
 
-
-        self.send_new_block_list([block1])
+        self.pl_send_new_block_list([block1])
         return True
 
-    def pause(self):
+    def cb_pause(self):
         pass
 
 
-    def resume(self):
+    def cb_resume(self):
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
         vec = numpy.zeros((2,1))
 
         vec[0,0] = self.t*10
@@ -49,16 +49,15 @@ class CPU_Load(iop_base):
 
         self.t += self.delta_t
 
-
-        self.send_new_data('CPUload', vec[0], {'load_in_percent':vec[1]} )
+        self.pl_send_new_data('CPUload', [vec[0, 0]], {'load_in_percent': vec[1]})
 
         time.sleep(self.delta_t)
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
 
-    def quit(self):
+    def cb_quit(self):
         print('CPU Load: will quit')
 
 
@@ -91,8 +90,8 @@ class CPU_Load(iop_base):
         load = 1-(idle_time/total_time)
         return load
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         return {}

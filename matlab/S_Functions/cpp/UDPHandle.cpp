@@ -16,7 +16,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
@@ -136,11 +136,12 @@ void UDPHandle::startSend() {
     {
 
         boost::system::error_code ignored_error;
-
+        this->mutex_send_buffer_.lock();
         this->udp_socket->send_to(
-            boost::asio::buffer(this->send_buffer_, sizeof(int)*this->send_msg_length_) ,
+            boost::asio::buffer(this->send_buffer_, sizeof(char)*this->send_msg_length_) ,
             *this->udp_endpoint_destination, 0, ignored_error
         );
+        this->mutex_send_buffer_.unlock();
 
         if (ignored_error) {
             printf("StartSend:: Error occured: %s \n", ignored_error.message().c_str());
@@ -154,15 +155,29 @@ void UDPHandle::startSend() {
     @param stream Data stream which should be sent.
     @param msg_length Defines the amount of elements in the data stream
 */
-void UDPHandle::sendData(int* stream, std::size_t msg_length) {
+void UDPHandle::sendData(const char* stream, std::size_t msg_length) {
     if (this->threadInitialized) {
         this->send_msg_length_ = msg_length;
-//        this->send_buffer_ = new int[msg_length];
 
-        std::memcpy(this->send_buffer_.begin(), stream, sizeof(int)*msg_length);
+        this->mutex_send_buffer_.lock();
+        std::memcpy(this->send_buffer_.begin(), stream, sizeof(char)*msg_length);
+        this->mutex_send_buffer_.unlock();
         this->sigSendData();
     }
 }
+
+void UDPHandle::sendData(int* stream, std::size_t msg_length) {
+    if (this->threadInitialized) {
+        this->send_msg_length_ = msg_length*4;
+
+        this->mutex_send_buffer_.lock();
+        std::memcpy(this->send_buffer_.begin(), stream, sizeof(int)*msg_length);
+        this->mutex_send_buffer_.unlock();
+        this->sigSendData();
+
+    }
+}
+
 /**
     Callback function which is triggered by an incoming package.
     Will also call the this->otherHandleRecieve if defined.

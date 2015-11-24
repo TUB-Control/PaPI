@@ -19,14 +19,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Sven Knuth
 """
 
-__author__ = 'knuths'
+
 
 from papi.data.DObject import DObject
 
@@ -51,3 +51,12 @@ class DSignal(DObject):
             self.dname = uname
         else:
             self.dname = dname
+
+    def get_name(self):
+        """
+        Returns the name of this signal.
+
+        :return name: Unique name
+        """
+
+        return self.uname

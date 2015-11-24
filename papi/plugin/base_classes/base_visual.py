@@ -19,20 +19,23 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 Stefan Ruppin
 """
 
-__author__ = 'stefan'
-
-from papi.plugin.base_classes.base_plugin import base_plugin
 import re
 from PyQt5.QtWidgets import QMdiSubWindow, QMenu, QAction
-
+from PyQt5.QtCore    import QPoint
+from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
+from papi.plugin.base_classes.ParameterWindow import ParameterWindow
+from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+
+from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
+
 
 class base_visual(base_plugin):
     """
@@ -43,7 +46,7 @@ class base_visual(base_plugin):
     def __init__(self):
         super(base_visual, self).__init__()
 
-    def init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
+    def _init_plugin(self, CoreQueue, pluginQueue, id, control_api, dpluginInfo = None,TabManger = None):
         """
         Internal initialize function called by the PaPI framework;
 
@@ -55,55 +58,45 @@ class base_visual(base_plugin):
         :param TabManger: The tab mananger.
         :return:
         """
-        super(base_visual, self).papi_init()
+        super(base_visual, self)._papi_init()
         self._Core_event_queue__ = CoreQueue
         self.__plugin_queue__ = pluginQueue
         self.__id__ = id
         self.control_api = control_api
-        self.dplugin_info = dpluginInfo
+        self._dplugin_info = dpluginInfo
         self.TabManager = TabManger
         self.movable = True
 
-    def start_init(self, config=None):
+    def _starting_sequence(self, config=None):
         """
         Internal start function called by the PaPI framework;
 
         :param config:
         :return:
         """
-        self.config = config
+        self._config = config
         # --------------------------------
 
         # get needed data from config
         size_re = re.compile(r'([0-9]+)')
-        self.window_size = size_re.findall(self.config['size']['value'])
-        self.window_pos = size_re.findall(self.config['position']['value'])
+        self.window_size = size_re.findall(self._config['size']['value'])
+        self.window_pos = size_re.findall(self._config['position']['value'])
 
-        self.window_name = self.config['name']['value']
+        self.window_name = self._config['name']['value']
 
-        self.set_window_for_internal_usage(QMdiSubWindow())
-        return self.initiate_layer_1(self.config)
+        #self._set_window_for_internal_usage(QMdiSubWindow())
+        self._set_window_for_internal_usage(PaPISubWindow())
+        return self._start_plugin_base()
 
-    def get_current_config(self):
+    def _start_plugin_base(self):
         """
-        Used to get the current configuration.
+        Needs to be implemented by plugin base class
 
-        :return:
-        """
-        return self.config
-
-    def initiate_layer_1(self, config):
-        """
-        This function is called when the PaPI framework has called all internal function which are
-        needed to initialize the plugin. This function should be filled by the plugin developer.
-
-
-        :param config: Startup configuration
         :return:
         """
         raise NotImplementedError("Please Implement this method")
 
-    def get_configuration_base(self):
+    def _get_configuration_base(self):
         """
         Returns the basic configuration for this plugin base.
 
@@ -141,106 +134,243 @@ class base_visual(base_plugin):
         return config
 
 
-    def set_window_for_internal_usage(self, subwindow):
+    def _set_window_for_internal_usage(self, subwindow):
+        """
+        This function will take a subwindow and will prepare all his call back function to work within PaPI
+        It will also set the window reference for later use.
+
+        :param subwindow
+        :type subwindow: QMdiSubWindow
+        :return:
+        """
         self._subWindow = subwindow
         self.original_resize_function = self._subWindow.resizeEvent
         self.original_move_function = self._subWindow.moveEvent
         self.original_mouse_move_function = self._subWindow.mouseMoveEvent
 
-        self._subWindow.resizeEvent = self.window_resize
-        self._subWindow.moveEvent = self.window_move
+        self._subWindow.resizeEvent = self._window_resize
+        self._subWindow.moveEvent = self._window_move
 
 
         self._subWindow.setWindowTitle(self.window_name)
         self._subWindow.resize(int(self.window_size[0]), int(self.window_size[1]))
 
-    def set_widget_for_internal_usage(self, widget):
-        self.widget = widget
-        self._subWindow.setWidget(self.widget)
+    def pl_set_widget_for_internal_usage(self, widget):
+        """
+        Will take QWidget and will place it in the subwindow
+
+        Gets called by plugin developer!
+
+        :param widget: QWidget
+        :type widget: QWidget
+        :return:
+        """
+        self._widget = widget
+        self._subWindow.setWidget(self._widget)
 
 
-    def window_move(self, event):
+    def _window_move(self, event):
+        """
+        New callback function for movement of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
+
+        :param event:
+        :return:
+        """
         pos = self._subWindow.pos()
 
         x = pos.x()
         y = pos.y()
-        self.config['position']['value'] = '(' + str(x) + ',' + str(y) + ')'
+        self._config['position']['value'] = '(' + str(x) + ',' + str(y) + ')'
         self.original_move_function(event)
 
 
-    def window_resize(self, event):
+    def _window_resize(self, event):
+        """
+        New callback function for resizing of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
 
+        :param event:
+        :return:
+        """
         size = event.size()
         w = size.width()
         h = size.height()
 
-        isMaximized = self.get_sub_window().isMaximized()
+        isMaximized = self._get_sub_window().isMaximized()
 
         if isMaximized:
-            self.config['maximized']['value'] = '1'
+            self._config['maximized']['value'] = '1'
         else:
-            self.config['maximized']['value'] = '0'
+            self._config['maximized']['value'] = '0'
 
-        self.config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
+        self._config['size']['value'] = '(' + str(w) + ',' + str(h) + ')'
         self.original_resize_function(event)
 
-    def window_mouse_move(self, event):
+    def _window_mouse_move(self, event):
+        """
+        New callback function for mouse move of a subwindow.
+        Will do some PaPI specific tasks and then call the original subwindow callback function.
+
+        :param event:
+        :return:
+        """
         if self.movable:
             self.original_mouse_move_function(event)
 
-    def get_sub_window(self):
+    def _get_sub_window(self):
+        """
+        Getter method to get subwindow of plugin
+
+        :return: QMdiSubWindow
+        """
         return self._subWindow
 
-    def get_widget(self):
-        return self.widget
+    def pl_get_widget(self):
+        """
+        Getter method to get widget of plugin
 
-    def create_control_context_menu(self):
+        :return: QWidget
+        """
+        return self._widget
+
+    def pl_create_control_context_menu(self):
+        """
+        This function will create the general PaPI Control context menu to be used in Plugins.
+
+        :return: QMenu
+        """
+        # Disable context menu if run mode is enabled!
+        if self._subWindow.isInteractionAllowed() is False:
+            return QMenu('Disabled!')
+
         ctrlMenu = QMenu("Control")
 
-        del_action = QAction('Close plugin',self.widget)
-        del_action.triggered.connect(self.ctlrMenu_exit)
+        del_action = QAction('Close plugin',self._widget)
+        del_action.triggered.connect(self._ctrlMenu_exit)
 
-        pause_action = QAction('Pause plugin',self.widget)
-        pause_action.triggered.connect(self.ctlrMenu_pause)
+        para_action = QAction('Parameter',self._widget)
+        para_action.triggered.connect(self._ctrlMenu_Para)
 
-        resume_action = QAction('Resume plugin',self.widget)
-        resume_action.triggered.connect(self.ctlrMenu_resume)
+        pause_action = QAction('Pause plugin',self._widget)
+        pause_action.triggered.connect(self._ctrlMenu_pause)
 
-        subMenu_action = QAction('Open Signal Manager',self.widget)
-        #subMenu_action.triggered.connect(self.ctlrMenu_resume)
+        resume_action = QAction('Resume plugin',self._widget)
+        resume_action.triggered.connect(self._ctrlMenu_resume)
+
+        copy_action = QAction('Copy plugin',self._widget)
+        copy_action.triggered.connect(self._ctrlMenu_copy)
+
+        #subMenu_action = QAction('Open Signal Manager',self._widget)
 
         tabs = list(self.TabManager.get_tabs_by_uname().keys())
         if len(tabs) > 1:
             tabMenu = ctrlMenu.addMenu('Move to tab')
             tab_entrys = []
             for t in tabs:
-                if t != self.config['tab']['value']:
-                    entry = QAction(t, self.widget)
-                    entry.triggered.connect(lambda ignore, p=t: self.tabMenu_triggered(p))
+                if t != self._config['tab']['value']:
+                    entry = QAction(t, self._widget)
+                    entry.triggered.connect(lambda ignore, p=t: self._tabMenu_move_triggered(p))
                     tab_entrys.append(entry)
                     tabMenu.addAction(entry)
 
-        ctrlMenu.addAction(subMenu_action)
-        if self.get_type() == PLUGIN_VIP_IDENTIFIER:
-           ctrlMenu.addAction(resume_action)
-           ctrlMenu.addAction(pause_action)
+        #ctrlMenu.addAction(subMenu_action)
+        ctrlMenu.addAction(para_action)
+        ctrlMenu.addAction(copy_action)
+        ctrlMenu.addAction(resume_action)
+        ctrlMenu.addAction(pause_action)
         ctrlMenu.addAction(del_action)
+
         return ctrlMenu
 
-    def tabMenu_triggered(self, item):
+    def _tabMenu_move_triggered(self, item):
+        """
+        This callback function gets called when the user clicked on the moveToTab action at the context menu.
+        Will start the process of moving the plugin window to another tab
+
+        :param item: TabName to be moved to
+        :return:
+        """
         pos = self._subWindow.pos()
         posX = pos.x()
         posY = pos.y()
-        if self.TabManager.moveFromTo(self.config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
-            self.config['tab']['value'] = item
+        if self.TabManager.moveFromTo(self._config['tab']['value'], item, self._subWindow, posX=posX, posY=posY):
+            self._config['tab']['value'] = item
+
+    def _ctrlMenu_Para(self):
+        # Opens a small parameter menu for the plugin
+        # get the parameter list
+        Para_List = self.control_api.get_dparameter_of_plugin_from_data(self._dplugin_info.uname)
+        if Para_List is not None:
+            # open the parameter window
+            win = ParameterWindow(self.pl_get_dplugin_info(), self.control_api, parent=self._widget, pl_win_name = self._subWindow.windowTitle(),)
+            # move it slightly below the title bar of the subwindow
+            win.move(self._subWindow.mapToGlobal(QPoint(0,25)))
+            # set size of the parameter table to max. 8 rows and at least 200, but max. widget.width() width
+            if self._subWindow.width() > 200:
+                w=(self._subWindow.width())
+            else:
+                w=(200)
+
+            fh = win.parameterTree.fontMetrics().height()
+            if len(Para_List.keys()) > 8:
+                h=(fh*9+fh+25)
+            else:
+                h=(fh*len(Para_List.keys())+fh+fh+25)
+
+            win.resize(w,h)
+
+            # show the window and load the parameter list
+            win.show()
+            win.show_paramters(Para_List)
+
+    def _ctrlMenu_exit(self):
+        """
+        Callback function for context menu for closing plugins
+
+        :return:
+        """
+        self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
+        print(self._config['tab']['value'])
+
+    def _ctrlMenu_pause(self):
+        """
+        Callback function for context menu for pausing plugins
+
+        :return:
+        """
+        self.control_api.do_pause_plugin_by_uname(self._dplugin_info.uname)
+
+    def _ctrlMenu_resume(self):
+        """
+        Callback function for context menu for resuming plugins
+
+        :return:
+        """
+        self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
 
 
-    def ctlrMenu_exit(self):
-        self.control_api.do_delete_plugin_uname(self.dplugin_info.uname)
-        print(self.config['tab']['value'])
+    def _ctrlMenu_copy(self):
+        """
+        Callback function for context menu for copying plugins
 
-    def ctlrMenu_pause(self):
-        self.control_api.do_pause_plugin_by_uname(self.dplugin_info.uname)
+        :return:
+        """
+        dplugin =  self.control_api.get_dplugin_by_uname(self._dplugin_info.uname)
+        dplugin.startup_config = self.pl_get_current_config()
 
-    def ctlrMenu_resume(self):
-        self.control_api.do_resume_plugin_by_uname(self.dplugin_info.uname)
+        plugin_create_dialog = CreatePluginDialog(self.control_api, self.TabManager, parent=self._widget)
+        plugin_create_dialog.set_dplugin(dplugin, self._get_startup_configuration(), self._get_type())
+        print()
+        plugin_create_dialog.show()
+
+#        self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)
+
+    def cb_new_parameter_info(self, dparameter_object):
+        """
+        Will be called to notify a plugin that a new parameter subscription was done and will give
+        information about the init values
+        :param dparameter_object: DParameter
+        :return:
+        """
+        pass

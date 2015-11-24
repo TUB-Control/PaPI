@@ -19,13 +19,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
 Stefan Ruppin
 """
-__author__ = 'stefan'
+
 
 
 import papi.event as Event
@@ -33,7 +33,7 @@ import papi.event as Event
 from papi.data.DOptionalData import DOptionalData
 from papi.ConsoleLog import ConsoleLog
 from papi.constants import PLUGIN_API_CONSOLE_IDENTIFIER, PLUGIN_API_CONSOLE_LOG_LEVEL, CONFIG_LOADER_SUBSCRIBE_DELAY, \
-    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_PCP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER
+    CONFIG_ROOT_ELEMENT_NAME, CORE_PAPI_VERSION, PLUGIN_VIP_IDENTIFIER
 
 from PyQt5 import QtCore
 from papi.gui.gui_api import Gui_api
@@ -125,6 +125,21 @@ class Plugin_api(QtCore.QObject):
         """
         self.__default_api.do_set_parameter(plugin_id,parameter_name,value)
 
+    def do_update_parameter(self, plugin_id, parameter_name, value):
+        """
+        Something like a callback function for gui triggered events.
+        User wants to update a parameter in the gui. Used by a owner of a plugin to
+        inform the gui that a parameter was internally changed.
+
+        :param plugin_id: id of plugin which owns the parameter
+        :type plugin_id: int
+        :param parameter_name: name of parameter to change
+        :type parameter_name: basestring
+        :param value: new parameter value to set
+        :type value:
+        """
+        self.__default_api.do_set_parameter(plugin_id,parameter_name,value, only_db_update=True)
+
 
     def do_resume_plugin_by_uname(self, plugin_uname):
         """
@@ -156,3 +171,19 @@ class Plugin_api(QtCore.QObject):
 
     def get_dplugin_by_uname(self, name):
         return self.__default_api.gui_data.get_dplugin_by_uname(name)
+
+    def get_dparameter_of_plugin_from_data(self, plugin_uname):
+        if plugin_uname is not None and plugin_uname != '':
+            dplugin = self.__default_api.gui_data.get_dplugin_by_uname(plugin_uname)
+            if dplugin is not None:
+                return dplugin.get_parameters()
+        return None
+
+    def do_change_string_to_be_uname(self, name):
+        return self.__default_api.do_change_string_to_be_uname(name)
+
+    def change_uname_to_uniqe(self, name):
+        return self.__default_api.change_uname_to_uniqe(name)
+
+    def do_test_name_to_be_unique(self, name):
+        return self.__default_api.do_test_name_to_be_unique(name)

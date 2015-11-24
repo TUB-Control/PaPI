@@ -19,14 +19,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 Mirjana Ruppel
 """
 
-__author__ = 'Mirjana'
+
 
 # basic import for block and parameter structure
 from papi.data.DPlugin import DBlock
@@ -86,11 +86,11 @@ class HumanRequestHandler(http.server.SimpleHTTPRequestHandler):
 # Main Plugin
 class Human(dpp_base):
 
-    def start_init(self, config=None):
+    def cb_initialize_plugin(self):
 
         # Plugin is triggered by arrival of data
-        self.set_event_trigger_mode(True)
-        self.config = config
+        self.pl_set_event_trigger_mode(True)
+        self.config = self.pl_get_current_config_ref()
         # Read Configuration
 
         self.Up_w_Id = self.config['quat_upperarm_w']['value']
@@ -145,15 +145,15 @@ class Human(dpp_base):
         # Return init success
         return True
 
-    def pause(self):
+    def cb_pause(self):
         # Will be called, when plugin gets paused
         pass
 
-    def resume(self):
+    def cb_resume(self):
         # Will be called when plugin gets resumed
         pass
 
-    def execute(self, Data=None, block_name = None, plugin_uname = None):
+    def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
 
         # IMPORTANT: The identification names have to be the same as written in RTmain.sce!
 
@@ -215,10 +215,10 @@ class Human(dpp_base):
                            self.Angle_Data_Fo_y, self.Angle_Data_Fo_z]
 
 
-    def set_parameter(self, name, value):
+    def cb_set_parameter(self, name, value):
         pass
 
-    def quit(self):
+    def cb_quit(self):
         #TODO: self.thread.join()
 
         self.thread_goOn = False
@@ -228,7 +228,7 @@ class Human(dpp_base):
         pass
 
 
-    def get_plugin_configuration(self):
+    def cb_get_plugin_configuration(self):
         config = {
             "quat_upperarm_w": {
                 'value': 'quat_upperarm_w'
@@ -261,7 +261,7 @@ class Human(dpp_base):
         }
         return config
 
-    def plugin_meta_updated(self):
+    def cb_plugin_meta_updated(self):
         pass
 
 

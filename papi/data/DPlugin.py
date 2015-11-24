@@ -19,7 +19,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors
@@ -27,10 +27,13 @@ Sven Knuth
 """
 
 from papi.data import DParameter
+from papi.constants import CORE_TIME_SIGNAL
 
-__author__ = 'knuths'
+
+
 
 from papi.data.DObject import DObject
+from papi.data.DSignal import DSignal
 import copy
 
 
@@ -52,6 +55,7 @@ class DBlock(DObject):
         self.dplugin_id = None
         self.name = name
         self.signals = []
+        self.add_signal(DSignal(CORE_TIME_SIGNAL))
 
     def add_subscribers(self, dplugin):
         """
@@ -103,6 +107,7 @@ class DBlock(DObject):
         if signal in self.signals:
             signal.uname = signal.uname + "_deleted"
             signal.dname = signal.dname + "_deleted"
+            signal.remove()
             self.signals.remove(signal)
 
             return True
@@ -116,7 +121,7 @@ class DBlock(DObject):
         :return:
         :rtype []:
         """
-        return copy.deepcopy(self.subscribers)
+        return self.subscribers
 
     def get_signal_by_uname(self, uname):
         """
@@ -140,9 +145,20 @@ class DBlock(DObject):
         """
         return copy.deepcopy(self.signals)
 
+    def get_name(self):
+        """
+        Returns the name of this block.
+
+        :return block_name:
+        """
+        return self.name
+
+
 
 class DEvent(DBlock):
-    pass
+    def __init__(self, name):
+        super(DEvent, self).__init__(name)
+
 
 class DPlugin(DObject):
     """
@@ -212,6 +228,9 @@ class DPlugin(DObject):
                 for signal in signals:
                     subscription.rm_signal(signal)
 
+                if 0 == len(subscription.get_signals()):
+                    subscription.remove()
+                    del self.__subscriptions[dblock.dplugin_id][dblock.name]
                 return subscription
             else:
                 return None
@@ -220,7 +239,7 @@ class DPlugin(DObject):
 
     def subscribe(self, dblock):
         """
-        This plugin subscribes a 'dblock' by remembering the dblog id.
+        This plugin subscribes a 'dblock' by remembering the dblock id.
 
         :param dblock: DBlock which should be subscribed
         :return:
@@ -253,6 +272,7 @@ class DPlugin(DObject):
         else:
 
             if dblock.name in self.__subscriptions[dblock.dplugin_id]:
+                self.__subscriptions[dblock.dplugin_id][dblock.name].remove()
                 del self.__subscriptions[dblock.dplugin_id][dblock.name]
 
                 if len(self.__subscriptions[dblock.dplugin_id]) is 0:
@@ -264,7 +284,7 @@ class DPlugin(DObject):
 
     def get_subscribtions(self):
         """
-        Returns a reference to a dictionary of all subcribtions.
+        Returns a reference to a dictionary of all subscribtions.
 
         :return {}{} of DPlugin ids to DBlock names :
         :rtype: {}{}
@@ -299,6 +319,7 @@ class DPlugin(DObject):
         """
 
         if parameter.name in self.__parameters:
+            self.__parameters[parameter.name].remove()
             del self.__parameters[parameter.name]
             return True
         else:
@@ -343,6 +364,7 @@ class DPlugin(DObject):
         if dblock.name in self.__blocks:
             del self.__blocks[dblock.name]
             dblock.name += "_deleted"
+            dblock.remove()
             return True
         else:
             return False
@@ -355,6 +377,16 @@ class DPlugin(DObject):
         :rtype {}:
         """
         return self.__blocks
+
+    def get_devent(self):
+        devent_dict = {}
+        for dblock_name in self.__blocks:
+            block = self.__blocks[dblock_name]
+            if isinstance(block, DEvent):
+                devent_dict[dblock_name] = block
+
+        return devent_dict
+
 
     def get_dblock_by_name(self, dblock_name):
         """
@@ -416,13 +448,70 @@ class DPlugin(DObject):
         # Update DParameters of DPlugin
         # -----------------------------
 
-        self.__parameters = meta.__parameters
+        copy_parameters = copy.deepcopy(self.__parameters)
+
+        for parameter_name in meta.__parameters:
+            if parameter_name in self.__parameters:
+                self.__parameters[parameter_name].update_meta(meta.__parameters[parameter_name])
+
+            if parameter_name not in copy_parameters:
+                self.add_parameter(meta.__parameters[parameter_name])
+
+        for parameter_name in copy_parameters:
+            if parameter_name not in meta.__parameters:
+                self.rm_parameter(self.__parameters[parameter_name])
 
         # -----------------------------
         # Update DSubscriptions of DPlugin
         # -----------------------------
 
-        self.__subscriptions = meta.__subscriptions
+        copy_subscriptions = copy.deepcopy(self.__subscriptions)
+        meta_subscriptions = meta.__subscriptions
+
+        #self.__subscriptions = meta_subscriptions
+
+        # ---------------------------------------
+        # Create missing subscriptions
+        # Update existing subscriptions
+        # ---------------------------------------
+
+        for dplugin_uname in meta_subscriptions:
+
+            if dplugin_uname in copy_subscriptions:
+
+                for dblock_name in meta_subscriptions[dplugin_uname]:
+
+                    if dblock_name in copy_subscriptions[dplugin_uname]:
+                        self.__subscriptions[dplugin_uname][dblock_name].update_meta(meta_subscriptions[dplugin_uname][dblock_name])
+                    else:
+                        self.__subscriptions[dplugin_uname][dblock_name] = {}
+                        self.__subscriptions[dplugin_uname][dblock_name] = meta_subscriptions[dplugin_uname][dblock_name]
+            else:
+                self.__subscriptions[dplugin_uname] = meta_subscriptions[dplugin_uname]
+
+        # -----------------------------------------
+        # Remove no more needed subscriptions
+        # -----------------------------------------
+
+        for dplugin_uname in copy_subscriptions:
+
+            if dplugin_uname in meta_subscriptions:
+
+                for dblock_name in copy_subscriptions[dplugin_uname]:
+
+                    if dblock_name not in meta_subscriptions[dplugin_uname]:
+                        # Remove old subscription for dblock_name of dplugin_name
+                        self.__subscriptions[dplugin_uname][dblock_name].remove()
+                        del self.__subscriptions[dplugin_uname][dblock_name]
+
+            else:
+                for dblock_name in copy_subscriptions[dplugin_uname]:
+                    # Remove old subscritions for dplugin_uname
+                    self.__subscriptions[dplugin_uname][dblock_name].remove()
+                    del self.__subscriptions[dplugin_uname][dblock_name]
+
+                del self.__subscriptions[dplugin_uname]
+
 
         # -----------------------------
         # Update DBlocks of DPlugin
@@ -438,8 +527,11 @@ class DSubscription(DObject):
     def __init__(self, dblock):
         self.dblock = dblock
         self.dblock_name = dblock.name
+        self.dplugin_id = dblock.dplugin_id
+
         self.alias = None
         self.signals = []
+        self.add_signal(CORE_TIME_SIGNAL)
 
     def add_signal(self, signal):
         """
@@ -482,7 +574,11 @@ class DSubscription(DObject):
         :return:
         :rtype: []
         """
-        return copy.copy(self.signals)
+        return self.signals
+
+    def update_meta(self, subscription):
+        self.alias = subscription.alias
+        self.signals = subscription.signals
 
     def attach_signal(self, signal):
         raise NotImplementedError("Stop Using this function.")

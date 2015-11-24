@@ -16,7 +16,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
@@ -47,7 +47,7 @@ private:
     //Buffer and buffer information
     std::size_t send_msg_length_;
     boost::array<char, 8192> recv_buffer_;
-    boost::array<char, 8192> send_buffer_;
+    boost::array<char, 65507> send_buffer_;
     boost::mutex mutex_send_buffer_;
 
 
@@ -81,6 +81,7 @@ public:
 
     void run();
     void stop();
+    void sendData(const char*, std::size_t);
     void sendData(int*, std::size_t);
 
 };

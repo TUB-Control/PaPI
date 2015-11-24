@@ -19,7 +19,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
  
-You should have received a copy of the GNU Lesser General Public License
+You should have received a copy of the GNU General Public License
 along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
  
 Contributors:
@@ -29,9 +29,9 @@ Contributors:
 import copy
 import traceback
 import importlib.machinery
-import time
+import sys
 
-from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, \
+from papi.constants import PLUGIN_STATE_PAUSE, PLUGIN_VIP_IDENTIFIER, \
     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_PROCESS_CONSOLE_IDENTIFIER, GUI_WOKRING_INTERVAL, \
     PLUGIN_ROOT_FOLDER_LIST, PLUGIN_STATE_START_SUCCESFUL, PLUGIN_STATE_STOPPED, \
     PLUGIN_STATE_START_FAILED
@@ -44,7 +44,7 @@ from papi.yapsy.PluginManager import PluginManager
 from papi.data.DPlugin import DPlugin
 from PyQt5 import QtCore
 
-__author__ = 'Stefan'
+
 
 
 class GuiEventProcessing(QtCore.QObject):
@@ -94,7 +94,7 @@ class GuiEventProcessing(QtCore.QObject):
                               'pause_plugin': self.process_pause_plugin,
                               'resume_plugin': self.process_resume_plugin,
                               'stop_plugin': self.process_stop_plugin,
-                              'start_plugin': self.process_start_plugin,
+                              'start_plugin': self.process_restart_plugin,
                               'parameter_info': self.process_parameter_info
         }
 
@@ -165,11 +165,11 @@ class GuiEventProcessing(QtCore.QObject):
                     # check if new_data is a parameter or new raw data
                     try:
                         if opt.is_parameter is False:
-                            dplugin.plugin.execute(
-                                Data=dplugin.plugin.demux(opt.data_source_id, opt.block_name, opt.data),
+                            dplugin.plugin.cb_execute(
+                                Data=dplugin.plugin._demux(opt.data_source_id, opt.block_name, opt.data),
                                 block_name=opt.block_name, plugin_uname=event.source_plugin_uname)
                         else:
-                            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+                            dplugin.plugin._set_parameter_internal(opt.parameter_alias, opt.data)
                     except Exception as E:
                         tb = traceback.format_exc()
 
@@ -194,7 +194,7 @@ class GuiEventProcessing(QtCore.QObject):
         if dplugin is not None:
             if dplugin.own_process is False:
                 try:
-                    dplugin.plugin.quit()
+                    dplugin.plugin.cb_quit()
                 except Exception as E:
                     tb = traceback.format_exc()
                     self.plugin_died.emit(dplugin, E, tb)
@@ -218,7 +218,7 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
             try:
-                dplugin.plugin.quit()
+                dplugin.plugin.cb_quit()
                 dplugin.state = PLUGIN_STATE_STOPPED
                 self.removed_dplugin.emit(dplugin)
                 self.dgui_changed.emit()
@@ -226,10 +226,10 @@ class GuiEventProcessing(QtCore.QObject):
                 tb = traceback.format_exc()
                 self.plugin_died.emit(dplugin, E, tb)
 
-    def process_start_plugin(self, event):
+    def process_restart_plugin(self, event):
         """
         Processes plugin_start event.
-        Used to start a plugin after the plugin was stopped. Emit DPlugin was added -> necessary signal for the GUI.
+        Used to (re-)start a plugin after the plugin was stopped. Emit DPlugin was added -> necessary signal for the GUI.
 
         :param event:
         :return:
@@ -238,7 +238,7 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(id)
         if dplugin is not None:
             try:
-                if dplugin.plugin.start_init(dplugin.plugin.get_current_config()) is True:
+                if dplugin.plugin._starting_sequence(dplugin.plugin.pl_get_current_config()) is True:
                     dplugin.state = PLUGIN_STATE_START_SUCCESFUL
                     self.added_dplugin.emit(dplugin)
                 else:
@@ -285,19 +285,30 @@ class GuiEventProcessing(QtCore.QObject):
         # plugin seems to exist, so get the path of the plugin file
         imp_path = plugin_orginal.path + ".py"
         # build a loader object for this plugin
-        loader = importlib.machinery.SourceFileLoader(plugin_orginal.name.lower(), imp_path)
-        # load the plugin source code
-        current_modul = loader.load_module()
+        module_name = plugin_orginal.name.lower()
+
+        spec = importlib.util.find_spec(module_name)
+        #Module was not yet loaded
+        if spec is None:
+            loader = importlib.machinery.SourceFileLoader(module_name, imp_path)
+            current_modul = loader.load_module()
+            #Add path to sys path otherwise importlib.import_module will not find the module
+            sys_path = "/".join(plugin_orginal.path.split('/')[0:-1])
+            sys.path.append(sys_path)
+        else:
+            #Import module
+            current_modul = importlib.import_module(module_name)
+
         # build the plugin class name for usage
         class_name = plugin_orginal.name[:1].upper() + plugin_orginal.name[1:]
         # get the plugin class of the source code loaded and init class as a new object
         plugin = getattr(current_modul, class_name)()
         # get default startup configuration for merge with user defined startup_configuration
-        start_config = plugin.get_startup_configuration()
+        start_config = plugin._get_startup_configuration()
         config = dict(list(start_config.items()) + list(config.items()))
 
         # check if plugin in ViP (includes pcp) or something which is not running in the gui process
-        if plugin.get_type() == PLUGIN_VIP_IDENTIFIER or plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
+        if plugin._get_type() == PLUGIN_VIP_IDENTIFIER:
             # plugin in running in gui process
             # add a new dplugin object to DGui and set its type and uname
             dplugin = self.gui_data.add_plugin(None, None, False, self.gui_queue, plugin, id)
@@ -305,14 +316,15 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.type = opt.plugin_type
             dplugin.plugin_identifier = plugin_identifier
             dplugin.startup_config = config
+            dplugin.path = plugin_orginal.path
             # call the init function of plugin and set queues and id
             api = Plugin_api(self.gui_data, self.core_queue, self.gui_id, uname + ' API:', tabManager=self.TabManger)
 
             # call the plugin developers init function with config
             try:
-                dplugin.plugin.init_plugin(self.core_queue, self.gui_queue, dplugin.id, api,
+                dplugin.plugin._init_plugin(self.core_queue, self.gui_queue, dplugin.id, api,
                                            dpluginInfo=dplugin.get_meta(),TabManger=self.TabManger)
-                if dplugin.plugin.start_init(copy.deepcopy(config)) is True:
+                if dplugin.plugin._starting_sequence(copy.deepcopy(config)) is True:
                     # start succcessfull
                     self.core_queue.put(Event.status.StartSuccessfull(dplugin.id, 0, None))
                 else:
@@ -320,7 +332,7 @@ class GuiEventProcessing(QtCore.QObject):
 
                 # first set meta to plugin (meta infos in plugin)
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
-                    dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+                    dplugin.plugin._update_plugin_meta(dplugin.get_meta())
 
             except Exception as E:
                 dplugin.state = PLUGIN_STATE_STOPPED
@@ -339,6 +351,7 @@ class GuiEventProcessing(QtCore.QObject):
             dplugin.uname = uname
             dplugin.startup_config = opt.plugin_config
             dplugin.type = opt.plugin_type
+            dplugin.path = plugin_orginal.path
             # debug print
             self.log.printText(1, 'create_plugin, Plugin with name  ' + str(uname) + '  was added as non ViP')
 
@@ -392,7 +405,7 @@ class GuiEventProcessing(QtCore.QObject):
             if dplugin.own_process is False:
                 if dplugin.state not in [PLUGIN_STATE_STOPPED]:
                     # try:
-                        dplugin.plugin.update_plugin_meta(dplugin.get_meta())
+                        dplugin.plugin._update_plugin_meta(dplugin.get_meta())
                     # except Exception as E:
                     #     dplugin.state = PLUGIN_STATE_STOPPED
                     #     tb = traceback.format_exc()
@@ -402,6 +415,9 @@ class GuiEventProcessing(QtCore.QObject):
         else:
             # plugin does not exist
             self.log.printText(1, 'update_meta, Plugin with id  ' + str(pl_id) + '  does not exist')
+
+    def process_update_parameter(self, event):
+        print('Just update')
 
     def process_set_parameter(self, event):
         """
@@ -418,13 +434,15 @@ class GuiEventProcessing(QtCore.QObject):
         # get optional data of event
         opt = event.get_optional_parameter()
 
+        if isinstance(event, Event.instruction.UpdateParameter):
+            return
 
         # get destination plugin from DGUI
         dplugin = self.gui_data.get_dplugin_by_id(dID)
         # check if it exists
         if dplugin is not None:
             # it exists, so call its execute function
-            dplugin.plugin.set_parameter_internal(opt.parameter_alias, opt.data)
+            dplugin.plugin._set_parameter_internal(opt.parameter_alias, opt.data)
         else:
             # plugin does not exist in DGUI
             self.log.printText(1, 'set_parameter, Plugin with id  ' + str(dID) + '  does not exist in DGui')
@@ -441,7 +459,7 @@ class GuiEventProcessing(QtCore.QObject):
 
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            dplugin.plugin.pause()
+            dplugin.plugin.cb_pause()
 
     def process_resume_plugin(self, event):
         """
@@ -455,7 +473,7 @@ class GuiEventProcessing(QtCore.QObject):
 
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            dplugin.plugin.resume()
+            dplugin.plugin.cb_resume()
 
     def process_parameter_info(self, event):
         """
@@ -468,7 +486,4 @@ class GuiEventProcessing(QtCore.QObject):
         dplugin = self.gui_data.get_dplugin_by_id(pl_id)
 
         if dplugin is not None:
-            if dplugin.plugin.get_type() == PLUGIN_PCP_IDENTIFIER:
-                dplugin.plugin.new_parameter_info(event.dparameter_object)
-            else:
-                self.log.printText(1, 'non-pcp plugin received new parameter information. Why? Check if bug!')
+            dplugin.plugin.cb_new_parameter_info(event.dparameter_object)
