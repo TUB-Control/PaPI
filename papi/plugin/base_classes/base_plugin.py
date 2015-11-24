@@ -463,7 +463,7 @@ class base_plugin(IPlugin):
 
         :param block_name: Name of the block
         :type block_name: str
-        :return: DBlock Object
+        :return: DBlock Object or None in case of error
         """
         if isinstance(block_name, str):
             block = DBlock(name=block_name)
@@ -480,7 +480,7 @@ class base_plugin(IPlugin):
         :type signal_uname: str
         :param display_name: Name to display (alias) of the signal
         :type display_name: str
-        :return: DSignal Object
+        :return: DSignal Object or None in case of error
         """
         if isinstance(signal_uname, str):
             if display_name is not None and isinstance(display_name, str):
@@ -494,13 +494,27 @@ class base_plugin(IPlugin):
         """
         Creates a DParameter for use in a PaPI Plugin
 
-        :param parameter_name:
-        :param default_value:
-        :param regex:
-        :param optional_object_to_store:
-        :return:
+        :param parameter_name: Name of parameter
+        :type parameter_name: str
+        :param default_value: Default value for GUI to display
+        :param regex: Regex string for GUI to filter user inputs
+        :param optional_object_to_store: optional object to store within parameter object
+        :return: DParameter object or None in case of error
         """
         if isinstance(parameter_name, str):
             parameter = DParameter(parameter_name, default=default_value,Regex= regex, OptionalObject= optional_object_to_store)
             return parameter
+        return None
+
+    def pl_create_DEvent(self, event_name):
+        """
+        Creates a DEvent for use in a PaPI Plugin
+
+        :param event_name: Name of the event
+        :type event_name: str
+        :return: DEvent object or None in case of error
+        """
+        if isinstance(event, DEvent):
+            event = DEvent(event_name)
+            return event
         return None
