@@ -1,7 +1,7 @@
 Changelog
 ---------
 
-v.1.x:
+v.1.3:
 ------
 -  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically
 -  **feature**: Added a new parameter context menu to plugins which allows easy change of parameters without overview menu

@@ -12,13 +12,13 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
 
     sizeParameters = sum(amount_parameters);
 
-    name_papi_block = 'PaPI Block';
+    name_papi_block = 'PaPI Core Block';
 
     if amountIn < 0
         amountIn = 0;
     end
 
-    papi_block_handle = get_param([gcb '/PaPI Block'],'handle');
+    papi_block_handle = get_param([gcb '/PaPI Core Block'],'handle');
 
     papi_delay_block_handle = get_param([gcb '/PaPIDelay'],'handle');
 

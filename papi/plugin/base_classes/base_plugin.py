@@ -456,7 +456,6 @@ class base_plugin(IPlugin):
                         return True
         return False
 
-
     def pl_create_DBlock(self, block_name):
         """
         Creates a DBlock for use in a PaPI Plugin.
@@ -470,7 +469,6 @@ class base_plugin(IPlugin):
             return block
         else:
             return None
-
 
     def pl_create_DSignal(self, signal_uname, display_name=None):
         """
@@ -514,7 +512,7 @@ class base_plugin(IPlugin):
         :type event_name: str
         :return: DEvent object or None in case of error
         """
-        if isinstance(event, DEvent):
+        if isinstance(event_name, str):
             event = DEvent(event_name)
             return event
         return None

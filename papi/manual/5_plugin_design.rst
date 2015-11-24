@@ -87,13 +87,6 @@ Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
 e.g. a plot. We recommend to read :ref:`Signals/Blocks <man_signal_block>`.
 
-It is necessary to imports this objects:
-
-.. code-block:: python
-
-    from papi.data.DPlugin import DBlock
-    from papi.data.DSignal import DSignal
-
 In the following we gonna create a Block with the name ``Source``. In
 the next step a signal named ``Step`` is created and added to the
 previous created Block. At the end the PaPI-backend will be informed and
@@ -104,8 +97,8 @@ the Block can be used by other plugins. Previous sent blocks will be deleted.
 
     def cb_initialize_plugin(self):
 
-       self.block = DBlock('Source')
-       signal = DSignal('Step')
+       self.block = pl_create_DBlock('Source')
+       signal = pl_create_DSignal('Step')
        self.block.add_signal(signal)
        self.pl_send_new_block_list([block])
 
@@ -119,8 +112,8 @@ Here we assume an IOPlugin which ``cb_execute`` function is called in a loop. In
 
     def cb_initialize_plugin(self):
 
-        self.block = DBlock('Source')
-        self.step_signal = DSignal('Step')
+        self.block = pl_create_DBlock('Source')
+        self.step_signal = pl_create_DSignal('Step')
         self.block.add_signal(self.step_signal)
         self.pl_send_new_block_list([self.block])
 
@@ -159,12 +152,6 @@ create parameters
 
 Parameters are used to enable an external control of a running plugin. We recommend to read :ref:`Parameters <man_parameters>`.
 
-It is necessary to import this object:
-
-.. code-block:: python
-
-    from papi.data.DParameter import DParameter
-
 At first three parameters are created and the PaPI-backend gets
 informed by using the function ``pl_send_new_parameter_list``. To limit possible user entries in the frontend, a regex
 was defined for the
@@ -174,9 +161,9 @@ was defined for the
 
     def cb_initialize_plugin(self):
 
-        self.para_foo      = DParameter('foo',default=0)
-        self.para_bar      = DParameter('bar',default=0)
-        self.para_baz      = DParameter('baz',default=1, Regex='[0-9]+')
+        self.para_foo      = pl_create_DParameter('foo',default=0)
+        self.para_bar      = pl_create_DParameter('bar',default=0)
+        self.para_baz      = pl_create_DParameter('baz',default=1, Regex='[0-9]+')
 
         self.pl_send_new_parameter_list(para_list)
 
@@ -184,12 +171,6 @@ create events
 ~~~~~~~~~~~~~
 
 Events are used to change parameters of other plugins. We recommend to read :ref:`Events <man_events>`.
-
-It is necessary to imports this object:
-
-.. code-block:: python
-
-    from papi.data.DSignal import DEvent
 
 A new event is defined by the following code and at the end the PaPI-backend will be informed and
 the event can be used to change parameters of other plugins. In the code above a button was also created which is used to trigger the change event by a simple user interaction (clicking the button).
@@ -199,7 +180,7 @@ the event can be used to change parameters of other plugins. In the code above a
 
     def cb_initialize_plugin(self):
 
-        self.event_start         = DEvent('Start')
+        self.event_start         = pl_create_DEvent('Start')
         self.pl_send_new_event_list([self.event_start])
 
         self.button = QPushButton(self.name)
