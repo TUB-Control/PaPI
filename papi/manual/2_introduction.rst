@@ -201,6 +201,14 @@ These functions can be used by all types of plugins:
 
     self.pl_get_current_config_ref()
 
+    self.pl_create_DBlock(block_name)
+
+    self.pl_create_DSignal(signal_uname, display_name=None):
+
+    self.pl_create_DParameter(parameter_name, default_value=0, regex=None, optional_object_to_store=None)
+
+    self.pl_create_DEvent(event_name)
+
 These functions can only be used by plugins of type ViP.
 
 .. code-block:: python
@@ -287,7 +295,7 @@ The main window of PaPI contains the following elements.
     - Open: Create Plugin Menu
     - Open: Show Plugin Menu
     - Reset PaPI
-3. Favourite plugins were displayed here.
+3. Favourite plugins are displayed here.
 4. Area which contains all started visual plugins.
 
 PaPI menu

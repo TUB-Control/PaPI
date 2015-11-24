@@ -38,8 +38,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 
 
-CORE_PAPI_VERSION               = '1.2.0' # no spaces allowed
-CORE_CORE_VERSION               = '1.2.0' # no spaces allowed
+CORE_PAPI_VERSION               = '1.3.0' # no spaces allowed
+CORE_CORE_VERSION               = '1.3.0' # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -102,7 +102,7 @@ PAPI_DOC_PREFIX_PLUGIN           = 'man.papi.plugin'
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_1.2.0'
+GUI_VERSION                      = 'v_1.3.0'
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
