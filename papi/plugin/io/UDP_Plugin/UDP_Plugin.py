@@ -185,8 +185,12 @@ class UDP_Plugin(iop_base):
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         if (not self.sendOnReceivePort):
-            self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
-            print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+            try:
+                self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+                print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+            except socket.error as msg:
+                sys.stderr.write("[ERROR] Can't start UDP_Plugin due to %s\n" % msg)
+                return False
         else:
             print ("---- Using client UDP mode (not binding to a port) ----")
 
