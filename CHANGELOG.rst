@@ -1,6 +1,7 @@
 Changelog
 ---------
 
+
 v.1.3:
 ------
 -  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically

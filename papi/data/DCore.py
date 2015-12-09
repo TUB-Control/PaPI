@@ -30,7 +30,7 @@ from papi.data.DObject import DObject
 from papi.ConsoleLog import ConsoleLog
 import copy
 import papi.error_codes as ERROR
-
+from papi.constants import DCORE_CONSOLE_LOG_LEVEL
 
 
 
@@ -47,7 +47,7 @@ class DCore():
         self.__DPlugins = {}
 
         self.__newid = 0
-        self.log = ConsoleLog(2, "DCore: ")
+        self.log = ConsoleLog(DCORE_CONSOLE_LOG_LEVEL, "DCore: ")
 
     def create_id(self):
         """
@@ -188,7 +188,7 @@ class DCore():
         dblock = target.get_dblock_by_name(dblock_name)
 
         if dblock is None:
-            self.log.printText(1, "Target " + target.uname + " has no DBlock " + dblock_name)
+            self.log.printText(3, "Target " + target.uname + " has no DBlock " + dblock_name)
 
             return None
 

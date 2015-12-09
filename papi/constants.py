@@ -36,7 +36,7 @@ PAPI_DEV_EDITION                = True
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
-
+DCORE_CONSOLE_LOG_LEVEL         = 2
 
 CORE_PAPI_VERSION               = '1.3.0' # no spaces allowed
 CORE_CORE_VERSION               = '1.3.0' # no spaces allowed

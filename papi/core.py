@@ -418,6 +418,7 @@ class Core:
         if source_pl is not None:
 
             if source_pl.state != PLUGIN_STATE_START_SUCCESFUL:
+                # source for subscription does not exists yet, so delay subscription event again
                 self.core_delayed_operation_queue.append(orginal_event)
                 self.log.printText(2, 'subscribe, event was placed in delayed queue because plugin with id: '
                                    + str(source_id) + ' is still starting.')
@@ -434,6 +435,8 @@ class Core:
             dsubscription = self.core_data.subscribe(subscriber_id, source_id, block_name)
             if dsubscription is None:
                 # subscription failed
+                # maybe the block does not exists yet, so delay subscription event again
+                self.core_delayed_operation_queue.append(orginal_event)
                 self.log.printText(1, 'subscribe, something failed in subscription process with subscriber id: ' + str(
                     subscriber_id) + '..target id:' + str(source_id) + '..and block ' + str(block_name))
                 return -1
@@ -467,6 +470,11 @@ class Core:
         self.update_meta_data_to_gui(source_id)
         return ERROR.NO_ERROR
 
+
+    def checkEventsInDelayedQueue(self):
+        # process delayed_operation_queue
+        while len(self.core_delayed_operation_queue) != 0:
+            self.core_event_queue.put(self.core_delayed_operation_queue.pop(0))
 
 
     # ------- Event processing initial stage ---------
@@ -527,8 +535,7 @@ class Core:
             self.update_meta_data_to_gui(dplug.id)
 
             # process delayed_operation_queue
-            while len(self.core_delayed_operation_queue) != 0:
-                self.core_event_queue.put(self.core_delayed_operation_queue.pop(0))
+            self.checkEventsInDelayedQueue()
             return 1
         else:
             # plugin does not exist
@@ -793,19 +800,19 @@ class Core:
             if isinstance(eObject, DBlock):
 
                 dblock = pl.get_dblock_by_name(eObject.name)
+                if dblock is not None:
+                    if "edit" in cRequest:
+                        cObject = cRequest["edit"]
 
-                if "edit" in cRequest:
-                    cObject = cRequest["edit"]
+                        # Signal should be modified in DBlock
+                        if isinstance(cObject, DSignal):
+                            dsignal = dblock.get_signal_by_uname(cObject.uname)
 
-                    # Signal should be modified in DBlock
-                    if isinstance(cObject, DSignal):
-                        dsignal = dblock.get_signal_by_uname(cObject.uname)
+                            dsignal.dname = cObject.dname
 
-                        dsignal.dname = cObject.dname
-
-                        self.log.printText(3,
-                                           'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname +
-                                           " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
+                            self.log.printText(3,
+                                               'edit_dplugin, Edited Dblock ' + dblock.name + ' of DPlugin ' + pl.uname +
+                                               " : DSignal " + dsignal.uname + " to dname -> " + dsignal.dname)
 
             self.update_meta_data_to_gui(pl.id, True)
 
@@ -1267,6 +1274,7 @@ class Core:
                 dplugin.add_dblock(b)
             # update meta information of GUI after new blocks were added
             self.update_meta_data_to_gui(pl_id)
+            self.checkEventsInDelayedQueue()
             return 1
         else:
             # plugin does not exist
