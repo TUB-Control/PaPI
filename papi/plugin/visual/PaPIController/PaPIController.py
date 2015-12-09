@@ -67,7 +67,10 @@ class PaPIController(vip_base):
         self.ControllerWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ControllerWidget.customContextMenuRequested.connect(self.show_context_menu)
 
-        self.start_UDP_plugin()
+        if self.pl_get_config_element('StartUDPPlugin',castHandler=bool) is True:
+            self.start_UDP_plugin()
+            self.pl_set_config_element('StartUDPPlugin', 0)
+
         return True
 
     def show_context_menu(self, pos):
@@ -128,8 +131,9 @@ class PaPIController(vip_base):
                     for pl_uname in cfg:
                         if pl_uname not in self.plugin_started_list:
                             pl_cfg = cfg[pl_uname]
-                            self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
-                            self.plugin_started_list.append(pl_uname)
+                            if pl_cfg['identifier'] != 'PaPIController':
+                                self.control_api.do_create_plugin(pl_cfg['identifier']['value'],pl_uname, pl_cfg['config'])
+                                self.plugin_started_list.append(pl_uname)
 
 
             ############################
@@ -265,6 +269,13 @@ class PaPIController(vip_base):
                 'value' :'0',
                 'tooltip' : 'Use only first configuration, ignore further configurations.',
                 'type' : 'bool'
+            },
+            "StartUDPPlugin": {
+                'value':'1',
+                'type': 'bool',
+                'tooltip': 'Decide whether the controller starts a UDP Plugin',
+                'display_text': 'Start a UDP Plugin',
+                'advanced': '1'
             }
         }
         return config
