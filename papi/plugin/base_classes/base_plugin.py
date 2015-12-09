@@ -36,6 +36,9 @@ from papi.constants import CORE_TIME_SIGNAL
 import papi.event as Event
 import papi.exceptions as pe
 
+import os
+import traceback
+
 class base_plugin(IPlugin):
     """
     This class is used as basis class for all other plugin bases
@@ -516,3 +519,7 @@ class base_plugin(IPlugin):
             event = DEvent(event_name)
             return event
         return None
+
+    def pl_get_plugin_path(self):
+        script = traceback.extract_stack()[-2][0]
+        return os.path.dirname(script)
