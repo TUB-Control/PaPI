@@ -603,7 +603,7 @@ class UDP_Plugin(iop_base):
                     # if NValues > 1:
                     #     signal_id,data = struct.unpack_from('<id%sd' %NValues, rev, offset)
                     #     offset += (NValues-1)*(4+4)
-                    if self.Sources[str(signal_id)]["SourceName"] == "time":
+                    if self.Sources[str(signal_id)]["SourceName"] == "SourceTime":
                             timestamp = val[0]
 
                     self.signal_values[signal_id] = val

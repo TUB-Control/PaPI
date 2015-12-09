@@ -30,6 +30,7 @@ Sven Knuth
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <cstdio>
 #include <algorithm>
 #include <signal.h>
@@ -100,6 +101,9 @@ private:
     bool config_sent;
     std::string data_to_sent;
 
+    bool use_external_config_file;
+    std::string external_config_file;
+
     void parseBlockJsonConfig(signed char json_string[]);
     void buildConfiguration(double para_out[]);
 
@@ -127,7 +131,8 @@ public:
         int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
         int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
         int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
-        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
+        int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp,  // Parameters: p7 - p10
+        int p11_use_external_file, signed char p12_external_file[]
     );
 
     ~PaPIBlock();
@@ -149,7 +154,8 @@ extern void createPaPIBlock(
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp,  // Parameters: p7 - p10
+    int p11_use_external_file, signed char p12_external_file[]
 );
 
 extern void deletePaPIBlock(void **work1);

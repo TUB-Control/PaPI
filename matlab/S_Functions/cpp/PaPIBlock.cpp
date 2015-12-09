@@ -48,6 +48,8 @@ typedef struct __attribute__((packed)) para {
     double value;
 };
 
+std::string signedCharToString(signed char s[]);
+
 /**********************************/
 /**** Class method definitions ****/
 /**********************************/
@@ -56,7 +58,8 @@ PaPIBlock::PaPIBlock(
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6,  // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp,  // Parameters: p7 - p10
+    int p11_use_external_file, signed char p12_external_file[]
     )
     {
 
@@ -68,6 +71,8 @@ PaPIBlock::PaPIBlock(
         printf("Create: PaPIBlock (Simulation)\n");
     #endif
 
+    this->external_config_file = signedCharToString(p12_external_file);
+    this->use_external_config_file = p11_use_external_file == 1;
 
     this->size_config = 0;
     this->stream_in_length = 0;
@@ -137,6 +142,7 @@ PaPIBlock::PaPIBlock(
     for (int i=0; i<this->size_output_parameters;i++){
         this->buffer_para_out[i] = 0;
     }
+
 
     this->buildConfiguration(this->buffer_para_out);
     this->data_to_sent = this->config.substr(0);
@@ -224,6 +230,20 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
     Json::Value signalNames    =    blockConfig["SignalNames"];
 
     Json::Value papiConfig    =    this->blockJsonConfig["PaPIConfig"];
+
+    if (this->use_external_config_file) {
+        Json::Value root;
+        Json::Reader reader;
+        string line;
+        ifstream myfile (this->external_config_file.c_str());
+        bool success = reader.parse( myfile, root, false );
+        if (success) {
+            cout << reader.getFormatedErrorMessages() << endl;
+            papiConfig = root["PaPIConfig"];
+        } else {
+            printf("Failed to parse json string \n");
+        }
+    }
 
     Json::Value sourcesConfig;
     Json::Value parametersConfig;
@@ -331,7 +351,7 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
             ssc << signal_count;
             c_string = ssc.str();
 
-            ui["SourceName"] = "time";
+            ui["SourceName"] = "SourceTime";
             ui["NValues_send"] = "1";
             ui["datatype"]     = "257";
 
@@ -705,6 +725,19 @@ std::string intToString(int i) {
 }
 
 
+std::string signedCharToString(signed char s[]) {
+  std::stringstream ss;
+
+  for(int i=0;;i++) {
+      ss << s[i];
+      if (s[i] == '\0') {
+          break;
+      }
+  }
+
+  return ss.str();
+}
+
 //*************************************************
 //**** Wrappers for methods called in Simulink ****
 //*************************************************
@@ -714,7 +747,8 @@ void createPaPIBlock(
     int size_u1, int size_p1, int size_p2, int size_p5, int size_p6, // Sizes determined by size() in the build script
     int p1_dimension_parameters[], signed char p2_json_config[], int p3_size_data_out,    // Parameters: p1 - p3
     int p4_amount_para_out, int p5_dimension_input_signals[], int p6_split_signals[],     // Parameters: p4 - p6
-    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp  // Parameters: p7 - p10
+    int p7_local_port, int p8_remote_port, signed char p9_remote_ip[], int p10_start_udp,  // Parameters: p7 - p10
+    int p11_use_external_file, signed char p12_external_file[]
     )
     {
 
@@ -722,7 +756,8 @@ void createPaPIBlock(
         size_u1, size_p1, size_p2, size_p5, size_p6,
         p1_dimension_parameters, p2_json_config, p3_size_data_out,
         p4_amount_para_out, p5_dimension_input_signals, p6_split_signals,
-        p7_local_port, p8_remote_port, p9_remote_ip, p10_start_udp
+        p7_local_port, p8_remote_port, p9_remote_ip, p10_start_udp,
+        p11_use_external_file, p12_external_file
         );
     PaPIBlock *madClass = (class PaPIBlock *) *work1;
 }
