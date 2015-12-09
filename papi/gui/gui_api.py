@@ -1206,7 +1206,7 @@ class Gui_api(QtCore.QObject):
 
         try:
             with open(path, 'w') as outfile:
-                json.dump(papi_config, outfile)
+                json.dump(papi_config, outfile, indent='    ')
 
         except:
             pass
