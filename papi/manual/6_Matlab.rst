@@ -31,41 +31,27 @@ The depencies can be easily fulfilled by installing the following packages:
 Library
 -------
 
-The library is made out of two blocks:
+The library is made out of one block:
 
-.. |PaPI_Block_img_desc| replace:: The `PaPI Block` is the core block which calls the underlying S_Function to provide a communicaion with PaPI.
-                                   This block `SHOULD NOT` be used.
+.. |PaPI_Block_img_desc| replace:: The `PaPI Block` is made of sub system which contains the `PaPI Core Block`.
+                                            This blocks provides an easy configurable interface to the core block.
 
 .. |PaPI_Block_img| image:: _static/matlab/PaPI_Block.png
-                    :height: 250
-
-
-.. |PaPI_Block_Complete_img_desc| replace:: The `PaPI Block Complete` made of sub system which contains the `PaPI Block`.
-                                            This blocks contains an easy configurable interface to the core block. This block `SHOULD` be used.
-
-.. |PaPI_Block_Complete_img| image:: _static/matlab/PaPI_Block_Complete.png
                              :height: 250
 
 
 
-+---------------------------+----------------------------------+
-| |PaPI_Block_img|          | |PaPI_Block_Complete_img|        |
-+---------------------------+----------------------------------+
-| |PaPI_Block_img_desc|     | |PaPI_Block_Complete_img_desc|   |
-+---------------------------+----------------------------------+
++---------------------------+
+| |PaPI_Block_img|          |
++---------------------------+
+| |PaPI_Block_img_desc|     |
++---------------------------+
 
-PaPI_Block
-~~~~~~~~~~
-
-Should not be used ! No further description.
-
-PaPI_Block_Complete
-~~~~~~~~~~~~~~~~~~~
 
 Input Signals
 ^^^^^^^^^^^^^
 
-The `control` is used to control the internal behaviour of the block
+The `control` input signal is used to control the internal behaviour of the block
 
 .. list-table:: Possible values control signal
     :widths: 15 10
@@ -103,29 +89,8 @@ The settings for `Code Generation` must be edited as following:
 
     make_rtw OPTS="-DWITH_HW"
 
-The settings for `Code Generation/Custom Code` must be edited as following:
-
-.. code-block:: matlab
-
-    Include directories:
-
-    /usr/local/MATLAB/R2014b/sys/os/glnxa64/
-    /usr/lib/x86_64-linux-gnu/
-    /usr/include/
-
-.. code-block:: matlab
-
-    Libraries:
-
-    libstdc++.so.6
-    libgcc_s.so.1 
-    libgfortran.so.3
-    libdl.so
-    libboost_system.so
-    libboost_thread.so
-    libboost_signals.so
-
 Due to a new version of ert_linux, it is needed to use **C89/C90 (ANSI)** as default math library. This option can be found in `Code Generation/Interface`.
+It is also needed to enable the external mode, can also be found in `Code Generation/Interface`.
 
 Block Configuration
 -------------------

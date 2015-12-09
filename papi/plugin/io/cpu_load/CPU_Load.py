@@ -21,15 +21,15 @@ class CPU_Load(iop_base):
     def cb_initialize_plugin(self):
         self.t = 0
         self.delta_t = 0.01
-        self.para_delta_t = DParameter('Delta_t', default=0.01)
+
+        self.para_delta_t = self.pl_create_DParameter('Delta_t', default_value=0.01)
 
         self.pl_send_new_parameter_list([self.para_delta_t])
 
-        block1 = DBlock('CPUload')
+        block1 = self.pl_create_DBlock('CPUload')
+        signal = self.pl_create_DSignal('load_in_percent')
 
-        signal = DSignal('load_in_percent')
         block1.add_signal(signal)
-
 
         self.pl_send_new_block_list([block1])
         return True
@@ -49,8 +49,7 @@ class CPU_Load(iop_base):
 
         self.t += self.delta_t
 
-
-        self.pl_send_new_data('CPUload', vec[0], {'load_in_percent':vec[1]} )
+        self.pl_send_new_data('CPUload', [vec[0, 0]], {'load_in_percent': vec[1]})
 
         time.sleep(self.delta_t)
 

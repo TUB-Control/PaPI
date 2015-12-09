@@ -11,6 +11,7 @@ RST_SRC_DIR := papi
 RST_DES_DIR := docs
 
 RST_STATIC_FOLDER_SRC := _static
+RST_STATIC_FOLDER_SRC_TEXT_ONLY := _sta_tic
 RST_STATIC_FOLDER_DES := $(RST_DES_DIR)/_static
 
 UI_FILES_FOUND := $(shell find $(SRC_DIR) -name '*.ui')
@@ -76,6 +77,7 @@ $(RST_DES_DIR)/%.rst: $(RST_FILES_SRC)
 #	@echo "Copy static files from" $(static_folder_src) "to" $(RST_STATIC_FOLDER_DES)/
 	@if [ -d $(static_folder_src) ] ; then \
 	sed -i s,$(RST_STATIC_FOLDER_SRC),$(RST_STATIC_FOLDER_SRC)/$(unique_name),g $(tar_name) ; \
+	sed -i s,$(RST_STATIC_FOLDER_SRC_TEXT_ONLY),$(RST_STATIC_FOLDER_SRC),g $(tar_name) ; \
 	$(MKDIR_P) $(RST_STATIC_FOLDER_DES)/$(unique_name) ; \
 	cp -Rp $(static_folder_src)* $(RST_STATIC_FOLDER_DES)/$(unique_name)/ ; \
 	fi

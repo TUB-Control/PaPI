@@ -1167,6 +1167,7 @@ class Gui_api(QtCore.QObject):
             if dplugin.uname in sToSave:
                 subsOfPl = {}
                 subs = dplugin.get_subscribtions()
+
                 for sub in subs:
                     sourcePL = self.gui_data.get_dplugin_by_id(sub).uname
 
@@ -1176,9 +1177,11 @@ class Gui_api(QtCore.QObject):
                         subsOfPl[sourcePL][block] = {}
                         dsubscription = subs[sub][block]
                         subsOfPl[sourcePL]['alias'] = dsubscription.alias
-
+                        print(sourcePL)
+                        print(block)
                         if dsubscription.alias is not None:
-                            to_control[sourcePL] = {}
+                            if sourcePL not in to_control:
+                                to_control[sourcePL] = {}
                             to_control[sourcePL][block] = {'parameter' : dsubscription.alias}
                         else:
 

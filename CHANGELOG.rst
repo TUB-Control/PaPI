@@ -1,7 +1,7 @@
 Changelog
 ---------
 
-v.1.x:
+v.1.3:
 ------
 -  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically
 -  **feature**: Added a new parameter context menu to plugins which allows easy change of parameters without overview menu
@@ -11,13 +11,13 @@ v.1.x:
 -  **feature**: PaPI Configuration can be saved in a json format. The resulting file can be used by the PaPI Simulink block
 -  **feature**: Auto-Scale of background images
 -  **feature**: Background image will be the same after dock / detach
--  **improvement**: Backgorund image will now be loaded from cfg as well as opened tabs.
+-  **improvement**: Background image will now be loaded from cfg as well as opened tabs.
 -  **improvement**: Cleaned up the plugin developers API
 -  **doc**: Added documentation for the main window
 -  **doc**: Added documentation for shortcuts
 -  **simulink**: Added Checkbox to control if the UDPServer should be started in the initial phase
 -  **simulink**: SampleTime of the PaPIBlock is now parameterized
--  **simulink**: PaPIBlock is now always delayed by one step due to a legacy tool limitation: It is not possible to set the direct feedthrough flag to zero.
+-  **simulink**: PaPIBlock output is now always delayed by one step due to a legacy tool limitation: It is not possible to set the direct feedthrough flag to zero.
 -  **gui**: Added search bar for overview menu and create menu
 -  **gui**: Added shortcut features to search bar and tree in overview menu and create menu
 -  **gui**: Added shortcuts for actions of the main window for example: save, load

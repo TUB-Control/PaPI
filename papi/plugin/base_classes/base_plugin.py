@@ -28,7 +28,7 @@ Sven Knuth
 """
 import copy
 
-from papi.data.DPlugin import DBlock, DEvent
+from papi.data.DPlugin import DBlock, DEvent, DSignal
 from papi.data.DParameter import DParameter
 from papi.data.DOptionalData import DOptionalData
 from papi.yapsy.IPlugin import IPlugin
@@ -455,3 +455,64 @@ class base_plugin(IPlugin):
                         self._config[field_name]['value'] = str(value)
                         return True
         return False
+
+    def pl_create_DBlock(self, block_name):
+        """
+        Creates a DBlock for use in a PaPI Plugin.
+
+        :param block_name: Name of the block
+        :type block_name: str
+        :return: DBlock Object or None in case of error
+        """
+        if isinstance(block_name, str):
+            block = DBlock(name=block_name)
+            return block
+        else:
+            return None
+
+    def pl_create_DSignal(self, signal_uname, display_name=None):
+        """
+        Creates a DSignal for use in a PaPI Plugin.
+
+        :param signal_uname: unique name of the signal (unique in block context)
+        :type signal_uname: str
+        :param display_name: Name to display (alias) of the signal
+        :type display_name: str
+        :return: DSignal Object or None in case of error
+        """
+        if isinstance(signal_uname, str):
+            if display_name is not None and isinstance(display_name, str):
+                signal = DSignal(uname=signal_uname, dname=display_name)
+            else:
+                signal = DSignal(uname=signal_uname)
+            return signal
+        return None
+
+    def pl_create_DParameter(self,parameter_name, default_value = 0, regex = None, optional_object_to_store=None ):
+        """
+        Creates a DParameter for use in a PaPI Plugin
+
+        :param parameter_name: Name of parameter
+        :type parameter_name: str
+        :param default_value: Default value for GUI to display
+        :param regex: Regex string for GUI to filter user inputs
+        :param optional_object_to_store: optional object to store within parameter object
+        :return: DParameter object or None in case of error
+        """
+        if isinstance(parameter_name, str):
+            parameter = DParameter(parameter_name, default=default_value,Regex= regex, OptionalObject= optional_object_to_store)
+            return parameter
+        return None
+
+    def pl_create_DEvent(self, event_name):
+        """
+        Creates a DEvent for use in a PaPI Plugin
+
+        :param event_name: Name of the event
+        :type event_name: str
+        :return: DEvent object or None in case of error
+        """
+        if isinstance(event_name, str):
+            event = DEvent(event_name)
+            return event
+        return None

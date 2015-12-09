@@ -23,7 +23,7 @@ addpath([pwd '/hpp']);
 addpath([pwd '/cpp']);
 addpath([pwd '/legacy']);
 
-libPaths = {'/usr/lib/','/usr/lib/x86_64-linux-gnu/'};
+libPaths = {'/usr/lib/','/usr/include/','/usr/lib/x86_64-linux-gnu/','/usr/local/MATLAB/R2014b/sys/os/glnxa64/','/usr/lib/gcc/x86_64-linux-gnu/4.8/'};
 
 legacy_folder_cpp = 'legacy/';
 
@@ -48,8 +48,8 @@ def.SourceFiles = {'PaPIBlock.cpp','UDPHandle.cpp'};
 def.IncPaths = {'../hpp'};
 def.SrcPaths = {'../cpp'};
 def.Options.useTlcWithAccel = false;
-def.HostLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so','libboost_signals.so'};
-def.TargetLibFiles = {'libjsoncpp.so','libboost_system.so','libboost_thread.so','libboost_signals.so'};
+def.HostLibFiles   = {'libstdc++.so','libgcc_s.so','libdl.so','libjsoncpp.so','libboost_system.so','libboost_thread.so','libboost_signals.so'};
+def.TargetLibFiles = {'libstdc++.so','libgcc_s.so','libdl.so','libjsoncpp.so','libboost_system.so','libboost_thread.so','libboost_signals.so'};
 def.Options.language = 'C++';
 def.LibPaths = libPaths;
 def.SampleTime    = 'parameterized';

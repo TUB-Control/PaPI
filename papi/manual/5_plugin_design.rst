@@ -16,19 +16,42 @@ The plugins are written in python 3.4. For the development we recommend to use o
 
 The name of a plugin has to be unique, in the following we will use ``<unique-plugin-name>`` as a placeholder.
 
-The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_static``, otherwise these files wont be recognized during the documentation build process.
+The plugin directory ``<unique-plugin-name>`` has to contain a plugin python file ``<unique-plugin-name>.py``, a plugin description file ``<unique-plugin-name>.yapsy-plugin``. Additionally it is possible and **recommended** to add a documentation as a plugin documentation file ``<unique-plugin-name>.rst`` and a small icon as 16x16 png with the name ``box.png``. Files, which are used in the rst-file, should be stored in the sub folder ``_sta_tic``, otherwise these files wont be recognized during the documentation build process.
 
-A sample folder structure is given here:
+The whole plugin folder must then be stored under one of the provided categories, which can be found in ``papi/plugin/``.
 
-.. code-block::
+A sample folder structure for a plugin is given here:
 
-    /LCDDisplay/
-        _static/
-            LCDDisplay.png
-        LCDDisplay.py
-        LCDDisplay.rst
-        LCDDisplay.yapsy-plugin
-        box.png
+.. code-block:: bash
+
+    papi/
+        plugin/
+            display/
+                /LCDDisplay/
+                    _sta_tic/
+                        LCDDisplay.png
+                    LCDDisplay.py
+                    LCDDisplay.rst
+                    LCDDisplay.yapsy-plugin
+                    box.png
+
+It is also possible to create an own category by creating the following folder structure:
+
+.. code-block:: bash
+
+    papi/
+        plugin/
+            <unique-category-name>/
+                info.ini
+
+The ``info.ini`` is optional and contains the category name as it is used in PaPI.
+
+.. code-block:: ini
+
+    [Config]
+    Name = My Foo Bar Category
+
+
 
 The plugin must be categorized by storing the plugin directory in one of the sub folders, which can be found here: ``papi/plugin/``
 
@@ -64,13 +87,6 @@ Blocks are used to collect all signals created by the same source. An
 entire block and or a single signal can be subscribed by other plugins
 e.g. a plot. We recommend to read :ref:`Signals/Blocks <man_signal_block>`.
 
-It is necessary to imports this objects:
-
-.. code-block:: python
-
-    from papi.data.DPlugin import DBlock
-    from papi.data.DSignal import DSignal
-
 In the following we gonna create a Block with the name ``Source``. In
 the next step a signal named ``Step`` is created and added to the
 previous created Block. At the end the PaPI-backend will be informed and
@@ -81,8 +97,8 @@ the Block can be used by other plugins. Previous sent blocks will be deleted.
 
     def cb_initialize_plugin(self):
 
-       self.block = DBlock('Source')
-       signal = DSignal('Step')
+       self.block = pl_create_DBlock('Source')
+       signal = pl_create_DSignal('Step')
        self.block.add_signal(signal)
        self.pl_send_new_block_list([block])
 
@@ -96,8 +112,8 @@ Here we assume an IOPlugin which ``cb_execute`` function is called in a loop. In
 
     def cb_initialize_plugin(self):
 
-        self.block = DBlock('Source')
-        self.step_signal = DSignal('Step')
+        self.block = pl_create_DBlock('Source')
+        self.step_signal = pl_create_DSignal('Step')
         self.block.add_signal(self.step_signal)
         self.pl_send_new_block_list([self.block])
 
@@ -136,12 +152,6 @@ create parameters
 
 Parameters are used to enable an external control of a running plugin. We recommend to read :ref:`Parameters <man_parameters>`.
 
-It is necessary to import this object:
-
-.. code-block:: python
-
-    from papi.data.DParameter import DParameter
-
 At first three parameters are created and the PaPI-backend gets
 informed by using the function ``pl_send_new_parameter_list``. To limit possible user entries in the frontend, a regex
 was defined for the
@@ -151,9 +161,9 @@ was defined for the
 
     def cb_initialize_plugin(self):
 
-        self.para_foo      = DParameter('foo',default=0)
-        self.para_bar      = DParameter('bar',default=0)
-        self.para_baz      = DParameter('baz',default=1, Regex='[0-9]+')
+        self.para_foo      = pl_create_DParameter('foo',default=0)
+        self.para_bar      = pl_create_DParameter('bar',default=0)
+        self.para_baz      = pl_create_DParameter('baz',default=1, Regex='[0-9]+')
 
         self.pl_send_new_parameter_list(para_list)
 
@@ -161,12 +171,6 @@ create events
 ~~~~~~~~~~~~~
 
 Events are used to change parameters of other plugins. We recommend to read :ref:`Events <man_events>`.
-
-It is necessary to imports this object:
-
-.. code-block:: python
-
-    from papi.data.DSignal import DEvent
 
 A new event is defined by the following code and at the end the PaPI-backend will be informed and
 the event can be used to change parameters of other plugins. In the code above a button was also created which is used to trigger the change event by a simple user interaction (clicking the button).
@@ -176,7 +180,7 @@ the event can be used to change parameters of other plugins. In the code above a
 
     def cb_initialize_plugin(self):
 
-        self.event_start         = DEvent('Start')
+        self.event_start         = pl_create_DEvent('Start')
         self.pl_send_new_event_list([self.event_start])
 
         self.button = QPushButton(self.name)
