@@ -155,6 +155,8 @@ class Plot(vip_base):
         self.__downsampling_rate__ = int(int_re.findall(self.config['downsampling_rate']['value'])[0])
         self.__downsampling_rate_start__ = 0
 
+        self.__bgcolor = self.pl_get_config_element('bgcol')
+
         # ----------------------------
         # Set internal variables
         # ----------------------------
@@ -305,6 +307,9 @@ class Plot(vip_base):
         # ----------------------------
         # Initiate for default plotting
         # ----------------------------
+        c = self.__bgcolor[1:-1]
+        c = c.split(',')
+        self.__plotWidget__.setBackground([int(c[0]),int(c[1]),int(c[2])])
 
         self.initiate_update_plot()
         return True
@@ -1157,7 +1162,11 @@ class Plot(vip_base):
             'regex' : pc.REGEX_BOOL_BIN,
             'display_text' : 'Enable/Disable legend',
             'type' : pc.CFG_TYPE_BOOL
-        }
+        },
+            'bgcol':{
+                'value':'(0,0,0)',
+                'type': pc.CFG_TYPE_COLOR
+            }
         }
         # http://www.regexr.com/
         return config
