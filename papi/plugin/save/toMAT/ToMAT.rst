@@ -7,6 +7,10 @@ ToMAT
 
     This plugin is used save subscribed signals in a matlab file.
 
+.. code:: bash
+
+    sudo apt-get install python3-scipy
+
 Configuration
 ----------------------
 The plugin uses this specific configuration.

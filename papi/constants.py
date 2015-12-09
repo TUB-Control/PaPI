@@ -30,6 +30,11 @@ Stefan Ruppin
 
 import platform
 from os.path import expanduser
+import datetime
+import os
+import papi
+
+now = datetime.datetime.now()
 
 PAPI_DEV_EDITION                = True
 
@@ -38,8 +43,8 @@ CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 DCORE_CONSOLE_LOG_LEVEL         = 2
 
-CORE_PAPI_VERSION               = '1.3.0' # no spaces allowed
-CORE_CORE_VERSION               = '1.3.0' # no spaces allowed
+CORE_PAPI_VERSION               = 'v.1.4-dev' # no spaces allowed
+CORE_CORE_VERSION               = CORE_PAPI_VERSION # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'
 CORE_STOP_CONSOLE_MESSAGE       = 'Core and PaPI finished operation cleanly'
@@ -65,7 +70,7 @@ PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
 
 # PaPI Information constants
 
-PAPI_COPYRIGHT                  = '&copy; 2014-2015'
+PAPI_COPYRIGHT                  = '&copy; 2014-' + str(now.year)
 PAPI_ABOUT_TITLE                = 'About PaPI'
 PAPI_ABOUT_TEXT                 = """
 <html><body>
@@ -102,7 +107,7 @@ PAPI_DOC_PREFIX_PLUGIN           = 'man.papi.plugin'
 # GUI CONSTANTS
 GUI_PROCESS_CONSOLE_IDENTIFIER  = 'Gui  Process: '
 GUI_PROCESS_CONSOLE_LOG_LEVEL   = 1
-GUI_VERSION                      = 'v_1.3.0'
+GUI_VERSION                      = CORE_CORE_VERSION
 GUI_START_CONSOLE_MESSAGE       = 'PaPI GUI Modul ' + GUI_VERSION + ' started'
 
 GUI_PAPI_WINDOW_TITLE           = 'PaPI - Plugin based Process Interaction'
@@ -118,7 +123,7 @@ GUI_TABWIDGET_IDENTIFIER        = '__tabWidget'
 GUI_PLUGIN_CONFIG               = 'info.ini'
 
 # PLUGIN LOCATION CONSTANTS
-PLUGIN_ROOT_FOLDER_LIST         = ['plugin', 'papi/plugin', '../plugin']
+PLUGIN_ROOT_FOLDER_LIST         = [os.path.dirname(papi.__file__)+'/plugin']
 PLUGIN_IOP_FOLDER               = ''
 PLUGIN_VIP_FOLDER               = ''
 PLUGIN_DPP_FOLDER               = ''
@@ -171,26 +176,26 @@ CFG_TYPE_BOOL = 'bool'
 TREE_CSS = """
 QTreeView { alternate-background-color: yellow;}
 QTreeView::branch:has-siblings:!adjoins-item {
-    border-image: url(papi/gui/default/images/vline.png) 0;
+    border-image: url(""" + os.path.dirname(papi.__file__)+ """/gui/default/images/vline.png) 0;
 }
 
 QTreeView::branch:has-siblings:adjoins-item {
-    border-image: url(papi/gui/default/images/branch-more.png) 0;
+    border-image: url(""" + os.path.dirname(papi.__file__)+ """/gui/default/images/branch-more.png) 0;
 }
 
 QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: url(papi/gui/default/images/branch-end.png) 0;
+    border-image: url(""" + os.path.dirname(papi.__file__)+ """/gui/default/images/branch-end.png) 0;
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
         border-image: none;
-        image: url(papi/gui/default/images/branch-closed.png);
+        image: url(""" + os.path.dirname(papi.__file__)+ """/gui/default/images/branch-closed.png);
 }
 
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
         border-image: none;
-        image: url(papi/gui/default/images/branch-open.png);
+        image: url(""" + os.path.dirname(papi.__file__)+ """/gui/default/images/branch-open.png);
 }
 """

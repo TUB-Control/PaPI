@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v.1.4-dev:
+----------
+
+- **improvement**: It is not more mandatory to start PaPI inside of the PaPI installation folder.
+- **plugin**: Added new plugin function: pl_get_plugin_path()
 
 v.1.3:
 ------

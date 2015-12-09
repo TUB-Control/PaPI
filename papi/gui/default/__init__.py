@@ -30,19 +30,20 @@ Sven Knuth
 
 import os
 from PyQt5.QtGui import QIcon, QPixmap
+import papi
 
 def get32Icon(file):
-    path = os.path.abspath('./papi/gui/default/images/32/' + file)
+    path = os.path.abspath(os.path.dirname(papi.__file__) + '/gui/default/images/32/' + file)
     return QIcon(path)
 
 def get16Icon(file):
-    path = os.path.abspath('./papi/gui/default/images/16/' + file)
+    path = os.path.abspath(os.path.dirname(papi.__file__) + '/gui/default/images/16/' + file)
     return QIcon(path)
 
 def get32Pixmap(file):
-    path = os.path.abspath('./papi/gui/default/images/32/' + file)
+    path = os.path.abspath(os.path.dirname(papi.__file__) + '/gui/default/images/32/' + file)
     return QPixmap(path)
 
 def get16Pixmap(file):
-    path = os.path.abspath('./papi/gui/default/images/16/' + file)
+    path = os.path.abspath(os.path.dirname(papi.__file__) + '/gui/default/images/16/' + file)
     return QPixmap(path)
