@@ -147,6 +147,8 @@ class Plot(vip_base):
         self.__show_grid_y__ = self.config['y-grid']['value'] == '1'
         self.__rolling_plot__ = self.config['rolling_plot']['value'] == '1'
 
+        self.__plot_over__ = self.pl_get_config_element('plot_over')
+
         self.__colors_selected__ = int_re.findall(self.config['color']['value'])
         self.__styles_selected__ = int_re.findall(self.config['style']['value'])
 
@@ -339,7 +341,7 @@ class Plot(vip_base):
         :return:
         """
 
-        t = Data[CORE_TIME_SIGNAL]
+        t = Data[self.__plot_over__]
 
         self.__input_size__ = len(t)
 
@@ -348,7 +350,7 @@ class Plot(vip_base):
         now = pg.ptime.time()
 
         for key in Data:
-            if key != CORE_TIME_SIGNAL:
+            if key not in [pc.CORE_TIME_SIGNAL, self.__plot_over__]:
                 y = Data[key]
                 if key in self.signals:
                     if self.__downsampling_rate_start__ < len(y):
@@ -566,11 +568,14 @@ class Plot(vip_base):
         cur_min_y = 1000
 
         for signal_name in data:
-            if signal_name != CORE_TIME_SIGNAL:
+            if signal_name not in [pc.CORE_TIME_SIGNAL, self.__plot_over__]:
                 signal_data = data[signal_name]
                 if signal_name in self.signals:
 
                     tdata = np.linspace(1, len(signal_data), len(signal_data))
+                    if len(data[self.__plot_over__]) == len(signal_data):
+                        plot_axis = data[self.__plot_over__]
+                        tdata = np.linspace(1, plot_axis[-1], len(plot_axis))
 
                     plot_item = self.signals[signal_name]
 
@@ -639,7 +644,7 @@ class Plot(vip_base):
 
                 for signal_name in subscription.get_signals():
 
-                    if signal_name != pc.CORE_TIME_SIGNAL:
+                    if signal_name not in [pc.CORE_TIME_SIGNAL, self.__plot_over__]:
 
                         signal = subscription.get_dblock().get_signal_by_uname(signal_name)
                         current_signals[signal_name] = {}
@@ -651,7 +656,7 @@ class Plot(vip_base):
         # Add new subscribed signals
         # ----------------------------
         for signal_name in sorted(current_signals.keys()):
-            if signal_name != CORE_TIME_SIGNAL:
+            if signal_name not in [pc.CORE_TIME_SIGNAL, self.__plot_over__]:
                 if signal_name not in self.signals:
                     signal = current_signals[signal_name]['signal']
                     self.add_plot_item(signal, current_signals[signal_name]['index'])
@@ -1003,7 +1008,7 @@ class Plot(vip_base):
                 subscription = subscriptions[dpluginsub_id][dblock_name]
 
                 for signal_name in subscription.get_signals():
-                    if signal_name != CORE_TIME_SIGNAL:
+                    if signal_name not in [pc.CORE_TIME_SIGNAL, self.__plot_over__]:
                         signal = subscription.get_dblock().get_signal_by_uname(signal_name)
 
                         self.signals[signal_name].update_signal(signal)
@@ -1166,6 +1171,11 @@ class Plot(vip_base):
             'bgcol':{
                 'value':'(0,0,0)',
                 'type': pc.CFG_TYPE_COLOR
+        },
+            'plot_over' : {
+            'advanced' : '1',
+            'value' : pc.CORE_TIME_SIGNAL,
+            'display_text' : 'Plot signals over this x-axis'
             }
         }
         # http://www.regexr.com/
