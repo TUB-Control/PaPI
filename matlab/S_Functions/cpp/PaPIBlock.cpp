@@ -241,7 +241,8 @@ void PaPIBlock::buildConfiguration(double para_out[]) {
             cout << reader.getFormatedErrorMessages() << endl;
             papiConfig = root["PaPIConfig"];
         } else {
-            printf("Failed to parse json string \n");
+            printf("Failed to parse json string from %s \n", this->external_config_file.c_str());
+            printf("Json string provided by the simulink edit parameter 'json config' will be used.\n");
         }
     }
 

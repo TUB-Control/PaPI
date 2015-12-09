@@ -5,10 +5,10 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
 
     config = loadjson(json_config);
     q = char(39);
-    
+
     size_diff = size(define_inputs,2) - size(split_signals, 2);
-    
-    if ( size_diff > 0 ) 
+
+    if ( size_diff > 0 )
         split_signals = [split_signals ones(1, size_diff)];
     end
 
@@ -17,14 +17,14 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
     % -------------
     command = init_command;
 
-    
+
     % ------------
     % Get importand handles
     % ----------------------
-    
+
     papi_block_complete_handle = get_param( gcb,'handle');
     papi_block_complete = get_param(papi_block_complete_handle, 'PortHandles');
-    
+
     % ---------------------
     % Fill ParameterNames
     % and SignalNames if ncessary
@@ -46,16 +46,16 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
             error('You are using a BlockConfig: Define the signals');
         end
 
-        
+
         % ---------------------
         % Set port labels for inport/outport
         % based on SignalNames and ParameterNames in config.BlockConfig
         % ---------------------
-        
+
         offset = 0;
         for n=1+input_offset:length(papi_block_complete.Inport)
             port_number = n-input_offset;
-            
+
             ch_name = '';
             if (n-input_offset+offset <= length(config.BlockConfig.SignalNames))
                 ch_name = config.BlockConfig.SignalNames(port_number + offset);
@@ -63,28 +63,28 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
                 ch_name = ['s', num2str(port_number)];
             end
 
-            if split_signals(port_number) 
+            if split_signals(port_number)
                 offset = offset + define_inputs(port_number)-1;
             end
-            
+
             command = [command ['port_label(''input'', ' num2str(n) ' ,''' [ch_name] ''');']];
         end
 
-        
+
     else
           % Try to derive ParameterNames and SignalNames itself
 
           parameters = {};
           signals = {};
-          
+
           % ----------------------
           % Set signal names
           % ----------------------
-          
+
           %disp(get(papi_block_complete_handle))
-          
+
            signal_count = 1;
-           
+
            for n=1+input_offset:length(papi_block_complete.Inport)
               port_handler = papi_block_complete.Inport(n);
               port = get(port_handler);
@@ -93,34 +93,34 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
               input_dimension = define_inputs(n-input_offset);
 
               line_name = '';
-              
-              if split_signals(n-input_offset) && input_dimension ~= 1                  
+
+              if split_signals(n-input_offset) && input_dimension ~= 1
 
                   for d=1:input_dimension
 
                       [line_name, signal_name] = papi_block_get_line_name(line_handler, ['s' num2str(n-input_offset) ''], ['(' num2str(d) ')']);
-                      
+
                       signals(signal_count) = {strjoin(signal_name)};
-                      
+
                       signal_count = signal_count + 1;
                   end
               else
                  [line_name, signal_name] = papi_block_get_line_name(line_handler, ['s' num2str(n-input_offset) ''], '');
                  signals(signal_count) = {strjoin(signal_name)};
-            
+
                  signal_count = signal_count + 1;
               end
-              
+
               set_param(gcb,'MaskDisplay',['port_label(''input'', ' num2str(n) ' ,''channel 1'')']);
-              
+
               command = [command ['port_label(''input'', ' num2str(n) ' ,''' [line_name] ''');']];
-              
+
            end
 
           % ----------------------
           % Set parameter names
-          % ----------------------          
-           
+          % ----------------------
+
            for n=1+output_offset:length(papi_block_complete.Outport)
                port_handler = papi_block_complete.Outport(n);
                port = get(port_handler);
@@ -141,7 +141,7 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
                end
 
            end
-           
+
            assignin('base', 'papi_signals', signals);
            assignin('base', 'papi_parameters', parameters);
 
@@ -178,5 +178,5 @@ function papi_block_set_signal_parameter_names( gcb, json_config, papi_block_han
     final_json_config = savejson('', config, 'Compact', 1);
 
     set_param(papi_block_handle,'json_string', strcat(q, final_json_config, q) );
-    
+
 end

@@ -7,10 +7,6 @@ function papi_block_complete_init( gcb, amount_parameters, amount_input, json_co
     %disp('Start---------------')
     load_system(gcb);
 
-    if use_external_file
-        json_config = '{}';
-    end
-
     amountIn=size(define_inputs,2);
     amountOut=size(amount_parameters,2);
 
