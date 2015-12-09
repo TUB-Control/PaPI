@@ -32,7 +32,7 @@ class CPU_Load(iop_base):
         block1.add_signal(signal)
 
         self.pl_send_new_block_list([block1])
-        return False
+        return True
 
     def cb_pause(self):
         pass
