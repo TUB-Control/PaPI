@@ -49,7 +49,7 @@ The library is made out of one block:
 
 
 Input Signals
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 The `control` input signal is used to control the internal behaviour of the block
 
@@ -94,6 +94,7 @@ It is also needed to enable the external mode, can also be found in `Code Genera
 
 Block Configuration
 -------------------
+
 Tab 1
 ~~~~~
 .. figure:: _static/manual/matlab/Tab_1.png
@@ -108,7 +109,9 @@ Therefore, the first parameter has a size of 1, the second a size of 2, the thir
 The array [1,1,1,1] given in 'Define input signals' leads to 4 different signals, the signal dimension is defined by the corresponding array index. Therefore, all signals have a size of one.
 It is also possible to describe if the signal should be splitted, which is the default case. Having a signal of dimension 4 which should be splitted leads to four different signals in PaPI, if not only one signal with the size four appears in PaPI.
 
-The field 'Json config' can be used to provide a configuration which is sent to PaPI. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).
+The field 'Json config' can be used to provide a configuration which is built in the binary and sent to PaPI when requested. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).
+
+Additionally it is possible to set an external configuration file by using 'External PaPI config file' and provides the ability to change the configuration during runtime. When an PaPI requests the current configuration this file be read as a source for a json configuration. If it is not possible to parse a json configuration from this file the built-in json configuration will be used.
 
 Parameters
 ^^^^^^^^^^

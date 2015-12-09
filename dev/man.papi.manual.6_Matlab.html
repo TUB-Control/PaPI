@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Matlab &mdash; papi 1.3.0 documentation</title>
+    <title>Matlab &mdash; papi v.1.4-dev documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.3.0',
+        VERSION:     'v.1.4-dev',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="papi 1.3.0 documentation" href="index.html" /> 
+    <link rel="top" title="papi v.1.4-dev documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
     
-        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+        <li><a href="index.html">papi v.1.4-dev documentation</a> &raquo;</li>
     <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
  
       </ul>
@@ -148,6 +148,8 @@ It is also needed to enable the external mode, can also be found in <cite>Code G
 </div>
 <div class="section" id="block-configuration">
 <h2>Block Configuration<a class="headerlink" href="#block-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tab-1">
+<h3>Tab 1<a class="headerlink" href="#tab-1" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_1.png" />
 <p class="caption"><strong>This tab is used to describe the signals and parameters as they appear in PaPI.</strong></p>
@@ -156,9 +158,10 @@ It is also needed to enable the external mode, can also be found in <cite>Code G
 Therefore, the first parameter has a size of 1, the second a size of 2, the third a size of 3 and the fourth a size of 4. Is is also possible to name the parameters by setting a signal name in simulink.</p>
 <p>The array [1,1,1,1] given in &#8216;Define input signals&#8217; leads to 4 different signals, the signal dimension is defined by the corresponding array index. Therefore, all signals have a size of one.
 It is also possible to describe if the signal should be splitted, which is the default case. Having a signal of dimension 4 which should be splitted leads to four different signals in PaPI, if not only one signal with the size four appears in PaPI.</p>
-<p>The field &#8216;Json config&#8217; can be used to provide a configuration which is sent to PaPI. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).</p>
+<p>The field &#8216;Json config&#8217; can be used to provide a configuration which is built in the binary and sent to PaPI when requested. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).</p>
+<p>Additionally it is possible to set an external configuration file by using &#8216;External PaPI config file&#8217; and provides the ability to change the configuration during runtime. When an PaPI requests the current configuration this file be read as a source for a json configuration. If it is not possible to parse a json configuration from this file the built-in json configuration will be used.</p>
 <div class="section" id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h4>
 <hr class="docutils" />
 <table border="1" class="docutils">
 <colgroup>
@@ -180,7 +183,7 @@ It is also possible to describe if the signal should be splitted, which is the d
 </div>
 <hr class="docutils" />
 <div class="section" id="signals">
-<h3>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h3>
+<h4>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h4>
 <hr class="docutils" />
 <table border="1" class="docutils">
 <colgroup>
@@ -202,20 +205,21 @@ It is also possible to describe if the signal should be splitted, which is the d
 </div>
 <hr class="docutils" />
 <div class="section" id="naming">
-<h3>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h3>
+<h4>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
 <div class="section" id="tab-2">
-<h4>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h4>
+<h3>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_2.png" />
 <p class="caption"><strong>This tab is used set the needed information for the udp communication.</strong></p>
 </div>
 </div>
 <div class="section" id="tab-3">
-<h4>Tab 3<a class="headerlink" href="#tab-3" title="Permalink to this headline">¶</a></h4>
+<h3>Tab 3<a class="headerlink" href="#tab-3" title="Permalink to this headline">¶</a></h3>
 <div class="figure" style="width: 40%">
 <img alt="" src="_images/Tab_3.png" />
 <p class="caption"><strong>This tab provides the ability to set a sampling rate for the underlying blocks.</strong></p>
-</div>
 </div>
 </div>
 </div>
@@ -266,13 +270,14 @@ This must be done when different PaPI Blocks were used because this prevent a si
 <li><a class="reference internal" href="#build">Build</a></li>
 <li><a class="reference internal" href="#code-generation">Code generation</a></li>
 <li><a class="reference internal" href="#block-configuration">Block Configuration</a><ul>
+<li><a class="reference internal" href="#tab-1">Tab 1</a><ul>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
 <li><a class="reference internal" href="#signals">Signals</a></li>
-<li><a class="reference internal" href="#naming">Naming</a><ul>
-<li><a class="reference internal" href="#tab-2">Tab 2</a></li>
-<li><a class="reference internal" href="#tab-3">Tab 3</a></li>
+<li><a class="reference internal" href="#naming">Naming</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#tab-2">Tab 2</a></li>
+<li><a class="reference internal" href="#tab-3">Tab 3</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#example-stateflow">Example: Stateflow</a></li>
@@ -313,7 +318,7 @@ This must be done when different PaPI Blocks were used because this prevent a si
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
     
-        <li><a href="index.html">papi 1.3.0 documentation</a> &raquo;</li>
+        <li><a href="index.html">papi v.1.4-dev documentation</a> &raquo;</li>
     <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
  
       </ul>
