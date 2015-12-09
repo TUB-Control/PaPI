@@ -7,6 +7,7 @@ v.1.4-dev:
 - **improvement**: It is not more mandatory to start PaPI inside of the PaPI installation folder.
 - **improvement**: The PaPI start.sh script can be used with simlinks everywhere
 - **improvement**: Subscriptions for blocks which does not exist yet are delayed and done later. Better Supports run-time block creation using e.g. Simulink
+- **simulink**: The configuration can now be changed without re-compiling the simulink model by setting a file in the PaPIBlock mask.
 - **plugin**: Added new plugin function: pl_get_plugin_path()
 
 v.1.3:
