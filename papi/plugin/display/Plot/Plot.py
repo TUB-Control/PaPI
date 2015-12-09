@@ -309,9 +309,9 @@ class Plot(vip_base):
         # ----------------------------
         # Initiate for default plotting
         # ----------------------------
-        c = self.__bgcolor[1:-1]
-        c = c.split(',')
-        self.__plotWidget__.setBackground([int(c[0]),int(c[1]),int(c[2])])
+        color_rgb = self.__bgcolor[1:-1]
+        color_rgb = color_rgb.split(',')
+        self.__plotWidget__.setBackground([int(color_rgb[0]),int(color_rgb[1]),int(color_rgb[2])])
 
         self.initiate_update_plot()
         return True
@@ -1170,7 +1170,8 @@ class Plot(vip_base):
         },
             'bgcol':{
                 'value':'(0,0,0)',
-                'type': pc.CFG_TYPE_COLOR
+                'type': pc.CFG_TYPE_COLOR,
+                'advanced': '1'
         },
             'plot_over' : {
             'advanced' : '1',
