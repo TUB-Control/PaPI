@@ -350,7 +350,7 @@ class Core:
             self.gui_event_queue.put(eventMeta)
 
             # check if plugin got some subscribers which run in own process
-            if dplugin.own_process is True:
+            if dplugin.own_process is True and dplugin.state == PLUGIN_STATE_START_SUCCESFUL:
                 dplugin.queue.put(eventMeta)
 
             # ---------------------------------------------
@@ -599,7 +599,7 @@ class Core:
                 self.log.printText(1, 'join request, remove plugin with id ' + str(dplugin.id) + 'failed')
                 return -1
             else:
-                # remove from DCore in core successfull
+                # remove from DCore in core successful
                 if self.gui_alive is True:
                     # GUI is still alive, so tell GUI, that this plugin was closed
                     opt = DOptionalData()
