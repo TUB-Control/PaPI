@@ -23,7 +23,7 @@ addpath([pwd '/hpp']);
 addpath([pwd '/cpp']);
 addpath([pwd '/legacy']);
 
-libPaths = {'/usr/lib/','/usr/include/','/usr/lib/x86_64-linux-gnu/','/usr/local/MATLAB/R2014b/sys/os/glnxa64/','/usr/lib/gcc/x86_64-linux-gnu/4.8/'};
+libPaths = {'/usr/lib/','/usr/include/','/usr/lib/x86_64-linux-gnu/',[matlabroot,'/sys/os/glnxa64/'],'/usr/lib/gcc/x86_64-linux-gnu/4.8/'};
 
 legacy_folder_cpp = 'legacy/';
 
