@@ -116,6 +116,7 @@ class ColorLineEdit(QPushButton):
 class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
     def __init__(self, parent, gui_api):
         super(PaPIConfigSaveDialog, self).__init__(parent)
+        self.setOption(QtWidgets.QFileDialog.DontUseNativeDialog)
 
         inital_hidden = True
 
@@ -125,7 +126,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
 
         self.setFileMode(QFileDialog.AnyFile)
         self.setNameFilters( [ self.tr("PaPI-Cfg (*.xml)"), self.tr("PaPI-Cfg (*.json)") ])
-        self.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
+        self.setDirectory(os.path.abspath(pc.CONFIG_DEFAULT_DIRECTORY))
         self.setWindowTitle("Save Configuration")
         self.setAcceptMode(QFileDialog.AcceptSave)
 
