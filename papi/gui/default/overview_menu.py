@@ -726,6 +726,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             self.pluginTree.model().sourceModel().appendRow(self.plugin_roots[root])
             self.plugin_roots[root].sortChildren(0)
 
+        self.pluginTree.expandAll()
+
     def play_button_callback(self):
         """
         Callback function for the play button.
