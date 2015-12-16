@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Wed Sep 23 16:34:27 2015
+# Created: Wed Dec 16 14:32:09 2015
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ class Ui_DefaultMain(object):
         self.verticalLayout_2.addWidget(self.widgetTabs)
         DefaultMain.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(DefaultMain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 693, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 693, 25))
         self.menubar.setDefaultUp(False)
         self.menubar.setNativeMenuBar(False)
         self.menubar.setObjectName("menubar")
@@ -86,8 +86,8 @@ class Ui_DefaultMain(object):
         self.menuPaPI.addAction(self.actionResetPaPI)
         self.menuPaPI.addSeparator()
         self.menuPaPI.addAction(self.actionExit)
-        self.menuPlugin.addAction(self.actionOverview)
         self.menuPlugin.addAction(self.actionCreate)
+        self.menuPlugin.addAction(self.actionOverview)
         self.menuPlugin.addSeparator()
         self.menuPlugin.addAction(self.actionReload_Plugin_DB)
         self.menuView.addAction(self.actionRunMode)
