@@ -568,7 +568,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setNameFilter( self.tr("PaPI-Cfg (*.xml)"))
-        dialog.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
+        dialog.setDirectory(os.path.abspath(pc.CONFIG_DEFAULT_DIRECTORY))
         dialog.setWindowTitle("Load Configuration")
 
         if dialog.exec_():
