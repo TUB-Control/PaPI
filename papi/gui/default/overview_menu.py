@@ -338,6 +338,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         self.blockTree.expandAll()
         self.parameterTree.expandAll()
+        self.connectionTree.expandAll()
 
         # http://srinikom.github.io/pyside-docs/PySide/QtGui/QAbstractItemView.html \
         # #PySide.QtGui.PySide.QtGui.QAbstractItemView.SelectionMode
