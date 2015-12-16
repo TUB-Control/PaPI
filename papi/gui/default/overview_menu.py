@@ -388,6 +388,15 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
 
         action.triggered.connect(lambda ignore, p=dplugin: self.show_create_plugin_dialog(p))
 
+        actionCollapsAll = QAction('Collapse all',self)
+        actionCollapsAll.triggered.connect(self.pluginTree.collapseAll)
+
+        actionExpandAll = QAction('Expand all',self)
+        actionExpandAll.triggered.connect(self.pluginTree.expandAll)
+
+        menu.addAction(actionCollapsAll)
+        menu.addAction(actionExpandAll)
+
         menu.exec_(self.pluginTree.viewport().mapToGlobal(position))
 
     def open_context_menu_block_tree(self, position):
@@ -518,9 +527,13 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         actionCollapsAll = QAction('Collapse all',self)
         actionCollapsAll.triggered.connect(self.connectionTree.collapseAll)
 
+        actionExpandAll = QAction('Expand all',self)
+        actionExpandAll.triggered.connect(self.connectionTree.expandAll)
+
         menu = QMenu('Remove')
         menu.addAction(action)
         menu.addAction(actionCollapsAll)
+        menu.addAction(actionExpandAll)
         menu.exec_(self.connectionTree.viewport().mapToGlobal(position))
 
     def open_context_menu_parameter_tree(self, position):
