@@ -183,7 +183,6 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
                 self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
-
         self.plugin_manager.locatePlugins()
         candidates = self.plugin_manager.getPluginCandidates()
         all_pluginfo = {c[2].path:c[2] for c in candidates}
@@ -204,6 +203,7 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         for root in sorted(self.plugin_roots.keys()):
             self.pluginTree.model().sourceModel().appendRow(self.plugin_roots[root])
             self.plugin_roots[root].sortChildren(0)
+        self.pluginTree.expandAll()
 
     def help_button_triggered(self):
         index = self.pluginTree.currentIndex()
