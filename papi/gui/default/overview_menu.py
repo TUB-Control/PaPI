@@ -515,8 +515,12 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
             action = QAction('Remove Subscription', self)
             action.triggered.connect(lambda ignore, p=dblock, m=dplugin, s=signals: self.cancel_subscription_action(m, p, s))
 
+        actionCollapsAll = QAction('Collapse all',self)
+        actionCollapsAll.triggered.connect(self.connectionTree.collapseAll)
+
         menu = QMenu('Remove')
         menu.addAction(action)
+        menu.addAction(actionCollapsAll)
         menu.exec_(self.connectionTree.viewport().mapToGlobal(position))
 
     def open_context_menu_parameter_tree(self, position):
