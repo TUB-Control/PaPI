@@ -36,6 +36,7 @@ from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 
 from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
 
+import collections
 
 class base_visual(base_plugin):
     """
@@ -102,35 +103,41 @@ class base_visual(base_plugin):
 
         :return:
         """
-        config = {
-            'size': {
-                'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine size: (height,width)'
-            },
-            'position': {
-                'value': "(0,0)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine position: (x,y)'
-            },
-            'name': {
-                'value': 'VisualPlugin',
-                'tooltip': 'Used for window title'
-            },
-            'tab': {
-                'value': 'Tab',
-                'tooltip': 'Used for tabs'
-            },
-            'maximized' : {
-                'value' : '0',
-                'type' : 'bool',
-                'advanced' : '1',
-                'tooltip' : 'Set true to start plugin maximized',
-                'display_text' : 'Start maximized'
-            }
+
+        config = collections.OrderedDict()
+
+        config['size'] = {
+            'value': "(300,300)",
+            'regex': '\(([0-9]+),([0-9]+)\)',
+            'advanced' : 'Default',
+            'tooltip': 'Determine size: (height,width)'
         }
+        config['position'] = {
+            'value': "(0,0)",
+            'regex': '\(([0-9]+),([0-9]+)\)',
+            'advanced' : 'Default',
+            'tooltip': 'Determine position: (x,y)'
+        }
+        config['name'] = {
+            'value': 'VisualPlugin',
+            'tooltip': 'Used for window title',
+            'advanced' : 'Default'
+        }
+
+        config['tab'] = {
+            'value': 'Tab',
+            'tooltip': 'Used for tabs',
+            'advanced' : 'Default',
+        }
+
+        config['maximized'] = {
+            'value' : '0',
+            'type' : 'bool',
+            'advanced' : 'Default',
+            'tooltip' : 'Set true to start plugin maximized',
+            'display_text' : 'Start maximized'
+        }
+
         return config
 
 

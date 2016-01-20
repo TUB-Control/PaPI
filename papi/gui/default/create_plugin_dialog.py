@@ -31,7 +31,7 @@ Sven Knuth
 import operator
 
 from PyQt5.QtGui        import QRegExpValidator
-from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox, QComboBox
+from PyQt5.QtWidgets    import QDialog, QLineEdit, QCheckBox, QComboBox, QFormLayout, QVBoxLayout, QWidget
 from PyQt5.QtCore       import *
 
 from papi.ui.gui.default.PluginCreateDialog import Ui_CreatePluginDialog
@@ -39,6 +39,8 @@ from papi.gui.default.custom import FileLineEdit, ColorLineEdit
 
 from papi.constants import GUI_DEFAULT_TAB
 import papi.constants as pc
+
+import collections
 
 class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
@@ -49,7 +51,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         self.configuration_inputs = {}
         self.gui_api = gui_api
         self.TabManager = TabManager
-
+        self.advancedForms = {}
 
     def set_plugin(self, plugin_info):
         startup_config = plugin_info.plugin_object._get_startup_configuration()
@@ -81,7 +83,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         config = self.cfg
 
         for attr in self.configuration_inputs:
-
+            print(attr)
             if isinstance(self.configuration_inputs[attr], QCheckBox):
 
                 if self.configuration_inputs[attr].isChecked():
@@ -117,8 +119,10 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
     def showEvent(self, *args, **kwargs):
         startup_config = self.cfg
 
-        self.clear_layout(self.formSimple)
-        self.clear_layout(self.formAdvance)
+
+        for form in self.advancedForms:
+            self.clear_layout(self.advancedForms[form])
+
         self.configuration_inputs.clear()
 
         self.setWindowTitle("Create Plugin " + self.plugin_name)
@@ -141,7 +145,16 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             editable_field.setText(uname)
             editable_field.setObjectName('uname' + "_line_edit")
 
-            self.formSimple.addRow(str(display_text) , editable_field)
+            formName = 'Simple'
+            if formName not in self.advancedForms:
+                self.advancedForms[formName] = QFormLayout()
+                tabWidget = QWidget()
+
+                self.tabWidget.addTab(tabWidget, formName)
+                vlayout = QVBoxLayout(tabWidget)
+                vlayout.addLayout(self.advancedForms[formName])
+
+            self.advancedForms[formName].addRow(str(display_text), editable_field)
 
             self.configuration_inputs['uname'] = editable_field
 
@@ -150,41 +163,14 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
             position += 1
 
-        if 'tab' in startup_config.keys():
-            value = startup_config['tab']['value']
+        startup_config_sorted = startup_config.items()
+        if not isinstance(startup_config, collections.OrderedDict):
+            startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
-            display_text = 'Tab'
-
-            if 'display_text' in startup_config['tab'].keys():
-                display_text = startup_config['tab']['display_text']
-
-            #uname = self.gui_api.do_change_string_to_be_uname(self.plugin_name)
-            #uname = self.gui_api.change_uname_to_uniqe(uname)
-
-
-            editable_field = QComboBox()
-            tabs = list(self.TabManager.get_tabs_by_uname().keys())
-            if len(tabs) == 0:
-                tabs = [GUI_DEFAULT_TAB]
-            tabs.sort(key=str.lower)
-            editable_field.addItems(tabs)
-            editable_field.setObjectName('Tab' + "_comboBox")
-
-            self.formSimple.addRow(str(display_text) , editable_field)
-
-            self.configuration_inputs['tab'] = editable_field
-
-
-            #line_edit.selectAll()
-            #line_edit.setFocus()
-
-            position += 1
-
-        startup_config_sorted = sorted(startup_config.items(), key=operator.itemgetter(0))
 
         for attr in startup_config_sorted:
             attr = attr[0]
-            if attr != 'uname' and attr !='tab':
+            if attr != 'uname':
                 value = startup_config[attr]['value']
 
                 display_text = attr
@@ -199,55 +185,80 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
                 editable_field = None
 
-                if 'type' in startup_config[attr]:
-                    parameter_type = startup_config[attr]['type']
+                if attr != 'tab':
 
-                    if parameter_type == 'bool':
-                        editable_field = QCheckBox()
+                    if 'type' in startup_config[attr]:
+                        parameter_type = startup_config[attr]['type']
 
-                        if value == '1':
-                            editable_field.setChecked(True)
-                        else:
-                            editable_field.setChecked(False)
+                        if parameter_type == 'bool':
+                            editable_field = QCheckBox()
 
-                    if parameter_type == 'file':
-                        editable_field = FileLineEdit()
-                        editable_field.setReadOnly(True)
-                        editable_field.setText(value)
+                            if value == '1':
+                                editable_field.setChecked(True)
+                            else:
+                                editable_field.setChecked(False)
 
-                    if parameter_type == 'color':
-                        editable_field = ColorLineEdit()
-                        editable_field.set_default_color(startup_config[attr]['value'])
-                        #
-                        #editable_field.setText(value)
+                        if parameter_type == 'file':
+                            editable_field = FileLineEdit()
+                            editable_field.setReadOnly(True)
+                            editable_field.setText(value)
 
+                        if parameter_type == 'color':
+                            editable_field = ColorLineEdit()
+                            editable_field.set_default_color(startup_config[attr]['value'])
+                            #
+                            #editable_field.setText(value)
+
+                    else:
+                        editable_field = QLineEdit()
+
+                        editable_field.setText(str(value))
+                        editable_field.setObjectName(attr + "_line_edit")
+
+                        # -------------------------------
+                        # Check for regex description
+                        # -------------------------------
+
+                        if 'regex' in startup_config[attr]:
+                            regex = startup_config[attr]['regex']
+                            rx = QRegExp(regex)
+                            validator = QRegExpValidator(rx, self)
+                            editable_field.setValidator(validator)
                 else:
-                    editable_field = QLineEdit()
-
-                    editable_field.setText(str(value))
-                    editable_field.setObjectName(attr + "_line_edit")
-
-                    # -------------------------------
-                    # Check for regex description
-                    # -------------------------------
-
-                    if 'regex' in startup_config[attr]:
-                        regex = startup_config[attr]['regex']
-                        rx = QRegExp(regex)
-                        validator = QRegExpValidator(rx, self)
-                        editable_field.setValidator(validator)
-
+                    editable_field = QComboBox()
+                    tabs = list(self.TabManager.get_tabs_by_uname().keys())
+                    if len(tabs) == 0:
+                        tabs = [GUI_DEFAULT_TAB]
+                    tabs.sort(key=str.lower)
+                    editable_field.addItems(tabs)
+                    editable_field.setObjectName('Tab' + "_comboBox")
                 # -------------------------------
                 # Divided in advanced or simple option
                 # -------------------------------
 
                 if 'advanced' in startup_config[attr]:
-                    if startup_config[attr]['advanced'] == '1':
-                        self.formAdvance.addRow(str(display_text), editable_field)
-                    else:
-                        self.formSimple.addRow(str(display_text), editable_field)
+
+                    formName = startup_config[attr]['advanced']
                 else:
-                    self.formSimple.addRow(str(display_text), editable_field)
+                    formName = 'Simple'
+
+                if formName in ['0', 0]:
+                    formName = 'Simple'
+
+                if formName == '1':
+                    formName = 'Advanced'
+
+                if formName not in self.advancedForms:
+                    self.advancedForms[formName] = QFormLayout()
+                    tabWidget = QWidget()
+
+                    self.tabWidget.addTab(tabWidget, formName)
+                    vlayout = QVBoxLayout(tabWidget)
+                    vlayout.addLayout(self.advancedForms[formName])
+
+                self.advancedForms[formName].addRow(str(display_text), editable_field)
+
+
 
                 if 'tooltip' in startup_config[attr]:
                     editable_field.setToolTip(startup_config[attr]['tooltip'])
