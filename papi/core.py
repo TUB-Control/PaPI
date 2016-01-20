@@ -532,7 +532,8 @@ class Core:
     # ------- Event processing initial stage ---------
     def __process_event__(self, event):
         """
-        Initial stage of event processing, dividing to event type
+        Initial stage of event processing, dividing by event type
+        Extracts event type and give it to a switch case equivalent
 
         :param event: event to process
         :type event: PapiEventBase
@@ -543,7 +544,8 @@ class Core:
     # ------- Event processing first stage ---------
     def __process_status_event__(self, event):
         """
-        First stage of event processing, deciding which status_event this is
+        First stage of event processing, deciding which status_event this is. Therefore, the method extracts the event
+        operation and processes it.
 
         :param event: event to process
         :type event: PapiEventBase
@@ -563,7 +565,8 @@ class Core:
 
     def __process_instr_event__(self, event):
         """
-        First stage of event processing, deciding which instr_event this is
+        First stage of event processing, deciding which instr_event this is. Therefore, the method extracts the event
+        operation and processes it.
 
         :param event: event to process
         :type event: PapiEventBase
@@ -574,7 +577,11 @@ class Core:
     # ------- Event processing second stage: status events ---------
     def __process_start_successfull__(self, event):
         """
-        Process start_successfull event
+        Process start_successful event.
+
+        A start_successful event is sent by plugins after their initialize function returned 'true' indicating a
+        successful start of the plugin before continuing with its main execution routine.
+
 
         :param event: event to process
         :type event: PapiEventBase
