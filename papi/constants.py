@@ -56,17 +56,19 @@ CORE_ALIVE_MAX_COUNT            = 10
 
 CORE_TIME_SIGNAL                = 'papi_time_signal'
 
-PAPI_LAST_CFG_PATH              = 'papi/last_active_papi.xml'
+PAPI_LAST_CFG                   =  'last_active_papi.xml'
+
 PAPI_USER_CFG                   = ''
+PAPI_USER_FOLDER                = ''
 
-if platform.system() == 'Linux':
-    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
+if platform.system() in ['Linux', 'Darwin']:
+    PAPI_USER_FOLDER = expanduser("~")
 
-if platform.system() == 'Darwin':
-    PAPI_USER_CFG =  expanduser("~") + '/.papi/config.xml'
-
+PAPI_USER_CFG =  PAPI_USER_FOLDER + '/.papi/config.xml'
 
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
+
+PAPI_LAST_CFG_PATH              = PAPI_USER_FOLDER + '/' + PAPI_LAST_CFG
 
 # PaPI Information constants
 

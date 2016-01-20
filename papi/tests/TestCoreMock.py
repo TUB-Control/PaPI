@@ -3,7 +3,7 @@
 import unittest
 from papi.data.DGui import DGui
 from papi.core import Core
-from papi.gui.default.main import startGUI_TESTMOCK
+from papi.gui.default.GUI import startGUI_TESTMOCK
 
 from papi.gui.gui_api import Gui_api
 from threading import Thread

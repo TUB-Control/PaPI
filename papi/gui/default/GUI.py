@@ -32,44 +32,32 @@ import sys
 import os
 import traceback
 import re
+import signal
+from multiprocessing import Queue, Process
 
-from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox, QTreeView
-from PyQt5.QtGui               import QIcon, QDesktopServices, QDropEvent, QDragEnterEvent, QPixmap
+from PyQt5.QtWidgets           import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PyQt5.QtGui               import QIcon, QDesktopServices, QDropEvent, QPixmap
 from PyQt5.QtCore              import Qt, QUrl
 from PyQt5 import QtCore, QtGui
+
+import papi.constants as pc
 
 from papi.ui.gui.default.DefaultMain   import Ui_DefaultMain
 from papi.data.DGui             import DGui
 from papi.ConsoleLog            import ConsoleLog
 from papi.gui.default.item      import PaPIFavAction
 
-
-# from papi.constants import GUI_PAPI_WINDOW_TITLE, GUI_WOKRING_INTERVAL, GUI_PROCESS_CONSOLE_IDENTIFIER, \
-#     GUI_PROCESS_CONSOLE_LOG_LEVEL, GUI_START_CONSOLE_MESSAGE, GUI_WAIT_TILL_RELOAD, GUI_DEFAULT_HEIGHT, GUI_DEFAULT_WIDTH, \
-#     PLUGIN_STATE_PAUSE, PLUGIN_STATE_STOPPED, PAPI_ABOUT_TEXT, PAPI_ABOUT_TITLE, PAPI_DEFAULT_BG_PATH, PAPI_LAST_CFG_PATH
-# from papi.constants import CONFIG_DEFAULT_FILE, PLUGIN_VIP_IDENTIFIER, PLUGIN_PCP_IDENTIFIER, CONFIG_DEFAULT_DIRECTORY
-
-import papi.constants as pc
-
 from papi.gui.default.create_plugin_dialog import CreatePluginDialog
 from papi.gui.default.create_plugin_menu import CreatePluginMenu
 from papi.gui.default.overview_menu import OverviewPluginMenu
-from papi.gui.default.PapiTabManger import PapiTabManger, TabObject, PaPIWindow
-
+from papi.gui.default.PapiTabManger import PapiTabManger, TabObject
 from papi.gui.default.custom import PaPIConfigSaveDialog
-from papi.gui.default.item import PaPITreeModel
+from papi.gui.default import get32Icon, get16Icon
 
 from papi.gui.gui_management import GuiManagement
 
-from papi.gui.default import get32Icon, get16Icon
-
-from multiprocessing import Queue, Process
 from papi.core import run_core_in_own_process
-import signal
 
-
-# Disable antialiasing for prettier plots
-#pg.setConfigOptions(antialias=False)
 
 def run_gui_in_own_process(CoreQueue, GUIQueue, gui_id, args):
     """
@@ -133,9 +121,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :return:
         """
         super(GUI, self).__init__(parent)
-        self.is_parent = is_parent
-
         self.setupUi(self)
+
+        self.is_parent = is_parent
 
         # Create a data structure for gui if it is missing
         # -------------------------------------------------- #
@@ -175,31 +163,31 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.TabManager = PapiTabManger(tabWigdet=self.widgetTabs, centralWidget=self.centralwidget)
 
         self.gui_management = GuiManagement(core_queue_ref,
-                                    gui_queue_ref,
-                                    gui_id_ref,
-                                    self.TabManager,
-                                    self.get_gui_config,
-                                    self.set_gui_config)
+                                            gui_queue_ref,
+                                            gui_id_ref,
+                                            self.TabManager,
+                                            self.get_gui_config,
+                                            self.set_gui_config
+                                            )
 
         self.TabManager.gui_api = self.gui_management.gui_api
         self.TabManager.dGui    = self.gui_management.gui_data
 
         self.gui_management.gui_event_processing.added_dplugin.connect(self.add_dplugin)
         self.gui_management.gui_event_processing.removed_dplugin.connect(self.remove_dplugin)
-        self.gui_management.gui_event_processing.dgui_changed.connect(self.changed_dgui)
-        self.gui_management.gui_event_processing.plugin_died.connect(self.plugin_died)
+        self.gui_management.gui_event_processing.dgui_changed.connect(self.triggered_changed_dgui)
+        self.gui_management.gui_event_processing.plugin_died.connect(self.triggered_plugin_died)
 
-        self.gui_management.gui_api.error_occured.connect(self.error_occured)
+        self.gui_management.gui_api.error_occured.connect(self.triggered_error_occured)
 
         # initialize the graphic of the gui
         # -------------------------------------------------- #
-        self.gui_graphic_init()
+        self.init_gui_graphic()
 
         signal.signal(signal.SIGINT, lambda a,b: self.signal_handler(a,b))
 
         # List for keys that are active
-        self.keysActiveList = [];
-
+        self.keysActiveList = []
 
     def signal_handler(self,signal, frame):
         """
@@ -208,25 +196,28 @@ class GUI(QMainWindow, Ui_DefaultMain):
         As an reaction it will close the gui by first telling the core to close and then closing the gui
         :return:
         """
+
         self.gui_management.gui_api.do_close_program()
         sys.exit(0)
 
 
-    def gui_graphic_init(self):
+    def init_gui_graphic(self):
+        """
+        Called to set mandatory variables, create child dialogs and actions.
+
+        :return:
+        """
+
         self.setWindowTitle(pc.GUI_PAPI_WINDOW_TITLE)
         # set GUI size
         self.setGeometry(self.geometry().x(),self.geometry().y(), pc.GUI_DEFAULT_WIDTH, pc.GUI_DEFAULT_HEIGHT)
 
-        self.count = 0
-
         self.log = ConsoleLog(pc.GUI_PROCESS_CONSOLE_LOG_LEVEL, pc.GUI_PROCESS_CONSOLE_IDENTIFIER)
-
         self.log.printText(1,pc.GUI_START_CONSOLE_MESSAGE + ' .. Process id: '+str(os.getpid()))
 
         self.last_config = pc.PAPI_LAST_CFG_PATH
 
         self.in_run_mode = False
-
 
         # -------------------------------------
         # Create placeholder
@@ -240,59 +231,54 @@ class GUI(QMainWindow, Ui_DefaultMain):
         # -------------------------------------
         self.plugin_create_dialog = CreatePluginDialog(self.gui_management.gui_api, self.TabManager)
 
-
-        # -------------------------------------
-        # Create callback functions for buttons
-        # -------------------------------------
-        #self.loadButton.clicked.connect(self.load_triggered)
-        #self.saveButton.clicked.connect(self.save_triggered)
-
         # -------------------------------------
         # Create actions
         # -------------------------------------
         _translate = QtCore.QCoreApplication.translate
 
-        self.actionLoad.triggered.connect(self.triggered_load)
-        self.actionLoad.setShortcut(_translate("DefaultMain","Ctrl+L"))
+        self.action_load_config.triggered.connect(self.triggered_load_config)
+        self.action_load_config.setShortcut(_translate("DefaultMain","Ctrl+L"))
 
+        self.action_save_config.triggered.connect(self.triggered_save_config)
+        self.action_save_config.setShortcut(_translate("DefaultMain","Ctrl+S"))
 
+        self.action_open_overview_menu.triggered.connect(self.triggered_open_overview_menu)
+        self.action_open_overview_menu.setShortcut(_translate("DefaultMain","Ctrl+O"))
 
-        self.actionSave.triggered.connect(self.triggered_save)
-        self.actionSave.setShortcut(_translate("DefaultMain","Ctrl+S"))
+        self.action_open_create_plugin_menu.triggered.connect(self.triggered_open_create_plugin_menu)
+        self.action_open_create_plugin_menu.setShortcut(_translate("DefaultMain","Ctrl+N"))
 
-        self.actionOverview.triggered.connect(self.triggered_show_overview_menu)
-        self.actionOverview.setShortcut(_translate("DefaultMain","Ctrl+O"))
+        self.action_reset_papi.triggered.connect(self.triggered_reset_papi)
+        self.action_reload_config.triggered.connect(self.triggered_reload_config)
 
-        self.actionCreate.triggered.connect(self.triggered_show_create_plugin_menu)
-        self.actionCreate.setShortcut(_translate("DefaultMain","Ctrl+N"))
+        self.action_toggle_run_mode.triggered.connect(self.triggered_toggle_run_mode)
 
-        self.actionResetPaPI.triggered.connect(self.triggered_reset_papi)
-        self.actionReloadConfig.triggered.connect(self.triggered_reload_config)
+        self.action_reload_plugin_db.triggered.connect(self.triggered_reload_plugin_db)
 
-        self.actionRunMode.triggered.connect(self.toggle_run_mode)
+        self.action_open_papi_wiki.triggered.connect(self.triggered_open_papi_wiki)
 
-        self.actionReload_Plugin_DB.triggered.connect(self.triggered_reload_plugin_db)
+        self.action_open_papi_doc.triggered.connect(self.triggered_open_papi_doc)
+        self.action_open_papi_doc.setShortcut(_translate("DefaultMain","Ctrl+H"))
 
-        self.actionPaPI_Wiki.triggered.connect(self.triggered_papi_wiki)
+        self.action_open_papi_about.triggered.connect(self.triggered_open_papi_about)
+        self.action_open_qt_about.triggered.connect(self.triggered_open_qt_about)
 
-        self.actionPaPI_Doc.triggered.connect(self.triggered_papi_doc)
-        self.actionPaPI_Doc.setShortcut(_translate("DefaultMain","Ctrl+H"))
+        self.action_toggle_toolbar.triggered.connect(self.triggered_toggle_toolbar)
 
-        self.actionAbout.triggered.connect(self.triggered_papi_about)
-        self.actionAbout_Qt.triggered.connect(self.triggered_papi_about_qt)
+        self.toolbar.clickedFavouritePlugin.connect(self.toolbar_add_fav_plugin)
+        self.toolbar.removedFavouritePlugin.connect(self.fav_plugin_was_removed)
 
-        self.actionToolbar.triggered.connect(self.triggered_show_toolbar)
+        self.init_set_icons()
 
-        #self.toolBar.dragEnterEvent = self.toolbarDragEnterEvent
-        #self.toolBar.dropEvent = self.toolbarDropEvent
+    def fav_plugin_add(self, plugin_name):
+        """
+        Mark the plugin with the name plugin_name as favourite plugin.
 
-        self.toolBar.clickedFavouritePlugin.connect(self.toolbarAddFavPlugin)
-        self.toolBar.removedFavouritePlugin.connect(self.favPluginWasRemoved)
+        :param plugin_name: Name of the plugin
+        :return:
+        """
 
-        self.set_icons()
-
-    def addFavPlugin(self, fav_plugin):
-        plugin_manager = self.gui_management.plugin_manager;
+        plugin_manager = self.gui_management.plugin_manager
 
         plugin_manager.locatePlugins()
 
@@ -301,7 +287,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         loadable_pluginfo = {p.path:p for p in plugin_manager.getAllPlugins()}
 
         for plugin_info in all_pluginfo.values():
-            if plugin_info.name == fav_plugin:
+            if plugin_info.name == plugin_name:
 
                 if plugin_info.path in loadable_pluginfo.keys():
                     plugin_info = loadable_pluginfo[plugin_info.path]
@@ -309,26 +295,18 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 else:
                     plugin_info.loadable = False
 
-                self.toolbarAddFavPlugin(plugin_info)
+                self.toolbar_add_fav_plugin(plugin_info)
 
-    def favPluginWasRemoved(self):
+    def fav_plugin_was_removed(self):
         self.gui_management.gui_api.do_save_xml_config_reloaded(
             pc.PAPI_USER_CFG, plToSave=[], sToSave=[], saveUserSettings=True)
 
-    def set_icons(self):
-        # -------------------------------------
-        # Create Icons for buttons
-        # -------------------------------------
-        load_icon = get32Icon('folder')
-        save_icon = get32Icon('file_save_as')
-        # -------------------------------------
-        # Set Icons for buttons
-        # -------------------------------------
-        #self.loadButton.setIconSize(QSize(32, 32))
-        #self.loadButton.setIcon(load_icon)
+    def init_set_icons(self):
+        """
+        This function sets the icon for all actions.
 
-        #self.saveButton.setIconSize(QSize(32, 32))
-        #self.saveButton.setIcon(save_icon)
+        :return:
+        """
 
         # -------------------------------------
         # Create Icons for actions
@@ -348,43 +326,51 @@ class GUI(QMainWindow, Ui_DefaultMain):
         # -------------------------------------
         # Set Icons for actions
         # -------------------------------------
-        self.actionLoad.setIcon(load_icon)
-        self.actionSave.setIcon(save_icon)
-        self.actionExit.setIcon(exit_icon)
-        self.actionOverview.setIcon(overview_icon)
-        self.actionCreate.setIcon(create_icon)
-        self.actionReload_Plugin_DB.setIcon(reload_icon)
-        self.actionReloadConfig.setIcon(reload_icon)
-        self.actionPaPI_Wiki.setIcon(help_icon)
-        self.actionPaPI_Doc.setIcon(help_icon)
-        self.actionAbout.setIcon(info_icon)
-        self.actionAbout_Qt.setIcon(info_icon)
+        self.action_load_config.setIcon(load_icon)
+        self.action_save_config.setIcon(save_icon)
+        self.action_exit.setIcon(exit_icon)
+        self.action_open_overview_menu.setIcon(overview_icon)
+        self.action_open_create_plugin_menu.setIcon(create_icon)
+        self.action_reload_plugin_db.setIcon(reload_icon)
+        self.action_reload_config.setIcon(reload_icon)
+        self.action_open_papi_wiki.setIcon(help_icon)
+        self.action_open_papi_doc.setIcon(help_icon)
+        self.action_open_papi_about.setIcon(info_icon)
+        self.action_open_qt_about.setIcon(info_icon)
         self.actionAbout_PySide.setIcon(info_icon)
-        self.actionResetPaPI.setIcon(delete_icon)
-        self.actionRunMode.setIcon(view_icon)
+        self.action_reset_papi.setIcon(delete_icon)
+        self.action_toggle_run_mode.setIcon(view_icon)
 
         # -------------------------------------
         # Set Icons visible in menu
         # -------------------------------------
-        self.actionLoad.setIconVisibleInMenu(True)
-        self.actionSave.setIconVisibleInMenu(True)
-        self.actionExit.setIconVisibleInMenu(True)
-        self.actionOverview.setIconVisibleInMenu(True)
-        self.actionCreate.setIconVisibleInMenu(True)
-        self.actionReload_Plugin_DB.setIconVisibleInMenu(True)
-        self.actionReloadConfig.setIconVisibleInMenu(True)
-        self.actionPaPI_Wiki.setIconVisibleInMenu(True)
-        self.actionPaPI_Doc.setIconVisibleInMenu(True)
-        self.actionAbout.setIconVisibleInMenu(True)
-        self.actionAbout_Qt.setIconVisibleInMenu(True)
+        self.action_load_config.setIconVisibleInMenu(True)
+        self.action_save_config.setIconVisibleInMenu(True)
+        self.action_exit.setIconVisibleInMenu(True)
+        self.action_open_overview_menu.setIconVisibleInMenu(True)
+        self.action_open_create_plugin_menu.setIconVisibleInMenu(True)
+        self.action_reload_plugin_db.setIconVisibleInMenu(True)
+        self.action_reload_config.setIconVisibleInMenu(True)
+        self.action_open_papi_wiki.setIconVisibleInMenu(True)
+        self.action_open_papi_doc.setIconVisibleInMenu(True)
+        self.action_open_papi_about.setIconVisibleInMenu(True)
+        self.action_open_qt_about.setIconVisibleInMenu(True)
         self.actionAbout_PySide.setIconVisibleInMenu(True)
-        self.actionResetPaPI.setIconVisibleInMenu(True)
-        self.actionRunMode.setIconVisibleInMenu(True)
+        self.action_reset_papi.setIconVisibleInMenu(True)
+        self.action_toggle_run_mode.setIconVisibleInMenu(True)
 
     def get_gui_config(self, saveUserSettings=False):
+        """
+        Returns a dictionary which describes the current state of the GUI, like e.g. size, background image and postion.
 
-        actTab = {}
-        actTab['Active'] = str(self.TabManager.get_currently_active_tab())
+        When saveUserSettings==True the dictionary will also contain the current favourite plugins.
+
+        :param saveUserSettings:
+        :return:
+        """
+        actTab = {
+            'Active': str(self.TabManager.get_currently_active_tab())
+        }
 
         tabs = {}
         tab_dict = self.TabManager.get_tabs_by_uname()
@@ -394,24 +380,23 @@ class GUI(QMainWindow, Ui_DefaultMain):
             tabs[tab]['Background'] = tabOb.background
             tabs[tab]['Position'] = str(self.TabManager.getTabPosition_by_name(tab))
 
-        size = {}
+        size = {
+            'X': str(self.size().width()),
+            'Y': str(self.size().height())
+        }
 
-        size['X']= str(self.size().width())
-
-        size['Y']= str(self.size().height())
-
-
-        cfg = {}
-        cfg['ActiveTab'] = actTab
-        cfg['Tabs'] = tabs
-        cfg['Size'] = size
+        cfg = {
+            'ActiveTab': actTab,
+            'Tabs': tabs,
+            'Size': size
+        }
 
         # ----------------------
         # Set favourite plugins
         # ----------------------
         if saveUserSettings:
             favourites = {}
-            actions = self.toolBar.actions()
+            actions = self.toolbar.actions()
             for i in range(len(actions)):
                 action = actions[i]
                 if isinstance(action, PaPIFavAction):
@@ -423,51 +408,14 @@ class GUI(QMainWindow, Ui_DefaultMain):
         return cfg
 
     def set_gui_config(self, cfg):
-        #print(cfg)
-        # #################
-        # # Cfgs for Tabs #
-        # #################
-        # if 'tabs' in cfg:
-        #     tabList = {}
-        #     for tab in cfg['tabs']:
-        #         # Tab Name
-        #         name = tab
-        #
-        #         # Tab details
-        #         tabDetails = cfg['tabs'][tab]
-        #
-        #         # check for background
-        #         if 'background' in tabDetails:
-        #             bg = tabDetails['background']
-        #             if bg != 'default':
-        #                 self.TabManager.set_background_for_tab_with_name(name,bg)
-        #         else:
-        #             bg = None
-        #
-        #         # check for position
-        #         if 'position' in tabDetails:
-        #             pos = int(tabDetails['position'])
-        #         else:
-        #             if len(list(tabList.keys())) > 1:
-        #                 pos = max(list(tabList.keys()))+1
-        #             else:
-        #                 pos = 0
-        #
-        #         tabList[pos] = [name, bg]
-        #
-        #     # sort tabs acoriding to positions
-        #     keys = list(tabList.keys())
-        #     keys.sort()
-        #     for position in keys:
-        #         name = tabList[position][0]
-        #         bg = tabList[position][1]
-        #         tabOb = self.TabManager.add_tab(name)
-        #         self.TabManager.set_background_for_tab_with_name(name,bg)
-        #
-        # if 'activeTab' in cfg:
-        #     if 'value' in cfg['activeTab']['active']:
-        #         self.TabManager.set_tab_active_by_index(int( cfg['activeTab']['active']['value'] ))
-        #
+        """
+        A configuration as dictionary is loaded by this function.
+
+        :param cfg:
+        :type {};
+        :return:
+        """
+
         #################
         # windows size: #
         #################
@@ -487,7 +435,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
             for position in sorted(sorted_positions.keys()):
                 plugin = sorted_positions[position]
-                self.addFavPlugin(plugin)
+                self.fav_plugin_add(plugin)
 
         # -----------------------
         # Restore Tabs
@@ -499,12 +447,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 if 'Background' in tab:
                     self.TabManager.set_background_for_tab_with_name(tabName, tab['Background'])
 
-                
-
-
     def triggered_reload_plugin_db(self):
         """
-        This Callback function will reload the plugin list of the plugin manager
+        This callback function reloads the list of plugins of the plugin manager.
 
         :return:
         """
@@ -512,54 +457,54 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
     def run(self):
         """
-
+        Creates a timer and set interval for processing events with working loop
 
         :return:
         """
-        # create a timer and set interval for processing events with working loop
 
-        #QtCore.QTimer.singleShot(GUI_WOKRING_INTERVAL, lambda: self.gui_event_processing.gui_working(self.closeEvent))
         self.workingTimer = QtCore.QTimer(self)
-        self.workingTimer.timeout.connect(lambda: self.gui_management.gui_event_processing.gui_working(self.closeEvent, self.workingTimer))
+        self.workingTimer.timeout.connect(
+            lambda: self.gui_management.gui_event_processing.gui_working(
+                self.closeEvent, self.workingTimer
+            )
+        )
         self.workingTimer.start(pc.GUI_WOKRING_INTERVAL)
 
-
-
-
-    def triggered_show_create_plugin_menu(self):
+    def triggered_open_create_plugin_menu(self):
         """
-
+        Used to open the create plugin menu.
 
         :return:
         """
+
         self.create_plugin_menu = CreatePluginMenu(self.gui_management.gui_api,
                                                    self.TabManager,
                                                    self.gui_management.plugin_manager )
-
         self.create_plugin_menu.show()
 
-    def triggered_show_overview_menu(self):
+    def triggered_open_overview_menu(self):
         """
-        Used to show the overview menu.
+        Used to open the overview menu.
 
         :return:
         """
         self.overview_menu = OverviewPluginMenu(self.gui_management.gui_api, self.gui_management.tab_manager)
         self.overview_menu.show()
 
-    def triggered_show_toolbar(self):
+    def triggered_toggle_toolbar(self):
         """
-        Used to hide and unhide the toolbar
+        Used to toogle the vision of the the toolbar
+
         :return:
         """
 
-        self.toolBar.setHidden(not self.toolBar.isHidden())
+        self.toolbar.setHidden(not self.toolbar.isHidden())
 
-        self.actionToolbar.setChecked(not self.toolBar.isHidden())
+        self.action_toggle_toolbar.setChecked(not self.toolbar.isHidden())
 
-    def triggered_load(self):
+    def triggered_load_config(self):
         """
-        Used to start the 'load config' dialog.
+        Used to open the 'load config' dialog.
 
         :return:
         """
@@ -580,14 +525,22 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 self.load_config(fileNames[0])
 
     def load_config(self, file_name):
+        """
+        Called with a PaPI XML Configuration which is determined by file_name,
+
+        :param file_name:
+        :return:
+        """
+
         self.gui_management.gui_api.do_load_xml(file_name)
 
-    def triggered_save(self):
+    def triggered_save_config(self):
         """
         Used to start the 'save config' dialog.
 
         :return:
         """
+
         fileNames = ''
 
         dialog = PaPIConfigSaveDialog(self, self.gui_management.gui_api)
@@ -600,28 +553,30 @@ class GUI(QMainWindow, Ui_DefaultMain):
         plugin_list, subscription_list = dialog.get_create_lists()
 
         if len(fileNames):
-
-
-
             if fileNames[0] != '':
                 if "json" in dialog.selectedNameFilter():
-                    self.gui_management.gui_api.do_save_json_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
+                    self.gui_management.gui_api.do_save_json_config_reloaded(
+                        fileNames[0], plToSave=plugin_list, sToSave=subscription_list
+                    )
 
                 if "xml" in dialog.selectedNameFilter():
-                    self.gui_management.gui_api.do_save_xml_config_reloaded(fileNames[0], plToSave=plugin_list, sToSave=subscription_list)
+                    self.gui_management.gui_api.do_save_xml_config_reloaded(
+                        fileNames[0], plToSave=plugin_list, sToSave=subscription_list
+                    )
 
     def closeEvent(self, *args, **kwargs):
         """
-        Handle close event.
-        Saves current session as 'papi/last_active_papi.xml'
+        Handles close events.
+        Saves current session as pc.PAPI_LAST_CFG_PATH
         Closes all opened windows.
 
         :param args:
         :param kwargs:
         :return:
         """
+
         try:
-            self.gui_management.gui_api.do_save_xml_config('papi/last_active_papi.xml')
+            self.gui_management.gui_api.do_save_xml_config(pc.PAPI_LAST_CFG_PATH)
         except Exception as E:
             tb = traceback.format_exc()
 
@@ -642,12 +597,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :param dplugin:
         :return:
         """
-        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
 
-            # sub_window_ori = dplugin.plugin.get_sub_window()
-            #
-            # dplugin.plugin.set_window_for_internal_usage(PaPIMDISubWindow())
-            # dplugin.plugin.pl_set_widget_for_internal_usage(sub_window_ori.widget())
+        if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
 
             sub_window = dplugin.plugin._get_sub_window()
 
@@ -663,7 +614,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
             isMaximized = config['maximized']['value'] == '1'
 
-
             size_re = re.compile(r'([0-9]+)')
 
             pos = config['position']['value']
@@ -676,7 +626,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 sub_window.showMaximized()
 
             # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
-
             sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
 
         if self.overview_menu is not None:
@@ -690,6 +639,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         :param dplugin:
         :return:
         """
+
         if dplugin.type == pc.PLUGIN_VIP_IDENTIFIER:
             config = dplugin.plugin.pl_get_current_config()
             tab_name = config['tab']['value']
@@ -703,22 +653,32 @@ class GUI(QMainWindow, Ui_DefaultMain):
                         else:
                             self.TabManager.remove_window(tabOb)
 
+    def triggered_changed_dgui(self):
+        """
+        This is triggered to refresh the overview menu if it is active.
+        This is needed to guarantee the consistency between the data structure dgui and the data seen by the user.
 
-    def changed_dgui(self):
+        :return:
+        """
         if self.overview_menu is not None:
             self.overview_menu.refresh_action()
 
-    def plugin_died(self, dplugin, e, msg):
+    def triggered_plugin_died(self, dplugin, e, msg):
+        """
+        Triggered when a plugin died.
+
+        :param dplugin:
+        :param e:
+        :param msg:
+        :return:
+        """
+
         dplugin.state = pc.PLUGIN_STATE_STOPPED
 
         self.gui_management.gui_api.do_stopReset_plugin_uname(dplugin.uname)
 
         errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
-
-        # layout = errMsg.layout();
-        # spacer = QtGui.QSpacerItem(1000, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        # layout.addItem(spacer, layout.rowCount(), 0,1, layout.columnCount())
 
         errMsg.setIcon(QtGui.QMessageBox.Critical)
         errMsg.setSizeGripEnabled(True)
@@ -728,7 +688,18 @@ class GUI(QMainWindow, Ui_DefaultMain):
         errMsg.setWindowModality(Qt.NonModal)
         errMsg.show()
 
-    def error_occured(self, title, msg, detailed_msg):
+    def triggered_error_occured(self, title, msg, detailed_msg):
+        """
+        Triggered when an error occured. Creates an error dialog for the user.
+        Title defines the title of the error dialog.
+        Msg contains a messages displayed in the dialog.
+        Detailed_msg should contain more information about the occured error which is optional displayed.
+
+        :param title:
+        :param msg:
+        :param detailed_msg:
+        :return:
+        """
 
         errMsg = QtGui.QMessageBox(self)
         errMsg.setFixedWidth(650)
@@ -739,11 +710,17 @@ class GUI(QMainWindow, Ui_DefaultMain):
         errMsg.setWindowModality(Qt.NonModal)
         errMsg.show()
 
-    def toggle_run_mode(self):
+    def triggered_toggle_run_mode(self):
+        """
+        Toggles the run mode, i.e. it changes from active to passive and vice versa.
+
+        :return:
+        """
+
         if self.in_run_mode is False:
             # hide toolbar
-            self.toolBar.setHidden(True)
-            self.actionToolbar.setChecked(False)
+            self.toolbar.setHidden(True)
+            self.action_toggle_toolbar.setChecked(False)
             # disable context menu of tabmanger
             self.TabManager.disableContextMenus()
 
@@ -756,8 +733,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
             self.in_run_mode = True
         else:
             # show toolbar
-            self.toolBar.setHidden(False)
-            self.actionToolbar.setChecked(True)
+            self.toolbar.setHidden(False)
+            self.toolbarAction.setChecked(True)
             # disable context menu of tabmanger
             self.TabManager.enableContextMenus()
 
@@ -769,68 +746,58 @@ class GUI(QMainWindow, Ui_DefaultMain):
                     subWindow.enableInteraction()
             self.in_run_mode = False
 
-    def toogle_lock(self):
-        raise Exception("PLEASE REPORT THIS BUG!!")
-        if self.in_run_mode:
-            for tab_name in self.TabManager.get_tabs_by_uname():
-                area = self.TabManager.get_tabs_by_uname()[tab_name]
-
-                windowsList = area.subWindowList()
-
-                for window in windowsList:
-
-                    #window.setAttribute(Qt.WA_NoBackground)
-
-                    #window.setAttribute(Qt.WA_NoSystemBackground)
-                    #window.setAttribute(Qt.WA_TranslucentBackground)
-                    #window.set_movable(False)
-                    window.setMouseTracking(False)
-                    window.setWindowFlags(~Qt.WindowMinMaxButtonsHint & (Qt.CustomizeWindowHint | Qt.WindowTitleHint))
-
-        if not self.in_run_mode:
-            for tab_name in self.TabManager.get_tabs_by_uname():
-                area = self.TabManager.get_tabs_by_uname()[tab_name]
-
-                windowsList = area.subWindowList()
-
-                for window in windowsList:
-                    #window.set_movable(True)
-                    window.setMouseTracking(True)
-                    window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint )
-
     def keyPressEvent(self, event):
+        """
+        Default callback function which is called when any key was pressed by the user.
+
+        :param event:
+        :return:
+        """
+
         if event.key() not in self.keysActiveList:
             self.keysActiveList.append(event.key())
 
         if  QtCore.Qt.Key_Escape in self.keysActiveList:
             if self.in_run_mode:
-                self.toggle_run_mode()
+                self.triggered_toggle_run_mode()
 
         if QtCore.Qt.Key_D in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_next_tab()
             self.keysActiveList.remove(QtCore.Qt.Key_D)
-            #self.keysActiveList.remove(QtCore.Qt.Key_Control)
 
         if QtCore.Qt.Key_A in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_prev_tab()
             self.keysActiveList.remove(QtCore.Qt.Key_A)
-            #self.keysActiveList.remove(QtCore.Qt.Key_Control)
-
 
     def keyReleaseEvent(self, event):
+        """
+        Default callback function which is called when any key was released by the user.
+
+        :param event:
+        :return:
+        """
+
         if event.key() in self.keysActiveList:
             self.keysActiveList.remove(event.key())
 
-
     def resize_gui_window(self, w, h):
+        """
+        Internal function for resizing the window of the GUI.
+
+        :param event:
+        :return:
+        """
+
         self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
 
 
     def triggered_reload_config(self):
         """
         This function is used to reset PaPI and to reload the last loaded configuration file.
+
         :return:
         """
+
         if self.last_config is not None:
             self.triggered_reset_papi()
             QtCore.QTimer.singleShot(pc.GUI_WAIT_TILL_RELOAD, lambda: self.gui_management.gui_api.do_load_xml(self.last_config))
@@ -838,32 +805,63 @@ class GUI(QMainWindow, Ui_DefaultMain):
     def triggered_reset_papi(self):
         """
         This function is called to reset PaPI. That means all subscriptions were canceled and all plugins were removed.
+
         :return:
         """
+
         h = pc.GUI_DEFAULT_HEIGHT
         w = pc.GUI_DEFAULT_WIDTH
-        self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
 
+        self.setGeometry(self.geometry().x(),self.geometry().y(),w,h)
         self.TabManager.set_all_tabs_to_close_when_empty(True)
         self.TabManager.close_all_empty_tabs()
-
         self.gui_management.gui_api.do_reset_papi()
 
+    def triggered_open_papi_wiki(self):
+        """
+        Opens the PaPI Wiki in the default browser.
 
+        :return:
+        """
 
-    def triggered_papi_wiki(self):
         QDesktopServices.openUrl(QUrl(pc.PAPI_WIKI_URL, QUrl.TolerantMode))
 
-    def triggered_papi_doc(self):
+    def triggered_open_papi_doc(self):
+        """
+        Opens the PaPI documentation in the default browser.
+
+        :return:
+        """
+
         QDesktopServices.openUrl(QUrl(pc.PAPI_DOC_URL, QUrl.TolerantMode))
 
-    def triggered_papi_about(self):
+    def triggered_open_papi_about(self):
+        """
+        Opens a dialog with information about PaPI.
+
+        :return:
+        """
+
         QMessageBox.about(self, pc.PAPI_ABOUT_TITLE, pc.PAPI_ABOUT_TEXT)
 
-    def triggered_papi_about_qt(self):
+    def triggered_open_qt_about(self):
+        """
+        Opens the default dialog provided by Qt which contains information about Qt.
+
+        :return:
+        """
+
         QMessageBox.aboutQt(self)
 
-    def toolbarAddFavPlugin(self, plugin_info):
+    def toolbar_add_fav_plugin(self, plugin_info):
+        """
+        Adds an plugin described by plugin_info to the toolbar.
+        Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.
+        The description contains information like e.g., name and path.
+
+        :param plugin_info:
+        :return:
+        """
 
         l = len(plugin_info.name)
         path = plugin_info.path[:-l]
@@ -872,30 +870,37 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         icon = QIcon(px)
 
-        for action in self.toolBar.actions():
+        for action in self.toolbar.actions():
             if action.text() == plugin_info.name:
                 return
 
         plugin_action = PaPIFavAction(icon, plugin_info.name, self)
         plugin_action.triggered.connect(lambda ignore, p1=plugin_info : self.show_create_plugin_dialog(p1))
 
-        self.toolBar.addAction(plugin_action)
+        self.toolbar.addAction(plugin_action)
 
         self.gui_management.gui_api.do_save_xml_config_reloaded(
             pc.PAPI_USER_CFG, plToSave=[], sToSave=[], saveUserSettings=True)
 
     def show_create_plugin_dialog(self, plugin_info):
+        """
+        Opens the create plugin dialog for a plugin described by plugin_info.
+        Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.
+        The description contains information like e.g., name and path.
+
+        :param plugin_info:
+        :return:
+        """
+
         if plugin_info is not None:
             if plugin_info.loadable:
                 self.plugin_create_dialog.set_plugin(plugin_info)
                 self.plugin_create_dialog.show()
 
-    def dropEvent(self, event:QDropEvent):
-        source = event.source()
-
 def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     """
     Function to call to start gui operation
+
     :param CoreQueue: link to queue of core
     :type CoreQueue: Queue
     :param GUIQueue: queue where gui receives messages
@@ -904,6 +909,7 @@ def startGUI_TESTMOCK(CoreQueue, GUIQueue,gui_id, data_mock):
     :type gui_id: int
     :return:
     """
+
     app = QApplication(sys.argv)
     app.aboutToQuit.connect(app.deleteLater)
 
