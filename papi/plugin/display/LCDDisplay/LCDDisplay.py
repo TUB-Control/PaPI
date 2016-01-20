@@ -35,6 +35,7 @@ import papi.constants as pc
 from papi.constants import CORE_TIME_SIGNAL
 
 import time
+import collections
 
 from PyQt5 import QtGui, QtWidgets, QtCore
 
@@ -181,41 +182,54 @@ class LCDDisplay(vip_base):
         # config[config_parameter_name]['value']  NEEDS TO BE IMPLEMENTED
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
-        config = {
-             "update_interval": {
+
+        config = collections.OrderedDict()
+        config['update_interval'] = {
                      'value': '1000',
                      'regex': '[0-9]+',
                      'display_text' : 'Minimal time between updates (in ms)',
                      'advanced' : '1'
-            },   'size': {
+        }
+
+        config['size'] = {
                     'value': "(150,75)",
                     'regex': '\(([0-9]+),([0-9]+)\)',
                     'advanced': '1',
                     'tooltip': 'Determine size: (height,width)'
-            },   'name': {
+        }
+
+        config['name'] = {
                     'value': 'LCD',
                     'tooltip': 'Used for window title'
-            },   'value_init': {
-                    'value': 0,
+        }
+
+        config['value_init'] = {
+                    'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
                     'tooltip': 'Used as initial value for the LCD-Display'
-            },   'value_scale': {
+        }
+
+        config['value_scale'] = {
                     'value': '1',
                     'tooltip': 'Used to scale displayed value',
                     'regex': '-?[1-9]+[0-9]*(\.?[0-9]+)?',
                     'advanced': '1'
-            },   'value_offset': {
+        }
+
+        config['value_offset'] = {
                     'value': '0',
                     'tooltip': 'Used to offset displayed value',
                     'regex': '-?\d+(\.?\d+)?',
                     'advanced': '1'
-            },  'digit_count': {
+        }
+
+        config['digit_count'] = {
                     'value': '3',
                     'tooltip': 'Number of digits',
                     'regex': '[3-9]',
                     'advanced': '1'
-            }
         }
+
         # config = DConfiguration.DConfiguration()
         #
         # config.add(

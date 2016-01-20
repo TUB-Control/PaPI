@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>-1</number>
      </property>
      <property name="tabsClosable">
       <bool>false</bool>
@@ -25,26 +25,6 @@
      <property name="movable">
       <bool>false</bool>
      </property>
-     <widget class="QWidget" name="tabSimple">
-      <attribute name="title">
-       <string>Simple</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <layout class="QFormLayout" name="formSimple"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabAdvance">
-      <attribute name="title">
-       <string>Advanced</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QFormLayout" name="formAdvance"/>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item>

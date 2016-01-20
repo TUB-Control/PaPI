@@ -38,6 +38,7 @@ import papi.exceptions as pe
 
 import os
 import traceback
+import collections
 
 class base_plugin(IPlugin):
     """
@@ -95,7 +96,24 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        return self._merge_configs(self._get_configuration_base(), self.cb_get_plugin_configuration())
+
+        config_base = self._get_configuration_base()
+        config_plugin = self.cb_get_plugin_configuration()
+
+        # if isinstance(config_base, collections.OrderedDict) and \
+        #     isinstance(config_plugin, collections.OrderedDict):
+            #print('Both are  Ordered dict 1')
+            # More complex merge necessary for keeping the order
+
+        config_merged = config_plugin
+
+        for key in config_base:
+            if key not in config_merged:
+                config_merged[key] = config_base[key]
+
+        return config_merged
+
+#        return self._merge_configs(self._get_configuration_base(), self.cb_get_plugin_configuration())
 
     def cb_get_plugin_configuration(self):
         """
