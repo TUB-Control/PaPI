@@ -69,17 +69,15 @@ class Process_dummy(object):
     def __init__(self):
         self.pid= 0
 
-
 class Core:
     def __init__(self, gui_start_function = None, use_gui=True, is_parent = True, gui_process_pid = None, args=None):
         """
-        Init funciton of core.
-        Will create all data needed to use core and core.run() function
+        Init function of the PaPI Core.
+        Creates all data needed to use core and core.run() functions
 
         .. document private functions
         .. automethod:: __*
         """
-        self.is_parent = is_parent
 
         # switch case structure for processing incoming events
         self.__process_event_by_type__ = {'status_event': self.__process_status_event__,
@@ -117,14 +115,16 @@ class Core:
                                           'start_plugin':           self.__process_start_plugin__
         }
 
+        # Startup parameter to configure core
         self.args = args
+        self.is_parent = is_parent
 
         # creating the main core data object DCore and core queue
         self.core_data = DCore()
         self.core_goOn = 1
         self.core_id = 0
 
-        # setting up the yapsy plguin manager for directory structure
+        # setting up the yapsy plugin manager for directory structure
         self.plugin_manager = PluginManager()
         self.plugin_manager.setPluginPlaces(PLUGIN_ROOT_FOLDER_LIST)
 
@@ -134,10 +134,8 @@ class Core:
         self.use_gui = use_gui
 
         # set information for console logging part (debug information)
-
         self.log = ConsoleLog(CORE_CONSOLE_LOG_LEVEL, CORE_PROCESS_CONSOLE_IDENTIFIER)
         self.log.lvl = pc.CORE_CONSOLE_LOG_LEVEL
-
         try:
             if args:
                 if args.debug_level:
@@ -146,18 +144,20 @@ class Core:
             pass
 
         # define variables for check alive system, e.a. timer and counts
-        self.alive_intervall = CORE_ALIVE_CHECK_INTERVAL
+        self.alive_interval = CORE_ALIVE_CHECK_INTERVAL
         self.alive_count_max = CORE_ALIVE_MAX_COUNT
-        self.alive_timer = Timer(self.alive_intervall, self.check_alive_callback)
+        self.alive_timer = Timer(self.alive_interval, self.check_alive_callback)
         self.alive_count = 0
         self.gui_alive_count = 0
 
+        # Setup queues and processes for inter-process communication between core and gui
         self.core_event_queue = None
         self.gui_event_queue = None
         self.gui_process = Process_dummy()
         self.gui_process.pid = gui_process_pid
         self.gui_alive = True
 
+        # Check whether core is set to be parent and then check parameter to be valid
         if is_parent:
             if gui_start_function is None:
                 raise Exception('Core started with wrong arguments')
@@ -166,14 +166,16 @@ class Core:
             if is_parent is False and gui_process_pid is None:
                  raise Exception('Core started with wrong arguments')
 
+            # core is set to be parent, start gui process from core
             self.gui_start_function = gui_start_function
             self.core_event_queue = Queue()
             self.gui_event_queue = Queue()
 
-
+        # list/queue for events that should be delayed before execution
         self.core_delayed_operation_queue = []
 
-        signal.signal(signal.SIGINT, lambda a,b,c=self: self.signal_handler(a,b,c))
+        # connect CTRL+C signaling from cmd to quit PaPI
+        signal.signal(signal.SIGINT, lambda sig,frame,core=self: self.signal_handler(sig,frame,core))
 
     def run(self):
         """
@@ -182,31 +184,34 @@ class Core:
 
         :return:
         """
-        # some start up information
+        # logs: some startup information
         self.log.printText(1, CORE_PAPI_CONSOLE_START_MESSAGE)
         self.log.printText(1, CORE_CORE_CONSOLE_START_MESSAGE + ' .. Process id: ' + str(os.getpid()))
 
         # start the GUI process to show GUI, set GUI alive status to TRUE
-
+        # don't start GUI in case that CORE is not parent and that the gui should be used
         if self.use_gui and self.is_parent:
             self.gui_process = Process(target=self.gui_start_function,
                                        args=(self.core_event_queue, self.gui_event_queue, self.gui_id, self.args))
             self.gui_process.start()
 
-        # start the check alive timer
+        # start the check alive timer if heartbeat is activated
         if CORE_ALIVE_CHECK_ENABLED is True:
             self.log.printText(1, 'Alive check of processes is enabled')
             self.alive_timer.start()
 
         # core main operation loop
+        # Receiving and reaction to events
         while self.core_goOn:
             # get event from queue, blocks until there is a new event
+            # blocking prevents unnecessary iterations since core is only reacting to events
             event = self.core_event_queue.get()
 
-            # debung out
+            # LOG: Debug output
             self.log.printText(2, 'Event->' + event.get_eventtype() + '   ' + event.get_event_operation())
 
             # process the next event of queue
+            # catch error if event is unknown, i.e. no callback function exits for it
             try:
                 self.__process_event__(event)
             except Exception as Exc:
@@ -215,15 +220,15 @@ class Core:
             # check if there are still plugins alive or gui is still alive before ending core main loop
             self.core_goOn = self.core_data.get_dplugins_count() != 0 or self.gui_alive
 
-        # core main loop ended, so cancel active alive timer
+        # core main loop ended, so cancel alive timer
         self.alive_timer.cancel()
 
-        # core finished operation and did clean shutdown
+        # LOG: core finished operation and did clean shutdown
         self.log.printText(1, CORE_STOP_CONSOLE_MESSAGE)
 
     def signal_handler(self,signal, frame,core):
         """
-        This is an empty
+        Callback-handler for signal from cmd line like e.g. SIGINT
         :return:
         """
         pass
@@ -231,8 +236,8 @@ class Core:
     def send_alive_check_events(self):
         """
         Function for check_alive_status timer to send check_alive events to all running processes
-        This will trigger all correctly running processes to send an answer to core
-
+        This will trigger all correctly running processes to send an answer to core.
+        Alive response is handled in method '__process_alive__'
         :return:
         """
 
@@ -255,6 +260,11 @@ class Core:
         """
         Function which handles the check for the alive situation of all plugins in data base
         Will distribute to error_handling methods to handle dead processes
+        This is no callback functions, more a rather periodically called method to check the alive situation.
+        Is called by the handler which handles the alive timer callbacks
+
+        It checks the counter of the plugins and compares them against the core counter. A not equal (normally smaller)
+        number in the plugin object indicates a dead process. A error handler is called.
 
         :return:
         """
@@ -283,7 +293,8 @@ class Core:
 
     def gui_is_dead_error_handler(self):
         """
-        error handler when gui is dead
+        Error handler for the case that the gui is dead.
+        The handler gets called by the method 'handle_alive_situation' in case the gui counter does not match
 
         :return:
         """
@@ -293,25 +304,32 @@ class Core:
 
     def plugin_process_is_dead_error_handler(self, dplug):
         """
-        Error handler for a dead plugin process
+        Error handler for the case that the a plugin is dead.
+        The handler gets called by the method 'handle_alive_situation' in case the plugin counter does not match
 
         :param dplug: Plugin which is dead
         :type dplug: DPlugin
         :return:
         """
+        # LOG: print situation to the console
         self.log.printText(1, 'Plugin ' + dplug.uname + ' is DEAD')
         self.log.printText(1,
                            'core count: ' + str(self.alive_count) + ' vs. ' + str(dplug.alive_count) + ' :plugin count')
+
+        # set the plugin state to DEAD and update meta data to let the GUI know
         dplug.alive_state = PLUGIN_STATE_DEAD
         self.update_meta_data_to_gui(dplug.id)
 
     def check_alive_callback(self):
         """
-        callback function for check_alive status timer
-        handles sending events to processes and checking their answer
+        Callback function for check_alive status timer, get called every time the timer triggers, does sth and starts a
+        new timer.
+        Handles sending events to processes and checking their answer.
 
         :return:
         """
+
+        # LOG: alive timer triggered
         self.log.printText(2, 'check alive')
 
         # check for answer status of all plugins
@@ -324,29 +342,38 @@ class Core:
         # send new check alive events to plugins
         self.send_alive_check_events()
 
-        # start a new one shot timer with this callback function
+        # start a new one shot timer with this callback function as the next alive interval
         if CORE_ALIVE_CHECK_ENABLED is True:
-            self.alive_timer = Timer(self.alive_intervall, self.check_alive_callback)
+            self.alive_timer = Timer(self.alive_interval, self.check_alive_callback)
             self.alive_timer.start()
 
     def update_meta_data_to_gui(self, pl_id, inform_subscriber=False):
         """
-        On call this function will send the meta information of pl_id to GUI
+        On call, this function sends the meta information of the plugin with pl_id to the GUI
+        With meta information is meant: all data in the dplugin object which is not process related (e.g. ids, names,
+        states, subscriptions)
+        The methods should be called everywhere, where some of those information are changed and a update in other
+        processes is required/wanted. Additionally, subscriber of the plugin 'pl_id' are informed/
+
+        The methods takes the dplugin specified by its id and extracts all the meta data. Then, sends the updated meta
+        data to the gui. Afterwards, if required, the subscriber will be informed by calling this methods (some kind of
+        recursive) again with another id.
 
         :param pl_id: id of plugin with new meta information
+        :type pl_id: int
         :param inform_subscriber: flag used to determine if a meta_update for all subscriber should be initiated
+        :type inform_subscriber: bool
         :return:
         """
         # get DPlugin object with id and check if it exists
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            # DPlugin object exists,so build optinalData for Event
-            o = DOptionalData()
-            # get meta information of DPlugin
-            o.plugin_object = dplugin.get_meta()
+            # DPlugin object exists,so build optionalData for Event
+            optObj = DOptionalData()
+            # get meta information of DPlugin and add it to the event
+            optObj.plugin_object = dplugin.get_meta()
             # build event and send it to GUI with meta information
-            #eventMeta = PapiEvent(pl_id, self.gui_id, 'instr_event', 'update_meta', o)
-            eventMeta = Event.instruction.UpdateMeta(pl_id,self.gui_id,o)
+            eventMeta = Event.instruction.UpdateMeta(pl_id,self.gui_id,optObj)
             self.gui_event_queue.put(eventMeta)
 
             # check if plugin got some subscribers which run in own process
@@ -357,14 +384,18 @@ class Core:
             # Inform all subscriber if needed and wished
             # ---------------------------------------------
             if inform_subscriber:
+                # get all blocks of the plugin to search for subscriber
                 dblocks = dplugin.get_dblocks()
                 for dblock_name in dblocks:
+                    # search in all blocks for subscriber
                     dblock = dblocks[dblock_name]
                     for subscriber_id in dblock.get_subscribers():
+                        # for every subscriber of a block of the plugin, check if it runs in its own process (not in gui)
+                        # to inform that process by a message (recursive call of this function)
                         dplugin_sub = self.core_data.get_dplugin_by_id(subscriber_id)
                         if dplugin_sub.own_process is False:
                             self.update_meta_data_to_gui(dplugin_sub.id, False)
-
+            # return 1 if plugin exists and everything went fine in the update process
             return 1
         else:
             # Dplugin object with pl_id does not exist in DCore of core
@@ -374,14 +405,21 @@ class Core:
             return -1
 
     def update_meta_data_to_gui_for_all(self):
+        """
+        This functions update the meta data of all plugins to the GUI process by iteration over the plugin database
+        and calling 'update_meta_data_to_gui' for every plugin id.
+        :return:
+        """
+        # iterate over plugin database
         plugins = self.core_data.get_all_plugins()
         for id in plugins:
+            # update meta data of plugin id to gui
             self.update_meta_data_to_gui(id)
 
     def handle_parameter_change(self, plugin, parameter_name, value):
         """
-        This function should be called, when there is a new_data event for changing a parameter value
-        This function will change the value in DCore and update this information to GUI via meta update
+        This function should be called whenever there is a new_data event for changing a parameter value
+        This function changes the value in DCore and updates this information to the GUI via a meta update
 
         :param plugin: Plugin which owns the parameter
         :type plugin: DPlugin
@@ -391,10 +429,13 @@ class Core:
         :type value: all possible, depends on plugin
         :return: -1 for error(parameter with parameter_name does not exist in plugin), 1 for o.k., done
         """
+        # gets the parameter list of the plugin for witch a parameter was changed
         allparas = plugin.get_parameters()
         if parameter_name in allparas:
+            # parameter exists in the plugin, so change its value.
             para = allparas[parameter_name]
             para.value = value
+            # Then, update the change to the gui by performing a meta update
             self.update_meta_data_to_gui(plugin.id)
             return 1
         else:
@@ -402,7 +443,7 @@ class Core:
 
     def new_subscription(self, subscriber_id, source_id, block_name, signals, sub_alias, orginal_event=None):
         """
-        Gets information of a new and wanted subscription.
+        Gets information of a new and desired subscription.
         This method will try to create the wanted subscription.
 
         :param subscriber_id: Id of the plugin that want to get data
@@ -413,10 +454,11 @@ class Core:
         :return:
         """
         already_sub = False
-        # test if already subscribed
+
+        # check if already subscribed
         source_pl = self.core_data.get_dplugin_by_id(source_id)
         if source_pl is not None:
-
+            # only check plugins which are started successfully, otherwise delay this operation.
             if source_pl.state != PLUGIN_STATE_START_SUCCESFUL:
                 # source for subscription does not exists yet, so delay subscription event again
                 self.core_delayed_operation_queue.append(orginal_event)
@@ -424,13 +466,17 @@ class Core:
                                    + str(source_id) + ' is still starting.')
                 return 0
 
+            # plugin is running correctly, so get its blocks to check if the subscriber already exists
             blocks = source_pl.get_dblocks()
             if block_name in blocks:
                 b = blocks[block_name]
                 subs = b.get_subscribers()
+
                 if subscriber_id in subs:
+                    # subscriber is already listed, so remember that
                     already_sub = True
 
+        # Check if the subscription is necessary
         if already_sub is False:
             dsubscription = self.core_data.subscribe(subscriber_id, source_id, block_name)
             if dsubscription is None:
@@ -464,15 +510,21 @@ class Core:
             else:
                 pass
 
+        # LOG: successful
         self.log.printText(1, 'subscribe, subscribtion correct: ' + str(subscriber_id) + '->(' + str(source_id) + ',' + str(
             block_name) + ')')
+
+        # update meta data of subscriber and source plugin, since the relation between those two changed due to this method.
         self.update_meta_data_to_gui(subscriber_id)
         self.update_meta_data_to_gui(source_id)
         return ERROR.NO_ERROR
 
-
     def checkEventsInDelayedQueue(self):
-        # process delayed_operation_queue
+        """
+        Process all events which are in the delayed operation queue by poping them out and inserting them to the main
+        core event queue 'core_event_queue'
+        :return:
+        """
         while len(self.core_delayed_operation_queue) != 0:
             self.core_event_queue.put(self.core_delayed_operation_queue.pop(0))
 
@@ -564,8 +616,8 @@ class Core:
 
     def __process_alive__(self, event):
         """
-        Processes alive response from processes/plugins and GUI, organising the counter
-
+        Processes alive response from processes/plugins and GUI, organising the counter,
+        i.e. increment GUI counter if alive event's origin is GUI, otherwise increment counter stored in dplugin object
         :param event: event to process
         :type event: PapiEventBase
         """
