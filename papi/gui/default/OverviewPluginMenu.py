@@ -54,12 +54,23 @@ from papi.data.DPlugin import DPlugin, DBlock, DParameter, DSubscription
 
 class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     """
-    This class is used to create an extra window which is used to display all created plugins.
-    The information are taken by the corresponding DPlugin-Object of a plugin. By this window a user is able to
+    This class is used to create an extra window which displays all created plugins.
+    The information are taken by the corresponding DPlugin-Object of a plugin. By this window a user is also able to
     create and cancel subscriptions.
     """
 
     def __init__(self, gui_api, tabmanager, parent=None):
+        """
+        Constructor of this class.
+        'gui_api' provides an access to all functions which are needed for the functionality of the GUI.
+        'tabmanager' manages the tabs of the gui
+
+        :param gui_api:
+        :param tabmanager:
+        :param parent:
+        :return:
+        """
+
         super(OverviewPluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = gui_api.gui_data
@@ -168,6 +179,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
     def clear(self):
         """
         This function will clear this window.
+        It is used to reset all elements in this windows.
 
         :return:
         """
@@ -191,6 +203,8 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         """
         Used to display all known information for a DPlugin which is
         accessible in the pluginTree by its index.
+
+        It is called when an user changes the selected plugin in the plugin tree.
 
         :param index: Current selected index
         :return:
@@ -348,15 +362,20 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         self.bModel.sort(0)
 
     def plugin_item_refresh(self, index):
+        """
+        This function is called when it's known that the dplugin object, which describes the selected plugin, was changed.
+
+        :param index:
+        :return:
+        """
         self.parameterTree.viewport().update()
         self.blockTree.viewport().update()
         self.connectionTree.viewport().update()
 
-    # noinspection PyUnresolvedReferences
     def open_context_menu_dplugin_tree(self, position):
         """
-        This callback function is called to create a context menu
-        for the dplugin tree
+        This callback function is called to create a context menu for the dplugin tree.
+        It is triggered by use
 
         :param position:
         :return:
@@ -544,6 +563,7 @@ class OverviewPluginMenu(QMainWindow, Ui_PluginOverviewMenu):
         :param position:
         :return:
         """
+
         index = self.parameterTree.indexAt(position)
 
         if index.isValid() is False:
