@@ -606,13 +606,19 @@ class Core:
         """
         Process start failed event and do error handling
 
+        This event occurs when a plugin returns false in its initialize routine. Therefore, it means that the start of
+        failed but the plugin noticed it itself and was able to return false.
+
+        This method will update the core database with the new state of the plugin. At the moment, no other actions are
+        done.
+
         :param event: event to process
         :type event: PapiEventBase
         """
         # get plugin from DCore with id of event origin and check if it exists
         dplug = self.core_data.get_dplugin_by_id(event.get_originID())
         if (dplug != None):
-            # plugin exists but start failed, so change it state
+            # plugin exists but start failed, so change its state
             dplug.state = PLUGIN_STATE_START_FAILED
             return 1
         else:
@@ -625,10 +631,14 @@ class Core:
         """
         Processes alive response from processes/plugins and GUI, organising the counter,
         i.e. increment GUI counter if alive event's origin is GUI, otherwise increment counter stored in dplugin object
+
+        Alive events that were sent by plugins are the response on alive request which were sent by the core alive timer.
+        An alive event indicates that the plugin is still running and responding to requests.
+
         :param event: event to process
         :type event: PapiEventBase
         """
-        # get event origin
+        # get the event origin
         oID = event.get_originID()
         # check if its the gui
         if oID is self.gui_id:
@@ -648,6 +658,16 @@ class Core:
         """
         Process join requests of processes
 
+        A join request is send from a plugin which will close itself. The requests wants the core to join the process of
+        the plugin for clean-up reasons. Therefore, the join request is just send by plugins running in an own process
+        (and not in the GUI).
+
+        The method is searching for the dplugin object in the core database to get the corresponding process object.
+        Then, the method joins the process. Note, that a join request is the last action of a plugin to ensure that the
+        core is not blocked by the process join procedure.
+        Afterwards, the plugin will be removed from the core's database. A event is send to the GUI process to inform the
+        GUI about the closed and removed plugin.
+
         :param event: event to process
         :type event: PapiEventBase
         :type dplugin: DPlugin
@@ -655,17 +675,18 @@ class Core:
         # get event origin id and its corresponding plugin object
         pl_id = event.get_originID()
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
-        # check for existance
+        # check for existence
         if dplugin is not None:
-            # get process of plugin and join it
+            # get process of plugin and join it (is blocking but plugin call order ensures that no block can occur)
             dplugin.process.join()
-            # remove plugin from DCore, because process was joined
+            # remove plugin from DCore, because process was joined and thus, the plugin is identified as 'closed'
             if self.core_data.rm_dplugin(dplugin.id) is False:
                 # remove failed
                 self.log.printText(1, 'join request, remove plugin with id ' + str(dplugin.id) + 'failed')
                 return -1
             else:
                 # remove from DCore in core successful
+                # Check whether the GUI is still alive to ensure that no new events are put into a queue to a non-existing GUI process
                 if self.gui_alive is True:
                     # GUI is still alive, so tell GUI, that this plugin was closed
                     opt = DOptionalData()
@@ -748,79 +769,6 @@ class Core:
                             self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
                         except:
                             self.log.printText(2, 'pl not assigned (Use of pcp parameter which isn\'t used)')
-                    # process new_data seemed correct
-                    return 1
-                else:
-                    # block is None
-                    self.log.printText(1, 'new_data, block with name ' + opt.block_name + ' does not exists')
-                    return -1
-            else:
-                # Plugin of event origin does not exist in DCore of core
-                self.log.printText(1, 'new_data, Plugin with id  ' + str(oID) + '  does not exist in DCore')
-                return -1
-
-    def BACKUP__process_new_data__(self, event):
-        """
-        Process new_data event from plugins.
-        Will do the routing: Subscriber/Subscription
-
-        :param event: event to process
-        :type event: PapiEventBase
-        :type tar_plug: DPlugin
-        """
-        # just proceed with new_data events if GUI is still alive (indicates that program will close)
-        if self.gui_alive:
-            # get event origin and optional parameter
-            oID = event.get_originID()
-            opt = event.get_optional_parameter()
-            Data = opt.data
-
-            # get origin plugin from DCore
-            dplug = self.core_data.get_dplugin_by_id(oID)
-            # check for existence
-            if dplug is not None:
-                # get data block of DPlugin with block_name from event
-                block = dplug.get_dblock_by_name(opt.block_name)
-                # check for existence of block with block_name
-                if block is not None:
-                    # get subscriber list of block
-                    subscriber = block.get_subscribers()
-                    # for all subscriber in subscriber list
-                    for sub_id in subscriber:
-                        # get plugin with sub_id and check for existence
-                        pl = self.core_data.get_dplugin_by_id(sub_id)
-                        if pl is not None:
-                            # demux signals
-
-
-                            subcribtions = pl.get_subscribtions()
-                            sub_object = subcribtions[oID][opt.block_name]
-                            sub_signals = sub_object.signals
-                            sub_signals.append(CORE_TIME_SIGNAL)
-                            opt.data = dict([(i, Data[i]) for i in sub_signals if i in Data])
-
-                            # plugin exists, check whether it is a ViP
-                            if pl.type == PLUGIN_VIP_IDENTIFIER:
-                                # Plugin runs in GUI
-                                opt = event.get_optional_parameter()
-                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                new_event = Event.data.NewData(oID, [pl.id], opt)
-                                self.gui_event_queue.put(new_event)
-                            else:
-                                # Plugin is not running in GUI
-                                opt.parameter_alias = pl.get_subscribtions()[oID][opt.block_name].alias
-                                new_event = Event.data.NewData(oID, [pl.id], opt)
-                                pl.queue.put(new_event)
-
-                                # this event will be a new parameter value for a plugin
-                                if opt.is_parameter is True:
-                                    self.handle_parameter_change(pl, opt.parameter_alias, opt.data)
-                        else:
-                            # pluign with sub_id does not exist in DCore of core
-                            self.log.printText(1, 'new_data, subscriber plugin with id ' + str(
-                                sub_id) + ' does not exists')
-                            return -1
-
                     # process new_data seemed correct
                     return 1
                 else:
