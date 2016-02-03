@@ -784,6 +784,8 @@ class Core:
         """
         Process edit_dplugin event from gui.
 
+        TODO: SVEN
+
         :param event: event to process
         :type event: PapiEventBaseBase
         :type tar_plug: DPlugin
@@ -824,13 +826,23 @@ class Core:
             self.update_meta_data_to_gui(pl.id, True)
 
     def __process_edit_dplugin_by_uname__(self, event):
+        """
+        This function processes edit plugin events and acts like a wrapper for the '__process_edit_dplugin' function which
+        requires plugin ids instead of unames.
 
+        Documentation of what the method does can be found in the method: __process_edit_dplugin
+
+        :param event:
+        :return:
+        """
+        # Get dplugin object by uname out of core queue.
         dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
+        # Check if plugin object exists
         if dplugin is not None:
             pl_id = dplugin.id
-
+            # create a new event with the corresponding id instead of the uname
             idEvent = Event.data.EditDPlugin(self.gui_id, pl_id, event.editedObject, event.changeRequest)
-
+            # pass the event to the function which is wrapped here
             self.__process_edit_dplugin(idEvent)
         else:
             self.log.printText(1, " Do edit plugin with uname " + event.plugin_uname + ' failed')
@@ -946,6 +958,18 @@ class Core:
         Process stop_plugin event.
         Will send an event to destination plugin to close itself. Will lead to a join request of this plugin.
 
+        A stop plugin event is sent by the GUI to the core to request the core to stop a plugin.
+        'Stop' means that: either the plugin is just stopped and not deleted or the plugin execution is stopped and the
+        is deleted from the database (i.e. it is cleaned). It is determines by a flag which of them is used.
+
+        The methods searches for the dplugin object in the core database.
+        If the plugin runs in an own process, the stop event is redirected to the corresponding plugin
+        (to notify it to close itself). The core will cut all subscriptions&subscribers loose and update the gui data with
+        the new plugin state.
+        If the plugin is not running in an own process (runs in GUI), the event is checked for the delete flag.
+        If the delete flag is set, the method will send a close request to the plugin.
+        If not, the plugin will receive a customized stop event. The state will be modified and updated to the GUI.
+
         :param event: event to process
         :type event: PapiEventBase
         :type dplugin: DPlugin
@@ -959,16 +983,15 @@ class Core:
             # dplugin exist, get queue and route event to plugin
             if dplugin.own_process is True:
                 # dplugin is not running in gui
-                # tell plugin to quit
+                # tell plugin to stop and update state and GUI
                 dplugin.queue.put(event)
                 dplugin.state = PLUGIN_STATE_STOPPED
                 self.core_data.unsubscribe_all(dplugin.id)
                 self.core_data.rm_all_subscribers(dplugin.id)
                 self.update_meta_data_to_gui_for_all()
-
             else:
+                # plugin is not running in own process, so process the event completely
                 if event.delete is True:
-                    # plugin is running in GUI
                     # tell gui to close plugin
                     opt = DOptionalData()
                     opt.plugin_id = id
@@ -980,7 +1003,9 @@ class Core:
                         return ERROR.UNKNOWN_ERROR
 
                 else:
+                    # Do not delete the plugin from the database, thus just send a stop event to plugin without delete flag.
                     dplugin.queue.put(Event.instruction.StopPlugin(self.core_id, id, None, delete=False))
+                    # update plugin state and gui meta database
                     dplugin.state = PLUGIN_STATE_STOPPED
                     self.core_data.unsubscribe_all(dplugin.id)
                     self.core_data.rm_all_subscribers(dplugin.id)
@@ -995,22 +1020,37 @@ class Core:
     def __process_stop_plugin_by_uname__(self, event):
         """
 
+        Just a wrapper function for '__process_stop_plugin__' to use the uname instead of a plugin id.
+
         :param event:
         :return:
         """
+
         dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
-
+        # check  if plugin exists in core database
         if dplugin is not None:
+            # get plugin id, rebuild event and call original function
             id = dplugin.id
-
             idEvent = Event.instruction.StopPlugin(self.gui_id, id, None)
             self.__process_stop_plugin__(idEvent)
 
-
     def __process_start_plugin__(self, event):
+        """
+        Processes start event for a plugin.
+
+        The start plugin event is a request for the core to send a start event to a plugin.
+        The plugin will be started by receiving the event, i.e. it will call its initialize function and start its
+        execution afterwards.
+
+        The methods searches the plugin in the database and checks wheter it has its own process or not.
+        Then, it will send an event to the corresponding queue to tell the plugin it should start.
+
+        :param event: Incomming event
+        :type event:  PapiEventBase
+        :return:
+        """
         # get destination id
         id = event.get_destinatioID()
-
         # get DPlugin object and check if plugin exists
         dplugin = self.core_data.get_dplugin_by_id(id)
         if dplugin is not None:
@@ -1065,8 +1105,12 @@ class Core:
 
     def __process_close_programm__(self, event):
         """
-        This functions processes a close_programm event from GUI and
+        This functions processes a close_program event from GUI and
         sends events to all processes to close themselves
+
+        The GUI can request the close to quit PaPI.
+
+        The method will request all other processes to stop their execution and to close.
 
         :param event: event to process
         :type event: PapiEventBase
@@ -1100,7 +1144,11 @@ class Core:
     def __process_subscribe__(self, event):
         """
         Process subscribe_event.
-        Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
+
+        The event is sent to create new data connections between plugins.
+
+        The method will call the functional method 'new_subscription' will the necessary arguments,
+        like SourceID, Block, Signals, Alias
 
         :param event: event to process
         :type event: PapiEventBase
@@ -1112,46 +1160,14 @@ class Core:
         self.new_subscription(event.get_originID(), opt.source_ID, opt.block_name, opt.signals, opt.subscription_alias,
                               orginal_event=event)
 
-        # already_sub = False
-        # # test if already subscribed
-        # source_pl = self.core_data.get_dplugin_by_id(opt.source_ID)
-        # if source_pl is not None:
-        #     blocks = source_pl.get_dblocks()
-        #     if opt.block_name in blocks:
-        #         b = blocks[opt.block_name]
-        #         subs = b.get_subscribers()
-        #         if oID in subs:
-        #             already_sub = True
-        #
-        # if already_sub is False:
-        #     dsubscription = self.core_data.subscribe(oID, opt.source_ID, opt.block_name)
-        #     if dsubscription is None:
-        #         # subscribtion failed
-        #         self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
-        #             oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
-        #         return -1
-        #     else:
-        #         # subscribtion correct
-        #         dsubscription.alias = opt.subscription_alias
-        #
-        # if opt.signals != []:
-        #     if self.core_data.subscribe_signals(oID, opt.source_ID, opt.block_name, opt.signals) is None:
-        #         # subscribtion failed
-        #         self.log.printText(1, 'subscribe, something failed in subsription process with subscriber id: ' + str(
-        #             oID) + '..target id:' + str(opt.source_ID) + '..and block ' + str(opt.block_name))
-        #         return -1
-        #     else:
-        #         pass
-        #
-        # self.log.printText(1, 'subscribe, subscribtion correct: ' + str(oID) + '->(' + str(opt.source_ID) + ',' + str(
-        #     opt.block_name) + ')')
-        # self.update_meta_data_to_gui(oID)
-        # self.update_meta_data_to_gui(opt.source_ID)
-
     def __process_subscribe_by_uname__(self, event):
         """
-        Process subscribe_event.
-        Will set a new route in DCore for this two plugins to route new data events. Update of meta will be send to GUI.
+        Process subscribe_event. Uses uname instead of IDs
+
+        The event is sent to create new data connections between plugins.
+
+        The method will call the functional method 'new_subscription' will the necessary arguments,
+        like SourceID, Block, Signals, Alias
 
         :param event: event to process
         :type event: PapiEventBase
@@ -1358,6 +1374,9 @@ class Core:
         """
         Processes pause_plugin event. Will add information that a plugin is paused and send event to plugin to pause it.
 
+        Pause events are request from the GUI to pause a plugin. Paused plugins will not execute its execution function and
+        thus, lower the computational load.
+
         :param event: event to process
         :type event: PapiEventBase
         :type dplugin: DPlugin
@@ -1379,6 +1398,8 @@ class Core:
     def __process_resume_plugin__(self, event):
         """
         Processes resume_plugin event. Will add information that a plugin is resumed and send event to plugin to resume it.
+
+        Resumes a paused plugin to make it work again. So, the plugin will execute its main functions again.
 
         :param event: event to process
         :type event: PapiEventBase
