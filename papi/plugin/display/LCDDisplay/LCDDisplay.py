@@ -134,6 +134,7 @@ class LCDDisplay(vip_base):
             t = Data[CORE_TIME_SIGNAL]
             keys = list(Data.keys())
             keys.sort()
+            y = 0
             if keys[0] != CORE_TIME_SIGNAL:
                 y = Data[keys[0]][-1]
             else:
