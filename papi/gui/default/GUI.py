@@ -734,7 +734,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         else:
             # show toolbar
             self.toolbar.setHidden(False)
-            self.toolbarAction.setChecked(True)
+            self.action_toggle_toolbar.setChecked(True)
             # disable context menu of tabmanger
             self.TabManager.enableContextMenus()
 
