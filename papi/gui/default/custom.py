@@ -28,13 +28,11 @@ Sven Knuth
 
 
 
-from PyQt5.QtGui        import QColor
+
 from PyQt5.QtWidgets    import QLineEdit, QFileDialog, QColorDialog, QPushButton
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 
-from papi.data.DGui import DGui
-
-import os, re
+import os
 import papi.helper as ph
 import papi.constants as pc
 

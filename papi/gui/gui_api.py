@@ -847,7 +847,7 @@ class Gui_api(QtCore.QObject):
             ##########################
             # Save gui configuration #
             ##########################
-            gui_cfg = self.get_gui_config_function(saveUserSettings=saveUserSettings)
+            gui_cfg = self.get_gui_config_function(save_user_settings=saveUserSettings)
             gui_cfg_xml = ET.SubElement(root, 'Configuration')
 
             for cfg_item in gui_cfg:
