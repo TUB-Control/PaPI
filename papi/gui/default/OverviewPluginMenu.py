@@ -38,7 +38,7 @@ from papi.gui.default.item import DPluginTreeItem, DBlockTreeItem, DParameterTre
 
 from papi.ui.gui.default.PluginOverviewMenu import Ui_PluginOverviewMenu
 
-from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+from papi.gui.default.CreatePluginDialog import CreatePluginDialog
 
 from papi.constants import PLUGIN_DPP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_IOP_IDENTIFIER, \
     PLUGIN_STATE_DEAD, PLUGIN_STATE_STOPPED, PLUGIN_STATE_PAUSE, PLUGIN_STATE_RESUMED, PLUGIN_STATE_START_SUCCESFUL, \

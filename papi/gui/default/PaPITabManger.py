@@ -42,10 +42,10 @@ from papi.constants import PLUGIN_IOP_IDENTIFIER, PLUGIN_VIP_IDENTIFIER, PLUGIN_
                                     GUI_TABWIDGET_IDENTIFIER
 
 
-class PapiTabManger(QObject):
+class PaPITabManger(QObject):
 
     def __init__(self, tabWigdet = None, dgui = None,gui_api = None, parent=None, centralWidget=None):
-        super(PapiTabManger, self).__init__(parent)
+        super(PaPITabManger, self).__init__(parent)
 
         self.tabWidget = tabWigdet
         self.gui_api = gui_api

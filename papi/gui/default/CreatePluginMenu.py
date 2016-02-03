@@ -36,19 +36,36 @@ from papi.gui.default.item import PaPIRootItem, PaPITreeModel
 from papi.gui.default.item import PluginTreeItem, PaPITreeProxyModel
 
 from papi.ui.gui.default.PluginCreateMenu import Ui_PluginCreateMenu
-from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+from papi.gui.default.CreatePluginDialog import CreatePluginDialog
 
 from . import get16Icon
 
 import papi.constants as pc
 
-from PyQt5.QtCore       import *
-from PyQt5.QtGui        import QColor, QDesktopServices
-from PyQt5.QtWidgets    import QListWidgetItem, QMainWindow
+from PyQt5.QtCore import *
+from PyQt5.QtGui import QColor, QDesktopServices
+from PyQt5.QtWidgets import QListWidgetItem, QMainWindow
 
 class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
+    """
+    This class creates a menu which displays all avaiable plugins.
+    This menu is used to create plugin.
+
+    """
 
     def __init__(self, gui_api, TabManger, plugin_manager, parent=None):
+        """
+        Constructor of this class.
+        'gui_api' is used to access the GUI data storage 'DGUI' and for creating the plugin.
+        'TabManager' access to the tab manager is needed because it provides the information about all used tabs.
+        'plugin_manager' provides access to the yapsy manager which is used to parse the plugin information.
+
+        :param gui_api:
+        :param TabManger:
+        :param plugin_manager:
+        :param parent:
+        :return:
+        """
         super(CreatePluginMenu, self).__init__(parent)
         self.setupUi(self)
         self.dgui = gui_api.gui_data
@@ -85,7 +102,7 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
 
         self.configuration_inputs = {}
 
-        self.pluginTree.clicked.connect(self.pluginItemChanged)
+        self.pluginTree.clicked.connect(self.plugin_item_changed)
 
         self.plugin_create_dialog = CreatePluginDialog(self.gui_api, self.TabManager)
 
@@ -101,24 +118,37 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.helpButton.setToolTip('Opens the documentation for the currently selected plugin.')
 
     def keyPressEvent(self, event):
+        """
+        Default callback function which is called when an any key was pressed by the user.
+
+        :param event:
+        :return:
+        """
 
         if event.key() in [Qt.Key_Right, Qt.Key_Space]:
             index = self.pluginTree.currentIndex()
-            self.pluginItemChanged(index)
+            self.plugin_item_changed(index)
 
         if event.key() == Qt.Key_Escape:
             self.close()
 
         # Use enter/return to bring up the dialog for a selected plugin
         if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter) and self.pluginTree.hasFocus():
-           self.show_create_plugin_dialog()
+            self.show_create_plugin_dialog()
 
         # if search bar has focus and user pressed enter/return,arrow up/down, change focus to the plugin tree
         if (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter or event.key() == Qt.Key_Down \
-            or event.key() == Qt.Key_Up) and self.pluginSearchText.hasFocus():
+                    or event.key() == Qt.Key_Up) and self.pluginSearchText.hasFocus():
             self.pluginTree.setFocus(Qt.OtherFocusReason)
 
-    def pluginItemChanged(self, index):
+    def plugin_item_changed(self, index):
+        """
+        This function is called when the user selects another plugin in the plugin tree on the left side.
+        Every change of plugin updates the displayed plugin information on the right side.
+
+        :param index:
+        :return:
+        """
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         self.clear()
@@ -146,18 +176,17 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         for line in lines:
             if line.startswith('import'):
 
-                m = re.search('(import)\s+([\w.]*)(\s+as){0,1}',str.strip(line))
+                m = re.search('(import)\s+([\w.]*)(\s+as){0,1}', str.strip(line))
                 if m is not None:
                     if len(m.groups()) > 2:
                         found_imports.append(m.group(2))
 
             if line.startswith('from'):
-                m = re.search('(from)\s+([\w.]*)(\s+import)',str.strip(line))
+                m = re.search('(from)\s+([\w.]*)(\s+import)', str.strip(line))
                 if m is not None:
                     if len(m.groups()) > 2:
                         found_imports.append(m.group(2))
         found_imports.sort()
-
 
         for imp in found_imports:
             item = QListWidgetItem(imp)
@@ -166,14 +195,20 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
             found = spam_loader is not None
             if not found:
                 self.modulesList.addItem(item)
-                item.setBackground(QColor(255,0,0,50))
+                item.setBackground(QColor(255, 0, 0, 50))
 
         if not plugin_info.loadable:
-
             self.modulesList.setEnabled(True)
             self.modulesLabel.setEnabled(True)
 
     def show_create_plugin_dialog(self):
+        """
+        This function opens the dialog which is used to create plugin.
+        An user opens this dialog by selecting a plugin and clicking on the 'Create Plugin' button.
+
+        :return:
+        """
+
         index = self.pluginTree.currentIndex()
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
@@ -183,21 +218,29 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
                 self.plugin_create_dialog.show()
 
     def showEvent(self, *args, **kwargs):
+        """
+        This function is called when the dialog was displayed.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
         self.plugin_manager.locatePlugins()
         candidates = self.plugin_manager.getPluginCandidates()
-        all_pluginfo = {c[2].path:c[2] for c in candidates}
-        loadable_pluginfo = {p.path:p for p in self.plugin_manager.getAllPlugins()}
+        all_pluginfo = {c[2].path: c[2] for c in candidates}
+        loadable_pluginfo = {p.path: p for p in self.plugin_manager.getAllPlugins()}
 
-        for pluginfo in all_pluginfo.values():
+        for plugin_info in all_pluginfo.values():
 
-            if pluginfo.path in loadable_pluginfo.keys():
-                pluginfo = loadable_pluginfo[pluginfo.path]
-                pluginfo.loadable = True
+            if plugin_info.path in loadable_pluginfo.keys():
+                plugin_info = loadable_pluginfo[plugin_info.path]
+                plugin_info.loadable = True
             else:
-                pluginfo.loadable = False
-            plugin_item = PluginTreeItem(pluginfo)
+                plugin_info.loadable = False
+            plugin_item = PluginTreeItem(plugin_info)
 
-            plugin_root = self.get_plugin_root(pluginfo.path)
+            plugin_root = self.get_plugin_root(plugin_info.path)
             plugin_root.appendRow(plugin_item)
 
         for root in sorted(self.plugin_roots.keys()):
@@ -206,21 +249,32 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.pluginTree.expandAll()
 
     def help_button_triggered(self):
+        """
+        This function opens the documentation page a plugin in the default web browser.
+        An user opens the page by selecting a plugin and clicking on the 'Help' button.
+
+        :return:
+        """
+
         index = self.pluginTree.currentIndex()
         plugin_info = self.pluginTree.model().data(index, Qt.UserRole)
 
         if plugin_info is not None:
-
-
-
             path = plugin_info.path
             plugin_type = path.split('/')[-3]
             suffix = "." + '.'.join(path.split('/')[-2:])
             target_url = pc.PAPI_DOC_URL + pc.PAPI_DOC_PREFIX_PLUGIN + "." + plugin_type.lower() + suffix + ".html"
             QDesktopServices.openUrl(QUrl(target_url, QUrl.TolerantMode))
 
-    def get_plugin_root(self,path):
-        parts = path.split('/');
+    def get_plugin_root(self, path):
+        """
+        This function returns one of the root-Items of the plugin tree.
+        The root-Item is determined by the plugin path.
+
+        :return:
+        """
+
+        parts = path.split('/')
         part = parts[-3]
         name = part
         if part not in self.plugin_roots:
@@ -239,6 +293,13 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         return self.plugin_roots[part]
 
     def changed_search_plugin_text_field(self, value):
+        """
+        This function is triggered by the user. It is called when the text in the search field is changed.
+        The plugin-Tree is filtered by `value`
+
+        :param value:
+        :return:
+        """
 
         if not len(value):
             value = "*"
@@ -253,11 +314,13 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
         self.pluginProxyModel.setFilterRegExp(regex)
 
-
-
-
-
     def clear(self):
+        """
+        This function is called to reset all necessary labels and line edits.
+
+        :return:
+        """
+
         self.nameEdit.setText('')
         self.authorEdit.setText('')
         self.descriptionText.setText('')
@@ -267,4 +330,13 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
         self.modulesLabel.setEnabled(False)
 
     def closeEvent(self, *args, **kwargs):
+        """
+        Handles close events for this windows.
+        Closing windows will also close the plugin create dialog.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
         self.plugin_create_dialog.close()
