@@ -519,7 +519,7 @@ class Core:
         self.update_meta_data_to_gui(source_id)
         return ERROR.NO_ERROR
 
-    def checkEventsInDelayedQueue(self):
+    def check_events_in_delayed_queue(self):
         """
         Process all events which are in the delayed operation queue by poping them out and inserting them to the main
         core event queue 'core_event_queue'
@@ -594,7 +594,7 @@ class Core:
             self.update_meta_data_to_gui(dplug.id)
 
             # process delayed_operation_queue
-            self.checkEventsInDelayedQueue()
+            self.check_events_in_delayed_queue()
             return 1
         else:
             # plugin does not exist
@@ -1339,7 +1339,7 @@ class Core:
                 dplugin.add_dblock(b)
             # update meta information of GUI after new blocks were added
             self.update_meta_data_to_gui(pl_id)
-            self.checkEventsInDelayedQueue()
+            self.check_events_in_delayed_queue()
             return 1
         else:
             # plugin does not exist
