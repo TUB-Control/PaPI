@@ -97,7 +97,7 @@ the Block can be used by other plugins. Previous sent blocks will be deleted.
 
     def cb_initialize_plugin(self):
 
-       self.block = pl_create_DBlock('Source')
+       self.block = self.pl_create_DBlock('Source')
        signal = pl_create_DSignal('Step')
        self.block.add_signal(signal)
        self.pl_send_new_block_list([block])
@@ -112,8 +112,8 @@ Here we assume an IOPlugin which ``cb_execute`` function is called in a loop. In
 
     def cb_initialize_plugin(self):
 
-        self.block = pl_create_DBlock('Source')
-        self.step_signal = pl_create_DSignal('Step')
+        self.block = self.pl_create_DBlock('Source')
+        self.step_signal = self.pl_create_DSignal('Step')
         self.block.add_signal(self.step_signal)
         self.pl_send_new_block_list([self.block])
 
@@ -161,9 +161,9 @@ was defined for the
 
     def cb_initialize_plugin(self):
 
-        self.para_foo      = pl_create_DParameter('foo',default=0)
-        self.para_bar      = pl_create_DParameter('bar',default=0)
-        self.para_baz      = pl_create_DParameter('baz',default=1, Regex='[0-9]+')
+        self.para_foo      = self.pl_create_DParameter('foo',default=0)
+        self.para_bar      = self.pl_create_DParameter('bar',default=0)
+        self.para_baz      = self.pl_create_DParameter('baz',default=1, Regex='[0-9]+')
 
         self.pl_send_new_parameter_list(para_list)
 
@@ -180,7 +180,7 @@ the event can be used to change parameters of other plugins. In the code above a
 
     def cb_initialize_plugin(self):
 
-        self.event_start         = pl_create_DEvent('Start')
+        self.event_start = self.pl_create_DEvent('Start')
         self.pl_send_new_event_list([self.event_start])
 
         self.button = QPushButton(self.name)
@@ -341,7 +341,7 @@ If you only like to change one single value in the startup configuration we reco
     :linenos:
 
     def cb_initailize_plugin():
-        pl_set_config_element('color', '(10,20,30)')
+        self.pl_set_config_element('color', '(10,20,30)')
 
 Visual plugins
 --------------
