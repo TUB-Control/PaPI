@@ -26,14 +26,12 @@ Contributors
 Sven Knuth
 """
 
-
-
-from PyQt5.QtWidgets    import QMdiSubWindow, QAction, QToolBar,QTreeView, QMenu
-from PyQt5.QtCore       import Qt, QRegExp, pyqtSignal, QSortFilterProxyModel, QModelIndex
-from PyQt5.QtGui        import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon, QDragEnterEvent, QDropEvent
+from PyQt5.QtWidgets import QMdiSubWindow, QAction, QToolBar, QTreeView, QMenu
+from PyQt5.QtCore import Qt, QRegExp, pyqtSignal, QSortFilterProxyModel, QModelIndex
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QPixmap, QBrush, QColor, QIcon, QDragEnterEvent, QDropEvent
 from papi.data.DPlugin import *
 from papi.data.DSignal import DSignal
-from papi.gui.default import get16Pixmap
+from papi.gui.default import get16Pixmap, get16Icon
 from papi.yapsy.PluginInfo import PluginInfo
 
 
@@ -43,14 +41,19 @@ from papi.yapsy.PluginInfo import PluginInfo
 
 
 class PaPITreeItem(QStandardItem):
-    def __init__(self, object,  name):
+    """
+    Default Tree item as it is used in PaPI.
+
+    """
+
+    def __init__(self, object, name):
         super(PaPITreeItem, self).__init__(name)
         self.object = object
         self.name = name
         self.tool_tip = "Plugin: " + self.name
         self.visible = True
 
-    def data(self, role):
+    def data(self, role=None, **kwargs):
         """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param role:
@@ -82,7 +85,7 @@ class PaPITreeItem(QStandardItem):
         :return: True if items were removed and has no more children
         """
 
-        containsDeletedItems = False
+        contains_deleted_items = False
 
         for row in range(self.rowCount()):
             treeItem = self.child(row)
@@ -93,19 +96,20 @@ class PaPITreeItem(QStandardItem):
 
                 if hasattr(item, 'state'):
                     if item.state == 'deleted':
-                        containsDeletedItems = True
+                        contains_deleted_items = True
                         self.removeRow(row)
 
                 if hasattr(item, 'deleted'):
                     if item.deleted:
-                        containsDeletedItems = True
+                        contains_deleted_items = True
                         self.removeRow(row)
 
                 if canBeRemoved:
-                    containsDeletedItems = True
+                    contains_deleted_items = True
                     self.removeRow(row)
 
-        return not self.hasChildren() and containsDeletedItems
+        return not self.hasChildren() and contains_deleted_items
+
 
 class PaPIRootItem(PaPITreeItem):
     def __init__(self, name):
@@ -114,7 +118,7 @@ class PaPIRootItem(PaPITreeItem):
         self.setSelectable(False)
         self.name = name
 
-    def data(self, role):
+    def data(self, role=None, **kwargs):
         """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param role:
@@ -140,21 +144,20 @@ class PaPIRootItem(PaPITreeItem):
 
         return None
 
-        #return super(PaPIRootItem, self).data(role)
+        # return super(PaPIRootItem, self).data(role)
 
-
-    def hasItem(self, sItem):
+    def hasItem(self, searched_item):
         """
         Used to check if an item is already part of this Tree
 
-        :param sItem: Searched for this item
+        :param searched_item: Searched for this item
         :return:
         """
         for row in range(self.rowCount()):
-            treeItem = self.child(row)
-            if treeItem is not None:
-                item = treeItem.data(Qt.UserRole)
-                if item == sItem:
+            tree_item = self.child(row)
+            if tree_item is not None:
+                item = tree_item.data(Qt.UserRole)
+                if item == searched_item:
                     return True
 
     def mark_visibility_by_name(self, value):
@@ -162,16 +165,17 @@ class PaPIRootItem(PaPITreeItem):
         all_items_are_hidden = True
 
         for row in range(self.rowCount()):
-            treeItem = self.child(row)
+            tree_item = self.child(row)
             regex = QRegExp(value, Qt.CaseInsensitive, QRegExp.Wildcard)
 
-            if regex.exactMatch(treeItem.name):
-                treeItem.visible = True
+            if regex.exactMatch(tree_item.name):
+                tree_item.visible = True
                 all_items_are_hidden = False
             else:
-                treeItem.visible = False
+                tree_item.visible = False
 
         self.visible = not all_items_are_hidden
+
 
 # ------------------------------------
 # Model Objects
@@ -188,18 +192,17 @@ class PaPITreeModel(QStandardItemModel):
 
         parent = index.parent()
 
-
         if not parent.isValid():
             return Qt.NoItemFlags
 
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsDragEnabled
 
-    def remove_item(self, rItem):
+    def remove_item(self, remove_item):
         for r in range(self.rowCount()):
             for c in range(self.columnCount()):
                 item = self.item(r, c)
 
-                if item == rItem:
+                if item == remove_item:
                     self.removeRow(r)
                     return
 
@@ -213,9 +216,8 @@ class PaPITreeModel(QStandardItemModel):
 # Item Custom
 # ------------------------------------
 
-
 class PluginTreeItem(PaPITreeItem):
-    def __init__(self,  plugin_info):
+    def __init__(self, plugin_info):
         super(PluginTreeItem, self).__init__(plugin_info, plugin_info.name)
         self.plugin_info = plugin_info
         self.setEditable(False)
@@ -227,16 +229,17 @@ class PluginTreeItem(PaPITreeItem):
         px = QPixmap(path)
         return px
 
-    def data(self, role):
+    def data(self, role=None, **kwargs):
 
         if role == Qt.BackgroundRole:
             if not self.object.loadable:
-                return QBrush(QColor(255,0,0,50))
+                return QBrush(QColor(255, 0, 0, 50))
 
         return super(PluginTreeItem, self).data(role)
 
+
 class DPluginTreeItem(PaPITreeItem):
-    def __init__(self,  dplugin: DPlugin):
+    def __init__(self, dplugin: DPlugin):
         super(DPluginTreeItem, self).__init__(dplugin, dplugin.uname)
         self.dplugin = dplugin
         self.name = dplugin.uname
@@ -249,8 +252,9 @@ class DPluginTreeItem(PaPITreeItem):
         px = QPixmap(path)
         return px
 
+
 class DParameterTreeItem(PaPITreeItem):
-    def __init__(self,  dparameter: DParameter):
+    def __init__(self, dparameter: DParameter):
         super(DParameterTreeItem, self).__init__(dparameter, str(dparameter.value))
         self.dparameter = dparameter
         self.setEditable(False)
@@ -261,7 +265,7 @@ class DParameterTreeItem(PaPITreeItem):
 
 
 class DBlockTreeItem(PaPITreeItem):
-    def __init__(self,  dblock: DBlock):
+    def __init__(self, dblock: DBlock):
         super(DBlockTreeItem, self).__init__(dblock, dblock.name)
         self.dblock = dblock
         self.setSelectable(False)
@@ -276,7 +280,6 @@ class DBlockTreeItem(PaPITreeItem):
             self.setForeground(brush)
             self.setSelectable(True)
 
-
     def get_decoration(self):
 
         if isinstance(self.object, DEvent):
@@ -289,7 +292,7 @@ class DBlockTreeItem(PaPITreeItem):
 
 
 class DSignalTreeItem(PaPITreeItem):
-    def __init__(self,  dsignal: DSignal, check_box):
+    def __init__(self, dsignal: DSignal, check_box):
         super(DSignalTreeItem, self).__init__(dsignal, dsignal.dname)
         self.dsignal = dsignal
         self.setSelectable(False)
@@ -300,7 +303,7 @@ class DSignalTreeItem(PaPITreeItem):
     def get_decoration(self):
         return None
 
-    def data(self, role):
+    def data(self, role=None, **kwargs):
         """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param role:
@@ -327,22 +330,25 @@ class DSignalTreeItem(PaPITreeItem):
 
         return None
 
+
 # ------------------------------------
 # Model Custom
 # ------------------------------------
-
 
 class PluginTreeModel(PaPITreeModel):
     """
     This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
     """
+
     def __init__(self, parent=None):
         super(PluginTreeModel, self).__init__(parent)
+
 
 class DPluginTreeModel(PaPITreeModel):
     """
     This model is used to handle DPlugin objects in TreeView.
     """
+
     def __init__(self, parent=None):
         super(DPluginTreeModel, self).__init__(parent)
 
@@ -351,6 +357,7 @@ class DParameterTreeModel(PaPITreeModel):
     """
     This model is used to handle DParameter objects in TreeView.
     """
+
     def __init__(self, parent=None):
         super(DParameterTreeModel, self).__init__(parent)
 
@@ -376,7 +383,7 @@ class DParameterTreeModel(PaPITreeModel):
         if col == 1:
             return Qt.ItemIsEditable | Qt.ItemIsEnabled
 
-    def data(self, index, role):
+    def data(self, index, role=None):
         """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param index:
@@ -399,7 +406,7 @@ class DParameterTreeModel(PaPITreeModel):
                 dparameter = super(DParameterTreeModel, self).data(index, Qt.UserRole)
                 return dparameter.name
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
                 return dparameter.value
 
@@ -407,20 +414,20 @@ class DParameterTreeModel(PaPITreeModel):
             if col == 0:
                 return super(DParameterTreeModel, self).data(index, Qt.DecorationRole)
             if col == 1:
-                return QIcon.fromTheme("edit-clear")
+                return get16Icon('bullet_gear')
 
         if role == Qt.UserRole:
             return super(DParameterTreeModel, self).data(index, Qt.UserRole)
 
         if role == Qt.EditRole:
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
                 return str(dparameter.value)
 
         return None
 
-    def setData(self, index, value, role):
+    def setData(self, index, value, role=None):
         """
         This function is called when a content in a row is edited by the user.
 
@@ -438,7 +445,7 @@ class DParameterTreeModel(PaPITreeModel):
 
         if role == Qt.EditRole:
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 dparameter = super(DParameterTreeModel, self).data(index_sibling, Qt.UserRole)
 
                 if dparameter.regex is not None:
@@ -471,13 +478,10 @@ class DBlockTreeModel(PaPITreeModel):
         parent = index.parent()
         flags = parent.flags()
 
-
         if not parent.isValid():
             flags ^= Qt.ItemIsSelectable
             flags ^= Qt.ItemIsEditable
             return flags
-
-
 
         if parent.isValid():
             if self.check_box.isChecked():
@@ -489,8 +493,7 @@ class DBlockTreeModel(PaPITreeModel):
                 flags |= Qt.ItemIsEditable
                 return flags
 
-
-    def setData(self, index, value, role):
+    def setData(self, index, value, role=None):
         """
         This function is called when a content in a row is edited by the user.
 
@@ -508,21 +511,22 @@ class DBlockTreeModel(PaPITreeModel):
 
         if role == Qt.EditRole:
 
-                dsignal = super(DBlockTreeModel, self).data(index, Qt.UserRole)
+            dsignal = super(DBlockTreeModel, self).data(index, Qt.UserRole)
 
-                if value != dsignal.dname:
-                    dsignal.dname = value
-                    self.dataChanged.emit(index, index)
+            if value != dsignal.dname:
+                dsignal.dname = value
+                self.dataChanged.emit(index, index)
 
-                return True
+            return True
 
         return False
+
 
 class CustomFieldModel(QStandardItemModel):
     def __init__(self, parent=None):
         super(CustomFieldModel, self).__init__(parent)
 
-    def data(self, index, role):
+    def data(self, index, role=None):
         """
         For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
         :param index:
@@ -545,7 +549,7 @@ class CustomFieldModel(QStandardItemModel):
                 field = super(CustomFieldModel, self).data(index, Qt.UserRole)
                 return field.desc
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
                 return field.size
             if col == 2:
@@ -562,7 +566,7 @@ class CustomFieldModel(QStandardItemModel):
                 field = super(CustomFieldModel, self).data(index, Qt.UserRole)
                 return field.desc
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
                 return field.size
             if col == 2:
@@ -570,7 +574,7 @@ class CustomFieldModel(QStandardItemModel):
 
         return None
 
-    def setData(self, index, value, role):
+    def setData(self, index, value, role=None):
         """
         This function is called when a content in a row is edited by the user.
 
@@ -589,7 +593,6 @@ class CustomFieldModel(QStandardItemModel):
         if role == Qt.EditRole:
 
             if col == 0:
-
                 field = super(CustomFieldModel, self).data(index, Qt.UserRole)
                 field.desc = value
                 self.dataChanged.emit(index, None)
@@ -597,188 +600,24 @@ class CustomFieldModel(QStandardItemModel):
                 return True
 
             if col == 1:
-                index_sibling = index.sibling(row, col-1)
+                index_sibling = index.sibling(row, col - 1)
                 field = super(CustomFieldModel, self).data(index_sibling, Qt.UserRole)
                 field.size = value
                 self.dataChanged.emit(index, None)
 
         return False
 
-
-class StructTreeModel(PaPITreeModel):
-    """
-    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
-    """
-    def __init__(self, parent=None):
-        super(StructTreeModel, self).__init__(parent)
-
-    def data(self, index, role):
-        """
-        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
-        :param index:
-        :param role:
-        :return:
-        """
-
-        if not index.isValid():
-            return None
-
-        row = index.row()
-        col = index.column()
-
-        if role == Qt.ToolTipRole:
-            return super(StructTreeModel, self).data(index, Qt.ToolTipRole)
-
-        if role == Qt.DisplayRole:
-
-            if col == 0:
-                item = super(StructTreeModel, self).data(index, Qt.UserRole)
-                if item is None:
-                    return super(StructTreeModel, self).data(index, Qt.DisplayRole)
-                return item.desc
-
-            return 'Quark'
-            if col == 1:
-                index_sibling = index.sibling(row, col-1)
-                item = super(StructTreeModel, self).data(index_sibling, Qt.UserRole)
-                return item.size
-            if col == 2:
-                return None
-
-        if role == Qt.DecorationRole:
-            pass
-
-        if role == Qt.UserRole:
-            pass
-
-        if role == Qt.EditRole:
-            if col == 0:
-                item = super(StructTreeModel, self).data(index, Qt.UserRole)
-                return item.field
-            if col == 1:
-                index_sibling = index.sibling(row, col-1)
-                item = super(StructTreeModel, self).data(index_sibling, Qt.UserRole)
-                return item.size
-            if col == 2:
-                return None
-
-        return None
-
-class StructRootNode(QStandardItem):
-    """
-    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
-    """
-    def __init__(self, name, parent=None):
-        super(StructRootNode, self).__init__(name)
-        self.nodes = {}
-        self.size = ''
-        self.field = 'Data'
-
-    def appendRow(self, field):
-
-        elements = str.split(field.desc, "::")
-
-        # Create new sub node for this element
-
-        if elements[0] not in self.nodes:
-
-#            sub_elements = str.split(field.desc, "::", 1)
-            #field.desc = sub_elements[1]
-            struct_node = StructTreeNode(field, 0)
-            self.nodes[elements[0]] = struct_node
-
-            super(StructRootNode, self).appendRow(struct_node)
-
-        # There is already a subnode for this element
-
-        if elements[0] in self.nodes:
-            self.nodes[elements[0]].appendRow(field)
-
-
-class StructTreeNode(QStandardItem):
-    """
-    This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.
-    """
-    def __init__(self, field, level, parent=None):
-
-        elements = str.split(field.desc, "::")
-
-        self.nodes = {}
-        self.level = level
-        self.time_identifier = 'time'
-        self.ptime_identifier = 'ptime'
-        self.size = ''
-        self.field = ''
-        self.object = field
-
-        super(StructTreeNode, self).__init__(elements[self.level])
-
-        self.appendRow(field)
-
-    def appendRow(self, field):
-
-        elements = str.split(field.desc, "::")
-
-        # Node is responsible for the first element
-
-        if len(elements) > self.level + 1:
-
-            if self.time_identifier not in self.nodes:
-                struct_node = QStandardItem(self.time_identifier)
-                self.nodes[self.time_identifier] = struct_node
-                super(StructTreeNode, self).appendRow(struct_node)
-
-            if self.ptime_identifier not in self.nodes:
-                struct_node = QStandardItem(self.ptime_identifier)
-                self.nodes[self.ptime_identifier] = struct_node
-                super(StructTreeNode, self).appendRow(struct_node)
-
-            if elements[self.level + 1] not in self.nodes:
-                struct_node = StructTreeNode(field, self.level + 1)
-                self.nodes[elements[self.level + 1]] = struct_node
-                super(StructTreeNode, self).appendRow(struct_node)
-
-            if elements[self.level + 1] in self.nodes:
-                self.nodes[elements[self.level + 1]].appendRow(field)
-        else:
-            self.size = '3x1'
-            self.field = elements[self.level]
-
-    def data(self, role):
-        """
-        For Qt.Role see 'http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum'
-        :param role:
-        :return:
-        """
-        if role == Qt.ToolTipRole:
-            return None
-
-        if role == Qt.DisplayRole:
-            return self.field
-
-        if role == Qt.DecorationRole:
-            return None
-
-        if role == Qt.UserRole:
-            return self.object
-
-        if role == Qt.EditRole:
-            return None
-
-        return None
-
-
 # ------------------------------------
 # Custom Proxy object
 # ------------------------------------
 
 class PaPITreeProxyModel(QSortFilterProxyModel):
-    def filterAcceptsRow(self, p_int:int, sourceParent: QModelIndex ):
+    def filterAcceptsRow(self, p_int:int, sourceParent: QModelIndex):
         index0 = self.sourceModel().index(p_int, 0, sourceParent)
 
         # if sourceParent.data() is None:
         #     return True
-        #text = self.sourceModel().data(index0)
+        # text = self.sourceModel().data(index0)
 
         item = self.sourceModel().itemFromIndex(index0)
 
@@ -789,10 +628,11 @@ class PaPITreeProxyModel(QSortFilterProxyModel):
         #     reg = self.filterRegExp()
         #     return reg.exactMatch(text)
         # return False
+
+
 # ------------------------------------
 # Custom GUI elements
 # ------------------------------------
-
 
 class PaPIMDISubWindow(QMdiSubWindow):
     def __init__(self):
@@ -806,10 +646,11 @@ class PaPIMDISubWindow(QMdiSubWindow):
     def set_movable(self, flag):
         self.movable = flag
 
-class PaPIFavAction(QAction):
 
+class PaPIFavAction(QAction):
     def __init__(self, *args, **kwargs):
         super(PaPIFavAction, self).__init__(*args, **kwargs)
+
 
 class PaPIToolbar(QToolBar):
     clickedFavouritePlugin = pyqtSignal(PluginInfo)
@@ -819,6 +660,7 @@ class PaPIToolbar(QToolBar):
         super(PaPIToolbar, self).__init__(*args, **kwargs)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.customMenu)
+
     def dragEnterEvent(self, event: QDragEnterEvent):
         source = event.source()
         if isinstance(source, QTreeView):
@@ -856,6 +698,6 @@ class PaPIToolbar(QToolBar):
         if hasFavourites:
             menu.exec_(self.mapToGlobal(position))
 
-    def removeFavouritePlugin(self, action : PaPIFavAction):
+    def removeFavouritePlugin(self, action: PaPIFavAction):
         self.removeAction(action)
         self.removedFavouritePlugin.emit()

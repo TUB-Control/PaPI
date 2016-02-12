@@ -48,7 +48,7 @@ from PyQt5.QtWidgets import QListWidgetItem, QMainWindow
 
 class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
     """
-    This class creates a menu which displays all avaiable plugins.
+    This class creates a menu which displays all available plugins.
     This menu is used to create plugin.
 
     """
@@ -119,7 +119,7 @@ class CreatePluginMenu(QMainWindow, Ui_PluginCreateMenu):
 
     def keyPressEvent(self, event):
         """
-        Default callback function which is called when an any key was pressed by the user.
+        Default callback function which is called when an arbitrary key was pressed by the user.
 
         :param event:
         :return:

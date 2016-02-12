@@ -157,7 +157,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
     def showEvent(self, *args, **kwargs):
         """
-        This function is called when the dialog was displayed.
+        This function is called before the dialog is displayed.
 
         :param args:
         :param kwargs:
