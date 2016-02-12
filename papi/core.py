@@ -98,7 +98,7 @@ class Core:
                                          'edit_dplugin':            self.__process_edit_dplugin,
                                          'edit_dplugin_by_uname':   self.__process_edit_dplugin_by_uname__,
                                          'delete_block':            self.__process_delete_block__,
-                                         'delete_parameter':        self.__delete_parameter__
+                                         'delete_parameter':        self.__process_delete_parameter__
         }
 
         self.__process_instr_event_l__ = {'create_plugin':          self.__process_create_plugin__,
@@ -709,6 +709,16 @@ class Core:
         Process new_data event from plugins.
         Will do the routing: Subscriber/Subscription
 
+        This method is doing all the magic in PaPI.
+        It routes all data to its target and decides whether subscription are for data or parameters.
+
+        First, it is checked if the GUI is alive, since no data shall be processed if the GUI is already closed.
+        Then, the dplugin object of the origin of the data event is searched. Then, the block of the new data is searched.
+        With the block object of the origin plugin, the subscriber list can be extracted. Then, for every subscriber of the
+        block (which has new data available), the plugin object is searched. If a subscriber plugin is running (not dead/stopped),
+        the data event is routed to it. For subscriber running in the GUI, just one event is sent with multiple receipts.
+        Data events which represent parameter subscriptions are handles separately.
+
         :param event: event to process
         :type event: PapiEventBase
         :type tar_plug: DPlugin
@@ -853,7 +863,15 @@ class Core:
         Processes create_plugin event.
         So it will create a plugin, start a process if needed, send events to GUI to create a plugin and do the pre configuration
 
-        :param event:
+        This method reacts to the create plugin event. Such an event, is mostly sent by the GUI.
+
+        The method extracts all the necessary plugin properties from the event.
+        Then, the yapsy plugin loader tries to find the plugin via its identifier. Afterwards, the PaPI dplugin object
+        is created and filled with all information. It is decided if the plugin runs in the GUI or in an own process.
+        Based on this, a new process is created or the plugin is redirected to the GUI process.
+        The startup configurations are merged and passed to the plugin.
+
+        :param event: event to process
         :param optData: optional Data Object of event
         :type event: PapiEventBase
         :type optData: DOptionalData
@@ -1070,14 +1088,24 @@ class Core:
         Will change plugins state and delete its parameters and blocks.
         Will update meta to gui
 
-        :param event:
+        The event is the result of a stop request of a plugin. A plugin which is request to stop its operation (no deletion)
+        sends the plugin stopped event to confirm that it has stopped its operation.
+
+        The method searches the plugin in the database and updates its state. Additionally, all subscribers, blocks and
+        parameter are removed/delete.
+
+        :param event: Incomming event
+        :type event:  PapiEventBase
         :return:
         """
         pl_id = event.get_originID()
         plugin = self.core_data.get_dplugin_by_id(pl_id)
+        # check if plugin exists
         if plugin is not None:
+            # update state
             plugin.state = PLUGIN_STATE_STOPPED
 
+            # remove all subscribers before removing the blocks
             self.core_data.rm_all_subscribers(pl_id)
 
             # delete all blocks of plugin
@@ -1229,12 +1257,21 @@ class Core:
         """
         Process set_parameter event. Core will just route this event from GUI to destination plugin and update DCore
 
+        The set parameter event is sent from plugins to some plugins to trigger parameter changes.
+
+        First, the method checks whether the event is an event by uname or by id. When the event is by uname, it is modified
+        to be by id. If the plugin which the event refers to is not started yet, the event is put in the
+        delayed operation queue. Then, the correct dplugin object and an event by id is available. The dplugin object is
+        searched for the parameter which is changed. If the parameter exists, its value in the database is changed and
+        then, the change event is redirected to the plugin itself.
+
         :param event: event to process
         :type event: PapiEventBase
         :type dplugin_sub: DPlugin
         :type dplugin_source: DPlugin
         """
 
+        # check if event is by uname or by id
         if isinstance(event, Event.instruction.SetParameterByUname):
             dplugin = self.core_data.get_dplugin_by_uname(event.plugin_uname)
             if dplugin is not None:
@@ -1244,26 +1281,28 @@ class Core:
                     self.log.printText(2, 'setParameterByUname, event was placed in delayed queue because plugin: '
                                        + event.plugin_uname + ' does not exist yet.')
                     return 0
-                # build forward event for gui with ids instead of uname
+                # build forward event for gui with ids instead of uname (original event was with uname)
                 forward_event = Event.instruction.SetParameter(event.get_originID(), dplugin.id, event.get_optional_parameter())
         else:
-            # get destination id
+            # Event is by id, so get destination id
             pl_id = event.get_destinatioID()
             # get DPlugin object of destination id from DCore and check for existence
             dplugin = self.core_data.get_dplugin_by_id(pl_id)
+            # set forward event to event, since there is no change required (event already by id)
             forward_event = event
             if dplugin is None:
-                #  pluign with id does not exist, so id is wrong.
+                #  plugin with id does not exist, so id is wrong.
                 self.log.printText(1, 'set_paramenter, plugin with id ' + str(pl_id) + ' not found')
                 return -1
 
-
+        # Now, the forward_event has the correct event with ids to process it.
+        # recheck for existing dplugin
         if dplugin is not None:
-            opt = event.get_optional_parameter()
             # Plugin exists
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
-
+            opt = event.get_optional_parameter()
+            # check for existance of the changed parameter
             if opt.parameter_alias in parameters:
                 para = parameters[opt.parameter_alias]
                 para.value = opt.data
@@ -1274,11 +1313,14 @@ class Core:
                 self.update_meta_data_to_gui(dplugin.id)
                 return 1
 
-
     def __process_new_block__(self, event):
         """
         Processes new_block event.
         Will try to add a new data block to a DPlugin object
+
+        This event is a request from a plugin to create a new block.
+
+        The method receives all block information via the event. It searches the corresponding pluign and add the blocks
 
         :param event: event to process
         :type event: PapiEventBase
@@ -1307,26 +1349,48 @@ class Core:
     def __process_delete_block__(self, event):
         """
         Processes delete_block event.
-        Will try to delete a Block of a plugin
+
+        The event is sent by a plugin if the plugin wants to delete one of its own blocks (plugin updates itself).
+
+        The methods searches in the dplugin object for the block and deletes it. Before deletion, all block
+        subscriptions are cut loose to ensure that no dead links are created.
 
         :param event: event to process
         :type event: PapiEventBase
         """
         pl_id = event.get_originID()
+        # cut loose all subscription for the block
         self.core_data.rm_all_subscribers_of_a_dblock(pl_id, event.blockname)
 
+        # get plugin object
         plugin = self.core_data.get_dplugin_by_id(pl_id)
-        dblock = plugin.get_dblock_by_name(event.blockname)
-        plugin.rm_dblock(dblock)
+        if plugin is not None:
+            # get block and remove it
+            dblock = plugin.get_dblock_by_name(event.blockname)
+            plugin.rm_dblock(dblock)
 
+        # send update to gui to propagate the change
         self.update_meta_data_to_gui_for_all()
 
-    def __delete_parameter__(self, event):
-        pl_id = event.get_originID()
+    def __process_delete_parameter__(self, event):
+        """
+        Processes delete parameter event.
 
+        The event is sent by a plugin if the plugin wants to delete one of its own parameter (plugin updates itself).
+
+        The methods searches in the dplugin object for the parameter and deletes it. Before deletion, all parameter
+        subscriptions are cut loose to ensure that no dead links are created.
+
+        :param event: event to process
+        :type event: PapiEventBase
+        :return:
+        """
+        # Get id of plugin which parameter should be changed
+        pl_id = event.get_originID()
+        # Search in database for plugin object
         dplugin = self.core_data.get_dplugin_by_id(pl_id)
         if dplugin is not None:
-            # get connections of this dplugin
+            # get connections of this dplugin (copy because changes in iteration are possible)
             subscriptions = copy.deepcopy(dplugin.get_subscribtions())
             # iterate over all source plugins by id in subscription dict
             for source_id in subscriptions:
@@ -1337,9 +1401,11 @@ class Core:
                     if dSubObject.alias == event.parameterName:
                         self.core_data.unsubscribe(pl_id, source_id, blockName)
 
+            # delete parameter in dplugin
             paraObject = dplugin.get_parameters()[event.parameterName]
-
             dplugin.rm_parameter(paraObject)
+
+            # send update to gui to propagate the change
             self.update_meta_data_to_gui_for_all()
 
     def __process_new_parameter__(self, event):
