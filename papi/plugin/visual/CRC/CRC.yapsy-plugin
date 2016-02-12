@@ -1,9 +1,0 @@
-[Core]
-Name = CRC
-Module = CRC
-
-[Documentation]
-Author = S. Knuth
-Version = 0.1
-Website =
-Description = Used to create the configuration for the recording tool.
