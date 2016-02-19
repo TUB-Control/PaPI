@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Wed Jan 20 16:31:03 2016
+# Created: Fri Feb 19 17:27:12 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,13 +39,13 @@ class Ui_DefaultMain(object):
         self.statusbar = QtWidgets.QStatusBar(DefaultMain)
         self.statusbar.setObjectName("statusbar")
         DefaultMain.setStatusBar(self.statusbar)
-        self.toolbar = PaPIToolbar(DefaultMain)
-        self.toolbar.setAcceptDrops(True)
-        self.toolbar.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.toolbar.setMovable(False)
-        self.toolbar.setFloatable(False)
-        self.toolbar.setObjectName("toolBar")
-        DefaultMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
+        self.toolBar = PaPIToolbar(DefaultMain)
+        self.toolBar.setAcceptDrops(True)
+        self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.toolBar.setMovable(False)
+        self.toolBar.setFloatable(False)
+        self.toolBar.setObjectName("toolBar")
+        DefaultMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.action_load_config = QtWidgets.QAction(DefaultMain)
         self.action_load_config.setObjectName("action_load_config")
         self.action_save_config = QtWidgets.QAction(DefaultMain)
@@ -80,6 +80,8 @@ class Ui_DefaultMain(object):
         self.action_toggle_toolbar.setCheckable(True)
         self.action_toggle_toolbar.setChecked(True)
         self.action_toggle_toolbar.setObjectName("action_toggle_toolbar")
+        self.actionFullscreen = QtWidgets.QAction(DefaultMain)
+        self.actionFullscreen.setObjectName("actionFullscreen")
         self.menuPaPI.addAction(self.action_load_config)
         self.menuPaPI.addAction(self.action_save_config)
         self.menuPaPI.addAction(self.action_reload_config)
@@ -92,6 +94,7 @@ class Ui_DefaultMain(object):
         self.menuPlugin.addAction(self.action_reload_plugin_db)
         self.menuView.addAction(self.action_toggle_run_mode)
         self.menuView.addAction(self.action_toggle_toolbar)
+        self.menuView.addAction(self.actionFullscreen)
         self.menuHelp.addAction(self.action_open_papi_wiki)
         self.menuHelp.addAction(self.action_open_papi_doc)
         self.menuHelp.addSeparator()
@@ -101,14 +104,14 @@ class Ui_DefaultMain(object):
         self.menubar.addAction(self.menuPlugin.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.toolbar.addAction(self.action_load_config)
-        self.toolbar.addAction(self.action_save_config)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_open_create_plugin_menu)
-        self.toolbar.addAction(self.action_open_overview_menu)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(self.action_reset_papi)
-        self.toolbar.addSeparator()
+        self.toolBar.addAction(self.action_load_config)
+        self.toolBar.addAction(self.action_save_config)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.action_open_create_plugin_menu)
+        self.toolBar.addAction(self.action_open_overview_menu)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.action_reset_papi)
+        self.toolBar.addSeparator()
 
         self.retranslateUi(DefaultMain)
         self.widgetTabs.setCurrentIndex(-1)
@@ -122,7 +125,7 @@ class Ui_DefaultMain(object):
         self.menuPlugin.setTitle(_translate("DefaultMain", "Plugin"))
         self.menuView.setTitle(_translate("DefaultMain", "View"))
         self.menuHelp.setTitle(_translate("DefaultMain", "Help"))
-        self.toolbar.setWindowTitle(_translate("DefaultMain", "toolBar"))
+        self.toolBar.setWindowTitle(_translate("DefaultMain", "toolBar"))
         self.action_load_config.setText(_translate("DefaultMain", "Load"))
         self.action_save_config.setText(_translate("DefaultMain", "Save"))
         self.action_open_overview_menu.setText(_translate("DefaultMain", "Overview"))
@@ -139,5 +142,6 @@ class Ui_DefaultMain(object):
         self.actionAbout_PySide.setText(_translate("DefaultMain", "About PySide"))
         self.action_reload_plugin_db.setText(_translate("DefaultMain", "Reload DB"))
         self.action_toggle_toolbar.setText(_translate("DefaultMain", "Toolbar"))
+        self.actionFullscreen.setText(_translate("DefaultMain", "Fullscreen"))
 
 from papi.gui.default.item import PaPIToolbar
