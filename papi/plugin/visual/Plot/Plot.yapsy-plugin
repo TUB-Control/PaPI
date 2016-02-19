@@ -1,0 +1,11 @@
+[Core]
+Name = Plot
+Module = Plot
+
+[Documentation]
+Author = S.R., S.K.
+Version = 1.0
+Website =
+Description = Basic plotting plugin. Supports more than one signals which must have the same time vector. Enabled single timestamp plotting and rolling plot.
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

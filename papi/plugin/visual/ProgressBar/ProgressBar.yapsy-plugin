@@ -1,0 +1,11 @@
+[Core]
+Name = ProgressBar
+Module = ProgressBar
+
+[Documentation]
+Author = S. Knuth
+Version = 1.0
+Website =
+Description = Simple progress bar which is used to display a value between a user defined minimum and maximum value. A simple increment by one is possible by using the 'trigger'-Parameter. It is possible to subscribe signals to controll the progress bar. 
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

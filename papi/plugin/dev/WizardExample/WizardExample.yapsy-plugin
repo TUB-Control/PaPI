@@ -1,0 +1,11 @@
+[Core]
+Name = WizardExample
+Module = WizardExample
+
+[Documentation]
+Author = S.R., S.K.
+Version = 1.0
+Website = https://github.com/TUB-Control/PaPI
+Description = example for a wizard plugin
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/
