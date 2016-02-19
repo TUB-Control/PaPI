@@ -95,6 +95,8 @@ class Plot(vip_base):
         self.__rolling_plot__ = False
         self.__colors_selected__ = []
         self.__styles_selected__ = []
+        self.__width_selected__ = []
+
         self.__show_grid_x__ = None
         self.__show_grid_y__ = None
         self.__parameters__ = {}
@@ -151,6 +153,7 @@ class Plot(vip_base):
 
         self.__colors_selected__ = int_re.findall(self.config['color']['value'])
         self.__styles_selected__ = int_re.findall(self.config['style']['value'])
+        self.__width_selected__  = int_re.findall(self.config['width']['value'])
 
         self.__buffer_size__ = int(int_re.findall(self.config['buffersize']['value'])[0])
 
@@ -268,6 +271,9 @@ class Plot(vip_base):
             DParameter('color', self.config['color']['value'], Regex='^\[(\s*\d\s*)+\]')
         self.__parameters__['style'] = \
             DParameter('style', self.config['style']['value'], Regex='^\[(\s*\d\s*)+\]')
+        self.__parameters__['width'] = \
+            DParameter('width', self.config['width']['value'], Regex='^\[(\s*\d\s*)+\]')
+
         self.__parameters__['rolling'] = \
             DParameter('rolling', self.config['rolling_plot']['value'], Regex='^(1|0){1}')
 
@@ -442,6 +448,14 @@ class Plot(vip_base):
             self.config['style']['value'] = value
             int_re = re.compile(r'(\d+)')
             self.__styles_selected__ = int_re.findall(self.config['style']['value'])
+            self.update_pens()
+            self.update_legend()
+
+        if name == 'width':
+            self.clear()
+            self.config['width']['value'] = value
+            int_re = re.compile(r'(\d+)')
+            self.__width_selected__ = int_re.findall(self.config['width']['value'])
             self.update_pens()
             self.update_legend()
 
@@ -732,6 +746,9 @@ class Plot(vip_base):
         style_index = index % len(self.__styles_selected__)
         style_code = int(self.__styles_selected__[style_index])
 
+        width_index = index % len(self.__width_selected__)
+        width_code = int(self.__width_selected__[width_index])
+
         color_index = index % len(self.__colors_selected__)
         color_code = int(self.__colors_selected__[color_index])
 
@@ -745,7 +762,10 @@ class Plot(vip_base):
         else:
             color = self.colors[0]
 
-        return pg.mkPen(color=color, style=style)
+        if width_code < 0:
+            width_code = 0;
+
+        return pg.mkPen(color=color, style=style, width=width_code)
 
     def update_rolling_plot(self):
         """
@@ -1140,6 +1160,11 @@ class Plot(vip_base):
             'advanced': '1',
             'display_text': 'Color'
         }, 'style': {
+            'value': "[0 0 0 0 0]",
+            'regex': '^\[(\s*\d\s*)+\]',
+            'advanced': '1',
+            'display_text': 'Style'
+        }, 'width': {
             'value': "[0 0 0 0 0]",
             'regex': '^\[(\s*\d\s*)+\]',
             'advanced': '1',

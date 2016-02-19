@@ -37,10 +37,7 @@ HTMLViewer plugin) [optional]
 ``sudo apt-get install python3-pyqt5.qtsvg`` (just needed for the
 export feature of the Plot plugin) [optional]
 
-``sudo pip3 install socketio_client`` (required for ORTD_UDP) [optional]
-
-``sudo pip3 install tornado`` (just needed for the Human plugin)
-[optional]
+``sudo pip3 install socketio_client==0.6.5`` (required for ORTD_UDP) [optional]
 
 ``git clone https://github.com/TUB-Control/PaPI.git PaPI``
 
@@ -73,7 +70,11 @@ Documentation
 
 Sphinx doc on GitHub: https://tub-control.github.io/PaPI/
 
-PaPI wiki on GitHub: https://github.com/TUB-Control/PaPI/wiki
+The provide makefile is used to build the documentation by using this simple command
+
+``make html``
+
+The documentation can be found in `docs/_build/html/`.
 
 Embedded Packages
 -----------------
