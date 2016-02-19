@@ -11,6 +11,10 @@ PaPIController
     After a connection is established, the target can send a PaPI config. This config is passed to the PaPI Controller.
     Then, the controller will apply the config to PaPI.
 
+Dependencies
+----------------------
+Only the dependencies of the UDP Plugin. See its documentation for info.
+
 Configuration
 ----------------------
 The plugin uses this specific configuration.
