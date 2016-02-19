@@ -68,7 +68,7 @@ PAPI_USER_CFG =  PAPI_USER_FOLDER + '/.papi/config.xml'
 
 PAPI_DEFAULT_BG_PATH            = 'papi/media/default_bg.png'
 
-PAPI_LAST_CFG_PATH              = PAPI_USER_FOLDER + '/' + PAPI_LAST_CFG
+PAPI_LAST_CFG_PATH              = PAPI_USER_FOLDER + '/.papi/lastCfg.xml'
 
 # PaPI Information constants
 
