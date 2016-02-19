@@ -153,6 +153,9 @@
    </property>
   </action>
   <action name="action_toggle_run_mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>RunMode</string>
    </property>
