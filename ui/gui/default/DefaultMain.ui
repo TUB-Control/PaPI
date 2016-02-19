@@ -86,7 +86,7 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="PaPIToolbar" name="toolBar">
+  <widget class="PaPIToolbar" name="toolbar">
    <property name="acceptDrops">
     <bool>true</bool>
    </property>
