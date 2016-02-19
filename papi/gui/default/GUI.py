@@ -285,6 +285,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.toolbar.clickedFavouritePlugin.connect(self.toolbar_add_fav_plugin)
         self.toolbar.removedFavouritePlugin.connect(self.fav_plugin_was_removed)
 
+        self.actionFullscreen.triggered.connect(self.trigger_toogle_fullscreen)
+
         self.init_set_icons()
 
     def fav_plugin_add(self, plugin_name):
@@ -539,6 +541,23 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.toolbar.setHidden(not self.toolbar.isHidden())
 
         self.action_toggle_toolbar.setChecked(not self.toolbar.isHidden())
+
+    def trigger_toogle_fullscreen(self):
+        """
+
+        :return:
+        """
+        if self.isFullScreen() is False:
+            self.toolbar.setHidden(True)
+            self.action_toggle_toolbar.setChecked(False)
+            self.showFullScreen()
+        else:
+            self.toolbar.setHidden(False)
+            self.action_toggle_toolbar.setChecked(True)
+            self.showNormal()
+
+        self.actionFullscreen.setChecked(self.isFullScreen())
+        self.actionFullscreen.setChecked(True)
 
     def triggered_load_config(self):
         """

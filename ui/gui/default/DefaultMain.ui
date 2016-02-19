@@ -204,6 +204,9 @@
    </property>
   </action>
   <action name="actionFullscreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Fullscreen</string>
    </property>
