@@ -1,6 +1,6 @@
 
 Plot
-===============
+====
 
 
 .. topic:: General description
@@ -10,8 +10,18 @@ Plot
 .. figure:: _static/Plot.png
     :alt: Picture of the plugin Plot
 
+Dependencies
+------------
+
+Optional requirements which is needed by the export feature of this plugin.
+
+.. code:: bash
+
+    sudo apt-get install python3-pyqt5.qtsvg
+
 Configuration
-----------------------
+-------------
+
 The plugin uses this specific configuration.
 
 .. list-table:: Plugin configuration
@@ -56,7 +66,7 @@ The plugin uses this specific configuration.
       - Sets the y range of the plot.
 
 Parameter
-----------------------
+---------
 A plugin instance can be manipulated by the following parameter.
 
 .. list-table:: Provided parameter
