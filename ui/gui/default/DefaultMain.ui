@@ -68,6 +68,7 @@
     </property>
     <addaction name="action_toggle_run_mode"/>
     <addaction name="action_toggle_toolbar"/>
+    <addaction name="actionFullscreen"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -200,6 +201,11 @@
    </property>
    <property name="text">
     <string>Toolbar</string>
+   </property>
+  </action>
+  <action name="actionFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
    </property>
   </action>
  </widget>
