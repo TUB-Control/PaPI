@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Fri Feb 19 17:30:57 2016
+# Created: Fri Feb 19 17:40:41 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -81,6 +81,7 @@ class Ui_DefaultMain(object):
         self.action_toggle_toolbar.setChecked(True)
         self.action_toggle_toolbar.setObjectName("action_toggle_toolbar")
         self.actionFullscreen = QtWidgets.QAction(DefaultMain)
+        self.actionFullscreen.setCheckable(True)
         self.actionFullscreen.setObjectName("actionFullscreen")
         self.menuPaPI.addAction(self.action_load_config)
         self.menuPaPI.addAction(self.action_save_config)

@@ -22,7 +22,7 @@ Dependencies
 
 .. code:: bash
 
-    sudo pip3 install socketIO-client
+    sudo pip3 install socketIO-client==0.6.5
 
 The plugin also uses python json and socket (should be available in every default installation)
 
