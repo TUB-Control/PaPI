@@ -72,6 +72,14 @@ class PaPITabManger(QObject):
 
         self.contextMenusEnabled = True
 
+    def setTabsMoveable(self, moveable):
+        if isinstance(moveable,bool):
+            self.tabWidget.setMovable(moveable)
+
+    def setTabsCloseable(self, closeable):
+        if isinstance(closeable,bool):
+            self.tabWidget.setTabsClosable(closeable)
+
     def disableContextMenus(self):
         self.contextMenusEnabled = False
 
