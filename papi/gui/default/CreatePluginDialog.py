@@ -189,7 +189,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             editable_field.setText(uname)
             editable_field.setObjectName('uname' + "_line_edit")
 
-            form_name = 'Simple'
+            form_name = 'PaPI -mandatory'
             if form_name not in self.advancedForms:
                 self.advancedForms[form_name] = QFormLayout()
                 tab_widget = QWidget()
@@ -279,10 +279,10 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
 
                     form_name = startup_config[attr]['advanced']
                 else:
-                    form_name = 'Simple'
+                    form_name = 'PaPI -mandatory'
 
                 if form_name in ['0', 0]:
-                    form_name = 'Simple'
+                    form_name = 'PaPI -mandatory'
 
                 if form_name == '1':
                     form_name = 'Advanced'

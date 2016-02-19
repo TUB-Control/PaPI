@@ -26,20 +26,6 @@ Contributors
 Christian Klauer
 Stefan Ruppin
 
-
-
-
-IDEAS
------
-
-- The ProtocolConfig.json may contain information about how to place indivual elements in the GUI
-- How to handle multiple instances and dynamically created datasources?
-- Show a separated screen/page in the gui for each datasource; something like tabs?
-- initial Configuration and later updates via UDP
-
-
-
-
 """
 
 
@@ -85,44 +71,52 @@ class UDP_Plugin(iop_base):
         config = {
             'address': {
                 'value': '127.0.0.1',
-                'advanced': '1'
+                'advanced': 'Connection',
+                'tooltip': 'IP address of the source',
+                'display_text': 'Target IP address'
             },
             'source_port': {
                 'value': '20000',
-                'advanced': '1'
+                'advanced': 'Connection',
+                'tooltip': 'Port of incoming data',
+                'display_text': 'Source Port'
             },
             'out_port': {
                 'value': '20001',
-                'advanced': '1'
-            },
-            'Cfg_Path': {
-                'value': '/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfig.json',
-                'type': 'file',
-                'advanced': '0'
+                'advanced': 'Connection',
+                'tooltip': 'Port for outgoing data',
+                'display_text': 'Send Port'
             },
             'SeparateSignals': {
                 'value': '0',
-                'advanced': '1'
+                'advanced': 'General',
+                'tooltip': 'Split up signal vectors to separate signals',
+                'display_text': 'Separate Signals'
             },
             'SendOnReceivePort': {
-                'value': '0',    # NOTE: chnage back to 0
-                'advanced': '1',
-                'display_text': 'Use same port for send and receive'
+                'value': '0',
+                'advanced': 'Connection',
+                'display_text': 'Same port for send and receive',
+                'tooltip': 'Use the source port to send data back to the target'
             },
             "UseSocketIO" : {
-                'value' : '0',   # NOTE: change back to 0 !!
-                'advanced' : '1',
+                'value' : '0',
+                'advanced' : 'SocketIO',
                 'tooltip' : 'Use socket.io connection to node.js target-server',
+                'display_text': 'Use SocketIO',
                 'type' : 'bool'
             },
             'socketio_port': {
                 'value': '8091',
-                'advanced': '1'
+                'advanced': 'SocketIO',
+                'tooltip': 'Port for the SocketIO Connection',
+                'display_text': 'SocketIO Port'
             },
             "OnlyInitialConfig" : {
                 'value' :'0',
                 'tooltip' : 'Use only first configuration, ignore further configurations.',
-                'type' : 'bool'
+                'type' : 'bool',
+                'advanced': 'General'
             }
         }
 

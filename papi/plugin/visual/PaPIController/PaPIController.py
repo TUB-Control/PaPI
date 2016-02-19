@@ -45,7 +45,7 @@ class PaPIController(vip_base):
         # Read configuration
         # ---------------------------
         self.config = self.pl_get_current_config_ref()
-        self.udp_plugin_uname = self.config['UDP_Plugin_uname']['value']
+        self.udp_plugin_uname = self.config['0:UDP_Plugin_uname']['value']
         # --------------------------------
         # Create Widget
         # --------------------------------
@@ -224,58 +224,70 @@ class PaPIController(vip_base):
         # configs can be marked as advanced for create dialog
         # http://utilitymill.com/utility/Regex_For_Range
         config = {
-            "UDP_Plugin_uname": {
+            "0:UDP_Plugin_uname": {
                 'value': 'UDPPlugin',
-                'display_text': 'Uname to use for UDP plugin instance',
-                'advanced': "0"
+                'display_text': 'Uname for UDP plugin instance',
+                'advanced': "UDP Plugin"
             },
             'name': {
-                'value': 'PaPIController'
+                'value': 'PaPIController',
+                'advanced': 'Appearance'
             },
             '1:address': {
                 'value': '127.0.0.1',
-                'advanced': '1'
+                'advanced': 'UDP Plugin',
+                'tooltip': 'IP address of the source',
+                'display_text': 'Target IP address'
             },
             '2:source_port': {
                 'value': '20000',
-                'advanced': '1'
+                'advanced': 'UDP Plugin',
+                'tooltip': 'Port of incoming data',
+                'display_text': 'Source Port'
             },
             '3:out_port': {
                 'value': '20001',
-                'advanced': '1'
+                'advanced': 'UDP Plugin',
+                'tooltip': 'Port for outgoing data',
+                'display_text': 'Send Port'
             },
-            'SendOnReceivePort': {
+            '4:SendOnReceivePort': {
                 'value': '0',
-                'advanced': '1',
-                'display_text': 'Use same port for send and receive'
+                'advanced': 'UDP Plugin',
+                'display_text': 'Same port for send and receive',
+                'tooltip': 'Use the source port to send data back to the target'
             },
             'size': {
                 'value': "(150,75)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
+                'advanced': 'Appearance',
                 'tooltip': 'Determine size: (height,width)'
             },
-            "UseSocketIO" : {
+            "7:UseSocketIO" : {
                 'value' : '0',
-                'advanced' : '1',
+                'advanced' : 'SocketIO',
                 'tooltip' : 'Use socket.io connection to node.js target-server',
+                'display_text': 'Use SocketIO',
                 'type' : 'bool'
             },
-            'socketio_port': {
+            '8:socketio_port': {
                 'value': '8091',
-                'advanced': '1'
+                'advanced': 'SocketIO',
+                'tooltip': 'Port for the SocketIO Connection',
+                'display_text': 'UDP Plugin'
             },
-            "OnlyInitialConfig" : {
+            "5:OnlyInitialConfig" : {
                 'value' :'0',
                 'tooltip' : 'Use only first configuration, ignore further configurations.',
-                'type' : 'bool'
+                'type' : 'bool',
+                'advanced': 'UDP Plugin'
             },
             "StartUDPPlugin": {
                 'value':'1',
                 'type': 'bool',
                 'tooltip': 'Decide whether the controller starts a UDP Plugin',
                 'display_text': 'Start a UDP Plugin',
-                'advanced': '1'
+                'advanced': 'General'
             }
         }
         return config
@@ -296,10 +308,10 @@ class PaPIController(vip_base):
         IP =  self.config ['1:address']['value']
         out_port = self.config ['2:source_port']['value']
         in_port  = self.config ['3:out_port']['value']
-        SendOnReceivePort = self.config['SendOnReceivePort']['value']
-        UseSocketIO = self.config['UseSocketIO']['value']
-        socketio_port = self.config['socketio_port']['value']
-        OnlyInitialConfig = self.config['OnlyInitialConfig']['value']
+        SendOnReceivePort = self.config['4:SendOnReceivePort']['value']
+        UseSocketIO = self.config['7:UseSocketIO']['value']
+        socketio_port = self.config['8:socketio_port']['value']
+        OnlyInitialConfig = self.config['5:OnlyInitialConfig']['value']
 
         ortd_cfg ={
             'address': {

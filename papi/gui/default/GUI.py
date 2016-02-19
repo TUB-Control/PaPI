@@ -620,7 +620,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         """
 
         try:
-            self.gui_management.gui_api.do_save_xml_config(pc.PAPI_LAST_CFG_PATH)
+            self.gui_management.gui_api.do_save_xml_config_reloaded(pc.PAPI_LAST_CFG_PATH)
         except Exception as E:
             tb = traceback.format_exc()
 

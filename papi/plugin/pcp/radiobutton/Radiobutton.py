@@ -153,25 +153,28 @@ class Radiobutton(vip_base):
             'option_texts': {
                 'display_text' : 'Displayed Option',
                 'value': 'Option Text 1, Option Text 2, Option Text 3',
-                'tooltip': 'This text is seen by the user. Must be separated by commas.'
+                'tooltip': 'This text is seen by the user. Must be separated by commas.',
+                'advanced' : 'Radiobutton'
             },
             'option_values': {
                 'display_text' : 'Value per Option',
                 'value': '',
                 'tooltip': 'It is possible to set a value for every option. '
-                           'The corresponding value is send instead of the displayed text. '
+                           'The corresponding value is send instead of the displayed text. ',
+                'advanced' : 'Radiobutton'
             },
             'selected_index': {
                 'display_text' : 'Preselected Option',
                 'value' : '',
                 'regex' : pc.REGEX_SINGLE_INT,
                 'tooltip': 'Preselect an option by its index.',
-                'advanced' : '1'
+                'advanced' : 'Radiobutton'
             },
             'name': {
                 'display_text' : 'Plugin Name',
                 'value': 'RadioButton Label',
-                'tooltip': 'Used for window title'
+                'tooltip': 'Used for window title',
+                'advanced': 'Appearance'
             }}
         return config
 

@@ -11,44 +11,14 @@ Button
 .. figure:: _static/Button.png
     :alt: Picture of the plugin button
 
-Configuration
+Event
 ----------------------
-The plugin uses this specific configuration.
-
-.. list-table:: Plugin configuration
-    :widths: 10 10 30
-    :header-rows: 1
-
-    * - Name
-      - Type
-      - Description
-    * - state1
-      - Float
-      - Number which is sent when this state is active
-    * - state2
-      - Float
-      - Number which is sent when this state is active
-    * - state1_text
-      - String
-      - Displayed text when this state is active
-    * - state2_text
-      - String
-      - Displayed text when this state is active
+The plugin generates one event for the 'click action' of the user.
+Every time the button is pressed, the state changes and the event is triggered.
 
 Parameter
 ----------------------
-A plugin instance can be manipulated by the following parameter.
-
-.. list-table:: Provided parameter
-    :widths: 10 10 30
-    :header-rows: 1
-
-    * - Name
-      - Type
-      - Description
-    * - None
-      - None
-      - None
+There are no parameter.
 
 Events
 ----------------------

@@ -80,16 +80,18 @@ class Textfield(vip_base):
             'size': {
                 'value': "(150,60)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
+                'advanced': 'Appearance',
                 'tooltip': 'Determine size: (height,width)'
                 },
             'value_init': {
-                    'value': '',
-                    'tooltip': 'Used as initial value for the Textfield'
+                'value': '',
+                'tooltip': 'Used as initial value for the Textfield',
+                'advanced': 'Textfield'
             },
             'name': {
                 'value': 'PaPI Textfield',
-                'tooltip': 'Used for window title'
+                'tooltip': 'Used for window title',
+                'advanced': 'Appearance',
             }}
         return config
 

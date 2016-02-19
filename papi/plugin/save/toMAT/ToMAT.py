@@ -135,7 +135,7 @@ class ToMAT(dpp_base):
              "file": {
                 'value': 'log.mat',
                  'type' : 'file',
-                 'advanced' : '0'
+                 'advanced' : 'ToMAT'
         }}
         return config
 

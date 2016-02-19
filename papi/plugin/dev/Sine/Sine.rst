@@ -1,11 +1,20 @@
 
-Sinus
+Sine
 ===============
 
 
 .. topic:: General description
 
     This plugin is used as simple data source of different sine signals.
+
+Output
+-----------
+This plugin outputs different sine wave signals with static and variable frequencies.
+
+
+Dependencies
+-----------
+Python3 numpy is required to run this plugin.
 
 Configuration
 ----------------------
