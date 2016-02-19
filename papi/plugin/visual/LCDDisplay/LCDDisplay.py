@@ -82,7 +82,7 @@ class LCDDisplay(vip_base):
         self.para_treshold      = DParameter('update_interval',default=self.time_treshold, Regex='[0-9]+')
         self.para_value_scale   = DParameter('value_scale',default= self.value_scale, Regex='-?[1-9]+[0-9]*(\.?[0-9]+)?')
         self.para_value_offset  = DParameter('value_offset',default= self.value_offset, Regex='-?\d+(\.?\d+)?')
-        self.para_digit_count   = DParameter('digit_count',default= self.digit_count, Regex='[3-9]')
+        self.para_digit_count   = DParameter('digit_count',default= self.digit_count, Regex=pc.REGEX_SINGLE_INT)
 
         para_list.append(self.para_treshold)
         para_list.append(self.para_value_scale)
@@ -164,9 +164,14 @@ class LCDDisplay(vip_base):
             self.value_offset = float(value)
 
         if name == self.para_digit_count.name:
-            self.pl_set_config_element(self.para_digit_count.name, value)
-            self.digit_count = int(value)
-            self.LcdWidget.setDigitCount(self.digit_count)
+            if int(value) > 1:
+                self.pl_set_config_element(self.para_digit_count.name, str(int(value)+1))
+                self.digit_count = int(value)+1
+                self.LcdWidget.setDigitCount(self.digit_count)
+            else:
+                self.pl_set_config_element(self.para_digit_count.name,str(1))
+                self.digit_count = 1
+                self.LcdWidget.setDigitCount(self.digit_count)
 
 
 
@@ -189,68 +194,50 @@ class LCDDisplay(vip_base):
                      'value': '1000',
                      'regex': '[0-9]+',
                      'display_text' : 'Minimal time between updates (in ms)',
-                     'advanced' : '1'
+                     'advanced' : 'LCD Display'
         }
 
         config['size'] = {
                     'value': "(150,75)",
                     'regex': '\(([0-9]+),([0-9]+)\)',
-                    'advanced': '1',
+                    'advanced': 'Appearance',
                     'tooltip': 'Determine size: (height,width)'
         }
 
         config['name'] = {
                     'value': 'LCD',
-                    'tooltip': 'Used for window title'
+                    'tooltip': 'Used for window title',
+                    'advanced': 'Appearance'
         }
 
         config['value_init'] = {
                     'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
-                    'tooltip': 'Used as initial value for the LCD-Display'
+                    'tooltip': 'Used as initial value for the LCD-Display',
+                    'advanced': 'LCD Display'
         }
 
         config['value_scale'] = {
                     'value': '1',
                     'tooltip': 'Used to scale displayed value',
                     'regex': '-?[1-9]+[0-9]*(\.?[0-9]+)?',
-                    'advanced': '1'
+                    'advanced': 'LCD Display'
         }
 
         config['value_offset'] = {
                     'value': '0',
                     'tooltip': 'Used to offset displayed value',
-                    'regex': '-?\d+(\.?\d+)?',
-                    'advanced': '1'
+                    'regex': pc.REGEX_SIGNED_FLOAT_OR_INT,
+                    'advanced': 'LCD Display'
         }
 
         config['digit_count'] = {
                     'value': '3',
                     'tooltip': 'Number of digits',
-                    'regex': '[3-9]',
-                    'advanced': '1'
+                    'regex': pc.REGEX_SINGLE_INT,
+                    'advanced': 'LCD Display'
         }
-
-        # config = DConfiguration.DConfiguration()
-        #
-        # config.add(
-        #     name='size',
-        #     value='(150,75',
-        #     regex=DConfiguration.REGEX_BOOL_BIN
-        # )
-        # config.add(
-        #     name='name',
-        #     value=0,
-        #     regex=DConfiguration.REGEX_BOOL_BIN
-        # )
         return config
 
     def cb_plugin_meta_updated(self):
-        """
-        Whenever the meta information is updated this function is called (if implemented).
-
-        :return:
-        """
-
-        #dplugin_info = self.dplugin_info
         pass

@@ -30,16 +30,9 @@ Contributors:
 
 from PyQt5.QtWebKitWidgets import QWebView
 from PyQt5 import QtCore
-
-
 from papi.plugin.base_classes.vip_base import vip_base
-from papi.data.DParameter import DParameter
-
-
 
 class HTMLViewer(vip_base):
-
-
     def cb_initialize_plugin(self):
 
         # ---------------------------
@@ -125,14 +118,14 @@ class HTMLViewer(vip_base):
             "content": {
                 'value': """<p> Insert your html code here </p>""",
                 'display_text' : 'HTML Content',
-                'advanced' : '0',
+                'advanced' : 'HTLM',
                 'tooltip' : 'Plain html code to be displayed'
             },
             "isUrl": {
                 'value': "0",
                 'display_text': "Content==Url?",
                 'tooltip': "Set to 1 if the content is an url that should be loaded",
-                'advanced' : '0'
+                'advanced' : 'HTML'
             },
         }
 
