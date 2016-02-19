@@ -6,6 +6,14 @@ PaPIController
 .. topic:: General description
 
     This plugin is used as a central instance for other plugins to create/control plugins. Was especially created for the external PaPI interface.
+    Usage example:
+    When the PaPI Controller starts, it will start an UDP Plugin. Then, the UDP plugin can connect to an external target.
+    After a connection is established, the target can send a PaPI config. This config is passed to the PaPI Controller.
+    Then, the controller will apply the config to PaPI.
+
+Dependencies
+----------------------
+Only the dependencies of the UDP Plugin. See its documentation for info.
 
 Configuration
 ----------------------
