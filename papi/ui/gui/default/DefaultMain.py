@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Fri Feb 19 17:27:12 2016
+# Created: Fri Feb 19 17:30:57 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,13 +39,13 @@ class Ui_DefaultMain(object):
         self.statusbar = QtWidgets.QStatusBar(DefaultMain)
         self.statusbar.setObjectName("statusbar")
         DefaultMain.setStatusBar(self.statusbar)
-        self.toolBar = PaPIToolbar(DefaultMain)
-        self.toolBar.setAcceptDrops(True)
-        self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.toolBar.setMovable(False)
-        self.toolBar.setFloatable(False)
-        self.toolBar.setObjectName("toolBar")
-        DefaultMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.toolbar = PaPIToolbar(DefaultMain)
+        self.toolbar.setAcceptDrops(True)
+        self.toolbar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.toolbar.setMovable(False)
+        self.toolbar.setFloatable(False)
+        self.toolbar.setObjectName("toolbar")
+        DefaultMain.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
         self.action_load_config = QtWidgets.QAction(DefaultMain)
         self.action_load_config.setObjectName("action_load_config")
         self.action_save_config = QtWidgets.QAction(DefaultMain)
@@ -104,14 +104,14 @@ class Ui_DefaultMain(object):
         self.menubar.addAction(self.menuPlugin.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.toolBar.addAction(self.action_load_config)
-        self.toolBar.addAction(self.action_save_config)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.action_open_create_plugin_menu)
-        self.toolBar.addAction(self.action_open_overview_menu)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.action_reset_papi)
-        self.toolBar.addSeparator()
+        self.toolbar.addAction(self.action_load_config)
+        self.toolbar.addAction(self.action_save_config)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.action_open_create_plugin_menu)
+        self.toolbar.addAction(self.action_open_overview_menu)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.action_reset_papi)
+        self.toolbar.addSeparator()
 
         self.retranslateUi(DefaultMain)
         self.widgetTabs.setCurrentIndex(-1)
@@ -125,7 +125,7 @@ class Ui_DefaultMain(object):
         self.menuPlugin.setTitle(_translate("DefaultMain", "Plugin"))
         self.menuView.setTitle(_translate("DefaultMain", "View"))
         self.menuHelp.setTitle(_translate("DefaultMain", "Help"))
-        self.toolBar.setWindowTitle(_translate("DefaultMain", "toolBar"))
+        self.toolbar.setWindowTitle(_translate("DefaultMain", "toolBar"))
         self.action_load_config.setText(_translate("DefaultMain", "Load"))
         self.action_save_config.setText(_translate("DefaultMain", "Save"))
         self.action_open_overview_menu.setText(_translate("DefaultMain", "Overview"))
