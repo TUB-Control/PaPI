@@ -109,31 +109,31 @@ class base_visual(base_plugin):
         config['size'] = {
             'value': "(300,300)",
             'regex': '\(([0-9]+),([0-9]+)\)',
-            'advanced' : 'Default',
+            'advanced' : 'Appearance',
             'tooltip': 'Determine size: (height,width)'
         }
         config['position'] = {
             'value': "(0,0)",
             'regex': '\(([0-9]+),([0-9]+)\)',
-            'advanced' : 'Default',
+            'advanced' : 'Appearance',
             'tooltip': 'Determine position: (x,y)'
         }
         config['name'] = {
             'value': 'VisualPlugin',
             'tooltip': 'Used for window title',
-            'advanced' : 'Default'
+            'advanced': 'Appearance'
         }
 
         config['tab'] = {
             'value': 'Tab',
             'tooltip': 'Used for tabs',
-            'advanced' : 'Default',
+            'advanced' : 'Appearance',
         }
 
         config['maximized'] = {
             'value' : '0',
             'type' : 'bool',
-            'advanced' : 'Default',
+            'advanced' : 'Appearance',
             'tooltip' : 'Set true to start plugin maximized',
             'display_text' : 'Start maximized'
         }

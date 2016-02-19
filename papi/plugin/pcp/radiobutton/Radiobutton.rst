@@ -42,10 +42,10 @@ A plugin instance can be manipulated by the following parameter.
     * - Name
       - Possible value
       - Description
-    * - Type
+    * - Texts
       - CSV
       - String used to name the different options.
-    * - option_values
+    * - values
       - CSV
       - Value which is sent instead of the chosen option_text.
 
@@ -61,5 +61,5 @@ A plugin instance provides this events which can be used to manipulated paramete
       - Type
       - Description
     * - Choice
-      - Float
+      - \-
       - Sent when choice has changed.

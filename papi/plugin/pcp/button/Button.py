@@ -109,26 +109,30 @@ class Button(vip_base):
             "state1": {
                 'value': 0,
                 'regex': REGEX_SIGNED_FLOAT,
-                'advanced' : '0'
+                'advanced' : 'Button',
+                'tooltip': 'Data that will be sent when state1 gets activated',
+                'display_text': 'Data for state 1'
             }, "state2": {
                 'value': 1,
                 'regex': REGEX_SIGNED_FLOAT,
-                'advanced' : '0',
+                'advanced' : 'Button',
+                'tooltip': 'Data that will be sent when state2 gets activated',
+                'display_text': 'Data for state 2'
             }, "state1_text": {
                 'value': 'Go to state 2',
-                'advanced' : '0',
-                'display_text': 'Text for state 1'
+                'advanced' : 'Button',
+                'display_text': 'Name for state 1'
             }, "state2_text": {
                 'value': 'Go to state 1',
-                'advanced' : '0',
-                'display_text': 'Text for state 2'
+                'advanced' : 'Button',
+                'display_text': 'Name for state 2'
             },"name": {
                 'value': "PaPI Button",
-                'advanced': '0'
+                'advanced': 'Appearance'
             },'size': {
                 'value': "(150,50)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
+                'advanced': 'Appearance',
                 'tooltip': 'Determine size: (height,width)'
             } }
         return config

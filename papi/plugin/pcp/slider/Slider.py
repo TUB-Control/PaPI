@@ -146,19 +146,30 @@ class Slider(vip_base):
     def cb_get_plugin_configuration(self):
         config = {
             'lower_bound': {
-                'value': '0.0'
-                },
+                'value': '0.0',
+                'display_text':'Lower Slider Bound',
+                'tooltip':'Lower bound for the slider (left side)',
+                'regex': pc.REGEX_SIGNED_FLOAT_OR_INT,
+                'advanced': 'Slider'
+            },
             'upper_bound': {
-                'value': '1.0'
+                'value': '1.0',
+                'display_text':'Upper Slider Bound',
+                'tooltip':'Upper bound for the slider (right side)',
+                'regex': pc.REGEX_SIGNED_FLOAT_OR_INT,
+                'advanced': 'Slider'
                 },
             'step_count': {
                 'value': '11',
                 'regex': pc.REGEX_SINGLE_INT,
+                'display_text': 'Step count',
+                'tooltip': 'Step count between lower and upper bound',
+                'advanced': 'Slider'
                 },
             'size': {
                 'value': "(150,75)",
                 'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
+                'advanced' : 'Appearance',
                 'tooltip': 'Determine size: (height,width)'
                 },
             'vertical': {
@@ -166,16 +177,19 @@ class Slider(vip_base):
                 'regex': pc.REGEX_BOOL_BIN,
                 'advanced': '0',
                 'tooltip': 'Use a vertical representation of this slider.',
-                'display_text' : 'Vertical slider'
+                'display_text' : 'Vertical slider',
+                'advanced': 'Appearance'
                 },
             'value_init': {
                     'value': '0',
                     'regex' : pc.REGEX_SIGNED_FLOAT_OR_INT,
-                    'tooltip': 'Used as initial value for the Slider'
+                    'tooltip': 'Used as initial value for the Slider',
+                    'advanced': 'Slider'
             },
             'name': {
                 'value': 'PaPI Slider',
-                'tooltip': 'Used for window title'
+                'tooltip': 'Used for window title',
+                'advanced': 'Appearance'
             }}
         return config
 
