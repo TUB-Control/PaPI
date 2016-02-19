@@ -8,7 +8,7 @@ ORTD_UDP
     This plugin provides an UDP-Interface commonly used to connect PaPI with Simulink or ORTD.
 
 
-Depenencies
+Dependencies
 -----------
 
 .. code:: bash

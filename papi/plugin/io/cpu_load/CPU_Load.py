@@ -34,14 +34,15 @@ class CPU_Load(iop_base):
         self.t = 0
         self.delta_t = 0.01
 
+        # creates Block for CPU load
         block1 = self.pl_create_DBlock('CPUload')
         signal = self.pl_create_DSignal('load_in_percent')
+        block1.add_signal(signal)
+        self.pl_send_new_block_list([block1])
 
+        # sets update interval
         self.INTERVAL = 0.1
 
-        block1.add_signal(signal)
-
-        self.pl_send_new_block_list([block1])
         return True
 
     def cb_pause(self):
@@ -51,12 +52,13 @@ class CPU_Load(iop_base):
         pass
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
+        # get load
         cpuload = self.getCpuLoad()
-
+        # increment time stamp
         self.t += self.delta_t
-
+        # send data to core
         self.pl_send_new_data('CPUload', [self.t*10], {'load_in_percent': [cpuload*100]})
-
+        # wait
         time.sleep(self.delta_t)
 
     def cb_set_parameter(self, name, value):
