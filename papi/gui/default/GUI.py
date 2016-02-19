@@ -557,7 +557,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
             self.showNormal()
 
         self.actionFullscreen.setChecked(self.isFullScreen())
-        self.actionFullscreen.setChecked(True)
+        self.actionFullscreen.setChecked(self.isFullScreen())
 
     def triggered_load_config(self):
         """
