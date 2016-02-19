@@ -3,7 +3,9 @@ Changelog
 
 v.1.4-dev:
 ----------
-
+- **feature**: Plot now supports different line width styles.
+- **feature**: PaPI Main GUI now supports a fullscreen mode including toolbar toggling and run mode.
+- **improvement**: Run mode now prevents close and move of tabs.
 - **improvement**: It is not more mandatory to start PaPI inside of the PaPI installation folder.
 - **improvement**: The PaPI start.sh script can be used with simlinks everywhere
 - **improvement**: Subscriptions for blocks which does not exist yet are delayed and done later. Better Supports run-time block creation using e.g. Simulink
