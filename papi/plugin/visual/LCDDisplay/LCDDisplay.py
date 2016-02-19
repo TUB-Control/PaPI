@@ -142,7 +142,7 @@ class LCDDisplay(vip_base):
                     y = Data[keys[1]][-1]
 
             y = y*self.value_scale + self.value_offset
-            self.LcdWidget.display(y)
+            self.LcdWidget.display(round(y,self.digit_count))
 
 
 
@@ -164,14 +164,10 @@ class LCDDisplay(vip_base):
             self.value_offset = float(value)
 
         if name == self.para_digit_count.name:
-            if int(value) > 1:
-                self.pl_set_config_element(self.para_digit_count.name, str(int(value)+1))
-                self.digit_count = int(value)+1
-                self.LcdWidget.setDigitCount(self.digit_count)
-            else:
-                self.pl_set_config_element(self.para_digit_count.name,str(1))
-                self.digit_count = 1
-                self.LcdWidget.setDigitCount(self.digit_count)
+                self.pl_set_config_element(self.para_digit_count.name, value)
+                self.digit_count = int(value)
+                #self.LcdWidget.setDigitCount(self.digit_count)
+
 
 
 
