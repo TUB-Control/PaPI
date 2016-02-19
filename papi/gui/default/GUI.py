@@ -368,7 +368,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.action_open_qt_about.setIcon(info_icon)
         self.actionAbout_PySide.setIcon(info_icon)
         self.action_reset_papi.setIcon(delete_icon)
-        self.action_toggle_run_mode.setIcon(view_icon)
+        #self.action_toggle_run_mode.setIcon(view_icon)
 
         # -------------------------------------
         # Set Icons visible in menu
@@ -386,7 +386,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.action_open_qt_about.setIconVisibleInMenu(True)
         self.actionAbout_PySide.setIconVisibleInMenu(True)
         self.action_reset_papi.setIconVisibleInMenu(True)
-        self.action_toggle_run_mode.setIconVisibleInMenu(True)
+        #self.action_toggle_run_mode.setIconVisibleInMenu(True)
 
     def get_gui_config(self, save_user_settings=False):
         """
@@ -791,7 +791,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
             self.action_toggle_toolbar.setChecked(False)
             # disable context menu of tabmanger
             self.TabManager.disableContextMenus()
-
+            self.TabManager.setTabs_movable_closable(False, False)
+            self.action_toggle_run_mode.setChecked(True)
             # lock subwindows in tabs
             for tab_name in self.TabManager.tab_dict_uname:
                 tab = self.TabManager.tab_dict_uname[tab_name]
@@ -805,7 +806,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
             self.action_toggle_toolbar.setChecked(True)
             # disable context menu of tabmanger
             self.TabManager.enableContextMenus()
-
+            self.TabManager.setTabs_movable_closable(True, True)
+            self.action_toggle_run_mode.setChecked(False)
             # unlock subwindows in tabs
             for tab_name in self.TabManager.tab_dict_uname:
                 tab = self.TabManager.tab_dict_uname[tab_name]
