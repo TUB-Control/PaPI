@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Fri Feb 19 17:40:41 2016
+# Created: Fri Feb 19 17:51:11 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,6 +61,7 @@ class Ui_DefaultMain(object):
         self.action_reset_papi = QtWidgets.QAction(DefaultMain)
         self.action_reset_papi.setObjectName("action_reset_papi")
         self.action_toggle_run_mode = QtWidgets.QAction(DefaultMain)
+        self.action_toggle_run_mode.setCheckable(True)
         self.action_toggle_run_mode.setObjectName("action_toggle_run_mode")
         self.actionSetBackground = QtWidgets.QAction(DefaultMain)
         self.actionSetBackground.setObjectName("actionSetBackground")
