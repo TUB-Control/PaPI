@@ -37,7 +37,7 @@ import math
 import numpy
 
 
-class Sinus(iop_base):
+class Sine(iop_base):
 
     def cb_initialize_plugin(self):
         config = self.pl_get_current_config_ref()
@@ -63,9 +63,6 @@ class Sinus(iop_base):
         self.block3.add_signal(signal)
         signal = DSignal('f3_scalar')
         self.block3.add_signal(signal)
-
-
-        #self.block4 = self.create_new_block('Sin4', [CORE_TIME_SIGNAL,'f3_1','f3_2', 'Scalar'], [ 'numpy_vec', 'numpy_vec', 'numpy_vec', 'int'], 100 )
 
         blockList = [self.block1, self.block2, self.block3]
         self.pl_send_new_block_list(blockList)
@@ -116,10 +113,12 @@ class Sinus(iop_base):
         config = {
             "amax": {
                 'value': 3,
-                'regex': '[0-9]+'
+                'regex': '[0-9]+',
+                'advanced': 'General'
         }, 'f': {
                 'value': "1",
-                'regex': '\d+.{0,1}\d*'
+                'regex': '\d+.{0,1}\d*',
+                'advanced': 'General'
         }}
         return config
 
