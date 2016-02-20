@@ -285,7 +285,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.toolbar.clickedFavouritePlugin.connect(self.toolbar_add_fav_plugin)
         self.toolbar.removedFavouritePlugin.connect(self.fav_plugin_was_removed)
 
-        self.actionFullscreen.triggered.connect(self.trigger_toogle_fullscreen)
+        self.actionFullscreen.triggered.connect(self.triggered_toggle_fullscreen)
 
         self.init_set_icons()
 
@@ -542,7 +542,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         self.action_toggle_toolbar.setChecked(not self.toolbar.isHidden())
 
-    def trigger_toogle_fullscreen(self):
+    def triggered_toggle_fullscreen(self):
         """
 
         :return:
@@ -830,6 +830,8 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if QtCore.Qt.Key_Escape in self.keysActiveList:
             if self.in_run_mode:
                 self.triggered_toggle_run_mode()
+            if self.isFullScreen():
+                self.triggered_toggle_fullscreen()
 
         if QtCore.Qt.Key_D in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_next_tab()
