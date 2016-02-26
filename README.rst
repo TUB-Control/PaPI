@@ -53,15 +53,23 @@ Start PaPI
 --------------------------------------------
 You can either start PaPI by calling the main.py with a python interpreter or you can start PaPI by using the bash script.
 In addition, PaPI can be installed as a symlink to your device.
+
 ``cd PaPI``
+
 ``sudo make install``
 
 For both start methods, command line switches and arguments are available.
+
 ``-f:Starts PaPI in full screen mode.
+
 ``-r: Starts PaPI with activated run mode.
+
 ``-v: Displays the version of PaPI.
+
 ``-h: Displays a help message.
+
 ``-c: Start PaPI with the given configuration(PaPI loads arg-cfg after start).
+
 ``-u: Specify another user config.
 
 Real-time target systems currently supported
