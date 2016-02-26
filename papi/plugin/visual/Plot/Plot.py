@@ -140,6 +140,10 @@ class Plot(vip_base):
         :return:
         """
         self.config = self.pl_get_current_config_ref()
+
+
+        self.startup_config = self.pl_get_current_config()
+
         # ---------------------------
         # Read configuration
         # ---------------------------
@@ -685,12 +689,14 @@ class Plot(vip_base):
                     self.remove_plot_item(signal_name)
                 changes = True
 
+
         if changes:
             self.update_pens()
             self.update_signals()
             self.update_legend()
             self.update_rolling_plot()
             self.update_downsampling_rate()
+            self.update_parameters()
         else:
             self.update_signals()
             #self.update_legend()
@@ -763,7 +769,7 @@ class Plot(vip_base):
             color = self.colors[0]
 
         if width_code < 0:
-            width_code = 0;
+            width_code = 0
 
         return pg.mkPen(color=color, style=style, width=width_code)
 
@@ -790,6 +796,67 @@ class Plot(vip_base):
             self.signals[signal_name].rolling_plot = self.__rolling_plot__
 
         self.initiate_update_plot()
+
+
+    def update_parameters(self):
+        print(len(self.signals))
+
+        style_new = []
+        width_new = []
+        color_new = []
+
+        parameter_style = self.__parameters__['style']
+        parameter_width = self.__parameters__['width']
+        parameter_color = self.__parameters__['color']
+
+        int_re = re.compile(r'(\d+)')
+
+        # Styles
+        current_styles = int_re.findall(parameter_style.value)
+        original_style = int_re.findall(self.startup_config['style']['value'])
+
+        # Width
+        current_width = int_re.findall(parameter_width.value)
+        original_width = int_re.findall(self.startup_config['width']['value'])
+
+        # Color
+        current_color = int_re.findall(parameter_color.value)
+        original_color = int_re.findall(self.startup_config['color']['value'])
+
+        min_len = min(len(current_styles), len(current_width), len(current_color))
+
+        if len(self.signals) < min_len:
+            style_new = current_styles[0:len(self.signals)]
+            width_new = current_width[0:len(self.signals)]
+            color_new = current_color[0:len(self.signals)]
+            print('long enough')
+        else:
+            #len(self.signals) > len(current_styles)
+            style_new = current_styles
+            width_new = current_width
+            color_new = current_color
+
+            if len(self.signals) < len(original_style):
+                style_new.extend( original_style[0:len(original_style)-len(self.signals)])
+                width_new.extend( original_width[0:len(original_style)-len(self.signals)])
+                color_new.extend( original_color[0:len(original_style)-len(self.signals)])
+
+            else:
+                style_new.extend([0] * (len(self.signals)-len(original_style)))
+                width_new.extend([0] * (len(self.signals)-len(original_style)))
+                color_new.extend([0] * (len(self.signals)-len(original_style)))
+
+        style_new = '[' + ' '.join(str(x) for x in style_new) + ']'
+        width_new = '[' + ' '.join(str(x) for x in width_new) + ']'
+        color_new = '[' + ' '.join(str(x) for x in color_new) + ']'
+
+        parameter_style.value = str(style_new)
+        parameter_width.value = str(width_new)
+        parameter_color.value = str(color_new)
+
+        self.control_api.do_set_parameter(self.__id__, parameter_style.name, parameter_style.value)
+        self.control_api.do_set_parameter(self.__id__, parameter_width.name, parameter_width.value)
+        self.control_api.do_set_parameter(self.__id__, parameter_color.name, parameter_color.value)
 
     def use_range_for_x(self, value):
         """
@@ -1168,7 +1235,7 @@ class Plot(vip_base):
             'value': "[0 0 0 0 0]",
             'regex': '^\[(\s*\d\s*)+\]',
             'advanced': '1',
-            'display_text': 'Style'
+            'display_text': 'Width'
         }, 'buffersize': {
             'value': "100",
             'regex': '^(\d+)$',
