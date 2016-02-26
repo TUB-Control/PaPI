@@ -35,6 +35,8 @@ MKDIR_P = mkdir -p
 
 AUTHOR = $(shell whoami)
 
+ROOT_DIR :=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
 .PHONY: rst_files create_rst create_ui clean
 
 create_ui: $(PY_FILES)
@@ -103,3 +105,9 @@ clean:
 	@rm $(RST_DES_DIR)/$(CHANGELOG_RST)
 	@rm -R $(RST_STATIC_FOLDER_DES)
 	make -C docs clean
+
+install:
+	@rm -rf /usr/local/bin/PaPI	
+	@ln -s $(ROOT_DIR)/start.sh /usr/local/bin/PaPI
+
+

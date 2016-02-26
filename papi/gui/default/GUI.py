@@ -88,6 +88,12 @@ def run_gui_in_own_process(core_queue, gui_queue, gui_id, args):
         if args.user_config:
             gui.load_config(args.user_config)
 
+        if args.full_screen:
+            gui.triggered_toggle_fullscreen()
+
+        if args.run_mode:
+            gui.triggered_toggle_run_mode()
+
         if args.config:
             gui.load_config(args.config)
         else:
@@ -285,7 +291,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.toolbar.clickedFavouritePlugin.connect(self.toolbar_add_fav_plugin)
         self.toolbar.removedFavouritePlugin.connect(self.fav_plugin_was_removed)
 
-        self.actionFullscreen.triggered.connect(self.trigger_toogle_fullscreen)
+        self.actionFullscreen.triggered.connect(self.triggered_toggle_fullscreen)
 
         self.init_set_icons()
 
@@ -542,7 +548,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         self.action_toggle_toolbar.setChecked(not self.toolbar.isHidden())
 
-    def trigger_toogle_fullscreen(self):
+    def triggered_toggle_fullscreen(self):
         """
 
         :return:
@@ -693,6 +699,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
             # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
             sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint)
 
+            if self.in_run_mode:
+                sub_window.disableInteraction()
+
         if self.overview_menu is not None:
             self.overview_menu.refresh_action(dplugin)
 
@@ -800,6 +809,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 for sub_window in tab.subWindowList():
                     sub_window.disableInteraction()
             self.in_run_mode = True
+            self.menubar.hide()
         else:
             # show toolbar
             self.toolbar.setHidden(False)
@@ -815,6 +825,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 for sub_window in tab.subWindowList():
                     sub_window.enableInteraction()
             self.in_run_mode = False
+            self.menubar.show()
 
     def keyPressEvent(self, event):
         """
@@ -827,9 +838,11 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if event.key() not in self.keysActiveList:
             self.keysActiveList.append(event.key())
 
-        if QtCore.Qt.Key_Escape in self.keysActiveList:
-            if self.in_run_mode:
-                self.triggered_toggle_run_mode()
+        # if QtCore.Qt.Key_Escape in self.keysActiveList:
+            # if self.in_run_mode:
+            #     self.triggered_toggle_run_mode()
+            # if self.isFullScreen():
+            #     self.triggered_toggle_fullscreen()
 
         if QtCore.Qt.Key_D in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_next_tab()
@@ -838,6 +851,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if QtCore.Qt.Key_A in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_prev_tab()
             self.keysActiveList.remove(QtCore.Qt.Key_A)
+
+        if QtCore.Qt.Key_M in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.toggleMenuBarHide()
 
     def keyReleaseEvent(self, event):
         """
@@ -859,6 +875,12 @@ class GUI(QMainWindow, Ui_DefaultMain):
         """
 
         self.setGeometry(self.geometry().x(), self.geometry().y(), w, h)
+
+    def toggleMenuBarHide(self):
+            if not self.menubar.isHidden():
+                self.menubar.hide()
+            else:
+                self.menubar.show()
 
     def triggered_reload_config(self):
         """

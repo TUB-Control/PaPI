@@ -177,7 +177,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
         if 'uname' in startup_config.keys():
             value = startup_config['uname']['value']
 
-            display_text = 'uname'
+            display_text = 'Unique name'
 
             if 'display_text' in startup_config['uname'].keys():
                 display_text = startup_config['uname']['display_text']
@@ -188,6 +188,7 @@ class CreatePluginDialog(QDialog, Ui_CreatePluginDialog):
             editable_field = QLineEdit(str(value))
             editable_field.setText(uname)
             editable_field.setObjectName('uname' + "_line_edit")
+            editable_field.setToolTip('Name as identifier in PaPI. Must be UNIQUE')
 
             form_name = 'PaPI -mandatory'
             if form_name not in self.advancedForms:
