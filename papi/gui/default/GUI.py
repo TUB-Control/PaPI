@@ -88,6 +88,12 @@ def run_gui_in_own_process(core_queue, gui_queue, gui_id, args):
         if args.user_config:
             gui.load_config(args.user_config)
 
+        if args.full_screen:
+            gui.triggered_toggle_fullscreen()
+
+        if args.run_mode:
+            gui.triggered_toggle_run_mode()
+
         if args.config:
             gui.load_config(args.config)
         else:
@@ -692,6 +698,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
             # see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum
             sub_window.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowMinMaxButtonsHint | Qt.WindowTitleHint)
+
+            if self.in_run_mode:
+                sub_window.disableInteraction()
 
         if self.overview_menu is not None:
             self.overview_menu.refresh_action(dplugin)
