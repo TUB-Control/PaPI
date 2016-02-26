@@ -80,12 +80,7 @@ def start_PaPI(args=None):
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
         core.run()
         return
-        # app = QApplication(sys.argv)
-        # gui = GUI(is_parent=True)
-        # gui.run()
-        # gui.show()
-        # app.exec_()
-        # return
+
 
     raise Exception('Seems like the os you are using is not supported by PaPI')
 
