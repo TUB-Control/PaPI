@@ -799,11 +799,6 @@ class Plot(vip_base):
 
 
     def update_parameters(self):
-        print(len(self.signals))
-
-        style_new = []
-        width_new = []
-        color_new = []
 
         parameter_style = self.__parameters__['style']
         parameter_width = self.__parameters__['width']
@@ -829,17 +824,15 @@ class Plot(vip_base):
             style_new = current_styles[0:len(self.signals)]
             width_new = current_width[0:len(self.signals)]
             color_new = current_color[0:len(self.signals)]
-            print('long enough')
         else:
-            #len(self.signals) > len(current_styles)
             style_new = current_styles
             width_new = current_width
             color_new = current_color
 
             if len(self.signals) < len(original_style):
-                style_new.extend( original_style[0:len(original_style)-len(self.signals)])
-                width_new.extend( original_width[0:len(original_style)-len(self.signals)])
-                color_new.extend( original_color[0:len(original_style)-len(self.signals)])
+                style_new.extend(original_style[min_len:min_len+len(self.signals)-1])
+                width_new.extend(original_width[min_len:min_len+len(self.signals)-1])
+                color_new.extend(original_color[min_len:min_len+len(self.signals)-1])
 
             else:
                 style_new.extend([0] * (len(self.signals)-len(original_style)))
