@@ -800,6 +800,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 for sub_window in tab.subWindowList():
                     sub_window.disableInteraction()
             self.in_run_mode = True
+            self.menubar.hide()
         else:
             # show toolbar
             self.toolbar.setHidden(False)
@@ -815,6 +816,7 @@ class GUI(QMainWindow, Ui_DefaultMain):
                 for sub_window in tab.subWindowList():
                     sub_window.enableInteraction()
             self.in_run_mode = False
+            self.menubar.show()
 
     def keyPressEvent(self, event):
         """
@@ -827,11 +829,11 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if event.key() not in self.keysActiveList:
             self.keysActiveList.append(event.key())
 
-        if QtCore.Qt.Key_Escape in self.keysActiveList:
-            if self.in_run_mode:
-                self.triggered_toggle_run_mode()
-            if self.isFullScreen():
-                self.triggered_toggle_fullscreen()
+        # if QtCore.Qt.Key_Escape in self.keysActiveList:
+            # if self.in_run_mode:
+            #     self.triggered_toggle_run_mode()
+            # if self.isFullScreen():
+            #     self.triggered_toggle_fullscreen()
 
         if QtCore.Qt.Key_D in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_next_tab()
@@ -840,6 +842,9 @@ class GUI(QMainWindow, Ui_DefaultMain):
         if QtCore.Qt.Key_A in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
             self.gui_management.tab_manager.select_prev_tab()
             self.keysActiveList.remove(QtCore.Qt.Key_A)
+
+        if QtCore.Qt.Key_M in self.keysActiveList and QtCore.Qt.Key_Control in self.keysActiveList:
+            self.toggleMenuBarHide()
 
     def keyReleaseEvent(self, event):
         """
@@ -861,6 +866,12 @@ class GUI(QMainWindow, Ui_DefaultMain):
         """
 
         self.setGeometry(self.geometry().x(), self.geometry().y(), w, h)
+
+    def toggleMenuBarHide(self):
+            if not self.menubar.isHidden():
+                self.menubar.hide()
+            else:
+                self.menubar.show()
 
     def triggered_reload_config(self):
         """
