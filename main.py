@@ -37,8 +37,8 @@ import platform
 import sys
 import os
 import argparse
-parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://github.com/TUB-Control/PaPI")
 
+parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://tub-control.github.io/PaPI/dev/")
 parser.add_argument("-c", "--config",  dest = "config", default = "", help="Configuration file loaded after startup.")
 parser.add_argument("-u", "--user_config", dest = "user_config", default='0', help="Loads a user specific configuration")
 parser.add_argument("-v", "--version", dest = "version", action="store_true", default=False, help="Prints current PaPI version.")
@@ -80,12 +80,7 @@ def start_PaPI(args=None):
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
         core.run()
         return
-        # app = QApplication(sys.argv)
-        # gui = GUI(is_parent=True)
-        # gui.run()
-        # gui.show()
-        # app.exec_()
-        # return
+
 
     raise Exception('Seems like the os you are using is not supported by PaPI')
 

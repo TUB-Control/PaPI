@@ -33,6 +33,7 @@ function HELP_FUNC {
   echo "${REV}-c${NORM}  --Start PaPI with the given configuration(PaPI loads arg-cfg after start)"
   echo -e "${REV}-u${NORM}  --Specify another user config."\\n
   echo -e "Example: ${BOLD}$SCRIPT -f -r -c ./cfg.xml${NORM}"\\n
+  echo -e "More documentation can be found here: Documentation can be found here: http://tub-control.github.io/PaPI/dev/"\\n
 
 
   exit 1
@@ -46,6 +47,7 @@ OPT_C=""
 OPT_V=""
 
 ### Start getopts code ###
+### some examples: http://tuxtweaks.com/2014/05/bash-getopts/
 while getopts :c:frvu:h FLAG; do
   case $FLAG in
     c)  #set option "c"
