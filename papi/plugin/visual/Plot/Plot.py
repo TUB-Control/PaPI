@@ -166,6 +166,12 @@ class Plot(vip_base):
 
         self.__bgcolor = self.pl_get_config_element('bgcol')
 
+
+        pos_re = re.compile(r'([0-9]+)')
+        self.__legend_position__= pos_re.findall( self.pl_get_config_element('legend_position') )
+
+        print(self.__legend_position__)
+
         # ----------------------------
         # Set internal variables
         # ----------------------------
@@ -291,6 +297,9 @@ class Plot(vip_base):
 
         self.__parameters__['show_legend'] = \
             DParameter('show_legend', self.config['show_legend']['value'],  Regex=pc.REGEX_BOOL_BIN)
+
+        self.__parameters__['legend_position'] = \
+            DParameter('legend_position', self.pl_get_config_element('legend_position'), Regex='\(([0-9]+),([0-9]+)\)')
 
         if not self.__papi_debug__:
             self.pl_send_new_parameter_list(list(self.__parameters__.values()))
@@ -480,6 +489,12 @@ class Plot(vip_base):
         if name == 'yRange':
             self.config['yRange']['value'] = value
             self.use_range_for_y(value)
+
+        if name == 'legend_position':
+            self.pl_set_config_element('legend_position',value)
+            pos_re = re.compile(r'([0-9]+)')
+            self.__legend_position__ = pos_re.findall(value)
+            self.update_legend()
 
     def update_pens(self):
         """
@@ -1123,6 +1138,8 @@ class Plot(vip_base):
 
                 self.__legend__.addItem(graphic, legend_name)
 
+        self.__legend__.setPos(int(self.__legend_position__[0]),int(self.__legend_position__[1]))
+
     def update_downsampling_rate(self):
         """
         Used to update the downsampling rate by resolving all dependencies.
@@ -1208,58 +1225,69 @@ class Plot(vip_base):
             'value': "0",
             'regex': '^(1|0)$',
             'type': 'bool',
-            'display_text': 'Grid-X'
+            'display_text': 'Grid-X',
+            'advanced': 'Style'
         }, 'y-grid': {
             'value': "0",
             'regex': '^(1|0)$',
             'type': 'bool',
-            'display_text': 'Grid-Y'
+            'display_text': 'Grid-Y',
+            'advanced': 'Style'
         }, 'color': {
             'value': "[0 1 2 3 4]",
             'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
+            'advanced': 'Style',
             'display_text': 'Color'
         }, 'style': {
             'value': "[0 0 0 0 0]",
             'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
+            'advanced': 'Style',
             'display_text': 'Style'
         }, 'width': {
             'value': "[0 0 0 0 0]",
             'regex': '^\[(\s*\d\s*)+\]',
-            'advanced': '1',
+            'advanced': 'Style',
             'display_text': 'Width'
         }, 'buffersize': {
             'value': "100",
             'regex': '^(\d+)$',
-            'advanced': '1',
+            'advanced': 'Data',
             'display_text': 'Buffersize'
         }, 'downsampling_rate': {
             'value': "1",
-            'regex': '(\d+)'
+            'regex': '(\d+)',
+            'advanced': 'Data'
         }, 'rolling_plot': {
             'value': '0',
             'regex': '^(1|0)$',
             'type': 'bool',
+            'advanced': 'Data',
             'display_text': 'Rolling Plot'
         }, 'yRange': {
             'value': '[0.0 1.0]',
             'regex': '^\[(\d+\.\d+)\s+(\d+\.\d+)\]$',
-            'advanced': '1',
+            'advanced': 'Data',
             'display_text': 'y: range'
         },  'show_legend' : {
             'value' : '1',
             'regex' : pc.REGEX_BOOL_BIN,
             'display_text' : 'Enable/Disable legend',
-            'type' : pc.CFG_TYPE_BOOL
+            'type' : pc.CFG_TYPE_BOOL,
+            'advanced': 'Style'
+        },  'legend_position' : {
+            'value' : '(10,10)',
+            'regex': '\(([0-9]+),([0-9]+)\)',
+            'tooltip' : 'Set (X,Y) position of legend',
+            'display_text' : 'Legend position',
+            'advanced': 'Style'
         },
             'bgcol':{
-                'value':'(0,0,0)',
-                'type': pc.CFG_TYPE_COLOR,
-                'advanced': '1'
+            'value':'(0,0,0)',
+            'type': pc.CFG_TYPE_COLOR,
+            'advanced': 'Style'
         },
             'plot_over' : {
-            'advanced' : '1',
+            'advanced' : 'Data',
             'value' : pc.CORE_TIME_SIGNAL,
             'display_text' : 'Plot signals over this x-axis'
             }
