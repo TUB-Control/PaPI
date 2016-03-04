@@ -104,7 +104,7 @@ class Textfield(vip_base):
 
     def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = dparameter_object.default
+            value = dparameter_object.value
 
             regex = dparameter_object.regex
             if regex is not None:

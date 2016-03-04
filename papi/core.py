@@ -1302,7 +1302,7 @@ class Core:
             # get parameter list of plugin [hash]
             parameters = dplugin.get_parameters()
             opt = event.get_optional_parameter()
-            # check for existance of the changed parameter
+            # check for existence of the changed parameter
             if opt.parameter_alias in parameters:
                 para = parameters[opt.parameter_alias]
                 para.value = opt.data

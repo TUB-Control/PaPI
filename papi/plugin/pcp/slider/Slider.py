@@ -205,7 +205,7 @@ class Slider(vip_base):
 
     def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = float(dparameter_object.default)
+            value = float(dparameter_object.value)
             self.text_field.setText(str(value))
             init_value = (value - self.value_min)/self.tick_width
             init_value = round(init_value,0)

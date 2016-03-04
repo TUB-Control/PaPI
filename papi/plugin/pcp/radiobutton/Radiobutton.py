@@ -183,7 +183,7 @@ class Radiobutton(vip_base):
 
     def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = dparameter_object.default
+            value = dparameter_object.value
             if str(value) in self.option_values:
                 self.pre_selected_index = self.option_values.index(str(value))
                 self.update_widget()

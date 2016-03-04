@@ -301,8 +301,8 @@ class Gui_api(QtCore.QObject):
         """
         Something like a callback function for gui triggered events.
         User wants to change a parameter of a plugin
-        :param plugin_id: id of plugin which owns the parameter
 
+        :param plugin_id: id of plugin which owns the parameter
         :type plugin_id: int
         :param parameter_name: name of parameter to change
         :type parameter_name: basestring

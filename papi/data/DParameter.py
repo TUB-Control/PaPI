@@ -55,6 +55,13 @@ class DParameter(DObject):
         self.plugin_identifier = None
         self.regex = Regex
         self.OptionalObject = OptionalObject
+        self.callback_function_handler = None
+
+    def connect(self, function_handler):
+        # Not allowed to be copied or to be send by queue
+        if hasattr(function_handler, '__call__'):
+            self.callback_function_handler = function_handler
+
 
     def update_meta(self, parameter):
         self.value = parameter.value

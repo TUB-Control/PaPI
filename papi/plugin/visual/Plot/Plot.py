@@ -170,8 +170,6 @@ class Plot(vip_base):
         pos_re = re.compile(r'([0-9]+)')
         self.__legend_position__= pos_re.findall( self.pl_get_config_element('legend_position') )
 
-        print(self.__legend_position__)
-
         # ----------------------------
         # Set internal variables
         # ----------------------------
@@ -300,6 +298,7 @@ class Plot(vip_base):
 
         self.__parameters__['legend_position'] = \
             DParameter('legend_position', self.pl_get_config_element('legend_position'), Regex='\(([0-9]+),([0-9]+)\)')
+        self.__parameters__['legend_position'].connect(self.parameter_callback_legend_position)
 
         if not self.__papi_debug__:
             self.pl_send_new_parameter_list(list(self.__parameters__.values()))
@@ -490,11 +489,12 @@ class Plot(vip_base):
             self.config['yRange']['value'] = value
             self.use_range_for_y(value)
 
-        if name == 'legend_position':
-            self.pl_set_config_element('legend_position',value)
-            pos_re = re.compile(r'([0-9]+)')
-            self.__legend_position__ = pos_re.findall(value)
-            self.update_legend()
+        # if name == 'legend_position':
+        #     self.pl_set_config_element('legend_position',value)
+        #     pos_re = re.compile(r'([0-9]+)')
+        #     self.__legend_position__ = pos_re.findall(value)
+        #     self.update_legend()
+        #     print('POS:', self.__parameters__['legend_position'].value)
 
     def update_pens(self):
         """
@@ -1305,6 +1305,12 @@ class Plot(vip_base):
 
         for signal_name in self.signals:
             self.signals[signal_name].clear()
+
+    def parameter_callback_legend_position(self, value):
+        self.pl_set_config_element('legend_position',value)
+        pos_re = re.compile(r'([0-9]+)')
+        self.__legend_position__ = pos_re.findall(value)
+        self.update_legend()
 
 
 class GraphicItem(QGraphicsPathItem):
