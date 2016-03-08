@@ -176,25 +176,31 @@ class UDP_Plugin(iop_base):
 
         self.pl_set_event_trigger_mode(True)
 
-        self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        if (not self.sendOnReceivePort):
-            try:
-                self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
-                print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
-            except socket.error as msg:
-                sys.stderr.write("[ERROR] Can't start UDP_Plugin due to %s\n" % msg)
-                return False
-        else:
-            print ("---- Using client UDP mode (not binding to a port) ----")
+        if not self.UseSocketIO:
+
+            self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+            if (not self.sendOnReceivePort):
+                try:
+                    self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+                    print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+                except socket.error as msg:
+                    sys.stderr.write("[ERROR] Can't start UDP_Plugin due to %s\n" % msg)
+                    return False
+            else:
+                print ("---- Using client UDP mode (not binding to a port) ----")
 
 
-        self.sock_recv.settimeout(1)
+            self.sock_recv.settimeout(1)
 
-        self.thread_goOn = True
-        self.lock = threading.Lock()
-        self.thread = threading.Thread(target=self.thread_execute)
-        self.thread.start()
+            self.thread_goOn = True
+            self.lock = threading.Lock()
+            self.thread = threading.Thread(target=self.thread_execute)
+            self.thread.start()
+
+
+
 
         if self.UseSocketIO:
             print ("Using socket.io connection on port", self.SocketIOPort)
