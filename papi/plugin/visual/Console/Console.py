@@ -30,7 +30,6 @@ Contributors:
 
 
 from PyQt5 import QtCore
-
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
@@ -38,12 +37,8 @@ from papi.plugin.base_classes.vip_base import vip_base
 from papi.data.DParameter import DParameter
 from papi.data.DPlugin import DBlock
 
-from papi.plugin.visual.Console.CmdInput import CmdInput
-
 
 class Console(vip_base):
-
-
     def cb_initialize_plugin(self):
 
         # ---------------------------
@@ -65,9 +60,9 @@ class Console(vip_base):
         self.ConsoleW.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.ConsoleW.customContextMenuRequested.connect(self.show_context_menu)
 
-        block = DBlock('Command')
+        event = self.pl_create_DEvent('CommandLine')
 
-        self.pl_send_new_block_list([block])
+        self.pl_send_new_event_list([event])
 
         return True
 
@@ -130,7 +125,8 @@ class Console(vip_base):
         config = {
             'name': {
                 'value': 'Console',
-                'tooltip': 'Used for window title'
+                'tooltip': 'Used for window title',
+                'advanced': 'Appearance'
             }
         }
 
@@ -265,3 +261,40 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Console"))
 
+
+class CmdInput(QtWidgets.QLineEdit):
+
+    sigExecuteCmd = QtCore.pyqtSignal(object)
+
+    def __init__(self, parent):
+        QtWidgets.QLineEdit.__init__(self, parent)
+        self.history = [""]
+        self.ptr = 0
+
+    def keyPressEvent(self, ev):
+        if ev.key() == QtCore.Qt.Key_Up and self.ptr < len(self.history) - 1:
+            self.setHistory(self.ptr+1)
+            ev.accept()
+            return
+        elif ev.key() ==  QtCore.Qt.Key_Down and self.ptr > 0:
+            self.setHistory(self.ptr-1)
+            ev.accept()
+            return
+        elif ev.key() == QtCore.Qt.Key_Return:
+            self.execCmd()
+        else:
+            QtWidgets.QLineEdit.keyPressEvent(self, ev)
+            self.history[0] = (self.text())
+
+    def execCmd(self):
+        cmd = (self.text())
+        if len(self.history) == 1 or cmd != self.history[1]:
+            self.history.insert(1, cmd)
+
+        self.history[0] = ""
+        self.setHistory(0)
+        self.sigExecuteCmd.emit(cmd)
+
+    def setHistory(self, num):
+        self.ptr = num
+        self.setText(self.history[self.ptr])

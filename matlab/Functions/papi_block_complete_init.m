@@ -1,4 +1,4 @@
-function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config, define_inputs, split_inputs)
+function papi_block_complete_init( gcb, amount_parameters, amount_input, json_config, define_inputs, split_inputs, use_external_file)
 %PAPI_BLOCK_COMPLETE_INIT Summary of this function goes here
 %   Detailed explanation goes here
 

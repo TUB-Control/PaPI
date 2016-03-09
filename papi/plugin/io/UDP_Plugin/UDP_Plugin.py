@@ -26,20 +26,6 @@ Contributors
 Christian Klauer
 Stefan Ruppin
 
-
-
-
-IDEAS
------
-
-- The ProtocolConfig.json may contain information about how to place indivual elements in the GUI
-- How to handle multiple instances and dynamically created datasources?
-- Show a separated screen/page in the gui for each datasource; something like tabs?
-- initial Configuration and later updates via UDP
-
-
-
-
 """
 
 
@@ -85,44 +71,52 @@ class UDP_Plugin(iop_base):
         config = {
             'address': {
                 'value': '127.0.0.1',
-                'advanced': '1'
+                'advanced': 'Connection',
+                'tooltip': 'IP address of the source',
+                'display_text': 'Target IP address'
             },
             'source_port': {
                 'value': '20000',
-                'advanced': '1'
+                'advanced': 'Connection',
+                'tooltip': 'Port of incoming data',
+                'display_text': 'Source Port'
             },
             'out_port': {
                 'value': '20001',
-                'advanced': '1'
-            },
-            'Cfg_Path': {
-                'value': '/home/control/PycharmProjects/PaPI/data_sources/ORTD/DataSourceExample/ProtocollConfig.json',
-                'type': 'file',
-                'advanced': '0'
+                'advanced': 'Connection',
+                'tooltip': 'Port for outgoing data',
+                'display_text': 'Send Port'
             },
             'SeparateSignals': {
                 'value': '0',
-                'advanced': '1'
+                'advanced': 'General',
+                'tooltip': 'Split up signal vectors to separate signals',
+                'display_text': 'Separate Signals'
             },
             'SendOnReceivePort': {
-                'value': '0',    # NOTE: chnage back to 0
-                'advanced': '1',
-                'display_text': 'Use same port for send and receive'
+                'value': '0',
+                'advanced': 'Connection',
+                'display_text': 'Same port for send and receive',
+                'tooltip': 'Use the source port to send data back to the target'
             },
             "UseSocketIO" : {
-                'value' : '0',   # NOTE: change back to 0 !!
-                'advanced' : '1',
+                'value' : '0',
+                'advanced' : 'SocketIO',
                 'tooltip' : 'Use socket.io connection to node.js target-server',
+                'display_text': 'Use SocketIO',
                 'type' : 'bool'
             },
             'socketio_port': {
                 'value': '8091',
-                'advanced': '1'
+                'advanced': 'SocketIO',
+                'tooltip': 'Port for the SocketIO Connection',
+                'display_text': 'SocketIO Port'
             },
             "OnlyInitialConfig" : {
                 'value' :'0',
                 'tooltip' : 'Use only first configuration, ignore further configurations.',
-                'type' : 'bool'
+                'type' : 'bool',
+                'advanced': 'General'
             }
         }
 
@@ -182,21 +176,31 @@ class UDP_Plugin(iop_base):
 
         self.pl_set_event_trigger_mode(True)
 
-        self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        if (not self.sendOnReceivePort):
-            self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
-            print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
-        else:
-            print ("---- Using client UDP mode (not binding to a port) ----")
+        if not self.UseSocketIO:
+
+            self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+            if (not self.sendOnReceivePort):
+                try:
+                    self.sock_recv.bind((self.LOCALBIND_HOST, self.SOURCE_PORT)) # CK
+                    print("UDP_Plugin-plugin listening on: ", self.LOCALBIND_HOST, ":", self.SOURCE_PORT)     #CK
+                except socket.error as msg:
+                    sys.stderr.write("[ERROR] Can't start UDP_Plugin due to %s\n" % msg)
+                    return False
+            else:
+                print ("---- Using client UDP mode (not binding to a port) ----")
 
 
-        self.sock_recv.settimeout(1)
+            self.sock_recv.settimeout(1)
 
-        self.thread_goOn = True
-        self.lock = threading.Lock()
-        self.thread = threading.Thread(target=self.thread_execute)
-        self.thread.start()
+            self.thread_goOn = True
+            self.lock = threading.Lock()
+            self.thread = threading.Thread(target=self.thread_execute)
+            self.thread.start()
+
+
+
 
         if self.UseSocketIO:
             print ("Using socket.io connection on port", self.SocketIOPort)
@@ -599,7 +603,7 @@ class UDP_Plugin(iop_base):
                     # if NValues > 1:
                     #     signal_id,data = struct.unpack_from('<id%sd' %NValues, rev, offset)
                     #     offset += (NValues-1)*(4+4)
-                    if self.Sources[str(signal_id)]["SourceName"] == "time":
+                    if self.Sources[str(signal_id)]["SourceName"] == "SourceTime":
                             timestamp = val[0]
 
                     self.signal_values[signal_id] = val
@@ -701,7 +705,7 @@ class UDP_Plugin(iop_base):
                     else:
                         self.sock_recv.sendto(data, (self.HOST, self.SOURCE_PORT))
         else:
-            if name == 'consoleIn':
+            if name == 'consoleIn' and self.UseSocketIO:
                 self.sio.emit('ConsoleCommand', { 'ConsoleId' : '1' ,  'Data' : value  })
 
 

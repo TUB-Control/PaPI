@@ -36,6 +36,10 @@ from papi.constants import CORE_TIME_SIGNAL
 import papi.event as Event
 import papi.exceptions as pe
 
+import os
+import traceback
+import collections
+
 class base_plugin(IPlugin):
     """
     This class is used as basis class for all other plugin bases
@@ -48,6 +52,7 @@ class base_plugin(IPlugin):
         self._dplugin_info = None
         self.__subscription_for_demux = None
         self._config = {}
+        self.__plugin_parameter_list = {}
 
     def _papi_init(self, ):
         """
@@ -92,7 +97,24 @@ class base_plugin(IPlugin):
 
         :return:
         """
-        return self._merge_configs(self._get_configuration_base(), self.cb_get_plugin_configuration())
+
+        config_base = self._get_configuration_base()
+        config_plugin = self.cb_get_plugin_configuration()
+
+        # if isinstance(config_base, collections.OrderedDict) and \
+        #     isinstance(config_plugin, collections.OrderedDict):
+            #print('Both are  Ordered dict 1')
+            # More complex merge necessary for keeping the order
+
+        config_merged = config_plugin
+
+        for key in config_base:
+            if key not in config_merged:
+                config_merged[key] = config_base[key]
+
+        return config_merged
+
+#        return self._merge_configs(self._get_configuration_base(), self.cb_get_plugin_configuration())
 
     def cb_get_plugin_configuration(self):
         """
@@ -147,8 +169,17 @@ class base_plugin(IPlugin):
         :param value:
         :return:
         """
-        self.cb_set_parameter(name, value)
-
+        if name in self.__plugin_parameter_list:
+            parameter = self.__plugin_parameter_list[name]
+            if parameter is not None:
+                parameter.value = value
+                if parameter.callback_function_handler is not None:
+                    try:
+                        parameter.callback_function_handler(value)
+                    except:
+                        self.cb_set_parameter(name, value)
+                else:
+                    self.cb_set_parameter(name, value)
 
     # some api functions
     # ------------------
@@ -281,13 +312,19 @@ class base_plugin(IPlugin):
         if len(parameters) == 0:
             raise pe.WrongLength("parameters", len(parameters), ">0")
 
+        parameter_list_to_send = []     # The callback handler cannot be send over process boundaries, so we need to remove it before sending
         for i in range(len(parameters)):
             parameter = parameters[i]
             if not isinstance(parameter, DParameter):
                 raise pe.WrongType('parameters['+str(i)+']', DParameter)
 
+            self.__plugin_parameter_list[parameter.name] = parameter
+            tmp_parameter = copy.copy(parameter)
+            tmp_parameter.callback_function_handler = None
+            parameter_list_to_send.append(tmp_parameter)
+
         opt = DOptionalData()
-        opt.parameter_list = parameters
+        opt.parameter_list = parameter_list_to_send
 
         event = Event.data.NewParameter(self.__id__, 0, opt)
         self._Core_event_queue__.put(event)
@@ -331,6 +368,9 @@ class base_plugin(IPlugin):
 
         if isinstance(parameter, str):
             parameter_name = parameter
+
+        if parameter_name in self.__plugin_parameter_list:
+            self.__plugin_parameter_list.pop(parameter_name)
 
         event = Event.data.DeleteParameter(self.__id__, 0, parameter_name)
         self._Core_event_queue__.put(event)
@@ -516,3 +556,7 @@ class base_plugin(IPlugin):
             event = DEvent(event_name)
             return event
         return None
+
+    def pl_get_plugin_path(self):
+        script = traceback.extract_stack()[-2][0]
+        return os.path.dirname(script)

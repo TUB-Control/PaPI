@@ -1,65 +1,71 @@
 #!/usr/bin/python3
-#-*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
+Copyright (C) 2014 Technische Universität Berlin,
+Fakultät IV - Elektrotechnik und Informatik,
+Fachgebiet Regelungssysteme,
+Einsteinufer 17, D-10587 Berlin, Germany
 
+This file is part of PaPI.
+
+PaPI is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.b
+
+PaPI is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PaPI.  If not, see <http://www.gnu.org/licenses/>.
+
+Contributors
+Stefan Ruppin
 """
 
 from papi.plugin.base_classes.iop_base import iop_base
-
-from papi.data.DPlugin import DBlock
-from papi.data.DParameter import DParameter
-from papi.data.DSignal import DSignal
-
-import numpy
 import time
 
-
-
 class CPU_Load(iop_base):
-    INTERVAL = 0.1
     def cb_initialize_plugin(self):
         self.t = 0
         self.delta_t = 0.01
 
-        self.para_delta_t = self.pl_create_DParameter('Delta_t', default_value=0.01)
-
-        self.pl_send_new_parameter_list([self.para_delta_t])
-
+        # creates Block for CPU load
         block1 = self.pl_create_DBlock('CPUload')
         signal = self.pl_create_DSignal('load_in_percent')
-
         block1.add_signal(signal)
-
         self.pl_send_new_block_list([block1])
+
+        # sets update interval
+        self.INTERVAL = 0.1
+
         return True
 
     def cb_pause(self):
         pass
 
-
     def cb_resume(self):
         pass
 
     def cb_execute(self, Data=None, block_name = None, plugin_uname = None):
-        vec = numpy.zeros((2,1))
-
-        vec[0,0] = self.t*10
-        vec[1,0] = self.getCpuLoad() * 100
-
+        # get load
+        cpuload = self.getCpuLoad()
+        # increment time stamp
         self.t += self.delta_t
-
-        self.pl_send_new_data('CPUload', [vec[0, 0]], {'load_in_percent': vec[1]})
-
+        # send data to core
+        self.pl_send_new_data('CPUload', [self.t*10], {'load_in_percent': [cpuload*100]})
+        # wait
         time.sleep(self.delta_t)
 
     def cb_set_parameter(self, name, value):
         pass
 
-
     def cb_quit(self):
-        print('CPU Load: will quit')
-
+        pass
 
     def getTimeList(self):
         """

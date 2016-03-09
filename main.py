@@ -29,7 +29,7 @@ Sven Knuth
 
 
 from papi.core              import Core
-from papi.gui.default.main   import GUI, run_gui_in_own_process
+from papi.gui.default.GUI   import GUI, run_gui_in_own_process
 
 import papi.constants as pc
 
@@ -37,19 +37,21 @@ import platform
 import sys
 import os
 import argparse
-parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://github.com/TUB-Control/PaPI")
 
+parser = argparse.ArgumentParser(epilog="Documentation can be found here: http://tub-control.github.io/PaPI/dev/")
 parser.add_argument("-c", "--config",  dest = "config", default = "", help="Configuration file loaded after startup.")
 parser.add_argument("-u", "--user_config", dest = "user_config", default='0', help="Loads a user specific configuration")
 parser.add_argument("-v", "--version", dest = "version", action="store_true", default=False, help="Prints current PaPI version.")
 parser.add_argument("-d", "--debug_level", dest = "debug_level", default='0', help="Sets debug level.")
+parser.add_argument("-f", "--full_screen", dest = "full_screen", action='store_true', default=False, help="Use full screen.")
+parser.add_argument("-r", "--run_mode", dest = "run_mode", action='store_true', default=False, help="Start PaPI in run_mode.")
 
 args = parser.parse_args()
 
 def start_PaPI(args=None):
     print('Plattform of the system running PaPI: ' + platform.system())
 
-    if args:
+    if args is not None:
         if args.version:
             print("Current PaPI version: " + pc.CORE_PAPI_VERSION)
             return
@@ -78,12 +80,7 @@ def start_PaPI(args=None):
         core = Core(run_gui_in_own_process, is_parent=True, use_gui=True, args=args)
         core.run()
         return
-        # app = QApplication(sys.argv)
-        # gui = GUI(is_parent=True)
-        # gui.run()
-        # gui.show()
-        # app.exec_()
-        # return
+
 
     raise Exception('Seems like the os you are using is not supported by PaPI')
 

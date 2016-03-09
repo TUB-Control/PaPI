@@ -49,9 +49,16 @@ A plugin instance can be manipulated by the following parameter.
     * - Name
       - Type
       - Description
-    * - None
-      - None
-      - None
+    * - MaxValue
+      - float
+      - Upper bound of slider
+    * - MinValue
+      - float
+      - Lower bound of slider
+    * - StepCount
+      - float
+      - Steps between lower and upper bound
+
 
 Events
 ----------------------

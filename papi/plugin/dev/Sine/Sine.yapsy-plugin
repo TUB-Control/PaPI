@@ -1,0 +1,11 @@
+[Core]
+Name = Sine
+Module = Sine
+
+[Documentation]
+Author = S.K.
+Version = 0.1
+Website = www
+Description = simple sine io plugin
+
+Icon = License: http://creativecommons.org/licenses/by/3.0/us/, Provided by: http://www.fatcow.com/

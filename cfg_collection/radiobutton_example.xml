@@ -112,7 +112,7 @@
         </block>
       </Subscription>
       <Subscription>
-        <data_source>Sinus</data_source>
+        <data_source>Sine</data_source>
         <block Name="SinMit_f3">
           <alias />
           <Signal>f3_1</Signal>
@@ -192,8 +192,8 @@
     </DBlocks>
     <Subscriptions />
   </Plugin>
-  <Plugin uname="Sinus">
-    <Identifier>Sinus</Identifier>
+  <Plugin uname="Sine">
+    <Identifier>Sine</Identifier>
     <StartConfig>
       <Parameter Name="f">
         <value>1</value>
@@ -204,7 +204,7 @@
         <regex>[0-9]+</regex>
       </Parameter>
       <Parameter Name="uname">
-        <value>Sinus</value>
+        <value>Sine</value>
       </Parameter>
     </StartConfig>
     <PreviousParameters>
@@ -388,7 +388,7 @@
     </DBlocks>
     <Subscriptions />
   </Plugin>
-  <Plugin uname="LCDSinus">
+  <Plugin uname="LCDSine">
     <Identifier>LCDDisplay</Identifier>
     <StartConfig>
       <Parameter Name="updateFrequency">
@@ -414,10 +414,10 @@
         <advanced>1</advanced>
       </Parameter>
       <Parameter Name="uname">
-        <value>LCDSinus</value>
+        <value>LCDSine</value>
       </Parameter>
       <Parameter Name="name">
-        <value>Sinus Value</value>
+        <value>Sine Value</value>
         <tooltip>Used for window title</tooltip>
       </Parameter>
       <Parameter Name="position">
@@ -459,7 +459,7 @@
         </block>
       </Subscription>
       <Subscription>
-        <data_source>Sinus</data_source>
+        <data_source>Sine</data_source>
         <block Name="SinMit_f3">
           <alias />
           <Signal>f3_1</Signal>

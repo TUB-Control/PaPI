@@ -153,25 +153,28 @@ class Radiobutton(vip_base):
             'option_texts': {
                 'display_text' : 'Displayed Option',
                 'value': 'Option Text 1, Option Text 2, Option Text 3',
-                'tooltip': 'This text is seen by the user. Must be separated by commas.'
+                'tooltip': 'This text is seen by the user. Must be separated by commas.',
+                'advanced' : 'Radiobutton'
             },
             'option_values': {
                 'display_text' : 'Value per Option',
                 'value': '',
                 'tooltip': 'It is possible to set a value for every option. '
-                           'The corresponding value is send instead of the displayed text. '
+                           'The corresponding value is send instead of the displayed text. ',
+                'advanced' : 'Radiobutton'
             },
             'selected_index': {
                 'display_text' : 'Preselected Option',
                 'value' : '',
                 'regex' : pc.REGEX_SINGLE_INT,
                 'tooltip': 'Preselect an option by its index.',
-                'advanced' : '1'
+                'advanced' : 'Radiobutton'
             },
             'name': {
                 'display_text' : 'Plugin Name',
                 'value': 'RadioButton Label',
-                'tooltip': 'Used for window title'
+                'tooltip': 'Used for window title',
+                'advanced': 'Appearance'
             }}
         return config
 
@@ -180,7 +183,7 @@ class Radiobutton(vip_base):
 
     def cb_new_parameter_info(self, dparameter_object):
         if isinstance(dparameter_object, DParameter):
-            value = dparameter_object.default
+            value = dparameter_object.value
             if str(value) in self.option_values:
                 self.pre_selected_index = self.option_values.index(str(value))
                 self.update_widget()

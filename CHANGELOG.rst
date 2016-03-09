@@ -1,6 +1,18 @@
 Changelog
 ---------
 
+v.1.4:
+----------
+- **feature**: Plot now supports different line width styles.
+- **feature**: PaPI Main GUI now supports a fullscreen mode including toolbar toggling and run mode.
+- **improvement**: Cmd line arguments and switches can control full screen mode and run mode of PaPI.
+- **improvement**: Run mode now prevents close and move of tabs.
+- **improvement**: It is not more mandatory to start PaPI inside of the PaPI installation folder.
+- **improvement**: The PaPI start.sh script can be used with simlinks everywhere
+- **improvement**: Subscriptions for blocks which does not exist yet are delayed and done later. Better Supports run-time block creation using e.g. Simulink
+- **simulink**: The configuration can now be changed without re-compiling the simulink model by setting a file in the PaPIBlock mask.
+- **plugin**: Added new plugin function: pl_get_plugin_path()
+
 v.1.3:
 ------
 -  **feature**: Added possibility to copy a plugin, i.e to create a plugin with the same start-up cfg automatically

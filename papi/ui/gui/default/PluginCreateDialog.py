@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/PluginCreateDialog.ui'
 #
-# Created: Tue Oct 13 14:10:13 2015
+# Created: Fri Feb 19 17:30:58 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,22 +19,6 @@ class Ui_CreatePluginDialog(object):
         self.tabWidget.setTabsClosable(False)
         self.tabWidget.setMovable(False)
         self.tabWidget.setObjectName("tabWidget")
-        self.tabSimple = QtWidgets.QWidget()
-        self.tabSimple.setObjectName("tabSimple")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tabSimple)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.formSimple = QtWidgets.QFormLayout()
-        self.formSimple.setObjectName("formSimple")
-        self.verticalLayout_2.addLayout(self.formSimple)
-        self.tabWidget.addTab(self.tabSimple, "")
-        self.tabAdvance = QtWidgets.QWidget()
-        self.tabAdvance.setObjectName("tabAdvance")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.tabAdvance)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.formAdvance = QtWidgets.QFormLayout()
-        self.formAdvance.setObjectName("formAdvance")
-        self.verticalLayout_3.addLayout(self.formAdvance)
-        self.tabWidget.addTab(self.tabAdvance, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.buttonBox = QtWidgets.QDialogButtonBox(CreatePluginDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -47,7 +31,7 @@ class Ui_CreatePluginDialog(object):
         self.verticalLayout.addWidget(self.autostartBox)
 
         self.retranslateUi(CreatePluginDialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(-1)
         self.buttonBox.accepted.connect(CreatePluginDialog.accept)
         self.buttonBox.rejected.connect(CreatePluginDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(CreatePluginDialog)
@@ -55,7 +39,5 @@ class Ui_CreatePluginDialog(object):
     def retranslateUi(self, CreatePluginDialog):
         _translate = QtCore.QCoreApplication.translate
         CreatePluginDialog.setWindowTitle(_translate("CreatePluginDialog", "Dialog"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSimple), _translate("CreatePluginDialog", "Simple"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAdvance), _translate("CreatePluginDialog", "Advanced"))
         self.autostartBox.setText(_translate("CreatePluginDialog", "Autostart"))
 

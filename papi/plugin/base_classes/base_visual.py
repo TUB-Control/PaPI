@@ -32,10 +32,11 @@ from PyQt5.QtCore    import QPoint
 from papi.plugin.base_classes.base_plugin import base_plugin
 from papi.constants import PLUGIN_VIP_IDENTIFIER
 from papi.plugin.base_classes.ParameterWindow import ParameterWindow
-from papi.gui.default.create_plugin_dialog import CreatePluginDialog
+from papi.gui.default.CreatePluginDialog import CreatePluginDialog
 
 from papi.plugin.base_classes.PaPISubWindow import PaPISubWindow
 
+import collections
 
 class base_visual(base_plugin):
     """
@@ -102,35 +103,41 @@ class base_visual(base_plugin):
 
         :return:
         """
-        config = {
-            'size': {
-                'value': "(300,300)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine size: (height,width)'
-            },
-            'position': {
-                'value': "(0,0)",
-                'regex': '\(([0-9]+),([0-9]+)\)',
-                'advanced': '1',
-                'tooltip': 'Determine position: (x,y)'
-            },
-            'name': {
-                'value': 'VisualPlugin',
-                'tooltip': 'Used for window title'
-            },
-            'tab': {
-                'value': 'Tab',
-                'tooltip': 'Used for tabs'
-            },
-            'maximized' : {
-                'value' : '0',
-                'type' : 'bool',
-                'advanced' : '1',
-                'tooltip' : 'Set true to start plugin maximized',
-                'display_text' : 'Start maximized'
-            }
+
+        config = collections.OrderedDict()
+
+        config['size'] = {
+            'value': "(300,300)",
+            'regex': '\(([0-9]+),([0-9]+)\)',
+            'advanced' : 'Appearance',
+            'tooltip': 'Determine size: (height,width)'
         }
+        config['position'] = {
+            'value': "(0,0)",
+            'regex': '\(([0-9]+),([0-9]+)\)',
+            'advanced' : 'Appearance',
+            'tooltip': 'Determine position: (x,y)'
+        }
+        config['name'] = {
+            'value': 'VisualPlugin',
+            'tooltip': 'Used for window title',
+            'advanced': 'Appearance'
+        }
+
+        config['tab'] = {
+            'value': 'Tab',
+            'tooltip': 'Used for tabs',
+            'advanced' : 'Appearance',
+        }
+
+        config['maximized'] = {
+            'value' : '0',
+            'type' : 'bool',
+            'advanced' : 'Appearance',
+            'tooltip' : 'Set true to start plugin maximized',
+            'display_text' : 'Start maximized'
+        }
+
         return config
 
 
@@ -331,7 +338,6 @@ class base_visual(base_plugin):
         :return:
         """
         self.control_api.do_delete_plugin_uname(self._dplugin_info.uname)
-        print(self._config['tab']['value'])
 
     def _ctrlMenu_pause(self):
         """
@@ -361,7 +367,6 @@ class base_visual(base_plugin):
 
         plugin_create_dialog = CreatePluginDialog(self.control_api, self.TabManager, parent=self._widget)
         plugin_create_dialog.set_dplugin(dplugin, self._get_startup_configuration(), self._get_type())
-        print()
         plugin_create_dialog.show()
 
 #        self.control_api.do_resume_plugin_by_uname(self._dplugin_info.uname)

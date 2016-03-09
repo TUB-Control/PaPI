@@ -26,19 +26,19 @@ Contributors
 Sven Knuth
 """
 
+from PyQt5.QtWidgets import QLineEdit, QFileDialog, QColorDialog, QPushButton
+from PyQt5 import QtWidgets
 
-
-from PyQt5.QtGui        import QColor
-from PyQt5.QtWidgets    import QLineEdit, QFileDialog, QColorDialog, QPushButton
-from PyQt5 import QtWidgets, QtCore
-
-from papi.data.DGui import DGui
-
-import os, re
+import os
 import papi.helper as ph
 import papi.constants as pc
 
 class FileLineEdit(QLineEdit):
+    """
+    A QFileDialog is used to determine the content of this QLineEdit.
+    Used in the 'CreatePluginDialog' for a config element if the config elements contains the type : 'file'
+
+    """
     def __init__(self):
         super(FileLineEdit, self).__init__()
 
@@ -67,6 +67,12 @@ class FileLineEdit(QLineEdit):
 
 
 class ColorLineEdit(QPushButton):
+    """
+    A QColorDialog is used to determine the content of this QLineEdit.
+    Used in the 'CreatePluginDialog' for a config element if the config elements contains the type : 'color'
+
+    """
+
     def __init__(self):
         super(ColorLineEdit, self).__init__()
         self.clicked.connect(self.open_color_picker)
@@ -114,8 +120,15 @@ class ColorLineEdit(QPushButton):
 
 
 class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
+    """
+    The default QFileDialog for save operations was enhanced by additional options.
+    These options are hidden in the QFileDialog till the 'More Details'-Button was clicked.
+
+    """
+
     def __init__(self, parent, gui_api):
         super(PaPIConfigSaveDialog, self).__init__(parent)
+        self.setOption(QtWidgets.QFileDialog.DontUseNativeDialog)
 
         inital_hidden = True
 
@@ -125,7 +138,7 @@ class PaPIConfigSaveDialog(QtWidgets.QFileDialog):
 
         self.setFileMode(QFileDialog.AnyFile)
         self.setNameFilters( [ self.tr("PaPI-Cfg (*.xml)"), self.tr("PaPI-Cfg (*.json)") ])
-        self.setDirectory(pc.CONFIG_DEFAULT_DIRECTORY)
+        self.setDirectory(os.path.abspath(pc.CONFIG_DEFAULT_DIRECTORY))
         self.setWindowTitle("Save Configuration")
         self.setAcceptMode(QFileDialog.AcceptSave)
 
