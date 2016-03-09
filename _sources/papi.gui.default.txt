@@ -1,0 +1,70 @@
+papi.gui.default package
+========================
+
+Submodules
+----------
+
+papi.gui.default.CreatePluginDialog module
+------------------------------------------
+
+.. automodule:: papi.gui.default.CreatePluginDialog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.CreatePluginMenu module
+----------------------------------------
+
+.. automodule:: papi.gui.default.CreatePluginMenu
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.GUI module
+---------------------------
+
+.. automodule:: papi.gui.default.GUI
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.OverviewPluginMenu module
+------------------------------------------
+
+.. automodule:: papi.gui.default.OverviewPluginMenu
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.PaPITabManger module
+-------------------------------------
+
+.. automodule:: papi.gui.default.PaPITabManger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.custom module
+------------------------------
+
+.. automodule:: papi.gui.default.custom
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.gui.default.item module
+----------------------------
+
+.. automodule:: papi.gui.default.item
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: papi.gui.default
+    :members:
+    :undoc-members:
+    :show-inheritance:

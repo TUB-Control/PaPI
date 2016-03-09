@@ -1,0 +1,1238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.gui package &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="papi-gui-package">
+<h1>papi.gui package<a class="headerlink" href="#papi-gui-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="papi.gui.default.html">papi.gui.default package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.CreatePluginDialog">papi.gui.default.CreatePluginDialog module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.CreatePluginMenu">papi.gui.default.CreatePluginMenu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.GUI">papi.gui.default.GUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.OverviewPluginMenu">papi.gui.default.OverviewPluginMenu module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.PaPITabManger">papi.gui.default.PaPITabManger module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.custom">papi.gui.default.custom module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default.item">papi.gui.default.item module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="papi.gui.default.html#module-papi.gui.default">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-papi.gui.gui_api">
+<span id="papi-gui-gui-api-module"></span><h2>papi.gui.gui_api module<a class="headerlink" href="#module-papi.gui.gui_api" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.gui_api.Gui_api">
+<em class="property">class </em><tt class="descclassname">papi.gui.gui_api.</tt><tt class="descname">Gui_api</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>get_gui_config_function=None</em>, <em>set_gui_config_function=None</em>, <em>TabManager=None</em>, <em>plugin_manager=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.change_uname_to_uniqe">
+<tt class="descname">change_uname_to_uniqe</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.change_uname_to_uniqe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.change_uname_to_uniqe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function will search for unames and add an indentifier to it to make it unique in case of existence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; uname to make unique</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">uname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.config_loader_subs">
+<tt class="descname">config_loader_subs</tt><big>(</big><em>pl_to_start</em>, <em>subs_to_make</em>, <em>parameters_to_change</em>, <em>signals_to_change</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.config_loader_subs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.config_loader_subs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Function for callback when timer finished to apply</dt>
+<dd>subscriptions and parameter changed of config.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pl_to_start</strong> (<em>list</em>) &#8211; list of plugins to start</li>
+<li><strong>subs_to_make</strong> (<em>list</em>) &#8211; list of subscriptions to make</li>
+<li><strong>parameters_to_change</strong> (<em>list</em>) &#8211; parameter changes to apply</li>
+<li><strong>signals_to_change</strong> (<em>list</em>) &#8211; signal name changes to apply</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.config_loader_subs_reloaded">
+<tt class="descname">config_loader_subs_reloaded</tt><big>(</big><em>pl_to_start</em>, <em>subs_to_make</em>, <em>parameters_to_change</em>, <em>signals_to_change</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.config_loader_subs_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.config_loader_subs_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Function for callback when timer finished to apply</dt>
+<dd>subscriptions and parameter changed of config.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pl_to_start</strong> (<em>list</em>) &#8211; list of plugins to start</li>
+<li><strong>subs_to_make</strong> (<em>list</em>) &#8211; list of subscriptions to make</li>
+<li><strong>parameters_to_change</strong> (<em>list</em>) &#8211; parameter changes to apply</li>
+<li><strong>signals_to_change</strong> (<em>list</em>) &#8211; signal name changes to apply</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_change_string_to_be_uname">
+<tt class="descname">do_change_string_to_be_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_change_string_to_be_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_change_string_to_be_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method will take a string and convert him according to some rules to be an uname</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>basestring</em>) &#8211; name to convert to unmae</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">name converted to uname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_close_program">
+<tt class="descname">do_close_program</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_close_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_close_program" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell core to close papi. Core will respond and will close all open plugins.
+GUI will close all VIP Plugins due to calling their quit function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_create_plugin">
+<tt class="descname">do_create_plugin</tt><big>(</big><em>plugin_identifier</em>, <em>uname</em>, <em>config={}</em>, <em>autostart=True</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_create_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_create_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>plugin_identifier</strong> (<em>basestring</em>) &#8211; plugin to create</li>
+<li><strong>uname</strong> (<em>basestring</em>) &#8211; uniqe name to set for new plugin</li>
+<li><strong>config</strong> &#8211; additional configuration for creation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_delete_plugin">
+<tt class="descname">do_delete_plugin</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_delete_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_delete_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete plugin with given id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>int</em>) &#8211; Plugin id to delete</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_delete_plugin_uname">
+<tt class="descname">do_delete_plugin_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_delete_plugin_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_delete_plugin_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete plugin with given uname.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; Plugin uname to delete</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_edit_plugin">
+<tt class="descname">do_edit_plugin</tt><big>(</big><em>pl_id</em>, <em>eObject</em>, <em>changeRequest</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_edit_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_edit_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit plugin with given plugin id. Specify attribute of plugin by eObject which should
+be edited e.g. DBlock.
+Specify action by changeRequest e.g. {&#8216;edit&#8217; : DSignal}.
+Currently only possible to change a DSignal for a given dplugin and dblock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pl_id</strong> (<em>int</em>) &#8211; Plugin id to delete</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_edit_plugin_uname">
+<tt class="descname">do_edit_plugin_uname</tt><big>(</big><em>uname</em>, <em>eObject</em>, <em>changeRequest</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_edit_plugin_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_edit_plugin_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit plugin with given plugin uname. Specify attribute of plugin by eObject which should
+be edited e.g. DBlock.
+Specify action by changeRequest e.g. {&#8216;edit&#8217; : DSignal}.
+Currently only possible to change a DSignal for a given dplugin and dblock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>uname</strong> &#8211; </li>
+<li><strong>eObject</strong> &#8211; </li>
+<li><strong>changeRequest</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_get_plugin_id_from_uname">
+<tt class="descname">do_get_plugin_id_from_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_get_plugin_id_from_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_get_plugin_id_from_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plugin id of the plugin with unique name uname</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; uname of plugin</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None: plugin with uname does not exist, id: id of plugin</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_load_xml">
+<tt class="descname">do_load_xml</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_load_xml_reloaded">
+<tt class="descname">do_load_xml_reloaded</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to load a xml config to papi and apply the configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>basestring</em>) &#8211; path to xml file to load.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_load_xml_v1">
+<tt class="descname">do_load_xml_v1</tt><big>(</big><em>root</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_load_xml_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_load_xml_v1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to load a xml config to papi and apply the configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>basestring</em>) &#8211; path to xml file to load.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_open_new_tabs_with_names_in_order">
+<tt class="descname">do_open_new_tabs_with_names_in_order</tt><big>(</big><em>tabNames=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_open_new_tabs_with_names_in_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_open_new_tabs_with_names_in_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_pause_plugin_by_id">
+<tt class="descname">do_pause_plugin_by_id</tt><big>(</big><em>plugin_id</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_pause_plugin_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_pause_plugin_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to pause a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin to pause</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_pause_plugin_by_uname">
+<tt class="descname">do_pause_plugin_by_uname</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_pause_plugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_pause_plugin_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to pause a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_uname</strong> (<em>basestring</em>) &#8211; uname of plugin to pause</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_reset_papi">
+<tt class="descname">do_reset_papi</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_reset_papi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_reset_papi" title="Permalink to this definition">¶</a></dt>
+<dd><p>APi call to reset PaPI.
+Reset in this case means to delete all plugins cleanly and keep PaPI running.
+Will free all unames.
+Is using the do_delete_plugin api call and the delete plugin mechanism</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ERROR CODE</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_resume_plugin_by_id">
+<tt class="descname">do_resume_plugin_by_id</tt><big>(</big><em>plugin_id</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_resume_plugin_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_resume_plugin_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to pause a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin to pause</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_resume_plugin_by_uname">
+<tt class="descname">do_resume_plugin_by_uname</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_resume_plugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_resume_plugin_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to resume a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_uname</strong> (<em>basestring</em>) &#8211; uname of plugin to resume</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_save_json_config_reloaded">
+<tt class="descname">do_save_json_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_json_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_json_config_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_save_xml_config">
+<tt class="descname">do_save_xml_config</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will save papis current state to a xml file provided by path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>basestring</em>) &#8211; path to save xml to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded">
+<tt class="descname">do_save_xml_config_reloaded</tt><big>(</big><em>path</em>, <em>plToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>sToSave=</em>, <span class="optional">[</span><span class="optional">]</span><em>saveUserSettings=False</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_save_xml_config_reloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_save_xml_config_reloaded" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> &#8211; </li>
+<li><strong>plToSave</strong> &#8211; </li>
+<li><strong>sToSave</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_set_parameter">
+<tt class="descname">do_set_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em>, <em>only_db_update=False</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to change a parameter of a plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin which owns the parameter</li>
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+<li><strong>only_db_update</strong> &#8211; do_set_parameter of the target plugin will not be called. Updates only the internal database.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_set_parameter_uname">
+<tt class="descname">do_set_parameter_uname</tt><big>(</big><em>plugin_uname</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_set_parameter_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_set_parameter_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to change a parameter of a plugin
+:param plugin_uname: name of plugin which owns the parameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_set_tab_active_by_name">
+<tt class="descname">do_set_tab_active_by_name</tt><big>(</big><em>tabName</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_set_tab_active_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_set_tab_active_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_start_plugin">
+<tt class="descname">do_start_plugin</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_start_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_start_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start plugin with given id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>int</em>) &#8211; Plugin id to start</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_start_plugin_uname">
+<tt class="descname">do_start_plugin_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_start_plugin_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_start_plugin_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start plugin with given uname.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; Plugin uname to start</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_stopReset_plugin_uname">
+<tt class="descname">do_stopReset_plugin_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_stopReset_plugin_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_stopReset_plugin_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop and reset plugin with given uname without deleting it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; Plugin uname to stop</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_stopReset_pluign">
+<tt class="descname">do_stopReset_pluign</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_stopReset_pluign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_stopReset_pluign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop and reset plugin with given id without deleting it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>int</em>) &#8211; Plugin id to stopReset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_subscribe">
+<tt class="descname">do_subscribe</tt><big>(</big><em>subscriber_id</em>, <em>source_id</em>, <em>block_name</em>, <em>signals=None</em>, <em>sub_alias=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+In this case, user wants one plugin to subscribe another</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber_id</strong> (<em>int</em>) &#8211; Plugin id of plugin which should get the data</li>
+<li><strong>source_id</strong> (<em>int</em>) &#8211; plugin uname of plugin that should send the data</li>
+<li><strong>block_name</strong> (<em>basestring</em>) &#8211; name of block to subscribe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_subscribe_uname">
+<tt class="descname">do_subscribe_uname</tt><big>(</big><em>subscriber_uname</em>, <em>source_uname</em>, <em>block_name</em>, <em>signals=None</em>, <em>sub_alias=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_subscribe_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_subscribe_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+In this case, user wants one plugin to subscribe another</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber_uname</strong> (<em>basestring</em>) &#8211; Plugin uname of plugin which should get the data</li>
+<li><strong>source_uname</strong> (<em>basestring</em>) &#8211; plugin uname of plugin that should send the data</li>
+<li><strong>block_name</strong> (<em>basestring</em>) &#8211; name of block to subscribe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_test_name_to_be_unique">
+<tt class="descname">do_test_name_to_be_unique</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_test_name_to_be_unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_test_name_to_be_unique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will check if a given name would be a valid, unique name for a plugin.
+:param name: name to check</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True or False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_unsubscribe">
+<tt class="descname">do_unsubscribe</tt><big>(</big><em>subscriber_id</em>, <em>source_id</em>, <em>block_name</em>, <em>signal_index=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_unsubscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_unsubscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants one plugin to do not get any more data from another plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber_id</strong> (<em>int</em>) &#8211; plugin id which wants to lose a data source</li>
+<li><strong>source_id</strong> (<em>int</em>) &#8211; plugin id of data source</li>
+<li><strong>block_name</strong> (<em>basestring</em>) &#8211; name of block to unsubscribe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.do_unsubscribe_uname">
+<tt class="descname">do_unsubscribe_uname</tt><big>(</big><em>subscriber_uname</em>, <em>source_uname</em>, <em>block_name</em>, <em>signal_index=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.do_unsubscribe_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.do_unsubscribe_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants one plugin to do not get any more data from another plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber_uname</strong> (<em>basestring</em>) &#8211; plugin uname which wants to lose a data source</li>
+<li><strong>source_uname</strong> (<em>basestring</em>) &#8211; plugin uname of data source</li>
+<li><strong>block_name</strong> (<em>basestring</em>) &#8211; name of block to unsubscribe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.gui_api.Gui_api.error_occured">
+<tt class="descname">error_occured</tt><a class="headerlink" href="#papi.gui.gui_api.Gui_api.error_occured" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_api.Gui_api.indent">
+<tt class="descname">indent</tt><big>(</big><em>elem</em>, <em>level=0</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_api.html#Gui_api.indent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_api.Gui_api.indent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which will apply a nice looking indentiation to xml structure before save. Better readability.
+copied from <a class="reference external" href="http://effbot.org/zone/element-lib.htm#prettyprint">http://effbot.org/zone/element-lib.htm#prettyprint</a> 06.10.2014 15:53</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>elem</strong> &#8211; </li>
+<li><strong>level</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.gui_event_processing">
+<span id="papi-gui-gui-event-processing-module"></span><h2>papi.gui.gui_event_processing module<a class="headerlink" href="#module-papi.gui.gui_event_processing" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+&lt;Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing">
+<em class="property">class </em><tt class="descclassname">papi.gui.gui_event_processing.</tt><tt class="descname">GuiEventProcessing</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>gui_queue</em>, <em>TabManager</em>, <em>plugin_manager</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
+<p>This class will do all the event handling for a GUI process. It should be created and initialized with database and
+queues.
+To get all the functionality, one should link the callback functions (slots) for the needed signals.</p>
+<dl class="attribute">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.added_dplugin">
+<tt class="descname">added_dplugin</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.added_dplugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.dgui_changed">
+<tt class="descname">dgui_changed</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.dgui_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.gui_working">
+<tt class="descname">gui_working</tt><big>(</big><em>close_mock</em>, <em>workingTimer</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.gui_working"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.gui_working" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event processing loop of gui. Build to get called every 40ms after a run through.
+Will process all events of the queue at the time of call.
+Procedure was built this way, so that the processing of an event is not covered by the try/except structure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.plugin_died">
+<tt class="descname">plugin_died</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.plugin_died" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_check_alive_status">
+<tt class="descname">process_check_alive_status</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_check_alive_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_check_alive_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gui received check_alive request form core, so gui will respond to it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_close_program_event">
+<tt class="descname">process_close_program_event</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_close_program_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_close_program_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes close programm event.
+Nothing important happens.</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param event:</th><td class="field-body">event to process</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type event:</th><td class="field-body">PapiEventBase</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">type dplugin:</th><td class="field-body">DPlugin</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_create_plugin">
+<tt class="descname">process_create_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_create_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_create_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the create Plugin event. This event got sent by core to GUI.
+Gui now needs to add a new plugin to DGUI and decide whether it is a plugin running in the GUI process or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_new_data_event">
+<tt class="descname">process_new_data_event</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_new_data_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_new_data_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core sent a new data event to gui. Gui now needs to find the destination plugin and call its execute function
+with the new data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_parameter_info">
+<tt class="descname">process_parameter_info</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_parameter_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_parameter_info" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_pause_plugin">
+<tt class="descname">process_pause_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_pause_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_pause_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core sent event to pause a plugin in GUI, so call the pause function of this plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_plugin_closed">
+<tt class="descname">process_plugin_closed</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_plugin_closed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_plugin_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes plugin_closed event.
+Gui now knows, that a plugin was closed by core and needs to update its DGui data base</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_restart_plugin">
+<tt class="descname">process_restart_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_restart_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_restart_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes plugin_start event.
+Used to (re-)start a plugin after the plugin was stopped. Emit DPlugin was added -&gt; necessary signal for the GUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_resume_plugin">
+<tt class="descname">process_resume_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_resume_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_resume_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core sent event to resume a plugin in GUI, so call the resume function of this plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter">
+<tt class="descname">process_set_parameter</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes set_parameter event.
+Used to handle parameter sets by the gui or other plugins.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_stop_plugin">
+<tt class="descname">process_stop_plugin</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_stop_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_stop_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes plugin_stop events.
+Quit plugin, emit DPlugin was removed -&gt; necessary signal for the GUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_update_meta">
+<tt class="descname">process_update_meta</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_update_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_update_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core sent new meta information of an existing plugin. This function will update DGui with these information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>PapiEventBase</em>) &#8211; event to process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.process_update_parameter">
+<tt class="descname">process_update_parameter</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_event_processing.html#GuiEventProcessing.process_update_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.process_update_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin">
+<tt class="descname">removed_dplugin</tt><a class="headerlink" href="#papi.gui.gui_event_processing.GuiEventProcessing.removed_dplugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.gui_management">
+<span id="papi-gui-gui-management-module"></span><h2>papi.gui.gui_management module<a class="headerlink" href="#module-papi.gui.gui_management" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+&lt;Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.gui_management.GuiManagement">
+<em class="property">class </em><tt class="descclassname">papi.gui.gui_management.</tt><tt class="descname">GuiManagement</tt><big>(</big><em>core_queue</em>, <em>gui_queue</em>, <em>gui_id</em>, <em>TabManager</em>, <em>get_gui_config</em>, <em>set_gui_config</em><big>)</big><a class="reference internal" href="_modules/papi/gui/gui_management.html#GuiManagement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.gui_management.GuiManagement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.plugin_api">
+<span id="papi-gui-plugin-api-module"></span><h2>papi.gui.plugin_api module<a class="headerlink" href="#module-papi.gui.plugin_api" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.plugin_api.Plugin_api">
+<em class="property">class </em><tt class="descclassname">papi.gui.plugin_api.</tt><tt class="descname">Plugin_api</tt><big>(</big><em>gui_data</em>, <em>core_queue</em>, <em>gui_id</em>, <em>PLUGIN_API_IDENTIFIER</em>, <em>tabManager=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.change_uname_to_uniqe">
+<tt class="descname">change_uname_to_uniqe</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.change_uname_to_uniqe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.change_uname_to_uniqe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_change_string_to_be_uname">
+<tt class="descname">do_change_string_to_be_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_change_string_to_be_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_change_string_to_be_uname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_create_plugin">
+<tt class="descname">do_create_plugin</tt><big>(</big><em>plugin_identifier</em>, <em>uname</em>, <em>config={}</em>, <em>autostart=True</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_create_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_create_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events e.a. when a user wants to create a new plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>plugin_identifier</strong> (<em>basestring</em>) &#8211; plugin to create</li>
+<li><strong>uname</strong> (<em>basestring</em>) &#8211; uniqe name to set for new plugin</li>
+<li><strong>config</strong> &#8211; additional configuration for creation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_delete_plugin_uname">
+<tt class="descname">do_delete_plugin_uname</tt><big>(</big><em>uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_delete_plugin_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_delete_plugin_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete plugin with given uname.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uname</strong> (<em>basestring</em>) &#8211; Plugin uname to delete</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_load_xml">
+<tt class="descname">do_load_xml</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_load_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_load_xml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_pause_plugin_by_uname">
+<tt class="descname">do_pause_plugin_by_uname</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_pause_plugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_pause_plugin_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to pause a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_uname</strong> (<em>basestring</em>) &#8211; uname of plugin to pause</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_resume_plugin_by_uname">
+<tt class="descname">do_resume_plugin_by_uname</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_resume_plugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_resume_plugin_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to resume a plugin, so this method will send an event to core.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_uname</strong> (<em>basestring</em>) &#8211; uname of plugin to resume</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_set_parameter">
+<tt class="descname">do_set_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_set_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to change a parameter of a plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin which owns the parameter</li>
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_set_parameter_uname">
+<tt class="descname">do_set_parameter_uname</tt><big>(</big><em>plugin_uname</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_set_parameter_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_set_parameter_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to change a parameter of a plugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>plugin_uname</strong> (<em>basestring</em>) &#8211; name of plugin which owns the parameter</li>
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_set_tab_active_by_name">
+<tt class="descname">do_set_tab_active_by_name</tt><big>(</big><em>tabName</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_set_tab_active_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_set_tab_active_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_subscribe_uname">
+<tt class="descname">do_subscribe_uname</tt><big>(</big><em>subscriber_uname</em>, <em>source_uname</em>, <em>block_name</em>, <em>signals=None</em>, <em>sub_alias=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_subscribe_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_subscribe_uname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+In this case, user wants one plugin to subscribe another</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber_uname</strong> (<em>basestring</em>) &#8211; Plugin uname of plugin which should get the data</li>
+<li><strong>source_uname</strong> (<em>basestring</em>) &#8211; plugin uname of plugin that should send the data</li>
+<li><strong>block_name</strong> (<em>basestring</em>) &#8211; name of block to subscribe</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_test_name_to_be_unique">
+<tt class="descname">do_test_name_to_be_unique</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_test_name_to_be_unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_test_name_to_be_unique" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.do_update_parameter">
+<tt class="descname">do_update_parameter</tt><big>(</big><em>plugin_id</em>, <em>parameter_name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.do_update_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.do_update_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Something like a callback function for gui triggered events.
+User wants to update a parameter in the gui. Used by a owner of a plugin to
+inform the gui that a parameter was internally changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>plugin_id</strong> (<em>int</em>) &#8211; id of plugin which owns the parameter</li>
+<li><strong>parameter_name</strong> (<em>basestring</em>) &#8211; name of parameter to change</li>
+<li><strong>value</strong> &#8211; new parameter value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.get_all_plugins">
+<tt class="descname">get_all_plugins</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_all_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_all_plugins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.get_dparameter_of_plugin_from_data">
+<tt class="descname">get_dparameter_of_plugin_from_data</tt><big>(</big><em>plugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_dparameter_of_plugin_from_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_dparameter_of_plugin_from_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.plugin_api.Plugin_api.get_dplugin_by_uname">
+<tt class="descname">get_dplugin_by_uname</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/plugin_api.html#Plugin_api.get_dplugin_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.plugin_api.Plugin_api.get_dplugin_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-papi.gui" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">papi.gui package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-papi.gui.gui_api">papi.gui.gui_api module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.gui_event_processing">papi.gui.gui_event_processing module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.gui_management">papi.gui.gui_management module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.plugin_api">papi.gui.plugin_api module</a></li>
+<li><a class="reference internal" href="#module-papi.gui">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/papi.gui.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

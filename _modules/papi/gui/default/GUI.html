@@ -1,0 +1,1134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.gui.default.GUI &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="../../../../index.html" />
+    <link rel="up" title="papi.gui.default" href="../default.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="../../../../index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../default.html" accesskey="U">papi.gui.default</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for papi.gui.default.GUI</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/python3</span>
+<span class="c"># -*- coding: latin-1 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (C) 2014 Technische Universität Berlin,</span>
+<span class="sd">Fakultät IV - Elektrotechnik und Informatik,</span>
+<span class="sd">Fachgebiet Regelungssysteme,</span>
+<span class="sd">Einsteinufer 17, D-10587 Berlin, Germany</span>
+
+<span class="sd">This file is part of PaPI.</span>
+
+<span class="sd">PaPI is free software: you can redistribute it and/or modify</span>
+<span class="sd">it under the terms of the GNU General Public License as published by</span>
+<span class="sd">the Free Software Foundation, either version 3 of the License, or</span>
+<span class="sd">(at your option) any later version.</span>
+
+<span class="sd">PaPI is distributed in the hope that it will be useful,</span>
+<span class="sd">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="sd">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="sd">GNU General Public License for more details.</span>
+
+<span class="sd">You should have received a copy of the GNU General Public License</span>
+<span class="sd">along with PaPI.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="sd">Contributors</span>
+<span class="sd">Sven Knuth, Stefan Ruppin</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">Process</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QMessageBox</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span><span class="p">,</span> <span class="n">QDesktopServices</span><span class="p">,</span> <span class="n">QPixmap</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QUrl</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="kn">import</span> <span class="nn">papi.constants</span> <span class="kn">as</span> <span class="nn">pc</span>
+
+<span class="kn">from</span> <span class="nn">papi.ui.gui.default.DefaultMain</span> <span class="kn">import</span> <span class="n">Ui_DefaultMain</span>
+<span class="kn">from</span> <span class="nn">papi.data.DGui</span> <span class="kn">import</span> <span class="n">DGui</span>
+<span class="kn">from</span> <span class="nn">papi.ConsoleLog</span> <span class="kn">import</span> <span class="n">ConsoleLog</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.item</span> <span class="kn">import</span> <span class="n">PaPIFavAction</span>
+
+<span class="kn">from</span> <span class="nn">papi.gui.default.CreatePluginDialog</span> <span class="kn">import</span> <span class="n">CreatePluginDialog</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.CreatePluginMenu</span> <span class="kn">import</span> <span class="n">CreatePluginMenu</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.OverviewPluginMenu</span> <span class="kn">import</span> <span class="n">OverviewPluginMenu</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.PaPITabManger</span> <span class="kn">import</span> <span class="n">PaPITabManger</span><span class="p">,</span> <span class="n">TabObject</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default.custom</span> <span class="kn">import</span> <span class="n">PaPIConfigSaveDialog</span>
+<span class="kn">from</span> <span class="nn">papi.gui.default</span> <span class="kn">import</span> <span class="n">get16Icon</span>
+
+<span class="kn">from</span> <span class="nn">papi.gui.gui_management</span> <span class="kn">import</span> <span class="n">GuiManagement</span>
+
+<span class="kn">from</span> <span class="nn">papi.core</span> <span class="kn">import</span> <span class="n">run_core_in_own_process</span>
+
+
+<div class="viewcode-block" id="run_gui_in_own_process"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.run_gui_in_own_process">[docs]</a><span class="k">def</span> <span class="nf">run_gui_in_own_process</span><span class="p">(</span><span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the main function which is called to initialize and start the GUI.</span>
+<span class="sd">    This function is called by the core process in the context of a new process thus the GUI is executed within</span>
+<span class="sd">    its own process.</span>
+
+<span class="sd">    The multiprocessing queues &#39;core_queue&#39; and &#39;gui_queue&#39; are used for message exchange.</span>
+<span class="sd">    Messages within &#39;core_queue&#39; are received by the core, message within &#39;gui_queue&#39; are appointed for the GUI.</span>
+<span class="sd">    Events sent by the GUI are marked with &#39;gui_id&#39;.</span>
+<span class="sd">    The object &#39;args&#39; provides access to the provided cli arguments.</span>
+
+<span class="sd">    :param core_queue: link to queue of core</span>
+<span class="sd">    :type core_queue: Queue</span>
+<span class="sd">    :param gui_queue: queue where gui receives messages</span>
+<span class="sd">    :type gui_queue: Queue</span>
+<span class="sd">    :param gui_id: id of gui for events</span>
+<span class="sd">    :type gui_id: int</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gui_app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+
+    <span class="n">gui</span> <span class="o">=</span> <span class="n">GUI</span><span class="p">(</span><span class="n">core_queue</span><span class="o">=</span><span class="n">core_queue</span><span class="p">,</span> <span class="n">gui_queue</span><span class="o">=</span><span class="n">gui_queue</span><span class="p">,</span> <span class="n">gui_id</span><span class="o">=</span><span class="n">gui_id</span><span class="p">)</span>
+
+    <span class="c"># -----------------------------------------</span>
+    <span class="c"># Read the arguments specified by the CLI</span>
+    <span class="c"># -----------------------------------------</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">user_config</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">user_config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">full_screen</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">triggered_toggle_fullscreen</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">run_mode</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">triggered_toggle_run_mode</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gui</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">:</span>
+                <span class="n">gui</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+                <span class="n">gui</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+                <span class="n">gui</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">lvl</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gui</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">)</span>
+
+    <span class="c"># -----------------------------------------</span>
+    <span class="c"># Start the GUI</span>
+    <span class="c"># -----------------------------------------</span>
+
+    <span class="n">gui</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">gui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">gui_app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="GUI"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI">[docs]</a><span class="k">class</span> <span class="nc">GUI</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_DefaultMain</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class defines the default GUI written by PyQt5.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core_queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gui_queue</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gui_id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">gui_data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">is_parent</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor of this class. Called to initialize the GUI.</span>
+
+<span class="sd">        This constructor is called within an own process which is reliable for the GUI and all graphical plugins.</span>
+
+<span class="sd">        :param core_queue: Queue used to send PaPI events to the Core</span>
+<span class="sd">        :param gui_queue: GUI queue which contains PaPI events for the GUI</span>
+<span class="sd">        :param gui_id: Unique ID for this gui</span>
+<span class="sd">        :param gui_data: Contains all data for the current session</span>
+<span class="sd">        :param parent: parent element</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GUI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_parent</span> <span class="o">=</span> <span class="n">is_parent</span>
+
+        <span class="c"># Create a data structure for gui if it is missing</span>
+        <span class="c"># -------------------------------------------------- #</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gui_data</span><span class="p">,</span> <span class="n">DGui</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span> <span class="o">=</span> <span class="n">DGui</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_data</span> <span class="o">=</span> <span class="n">gui_data</span>
+
+        <span class="c"># check if gui should be the parent process or core is the parent</span>
+        <span class="c"># start core if gui is parent</span>
+        <span class="c"># -------------------------------------------------- #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_process</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">is_parent</span><span class="p">:</span>
+            <span class="n">core_queue_ref</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+            <span class="n">gui_queue_ref</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+            <span class="n">gui_id_ref</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">core_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_core_in_own_process</span><span class="p">,</span>
+                                        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">gui_queue_ref</span><span class="p">,</span> <span class="n">core_queue_ref</span><span class="p">,</span> <span class="n">gui_id_ref</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">core_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">core_queue</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Gui started with wrong arguments&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">gui_queue</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Gui started with wrong arguments&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gui_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Gui started with wrong arguments&#39;</span><span class="p">)</span>
+
+            <span class="n">core_queue_ref</span> <span class="o">=</span> <span class="n">core_queue</span>
+            <span class="n">gui_queue_ref</span> <span class="o">=</span> <span class="n">gui_queue</span>
+            <span class="n">gui_id_ref</span> <span class="o">=</span> <span class="n">gui_id</span>
+
+        <span class="c"># Create the Tab Manager and the gui management unit #</span>
+        <span class="c"># connect some signals of management to gui          #</span>
+        <span class="c"># -------------------------------------------------- #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span> <span class="o">=</span> <span class="n">PaPITabManger</span><span class="p">(</span><span class="n">tabWigdet</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">widgetTabs</span><span class="p">,</span> <span class="n">centralWidget</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span> <span class="o">=</span> <span class="n">GuiManagement</span><span class="p">(</span><span class="n">core_queue_ref</span><span class="p">,</span>
+                                            <span class="n">gui_queue_ref</span><span class="p">,</span>
+                                            <span class="n">gui_id_ref</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">get_gui_config</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">set_gui_config</span>
+                                            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">gui_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">dGui</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">added_dplugin</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_dplugin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">removed_dplugin</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_dplugin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">dgui_changed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_changed_dgui</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">plugin_died</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_plugin_died</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">error_occured</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_error_occurred</span><span class="p">)</span>
+
+
+
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_handler</span><span class="p">())</span>
+
+        <span class="c"># List for keys that are active</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Create placeholder</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_plugin_menu</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_config</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workingTimer</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># initialize the graphic of the gui</span>
+        <span class="c"># -------------------------------------------------- #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_gui_graphic</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GUI.signal_handler"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.signal_handler">[docs]</a>    <span class="k">def</span> <span class="nf">signal_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This handler will be called, when CTRL+C is used in the console</span>
+<span class="sd">        It will react to SIGINT Signal</span>
+<span class="sd">        As an reaction it will close the gui by first telling the core to close and then closing the gui</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_close_program</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.init_gui_graphic"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.init_gui_graphic">[docs]</a>    <span class="k">def</span> <span class="nf">init_gui_graphic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called to set mandatory variables, create child dialogs and actions.</span>
+<span class="sd">        This function is called once within the constructor.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">GUI_PAPI_WINDOW_TITLE</span><span class="p">)</span>
+        <span class="c"># set GUI size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_DEFAULT_WIDTH</span><span class="p">,</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_DEFAULT_HEIGHT</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">ConsoleLog</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">GUI_PROCESS_CONSOLE_LOG_LEVEL</span><span class="p">,</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_PROCESS_CONSOLE_IDENTIFIER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_START_CONSOLE_MESSAGE</span> <span class="o">+</span> <span class="s">&#39; .. Process id: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_config</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_LAST_CFG_PATH</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Create menues</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span> <span class="o">=</span> <span class="n">CreatePluginDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="p">)</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Create actions</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="n">_translate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_load_config</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_load_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_load_config</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span> <span class="s">&quot;Ctrl+L&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_save_config</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_save_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_save_config</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span> <span class="s">&quot;Ctrl+S&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_overview_menu</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_open_overview_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_overview_menu</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span> <span class="s">&quot;Ctrl+O&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_create_plugin_menu</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_open_create_plugin_menu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_create_plugin_menu</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span> <span class="s">&quot;Ctrl+N&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reset_papi</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_reset_papi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_config</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_reload_config</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_run_mode</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_toggle_run_mode</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_plugin_db</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_reload_plugin_db</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_doc</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_open_papi_doc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_doc</span><span class="o">.</span><span class="n">setShortcut</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s">&quot;DefaultMain&quot;</span><span class="p">,</span> <span class="s">&quot;Ctrl+H&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_about</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_open_papi_about</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_qt_about</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_open_qt_about</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_toggle_toolbar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">clickedFavouritePlugin</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolbar_add_fav_plugin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">removedFavouritePlugin</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fav_plugin_was_removed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionFullscreen</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_toggle_fullscreen</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_set_icons</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.fav_plugin_add"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.fav_plugin_add">[docs]</a>    <span class="k">def</span> <span class="nf">fav_plugin_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is used to mark an arbitrary plugin as a favourite plugin.</span>
+<span class="sd">        Favourite plugins are always displayed in the toolbar.</span>
+
+<span class="sd">        This function is called by dropping a plugin icon from the create menu on the toolbar.</span>
+<span class="sd">        It is also called in the initialize phase of the gui for restoring favourite plugin in the configuration file.</span>
+
+<span class="sd">        :param plugin_name: Name of the plugin</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plugin_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">plugin_manager</span>
+        <span class="n">plugin_manager</span><span class="o">.</span><span class="n">locatePlugins</span><span class="p">()</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">plugin_manager</span><span class="o">.</span><span class="n">getPluginCandidates</span><span class="p">()</span>
+        <span class="n">plugins_info</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">}</span>
+        <span class="n">plugins_info_loadable</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">path</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plugin_manager</span><span class="o">.</span><span class="n">getAllPlugins</span><span class="p">()}</span>
+
+        <span class="k">for</span> <span class="n">plugin_info</span> <span class="ow">in</span> <span class="n">plugins_info</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">plugin_name</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span> <span class="ow">in</span> <span class="n">plugins_info_loadable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">plugin_info</span> <span class="o">=</span> <span class="n">plugins_info_loadable</span><span class="p">[</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+                    <span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span> <span class="o">=</span> <span class="bp">False</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolbar_add_fav_plugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.fav_plugin_was_removed"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.fav_plugin_was_removed">[docs]</a>    <span class="k">def</span> <span class="nf">fav_plugin_was_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is called when a favourite plugin was removed.</span>
+<span class="sd">        This function is called by using the context menu of the toolbar and using it to remove a plugin.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.init_set_icons"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.init_set_icons">[docs]</a>    <span class="k">def</span> <span class="nf">init_set_icons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function sets the icon for all actions.</span>
+<span class="sd">        This function is called once during the initializing of the GUI.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Create Icons for actions</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="n">load_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;folder&#39;</span><span class="p">)</span>
+        <span class="n">save_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;file_save_as&#39;</span><span class="p">)</span>
+        <span class="n">exit_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;cancel&#39;</span><span class="p">)</span>
+        <span class="n">overview_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;tree_list&#39;</span><span class="p">)</span>
+        <span class="n">create_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;application_add&#39;</span><span class="p">)</span>
+        <span class="n">reload_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;arrow_rotate_clockwise&#39;</span><span class="p">)</span>
+        <span class="n">help_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;help&#39;</span><span class="p">)</span>
+        <span class="n">info_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;information&#39;</span><span class="p">)</span>
+        <span class="n">delete_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;delete&#39;</span><span class="p">)</span>
+        <span class="n">view_icon</span> <span class="o">=</span> <span class="n">get16Icon</span><span class="p">(</span><span class="s">&#39;reviewing_pane&#39;</span><span class="p">)</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Set Icons for actions</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_load_config</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">load_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_save_config</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">save_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_exit</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">exit_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_overview_menu</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">overview_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_create_plugin_menu</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">create_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_plugin_db</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">reload_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_config</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">reload_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_wiki</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">help_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_doc</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">help_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_about</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">info_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_qt_about</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">info_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionAbout_PySide</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">info_icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reset_papi</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">delete_icon</span><span class="p">)</span>
+        <span class="c">#self.action_toggle_run_mode.setIcon(view_icon)</span>
+
+        <span class="c"># -------------------------------------</span>
+        <span class="c"># Set Icons visible in menu</span>
+        <span class="c"># -------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_load_config</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_save_config</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_exit</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_overview_menu</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_create_plugin_menu</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_plugin_db</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reload_config</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_wiki</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_doc</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_papi_about</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_open_qt_about</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionAbout_PySide</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_reset_papi</span><span class="o">.</span><span class="n">setIconVisibleInMenu</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="c">#self.action_toggle_run_mode.setIconVisibleInMenu(True)</span>
+</div>
+<div class="viewcode-block" id="GUI.get_gui_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.get_gui_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_user_settings</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary which describes the current state of the GUI, like e.g. size, background image and postion.</span>
+
+<span class="sd">        This function is called when the current configuration is stored.</span>
+<span class="sd">        This function is also called when a plugin was marked or unmarked as favourite plugin,</span>
+
+<span class="sd">        If &#39;saveUserSettings==True&#39; the dictionary will also contain the current favourite plugins.</span>
+<span class="sd">        It is not necessary to save user specific settings when a configuration was saved by using the &#39;save configuration dialog&#39;.</span>
+
+<span class="sd">        :param save_user_settings:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_active_tab</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;Active&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_currently_active_tab</span><span class="p">())</span>
+        <span class="p">}</span>
+
+        <span class="n">tabs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tab_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">tab_dict</span><span class="p">:</span>
+            <span class="n">tab_config</span> <span class="o">=</span> <span class="n">tab_dict</span><span class="p">[</span><span class="n">tab</span><span class="p">]</span>
+            <span class="n">tabs</span><span class="p">[</span><span class="n">tab</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">tabs</span><span class="p">[</span><span class="n">tab</span><span class="p">][</span><span class="s">&#39;Background&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab_config</span><span class="o">.</span><span class="n">background</span>
+            <span class="n">tabs</span><span class="p">[</span><span class="n">tab</span><span class="p">][</span><span class="s">&#39;Position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">getTabPosition_by_name</span><span class="p">(</span><span class="n">tab</span><span class="p">))</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;X&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()),</span>
+            <span class="s">&#39;Y&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="p">}</span>
+
+        <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;ActiveTab&#39;</span><span class="p">:</span> <span class="n">current_active_tab</span><span class="p">,</span>
+            <span class="s">&#39;Tabs&#39;</span><span class="p">:</span> <span class="n">tabs</span><span class="p">,</span>
+            <span class="s">&#39;Size&#39;</span><span class="p">:</span> <span class="n">size</span>
+        <span class="p">}</span>
+
+        <span class="c"># ----------------------</span>
+        <span class="c"># Set favourite plugins</span>
+        <span class="c"># ----------------------</span>
+        <span class="k">if</span> <span class="n">save_user_settings</span><span class="p">:</span>
+            <span class="n">favourites</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">actions</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)):</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">PaPIFavAction</span><span class="p">):</span>
+                    <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">favourites</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()][</span><span class="s">&#39;position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Favourites&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">favourites</span>
+
+        <span class="k">return</span> <span class="n">cfg</span>
+</div>
+<div class="viewcode-block" id="GUI.set_gui_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.set_gui_config">[docs]</a>    <span class="k">def</span> <span class="nf">set_gui_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A configuration as dictionary is loaded by this function.</span>
+<span class="sd">        This function is called when a configuration was loaded. It restores attributes as size, position and favourite plugins.</span>
+
+<span class="sd">        :param cfg:</span>
+<span class="sd">        :type {};</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c">#################</span>
+        <span class="c"># windows size: #</span>
+        <span class="c">#################</span>
+        <span class="k">if</span> <span class="s">&#39;Size&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Size&#39;</span><span class="p">][</span><span class="s">&#39;X&#39;</span><span class="p">])</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Size&#39;</span><span class="p">][</span><span class="s">&#39;Y&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize_gui_window</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
+        <span class="c"># ------------------------</span>
+        <span class="c"># Restore favourite icons</span>
+        <span class="c"># ------------------------</span>
+        <span class="k">if</span> <span class="s">&#39;Favourites&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="n">sorted_positions</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Favourites&#39;</span><span class="p">]:</span>
+                <span class="n">sorted_positions</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Favourites&#39;</span><span class="p">][</span><span class="n">plugin</span><span class="p">][</span><span class="s">&#39;position&#39;</span><span class="p">])]</span> <span class="o">=</span> <span class="n">plugin</span>
+
+            <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sorted_positions</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">plugin</span> <span class="o">=</span> <span class="n">sorted_positions</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fav_plugin_add</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
+
+        <span class="c"># -----------------------</span>
+        <span class="c"># Restore Tabs</span>
+        <span class="c"># -----------------------</span>
+        <span class="k">if</span> <span class="s">&#39;Tabs&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tabName</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Tabs&#39;</span><span class="p">]:</span>
+                <span class="n">tab</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;Tabs&#39;</span><span class="p">][</span><span class="n">tabName</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">tabName</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;Background&#39;</span> <span class="ow">in</span> <span class="n">tab</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">set_background_for_tab_with_name</span><span class="p">(</span><span class="n">tabName</span><span class="p">,</span> <span class="n">tab</span><span class="p">[</span><span class="s">&#39;Background&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_reload_plugin_db"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_reload_plugin_db">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_reload_plugin_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This callback function reloads the list of plugins of the plugin manager.</span>
+<span class="sd">        This function is triggered by using the action &quot;Reload DB&quot; in the toolbar menu &quot;Plugin&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">plugin_manager</span><span class="o">.</span><span class="n">collectPlugins</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.run"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a timer and sets an interval for processing events with working loop.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">workingTimer</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workingTimer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_event_processing</span><span class="o">.</span><span class="n">gui_working</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">workingTimer</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workingTimer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">GUI_WOKRING_INTERVAL</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_open_create_plugin_menu"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_open_create_plugin_menu">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_open_create_plugin_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to open the create plugin menu.</span>
+<span class="sd">        This function is triggered by using the action &quot;Create&quot; in the toolbar menu &quot;Plugin&quot; or</span>
+<span class="sd">        by the action &quot;Create&quot; in the toolbar.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_plugin_menu</span> <span class="o">=</span> <span class="n">CreatePluginMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">plugin_manager</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_plugin_menu</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_open_overview_menu"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_open_overview_menu">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_open_overview_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to open the overview menu.</span>
+<span class="sd">        This function is triggered by using the action &quot;Overview&quot; in the toolbar menu &quot;Plugin&quot; or</span>
+<span class="sd">        by the action &quot;Overview&quot; in the toolbar.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="o">=</span> <span class="n">OverviewPluginMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_toggle_toolbar"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_toggle_toolbar">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_toggle_toolbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to toogle the vision of the the toolbar</span>
+<span class="sd">        This function is triggered by using the action &quot;Toolbar&quot; in the toolbar menu &quot;View&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">isHidden</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">isHidden</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_toggle_fullscreen"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_toggle_fullscreen">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_toggle_fullscreen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isFullScreen</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showFullScreen</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showNormal</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionFullscreen</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isFullScreen</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionFullscreen</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isFullScreen</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_load_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_load_config">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to open the &#39;load config&#39; dialog.</span>
+<span class="sd">        This function is triggered by using the action &quot;Load&quot; in the toolbar menu &quot;PaPI&quot; or</span>
+<span class="sd">        by the action &quot;Load&quot; in the toolbar.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_names</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setFileMode</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">ExistingFile</span><span class="p">)</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setNameFilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">(</span><span class="s">&quot;PaPI-Cfg (*.xml)&quot;</span><span class="p">))</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setDirectory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">CONFIG_DEFAULT_DIRECTORY</span><span class="p">))</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Load Configuration&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
+            <span class="n">file_names</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_config</span> <span class="o">=</span> <span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="GUI.load_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.load_config">[docs]</a>    <span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called with a PaPI XML Configuration which is determined by file_name,</span>
+<span class="sd">        This function is called when a configuration file was chosen by the &quot;Load Dialog&quot; and during the initialize phase for loading</span>
+<span class="sd">        the user specific configuration file.</span>
+
+<span class="sd">        :param file_name:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_load_xml</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_save_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_save_config">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to start the &#39;save config&#39; dialog.</span>
+<span class="sd">        This function is triggered by using the action &quot;Save&quot; in the toolbar menu &quot;PaPI&quot; or</span>
+<span class="sd">        by the action &quot;Save&quot; in the toolbar.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">file_names</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">PaPIConfigSaveDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="p">)</span>
+
+        <span class="n">dialog</span><span class="o">.</span><span class="n">fill_with</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">():</span>
+            <span class="n">file_names</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedFiles</span><span class="p">()</span>
+
+        <span class="n">plugin_list</span><span class="p">,</span> <span class="n">subscription_list</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">get_create_lists</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s">&quot;json&quot;</span> <span class="ow">in</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedNameFilter</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_json_config_reloaded</span><span class="p">(</span>
+                        <span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plToSave</span><span class="o">=</span><span class="n">plugin_list</span><span class="p">,</span> <span class="n">sToSave</span><span class="o">=</span><span class="n">subscription_list</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="s">&quot;xml&quot;</span> <span class="ow">in</span> <span class="n">dialog</span><span class="o">.</span><span class="n">selectedNameFilter</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span>
+                        <span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plToSave</span><span class="o">=</span><span class="n">plugin_list</span><span class="p">,</span> <span class="n">sToSave</span><span class="o">=</span><span class="n">subscription_list</span>
+                    <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.closeEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handles close events.</span>
+<span class="sd">        Saves current session as pc.PAPI_LAST_CFG_PATH</span>
+<span class="sd">        Closes all opened windows.</span>
+
+<span class="sd">        :param args:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_LAST_CFG_PATH</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_close_program</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_plugin_menu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_plugin_menu</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.add_dplugin"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.add_dplugin">[docs]</a>    <span class="k">def</span> <span class="nf">add_dplugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function called by &#39;DPlugin added signal&#39;</span>
+<span class="sd">        Used to add a DPlugin SubWindow on the GUI if possible.</span>
+
+<span class="sd">        Is called whenever a plugin was created.</span>
+
+<span class="sd">        :param dplugin:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+
+            <span class="n">sub_window</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_sub_window</span><span class="p">()</span>
+            
+            <span class="n">config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">startup_config</span>
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">():</span>
+                <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">()[</span><span class="n">tab_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">printText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;add dplugin: no tab with tab_id of dplugin&#39;</span><span class="p">)</span>
+                <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">add_tab</span><span class="p">(</span><span class="n">tab_name</span><span class="p">)</span>
+
+            <span class="n">area</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="n">sub_window</span><span class="p">)</span>
+
+            <span class="n">is_maximized</span><span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;maximized&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span>
+
+            <span class="n">size_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;([0-9]+)&#39;</span><span class="p">)</span>
+
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;position&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+            <span class="n">window_pos</span> <span class="o">=</span> <span class="n">size_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="n">sub_window</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">window_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">window_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_maximized</span><span class="p">:</span>
+                <span class="n">sub_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sub_window</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
+
+            <span class="c"># see http://qt-project.org/doc/qt-4.8/qt.html#WindowType-enum</span>
+            <span class="n">sub_window</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span> <span class="o">|</span> <span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span><span class="p">:</span>
+                <span class="n">sub_window</span><span class="o">.</span><span class="n">disableInteraction</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span><span class="o">.</span><span class="n">refresh_action</span><span class="p">(</span><span class="n">dplugin</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.remove_dplugin"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.remove_dplugin">[docs]</a>    <span class="k">def</span> <span class="nf">remove_dplugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback function called by &#39;DPlugin removed signal&#39;</span>
+<span class="sd">        Used to removed a DPlugin SubWindow from the GUI if possible.</span>
+
+<span class="sd">        Is called whenever a plugin was removed.</span>
+
+<span class="sd">        :param dplugin:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_VIP_IDENTIFIER</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">pl_get_current_config</span><span class="p">()</span>
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;tab&#39;</span><span class="p">][</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">():</span>
+                <span class="n">tabOb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">get_tabs_by_uname</span><span class="p">()[</span><span class="n">tab_name</span><span class="p">]</span>
+                <span class="n">tabOb</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">plugin</span><span class="o">.</span><span class="n">_get_sub_window</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">tabOb</span><span class="o">.</span><span class="n">closeIfempty</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tabOb</span><span class="p">,</span> <span class="n">TabObject</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">closeTab_by_name</span><span class="p">(</span><span class="n">tabOb</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">remove_window</span><span class="p">(</span><span class="n">tabOb</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_changed_dgui"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_changed_dgui">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_changed_dgui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is triggered to refresh the overview menu if it is active.</span>
+<span class="sd">        This is needed to guarantee the consistency between the data structure dgui and the data seen by the user.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overview_menu</span><span class="o">.</span><span class="n">refresh_action</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_plugin_died"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_plugin_died">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_plugin_died</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dplugin</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Triggered when a plugin died.</span>
+
+<span class="sd">        :param dplugin:</span>
+<span class="sd">        :param e:</span>
+<span class="sd">        :param msg:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dplugin</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">PLUGIN_STATE_STOPPED</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_stopReset_plugin_uname</span><span class="p">(</span><span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span><span class="p">)</span>
+
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">650</span><span class="p">)</span>
+
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setSizeGripEnabled</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s">&quot;Plugin: &quot;</span> <span class="o">+</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; // &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s">&quot;Error in plugin&quot;</span> <span class="o">+</span> <span class="n">dplugin</span><span class="o">.</span><span class="n">uname</span> <span class="o">+</span> <span class="s">&quot; // &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setDetailedText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setWindowModality</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">NonModal</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_error_occurred"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_error_occurred">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_error_occurred</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">detailed_msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Triggered when an error occured. Creates an error dialog for the user.</span>
+<span class="sd">        Title defines the title of the error dialog.</span>
+<span class="sd">        Msg contains a messages displayed in the dialog.</span>
+<span class="sd">        Detailed_msg should contain more information about the occured error which is optional displayed.</span>
+
+<span class="sd">        :param title:</span>
+<span class="sd">        :param msg:</span>
+<span class="sd">        :param detailed_msg:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setFixedWidth</span><span class="p">(</span><span class="mi">650</span><span class="p">)</span>
+
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setDetailedText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">detailed_msg</span><span class="p">))</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">setWindowModality</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">NonModal</span><span class="p">)</span>
+        <span class="n">err_msg</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_toggle_run_mode"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_toggle_run_mode">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_toggle_run_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggles the run mode, i.e. it changes from active to passive and vice versa.</span>
+<span class="sd">        This function is triggered by using the action &quot;Toolbar&quot; in the toolbar menu &quot;View&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="c"># hide toolbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="c"># disable context menu of tabmanger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">disableContextMenus</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">setTabs_movable_closable</span><span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_run_mode</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="c"># lock subwindows in tabs</span>
+            <span class="k">for</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tab_name</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">sub_window</span> <span class="ow">in</span> <span class="n">tab</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+                    <span class="n">sub_window</span><span class="o">.</span><span class="n">disableInteraction</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># show toolbar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_toolbar</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="c"># disable context menu of tabmanger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">enableContextMenus</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">setTabs_movable_closable</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_toggle_run_mode</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="c"># unlock subwindows in tabs</span>
+            <span class="k">for</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">:</span>
+                <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">tab_dict_uname</span><span class="p">[</span><span class="n">tab_name</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">sub_window</span> <span class="ow">in</span> <span class="n">tab</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+                    <span class="n">sub_window</span><span class="o">.</span><span class="n">enableInteraction</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_run_mode</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.keyPressEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default callback function which is called when an any key was pressed by the user.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">())</span>
+
+        <span class="c"># if QtCore.Qt.Key_Escape in self.keysActiveList:</span>
+            <span class="c"># if self.in_run_mode:</span>
+            <span class="c">#     self.triggered_toggle_run_mode()</span>
+            <span class="c"># if self.isFullScreen():</span>
+            <span class="c">#     self.triggered_toggle_fullscreen()</span>
+
+        <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_D</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="o">.</span><span class="n">select_next_tab</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_D</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_A</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">tab_manager</span><span class="o">.</span><span class="n">select_prev_tab</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_A</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_M</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Control</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toggleMenuBarHide</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.keyReleaseEvent"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.keyReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default callback function which is called when any key was released by the user.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keysActiveList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="GUI.resize_gui_window"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.resize_gui_window">[docs]</a>    <span class="k">def</span> <span class="nf">resize_gui_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal function for resizing the window of the GUI.</span>
+
+<span class="sd">        :param event:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.toggleMenuBarHide"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.toggleMenuBarHide">[docs]</a>    <span class="k">def</span> <span class="nf">toggleMenuBarHide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">isHidden</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_reload_config"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_reload_config">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_reload_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is used to reset PaPI and to reload the last loaded configuration file.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">triggered_reset_papi</span><span class="p">()</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">GUI_WAIT_TILL_RELOAD</span><span class="p">,</span>
+                                     <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_load_xml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_config</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_reset_papi"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_reset_papi">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_reset_papi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is called to reset PaPI. That means all subscriptions are canceled and all plugins are removed.</span>
+<span class="sd">        This function is triggered by using the action &quot;Reset&quot; in the toolbar menu &quot;PaPI&quot; or</span>
+<span class="sd">        by the action &quot;Reset&quot; in the toolbar.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_DEFAULT_HEIGHT</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">GUI_DEFAULT_WIDTH</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">set_all_tabs_to_close_when_empty</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TabManager</span><span class="o">.</span><span class="n">close_all_empty_tabs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_reset_papi</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="GUI.triggered_open_papi_doc"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_open_papi_doc">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_open_papi_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens the PaPI documentation in the default browser.</span>
+<span class="sd">        This function is triggered by using the action &quot;PaPI Doc&quot; in the toolbar menu &quot;Help&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">PAPI_DOC_URL</span><span class="p">,</span> <span class="n">QUrl</span><span class="o">.</span><span class="n">TolerantMode</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_open_papi_about"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_open_papi_about">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_open_papi_about</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a dialog with information about PaPI.</span>
+<span class="sd">        This function is triggered by using the action &quot;About&quot; in the toolbar menu &quot;Help&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">about</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_ABOUT_TITLE</span><span class="p">,</span> <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_ABOUT_TEXT</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.triggered_open_qt_about"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.triggered_open_qt_about">[docs]</a>    <span class="k">def</span> <span class="nf">triggered_open_qt_about</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens the default dialog provided by Qt which contains information about Qt.</span>
+<span class="sd">        This function is triggered by using the action &quot;About Qt&quot; in the toolbar menu &quot;Help&quot;.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">QMessageBox</span><span class="o">.</span><span class="n">aboutQt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.toolbar_add_fav_plugin"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.toolbar_add_fav_plugin">[docs]</a>    <span class="k">def</span> <span class="nf">toolbar_add_fav_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds an plugin described by plugin_info to the toolbar as an action.</span>
+<span class="sd">        Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.</span>
+<span class="sd">        The description contains information like e.g., name and path.</span>
+
+<span class="sd">        :param plugin_info:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="n">l</span><span class="p">]</span>
+        <span class="n">path</span> <span class="o">+=</span> <span class="s">&#39;box.png&#39;</span>
+        <span class="n">px</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">actions</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="n">plugin_action</span> <span class="o">=</span> <span class="n">PaPIFavAction</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">plugin_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ignore</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="n">plugin_info</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_create_plugin_dialog</span><span class="p">(</span><span class="n">p1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolbar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">plugin_action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui_management</span><span class="o">.</span><span class="n">gui_api</span><span class="o">.</span><span class="n">do_save_xml_config_reloaded</span><span class="p">(</span>
+            <span class="n">pc</span><span class="o">.</span><span class="n">PAPI_USER_CFG</span><span class="p">,</span> <span class="n">plToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">sToSave</span><span class="o">=</span><span class="p">[],</span> <span class="n">saveUserSettings</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="GUI.show_create_plugin_dialog"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.GUI.show_create_plugin_dialog">[docs]</a>    <span class="k">def</span> <span class="nf">show_create_plugin_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens the create plugin dialog for a plugin described by plugin_info.</span>
+<span class="sd">        Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.</span>
+<span class="sd">        The description contains information like e.g., name and path.</span>
+
+<span class="sd">        This dialog is triggered by clicking on a favourite plugin.</span>
+
+<span class="sd">        :param plugin_info:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">plugin_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plugin_info</span><span class="o">.</span><span class="n">loadable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">set_plugin</span><span class="p">(</span><span class="n">plugin_info</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plugin_create_dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div></div>
+<div class="viewcode-block" id="startGUI_TESTMOCK"><a class="viewcode-back" href="../../../../papi.gui.default.html#papi.gui.default.GUI.startGUI_TESTMOCK">[docs]</a><span class="k">def</span> <span class="nf">startGUI_TESTMOCK</span><span class="p">(</span><span class="n">CoreQueue</span><span class="p">,</span> <span class="n">GUIQueue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">data_mock</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to call to start gui operation</span>
+<span class="sd">    Function is used for testing.</span>
+
+<span class="sd">    :param CoreQueue: link to queue of core</span>
+<span class="sd">    :type CoreQueue: Queue</span>
+<span class="sd">    :param GUIQueue: queue where gui receives messages</span>
+<span class="sd">    :type GUIQueue: Queue</span>
+<span class="sd">    :param gui_id: id of gui for events</span>
+<span class="sd">    :type gui_id: int</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">aboutToQuit</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">)</span>
+
+    <span class="n">gui</span> <span class="o">=</span> <span class="n">GUI</span><span class="p">(</span><span class="n">CoreQueue</span><span class="p">,</span> <span class="n">GUIQueue</span><span class="p">,</span> <span class="n">gui_id</span><span class="p">,</span> <span class="n">data_mock</span><span class="p">)</span>
+
+    <span class="n">gui</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">gui</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c"># main of GUI, just for stand alone gui testing</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">GUI</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">frame</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="../../../../CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="../../../../man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="../../../../index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../default.html" >papi.gui.default</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

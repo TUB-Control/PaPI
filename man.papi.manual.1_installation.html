@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ubuntu-14-04">
+<h2>Ubuntu 14.04<a class="headerlink" href="#ubuntu-14-04" title="Permalink to this headline">¶</a></h2>
+<p>Basic installation on Ubuntu 14.04 64Bit, using python 3.4</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3.4</span> <span class="pre">git</span> <span class="pre">python3-pyside</span> <span class="pre">python3-numpy</span> <span class="pre">python3-pip</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">tornado</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/TUB-Control/PaPI.git</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">python3.4</span> <span class="pre">main.py</span></tt></p>
+<p>Tip: If python3.4 interpreter cannot find or locate the installed
+packages (pyside or numpy), please make sure that the right python
+interpreter is called (in case there are multiple installed).</p>
+</div>
+<div class="section" id="windows-7-not-supported">
+<h2>Windows 7 (not supported)<a class="headerlink" href="#windows-7-not-supported" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="python-3-4">
+<h3>Python 3.4<a class="headerlink" href="#python-3-4" title="Permalink to this headline">¶</a></h3>
+<p>Install python3.4 from here: <a class="reference external" href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></p>
+<p>The python.exe should be added to the PATH variable -&gt; could be done
+during the installation</p>
+</div>
+<div class="section" id="pyside-numpy">
+<h3>PySide &amp; Numpy<a class="headerlink" href="#pyside-numpy" title="Permalink to this headline">¶</a></h3>
+<p>Open a command line (maybe as administrator, depends on the installation
+directory of python3.4)</p>
+<p><tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-U</span> <span class="pre">PySide</span></tt></p>
+<p>Download and install numpy for python3.4 from here :
+<a class="reference external" href="http://sourceforge.net/projects/numpy/files/NumPy/1.9.2/">http://sourceforge.net/projects/numpy/files/NumPy/1.9.2/</a></p>
+</div>
+<div class="section" id="get-papi">
+<h3>Get PaPI<a class="headerlink" href="#get-papi" title="Permalink to this headline">¶</a></h3>
+<p>Download and unzip PaPI from here: <a class="reference external" href="https://github.com/TUB-Control/PaPI">https://github.com/TUB-Control/PaPI</a></p>
+<p><strong>OR</strong></p>
+<p>Download with git
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/TUB-Control/PaPI.git</span> <span class="pre">PaPI</span></tt></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li><a class="reference internal" href="#windows-7-not-supported">Windows 7 (not supported)</a><ul>
+<li><a class="reference internal" href="#python-3-4">Python 3.4</a></li>
+<li><a class="reference internal" href="#pyside-numpy">PySide &amp; Numpy</a></li>
+<li><a class="reference internal" href="#get-papi">Get PaPI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/man.papi.manual.1_installation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>papi.gui.default package &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="papi-gui-default-package">
+<h1>papi.gui.default package<a class="headerlink" href="#papi-gui-default-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-papi.gui.default.CreatePluginDialog">
+<span id="papi-gui-default-createplugindialog-module"></span><h2>papi.gui.default.CreatePluginDialog module<a class="headerlink" href="#module-papi.gui.default.CreatePluginDialog" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.CreatePluginDialog.</tt><tt class="descname">CreatePluginDialog</tt><big>(</big><em>gui_api</em>, <em>tab_manager</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QDialog</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">papi.ui.gui.default.PluginCreateDialog.Ui_CreatePluginDialog</span></tt></p>
+<p>This class create a dialog which enable an user to modify the default configuration of a plugin.</p>
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.accept">
+<tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when the user accepts the current modification and wants to create the plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.clear_layout">
+<tt class="descname">clear_layout</tt><big>(</big><em>layout</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.clear_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.clear_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to remove all elements within a tab.
+It is called in showEvent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>layout</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.keyPressEvent">
+<tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default callback function which is called when an any key was pressed by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.reject">
+<tt class="descname">reject</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.reject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.reject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when the user closes the dialog without creating a plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.set_dplugin">
+<tt class="descname">set_dplugin</tt><big>(</big><em>dplugin</em>, <em>startup_config</em>, <em>type</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.set_dplugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.set_dplugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Additionally to set_plugin it is also possible to provide a DPlugin object.
+This feature is used by copy a currently running plugin.
+The &#8216;type&#8217; of the plugin must be provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dplugin</strong> &#8211; Data object which describes the running plugin.</li>
+<li><strong>startup_config</strong> &#8211; Configuration used at startup. Contains user modification by the user.</li>
+<li><strong>type</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.set_plugin">
+<tt class="descname">set_plugin</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.set_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.set_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function must be called before the dialog is shown.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_info</strong> &#8211; The plugin info object provided by yapsy.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginDialog.CreatePluginDialog.showEvent">
+<tt class="descname">showEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginDialog.html#CreatePluginDialog.showEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginDialog.CreatePluginDialog.showEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called before the dialog is displayed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.CreatePluginMenu">
+<span id="papi-gui-default-createpluginmenu-module"></span><h2>papi.gui.default.CreatePluginMenu module<a class="headerlink" href="#module-papi.gui.default.CreatePluginMenu" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.CreatePluginMenu.</tt><tt class="descname">CreatePluginMenu</tt><big>(</big><em>gui_api</em>, <em>TabManger</em>, <em>plugin_manager</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">papi.ui.gui.default.PluginCreateMenu.Ui_PluginCreateMenu</span></tt></p>
+<p>This class creates a menu which displays all available plugins.
+This menu is used to create plugin.</p>
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.changed_search_plugin_text_field">
+<tt class="descname">changed_search_plugin_text_field</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.changed_search_plugin_text_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.changed_search_plugin_text_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is triggered by the user. It is called when the text in the search field is changed.
+The plugin-Tree is filtered by <cite>value</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to reset all necessary labels and line edits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.closeEvent">
+<tt class="descname">closeEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles close events for this windows.
+Closing windows will also close the plugin create dialog.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.get_plugin_root">
+<tt class="descname">get_plugin_root</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.get_plugin_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.get_plugin_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns one of the root-Items of the plugin tree.
+The root-Item is determined by the plugin path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.help_button_triggered">
+<tt class="descname">help_button_triggered</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.help_button_triggered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.help_button_triggered" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function opens the documentation page a plugin in the default web browser.
+An user opens the page by selecting a plugin and clicking on the &#8216;Help&#8217; button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.keyPressEvent">
+<tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default callback function which is called when an arbitrary key was pressed by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.plugin_item_changed">
+<tt class="descname">plugin_item_changed</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.plugin_item_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.plugin_item_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when the user selects another plugin in the plugin tree on the left side.
+Every change of plugin updates the displayed plugin information on the right side.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.showEvent">
+<tt class="descname">showEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.showEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.showEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when the dialog was displayed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.CreatePluginMenu.CreatePluginMenu.show_create_plugin_dialog">
+<tt class="descname">show_create_plugin_dialog</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/CreatePluginMenu.html#CreatePluginMenu.show_create_plugin_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.CreatePluginMenu.CreatePluginMenu.show_create_plugin_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function opens the dialog which is used to create plugin.
+An user opens this dialog by selecting a plugin and clicking on the &#8216;Create Plugin&#8217; button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.GUI">
+<span id="papi-gui-default-gui-module"></span><h2>papi.gui.default.GUI module<a class="headerlink" href="#module-papi.gui.default.GUI" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth, Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.default.GUI.GUI">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.GUI.</tt><tt class="descname">GUI</tt><big>(</big><em>core_queue=None</em>, <em>gui_queue=None</em>, <em>gui_id=None</em>, <em>gui_data=None</em>, <em>is_parent=False</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">papi.ui.gui.default.DefaultMain.Ui_DefaultMain</span></tt></p>
+<p>This class defines the default GUI written by PyQt5.</p>
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.add_dplugin">
+<tt class="descname">add_dplugin</tt><big>(</big><em>dplugin</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.add_dplugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.add_dplugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function called by &#8216;DPlugin added signal&#8217;
+Used to add a DPlugin SubWindow on the GUI if possible.</p>
+<p>Is called whenever a plugin was created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dplugin</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.closeEvent">
+<tt class="descname">closeEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles close events.
+Saves current session as pc.PAPI_LAST_CFG_PATH
+Closes all opened windows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.fav_plugin_add">
+<tt class="descname">fav_plugin_add</tt><big>(</big><em>plugin_name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.fav_plugin_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.fav_plugin_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to mark an arbitrary plugin as a favourite plugin.
+Favourite plugins are always displayed in the toolbar.</p>
+<p>This function is called by dropping a plugin icon from the create menu on the toolbar.
+It is also called in the initialize phase of the gui for restoring favourite plugin in the configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_name</strong> &#8211; Name of the plugin</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.fav_plugin_was_removed">
+<tt class="descname">fav_plugin_was_removed</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.fav_plugin_was_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.fav_plugin_was_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a favourite plugin was removed.
+This function is called by using the context menu of the toolbar and using it to remove a plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.get_gui_config">
+<tt class="descname">get_gui_config</tt><big>(</big><em>save_user_settings=False</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.get_gui_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.get_gui_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary which describes the current state of the GUI, like e.g. size, background image and postion.</p>
+<p>This function is called when the current configuration is stored.
+This function is also called when a plugin was marked or unmarked as favourite plugin,</p>
+<p>If &#8216;saveUserSettings==True&#8217; the dictionary will also contain the current favourite plugins.
+It is not necessary to save user specific settings when a configuration was saved by using the &#8216;save configuration dialog&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_user_settings</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.init_gui_graphic">
+<tt class="descname">init_gui_graphic</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.init_gui_graphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.init_gui_graphic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called to set mandatory variables, create child dialogs and actions.
+This function is called once within the constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.init_set_icons">
+<tt class="descname">init_set_icons</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.init_set_icons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.init_set_icons" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets the icon for all actions.
+This function is called once during the initializing of the GUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.keyPressEvent">
+<tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default callback function which is called when an any key was pressed by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.keyReleaseEvent">
+<tt class="descname">keyReleaseEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.keyReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.keyReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default callback function which is called when any key was released by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.load_config">
+<tt class="descname">load_config</tt><big>(</big><em>file_name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called with a PaPI XML Configuration which is determined by file_name,
+This function is called when a configuration file was chosen by the &#8220;Load Dialog&#8221; and during the initialize phase for loading
+the user specific configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.remove_dplugin">
+<tt class="descname">remove_dplugin</tt><big>(</big><em>dplugin</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.remove_dplugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.remove_dplugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function called by &#8216;DPlugin removed signal&#8217;
+Used to removed a DPlugin SubWindow from the GUI if possible.</p>
+<p>Is called whenever a plugin was removed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dplugin</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.resize_gui_window">
+<tt class="descname">resize_gui_window</tt><big>(</big><em>w</em>, <em>h</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.resize_gui_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.resize_gui_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function for resizing the window of the GUI.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a timer and sets an interval for processing events with working loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.set_gui_config">
+<tt class="descname">set_gui_config</tt><big>(</big><em>cfg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.set_gui_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.set_gui_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>A configuration as dictionary is loaded by this function.
+This function is called when a configuration was loaded. It restores attributes as size, position and favourite plugins.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cfg</strong> &#8211; </td>
+</tr>
+</tbody>
+</table>
+<p>:type {};
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.show_create_plugin_dialog">
+<tt class="descname">show_create_plugin_dialog</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.show_create_plugin_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.show_create_plugin_dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the create plugin dialog for a plugin described by plugin_info.
+Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.
+The description contains information like e.g., name and path.</p>
+<p>This dialog is triggered by clicking on a favourite plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_info</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.signal_handler">
+<tt class="descname">signal_handler</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.signal_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.signal_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This handler will be called, when CTRL+C is used in the console
+It will react to SIGINT Signal
+As an reaction it will close the gui by first telling the core to close and then closing the gui</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.toggleMenuBarHide">
+<tt class="descname">toggleMenuBarHide</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.toggleMenuBarHide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.toggleMenuBarHide" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.toolbar_add_fav_plugin">
+<tt class="descname">toolbar_add_fav_plugin</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.toolbar_add_fav_plugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.toolbar_add_fav_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an plugin described by plugin_info to the toolbar as an action.
+Plugin_info is an object which is created by the plugin manager yapsy to describe a plugin.
+The description contains information like e.g., name and path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_info</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_changed_dgui">
+<tt class="descname">triggered_changed_dgui</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_changed_dgui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_changed_dgui" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is triggered to refresh the overview menu if it is active.
+This is needed to guarantee the consistency between the data structure dgui and the data seen by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_error_occurred">
+<tt class="descname">triggered_error_occurred</tt><big>(</big><em>title</em>, <em>msg</em>, <em>detailed_msg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_error_occurred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_error_occurred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggered when an error occured. Creates an error dialog for the user.
+Title defines the title of the error dialog.
+Msg contains a messages displayed in the dialog.
+Detailed_msg should contain more information about the occured error which is optional displayed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>title</strong> &#8211; </li>
+<li><strong>msg</strong> &#8211; </li>
+<li><strong>detailed_msg</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_load_config">
+<tt class="descname">triggered_load_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to open the &#8216;load config&#8217; dialog.
+This function is triggered by using the action &#8220;Load&#8221; in the toolbar menu &#8220;PaPI&#8221; or
+by the action &#8220;Load&#8221; in the toolbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_open_create_plugin_menu">
+<tt class="descname">triggered_open_create_plugin_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_open_create_plugin_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_open_create_plugin_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to open the create plugin menu.
+This function is triggered by using the action &#8220;Create&#8221; in the toolbar menu &#8220;Plugin&#8221; or
+by the action &#8220;Create&#8221; in the toolbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_open_overview_menu">
+<tt class="descname">triggered_open_overview_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_open_overview_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_open_overview_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to open the overview menu.
+This function is triggered by using the action &#8220;Overview&#8221; in the toolbar menu &#8220;Plugin&#8221; or
+by the action &#8220;Overview&#8221; in the toolbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_open_papi_about">
+<tt class="descname">triggered_open_papi_about</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_open_papi_about"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_open_papi_about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a dialog with information about PaPI.
+This function is triggered by using the action &#8220;About&#8221; in the toolbar menu &#8220;Help&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_open_papi_doc">
+<tt class="descname">triggered_open_papi_doc</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_open_papi_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_open_papi_doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the PaPI documentation in the default browser.
+This function is triggered by using the action &#8220;PaPI Doc&#8221; in the toolbar menu &#8220;Help&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_open_qt_about">
+<tt class="descname">triggered_open_qt_about</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_open_qt_about"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_open_qt_about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens the default dialog provided by Qt which contains information about Qt.
+This function is triggered by using the action &#8220;About Qt&#8221; in the toolbar menu &#8220;Help&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_plugin_died">
+<tt class="descname">triggered_plugin_died</tt><big>(</big><em>dplugin</em>, <em>e</em>, <em>msg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_plugin_died"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_plugin_died" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triggered when a plugin died.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dplugin</strong> &#8211; </li>
+<li><strong>e</strong> &#8211; </li>
+<li><strong>msg</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_reload_config">
+<tt class="descname">triggered_reload_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_reload_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_reload_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to reset PaPI and to reload the last loaded configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_reload_plugin_db">
+<tt class="descname">triggered_reload_plugin_db</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_reload_plugin_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_reload_plugin_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function reloads the list of plugins of the plugin manager.
+This function is triggered by using the action &#8220;Reload DB&#8221; in the toolbar menu &#8220;Plugin&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_reset_papi">
+<tt class="descname">triggered_reset_papi</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_reset_papi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_reset_papi" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to reset PaPI. That means all subscriptions are canceled and all plugins are removed.
+This function is triggered by using the action &#8220;Reset&#8221; in the toolbar menu &#8220;PaPI&#8221; or
+by the action &#8220;Reset&#8221; in the toolbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_save_config">
+<tt class="descname">triggered_save_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_save_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to start the &#8216;save config&#8217; dialog.
+This function is triggered by using the action &#8220;Save&#8221; in the toolbar menu &#8220;PaPI&#8221; or
+by the action &#8220;Save&#8221; in the toolbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_toggle_fullscreen">
+<tt class="descname">triggered_toggle_fullscreen</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_toggle_fullscreen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_toggle_fullscreen" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_toggle_run_mode">
+<tt class="descname">triggered_toggle_run_mode</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_toggle_run_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_toggle_run_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Toggles the run mode, i.e. it changes from active to passive and vice versa.
+This function is triggered by using the action &#8220;Toolbar&#8221; in the toolbar menu &#8220;View&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.GUI.GUI.triggered_toggle_toolbar">
+<tt class="descname">triggered_toggle_toolbar</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#GUI.triggered_toggle_toolbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.GUI.triggered_toggle_toolbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to toogle the vision of the the toolbar
+This function is triggered by using the action &#8220;Toolbar&#8221; in the toolbar menu &#8220;View&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="papi.gui.default.GUI.run_gui_in_own_process">
+<tt class="descclassname">papi.gui.default.GUI.</tt><tt class="descname">run_gui_in_own_process</tt><big>(</big><em>core_queue</em>, <em>gui_queue</em>, <em>gui_id</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#run_gui_in_own_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.run_gui_in_own_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main function which is called to initialize and start the GUI.
+This function is called by the core process in the context of a new process thus the GUI is executed within
+its own process.</p>
+<p>The multiprocessing queues &#8216;core_queue&#8217; and &#8216;gui_queue&#8217; are used for message exchange.
+Messages within &#8216;core_queue&#8217; are received by the core, message within &#8216;gui_queue&#8217; are appointed for the GUI.
+Events sent by the GUI are marked with &#8216;gui_id&#8217;.
+The object &#8216;args&#8217; provides access to the provided cli arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>core_queue</strong> (<em>Queue</em>) &#8211; link to queue of core</li>
+<li><strong>gui_queue</strong> (<em>Queue</em>) &#8211; queue where gui receives messages</li>
+<li><strong>gui_id</strong> (<em>int</em>) &#8211; id of gui for events</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="papi.gui.default.GUI.startGUI_TESTMOCK">
+<tt class="descclassname">papi.gui.default.GUI.</tt><tt class="descname">startGUI_TESTMOCK</tt><big>(</big><em>CoreQueue</em>, <em>GUIQueue</em>, <em>gui_id</em>, <em>data_mock</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/GUI.html#startGUI_TESTMOCK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.GUI.startGUI_TESTMOCK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to call to start gui operation
+Function is used for testing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>CoreQueue</strong> (<em>Queue</em>) &#8211; link to queue of core</li>
+<li><strong>GUIQueue</strong> (<em>Queue</em>) &#8211; queue where gui receives messages</li>
+<li><strong>gui_id</strong> (<em>int</em>) &#8211; id of gui for events</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.OverviewPluginMenu">
+<span id="papi-gui-default-overviewpluginmenu-module"></span><h2>papi.gui.default.OverviewPluginMenu module<a class="headerlink" href="#module-papi.gui.default.OverviewPluginMenu" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.OverviewPluginMenu.</tt><tt class="descname">OverviewPluginMenu</tt><big>(</big><em>gui_api</em>, <em>tabmanager</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">papi.ui.gui.default.PluginOverviewMenu.Ui_PluginOverviewMenu</span></tt></p>
+<p>This class is used to create an extra window which displays all created plugins.
+The information are taken by the corresponding DPlugin-Object of a plugin. By this window a user is also able to
+create and cancel subscriptions.</p>
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.add_pcp_subscription_action">
+<tt class="descname">add_pcp_subscription_action</tt><big>(</big><em>dplugin: papi.data.DPlugin.DPlugin</em>, <em>dparameter: &lt;module 'papi.data.DParameter' from '/home/fescycling/PycharmProjects/PaPI/papi/data/DParameter.py'&gt;</em>, <em>dplugin_pcp: papi.data.DPlugin.DPlugin</em>, <em>dblock_pcp: papi.data.DPlugin.DBlock</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.add_pcp_subscription_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.add_pcp_subscription_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to create a subscription for a process control plugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dplugin</strong> &#8211; Subscriber of a pcp plugin</li>
+<li><strong>dparameter</strong> &#8211; Parameter of the subscriber which should be controlled by the pcp plugin.</li>
+<li><strong>dplugin_pcp</strong> &#8211; The pcp plugin</li>
+<li><strong>dblock_pcp</strong> &#8211; Block of the pcp plugin which is used to control the subscriber&#8217;s parameter.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.add_subscription_action">
+<tt class="descname">add_subscription_action</tt><big>(</big><em>dplugin_uname</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.add_subscription_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.add_subscription_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to add subscription for a specific dplugin</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dplugin_uname</strong> &#8211; Add Subscription for this DPlugin</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.cancel_subscription_action">
+<tt class="descname">cancel_subscription_action</tt><big>(</big><em>source: papi.data.DPlugin.DPlugin</em>, <em>dblock: papi.data.DPlugin.DBlock</em>, <em>signals:</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.cancel_subscription_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.cancel_subscription_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action called to cancel a subscription of the current selected dplugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>source</strong> &#8211; </li>
+<li><strong>dblock</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.changed_dplugin_tree_selection">
+<tt class="descname">changed_dplugin_tree_selection</tt><big>(</big><em>new_selection</em>, <em>old_selection</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.changed_dplugin_tree_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.changed_dplugin_tree_selection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.changed_search_plugin_text_field">
+<tt class="descname">changed_search_plugin_text_field</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.changed_search_plugin_text_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.changed_search_plugin_text_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will clear this window.
+It is used to reset all elements in this windows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.data_changed_block_model">
+<tt class="descname">data_changed_block_model</tt><big>(</big><em>index</em>, <em>n</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.data_changed_block_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.data_changed_block_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a dblock child, a disgnal, is changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Index of current changed dsignal object</li>
+<li><strong>n</strong> &#8211; None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.data_changed_parameter_model">
+<tt class="descname">data_changed_parameter_model</tt><big>(</big><em>index</em>, <em>n</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.data_changed_parameter_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.data_changed_parameter_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a dparameter value is changed by editing the &#8216;value&#8217;-column.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Index of current changed dparameter</li>
+<li><strong>n</strong> &#8211; None</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.get_plugin_root">
+<tt class="descname">get_plugin_root</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.get_plugin_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.get_plugin_root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.keyPressEvent">
+<tt class="descname">keyPressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to handle key events for this gui element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> &#8211; KeyEvent</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_block_tree">
+<tt class="descname">open_context_menu_block_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.open_context_menu_block_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_block_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function is called to create a context menu
+for the block tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_connection_tree">
+<tt class="descname">open_context_menu_connection_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.open_context_menu_connection_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_connection_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function is called to create a context menu
+for the subscriper tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_dplugin_tree">
+<tt class="descname">open_context_menu_dplugin_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.open_context_menu_dplugin_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_dplugin_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function is called to create a context menu for the dplugin tree.
+It is triggered by use</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_parameter_tree">
+<tt class="descname">open_context_menu_parameter_tree</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.open_context_menu_parameter_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.open_context_menu_parameter_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback function is called to create a context menu
+for the parameter tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.pause_button_callback">
+<tt class="descname">pause_button_callback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.pause_button_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.pause_button_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function pause_button_callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.play_button_callback">
+<tt class="descname">play_button_callback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.play_button_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.play_button_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function for the play button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.plugin_item_changed">
+<tt class="descname">plugin_item_changed</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.plugin_item_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.plugin_item_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to display all known information for a DPlugin which is
+accessible in the pluginTree by its index.</p>
+<p>It is called when an user changes the selected plugin in the plugin tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> &#8211; Current selected index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.plugin_item_refresh">
+<tt class="descname">plugin_item_refresh</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.plugin_item_refresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.plugin_item_refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when it&#8217;s known that the dplugin object, which describes the selected plugin, was changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.refresh_action">
+<tt class="descname">refresh_action</tt><big>(</big><em>new_dplugin: papi.data.DPlugin.DPlugin=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.refresh_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.refresh_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to refresh the overview menu view.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_dplugin</strong> &#8211; New dplugin which should be added in self.dpluginTreev.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.remove_subscriber_action">
+<tt class="descname">remove_subscriber_action</tt><big>(</big><em>subscriber: papi.data.DPlugin.DPlugin</em>, <em>dblock: papi.data.DPlugin.DBlock</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.remove_subscriber_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.remove_subscriber_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to remove a subscriber of the dplugin selected in the DPlugin tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subscriber</strong> &#8211; Subscriber which is effected</li>
+<li><strong>dblock</strong> &#8211; DBlock which should be unsubscribed by Subscriber</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.showEvent">
+<tt class="descname">showEvent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.showEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.showEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>ShowEvent of this class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> &#8211; </li>
+<li><strong>kwargs</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.show_create_plugin_dialog">
+<tt class="descname">show_create_plugin_dialog</tt><big>(</big><em>dplugin</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.show_create_plugin_dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.show_create_plugin_dialog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.show_internal_name_callback">
+<tt class="descname">show_internal_name_callback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.show_internal_name_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.show_internal_name_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback function for &#8216;showInternalNameCheckBox&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.stop_start_button_callback">
+<tt class="descname">stop_start_button_callback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/OverviewPluginMenu.html#OverviewPluginMenu.stop_start_button_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.OverviewPluginMenu.OverviewPluginMenu.stop_start_button_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function stop_start_button_callback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.PaPITabManger">
+<span id="papi-gui-default-papitabmanger-module"></span><h2>papi.gui.default.PaPITabManger module<a class="headerlink" href="#module-papi.gui.default.PaPITabManger" title="Permalink to this headline">¶</a></h2>
+<p>Contributors:
+&lt;Stefan Ruppin</p>
+<dl class="class">
+<dt id="papi.gui.default.PaPITabManger.DefaultCloseBox">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.PaPITabManger.</tt><tt class="descname">DefaultCloseBox</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#DefaultCloseBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.DefaultCloseBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMessageBox</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.PaPITabManger.</tt><tt class="descname">PaPITabManger</tt><big>(</big><em>tabWigdet=None</em>, <em>dgui=None</em>, <em>gui_api=None</em>, <em>parent=None</em>, <em>centralWidget=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QObject</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.add_tab">
+<tt class="descname">add_tab</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.add_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.add_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.add_wind">
+<tt class="descname">add_wind</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.add_wind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.add_wind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.closeTab_by_ind">
+<tt class="descname">closeTab_by_ind</tt><big>(</big><em>ind</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.closeTab_by_ind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.closeTab_by_ind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.closeTab_by_name">
+<tt class="descname">closeTab_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.closeTab_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.closeTab_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.close_all_empty_tabs">
+<tt class="descname">close_all_empty_tabs</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.close_all_empty_tabs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.close_all_empty_tabs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_close_tab">
+<tt class="descname">cmenu_close_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_close_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_close_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_dock_window">
+<tt class="descname">cmenu_dock_window</tt><big>(</big><em>tabarea</em>, <em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_dock_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_dock_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_tab">
+<tt class="descname">cmenu_new_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_new_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_tab_custom_name">
+<tt class="descname">cmenu_new_tab_custom_name</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_new_tab_custom_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_tab_custom_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_window">
+<tt class="descname">cmenu_new_window</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_new_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_new_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_rename_tab">
+<tt class="descname">cmenu_rename_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_rename_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_rename_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_rename_wind">
+<tt class="descname">cmenu_rename_wind</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_rename_wind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_rename_wind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_set_bg">
+<tt class="descname">cmenu_set_bg</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_set_bg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_set_bg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.cmenu_set_bg_window">
+<tt class="descname">cmenu_set_bg_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.cmenu_set_bg_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.cmenu_set_bg_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.create_context_menu">
+<tt class="descname">create_context_menu</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.create_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.create_context_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.create_context_menu_window">
+<tt class="descname">create_context_menu_window</tt><big>(</big><em>tabWidget</em>, <em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.create_context_menu_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.create_context_menu_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.detach_tab">
+<tt class="descname">detach_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.detach_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.detach_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.disableContextMenus">
+<tt class="descname">disableContextMenus</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.disableContextMenus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.disableContextMenus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.enableContextMenus">
+<tt class="descname">enableContextMenus</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.enableContextMenus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.enableContextMenus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.getTabPosition_by_name">
+<tt class="descname">getTabPosition_by_name</tt><big>(</big><em>tabName</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.getTabPosition_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.getTabPosition_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.get_currently_active_tab">
+<tt class="descname">get_currently_active_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.get_currently_active_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.get_currently_active_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.get_default_tab">
+<tt class="descname">get_default_tab</tt><big>(</big><em>NotThisIndex</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.get_default_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.get_default_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.get_tabs_by_uname">
+<tt class="descname">get_tabs_by_uname</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.get_tabs_by_uname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.get_tabs_by_uname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.isContextMenuEnabled">
+<tt class="descname">isContextMenuEnabled</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.isContextMenuEnabled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.isContextMenuEnabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.moveFromTo">
+<tt class="descname">moveFromTo</tt><big>(</big><em>start</em>, <em>dest</em>, <em>subWindow</em>, <em>posX=0</em>, <em>posY=0</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.moveFromTo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.moveFromTo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.new_wind_close_event">
+<tt class="descname">new_wind_close_event</tt><big>(</big><em>event</em>, <em>handler</em>, <em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.new_wind_close_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.new_wind_close_event" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.redock_window">
+<tt class="descname">redock_window</tt><big>(</big><em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.redock_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.redock_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.remove_tab">
+<tt class="descname">remove_tab</tt><big>(</big><em>tabObject</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.remove_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.remove_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.remove_window">
+<tt class="descname">remove_window</tt><big>(</big><em>window</em>, <em>rm_from_data=True</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.remove_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.remove_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.rename_tab">
+<tt class="descname">rename_tab</tt><big>(</big><em>tabObject</em>, <em>new_name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.rename_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.rename_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.rename_window">
+<tt class="descname">rename_window</tt><big>(</big><em>window</em>, <em>new_name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.rename_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.rename_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.select_next_tab">
+<tt class="descname">select_next_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.select_next_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.select_next_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.select_prev_tab">
+<tt class="descname">select_prev_tab</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.select_prev_tab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.select_prev_tab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.setTabsCloseable">
+<tt class="descname">setTabsCloseable</tt><big>(</big><em>closeable</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.setTabsCloseable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.setTabsCloseable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.setTabsMoveable">
+<tt class="descname">setTabsMoveable</tt><big>(</big><em>moveable</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.setTabsMoveable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.setTabsMoveable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.setTabs_movable_closable">
+<tt class="descname">setTabs_movable_closable</tt><big>(</big><em>move</em>, <em>close</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.setTabs_movable_closable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.setTabs_movable_closable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.set_all_tabs_to_close_when_empty">
+<tt class="descname">set_all_tabs_to_close_when_empty</tt><big>(</big><em>state</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.set_all_tabs_to_close_when_empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.set_all_tabs_to_close_when_empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.set_background_for_tab_with_name">
+<tt class="descname">set_background_for_tab_with_name</tt><big>(</big><em>name</em>, <em>bg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.set_background_for_tab_with_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.set_background_for_tab_with_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.set_tab_active_by_index">
+<tt class="descname">set_tab_active_by_index</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.set_tab_active_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.set_tab_active_by_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.set_tab_active_by_name">
+<tt class="descname">set_tab_active_by_name</tt><big>(</big><em>tabName</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.set_tab_active_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.set_tab_active_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.show_context_menu">
+<tt class="descname">show_context_menu</tt><big>(</big><em>pos</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.show_context_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.show_context_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPITabManger.show_context_menu_window">
+<tt class="descname">show_context_menu_window</tt><big>(</big><em>pos</em>, <em>window</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPITabManger.show_context_menu_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPITabManger.show_context_menu_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.PaPITabManger.</tt><tt class="descname">PaPIWindow</tt><big>(</big><em>windowName</em>, <em>conextMenu=None</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.addSubWindow">
+<tt class="descname">addSubWindow</tt><big>(</big><em>subwindow</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.addSubWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.addSubWindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.background">
+<tt class="descname">background</tt><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.background" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.getBackground">
+<tt class="descname">getBackground</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.getBackground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.getBackground" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.getName">
+<tt class="descname">getName</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.getName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.getName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.isEmpty">
+<tt class="descname">isEmpty</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.isEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.isEmpty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.name">
+<tt class="descname">name</tt><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.removeSubWindow">
+<tt class="descname">removeSubWindow</tt><big>(</big><em>subwindow</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.removeSubWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.removeSubWindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.setBackground">
+<tt class="descname">setBackground</tt><big>(</big><em>bg</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.setBackground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.setBackground" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.setName">
+<tt class="descname">setName</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.setName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.setName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.setNewWindowName">
+<tt class="descname">setNewWindowName</tt><big>(</big><em>newName</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.setNewWindowName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.setNewWindowName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.PaPIWindow.subWindowList">
+<tt class="descname">subWindowList</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#PaPIWindow.subWindowList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.PaPIWindow.subWindowList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.PaPITabManger.TabObject">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.PaPITabManger.</tt><tt class="descname">TabObject</tt><big>(</big><em>name</em>, <em>windowName=0</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#TabObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.TabObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMdiArea</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.TabObject.getBackground_image">
+<tt class="descname">getBackground_image</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#TabObject.getBackground_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.TabObject.getBackground_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.TabObject.isEmpty">
+<tt class="descname">isEmpty</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#TabObject.isEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.TabObject.isEmpty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.TabObject.resizeEvent">
+<tt class="descname">resizeEvent</tt><big>(</big><em>QResizeEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#TabObject.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.TabObject.resizeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.PaPITabManger.TabObject.setBackground_image">
+<tt class="descname">setBackground_image</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/PaPITabManger.html#TabObject.setBackground_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.PaPITabManger.TabObject.setBackground_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.custom">
+<span id="papi-gui-default-custom-module"></span><h2>papi.gui.default.custom module<a class="headerlink" href="#module-papi.gui.default.custom" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.gui.default.custom.ColorLineEdit">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.custom.</tt><tt class="descname">ColorLineEdit</tt><a class="reference internal" href="_modules/papi/gui/default/custom.html#ColorLineEdit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.ColorLineEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QPushButton</span></tt></p>
+<p>A QColorDialog is used to determine the content of this QLineEdit.
+Used in the &#8216;CreatePluginDialog&#8217; for a config element if the config elements contains the type : &#8216;color&#8217;</p>
+<dl class="method">
+<dt id="papi.gui.default.custom.ColorLineEdit.open_color_picker">
+<tt class="descname">open_color_picker</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#ColorLineEdit.open_color_picker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.ColorLineEdit.open_color_picker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.ColorLineEdit.set_default_color">
+<tt class="descname">set_default_color</tt><big>(</big><em>color_string</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#ColorLineEdit.set_default_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.ColorLineEdit.set_default_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.custom.FileLineEdit">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.custom.</tt><tt class="descname">FileLineEdit</tt><a class="reference internal" href="_modules/papi/gui/default/custom.html#FileLineEdit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.FileLineEdit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QLineEdit</span></tt></p>
+<p>A QFileDialog is used to determine the content of this QLineEdit.
+Used in the &#8216;CreatePluginDialog&#8217; for a config element if the config elements contains the type : &#8216;file&#8217;</p>
+<dl class="method">
+<dt id="papi.gui.default.custom.FileLineEdit.mousePressEvent">
+<tt class="descname">mousePressEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#FileLineEdit.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.FileLineEdit.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.FileLineEdit.set_file_type">
+<tt class="descname">set_file_type</tt><big>(</big><em>type</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#FileLineEdit.set_file_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.FileLineEdit.set_file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.custom.</tt><tt class="descname">PaPIConfigSaveDialog</tt><big>(</big><em>parent</em>, <em>gui_api</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QFileDialog</span></tt></p>
+<p>The default QFileDialog for save operations was enhanced by additional options.
+These options are hidden in the QFileDialog till the &#8216;More Details&#8217;-Button was clicked.</p>
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.button_clicked">
+<tt class="descname">button_clicked</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.button_clicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.button_clicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.fill_with">
+<tt class="descname">fill_with</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.fill_with"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.fill_with" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.get_create_lists">
+<tt class="descname">get_create_lists</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.get_create_lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.get_create_lists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.select_items">
+<tt class="descname">select_items</tt><big>(</big><em>flag</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.select_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.select_items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd">
+<tt class="descname">select_simulink_ortd</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/custom.html#PaPIConfigSaveDialog.select_simulink_ortd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.custom.PaPIConfigSaveDialog.select_simulink_ortd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default.item">
+<span id="papi-gui-default-item-module"></span><h2>papi.gui.default.item module<a class="headerlink" href="#module-papi.gui.default.item" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="class">
+<dt id="papi.gui.default.item.CustomFieldModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">CustomFieldModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#CustomFieldModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.CustomFieldModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItemModel</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.item.CustomFieldModel.data">
+<tt class="descname">data</tt><big>(</big><em>index</em>, <em>role=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#CustomFieldModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.CustomFieldModel.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
+:param index:
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.CustomFieldModel.setData">
+<tt class="descname">setData</tt><big>(</big><em>index</em>, <em>value</em>, <em>role=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#CustomFieldModel.setData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.CustomFieldModel.setData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a content in a row is edited by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Current selected index.</li>
+<li><strong>value</strong> &#8211; New value from user</li>
+<li><strong>role</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DBlockTreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DBlockTreeItem</tt><big>(</big><em>dblock: papi.data.DPlugin.DBlock</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DBlockTreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DBlockTreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.DBlockTreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DBlockTreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DBlockTreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DBlockTreeModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DBlockTreeModel</tt><big>(</big><em>check_box</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DBlockTreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DBlockTreeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeModel" title="papi.gui.default.item.PaPITreeModel"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeModel</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.DBlockTreeModel.flags">
+<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DBlockTreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DBlockTreeModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the flags for a specific index.</p>
+<p>For Qt.ItemFlags see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum</a>&#8216;
+:param index:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.DBlockTreeModel.setData">
+<tt class="descname">setData</tt><big>(</big><em>index</em>, <em>value</em>, <em>role=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DBlockTreeModel.setData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DBlockTreeModel.setData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a content in a row is edited by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Current selected index.</li>
+<li><strong>value</strong> &#8211; New value from user</li>
+<li><strong>role</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DParameterTreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DParameterTreeItem</tt><big>(</big><em>dparameter: &lt;module 'papi.data.DParameter' from '/home/fescycling/PycharmProjects/PaPI/papi/data/DParameter.py'&gt;</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.DParameterTreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DParameterTreeModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DParameterTreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeModel" title="papi.gui.default.item.PaPITreeModel"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeModel</span></tt></a></p>
+<p>This model is used to handle DParameter objects in TreeView.</p>
+<dl class="method">
+<dt id="papi.gui.default.item.DParameterTreeModel.data">
+<tt class="descname">data</tt><big>(</big><em>index</em>, <em>role=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeModel.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
+:param index:
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.DParameterTreeModel.flags">
+<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the flags for a specific index.</p>
+<p>For Qt.ItemFlags see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemFlag-enum</a>&#8216;
+:param index:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.DParameterTreeModel.setData">
+<tt class="descname">setData</tt><big>(</big><em>index</em>, <em>value</em>, <em>role=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DParameterTreeModel.setData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DParameterTreeModel.setData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called when a content in a row is edited by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> &#8211; Current selected index.</li>
+<li><strong>value</strong> &#8211; New value from user</li>
+<li><strong>role</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DPluginTreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DPluginTreeItem</tt><big>(</big><em>dplugin: papi.data.DPlugin.DPlugin</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DPluginTreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DPluginTreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.DPluginTreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DPluginTreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DPluginTreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DPluginTreeModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DPluginTreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DPluginTreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DPluginTreeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeModel" title="papi.gui.default.item.PaPITreeModel"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeModel</span></tt></a></p>
+<p>This model is used to handle DPlugin objects in TreeView.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.DSignalTreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">DSignalTreeItem</tt><big>(</big><em>dsignal: papi.data.DSignal.DSignal</em>, <em>check_box</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DSignalTreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DSignalTreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.DSignalTreeItem.data">
+<tt class="descname">data</tt><big>(</big><em>role=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DSignalTreeItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DSignalTreeItem.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.DSignalTreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#DSignalTreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.DSignalTreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPIFavAction">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPIFavAction</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIFavAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIFavAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QAction</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPIMDISubWindow">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPIMDISubWindow</tt><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIMDISubWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIMDISubWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QMdiSubWindow</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIMDISubWindow.mouseMoveEvent">
+<tt class="descname">mouseMoveEvent</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIMDISubWindow.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIMDISubWindow.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIMDISubWindow.set_movable">
+<tt class="descname">set_movable</tt><big>(</big><em>flag</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIMDISubWindow.set_movable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIMDISubWindow.set_movable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPIRootItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPIRootItem</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIRootItem.data">
+<tt class="descname">data</tt><big>(</big><em>role=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIRootItem.hasItem">
+<tt class="descname">hasItem</tt><big>(</big><em>searched_item</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.hasItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.hasItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to check if an item is already part of this Tree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>searched_item</strong> &#8211; Searched for this item</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIRootItem.mark_visibility_by_name">
+<tt class="descname">mark_visibility_by_name</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIRootItem.mark_visibility_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIRootItem.mark_visibility_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPIToolbar">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPIToolbar</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIToolbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtWidgets.QToolBar</span></tt></p>
+<dl class="attribute">
+<dt id="papi.gui.default.item.PaPIToolbar.clickedFavouritePlugin">
+<tt class="descname">clickedFavouritePlugin</tt><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.clickedFavouritePlugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIToolbar.customMenu">
+<tt class="descname">customMenu</tt><big>(</big><em>position</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIToolbar.customMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.customMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIToolbar.dragEnterEvent">
+<tt class="descname">dragEnterEvent</tt><big>(</big><em>event: PyQt5.QtGui.QDragEnterEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIToolbar.dragEnterEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.dragEnterEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIToolbar.dropEvent">
+<tt class="descname">dropEvent</tt><big>(</big><em>event: PyQt5.QtGui.QDropEvent</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIToolbar.dropEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.dropEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPIToolbar.removeFavouritePlugin">
+<tt class="descname">removeFavouritePlugin</tt><big>(</big><em>action: papi.gui.default.item.PaPIFavAction</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPIToolbar.removeFavouritePlugin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.removeFavouritePlugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="papi.gui.default.item.PaPIToolbar.removedFavouritePlugin">
+<tt class="descname">removedFavouritePlugin</tt><a class="headerlink" href="#papi.gui.default.item.PaPIToolbar.removedFavouritePlugin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPITreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeItem</tt><big>(</big><em>object</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItem</span></tt></p>
+<p>Default Tree item as it is used in PaPI.</p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeItem.clean">
+<tt class="descname">clean</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is called to remove all rows which contain an item marked as &#8216;deleted&#8217;.
+This only works with items having an state-attribute e.g. DPlugin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if items were removed and has no more children</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeItem.data">
+<tt class="descname">data</tt><big>(</big><em>role=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Qt.Role see &#8216;<a class="reference external" href="http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum">http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum</a>&#8216;
+:param role:
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPITreeModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtGui.QStandardItemModel</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeModel.flags">
+<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeModel.mark_visibility_by_name">
+<tt class="descname">mark_visibility_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.mark_visibility_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.mark_visibility_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeModel.remove_item">
+<tt class="descname">remove_item</tt><big>(</big><em>remove_item</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeModel.remove_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeModel.remove_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PaPITreeProxyModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PaPITreeProxyModel</tt><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeProxyModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">PyQt5.QtCore.QSortFilterProxyModel</span></tt></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PaPITreeProxyModel.filterAcceptsRow">
+<tt class="descname">filterAcceptsRow</tt><big>(</big><em>p_int: int</em>, <em>sourceParent: PyQt5.QtCore.QModelIndex</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PaPITreeProxyModel.filterAcceptsRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PaPITreeProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PluginTreeItem">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PluginTreeItem</tt><big>(</big><em>plugin_info</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PluginTreeItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PluginTreeItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeItem" title="papi.gui.default.item.PaPITreeItem"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeItem</span></tt></a></p>
+<dl class="method">
+<dt id="papi.gui.default.item.PluginTreeItem.data">
+<tt class="descname">data</tt><big>(</big><em>role=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PluginTreeItem.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PluginTreeItem.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="papi.gui.default.item.PluginTreeItem.get_decoration">
+<tt class="descname">get_decoration</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PluginTreeItem.get_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PluginTreeItem.get_decoration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="papi.gui.default.item.PluginTreeModel">
+<em class="property">class </em><tt class="descclassname">papi.gui.default.item.</tt><tt class="descname">PluginTreeModel</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default/item.html#PluginTreeModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.item.PluginTreeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#papi.gui.default.item.PaPITreeModel" title="papi.gui.default.item.PaPITreeModel"><tt class="xref py py-class docutils literal"><span class="pre">papi.gui.default.item.PaPITreeModel</span></tt></a></p>
+<p>This model is used to handle Plugin objects in TreeView created by the yapsy plugin manager.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-papi.gui.default">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-papi.gui.default" title="Permalink to this headline">¶</a></h2>
+<p>Contributors
+Sven Knuth</p>
+<dl class="function">
+<dt id="papi.gui.default.get16Icon">
+<tt class="descclassname">papi.gui.default.</tt><tt class="descname">get16Icon</tt><big>(</big><em>file</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default.html#get16Icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.get16Icon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="papi.gui.default.get16Pixmap">
+<tt class="descclassname">papi.gui.default.</tt><tt class="descname">get16Pixmap</tt><big>(</big><em>file</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default.html#get16Pixmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.get16Pixmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="papi.gui.default.get32Icon">
+<tt class="descclassname">papi.gui.default.</tt><tt class="descname">get32Icon</tt><big>(</big><em>file</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default.html#get32Icon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.get32Icon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="papi.gui.default.get32Pixmap">
+<tt class="descclassname">papi.gui.default.</tt><tt class="descname">get32Pixmap</tt><big>(</big><em>file</em><big>)</big><a class="reference internal" href="_modules/papi/gui/default.html#get32Pixmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#papi.gui.default.get32Pixmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">papi.gui.default package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.CreatePluginDialog">papi.gui.default.CreatePluginDialog module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.CreatePluginMenu">papi.gui.default.CreatePluginMenu module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.GUI">papi.gui.default.GUI module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.OverviewPluginMenu">papi.gui.default.OverviewPluginMenu module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.PaPITabManger">papi.gui.default.PaPITabManger module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.custom">papi.gui.default.custom module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default.item">papi.gui.default.item module</a></li>
+<li><a class="reference internal" href="#module-papi.gui.default">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/papi.gui.default.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+papi.plugin.visual package
+==========================
+
+Module contents
+---------------
+
+.. automodule:: papi.plugin.visual
+    :members:
+    :undoc-members:
+    :show-inheritance:

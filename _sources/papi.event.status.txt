@@ -1,0 +1,86 @@
+papi.event.status package
+=========================
+
+Submodules
+----------
+
+papi.event.status.Alive module
+------------------------------
+
+.. automodule:: papi.event.status.Alive
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.CheckAliveStatus module
+-----------------------------------------
+
+.. automodule:: papi.event.status.CheckAliveStatus
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.JoinRequest module
+------------------------------------
+
+.. automodule:: papi.event.status.JoinRequest
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.ParameterInfo module
+--------------------------------------
+
+.. automodule:: papi.event.status.ParameterInfo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.PluginClosed module
+-------------------------------------
+
+.. automodule:: papi.event.status.PluginClosed
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.PluginStopped module
+--------------------------------------
+
+.. automodule:: papi.event.status.PluginStopped
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.StartFailed module
+------------------------------------
+
+.. automodule:: papi.event.status.StartFailed
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.StartSuccessfull module
+-----------------------------------------
+
+.. automodule:: papi.event.status.StartSuccessfull
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.event.status.StatusBase module
+-----------------------------------
+
+.. automodule:: papi.event.status.StatusBase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: papi.event.status
+    :members:
+    :undoc-members:
+    :show-inheritance:

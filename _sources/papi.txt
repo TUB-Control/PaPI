@@ -1,0 +1,74 @@
+papi package
+============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    papi.data
+    papi.event
+    papi.gui
+    papi.plugin
+    papi.tests
+    papi.ui
+
+Submodules
+----------
+
+papi.ConsoleLog module
+----------------------
+
+.. automodule:: papi.ConsoleLog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.constants module
+---------------------
+
+.. automodule:: papi.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.core module
+----------------
+
+.. automodule:: papi.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.error_codes module
+-----------------------
+
+.. automodule:: papi.error_codes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.exceptions module
+----------------------
+
+.. automodule:: papi.exceptions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+papi.helper module
+------------------
+
+.. automodule:: papi.helper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: papi
+    :members:
+    :undoc-members:
+    :show-inheritance:

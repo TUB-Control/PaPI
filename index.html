@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PaPI v. 1.4 &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="#">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="papi-v-1-4">
+<h1>PaPI v. 1.4<a class="headerlink" href="#papi-v-1-4" title="Permalink to this headline">¶</a></h1>
+<p>Plugin based Process Interaction</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>PaPI is a tool to interact with real-time targets or sources for
+measured data. It provides a plugin-based framework that allows to
+read streaming data form targets and allows to set parameters.
+Several plugins for data visualization (plots, bars, meters, html-animations ...)
+as well as GUI-elements for entering parameters (textfields, sliders, ...).
+User customized plugins can be easily created using a given Python-API.</p>
+<p>Opening and closing of all GUI-elements can be controlled by real-time target
+programs and hence it is possible to implement GUI-logic using state-machines
+inside the target programs. Have a look at <a class="reference external" href="https://youtu.be/9B2BISXaPdo">https://youtu.be/9B2BISXaPdo</a>
+to get an impression of what is currently possible.</p>
+<p>PaPI spans across several processes to benefit form multi-core systems.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Basic installation on Ubuntu 14.04 64Bit, using python 3.4</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">git</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3.4</span> <span class="pre">python3-numpy</span> <span class="pre">python3-pip</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-pyqt5</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-pyqt5.qtwebkit</span></tt> (just needed for the
+HTMLViewer plugin) [optional]</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-pyqt5.qtsvg</span></tt> (just needed for the
+export feature of the Plot plugin) [optional]</p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">socketio_client==0.6.5</span></tt> (required for ORTD_UDP) [optional]</p>
+<p><tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/TUB-Control/PaPI.git</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">python3.4</span> <span class="pre">main.py</span></tt></p>
+<p>Tip: If python3.4 interpreter cannot find or locate the installed
+packages (PyQt5 or numpy), please make sure that the right python
+interpreter is called (in case there are multiple installed).</p>
+</div>
+<div class="section" id="start-papi">
+<h2>Start PaPI<a class="headerlink" href="#start-papi" title="Permalink to this headline">¶</a></h2>
+<p>You can either start PaPI by calling the main.py with a python interpreter or you can start PaPI by using the bash script.
+In addition, PaPI can be installed as a symlink to your device.</p>
+<p><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">PaPI</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">make</span> <span class="pre">install</span></tt></p>
+<p>For both start methods, command line switches and arguments are available.</p>
+<p><tt class="docutils literal"><span class="pre">-f</span></tt>: Starts PaPI in full screen mode.</p>
+<p><tt class="docutils literal"><span class="pre">-r</span></tt>: Starts PaPI with activated run mode.</p>
+<p><tt class="docutils literal"><span class="pre">-v</span></tt>: Displays the version of PaPI.</p>
+<p><tt class="docutils literal"><span class="pre">-h</span></tt>: Displays a help message.</p>
+<p><tt class="docutils literal"><span class="pre">-c</span></tt>: Start PaPI with the given configuration(PaPI loads arg-cfg after start).</p>
+<p><tt class="docutils literal"><span class="pre">-u</span></tt>: Specify another user config.</p>
+</div>
+<div class="section" id="real-time-target-systems-currently-supported">
+<h2>Real-time target systems currently supported<a class="headerlink" href="#real-time-target-systems-currently-supported" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>OpenRTDynamics.sf.net</li>
+<li>Simulink</li>
+</ul>
+</div></blockquote>
+<p>Examples for both Frameworks are contained within: <a class="reference external" href="https://github.com/TUB-Control/PaPI/tree/development/data_sources">https://github.com/TUB-Control/PaPI/tree/development/data_sources</a></p>
+<p>A demo video that shows how graphical interfaces you create using PaPI may look like: <a class="reference external" href="https://youtu.be/9B2BISXaPdo">https://youtu.be/9B2BISXaPdo</a></p>
+</div>
+<div class="section" id="contribution">
+<h2>Contribution<a class="headerlink" href="#contribution" title="Permalink to this headline">¶</a></h2>
+<p>To get started, sign the Contributor License Agreement.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Sphinx doc on GitHub: <a class="reference external" href="https://tub-control.github.io/PaPI/">https://tub-control.github.io/PaPI/</a></p>
+<p>The provide makefile is used to build the documentation by using this simple command</p>
+<p><tt class="docutils literal"><span class="pre">make</span> <span class="pre">html</span></tt></p>
+<p>The documentation can be found in <cite>docs/_build/html/</cite>.</p>
+</div>
+<div class="section" id="embedded-packages">
+<h2>Embedded Packages<a class="headerlink" href="#embedded-packages" title="Permalink to this headline">¶</a></h2>
+<p>Yapsy 1.10.423 published under BSD-License,
+<a class="reference external" href="http://yapsy.sourceforge.net/#license">http://yapsy.sourceforge.net/#license</a></p>
+<p>pyqtgraph-0.9.11 [unreleased] published under MIT-License
+<a class="reference external" href="https://github.com/pyqtgraph/pyqtgraph">https://github.com/pyqtgraph/pyqtgraph</a></p>
+<p>JSONlab 1.1 published under BSD-License and GPLv3
+<a class="reference external" href="https://github.com/fangq/jsonlab">https://github.com/fangq/jsonlab</a></p>
+</div>
+<div class="section" id="used-icon-set">
+<h2>Used icon-set<a class="headerlink" href="#used-icon-set" title="Permalink to this headline">¶</a></h2>
+<p>fatcow-hosting-icons-3.9.2, License:
+<a class="reference external" href="http://creativecommons.org/licenses/by/3.0/us/">http://creativecommons.org/licenses/by/3.0/us/</a>, Provided by:
+<a class="reference external" href="http://www.fatcow.com/">http://www.fatcow.com/</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PaPI v. 1.4</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#start-papi">Start PaPI</a></li>
+<li><a class="reference internal" href="#real-time-target-systems-currently-supported">Real-time target systems currently supported</a></li>
+<li><a class="reference internal" href="#contribution">Contribution</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#embedded-packages">Embedded Packages</a></li>
+<li><a class="reference internal" href="#used-icon-set">Used icon-set</a></li>
+</ul>
+</li>
+</ul>
+
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="#">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

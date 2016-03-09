@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Matlab &mdash; papi v.1.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'v.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="papi v.1.4 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="matlab">
+<h1>Matlab<a class="headerlink" href="#matlab" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The PaPI-matlab interface needs the following libraries:</p>
+<table border="1" class="docutils">
+<caption>Libraries</caption>
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Library</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>libjson</td>
+<td>Better handling of json in cpp</td>
+</tr>
+<tr class="row-odd"><td>libboost</td>
+<td>Basic boost library</td>
+</tr>
+<tr class="row-even"><td>libboost-thread</td>
+<td>Boost thread support</td>
+</tr>
+<tr class="row-odd"><td>libboost-signals</td>
+<td>Boost signal support</td>
+</tr>
+</tbody>
+</table>
+<p>The depencies can be easily fulfilled by installing the following packages:</p>
+<div class="code bash highlight-python"><div class="highlight"><pre>sudo apt-get install libjsoncpp-dev libboost1.55-dev
+sudo apt-get install libboost-thread1.55-dev libboost-signals1.55-dev
+</pre></div>
+</div>
+</div>
+<div class="section" id="library">
+<h2>Library<a class="headerlink" href="#library" title="Permalink to this headline">¶</a></h2>
+<p>The library is made out of one block:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="_images/PaPI_Block.png"><img alt="PaPI_Block_img" src="_images/PaPI_Block.png" style="height: 250px;" /></a></td>
+</tr>
+<tr class="row-even"><td>The <cite>PaPI Block</cite> is made of sub system which contains the <cite>PaPI Core Block</cite>.
+This blocks provides an easy configurable interface to the core block.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="input-signals">
+<h3>Input Signals<a class="headerlink" href="#input-signals" title="Permalink to this headline">¶</a></h3>
+<p>The <cite>control</cite> input signal is used to control the internal behaviour of the block</p>
+<table border="1" class="docutils">
+<caption>Possible values control signal</caption>
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Starts the internal UDPHandle and resets the output signals.</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Stops the internal UDPHandle.</td>
+</tr>
+<tr class="row-even"><td>else</td>
+<td>Doesn&#8217;t affect the internal behaviour.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="build">
+<h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
+<p>All needed functions are compiled and added to the Matlab search path when the build was executed.
+The build script can be found in <cite>&lt;/path/to/papi&gt;/PaPI/matlab/</cite>
+A template <cite>template.slx</cite> can also be found in the same directory it contains already all necessary changes described in the next section.</p>
+<p>After execution the new library <cite>PaPI</cite> will appear in the simulink library.</p>
+</div>
+<div class="section" id="code-generation">
+<h2>Code generation<a class="headerlink" href="#code-generation" title="Permalink to this headline">¶</a></h2>
+<p>By using the ert_linux it is also possible to build (code generation) a simulink model but it is needed to modify some model settings.</p>
+<p>The settings for <cite>Code Generation</cite> must be edited as following:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span class="n">Make</span> <span class="n">command</span><span class="p">:</span>
+
+<span class="n">make_rtw</span> <span class="n">OPTS</span><span class="p">=</span>&quot;<span class="o">-</span><span class="n">DWITH_HW</span>&quot;
+</pre></div>
+</div>
+<p>Due to a new version of ert_linux, it is needed to use <strong>C89/C90 (ANSI)</strong> as default math library. This option can be found in <cite>Code Generation/Interface</cite>.
+It is also needed to enable the external mode, can also be found in <cite>Code Generation/Interface</cite>.</p>
+</div>
+<div class="section" id="block-configuration">
+<h2>Block Configuration<a class="headerlink" href="#block-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="tab-1">
+<h3>Tab 1<a class="headerlink" href="#tab-1" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 40%">
+<img alt="" src="_images/Tab_1.png" />
+<p class="caption"><strong>This tab is used to describe the signals and parameters as they appear in PaPI.</strong></p>
+</div>
+<p>The array [1,2,3,4] given in &#8216;Amount parameters&#8217; leads to 4 different parameters, the parameter dimension is defined by the corresponding array index.
+Therefore, the first parameter has a size of 1, the second a size of 2, the third a size of 3 and the fourth a size of 4. Is is also possible to name the parameters by setting a signal name in simulink.</p>
+<p>The array [1,1,1,1] given in &#8216;Define input signals&#8217; leads to 4 different signals, the signal dimension is defined by the corresponding array index. Therefore, all signals have a size of one.
+It is also possible to describe if the signal should be splitted, which is the default case. Having a signal of dimension 4 which should be splitted leads to four different signals in PaPI, if not only one signal with the size four appears in PaPI.</p>
+<p>The field &#8216;Json config&#8217; can be used to provide a configuration which is built in the binary and sent to PaPI when requested. This configuration can be used to control nearly everything in PaPI (create plugins and subscriptions).</p>
+<p>Additionally it is possible to set an external configuration file by using &#8216;External PaPI config file&#8217; and provides the ability to change the configuration during runtime. When an PaPI requests the current configuration this file be read as a source for a json configuration. If it is not possible to parse a json configuration from this file the built-in json configuration will be used.</p>
+<div class="section" id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h4>
+<hr class="docutils" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="12%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first"><a class="reference internal" href="_images/Parameter_Example_1.png"><img alt="" src="_images/Parameter_Example_1.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>Signals of the parameters were named in simulink.</strong></p>
+</td>
+<td>&nbsp;</td>
+<td><p class="first"><a class="reference internal" href="_images/Parameter_Example_2.png"><img alt="" src="_images/Parameter_Example_2.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>As the parameters will appear in PaPI.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<div class="section" id="signals">
+<h4>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h4>
+<hr class="docutils" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="12%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first"><a class="reference internal" href="_images/Signal_Example_1.png"><img alt="" src="_images/Signal_Example_1.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>Signals were named in simulink.</strong></p>
+</td>
+<td>&nbsp;</td>
+<td><p class="first"><a class="reference internal" href="_images/Signal_Example_2.png"><img alt="" src="_images/Signal_Example_2.png" style="height: 250px;" /></a></p>
+<p class="last"><strong>As the signals will appear in PaPI.</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<div class="section" id="naming">
+<h4>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="tab-2">
+<h3>Tab 2<a class="headerlink" href="#tab-2" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 40%">
+<img alt="" src="_images/Tab_2.png" />
+<p class="caption"><strong>This tab is used set the needed information for the udp communication.</strong></p>
+</div>
+</div>
+<div class="section" id="tab-3">
+<h3>Tab 3<a class="headerlink" href="#tab-3" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 40%">
+<img alt="" src="_images/Tab_3.png" />
+<p class="caption"><strong>This tab provides the ability to set a sampling rate for the underlying blocks.</strong></p>
+</div>
+</div>
+</div>
+<div class="section" id="example-stateflow">
+<h2>Example: Stateflow<a class="headerlink" href="#example-stateflow" title="Permalink to this headline">¶</a></h2>
+<p>For stateflow it is necessary to create a simulink function which contains the simulink blocks.</p>
+<p>The following picture was taken from the example <cite>simulink_example_stateflow</cite> which can be found in <cite>data_sources/Simulink</cite>.</p>
+<p>The second input was mapped to the input <cite>control</cite> of the underlying PaPI Block.
+At entry the control input is set to one for starting the internal UDPServer of the current PaPI Block. The UDPServer is stopped by setting the control input to two.
+This must be done when different PaPI Blocks were used because this prevent a single block to occupy the used udp ports forever .</p>
+<div class="figure" style="width: 40%">
+<img alt="" src="_images/example_stateflow.png" />
+<p class="caption"><strong>Exemplary use in a state.</strong></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+	<h3> Links </h3>
+	<ul> 
+	  <li>
+	    <a href="CHANGELOG.html">Changelog</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.manual.html">Manual</a> </li>
+	  </li>
+	  <li>
+	    <a href="toc.framework.html">Framework</a> </li>
+	  </li>
+	  <li>
+	    <a href="man.papi.plugin.doc.html">Plugins</a> </li>
+	  </li>
+	</ul>
+	
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Matlab</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#library">Library</a><ul>
+<li><a class="reference internal" href="#input-signals">Input Signals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#build">Build</a></li>
+<li><a class="reference internal" href="#code-generation">Code generation</a></li>
+<li><a class="reference internal" href="#block-configuration">Block Configuration</a><ul>
+<li><a class="reference internal" href="#tab-1">Tab 1</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#naming">Naming</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tab-2">Tab 2</a></li>
+<li><a class="reference internal" href="#tab-3">Tab 3</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example-stateflow">Example: Stateflow</a></li>
+</ul>
+</li>
+</ul>
+
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/man.papi.manual.6_Matlab.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    
+        <li><a href="index.html">papi v.1.4 documentation</a> &raquo;</li>
+    <li><a href="https://github.com/TUB-Control/PaPI">GitHub</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014-2015, Control Systems, TU-Berlin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
