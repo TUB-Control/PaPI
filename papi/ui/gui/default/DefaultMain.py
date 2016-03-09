@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/gui/default/DefaultMain.ui'
 #
-# Created: Fri Feb 19 17:51:11 2016
+# Created: Wed Mar  9 14:15:12 2016
 #      by: PyQt5 UI code generator 5.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,7 +97,6 @@ class Ui_DefaultMain(object):
         self.menuView.addAction(self.action_toggle_run_mode)
         self.menuView.addAction(self.action_toggle_toolbar)
         self.menuView.addAction(self.actionFullscreen)
-        self.menuHelp.addAction(self.action_open_papi_wiki)
         self.menuHelp.addAction(self.action_open_papi_doc)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.action_open_papi_about)
