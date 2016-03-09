@@ -74,7 +74,6 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="action_open_papi_wiki"/>
     <addaction name="action_open_papi_doc"/>
     <addaction name="separator"/>
     <addaction name="action_open_papi_about"/>

@@ -278,8 +278,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
 
         self.action_reload_plugin_db.triggered.connect(self.triggered_reload_plugin_db)
 
-        self.action_open_papi_wiki.triggered.connect(self.triggered_open_papi_wiki)
-
         self.action_open_papi_doc.triggered.connect(self.triggered_open_papi_doc)
         self.action_open_papi_doc.setShortcut(_translate("DefaultMain", "Ctrl+H"))
 
@@ -911,15 +909,6 @@ class GUI(QMainWindow, Ui_DefaultMain):
         self.TabManager.close_all_empty_tabs()
         self.gui_management.gui_api.do_reset_papi()
 
-    def triggered_open_papi_wiki(self):
-        """
-        Opens the PaPI Wiki in the default browser.
-        This function is triggered by using the action "PaPI Wiki" in the toolbar menu "Help".
-
-        :return:
-        """
-
-        QDesktopServices.openUrl(QUrl(pc.PAPI_WIKI_URL, QUrl.TolerantMode))
 
     def triggered_open_papi_doc(self):
         """
