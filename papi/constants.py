@@ -36,14 +36,14 @@ import papi
 
 now = datetime.datetime.now()
 
-PAPI_DEV_EDITION                = True
+PAPI_DEV_EDITION                = False
 
 # CORE CONSTANTS
 CORE_PROCESS_CONSOLE_IDENTIFIER = 'Core Process: '
 CORE_CONSOLE_LOG_LEVEL          = 1
 DCORE_CONSOLE_LOG_LEVEL         = 2
 
-CORE_PAPI_VERSION               = 'v.1.4-dev' # no spaces allowed
+CORE_PAPI_VERSION               = 'v.1.4' # no spaces allowed
 CORE_CORE_VERSION               = CORE_PAPI_VERSION # no spaces allowed
 CORE_PAPI_CONSOLE_START_MESSAGE = 'PaPI - Plugin based Process Interaction' + ' Version: ' + CORE_PAPI_VERSION
 CORE_CORE_CONSOLE_START_MESSAGE = 'PaPI Core Modul ' + CORE_CORE_VERSION + ' started'

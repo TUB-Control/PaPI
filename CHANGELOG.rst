@@ -1,7 +1,7 @@
 Changelog
 ---------
 
-v.1.4-dev:
+v.1.4:
 ----------
 - **feature**: Plot now supports different line width styles.
 - **feature**: PaPI Main GUI now supports a fullscreen mode including toolbar toggling and run mode.

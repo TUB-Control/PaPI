@@ -1,4 +1,4 @@
-PaPI v. 1.4-dev
+PaPI v. 1.4
 ===============
 
 Plugin based Process Interaction
